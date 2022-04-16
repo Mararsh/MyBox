@@ -5,14 +5,21 @@ package mara.mybox.data;
  * @CreateDate 2022-4-14
  * @License Apache License Version 2.0
  */
-public class StatisticSelection {
+public class StatisticOptions {
 
     public boolean count, sum, mean, geometricMean, sumSquares,
             populationVariance, sampleVariance, populationStandardDeviation, sampleStandardDeviation, skewness,
             minimum, maximum, median, upperQuartile, lowerQuartile, mode;
+    public int scale;
 
-    public static StatisticSelection all(boolean select) {
-        return new StatisticSelection()
+    public StatisticObject statisticObject = StatisticObject.Columns;
+
+    public enum StatisticObject {
+        Columns, Rows, All
+    }
+
+    public static StatisticOptions all(boolean select) {
+        return new StatisticOptions()
                 .setCount(select)
                 .setSum(select)
                 .setMean(select)
@@ -50,7 +57,7 @@ public class StatisticSelection {
         return count;
     }
 
-    public StatisticSelection setCount(boolean count) {
+    public StatisticOptions setCount(boolean count) {
         this.count = count;
         return this;
     }
@@ -59,7 +66,7 @@ public class StatisticSelection {
         return sum;
     }
 
-    public StatisticSelection setSum(boolean sum) {
+    public StatisticOptions setSum(boolean sum) {
         this.sum = sum;
         return this;
     }
@@ -68,7 +75,7 @@ public class StatisticSelection {
         return mean;
     }
 
-    public StatisticSelection setMean(boolean mean) {
+    public StatisticOptions setMean(boolean mean) {
         this.mean = mean;
         return this;
     }
@@ -77,7 +84,7 @@ public class StatisticSelection {
         return geometricMean;
     }
 
-    public StatisticSelection setGeometricMean(boolean geometricMean) {
+    public StatisticOptions setGeometricMean(boolean geometricMean) {
         this.geometricMean = geometricMean;
         return this;
     }
@@ -86,7 +93,7 @@ public class StatisticSelection {
         return minimum;
     }
 
-    public StatisticSelection setMinimum(boolean minimum) {
+    public StatisticOptions setMinimum(boolean minimum) {
         this.minimum = minimum;
         return this;
     }
@@ -95,7 +102,7 @@ public class StatisticSelection {
         return maximum;
     }
 
-    public StatisticSelection setMaximum(boolean maximum) {
+    public StatisticOptions setMaximum(boolean maximum) {
         this.maximum = maximum;
         return this;
     }
@@ -104,7 +111,7 @@ public class StatisticSelection {
         return sumSquares;
     }
 
-    public StatisticSelection setSumSquares(boolean sumSquares) {
+    public StatisticOptions setSumSquares(boolean sumSquares) {
         this.sumSquares = sumSquares;
         return this;
     }
@@ -113,7 +120,7 @@ public class StatisticSelection {
         return populationVariance;
     }
 
-    public StatisticSelection setPopulationVariance(boolean populationVariance) {
+    public StatisticOptions setPopulationVariance(boolean populationVariance) {
         this.populationVariance = populationVariance;
         return this;
     }
@@ -122,7 +129,7 @@ public class StatisticSelection {
         return sampleVariance;
     }
 
-    public StatisticSelection setSampleVariance(boolean sampleVariance) {
+    public StatisticOptions setSampleVariance(boolean sampleVariance) {
         this.sampleVariance = sampleVariance;
         return this;
     }
@@ -131,7 +138,7 @@ public class StatisticSelection {
         return populationStandardDeviation;
     }
 
-    public StatisticSelection setPopulationStandardDeviation(boolean populationStandardDeviation) {
+    public StatisticOptions setPopulationStandardDeviation(boolean populationStandardDeviation) {
         this.populationStandardDeviation = populationStandardDeviation;
         return this;
     }
@@ -140,7 +147,7 @@ public class StatisticSelection {
         return sampleStandardDeviation;
     }
 
-    public StatisticSelection setSampleStandardDeviation(boolean sampleStandardDeviation) {
+    public StatisticOptions setSampleStandardDeviation(boolean sampleStandardDeviation) {
         this.sampleStandardDeviation = sampleStandardDeviation;
         return this;
     }
@@ -149,7 +156,7 @@ public class StatisticSelection {
         return skewness;
     }
 
-    public StatisticSelection setSkewness(boolean skewness) {
+    public StatisticOptions setSkewness(boolean skewness) {
         this.skewness = skewness;
         return this;
     }
@@ -158,7 +165,7 @@ public class StatisticSelection {
         return mode;
     }
 
-    public StatisticSelection setMode(boolean mode) {
+    public StatisticOptions setMode(boolean mode) {
         this.mode = mode;
         return this;
     }
@@ -167,7 +174,7 @@ public class StatisticSelection {
         return median;
     }
 
-    public StatisticSelection setMedian(boolean median) {
+    public StatisticOptions setMedian(boolean median) {
         this.median = median;
         return this;
     }
@@ -176,7 +183,7 @@ public class StatisticSelection {
         return upperQuartile;
     }
 
-    public StatisticSelection setUpperQuartile(boolean upperQuartile) {
+    public StatisticOptions setUpperQuartile(boolean upperQuartile) {
         this.upperQuartile = upperQuartile;
         return this;
     }
@@ -185,8 +192,26 @@ public class StatisticSelection {
         return lowerQuartile;
     }
 
-    public StatisticSelection setLowerQuartile(boolean lowerQuartile) {
+    public StatisticOptions setLowerQuartile(boolean lowerQuartile) {
         this.lowerQuartile = lowerQuartile;
+        return this;
+    }
+
+    public StatisticObject getStatisticObject() {
+        return statisticObject;
+    }
+
+    public StatisticOptions setStatisticObject(StatisticObject statisticObject) {
+        this.statisticObject = statisticObject;
+        return this;
+    }
+
+    public int getScale() {
+        return scale;
+    }
+
+    public StatisticOptions setScale(int scale) {
+        this.scale = scale;
         return this;
     }
 

@@ -2,18 +2,21 @@ package mara.mybox.controller;
 
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.DoubleStatistic;
-import mara.mybox.data.StatisticSelection;
+import mara.mybox.data.StatisticOptions;
+import mara.mybox.data.StatisticOptions.StatisticObject;
+import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
@@ -39,17 +42,21 @@ public class Data2DStatisticController extends Data2DHandleController {
             populationVarianceRow, sampleVarianceRow, populationStandardDeviationRow, sampleStandardDeviationRow, skewnessRow,
             maximumRow, minimumRow, medianRow, upperQuartileRow, lowerQuartileRow, modeRow;
     protected List<String> handledNames;
-    protected StatisticSelection selections;
+    protected StatisticOptions options;
+    protected int scale;
 
     @FXML
     protected CheckBox countCheck, summationCheck, meanCheck, geometricMeanCheck, sumOfSquaresCheck,
             populationVarianceCheck, sampleVarianceCheck, populationStandardDeviationCheck, sampleStandardDeviationCheck, skewnessCheck,
             maximumCheck, minimumCheck, medianCheck, upperQuartileCheck, lowerQuartileCheck, modeCheck;
-
+    @FXML
+    protected RadioButton columnsRadio, rowsRadio, allRadio;
     @FXML
     protected Label memoryNoticeLabel;
     @FXML
     protected VBox operationBox;
+    @FXML
+    protected ComboBox<String> scaleSelector;
 
     @Override
     public void setControlsStyle() {
@@ -206,6 +213,30 @@ public class Data2DStatisticController extends Data2DHandleController {
                 }
             });
 
+            scale = (short) UserConfig.getInt(baseName + "Scale", 2);
+            if (scale < 0) {
+                scale = 2;
+            }
+            scaleSelector.getItems().addAll(
+                    Arrays.asList("2", "1", "0", "3", "4", "5", "6", "7", "8", "10", "12", "15")
+            );
+            scaleSelector.setValue(scale + "");
+            scaleSelector.getSelectionModel().selectedItemProperty().addListener(
+                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                        try {
+                            int v = Integer.parseInt(scaleSelector.getValue());
+                            if (v >= 0 && v <= 15) {
+                                scale = (short) v;
+                                UserConfig.setInt(baseName + "Scale", v);
+                                scaleSelector.getEditor().setStyle(null);
+                            } else {
+                                scaleSelector.getEditor().setStyle(UserConfig.badStyle());
+                            }
+                        } catch (Exception e) {
+                            scaleSelector.getEditor().setStyle(UserConfig.badStyle());
+                        }
+                    });
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -214,7 +245,7 @@ public class Data2DStatisticController extends Data2DHandleController {
     @Override
     public boolean checkOptions() {
         boolean ok = super.checkOptions();
-        selections = new StatisticSelection()
+        options = new StatisticOptions()
                 .setCount(countCheck.isSelected())
                 .setSum(summationCheck.isSelected())
                 .setMean(meanCheck.isSelected())
@@ -230,13 +261,21 @@ public class Data2DStatisticController extends Data2DHandleController {
                 .setMinimum(minimumCheck.isSelected())
                 .setUpperQuartile(upperQuartileCheck.isSelected())
                 .setLowerQuartile(lowerQuartileCheck.isSelected())
-                .setMode(modeCheck.isSelected());
+                .setMode(modeCheck.isSelected())
+                .setScale(scale);
+        if (rowsRadio.isSelected()) {
+            options.setStatisticObject(StatisticObject.Rows);
+        } else if (allRadio.isSelected()) {
+            options.setStatisticObject(StatisticObject.All);
+        } else {
+            options.setStatisticObject(StatisticObject.Columns);
+        }
         checkMemoryLabel();
         return ok;
     }
 
     public void checkMemoryLabel() {
-        if (!data2D.isTable() && sourceController.allPages() && selections.needStored()) {
+        if (sourceController.allPages() && options.needStored() && (!data2D.isTable() || allRadio.isSelected())) {
             if (!operationBox.getChildren().contains(memoryNoticeLabel)) {
                 operationBox.getChildren().add(memoryNoticeLabel);
             }
@@ -292,63 +331,50 @@ public class Data2DStatisticController extends Data2DHandleController {
     @FXML
     @Override
     public void okAction() {
-        if ((sourceController.allPages() && !tableController.checkBeforeLoadingTableData())
-                || !checkOptions() || !prepareRows()) {
-            return;
-        }
-        task = new SingletonTask<Void>(this) {
-
-            @Override
-            protected boolean handle() {
-                try {
-                    data2D.setTask(task);
-                    if (sourceController.allPages()) {
-                        if (selections.needStored()) {
-                            if (data2D instanceof DataTable) {
-                                return statisticAllInTable();
-                            } else {
-                                return statisticRows(data2D.allRows(sourceController.checkedColsIndices(), false));
-                            }
-                        } else {
-                            return statisticAllWithoutStored();
-                        }
-                    } else {
-                        return statisticRows(sourceController.selectedData(false));
-                    }
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
+        try {
+            if ((sourceController.allPages() && !tableController.checkBeforeLoadingTableData())
+                    || !checkOptions() || !prepare()) {
+                return;
             }
-
-            @Override
-            protected void whenSucceeded() {
-                if (targetController.inTable()) {
-                    updateTable();
+            if (sourceController.allPages()) {
+                if (rowsRadio.isSelected()) {
+                    handleAllTask();
+                } else if (allRadio.isSelected()) {
+                    handleAllByAllTask();
                 } else {
-                    outputExternal();
+                    handleAllByColumnsTask();
                 }
+            } else {
+                handleRowsTask();
             }
-
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                data2D.setTask(null);
-                task = null;
-                if (targetController != null) {
-                    targetController.refreshControls();
-                }
-            }
-
-        };
-        start(task);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
     }
 
-    public boolean prepareRows() {
+    public boolean prepare() {
         try {
-            List<String> names = sourceController.checkedColsNames();
+            switch (options.statisticObject) {
+                case Rows:
+                    return prepareRows();
+                case All:
+                    return prepareColumns(Arrays.asList(message("All")));
+                default:
+                    return prepareColumns(sourceController.checkedColsNames());
+            }
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public boolean prepareColumns(List<String> names) {
+        try {
+
             if (names == null || names.isEmpty()) {
-                popError(message("SelectToHandle"));
                 return false;
             }
             String cName = message("Calculation");
@@ -492,7 +518,180 @@ public class Data2DStatisticController extends Data2DHandleController {
         }
     }
 
-    public boolean writeRows(DoubleStatistic statistic, int scale) {
+    public boolean prepareRows() {
+        try {
+            handledNames = new ArrayList<>();
+            handledColumns = new ArrayList<>();
+
+            String cName = message("Row");
+            handledNames.add(cName);
+            handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.String));
+
+            if (countCheck.isSelected()) {
+                cName = message("Count");
+                handledNames.add(cName);
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+            }
+
+            if (summationCheck.isSelected()) {
+                cName = message("Summation");
+                handledNames.add(cName);
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+            }
+
+            if (meanCheck.isSelected()) {
+                cName = message("Mean");
+                handledNames.add(cName);
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+            }
+
+            if (geometricMeanCheck.isSelected()) {
+                cName = message("GeometricMean");
+                handledNames.add(cName);
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+            }
+
+            if (sumOfSquaresCheck.isSelected()) {
+                cName = message("SumOfSquares");
+                handledNames.add(cName);
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+            }
+
+            if (populationVarianceCheck.isSelected()) {
+                cName = message("PopulationVariance");
+                handledNames.add(cName);
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+            }
+
+            if (sampleVarianceCheck.isSelected()) {
+                cName = message("SampleVariance");
+                handledNames.add(cName);
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+            }
+
+            if (populationStandardDeviationCheck.isSelected()) {
+                cName = message("PopulationStandardDeviation");
+                handledNames.add(cName);
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+            }
+
+            if (sampleStandardDeviationCheck.isSelected()) {
+                cName = message("SampleStandardDeviation");
+                handledNames.add(cName);
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+            }
+
+            if (skewnessCheck.isSelected()) {
+                cName = message("Skewness");
+                handledNames.add(cName);
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+            }
+
+            if (minimumCheck.isSelected()) {
+                cName = message("MinimumQ0");
+                handledNames.add(cName);
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+            }
+
+            if (upperQuartileCheck.isSelected()) {
+                cName = message("UpperQuartile");
+                handledNames.add(cName);
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+            }
+
+            if (medianCheck.isSelected()) {
+                cName = message("Median");
+                handledNames.add(cName);
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+            }
+
+            if (lowerQuartileCheck.isSelected()) {
+                cName = message("LowerQuartile");
+                handledNames.add(cName);
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+            }
+
+            if (maximumCheck.isSelected()) {
+                cName = message("MaximumQ4");
+                handledNames.add(cName);
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+            }
+
+            if (modeCheck.isSelected()) {
+                cName = message("Mode");
+                handledNames.add(cName);
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+            }
+
+            if (handledNames.size() < 2) {
+                popError(message("SelectToHandle"));
+                return false;
+            }
+
+            return true;
+        } catch (Exception e) {
+            popError(e.toString());
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean handleRows() {
+        return statisticData(sourceController.selectedData(true));
+    }
+
+    public boolean statisticData(List<List<String>> rows) {
+        try {
+            if (rows == null || rows.isEmpty()) {
+                if (task != null) {
+                    task.setError(message("SelectToHandle"));
+                }
+                return false;
+            }
+            switch (options.statisticObject) {
+                case Rows:
+                    return statisticByRows(rows);
+                case All:
+                    return statisticByAll(rows);
+                default:
+                    return statisticByColumns(rows);
+            }
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public boolean statisticByColumns(List<List<String>> rows) {
+        try {
+            if (rows == null || rows.isEmpty()) {
+                return false;
+            }
+            int rowsNumber = rows.size();
+            int colsNumber = rows.get(0).size();
+            for (int c = 1; c < colsNumber; c++) {
+                String[] colData = new String[rowsNumber];
+                for (int r = 0; r < rowsNumber; r++) {
+                    colData[r] = rows.get(r).get(c);
+                }
+                DoubleStatistic statistic = new DoubleStatistic(colData, options);
+                statisticByColumnsWrite(statistic);
+            }
+            return true;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public boolean statisticByColumnsWrite(DoubleStatistic statistic) {
         if (statistic == null) {
             return false;
         }
@@ -532,48 +731,44 @@ public class Data2DStatisticController extends Data2DHandleController {
         if (skewnessRow != null) {
             skewnessRow.add(DoubleTools.format(statistic.getSkewness(), scale));
         }
+        if (medianRow != null) {
+            medianRow.add(DoubleTools.format(statistic.getMedian(), scale));
+        }
+        if (upperQuartileRow != null) {
+            upperQuartileRow.add(DoubleTools.format(statistic.getUpperQuartile(), scale));
+        }
+        if (lowerQuartileRow != null) {
+            lowerQuartileRow.add(DoubleTools.format(statistic.getLowerQuartile(), scale));
+        }
+        if (modeRow != null) {
+            try {
+                modeRow.add(DoubleTools.format((double) statistic.getMode(), scale));
+            } catch (Exception e) {
+                modeRow.add(statistic.getMode().toString());
+            }
+        }
         return true;
     }
 
-    public boolean statisticRows(List<List<String>> rows) {
+    public boolean statisticByRows(List<List<String>> rows) {
         try {
             if (rows == null || rows.isEmpty()) {
-                if (task != null) {
-                    task.setError(message("SelectToHandle"));
-                }
                 return false;
             }
+            handledData = new ArrayList<>();
             int rowsNumber = rows.size();
-            int colsNumber = rows.get(0).size();
-            int scale = data2D.getScale();
-            for (int c = 0; c < colsNumber; c++) {
-                double[] colData = new double[rowsNumber];
-                for (int r = 0; r < rowsNumber; r++) {
-                    colData[r] = data2D.doubleValue(rows.get(r).get(c));
+            for (int r = 0; r < rowsNumber; r++) {
+                List<String> rowStatistic = new ArrayList<>();
+                List<String> row = rows.get(r);
+                rowStatistic.add(message("Row") + " " + row.get(0));
+                int colsNumber = row.size();
+                String[] rowData = new String[colsNumber - 1];
+                for (int c = 1; c < colsNumber; c++) {
+                    rowData[c - 1] = row.get(c);
                 }
-                DoubleStatistic statistic = new DoubleStatistic(colData, selections);
-                writeRows(statistic, scale);
-                if (medianRow != null) {
-                    medianRow.add(DoubleTools.format(statistic.getMedian(), scale));
-                }
-                if (upperQuartileRow != null) {
-                    upperQuartileRow.add(DoubleTools.format(statistic.getUpperQuartile(), scale));
-                }
-                if (lowerQuartileRow != null) {
-                    lowerQuartileRow.add(DoubleTools.format(statistic.getLowerQuartile(), scale));
-                }
-                if (modeRow != null) {
-                    if (statistic.getMode() == 0) {
-                        String[] colStrings = new String[rowsNumber];
-                        for (int r = 0; r < rowsNumber; r++) {
-                            colStrings[r] = rows.get(r).get(c);
-                        }
-                        Object mode = mode(colStrings);
-                        modeRow.add(mode + "");
-                    } else {
-                        modeRow.add(DoubleTools.format(statistic.getMode(), scale));
-                    }
-                }
+                DoubleStatistic statistic = new DoubleStatistic(rowData, options);
+                rowStatistic.addAll(statistic.toStringList());
+                handledData.add(rowStatistic);
             }
             return true;
         } catch (Exception e) {
@@ -585,51 +780,95 @@ public class Data2DStatisticController extends Data2DHandleController {
         }
     }
 
-    public static Object mode(Object[] values) {
-        Object mode = null;
+    public boolean statisticByAll(List<List<String>> rows) {
         try {
-            if (values == null || values.length == 0) {
-                return mode;
+            if (rows == null || rows.isEmpty()) {
+                return false;
             }
-            Map<Object, Integer> number = new HashMap<>();
-            for (Object value : values) {
-                if (number.containsKey(value)) {
-                    number.put(value, number.get(value) + 1);
-                } else {
-                    number.put(value, 1);
+            int rowsNumber = rows.size();
+            int colsNumber = rows.get(0).size();
+            String[] allData = new String[rowsNumber * (colsNumber - 1)];
+            int index = 0;
+            for (int r = 0; r < rowsNumber; r++) {
+                for (int c = 1; c < colsNumber; c++) {
+                    allData[index++] = rows.get(r).get(c);
                 }
             }
-            double num = 0;
-            for (Object value : number.keySet()) {
-                if (num < number.get(value)) {
-                    mode = value;
-                }
-            }
+            DoubleStatistic statistic = new DoubleStatistic(allData, options);
+            statisticByColumnsWrite(statistic);
+            return true;
         } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return false;
         }
-        return mode;
     }
 
-    public boolean statisticAllWithoutStored() {
-        DoubleStatistic[] statisticData = data2D.statisticData(sourceController.checkedColsIndices, selections);
+    public void handleAllByColumnsTask() {
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try {
+                    data2D.setTask(task);
+                    if (options.needStored()) {
+                        if (data2D instanceof DataTable) {
+                            return statisticAllByColumnsInDataTable();
+                        } else {
+                            return statisticData(data2D.allRows(sourceController.checkedColsIndices(), true));
+                        }
+                    } else {
+                        return statisticAllByColumnsWithoutStored();
+                    }
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (targetController.inTable()) {
+                    updateTable();
+                } else {
+                    outputExternal();
+                }
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                data2D.setTask(null);
+                task = null;
+                if (targetController != null) {
+                    targetController.refreshControls();
+                }
+            }
+
+        };
+        start(task);
+    }
+
+    public boolean statisticAllByColumnsWithoutStored() {
+        DoubleStatistic[] statisticData = data2D.statisticByColumns(sourceController.checkedColsIndices, options);
         if (statisticData == null) {
             return false;
         }
-        int scale = data2D.getScale();
         for (DoubleStatistic statistic : statisticData) {
-            writeRows(statistic, scale);
+            statisticByColumnsWrite(statistic);
         }
         return true;
     }
 
-    public boolean statisticAllInTable() {
-        if (!statisticAllWithoutStored() || !(data2D instanceof DataTable)) {
+    public boolean statisticAllByColumnsInDataTable() {
+        if (!statisticAllByColumnsWithoutStored() || !(data2D instanceof DataTable)) {
             return false;
         }
         try ( Connection conn = DerbyBase.getConnection()) {
             List<Integer> cols = sourceController.checkedColsIndices();
             DataTable dataTable = (DataTable) data2D;
-            int scale = dataTable.getScale();
             for (int c : cols) {
                 Data2DColumn column = data2D.getColumns().get(c);
                 if (medianRow != null) {
@@ -673,6 +912,61 @@ public class Data2DStatisticController extends Data2DHandleController {
             MyBoxLog.error(e.toString());
             return false;
         }
+    }
+
+    public void handleAllByAllTask() {
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try {
+                    data2D.setTask(task);
+                    if (options.needStored()) {
+                        return statisticData(data2D.allRows(sourceController.checkedColsIndices(), true));
+                    } else {
+                        return statisticAllByColumnsWithoutStored();
+                    }
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (targetController.inTable()) {
+                    updateTable();
+                } else {
+                    outputExternal();
+                }
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                data2D.setTask(null);
+                task = null;
+                if (targetController != null) {
+                    targetController.refreshControls();
+                }
+            }
+
+        };
+        start(task);
+    }
+
+    public boolean statisticAllByAllWithoutStored() {
+        DoubleStatistic statisticData = data2D.statisticByAll(sourceController.checkedColsIndices, options);
+        if (statisticData == null) {
+            return false;
+        }
+        statisticByColumnsWrite(statisticData);
+        return true;
+    }
+
+    @Override
+    public DataFileCSV generatedFile() {
+        return data2D.statisticByRows(handledNames, sourceController.checkedColsIndices(), options);
     }
 
     /*

@@ -1,9 +1,13 @@
 package mara.mybox.data;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleArrayTools;
+import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppValues;
 import org.apache.commons.math3.stat.descriptive.moment.Skewness;
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
@@ -19,7 +23,11 @@ public class DoubleStatistic {
     public long count;
     public double sum, mean, geometricMean, sumSquares,
             populationVariance, sampleVariance, populationStandardDeviation, sampleStandardDeviation, skewness,
-            minimum, maximum, median, upperQuartile, lowerQuartile, mode, vTmp;
+            minimum, maximum, median, upperQuartile, lowerQuartile, vTmp;
+    public Object mode;
+    public StatisticOptions options;
+    public String[] strings;
+    public double[] doubles;
 
     public DoubleStatistic() {
         init();
@@ -46,56 +54,66 @@ public class DoubleStatistic {
     }
 
     public DoubleStatistic(double[] values) {
-        calculate(values, StatisticSelection.all(true));
+        calculate(values, StatisticOptions.all(true));
     }
 
-    public DoubleStatistic(double[] values, StatisticSelection selections) {
-        calculate(values, selections);
+    public DoubleStatistic(double[] values, StatisticOptions options) {
+        calculate(values, options);
     }
 
-    public final void calculate(double[] values, StatisticSelection selections) {
+    public DoubleStatistic(String[] values, StatisticOptions options) {
+        if (options != null && options.isMode()) {
+            strings = values;
+        }
+        calculate(toDouble(values), options);
+    }
+
+    public final void calculate(double[] values, StatisticOptions options) {
         try {
             init();
-            if (values == null || selections == null) {
+            if (values == null || options == null) {
                 return;
             }
-            calculateBase(values, selections);
-            calculateVariance(values, selections);
-            calculatePercentile(values, selections);
-            calculateSkewness(values, selections);
+            this.options = options;
+            doubles = values;
+            calculateBase();
+            calculateVariance();
+            calculatePercentile();
+            calculateSkewness();
+            calculateMode();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public void calculateBase(double[] values, StatisticSelection selections) {
+    private void calculateBase() {
         try {
-            if (values == null || selections == null) {
+            if (doubles == null || options == null) {
                 return;
             }
             sum = 0;
-            count = values.length;
+            count = doubles.length;
             if (count == 0) {
                 return;
             }
             for (int i = 0; i < count; ++i) {
-                double v = values[i];
+                double v = doubles[i];
                 sum += v;
-                if (selections.isMaximum() && v > maximum) {
+                if (options.isMaximum() && v > maximum) {
                     maximum = v;
                 }
-                if (selections.isMinimum() && v < minimum) {
+                if (options.isMinimum() && v < minimum) {
                     minimum = v;
                 }
-                if (selections.isGeometricMean()) {
+                if (options.isGeometricMean()) {
                     geometricMean = geometricMean * v;
                 }
-                if (selections.isSumSquares()) {
+                if (options.isSumSquares()) {
                     sumSquares += v * v;
                 }
             }
             mean = sum / count;
-            if (selections.isGeometricMean()) {
+            if (options.isGeometricMean()) {
                 geometricMean = Math.pow(geometricMean, 1d / count);
             }
         } catch (Exception e) {
@@ -103,26 +121,26 @@ public class DoubleStatistic {
         }
     }
 
-    public void calculateVariance(double[] values, StatisticSelection selections) {
+    private void calculateVariance() {
         try {
-            if (values == null || selections == null || count <= 0) {
+            if (doubles == null || options == null || count <= 0) {
                 return;
             }
-            if (!selections.needVariance()) {
+            if (!options.needVariance()) {
                 return;
             }
             vTmp = 0;
             for (int i = 0; i < count; ++i) {
-                double p = values[i] - mean;
+                double p = doubles[i] - mean;
                 double p2 = p * p;
                 vTmp += p2;
             }
             populationVariance = vTmp / count;
             sampleVariance = vTmp / (count - 1);
-            if (selections.populationStandardDeviation) {
+            if (options.populationStandardDeviation) {
                 populationStandardDeviation = Math.sqrt(populationVariance);
             }
-            if (selections.isSampleStandardDeviation()) {
+            if (options.isSampleStandardDeviation()) {
                 sampleStandardDeviation = Math.sqrt(sampleVariance);
             }
         } catch (Exception e) {
@@ -130,23 +148,23 @@ public class DoubleStatistic {
         }
     }
 
-    public void calculatePercentile(double[] values, StatisticSelection selections) {
+    private void calculatePercentile() {
         try {
-            if (values == null || selections == null || count <= 0) {
+            if (doubles == null || options == null || count <= 0) {
                 return;
             }
-            if (!selections.needPercentile()) {
+            if (!options.needPercentile()) {
                 return;
             }
             Percentile percentile = new Percentile();
-            percentile.setData(values);
-            if (selections.isMedian()) {
+            percentile.setData(doubles);
+            if (options.isMedian()) {
                 median = percentile.evaluate(50);
             }
-            if (selections.isUpperQuartile()) {
+            if (options.isUpperQuartile()) {
                 upperQuartile = percentile.evaluate(25);
             }
-            if (selections.isLowerQuartile()) {
+            if (options.isLowerQuartile()) {
                 lowerQuartile = percentile.evaluate(75);
             }
         } catch (Exception e) {
@@ -154,37 +172,115 @@ public class DoubleStatistic {
         }
     }
 
-    public void calculateSkewness(double[] values, StatisticSelection selections) {
+    private void calculateSkewness() {
         try {
-            if (values == null || selections == null || count <= 0) {
+            if (doubles == null || options == null || count <= 0) {
                 return;
             }
-            if (!selections.isSkewness()) {
+            if (!options.isSkewness()) {
                 return;
             }
-            skewness = new Skewness().evaluate(values);
+            skewness = new Skewness().evaluate(doubles);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public void calculateMode(double[] values, StatisticSelection selections) {
+    private void calculateMode() {
         try {
-            if (values == null || selections == null || count <= 0) {
+            if (options == null || count <= 0) {
                 return;
             }
-            if (!selections.isMode()) {
+            if (!options.isMode()) {
                 return;
             }
-            mode = mode(values);
+            if (strings != null) {
+                mode = modeObject(strings);
+            } else if (doubles != null) {
+                mode = mode(doubles);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    public List<String> toStringList() {
+        int scale = options.getScale();
+        List<String> list = new ArrayList<>();
+        if (options.isCount()) {
+            list.add(StringTools.format(count));
+        }
+        if (options.isSum()) {
+            list.add(DoubleTools.format(sum, scale));
+        }
+        if (options.isMean()) {
+            list.add(DoubleTools.format(mean, scale));
+        }
+        if (options.isMaximum()) {
+            list.add(DoubleTools.format(maximum, scale));
+        }
+        if (options.isMinimum()) {
+            list.add(DoubleTools.format(minimum, scale));
+        }
+        if (options.isGeometricMean()) {
+            list.add(DoubleTools.format(geometricMean, scale));
+        }
+        if (options.isSumSquares()) {
+            list.add(DoubleTools.format(sumSquares, scale));
+        }
+        if (options.isPopulationStandardDeviation()) {
+            list.add(DoubleTools.format(populationVariance, scale));
+        }
+        if (options.isSampleVariance()) {
+            list.add(DoubleTools.format(sampleVariance, scale));
+        }
+        if (options.isPopulationStandardDeviation()) {
+            list.add(DoubleTools.format(populationStandardDeviation, scale));
+        }
+        if (options.isSampleStandardDeviation()) {
+            list.add(DoubleTools.format(sampleStandardDeviation, scale));
+        }
+        if (options.isSkewness()) {
+            list.add(DoubleTools.format(skewness, scale));
+        }
+        if (options.isMedian()) {
+            list.add(DoubleTools.format(median, scale));
+        }
+        if (options.isUpperQuartile()) {
+            list.add(DoubleTools.format(upperQuartile, scale));
+        }
+        if (options.isLowerQuartile()) {
+            list.add(DoubleTools.format(lowerQuartile, scale));
+        }
+        if (options.isMode()) {
+            try {
+                list.add(DoubleTools.format((double) mode, scale));
+            } catch (Exception e) {
+                list.add(mode.toString());
+            }
+        }
+        return list;
     }
 
     /*
         static methods
      */
+    public static double[] toDouble(String[] strings) {
+        if (strings == null) {
+            return null;
+        }
+        double[] doubles = new double[strings.length];
+        for (int i = 0; i < strings.length; i++) {
+            String s = strings[i];
+            try {
+                doubles[i] = Double.parseDouble(s.replaceAll(",", ""));
+            } catch (Exception e) {
+                doubles[i] = 0;
+            }
+        }
+        return doubles;
+    }
+
     public static double sum(double[] values) {
         if (values == null || values.length == 0) {
             return AppValues.InvalidDouble;
@@ -234,9 +330,25 @@ public class DoubleStatistic {
             if (values == null || values.length == 0) {
                 return AppValues.InvalidDouble;
             }
-            double mode = 0;
-            Map<Double, Integer> number = new HashMap<>();
-            for (double value : values) {
+            Object[] objects = new Object[values.length];
+            for (int i = 0; i < values.length; i++) {
+                objects[i] = values[i];
+            }
+            Object mode = modeObject(objects);
+            return mode != null ? (double) mode : AppValues.InvalidDouble;
+        } catch (Exception e) {
+            return AppValues.InvalidDouble;
+        }
+    }
+
+    public static Object modeObject(Object[] values) {
+        Object mode = null;
+        try {
+            if (values == null || values.length == 0) {
+                return mode;
+            }
+            Map<Object, Integer> number = new HashMap<>();
+            for (Object value : values) {
                 if (number.containsKey(value)) {
                     number.put(value, number.get(value) + 1);
                 } else {
@@ -244,15 +356,14 @@ public class DoubleStatistic {
                 }
             }
             double num = 0;
-            for (double value : number.keySet()) {
+            for (Object value : number.keySet()) {
                 if (num < number.get(value)) {
                     mode = value;
                 }
             }
-            return mode;
         } catch (Exception e) {
-            return AppValues.InvalidDouble;
         }
+        return mode;
     }
 
     public static double median(double[] values) {
@@ -370,11 +481,11 @@ public class DoubleStatistic {
         this.maximum = maximum;
     }
 
-    public double getMode() {
+    public Object getMode() {
         return mode;
     }
 
-    public void setMode(double mode) {
+    public void setMode(Object mode) {
         this.mode = mode;
     }
 
@@ -456,6 +567,24 @@ public class DoubleStatistic {
 
     public void setvTmp(double vTmp) {
         this.vTmp = vTmp;
+    }
+
+    public StatisticOptions getOptions() {
+        return options;
+    }
+
+    public DoubleStatistic setOptions(StatisticOptions options) {
+        this.options = options;
+        return this;
+    }
+
+    public double[] getDoubles() {
+        return doubles;
+    }
+
+    public DoubleStatistic setValues(double[] values) {
+        this.doubles = values;
+        return this;
     }
 
 }

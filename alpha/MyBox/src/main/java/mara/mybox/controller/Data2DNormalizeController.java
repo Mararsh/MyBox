@@ -27,10 +27,10 @@ public class Data2DNormalizeController extends Data2DHandleController {
         if (sourceController.allPages()) {
             normalizeController.columnsRadio.fire();
             normalizeController.rowsRadio.setDisable(true);
-            normalizeController.matrixRadio.setDisable(true);
+            normalizeController.allRadio.setDisable(true);
         } else {
             normalizeController.rowsRadio.setDisable(false);
-            normalizeController.matrixRadio.setDisable(false);
+            normalizeController.allRadio.setDisable(false);
         }
         return ok;
     }
@@ -86,11 +86,11 @@ public class Data2DNormalizeController extends Data2DHandleController {
                     normalizeController.from, normalizeController.to,
                     rowNumberCheck.isSelected(), colNameCheck.isSelected());
 
-        } else if (normalizeController.l1Radio.isSelected()) {
+        } else if (normalizeController.sumRadio.isSelected()) {
             return data2D.normalizeSum(sourceController.checkedColsIndices,
                     rowNumberCheck.isSelected(), colNameCheck.isSelected());
 
-        } else if (normalizeController.l2Radio.isSelected()) {
+        } else if (normalizeController.zscoreRadio.isSelected()) {
             return data2D.normalizeZscore(sourceController.checkedColsIndices,
                     rowNumberCheck.isSelected(), colNameCheck.isSelected());
         }
