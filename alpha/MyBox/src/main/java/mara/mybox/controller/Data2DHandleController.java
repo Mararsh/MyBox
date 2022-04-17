@@ -1,13 +1,19 @@
 package mara.mybox.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.Data2D_Operations.ObjectType;
 import mara.mybox.data2d.DataFile;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.ColumnDefinition;
@@ -28,6 +34,8 @@ public abstract class Data2DHandleController extends BaseChildController {
     protected Data2D data2D;
     protected List<List<String>> handledData;
     protected List<Data2DColumn> handledColumns;
+    protected int scale;
+    protected ObjectType objectType;
 
     @FXML
     protected ControlData2DSource sourceController;
@@ -37,10 +45,70 @@ public abstract class Data2DHandleController extends BaseChildController {
     protected CheckBox rowNumberCheck, colNameCheck;
     @FXML
     protected Label dataLabel, infoLabel;
+    @FXML
+    protected ComboBox<String> scaleSelector;
+    @FXML
+    protected ToggleGroup objectGroup;
+    @FXML
+    protected RadioButton columnsRadio, rowsRadio, allRadio;
 
     @Override
     public void setStageStatus() {
         setAsNormal();
+    }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            objectType = ObjectType.Columns;
+            if (objectGroup != null) {
+                objectGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                    @Override
+                    public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                        if (rowsRadio.isSelected()) {
+                            objectType = ObjectType.Rows;
+                        } else if (allRadio.isSelected()) {
+                            objectType = ObjectType.All;
+                        } else {
+                            objectType = ObjectType.Columns;
+                        }
+                    }
+                });
+            }
+
+            scale = (short) UserConfig.getInt(baseName + "Scale", 2);
+            if (scale < 0) {
+                scale = 2;
+            }
+            if (scaleSelector != null) {
+                scaleSelector.getItems().addAll(
+                        Arrays.asList("2", "1", "0", "3", "4", "5", "6", "7", "8", "10", "12", "15")
+                );
+                scaleSelector.setValue(scale + "");
+                scaleSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue ov, String oldValue, String newValue) {
+                        try {
+                            int v = Integer.parseInt(scaleSelector.getValue());
+                            if (v >= 0 && v <= 15) {
+                                scale = (short) v;
+                                UserConfig.setInt(baseName + "Scale", v);
+                                scaleSelector.getEditor().setStyle(null);
+                            } else {
+                                scaleSelector.getEditor().setStyle(UserConfig.badStyle());
+                            }
+                        } catch (Exception e) {
+                            scaleSelector.getEditor().setStyle(UserConfig.badStyle());
+                        }
+                    }
+                });
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     public void setParameters(ControlData2DEditTable tableController) {
@@ -119,6 +187,7 @@ public abstract class Data2DHandleController extends BaseChildController {
             okButton.setDisable(true);
             return false;
         }
+
         okButton.setDisable(false);
         return true;
     }

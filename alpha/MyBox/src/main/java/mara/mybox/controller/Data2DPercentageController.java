@@ -69,14 +69,48 @@ public class Data2DPercentageController extends Data2DHandleController {
 
     @Override
     public boolean checkOptions() {
-        boolean ok = super.checkOptions();
         targetController.setNotInTable(sourceController.allPages());
-        ok = ok && prepareRows();
-        okButton.setDisable(!ok);
-        return ok;
+        return super.checkOptions();
     }
 
-    public boolean prepareRows() {
+    @FXML
+    @Override
+    public void okAction() {
+        try {
+            if ((sourceController.allPages() && !tableController.checkBeforeLoadingTableData())
+                    || !checkOptions() || !prepare()) {
+                return;
+            }
+            if (sourceController.allPages()) {
+                handleAllTask();
+            } else {
+                handleRowsTask();
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    public boolean prepare() {
+        try {
+            switch (objectType) {
+                case Rows:
+                    return prepareByRows();
+                case All:
+                    return prepareByColumns(message("PercentageInAll"));
+                default:
+                    return prepareByColumns(message("PercentageInColumn"));
+            }
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public boolean prepareByColumns(String suffix) {
         try {
             List<Data2DColumn> cols = sourceController.checkedCols();
             if (cols == null || cols.isEmpty()) {
@@ -95,7 +129,7 @@ public class Data2DPercentageController extends Data2DHandleController {
                     handledColumns.add(column.cloneAll());
                     handledNames.add(column.getColumnName());
                 }
-                cName = column.getColumnName() + "_" + message("ValuePercentage");
+                cName = column.getColumnName() + "_" + suffix;
                 while (handledNames.contains(cName)) {
                     cName += "m";
                 }
@@ -110,20 +144,46 @@ public class Data2DPercentageController extends Data2DHandleController {
         }
     }
 
-    @FXML
-    @Override
-    public void okAction() {
+    public boolean prepareByRows() {
         try {
-            if (!checkOptions() || !prepareRows()) {
-                return;
+            List<Data2DColumn> cols = sourceController.checkedCols();
+            if (cols == null || cols.isEmpty()) {
+                return false;
             }
-            if (sourceController.allPages()) {
-                handleAllTask();
-            } else {
-                handleRowsTask();
+            handledNames = new ArrayList<>();
+            handledColumns = new ArrayList<>();
+
+            String cName = message("SourceRowNumber");
+            while (handledNames.contains(cName)) {
+                cName += "m";
             }
+            handledNames.add(cName);
+            handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.String));
+
+            cName = message("Row") + "-" + message("Summation");
+            while (handledNames.contains(cName)) {
+                cName += "m";
+            }
+            handledNames.add(cName);
+            handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+
+            for (Data2DColumn column : cols) {
+                if (valuesCheck.isSelected()) {
+                    handledColumns.add(column.cloneAll());
+                    handledNames.add(column.getColumnName());
+                }
+                cName = column.getColumnName() + "_" + message("PercentageInRow");
+                while (handledNames.contains(cName)) {
+                    cName += "m";
+                }
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+                handledNames.add(cName);
+            }
+            return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+            popError(e.toString());
+            MyBoxLog.error(e);
+            return false;
         }
     }
 
@@ -136,12 +196,32 @@ public class Data2DPercentageController extends Data2DHandleController {
                 }
                 return false;
             }
-            int colsLen = sourceController.checkedColsIndices.size();
+            switch (objectType) {
+                case Rows:
+                    return dataByRows();
+                case All:
+                    return dataByAll();
+                default:
+                    return dataByColumns();
+            }
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public boolean dataByColumns() {
+        try {
+            List<Integer> colIndices = sourceController.checkedColsIndices;
+            int colsLen = colIndices.size();
             double[] sum = new double[colsLen];
             for (int r : sourceController.checkedRowsIndices) {
                 List<String> tableRow = tableController.tableData.get(r);
                 for (int c = 0; c < colsLen; c++) {
-                    double d = data2D.doubleValue(tableRow.get(sourceController.checkedColsIndices.get(c) + 1));
+                    double d = data2D.doubleValue(tableRow.get(colIndices.get(c) + 1));
                     if (d < 0) {
                         if (!zeroRadio.isSelected()) {
                             sum[c] += Math.abs(d);
@@ -152,9 +232,8 @@ public class Data2DPercentageController extends Data2DHandleController {
                 }
             }
             handledData = new ArrayList<>();
-            int scale = data2D.getScale();
             List<String> row = new ArrayList<>();
-            row.add(message("Summation"));
+            row.add(message("Column") + "-" + message("Summation"));
             for (int c = 0; c < colsLen; c++) {
                 row.add(DoubleTools.format(sum[c], scale));
                 if (valuesCheck.isSelected()) {
@@ -165,9 +244,9 @@ public class Data2DPercentageController extends Data2DHandleController {
             for (int r : sourceController.checkedRowsIndices) {
                 List<String> tableRow = tableController.tableData.get(r);
                 row = new ArrayList<>();
-                row.add((r + 1) + "");
+                row.add(message("Row") + (r + 1));
                 for (int c = 0; c < colsLen; c++) {
-                    double d = data2D.doubleValue(tableRow.get(sourceController.checkedColsIndices.get(c) + 1));
+                    double d = data2D.doubleValue(tableRow.get(colIndices.get(c) + 1));
                     if (valuesCheck.isSelected()) {
                         row.add(DoubleTools.format(d, scale));
                     }
@@ -181,7 +260,122 @@ public class Data2DPercentageController extends Data2DHandleController {
                                 d = 0;
                             }
                         }
-                        row.add(DoubleTools.percentage(d, sum[c]));
+                        row.add(DoubleTools.percentage(d, sum[c], scale));
+                    }
+                }
+                handledData.add(row);
+            }
+            return true;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public boolean dataByRows() {
+        try {
+            List<Integer> colIndices = sourceController.checkedColsIndices;
+            handledData = new ArrayList<>();
+            for (int r : sourceController.checkedRowsIndices) {
+                double sum = 0d;
+                List<String> row = new ArrayList<>();
+                row.add(message("Row") + (r + 1));
+                List<String> tableRow = tableController.tableData.get(r);
+                for (int c : colIndices) {
+                    double d = data2D.doubleValue(tableRow.get(c + 1));
+                    if (d < 0) {
+                        if (!zeroRadio.isSelected()) {
+                            sum += Math.abs(d);
+                        }
+                    } else if (d > 0) {
+                        sum += d;
+                    }
+                }
+                row.add(DoubleTools.format(sum, scale));
+                for (int c : colIndices) {
+                    double d = data2D.doubleValue(tableRow.get(c + 1));
+                    if (valuesCheck.isSelected()) {
+                        row.add(DoubleTools.format(d, scale));
+                    }
+                    if (sum == 0) {
+                        row.add("0");
+                    } else {
+                        if (d < 0) {
+                            if (!zeroRadio.isSelected()) {
+                                d = Math.abs(d);
+                            } else {
+                                d = 0;
+                            }
+                        }
+                        row.add(DoubleTools.percentage(d, sum, scale));
+                    }
+                }
+                handledData.add(row);
+            }
+            return true;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public boolean dataByAll() {
+        try {
+            List<Integer> colIndices = sourceController.checkedColsIndices;
+            double sum = 0d;
+            for (int r : sourceController.checkedRowsIndices) {
+                List<String> tableRow = tableController.tableData.get(r);
+                for (int c : colIndices) {
+                    double d = data2D.doubleValue(tableRow.get(c + 1));
+                    if (d < 0) {
+                        if (!zeroRadio.isSelected()) {
+                            sum += Math.abs(d);
+                        }
+                    } else if (d > 0) {
+                        sum += d;
+                    }
+                }
+            }
+            handledData = new ArrayList<>();
+            List<String> row = new ArrayList<>();
+            row.add(message("All") + "-" + message("Summation"));
+            row.add(DoubleTools.format(sum, scale));
+            if (valuesCheck.isSelected()) {
+                row.add("100");
+            }
+            for (int c : colIndices) {
+                row.add(null);
+                if (valuesCheck.isSelected()) {
+                    row.add(null);
+                }
+            }
+            handledData.add(row);
+            for (int r : sourceController.checkedRowsIndices) {
+                List<String> tableRow = tableController.tableData.get(r);
+                row = new ArrayList<>();
+                row.add(message("Row") + (r + 1) + "");
+                for (int c : colIndices) {
+                    double d = data2D.doubleValue(tableRow.get(c + 1));
+                    if (valuesCheck.isSelected()) {
+                        row.add(DoubleTools.format(d, scale));
+                    }
+                    if (sum == 0) {
+                        row.add("0");
+                    } else {
+                        if (d < 0) {
+                            if (!zeroRadio.isSelected()) {
+                                d = Math.abs(d);
+                            } else {
+                                d = 0;
+                            }
+                        }
+                        row.add(DoubleTools.percentage(d, sum, scale));
                     }
                 }
                 handledData.add(row);
@@ -198,8 +392,17 @@ public class Data2DPercentageController extends Data2DHandleController {
 
     @Override
     public DataFileCSV generatedFile() {
-        return data2D.percentage(handledNames, sourceController.checkedColsIndices,
-                valuesCheck.isSelected(), !zeroRadio.isSelected());
+        switch (objectType) {
+            case Rows:
+                return data2D.percentageRows(handledNames, sourceController.checkedColsIndices,
+                        valuesCheck.isSelected(), !zeroRadio.isSelected(), scale);
+            case All:
+                return data2D.percentageAll(handledNames, sourceController.checkedColsIndices,
+                        valuesCheck.isSelected(), !zeroRadio.isSelected(), scale);
+            default:
+                return data2D.percentageColumns(handledNames, sourceController.checkedColsIndices,
+                        valuesCheck.isSelected(), !zeroRadio.isSelected(), scale);
+        }
     }
 
     /*

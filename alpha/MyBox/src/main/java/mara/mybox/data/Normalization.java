@@ -2,6 +2,7 @@ package mara.mybox.data;
 
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleMatrixTools;
+import mara.mybox.value.AppValues;
 
 /**
  * @Author Mara
@@ -56,7 +57,7 @@ public class Normalization {
             }
             double k = max - min;
             if (k == 0) {
-                k = Float.MIN_VALUE;
+                k = AppValues.TinyDouble;
             }
             k = (to - from) / k;
             double[] result = new double[len];
@@ -90,7 +91,7 @@ public class Normalization {
             }
             variance = Math.sqrt(variance / len);
             if (variance == 0) {
-                variance = Float.MIN_VALUE;
+                variance = AppValues.TinyDouble;
             }
             double[] result = new double[len];
             for (int i = 0; i < len; i++) {
@@ -117,7 +118,7 @@ public class Normalization {
                 sum += Math.abs(d);
             }
             if (sum == 0) {
-                sum = Float.MIN_VALUE;
+                sum = AppValues.TinyDouble;
             }
             double[] result = new double[len];
             for (int i = 0; i < len; i++) {
@@ -155,17 +156,17 @@ public class Normalization {
             switch (a) {
                 case MinMax:
                     for (int i = 0; i < rlen; i++) {
-                        result[i] = Normalization.minMax(matrix[i], from, to);
+                        result[i] = minMax(matrix[i], from, to);
                     }
                     break;
                 case Sum:
                     for (int i = 0; i < rlen; i++) {
-                        result[i] = Normalization.sum(matrix[i]);
+                        result[i] = sum(matrix[i]);
                     }
                     break;
                 case ZScore:
                     for (int i = 0; i < rlen; i++) {
-                        result[i] = Normalization.zscore(matrix[i]);
+                        result[i] = zscore(matrix[i]);
                     }
                     break;
                 default:
@@ -187,13 +188,13 @@ public class Normalization {
             double[] vector = DoubleMatrixTools.matrix2Array(matrix);
             switch (a) {
                 case MinMax:
-                    vector = Normalization.minMax(vector, from, to);
+                    vector = minMax(vector, from, to);
                     break;
                 case Sum:
-                    vector = Normalization.sum(vector);
+                    vector = sum(vector);
                     break;
                 case ZScore:
-                    vector = Normalization.zscore(vector);
+                    vector = zscore(vector);
                     break;
                 default:
                     return null;

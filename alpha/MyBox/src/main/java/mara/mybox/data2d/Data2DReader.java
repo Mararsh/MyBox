@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.data.DoubleStatistic;
+import mara.mybox.data.Normalization;
 import mara.mybox.data.StatisticOptions;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
@@ -16,6 +17,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.StringTools;
+import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.math3.stat.Frequency;
@@ -32,12 +34,12 @@ public abstract class Data2DReader {
     protected File readerFile;
     protected Operation operation;
     protected long rowIndex, rowsStart, rowsEnd, count;
-    protected int columnsNumber, colsLen, scale, scanPass, col;
+    protected int columnsNumber, colsLen, scale = -1, scanPass, col;
     protected List<String> record, names;
     protected List<List<String>> rows = new ArrayList<>();
     protected List<Integer> cols;
     protected boolean includeRowNumber, includeColName, withValues, failed, sumAbs;
-    protected double from;
+    protected double from, to, value;
     protected double[] colValues;
     protected ControlDataConvert convertController;
     protected Connection conn;
@@ -56,8 +58,11 @@ public abstract class Data2DReader {
         ReadDefinition, ReadTotal, ReadColumnNames, ReadPage,
         ReadCols, Export, WriteTable, Copy,
         StatisticColumns, StatisticRows, StatisticAll,
-        Percentage, Frequency,
-        NormalizeMinMax, NormalizeSum, NormalizeZscore
+        PercentageColumns, PercentageRows, PercentageAll,
+        NormalizeMinMaxColumns, NormalizeSumColumns, NormalizeZscoreColumns,
+        NormalizeMinMaxRows, NormalizeSumRows, NormalizeZscoreRows,
+        NormalizeMinMaxAll, NormalizeSumAll, NormalizeZscoreAll,
+        Frequency
     }
 
     public abstract void scanData();
@@ -140,7 +145,7 @@ public abstract class Data2DReader {
                     return null;
                 }
                 break;
-            case Percentage:
+            case PercentageColumns:
                 if (cols == null || cols.isEmpty()) {
                     failed = true;
                     return null;
@@ -148,6 +153,24 @@ public abstract class Data2DReader {
                 if (scanPass == 1) {
                     colValues = new double[colsLen];
                 } else if (colValues == null || csvPrinter == null) {
+                    failed = true;
+                    return null;
+                }
+                break;
+            case PercentageAll:
+                if (cols == null || cols.isEmpty()) {
+                    failed = true;
+                    return null;
+                }
+                if (scanPass == 1) {
+                    value = 0d;
+                } else if (csvPrinter == null) {
+                    failed = true;
+                    return null;
+                }
+                break;
+            case PercentageRows:
+                if (cols == null || cols.isEmpty() || csvPrinter == null) {
                     failed = true;
                     return null;
                 }
@@ -198,20 +221,56 @@ public abstract class Data2DReader {
                     return null;
                 }
                 break;
-            case NormalizeMinMax:
+            case NormalizeMinMaxColumns:
                 if (cols == null || cols.isEmpty() || statisticData == null || csvPrinter == null) {
                     failed = true;
                     return null;
                 }
                 break;
-            case NormalizeSum:
+            case NormalizeSumColumns:
                 if (cols == null || cols.isEmpty() || colValues == null || csvPrinter == null) {
                     failed = true;
                     return null;
                 }
                 break;
-            case NormalizeZscore:
+            case NormalizeZscoreColumns:
                 if (cols == null || cols.isEmpty() || statisticData == null || csvPrinter == null) {
+                    failed = true;
+                    return null;
+                }
+                break;
+            case NormalizeMinMaxRows:
+                if (cols == null || cols.isEmpty() || csvPrinter == null) {
+                    failed = true;
+                    return null;
+                }
+                break;
+            case NormalizeSumRows:
+                if (cols == null || cols.isEmpty() || csvPrinter == null) {
+                    failed = true;
+                    return null;
+                }
+                break;
+            case NormalizeZscoreRows:
+                if (cols == null || cols.isEmpty() || csvPrinter == null) {
+                    failed = true;
+                    return null;
+                }
+                break;
+            case NormalizeMinMaxAll:
+                if (cols == null || cols.isEmpty() || statisticAll == null || csvPrinter == null) {
+                    failed = true;
+                    return null;
+                }
+                break;
+            case NormalizeSumAll:
+                if (cols == null || cols.isEmpty() || csvPrinter == null) {
+                    failed = true;
+                    return null;
+                }
+                break;
+            case NormalizeZscoreAll:
+                if (cols == null || cols.isEmpty() || statisticAll == null || csvPrinter == null) {
                     failed = true;
                     return null;
                 }
@@ -229,7 +288,9 @@ public abstract class Data2DReader {
         count = 0;
         names = new ArrayList<>();
         rows = new ArrayList<>();
-        scale = data2D.getScale();
+        if (scale < 0) {
+            scale = data2D.getScale();
+        }
         record = new ArrayList<>();
         scanData();
         afterScanned();
@@ -326,24 +387,52 @@ public abstract class Data2DReader {
                 case StatisticRows:
                     handleStatisticRows();
                     break;
-                case Percentage:
+                case PercentageColumns:
                     if (scanPass == 1) {
-                        handlePecentageSum();
+                        handlePecentageColumnsSum();
                     } else if (scanPass == 2) {
-                        handlePercentage();
+                        handlePercentageColumns();
                     }
+                    break;
+                case PercentageAll:
+                    if (scanPass == 1) {
+                        handlePecentageAllSum();
+                    } else if (scanPass == 2) {
+                        handlePercentageAll();
+                    }
+                    break;
+                case PercentageRows:
+                    handlePercentageRows();
                     break;
                 case Frequency:
                     handleFrequency();
                     break;
-                case NormalizeMinMax:
-                    handleNormalizeMinMax();
+                case NormalizeMinMaxColumns:
+                    handleNormalizeMinMaxColumns();
                     break;
-                case NormalizeSum:
-                    handleNormalizeSum();
+                case NormalizeSumColumns:
+                    handleNormalizeSumColumns();
                     break;
-                case NormalizeZscore:
-                    handleNormalizeZscore();
+                case NormalizeZscoreColumns:
+                    handleNormalizeZscoreColumns();
+                    break;
+                case NormalizeMinMaxAll:
+                    handleNormalizeMinMaxAll();
+                    break;
+                case NormalizeSumAll:
+                    handleNormalizeSumAll();
+                    break;
+                case NormalizeZscoreAll:
+                    handleNormalizeZscoreAll();
+                    break;
+                case NormalizeMinMaxRows:
+                    handleNormalizeRows(Normalization.Algorithm.MinMax);
+                    break;
+                case NormalizeSumRows:
+                    handleNormalizeRows(Normalization.Algorithm.Sum);
+                    break;
+                case NormalizeZscoreRows:
+                    handleNormalizeRows(Normalization.Algorithm.ZScore);
                     break;
                 default:
                     break;
@@ -454,11 +543,11 @@ public abstract class Data2DReader {
         try {
             for (int c = 0; c < colsLen; c++) {
                 statisticData[c].count++;
-                int col = cols.get(c);
-                if (col < 0 || col >= record.size()) {
+                int i = cols.get(c);
+                if (i < 0 || i >= record.size()) {
                     continue;
                 }
-                double v = data2D.doubleValue(record.get(col));
+                double v = data2D.doubleValue(record.get(i));
                 if (sumAbs) {
                     statisticData[c].sum += Math.abs(v);
                 } else {
@@ -577,14 +666,14 @@ public abstract class Data2DReader {
         }
     }
 
-    public void handlePecentageSum() {
+    public void handlePecentageColumnsSum() {
         try {
             for (int c = 0; c < colsLen; c++) {
-                int col = cols.get(c);
-                if (col < 0 || col >= record.size()) {
+                int i = cols.get(c);
+                if (i < 0 || i >= record.size()) {
                     continue;
                 }
-                double v = data2D.doubleValue(record.get(col));
+                double v = data2D.doubleValue(record.get(i));
                 if (v < 0) {
                     if (sumAbs) {
                         colValues[c] += Math.abs(v);
@@ -597,15 +686,15 @@ public abstract class Data2DReader {
         }
     }
 
-    public void handlePercentage() {
+    public void handlePercentageColumns() {
         try {
             List<String> row = new ArrayList<>();
-            row.add((rowIndex + 1) + "");
+            row.add(message("Row") + (rowIndex + 1));
             for (int c = 0; c < colsLen; c++) {
-                int col = cols.get(c);
+                int i = cols.get(c);
                 double v = 0;
-                if (col >= 0 && col < record.size()) {
-                    v = data2D.doubleValue(record.get(col));
+                if (i >= 0 && i < record.size()) {
+                    v = data2D.doubleValue(record.get(i));
                 }
                 if (withValues) {
                     row.add(DoubleTools.scale(v, scale) + "");
@@ -621,7 +710,104 @@ public abstract class Data2DReader {
                 if (s == 0) {
                     row.add("0");
                 } else {
-                    row.add(DoubleTools.percentage(v, s));
+                    row.add(DoubleTools.percentage(v, s, scale));
+                }
+            }
+            csvPrinter.printRecord(row);
+        } catch (Exception e) {
+        }
+    }
+
+    public void handlePecentageAllSum() {
+        try {
+            for (int c = 0; c < colsLen; c++) {
+                int i = cols.get(c);
+                if (i < 0 || i >= record.size()) {
+                    continue;
+                }
+                double v = data2D.doubleValue(record.get(i));
+                if (v < 0) {
+                    if (sumAbs) {
+                        value += Math.abs(v);
+                    }
+                } else if (v > 0) {
+                    value += v;
+                }
+            }
+        } catch (Exception e) {
+        }
+    }
+
+    public void handlePercentageAll() {
+        try {
+            List<String> row = new ArrayList<>();
+            row.add(message("Row") + (rowIndex + 1));
+            for (int c = 0; c < colsLen; c++) {
+                int i = cols.get(c);
+                double v = 0;
+                if (i >= 0 && i < record.size()) {
+                    v = data2D.doubleValue(record.get(i));
+                }
+                if (withValues) {
+                    row.add(DoubleTools.scale(v, scale) + "");
+                }
+                if (v < 0) {
+                    if (sumAbs) {
+                        v = Math.abs(v);
+                    } else {
+                        v = 0;
+                    }
+                }
+                if (value == 0) {
+                    row.add("0");
+                } else {
+                    row.add(DoubleTools.percentage(v, value, scale));
+                }
+            }
+            csvPrinter.printRecord(row);
+        } catch (Exception e) {
+        }
+    }
+
+    public void handlePercentageRows() {
+        try {
+            List<String> row = new ArrayList<>();
+            row.add(message("Row") + (rowIndex + 1));
+            double sum = 0;
+            for (int c = 0; c < colsLen; c++) {
+                int i = cols.get(c);
+                if (i >= 0 && i < record.size()) {
+                    double v = data2D.doubleValue(record.get(i));
+                    if (v < 0) {
+                        if (sumAbs) {
+                            sum += Math.abs(v);
+                        }
+                    } else if (v > 0) {
+                        sum += v;
+                    }
+                }
+            }
+            row.add(DoubleTools.scale(sum, scale) + "");
+            for (int c = 0; c < colsLen; c++) {
+                int i = cols.get(c);
+                double v = 0;
+                if (i >= 0 && i < record.size()) {
+                    v = data2D.doubleValue(record.get(i));
+                }
+                if (withValues) {
+                    row.add(DoubleTools.scale(v, scale) + "");
+                }
+                if (v < 0) {
+                    if (sumAbs) {
+                        v = Math.abs(v);
+                    } else {
+                        v = 0;
+                    }
+                }
+                if (sum == 0) {
+                    row.add("0");
+                } else {
+                    row.add(DoubleTools.percentage(v, sum, scale));
                 }
             }
             csvPrinter.printRecord(row);
@@ -636,18 +822,18 @@ public abstract class Data2DReader {
         }
     }
 
-    public void handleNormalizeMinMax() {
+    public void handleNormalizeMinMaxColumns() {
         try {
             List<String> row = new ArrayList<>();
             if (includeRowNumber) {
-                row.add((rowIndex + 1) + "");
+                row.add(message("Row") + (rowIndex + 1));
             }
             for (int c = 0; c < colsLen; c++) {
-                int col = cols.get(c);
-                if (col < 0 || col >= record.size()) {
+                int i = cols.get(c);
+                if (i < 0 || i >= record.size()) {
                     row.add(null);
                 } else {
-                    double v = data2D.doubleValue(record.get(col));
+                    double v = data2D.doubleValue(record.get(i));
                     v = from + statisticData[c].vTmp * (v - statisticData[c].minimum);
                     row.add(DoubleTools.scale(v, scale) + "");
                 }
@@ -657,18 +843,18 @@ public abstract class Data2DReader {
         }
     }
 
-    public void handleNormalizeSum() {
+    public void handleNormalizeSumColumns() {
         try {
             List<String> row = new ArrayList<>();
             if (includeRowNumber) {
-                row.add((rowIndex + 1) + "");
+                row.add(message("Row") + (rowIndex + 1));
             }
             for (int c = 0; c < colsLen; c++) {
-                int col = cols.get(c);
-                if (col < 0 || col >= record.size()) {
+                int i = cols.get(c);
+                if (i < 0 || i >= record.size()) {
                     row.add(null);
                 } else {
-                    double v = data2D.doubleValue(record.get(col));
+                    double v = data2D.doubleValue(record.get(i));
                     v = v * colValues[c];
                     row.add(DoubleTools.scale(v, scale) + "");
                 }
@@ -678,25 +864,126 @@ public abstract class Data2DReader {
         }
     }
 
-    public void handleNormalizeZscore() {
+    public void handleNormalizeZscoreColumns() {
         try {
             List<String> row = new ArrayList<>();
             if (includeRowNumber) {
-                row.add((rowIndex + 1) + "");
+                row.add(message("Row") + (rowIndex + 1));
             }
             for (int c = 0; c < colsLen; c++) {
-                int col = cols.get(c);
-                if (col < 0 || col >= record.size()) {
+                int i = cols.get(c);
+                if (i < 0 || i >= record.size()) {
                     row.add(null);
                 } else {
-                    double v = data2D.doubleValue(record.get(col));
-                    double k = statisticData[c].getSampleStandardDeviation();
+                    double v = data2D.doubleValue(record.get(i));
+                    double k = statisticData[c].getPopulationStandardDeviation();
                     if (k == 0) {
-                        k = Float.MIN_VALUE;
+                        k = AppValues.TinyDouble;
                     }
                     v = (v - statisticData[c].mean) / k;
                     row.add(DoubleTools.scale(v, scale) + "");
                 }
+            }
+            csvPrinter.printRecord(row);
+        } catch (Exception e) {
+        }
+    }
+
+    public void handleNormalizeMinMaxAll() {
+        try {
+            List<String> row = new ArrayList<>();
+            if (includeRowNumber) {
+                row.add(message("Row") + (rowIndex + 1));
+            }
+            for (int c = 0; c < colsLen; c++) {
+                int i = cols.get(c);
+                if (i < 0 || i >= record.size()) {
+                    row.add(null);
+                } else {
+                    double v = data2D.doubleValue(record.get(i));
+                    v = from + statisticAll.vTmp * (v - statisticAll.minimum);
+                    row.add(DoubleTools.scale(v, scale) + "");
+                }
+            }
+            csvPrinter.printRecord(row);
+        } catch (Exception e) {
+        }
+    }
+
+    public void handleNormalizeSumAll() {
+        try {
+            List<String> row = new ArrayList<>();
+            if (includeRowNumber) {
+                row.add(message("Row") + (rowIndex + 1));
+            }
+            for (int c = 0; c < colsLen; c++) {
+                int i = cols.get(c);
+                if (i < 0 || i >= record.size()) {
+                    row.add(null);
+                } else {
+                    double v = data2D.doubleValue(record.get(i));
+                    v = v * value;
+                    row.add(DoubleTools.scale(v, scale) + "");
+                }
+            }
+            csvPrinter.printRecord(row);
+        } catch (Exception e) {
+        }
+    }
+
+    public void handleNormalizeZscoreAll() {
+        try {
+            List<String> row = new ArrayList<>();
+            if (includeRowNumber) {
+                row.add(message("Row") + (rowIndex + 1));
+            }
+            for (int c = 0; c < colsLen; c++) {
+                int i = cols.get(c);
+                if (i < 0 || i >= record.size()) {
+                    row.add(null);
+                } else {
+                    double v = data2D.doubleValue(record.get(i));
+                    double k = statisticAll.getPopulationStandardDeviation();
+                    if (k == 0) {
+                        k = AppValues.TinyDouble;
+                    }
+                    v = (v - statisticAll.mean) / k;
+                    row.add(DoubleTools.scale(v, scale) + "");
+                }
+            }
+            csvPrinter.printRecord(row);
+        } catch (Exception e) {
+        }
+    }
+
+    public void handleNormalizeRows(Normalization.Algorithm a) {
+        try {
+            List<String> row = new ArrayList<>();
+            if (includeRowNumber) {
+                row.add(message("Row") + (rowIndex + 1));
+            }
+            double[] values = new double[colsLen];
+            for (int c = 0; c < colsLen; c++) {
+                int i = cols.get(c);
+                if (i < 0 || i >= record.size()) {
+                    values[c] = 0;
+                } else {
+                    values[c] = data2D.doubleValue(record.get(i));
+                }
+            }
+            switch (a) {
+                case Sum:
+                    values = Normalization.sum(values);
+                    break;
+                case ZScore:
+                    values = Normalization.zscore(values);
+                    break;
+                case MinMax:
+                    values = Normalization.minMax(values, from, to);
+                    break;
+            }
+            for (double d : values) {
+                row.add(DoubleTools.scale(d, scale) + "");
             }
             csvPrinter.printRecord(row);
         } catch (Exception e) {
@@ -866,6 +1153,11 @@ public abstract class Data2DReader {
         return this;
     }
 
+    public Data2DReader setTo(double to) {
+        this.to = to;
+        return this;
+    }
+
     public Data2DReader setConvertController(ControlDataConvert convertController) {
         this.convertController = convertController;
         return this;
@@ -943,6 +1235,24 @@ public abstract class Data2DReader {
 
     public Data2DReader setStatisticAll(DoubleStatistic statisticAll) {
         this.statisticAll = statisticAll;
+        return this;
+    }
+
+    public double getValue() {
+        return value;
+    }
+
+    public Data2DReader setValue(double value) {
+        this.value = value;
+        return this;
+    }
+
+    public int getScale() {
+        return scale;
+    }
+
+    public Data2DReader setScale(int scale) {
+        this.scale = scale;
         return this;
     }
 

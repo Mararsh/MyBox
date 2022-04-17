@@ -25,9 +25,10 @@ public class AppValues {
 
     public static final short InvalidShort = Short.MAX_VALUE;
     public static final long InvalidLong = Long.MAX_VALUE;
-    public static final double InvalidDouble = Double.NaN;
     public static final float InvalidFloat = Float.MAX_VALUE;
     public static final int InvalidInteger = Integer.MAX_VALUE;
+    public static final double InvalidDouble = Double.NaN;
+    public static final double TinyDouble = Float.MIN_VALUE;
 
     public static final String GaoDeMapWebKey = "06b9e078a51325a843dfefd57ffd876c";
     public static final String GaoDeMapServiceKey = "d7444d9a7fae01fa850236d909ad4450";

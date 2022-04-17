@@ -25,23 +25,36 @@ License:    Apache License Version 2.0
             </children>
         </HBox>
       <fx:include fx:id="source" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DSource.fxml" VBox.vgrow="ALWAYS" />
-          <Label fx:id="memoryNoticeLabel" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" text="%AllRowsLoadComments" wrapText="true" />
-      <VBox fx:id="operationBox1" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="ALWAYS">
          <children>
-            <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+                <Label fx:id="memoryNoticeLabel" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" text="%AllRowsLoadComments" wrapText="true" />
+            <VBox fx:id="operationBox1" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                <children>
-                  <Label minWidth="-Infinity" text="%Column" />
-                  <ComboBox fx:id="colSelector" prefWidth="200.0" />
-                        <CheckBox fx:id="caseInsensitiveCheck" mnemonicParsing="false" selected="true" text="%CaseInsensitive" />
+                  <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+                     <children>
+                        <Label minWidth="-Infinity" text="%Column" />
+                        <ComboBox fx:id="colSelector" prefWidth="200.0" />
+                              <CheckBox fx:id="caseInsensitiveCheck" mnemonicParsing="false" selected="true" text="%CaseInsensitive" />
+                     </children>
+                  </FlowPane>
+                  <HBox alignment="CENTER_LEFT" spacing="2.0">
+                     <children>
+                        <Label minHeight="-Infinity" text="%DecimalScale" wrapText="true" />
+                        <ComboBox fx:id="scaleSelector" editable="true" prefWidth="120.0" />
+                     </children>
+                  </HBox>
                </children>
-            </FlowPane>
+            </VBox>
+              <VBox fx:id="targetBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                  <children>
+                      <fx:include fx:id="target" source="ControlData2DTarget.fxml" />
+                  </children>
+              </VBox>
          </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
       </VBox>
-        <VBox fx:id="targetBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-            <children>
-                <fx:include fx:id="target" source="ControlData2DTarget.fxml" />
-            </children>
-        </VBox>
         <HBox alignment="CENTER_LEFT" spacing="5.0">
             <children>
                 <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />

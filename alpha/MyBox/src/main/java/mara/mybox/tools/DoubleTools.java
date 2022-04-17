@@ -15,11 +15,15 @@ import static mara.mybox.value.Languages.message;
 public class DoubleTools {
 
     public static String percentage(double data, double total) {
+        return percentage(data, total, 2);
+    }
+
+    public static String percentage(double data, double total, int scale) {
         try {
             if (total == 0) {
                 return message("Invalid");
             }
-            return scale(data * 100 / total, 2) + "";
+            return scale(data * 100 / total, scale) + "";
         } catch (Exception e) {
             return message("Invalid");
         }

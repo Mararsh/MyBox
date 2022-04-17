@@ -104,13 +104,9 @@ public class Data2DFrequencyController extends Data2DHandleController {
         boolean ok = super.checkOptions();
         targetController.setNotInTable(sourceController.allPages());
         if (!data2D.isTable() && sourceController.allPages()) {
-            if (!thisPane.getChildren().contains(memoryNoticeLabel)) {
-                thisPane.getChildren().add(3, memoryNoticeLabel);
-            }
+            memoryNoticeLabel.setVisible(true);
         } else {
-            if (thisPane.getChildren().contains(memoryNoticeLabel)) {
-                thisPane.getChildren().remove(memoryNoticeLabel);
-            }
+            memoryNoticeLabel.setVisible(false);
         }
         ok = ok && prepareRows();
         okButton.setDisable(!ok);
@@ -206,7 +202,7 @@ public class Data2DFrequencyController extends Data2DHandleController {
 
     @Override
     public DataFileCSV generatedFile() {
-        return data2D.frequency(frequency, freName, freCol);
+        return data2D.frequency(frequency, freName, freCol, scale);
     }
 
     @Override

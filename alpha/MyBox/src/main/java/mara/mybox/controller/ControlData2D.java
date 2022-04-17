@@ -713,7 +713,7 @@ public class ControlData2D extends BaseController {
             menu.setDisable(empty);
             cmenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Percentage"), StyleTools.getIconImage("iconPercentage.png"));
+            menu = new MenuItem(message("ValuePercentage"), StyleTools.getIconImage("iconPercentage.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DPercentageController.open(tableController);
             });

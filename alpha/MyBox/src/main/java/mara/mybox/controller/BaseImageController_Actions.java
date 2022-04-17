@@ -360,7 +360,6 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             popMenu.setAutoHide(true);
 
             MenuItem menu;
-
             menu = new MenuItem(message("CopyToSystemClipboard"), StyleTools.getIconImage("iconCopySystem.png"));
             menu.setOnAction((ActionEvent event) -> {
                 copyToSystemClipboard();

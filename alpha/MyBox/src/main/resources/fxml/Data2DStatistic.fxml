@@ -24,17 +24,17 @@ License:    Apache License Version 2.0
 
 <VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="5.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DStatisticController">
     <children>
+        <HBox alignment="CENTER" VBox.vgrow="NEVER">
+            <children>
+                <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%DescriptiveStatistics" textAlignment="CENTER" VBox.vgrow="NEVER" />
+            </children>
+        </HBox>
       <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
         <tabs>
           <Tab text="%Data">
                <content>
                   <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                      <children>
-                          <HBox alignment="CENTER" VBox.vgrow="NEVER">
-                              <children>
-                                  <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%DescriptiveStatistics" textAlignment="CENTER" VBox.vgrow="NEVER" />
-                              </children>
-                          </HBox>
                         <fx:include fx:id="source" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DSource.fxml" VBox.vgrow="ALWAYS" />
                             <Label minHeight="-Infinity" text="%NonnumericCountAsZero" wrapText="true" />
                      </children>
@@ -120,11 +120,6 @@ License:    Apache License Version 2.0
                                         <Label fx:id="memoryNoticeLabel" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" text="%AllRowsLoadComments" wrapText="true" />
                                     </children>
                                 </VBox>
-                                <VBox fx:id="targetBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                 <children>
-                                        <fx:include fx:id="target" source="ControlData2DTarget.fxml" />
-                                 </children>
-                                </VBox>
                               <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                  <children>
                                     <HBox alignment="CENTER_LEFT" spacing="2.0">
@@ -133,9 +128,13 @@ License:    Apache License Version 2.0
                                           <ComboBox fx:id="scaleSelector" editable="true" prefWidth="120.0" />
                                        </children>
                                     </HBox>
-                                    <CheckBox mnemonicParsing="false" text="%Charts" />
                                  </children>
                               </VBox>
+                                <VBox fx:id="targetBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                 <children>
+                                        <fx:include fx:id="target" source="ControlData2DTarget.fxml" />
+                                 </children>
+                                </VBox>
                            </children>
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

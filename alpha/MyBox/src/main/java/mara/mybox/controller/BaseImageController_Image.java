@@ -180,7 +180,6 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         sourceFile = null;
         imageInformation = null;
         image = inImage;
-        MyBoxLog.console("here");
         afterImageLoaded();
     }
 

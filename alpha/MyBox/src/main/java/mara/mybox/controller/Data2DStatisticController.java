@@ -8,14 +8,14 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
+import javafx.scene.control.Toggle;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.DoubleStatistic;
 import mara.mybox.data.StatisticOptions;
 import mara.mybox.data.StatisticOptions.StatisticObject;
+import mara.mybox.data2d.Data2D_Operations.ObjectType;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
@@ -43,33 +43,28 @@ public class Data2DStatisticController extends Data2DHandleController {
             maximumRow, minimumRow, medianRow, upperQuartileRow, lowerQuartileRow, modeRow;
     protected List<String> handledNames;
     protected StatisticOptions options;
-    protected int scale;
 
     @FXML
     protected CheckBox countCheck, summationCheck, meanCheck, geometricMeanCheck, sumOfSquaresCheck,
             populationVarianceCheck, sampleVarianceCheck, populationStandardDeviationCheck, sampleStandardDeviationCheck, skewnessCheck,
             maximumCheck, minimumCheck, medianCheck, upperQuartileCheck, lowerQuartileCheck, modeCheck;
     @FXML
-    protected RadioButton columnsRadio, rowsRadio, allRadio;
-    @FXML
     protected Label memoryNoticeLabel;
     @FXML
     protected VBox operationBox;
-    @FXML
-    protected ComboBox<String> scaleSelector;
 
     @Override
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeStyleTools.setTooltip(summationCheck, new Tooltip("sum(V1, V2, ..., Vn) \n= V1 + V2 + ... + Vn \n= Σ(Vi)"));
-            NodeStyleTools.setTooltip(meanCheck, new Tooltip("mean(V1, V2, ..., Vn) \n= (V1 + V2 + ... + Vn) / n \n= Σ(Vi) / n"));
-            NodeStyleTools.setTooltip(geometricMeanCheck, new Tooltip("geometricMean(V1, V2, ..., Vn) \n= (V1 * V2 * ... * Vn)^(1/n)"));
-            NodeStyleTools.setTooltip(sumOfSquaresCheck, new Tooltip("sumOfSquares(V1, V2, ..., Vn) \n= V1^2 + V2^2 + ... + Vn^2 \n= Σ(Vi^2)"));
-            NodeStyleTools.setTooltip(populationVarianceCheck, new Tooltip("populationVariance(V1, V2, ..., Vn) \n= Σ((Vi-mean)^2) / n"));
-            NodeStyleTools.setTooltip(sampleVarianceCheck, new Tooltip("sampleVariance(V1, V2, ..., Vn) \n= Σ((Vi-mean)^2) / (n-1)"));
-            NodeStyleTools.setTooltip(populationStandardDeviationCheck, new Tooltip("populationStandardDeviation(V1, V2, ..., Vn) \n= √(populationVariance) \n= populationVariance^(1/2)"));
-            NodeStyleTools.setTooltip(sampleStandardDeviationCheck, new Tooltip("sampleStandardDeviation(V1, V2, ..., Vn) \n= √(sampleVariance) \n= sampleVariance^(1/2)"));
+            NodeStyleTools.setTooltip(summationCheck, new Tooltip("sum(X1, X2, ..., Xn) \n= X1 + X2 + ... + Xn \n= Σ(Xi)"));
+            NodeStyleTools.setTooltip(meanCheck, new Tooltip("mean(X1, X2, ..., Xn) \n= (X1 + X2 + ... + Xn) / n \n= Σ(Xi) / n"));
+            NodeStyleTools.setTooltip(geometricMeanCheck, new Tooltip("geometricMean(X1, X2, ..., Xn) \n= (X1 * X2 * ... * Xn)^(1/n)"));
+            NodeStyleTools.setTooltip(sumOfSquaresCheck, new Tooltip("sumOfSquares(X1, X2, ..., Xn) \n= X1^2 + X2^2 + ... + Xn^2 \n= Σ(Xi^2)"));
+            NodeStyleTools.setTooltip(populationVarianceCheck, new Tooltip("populationVariance(X1, X2, ..., Xn) \n= Σ((Xi-mean)^2) / n"));
+            NodeStyleTools.setTooltip(sampleVarianceCheck, new Tooltip("sampleVariance(X1, X2, ..., Xn) \n= Σ((Xi-mean)^2) / (n-1)"));
+            NodeStyleTools.setTooltip(populationStandardDeviationCheck, new Tooltip("populationStandardDeviation(X1, X2, ..., Xn) \n= √(populationVariance) \n= populationVariance^(1/2)"));
+            NodeStyleTools.setTooltip(sampleStandardDeviationCheck, new Tooltip("sampleStandardDeviation(X1, X2, ..., Xn) \n= √(sampleVariance) \n= sampleVariance^(1/2)"));
             NodeStyleTools.setTooltip(medianCheck, new Tooltip("50%"));
             NodeStyleTools.setTooltip(upperQuartileCheck, new Tooltip("25%"));
             NodeStyleTools.setTooltip(lowerQuartileCheck, new Tooltip("75%"));
@@ -83,11 +78,19 @@ public class Data2DStatisticController extends Data2DHandleController {
         try {
             super.initControls();
 
+            objectGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    checkMemoryLabel();
+                }
+            });
+
             countCheck.setSelected(UserConfig.getBoolean(baseName + "Count", true));
             countCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "Count", countCheck.isSelected());
+                    checkMemoryLabel();
                 }
             });
 
@@ -96,6 +99,7 @@ public class Data2DStatisticController extends Data2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "Summation", summationCheck.isSelected());
+                    checkMemoryLabel();
                 }
             });
 
@@ -104,6 +108,7 @@ public class Data2DStatisticController extends Data2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "Mean", meanCheck.isSelected());
+                    checkMemoryLabel();
                 }
             });
 
@@ -112,6 +117,7 @@ public class Data2DStatisticController extends Data2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "GeometricMean", geometricMeanCheck.isSelected());
+                    checkMemoryLabel();
                 }
             });
 
@@ -120,6 +126,7 @@ public class Data2DStatisticController extends Data2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "SumOfSquares", sumOfSquaresCheck.isSelected());
+                    checkMemoryLabel();
                 }
             });
 
@@ -128,6 +135,7 @@ public class Data2DStatisticController extends Data2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "PopulationVariance", populationVarianceCheck.isSelected());
+                    checkMemoryLabel();
                 }
             });
 
@@ -136,6 +144,7 @@ public class Data2DStatisticController extends Data2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "SampleVariance", sampleVarianceCheck.isSelected());
+                    checkMemoryLabel();
                 }
             });
 
@@ -144,6 +153,7 @@ public class Data2DStatisticController extends Data2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "PopulationStandardDeviation", populationStandardDeviationCheck.isSelected());
+                    checkMemoryLabel();
                 }
             });
 
@@ -152,6 +162,7 @@ public class Data2DStatisticController extends Data2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "SampleStandardDeviation", sampleStandardDeviationCheck.isSelected());
+                    checkMemoryLabel();
                 }
             });
 
@@ -160,6 +171,7 @@ public class Data2DStatisticController extends Data2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "Skewness", skewnessCheck.isSelected());
+                    checkMemoryLabel();
                 }
             });
 
@@ -168,6 +180,7 @@ public class Data2DStatisticController extends Data2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "Maximum", maximumCheck.isSelected());
+                    checkMemoryLabel();
                 }
             });
 
@@ -176,6 +189,7 @@ public class Data2DStatisticController extends Data2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "Minimum", minimumCheck.isSelected());
+                    checkMemoryLabel();
                 }
             });
 
@@ -202,6 +216,7 @@ public class Data2DStatisticController extends Data2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "UpperQuartile", upperQuartileCheck.isSelected());
+                    checkMemoryLabel();
                 }
             });
 
@@ -210,6 +225,7 @@ public class Data2DStatisticController extends Data2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "LowerQuartile", lowerQuartileCheck.isSelected());
+                    checkMemoryLabel();
                 }
             });
 
@@ -263,19 +279,29 @@ public class Data2DStatisticController extends Data2DHandleController {
                 .setLowerQuartile(lowerQuartileCheck.isSelected())
                 .setMode(modeCheck.isSelected())
                 .setScale(scale);
-        if (rowsRadio.isSelected()) {
-            options.setStatisticObject(StatisticObject.Rows);
-        } else if (allRadio.isSelected()) {
-            options.setStatisticObject(StatisticObject.All);
-        } else {
-            options.setStatisticObject(StatisticObject.Columns);
+        switch (objectType) {
+            case Rows:
+                options.setStatisticObject(StatisticObject.Rows);
+                break;
+            case All:
+                options.setStatisticObject(StatisticObject.All);
+                break;
+            default:
+                options.setStatisticObject(StatisticObject.Columns);
+                break;
         }
         checkMemoryLabel();
         return ok;
     }
 
     public void checkMemoryLabel() {
-        if (sourceController.allPages() && options.needStored() && (!data2D.isTable() || allRadio.isSelected())) {
+        if (isSettingValues) {
+            return;
+        }
+        if (sourceController.allPages() && objectType != ObjectType.Rows
+                && (medianCheck.isSelected() || upperQuartileCheck.isSelected()
+                || lowerQuartileCheck.isSelected() || modeCheck.isSelected())
+                && (!data2D.isTable() || allRadio.isSelected())) {
             if (!operationBox.getChildren().contains(memoryNoticeLabel)) {
                 operationBox.getChildren().add(memoryNoticeLabel);
             }
@@ -289,6 +315,7 @@ public class Data2DStatisticController extends Data2DHandleController {
     @FXML
     @Override
     public void selectAllAction() {
+        isSettingValues = true;
         countCheck.setSelected(true);
         summationCheck.setSelected(true);
         meanCheck.setSelected(true);
@@ -305,11 +332,14 @@ public class Data2DStatisticController extends Data2DHandleController {
         medianCheck.setSelected(true);
         upperQuartileCheck.setSelected(true);
         lowerQuartileCheck.setSelected(true);
+        isSettingValues = false;
+        checkMemoryLabel();
     }
 
     @FXML
     @Override
     public void selectNoneAction() {
+        isSettingValues = true;
         countCheck.setSelected(false);
         summationCheck.setSelected(false);
         meanCheck.setSelected(false);
@@ -326,6 +356,8 @@ public class Data2DStatisticController extends Data2DHandleController {
         sampleStandardDeviationCheck.setSelected(false);
         upperQuartileCheck.setSelected(false);
         lowerQuartileCheck.setSelected(false);
+        isSettingValues = false;
+        checkMemoryLabel();
     }
 
     @FXML
@@ -337,12 +369,16 @@ public class Data2DStatisticController extends Data2DHandleController {
                 return;
             }
             if (sourceController.allPages()) {
-                if (rowsRadio.isSelected()) {
-                    handleAllTask();
-                } else if (allRadio.isSelected()) {
-                    handleAllByAllTask();
-                } else {
-                    handleAllByColumnsTask();
+                switch (objectType) {
+                    case Rows:
+                        handleAllTask();
+                        break;
+                    case All:
+                        handleAllByAllTask();
+                        break;
+                    default:
+                        handleAllByColumnsTask();
+                        break;
                 }
             } else {
                 handleRowsTask();
@@ -354,13 +390,13 @@ public class Data2DStatisticController extends Data2DHandleController {
 
     public boolean prepare() {
         try {
-            switch (options.statisticObject) {
+            switch (objectType) {
                 case Rows:
-                    return prepareRows();
+                    return prepareByRows();
                 case All:
-                    return prepareColumns(Arrays.asList(message("All")));
+                    return prepareByColumns("", Arrays.asList(message("All")));
                 default:
-                    return prepareColumns(sourceController.checkedColsNames());
+                    return prepareByColumns(message("Column") + "-", sourceController.checkedColsNames());
             }
         } catch (Exception e) {
             if (task != null) {
@@ -371,13 +407,13 @@ public class Data2DStatisticController extends Data2DHandleController {
         }
     }
 
-    public boolean prepareColumns(List<String> names) {
+    public boolean prepareByColumns(String prefix, List<String> names) {
         try {
 
             if (names == null || names.isEmpty()) {
                 return false;
             }
-            String cName = message("Calculation");
+            String cName = prefix + message("Calculation");
             while (names.contains(cName)) {
                 cName += "m";
             }
@@ -396,117 +432,117 @@ public class Data2DStatisticController extends Data2DHandleController {
             countRow = null;
             if (countCheck.isSelected()) {
                 countRow = new ArrayList<>();
-                countRow.add(message("Count"));
+                countRow.add(prefix + message("Count"));
                 handledData.add(countRow);
             }
 
             summationRow = null;
             if (summationCheck.isSelected()) {
                 summationRow = new ArrayList<>();
-                summationRow.add(message("Summation"));
+                summationRow.add(prefix + message("Summation"));
                 handledData.add(summationRow);
             }
 
             meanRow = null;
             if (meanCheck.isSelected()) {
                 meanRow = new ArrayList<>();
-                meanRow.add(message("Mean"));
+                meanRow.add(prefix + message("Mean"));
                 handledData.add(meanRow);
             }
 
             geometricMeanRow = null;
             if (geometricMeanCheck.isSelected()) {
                 geometricMeanRow = new ArrayList<>();
-                geometricMeanRow.add(message("GeometricMean"));
+                geometricMeanRow.add(prefix + message("GeometricMean"));
                 handledData.add(geometricMeanRow);
             }
 
             sumOfSquaresRow = null;
             if (sumOfSquaresCheck.isSelected()) {
                 sumOfSquaresRow = new ArrayList<>();
-                sumOfSquaresRow.add(message("SumOfSquares"));
+                sumOfSquaresRow.add(prefix + message("SumOfSquares"));
                 handledData.add(sumOfSquaresRow);
             }
 
             populationVarianceRow = null;
             if (populationVarianceCheck.isSelected()) {
                 populationVarianceRow = new ArrayList<>();
-                populationVarianceRow.add(message("PopulationVariance"));
+                populationVarianceRow.add(prefix + message("PopulationVariance"));
                 handledData.add(populationVarianceRow);
             }
 
             sampleVarianceRow = null;
             if (sampleVarianceCheck.isSelected()) {
                 sampleVarianceRow = new ArrayList<>();
-                sampleVarianceRow.add(message("SampleVariance"));
+                sampleVarianceRow.add(prefix + message("SampleVariance"));
                 handledData.add(sampleVarianceRow);
             }
 
             populationStandardDeviationRow = null;
             if (populationStandardDeviationCheck.isSelected()) {
                 populationStandardDeviationRow = new ArrayList<>();
-                populationStandardDeviationRow.add(message("PopulationStandardDeviation"));
+                populationStandardDeviationRow.add(prefix + message("PopulationStandardDeviation"));
                 handledData.add(populationStandardDeviationRow);
             }
 
             sampleStandardDeviationRow = null;
             if (sampleStandardDeviationCheck.isSelected()) {
                 sampleStandardDeviationRow = new ArrayList<>();
-                sampleStandardDeviationRow.add(message("SampleStandardDeviation"));
+                sampleStandardDeviationRow.add(prefix + message("SampleStandardDeviation"));
                 handledData.add(sampleStandardDeviationRow);
             }
 
             skewnessRow = null;
             if (skewnessCheck.isSelected()) {
                 skewnessRow = new ArrayList<>();
-                skewnessRow.add(message("Skewness"));
+                skewnessRow.add(prefix + message("Skewness"));
                 handledData.add(skewnessRow);
             }
 
             minimumRow = null;
             if (minimumCheck.isSelected()) {
                 minimumRow = new ArrayList<>();
-                minimumRow.add(message("MinimumQ0"));
+                minimumRow.add(prefix + message("MinimumQ0"));
                 handledData.add(minimumRow);
             }
 
             upperQuartileRow = null;
             if (upperQuartileCheck.isSelected()) {
                 upperQuartileRow = new ArrayList<>();
-                upperQuartileRow.add(message("UpperQuartile"));
+                upperQuartileRow.add(prefix + message("UpperQuartile"));
                 handledData.add(upperQuartileRow);
             }
 
             medianRow = null;
             if (medianCheck.isSelected()) {
                 medianRow = new ArrayList<>();
-                medianRow.add(message("Median"));
+                medianRow.add(prefix + message("Median"));
                 handledData.add(medianRow);
             }
 
             lowerQuartileRow = null;
             if (lowerQuartileCheck.isSelected()) {
                 lowerQuartileRow = new ArrayList<>();
-                lowerQuartileRow.add(message("LowerQuartile"));
+                lowerQuartileRow.add(prefix + message("LowerQuartile"));
                 handledData.add(lowerQuartileRow);
             }
 
             maximumRow = null;
             if (maximumCheck.isSelected()) {
                 maximumRow = new ArrayList<>();
-                maximumRow.add(message("MaximumQ4"));
+                maximumRow.add(prefix + message("MaximumQ4"));
                 handledData.add(maximumRow);
             }
 
             modeRow = null;
             if (modeCheck.isSelected()) {
                 modeRow = new ArrayList<>();
-                modeRow.add(message("Mode"));
+                modeRow.add(prefix + message("Mode"));
                 handledData.add(modeRow);
             }
 
             if (handledData.size() < 1) {
-                popError(message("SelectToHandle"));
+                popError(prefix + message("SelectToHandle"));
                 return false;
             }
 
@@ -518,107 +554,108 @@ public class Data2DStatisticController extends Data2DHandleController {
         }
     }
 
-    public boolean prepareRows() {
+    public boolean prepareByRows() {
         try {
             handledNames = new ArrayList<>();
             handledColumns = new ArrayList<>();
 
-            String cName = message("Row");
+            String cName = message("SourceRowNumber");
             handledNames.add(cName);
             handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.String));
 
+            String prefix = message("Rows") + "-";
             if (countCheck.isSelected()) {
-                cName = message("Count");
+                cName = prefix + message("Count");
                 handledNames.add(cName);
                 handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
             }
 
             if (summationCheck.isSelected()) {
-                cName = message("Summation");
+                cName = prefix + message("Summation");
                 handledNames.add(cName);
                 handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
             }
 
             if (meanCheck.isSelected()) {
-                cName = message("Mean");
+                cName = prefix + message("Mean");
                 handledNames.add(cName);
                 handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
             }
 
             if (geometricMeanCheck.isSelected()) {
-                cName = message("GeometricMean");
+                cName = prefix + message("GeometricMean");
                 handledNames.add(cName);
                 handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
             }
 
             if (sumOfSquaresCheck.isSelected()) {
-                cName = message("SumOfSquares");
+                cName = prefix + message("SumOfSquares");
                 handledNames.add(cName);
                 handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
             }
 
             if (populationVarianceCheck.isSelected()) {
-                cName = message("PopulationVariance");
+                cName = prefix + message("PopulationVariance");
                 handledNames.add(cName);
                 handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
             }
 
             if (sampleVarianceCheck.isSelected()) {
-                cName = message("SampleVariance");
+                cName = prefix + message("SampleVariance");
                 handledNames.add(cName);
                 handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
             }
 
             if (populationStandardDeviationCheck.isSelected()) {
-                cName = message("PopulationStandardDeviation");
+                cName = prefix + message("PopulationStandardDeviation");
                 handledNames.add(cName);
                 handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
             }
 
             if (sampleStandardDeviationCheck.isSelected()) {
-                cName = message("SampleStandardDeviation");
+                cName = prefix + message("SampleStandardDeviation");
                 handledNames.add(cName);
                 handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
             }
 
             if (skewnessCheck.isSelected()) {
-                cName = message("Skewness");
+                cName = prefix + message("Skewness");
                 handledNames.add(cName);
                 handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
             }
 
             if (minimumCheck.isSelected()) {
-                cName = message("MinimumQ0");
+                cName = prefix + message("MinimumQ0");
                 handledNames.add(cName);
                 handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
             }
 
             if (upperQuartileCheck.isSelected()) {
-                cName = message("UpperQuartile");
+                cName = prefix + message("UpperQuartile");
                 handledNames.add(cName);
                 handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
             }
 
             if (medianCheck.isSelected()) {
-                cName = message("Median");
+                cName = prefix + message("Median");
                 handledNames.add(cName);
                 handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
             }
 
             if (lowerQuartileCheck.isSelected()) {
-                cName = message("LowerQuartile");
+                cName = prefix + message("LowerQuartile");
                 handledNames.add(cName);
                 handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
             }
 
             if (maximumCheck.isSelected()) {
-                cName = message("MaximumQ4");
+                cName = prefix + message("MaximumQ4");
                 handledNames.add(cName);
                 handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
             }
 
             if (modeCheck.isSelected()) {
-                cName = message("Mode");
+                cName = prefix + message("Mode");
                 handledNames.add(cName);
                 handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
             }
@@ -924,7 +961,12 @@ public class Data2DStatisticController extends Data2DHandleController {
                     if (options.needStored()) {
                         return statisticData(data2D.allRows(sourceController.checkedColsIndices(), true));
                     } else {
-                        return statisticAllByColumnsWithoutStored();
+                        DoubleStatistic statisticData = data2D.statisticByAll(sourceController.checkedColsIndices, options);
+                        if (statisticData == null) {
+                            return false;
+                        }
+                        statisticByColumnsWrite(statisticData);
+                        return true;
                     }
                 } catch (Exception e) {
                     error = e.toString();
@@ -953,15 +995,6 @@ public class Data2DStatisticController extends Data2DHandleController {
 
         };
         start(task);
-    }
-
-    public boolean statisticAllByAllWithoutStored() {
-        DoubleStatistic statisticData = data2D.statisticByAll(sourceController.checkedColsIndices, options);
-        if (statisticData == null) {
-            return false;
-        }
-        statisticByColumnsWrite(statisticData);
-        return true;
     }
 
     @Override
