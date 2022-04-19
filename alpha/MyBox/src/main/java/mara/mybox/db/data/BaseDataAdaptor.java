@@ -35,6 +35,7 @@ import mara.mybox.db.table.TableVisitHistory;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Languages;
 
@@ -470,7 +471,7 @@ public class BaseDataAdaptor {
                     if (column.getMinValue() != null && dvalue < (double) column.getMinValue()) {
                         return null;
                     }
-                    return dvalue != AppValues.InvalidDouble ? dvalue + "" : null;
+                    return DoubleTools.invalidDouble(dvalue) ? null : (dvalue + "");
                 case Float:
                     float fvalue = (float) value;
                     if (column.getMaxValue() != null && fvalue > (float) column.getMaxValue()) {
@@ -479,7 +480,7 @@ public class BaseDataAdaptor {
                     if (column.getMinValue() != null && fvalue < (float) column.getMinValue()) {
                         return null;
                     }
-                    return fvalue != AppValues.InvalidDouble ? fvalue + "" : null;
+                    return DoubleTools.invalidDouble(fvalue) ? null : (fvalue + "");
                 case Long:
                 case Era:
                     long lvalue = (long) value;

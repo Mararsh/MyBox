@@ -26,19 +26,20 @@ import javafx.scene.transform.Transform;
 import javafx.stage.DirectoryChooser;
 import mara.mybox.controller.ControlMapOptions.MapName;
 import mara.mybox.db.data.BaseData;
+import mara.mybox.db.data.BaseDataAdaptor;
 import mara.mybox.db.data.Location;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
-import mara.mybox.db.data.BaseDataAdaptor;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.ControllerTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.imagefile.ImageGifFile;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.LocationTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Fxmls;
@@ -352,7 +353,7 @@ public class LocationDataMapController extends BaseMapController {
                 label += "</BR>";
             }
             label += location.getLongitude() + "," + location.getLatitude();
-            if (location.getAltitude() != AppValues.InvalidDouble) {
+            if (!DoubleTools.invalidDouble(location.getAltitude())) {
                 label += "," + location.getAltitude();
             }
         }
@@ -386,7 +387,7 @@ public class LocationDataMapController extends BaseMapController {
             }
         }
         if (mapOptionsController.markerSpeedCheck.isSelected()
-                && location.getSpeed() != AppValues.InvalidDouble) {
+                && !DoubleTools.invalidDouble(location.getSpeed())) {
             if (!label.isBlank()) {
                 label += "</BR>";
             }
@@ -400,14 +401,14 @@ public class LocationDataMapController extends BaseMapController {
             label += Languages.message("Direction") + ":" + location.getDirection();
         }
         if (mapOptionsController.markerValueCheck.isSelected()
-                && location.getDataValue() != AppValues.InvalidDouble) {
+                && !DoubleTools.invalidDouble(location.getDataValue())) {
             if (!label.isBlank()) {
                 label += "</BR>";
             }
             label += Languages.message("Value") + ":" + location.getDataValue();
         }
         if (mapOptionsController.markerSizeCheck.isSelected()
-                && location.getDataValue() != AppValues.InvalidDouble) {
+                && !DoubleTools.invalidDouble(location.getDataSize())) {
             if (!label.isBlank()) {
                 label += "</BR>";
             }

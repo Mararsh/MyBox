@@ -13,7 +13,6 @@ import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableData2DCell;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleTools;
-import mara.mybox.value.AppValues;
 
 /**
  * @Author Mara
@@ -139,7 +138,7 @@ public class DataMatrix extends Data2D {
                 List<String> row = tableRowWithoutNumber(r);
                 for (int c = 0; c < row.size(); c++) {
                     double d = toDouble(row.get(c));
-                    if (d == 0 || d == AppValues.InvalidDouble) {
+                    if (d == 0 || DoubleTools.invalidDouble(d)) {
                         continue;
                     }
                     Data2DCell cell = Data2DCell.create().setD2did(did)
@@ -170,7 +169,7 @@ public class DataMatrix extends Data2D {
     }
 
     public String toString(double d) {
-        if (d == AppValues.InvalidDouble) {
+        if (DoubleTools.invalidDouble(d)) {
             return "0";
         } else {
             return DoubleTools.format(d, scale);

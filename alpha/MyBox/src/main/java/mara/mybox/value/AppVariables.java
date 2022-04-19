@@ -15,10 +15,10 @@ import javafx.beans.property.SimpleBooleanProperty;
 import mara.mybox.controller.AlarmClockController;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ImageClipboardMonitor;
-import mara.mybox.fxml.style.StyleData;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.fxml.TextClipboardMonitor;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.StyleData;
+import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.getBundle;
 import static mara.mybox.value.Languages.getTableBundle;
 import static mara.mybox.value.UserConfig.getPdfMem;
@@ -76,8 +76,12 @@ public class AppVariables {
             popErrorLogs = UserConfig.getBoolean("PopErrorLogs", true);
             errorNotify = new SimpleBooleanProperty(false);
             isTesting = false;
+
             ImageRenderHints.loadImageRenderHints();
 
+            if (exitTimer != null) {
+                exitTimer.cancel();
+            }
             exitTimer = new Timer();
             exitTimer.schedule(new TimerTask() {
 
@@ -86,9 +90,10 @@ public class AppVariables {
                     if (handlingExit) {
                         return;
                     }
+                    System.gc();
                     WindowTools.checkExit();
                 }
-            }, 3000);
+            }, 0, 3000);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

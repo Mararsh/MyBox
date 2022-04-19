@@ -24,6 +24,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleMatrixTools;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -383,7 +384,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                     if (result != null) {
                         resultBox.getChildren().add(resultTablePane);
                         resultController.loadMatrix(result);
-                    } else if (resultValue != AppValues.InvalidDouble) {
+                    } else if (!DoubleTools.invalidDouble(resultValue)) {
                         resultBox.getChildren().add(resultArea);
                         resultArea.setText(resultValue + "");
                     }

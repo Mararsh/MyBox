@@ -422,7 +422,7 @@ public class Data2DStatisticController extends Data2DHandleController {
             handledNames.addAll(names);
 
             handledColumns = new ArrayList<>();
-            handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.String));
+            handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.String, 300));
             for (String name : names) {
                 handledColumns.add(new Data2DColumn(name, ColumnDefinition.ColumnType.Double));
             }
@@ -564,100 +564,101 @@ public class Data2DStatisticController extends Data2DHandleController {
             handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.String));
 
             String prefix = message("Rows") + "-";
+            int width = 150;
             if (countCheck.isSelected()) {
                 cName = prefix + message("Count");
                 handledNames.add(cName);
-                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
             }
 
             if (summationCheck.isSelected()) {
                 cName = prefix + message("Summation");
                 handledNames.add(cName);
-                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
             }
 
             if (meanCheck.isSelected()) {
                 cName = prefix + message("Mean");
                 handledNames.add(cName);
-                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
             }
 
             if (geometricMeanCheck.isSelected()) {
                 cName = prefix + message("GeometricMean");
                 handledNames.add(cName);
-                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
             }
 
             if (sumOfSquaresCheck.isSelected()) {
                 cName = prefix + message("SumOfSquares");
                 handledNames.add(cName);
-                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
             }
 
             if (populationVarianceCheck.isSelected()) {
                 cName = prefix + message("PopulationVariance");
                 handledNames.add(cName);
-                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
             }
 
             if (sampleVarianceCheck.isSelected()) {
                 cName = prefix + message("SampleVariance");
                 handledNames.add(cName);
-                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
             }
 
             if (populationStandardDeviationCheck.isSelected()) {
                 cName = prefix + message("PopulationStandardDeviation");
                 handledNames.add(cName);
-                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
             }
 
             if (sampleStandardDeviationCheck.isSelected()) {
                 cName = prefix + message("SampleStandardDeviation");
                 handledNames.add(cName);
-                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
             }
 
             if (skewnessCheck.isSelected()) {
                 cName = prefix + message("Skewness");
                 handledNames.add(cName);
-                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
             }
 
             if (minimumCheck.isSelected()) {
                 cName = prefix + message("MinimumQ0");
                 handledNames.add(cName);
-                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
             }
 
             if (upperQuartileCheck.isSelected()) {
                 cName = prefix + message("UpperQuartile");
                 handledNames.add(cName);
-                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
             }
 
             if (medianCheck.isSelected()) {
                 cName = prefix + message("Median");
                 handledNames.add(cName);
-                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
             }
 
             if (lowerQuartileCheck.isSelected()) {
                 cName = prefix + message("LowerQuartile");
                 handledNames.add(cName);
-                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
             }
 
             if (maximumCheck.isSelected()) {
                 cName = prefix + message("MaximumQ4");
                 handledNames.add(cName);
-                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
             }
 
             if (modeCheck.isSelected()) {
                 cName = prefix + message("Mode");
                 handledNames.add(cName);
-                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
             }
 
             if (handledNames.size() < 2) {

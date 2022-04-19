@@ -3,8 +3,7 @@ package mara.mybox.fxml.cell;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
-import mara.mybox.value.AppValues;
-
+import mara.mybox.tools.DoubleTools;
 
 /**
  * @Author Mara
@@ -28,7 +27,7 @@ public class TableDoubleCell<T> extends TableCell<T, Double>
                     setText(null);
                     return;
                 }
-                if (item != AppValues.InvalidDouble) {
+                if (!DoubleTools.invalidDouble(item)) {
                     setText(item + "");
                 } else {
                     setText(null);

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.Random;
+import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -13,6 +14,10 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class DoubleTools {
+
+    public static boolean invalidDouble(double value) {
+        return value == AppValues.InvalidDouble || value == Double.MAX_VALUE;
+    }
 
     public static String percentage(double data, double total) {
         return percentage(data, total, 2);

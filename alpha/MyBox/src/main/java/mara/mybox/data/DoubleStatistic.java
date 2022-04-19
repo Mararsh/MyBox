@@ -26,7 +26,6 @@ public class DoubleStatistic {
             minimum, maximum, median, upperQuartile, lowerQuartile, vTmp;
     public Object mode;
     public StatisticOptions options;
-    public String[] strings;
     public double[] doubles;
 
     public DoubleStatistic() {
@@ -49,7 +48,7 @@ public class DoubleStatistic {
         median = 0;
         upperQuartile = 0;
         lowerQuartile = 0;
-        mode = 0;
+        mode = null;
         vTmp = 0;
     }
 
@@ -63,7 +62,7 @@ public class DoubleStatistic {
 
     public DoubleStatistic(String[] values, StatisticOptions options) {
         if (options != null && options.isMode()) {
-            strings = values;
+            mode = modeObject(values);
         }
         calculate(toDouble(values), options);
     }
@@ -80,7 +79,9 @@ public class DoubleStatistic {
             calculateVariance();
             calculatePercentile();
             calculateSkewness();
-            calculateMode();
+            if (mode == null) {
+                calculateMode();
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -194,11 +195,7 @@ public class DoubleStatistic {
             if (!options.isMode()) {
                 return;
             }
-            if (strings != null) {
-                mode = modeObject(strings);
-            } else if (doubles != null) {
-                mode = mode(doubles);
-            }
+            mode = mode(doubles);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
