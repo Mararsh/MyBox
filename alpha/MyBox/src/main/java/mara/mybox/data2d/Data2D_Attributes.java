@@ -75,10 +75,10 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
                 return;
             }
             super.cloneBase(d);
-            loadController = d.loadController;
             task = d.task;
             backgroundTask = d.backgroundTask;
             error = d.error;
+            options = d.options;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -90,20 +90,20 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
                 return;
             }
             super.cloneAttributes(d);
+            loadController = d.loadController;
             tableData2DDefinition = d.tableData2DDefinition;
             tableData2DColumn = d.tableData2DColumn;
             columns = d.columns;
             savedColumns = d.savedColumns;
             newColumnIndex = d.newColumnIndex;
-            dataSize = d.dataSize;
             styles = d.styles;
+            dataSize = d.dataSize;
             pageSize = d.pageSize;
             pagesNumber = d.pagesNumber;
             currentPage = d.currentPage;
             startRowOfCurrentPage = d.startRowOfCurrentPage;
             endRowOfCurrentPage = d.endRowOfCurrentPage;
             tableChanged = d.tableChanged;
-            options = d.options;
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }

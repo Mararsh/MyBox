@@ -1,5 +1,6 @@
 package mara.mybox.data2d;
 
+import mara.mybox.data2d.scan.Data2DReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.sql.Connection;

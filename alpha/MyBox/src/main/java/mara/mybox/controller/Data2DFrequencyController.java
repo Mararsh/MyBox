@@ -123,22 +123,22 @@ public class Data2DFrequencyController extends Data2DHandleController {
                 return false;
             }
             handledNames = new ArrayList<>();
-            handledColumns = new ArrayList<>();
-            handledColumns.add(freColumn.cloneAll());
+            outputColumns = new ArrayList<>();
+            outputColumns.add(freColumn.cloneAll());
             handledNames.add(freName);
 
             String cName = freName + "_" + message("Count");
             while (handledNames.contains(cName)) {
                 cName += "m";
             }
-            handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Long));
+            outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Long));
             handledNames.add(cName);
 
             cName = freName + "_" + message("CountPercentage");
             while (handledNames.contains(cName)) {
                 cName += "m";
             }
-            handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+            outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
             handledNames.add(cName);
             return true;
         } catch (Exception e) {
@@ -171,7 +171,7 @@ public class Data2DFrequencyController extends Data2DHandleController {
     @Override
     public boolean handleRows() {
         try {
-            handledData = new ArrayList<>();
+            outputData = new ArrayList<>();
             int scale = data2D.getScale();
             for (int r : sourceController.checkedRowsIndices) {
                 List<String> tableRow = tableController.tableData.get(r);
@@ -186,7 +186,7 @@ public class Data2DFrequencyController extends Data2DHandleController {
                     row.add(value);
                     row.add(frequency.getCount(value) + "");
                     row.add(DoubleTools.format(frequency.getPct(value) * 100, scale));
-                    handledData.add(row);
+                    outputData.add(row);
                 }
             }
             frequency.clear();

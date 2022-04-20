@@ -1,8 +1,9 @@
-package mara.mybox.data2d;
+package mara.mybox.data2d.scan;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.List;
+import mara.mybox.data2d.DataFileText;
 import mara.mybox.dev.MyBoxLog;
 
 /**

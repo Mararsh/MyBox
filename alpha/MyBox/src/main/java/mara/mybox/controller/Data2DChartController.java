@@ -106,7 +106,7 @@ public class Data2DChartController extends Data2DHandleController {
             categoryCartesianRadio, categorySquareRootRadio, categoryLogarithmicERadio, categoryLogarithmic10Radio,
             sizeCartesianRadio, sizeSquareRootRadio, sizeLogarithmicERadio, sizeLogarithmic10Radio;
     @FXML
-    protected ComboBox<String> categoryColumnSelector, valueColumnSelector, scaleSelector,
+    protected ComboBox<String> categoryColumnSelector, valueColumnSelector,
             titleFontSizeSelector, labelFontSizeSelector, lineWdithSelector, tickFontSizeSelector,
             barGapSelector, categoryGapSelector, categoryFontSizeSelector, categoryTickRotationSelector,
             categoryMarginSelector, numberFontSizeSelector, numberTickRotationSelector;
@@ -121,7 +121,8 @@ public class Data2DChartController extends Data2DHandleController {
     @FXML
     protected CheckBox categoryTickCheck, numberTickCheck, categoryMarkCheck, numberMarkCheck, categoryNumbersCheck,
             hlinesCheck, vlinesCheck, xyReverseCheck, autoTitleCheck, clockwiseCheck, popLabelCheck,
-            hZeroCheck, vZeroCheck, animatedCheck, categoryAxisAnimatedCheck, numberAxisAnimatedCheck;
+            hZeroCheck, vZeroCheck, animatedCheck, categoryAxisAnimatedCheck, numberAxisAnimatedCheck,
+            altColumnsFillCheck, altRowsFillCheck;
     @FXML
     protected ToggleGroup chartGroup, titleSideGroup, labelGroup, legendGroup, numberCoordinateGroup,
             categorySideGroup, numberSideGroup, labelLocaionGroup, categoryCoordinateGroup, sizeCoordinateGroup;
@@ -300,6 +301,28 @@ public class Data2DChartController extends Data2DHandleController {
                 UserConfig.setBoolean(baseName + "DisplayVZero", vZeroCheck.isSelected());
                 if (xyChart != null) {
                     xyChart.setVerticalZeroLineVisible(vZeroCheck.isSelected());
+                }
+            });
+
+            altColumnsFillCheck.setSelected(UserConfig.getBoolean(baseName + "AltColumnsFill", false));
+            altColumnsFillCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
+                if (isSettingValues) {
+                    return;
+                }
+                UserConfig.setBoolean(baseName + "AltColumnsFill", altColumnsFillCheck.isSelected());
+                if (xyChart != null) {
+                    xyChart.setAlternativeColumnFillVisible(altColumnsFillCheck.isSelected());
+                }
+            });
+
+            altRowsFillCheck.setSelected(UserConfig.getBoolean(baseName + "AltRowsFill", true));
+            altRowsFillCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
+                if (isSettingValues) {
+                    return;
+                }
+                UserConfig.setBoolean(baseName + "AltRowsFill", altRowsFillCheck.isSelected());
+                if (xyChart != null) {
+                    xyChart.setAlternativeRowFillVisible(altRowsFillCheck.isSelected());
                 }
             });
 
@@ -1134,12 +1157,12 @@ public class Data2DChartController extends Data2DHandleController {
                 try {
                     data2D.setTask(task);
                     if (sourceController.allPages()) {
-                        handledData = data2D.allRows(colsIndices, false);
+                        outputData = data2D.allRows(colsIndices, false);
                     } else {
-                        handledData = sourceController.selectedData(
+                        outputData = sourceController.selectedData(
                                 sourceController.checkedRowsIndices(), colsIndices, false);
                     }
-                    return handledData != null && !handledData.isEmpty();
+                    return outputData != null && !outputData.isEmpty();
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                     error = e.toString();
@@ -1248,8 +1271,8 @@ public class Data2DChartController extends Data2DHandleController {
                     return;
                 }
 
-                xyChart.setAlternativeRowFillVisible(false);
-                xyChart.setAlternativeColumnFillVisible(false);
+                xyChart.setAlternativeRowFillVisible(altRowsFillCheck.isSelected());
+                xyChart.setAlternativeColumnFillVisible(altColumnsFillCheck.isSelected());
                 xyChart.setVerticalGridLinesVisible(vlinesCheck.isSelected());
                 xyChart.setHorizontalGridLinesVisible(hlinesCheck.isSelected());
                 xyChart.setVerticalZeroLineVisible(vZeroCheck.isSelected());
@@ -1384,7 +1407,7 @@ public class Data2DChartController extends Data2DHandleController {
 
     public void drawChart() {
         try {
-            if (handledData == null || handledData.isEmpty()) {
+            if (outputData == null || outputData.isEmpty()) {
                 popError(message("NoData"));
                 return;
             }
@@ -1421,7 +1444,7 @@ public class Data2DChartController extends Data2DHandleController {
                 String rgb = FxColorTools.color2rgb(color);
                 palette.put(colName, rgb);
                 double categoryValue, categoryCoordinateValue, numberValue, numberCoordinateValue;
-                for (List<String> rowData : handledData) {
+                for (List<String> rowData : outputData) {
                     String category = rowData.get(0);
                     numberValue = data2D.doubleValue(rowData.get(i + 1));
                     numberCoordinateValue = ChartTools.coordinateValue(nCoordinate, numberValue);
@@ -1475,7 +1498,7 @@ public class Data2DChartController extends Data2DHandleController {
                 palette.put(colName, rgb);
             }
             double categoryValue, categoryCoordinateValue, numberValue, numberCoordinateValue, sizeValue, sizeCoordinateValue;
-            for (List<String> rowData : handledData) {
+            for (List<String> rowData : outputData) {
                 categoryValue = data2D.doubleValue(rowData.get(0));
                 categoryCoordinateValue = ChartTools.coordinateValue(cCoordinate, categoryValue);
                 numberValue = data2D.doubleValue(rowData.get(1));
@@ -1506,7 +1529,7 @@ public class Data2DChartController extends Data2DHandleController {
             ObservableList<PieChart.Data> pieData = FXCollections.observableArrayList();
             pieChart.setData(pieData);
             double total = 0;
-            for (List<String> rowData : handledData) {
+            for (List<String> rowData : outputData) {
                 double d = data2D.doubleValue(rowData.get(1));
                 if (d > 0) {
                     total += d;
@@ -1517,7 +1540,7 @@ public class Data2DChartController extends Data2DHandleController {
             }
             String label;
             paletteList = new ArrayList();
-            for (List<String> rowData : handledData) {
+            for (List<String> rowData : outputData) {
                 String name = rowData.get(0);
                 double d = data2D.doubleValue(rowData.get(1));
                 if (d <= 0) {
@@ -1651,7 +1674,7 @@ public class Data2DChartController extends Data2DHandleController {
     @FXML
     public void htmlAction() {
         try {
-            if (chart == null || colsIndices == null || handledData == null || handledData.isEmpty()) {
+            if (chart == null || colsIndices == null || outputData == null || outputData.isEmpty()) {
                 popError(message("NoData"));
                 return;
             }
@@ -1661,7 +1684,7 @@ public class Data2DChartController extends Data2DHandleController {
             ImageFileWriters.writeImageFile(bufferedImage, "jpg", imageFile.getAbsolutePath());
 
             StringTable table = new StringTable(data2D.columnNames(colsIndices));
-            for (List<String> row : handledData) {
+            for (List<String> row : outputData) {
                 table.add(row);
             }
 

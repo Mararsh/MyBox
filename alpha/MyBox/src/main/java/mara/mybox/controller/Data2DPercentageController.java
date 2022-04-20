@@ -117,23 +117,23 @@ public class Data2DPercentageController extends Data2DHandleController {
                 return false;
             }
             handledNames = new ArrayList<>();
-            handledColumns = new ArrayList<>();
+            outputColumns = new ArrayList<>();
             String cName = message("SourceRowNumber");
             while (handledNames.contains(cName)) {
                 cName += "m";
             }
             handledNames.add(cName);
-            handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.String));
+            outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.String));
             for (Data2DColumn column : cols) {
                 if (valuesCheck.isSelected()) {
-                    handledColumns.add(column.cloneAll());
+                    outputColumns.add(column.cloneAll());
                     handledNames.add(column.getColumnName());
                 }
                 cName = column.getColumnName() + "_" + suffix;
                 while (handledNames.contains(cName)) {
                     cName += "m";
                 }
-                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
                 handledNames.add(cName);
             }
             return true;
@@ -151,32 +151,32 @@ public class Data2DPercentageController extends Data2DHandleController {
                 return false;
             }
             handledNames = new ArrayList<>();
-            handledColumns = new ArrayList<>();
+            outputColumns = new ArrayList<>();
 
             String cName = message("SourceRowNumber");
             while (handledNames.contains(cName)) {
                 cName += "m";
             }
             handledNames.add(cName);
-            handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.String));
+            outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.String));
 
             cName = message("Row") + "-" + message("Summation");
             while (handledNames.contains(cName)) {
                 cName += "m";
             }
             handledNames.add(cName);
-            handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+            outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
 
             for (Data2DColumn column : cols) {
                 if (valuesCheck.isSelected()) {
-                    handledColumns.add(column.cloneAll());
+                    outputColumns.add(column.cloneAll());
                     handledNames.add(column.getColumnName());
                 }
                 cName = column.getColumnName() + "_" + message("PercentageInRow");
                 while (handledNames.contains(cName)) {
                     cName += "m";
                 }
-                handledColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
                 handledNames.add(cName);
             }
             return true;
@@ -231,7 +231,7 @@ public class Data2DPercentageController extends Data2DHandleController {
                     }
                 }
             }
-            handledData = new ArrayList<>();
+            outputData = new ArrayList<>();
             List<String> row = new ArrayList<>();
             row.add(message("Column") + "-" + message("Summation"));
             for (int c = 0; c < colsLen; c++) {
@@ -240,7 +240,7 @@ public class Data2DPercentageController extends Data2DHandleController {
                     row.add("100");
                 }
             }
-            handledData.add(row);
+            outputData.add(row);
             for (int r : sourceController.checkedRowsIndices) {
                 List<String> tableRow = tableController.tableData.get(r);
                 row = new ArrayList<>();
@@ -263,7 +263,7 @@ public class Data2DPercentageController extends Data2DHandleController {
                         row.add(DoubleTools.percentage(d, sum[c], scale));
                     }
                 }
-                handledData.add(row);
+                outputData.add(row);
             }
             return true;
         } catch (Exception e) {
@@ -278,7 +278,7 @@ public class Data2DPercentageController extends Data2DHandleController {
     public boolean dataByRows() {
         try {
             List<Integer> colIndices = sourceController.checkedColsIndices;
-            handledData = new ArrayList<>();
+            outputData = new ArrayList<>();
             for (int r : sourceController.checkedRowsIndices) {
                 double sum = 0d;
                 List<String> row = new ArrayList<>();
@@ -313,7 +313,7 @@ public class Data2DPercentageController extends Data2DHandleController {
                         row.add(DoubleTools.percentage(d, sum, scale));
                     }
                 }
-                handledData.add(row);
+                outputData.add(row);
             }
             return true;
         } catch (Exception e) {
@@ -342,7 +342,7 @@ public class Data2DPercentageController extends Data2DHandleController {
                     }
                 }
             }
-            handledData = new ArrayList<>();
+            outputData = new ArrayList<>();
             List<String> row = new ArrayList<>();
             row.add(message("All") + "-" + message("Summation"));
             row.add(DoubleTools.format(sum, scale));
@@ -355,7 +355,7 @@ public class Data2DPercentageController extends Data2DHandleController {
                     row.add(null);
                 }
             }
-            handledData.add(row);
+            outputData.add(row);
             for (int r : sourceController.checkedRowsIndices) {
                 List<String> tableRow = tableController.tableData.get(r);
                 row = new ArrayList<>();
@@ -378,7 +378,7 @@ public class Data2DPercentageController extends Data2DHandleController {
                         row.add(DoubleTools.percentage(d, sum, scale));
                     }
                 }
-                handledData.add(row);
+                outputData.add(row);
             }
             return true;
         } catch (Exception e) {

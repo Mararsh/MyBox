@@ -1,4 +1,4 @@
-package mara.mybox.data2d;
+package mara.mybox.data2d.scan;
 
 import java.io.File;
 import java.sql.Connection;
@@ -9,6 +9,12 @@ import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.data.DoubleStatistic;
 import mara.mybox.data.Normalization;
 import mara.mybox.data.StatisticOptions;
+import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.Data2D_Edit;
+import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.DataFileExcel;
+import mara.mybox.data2d.DataFileText;
+import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
@@ -283,8 +289,8 @@ public abstract class Data2DReader {
         needCheckTask = readerTask != null;
         columnsNumber = data2D.columnsNumber();
         rowIndex = 0;
-        rowsStart = data2D.startRowOfCurrentPage;
-        rowsEnd = rowsStart + data2D.pageSize;
+        rowsStart = data2D.getStartRowOfCurrentPage();
+        rowsEnd = rowsStart + data2D.getPageSize();
         count = 0;
         names = new ArrayList<>();
         rows = new ArrayList<>();

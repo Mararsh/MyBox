@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
-import mara.mybox.data2d.Data2DReader.Operation;
+import mara.mybox.data2d.scan.Data2DReader;
+import mara.mybox.data2d.scan.Data2DReader.Operation;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
@@ -247,7 +248,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
         countSize();
         try ( Connection conn = DerbyBase.getConnection()) {
             return saveColumns(conn, (Data2D) this, columns)
-                    && saveStyles(conn);
+                    && savePageStyles(conn);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -257,7 +258,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
         }
     }
 
-    public boolean saveStyles(Connection conn) {
+    public boolean savePageStyles(Connection conn) {
         if (conn == null || d2did < 0) {
             return false;
         }
@@ -363,8 +364,13 @@ public abstract class Data2D_Edit extends Data2D_Data {
         try ( Connection conn = DerbyBase.getConnection()) {
             source.countSize();
             target.cloneAttributes(source);
-            return saveColumns(conn, target, source.getColumns())
-                    && target.saveStyles(conn);
+            if (!saveColumns(conn, target, source.getColumns())) {
+                return false;
+            }
+            long targetid = target.getD2did();
+            target.getTableData2DStyle().clear(conn, targetid);
+            target.getTableData2DStyle().copyStyles(conn, source.getD2did(), target.getD2did());
+            return target.savePageStyles(conn);
         } catch (Exception e) {
             if (source.getTask() != null) {
                 source.getTask().setError(e.toString());

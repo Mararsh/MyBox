@@ -117,13 +117,13 @@ public class Data2DSortController extends Data2DHandleController {
                 colsIndices.add(orderCol);
                 colsNames.add(orderName);
             }
-            handledColumns = new ArrayList<>();
+            outputColumns = new ArrayList<>();
             for (int col : colsIndices) {
-                handledColumns.add(data2D.column(col));
+                outputColumns.add(data2D.column(col));
             }
             if (showRowNumber()) {
                 colsNames.add(0, message("SourceRowNumber"));
-                handledColumns.add(0, new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
+                outputColumns.add(0, new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
             }
             return colsIndices;
         } catch (Exception e) {
@@ -138,11 +138,11 @@ public class Data2DSortController extends Data2DHandleController {
     @Override
     public boolean handleRows() {
         try {
-            handledData = sourceController.selectedData(
+            outputData = sourceController.selectedData(
                     sourceController.checkedRowsIndices(), adjustedCols(), showRowNumber());
-            sort(handledData);
+            sort(outputData);
             if (showRowNumber()) {
-                handledData.add(0, colsNames);
+                outputData.add(0, colsNames);
             }
             return true;
         } catch (Exception e) {
@@ -169,7 +169,7 @@ public class Data2DSortController extends Data2DHandleController {
                     return desc ? -c : c;
                 }
             });
-            handledData = data;
+            outputData = data;
             return true;
         } catch (Exception e) {
             if (task != null) {

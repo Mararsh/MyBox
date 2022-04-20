@@ -32,8 +32,8 @@ public abstract class Data2DHandleController extends BaseChildController {
 
     protected ControlData2DEditTable tableController;
     protected Data2D data2D;
-    protected List<List<String>> handledData;
-    protected List<Data2DColumn> handledColumns;
+    protected List<List<String>> outputData;
+    protected List<Data2DColumn> outputColumns;
     protected int scale;
     protected ObjectType objectType;
 
@@ -199,9 +199,9 @@ public abstract class Data2DHandleController extends BaseChildController {
             if (!checkOptions()) {
                 return;
             }
-            handledColumns = sourceController.checkedCols();
+            outputColumns = sourceController.checkedCols();
             if (showRowNumber()) {
-                handledColumns.add(0, new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
+                outputColumns.add(0, new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
             }
             if (sourceController.allPages()) {
                 handleAllTask();
@@ -228,7 +228,7 @@ public abstract class Data2DHandleController extends BaseChildController {
                 if (handledCSV == null) {
                     return false;
                 }
-                handledCSV.setColumns(handledColumns);
+                handledCSV.setColumns(outputColumns);
                 handledFile = handledCSV.convert(myController, handledCSV, targetController.target);
                 return handledFile != null;
             }
@@ -301,8 +301,8 @@ public abstract class Data2DHandleController extends BaseChildController {
 
     public boolean handleRows() {
         try {
-            handledData = sourceController.selectedData(showRowNumber());
-            if (handledData == null) {
+            outputData = sourceController.selectedData(showRowNumber());
+            if (outputData == null) {
                 return false;
             }
             if (showColNames()) {
@@ -310,7 +310,7 @@ public abstract class Data2DHandleController extends BaseChildController {
                 if (showRowNumber()) {
                     names.add(0, message("SourceRowNumber"));
                 }
-                handledData.add(0, names);
+                outputData.add(0, names);
             }
             return true;
         } catch (Exception e) {
@@ -324,7 +324,7 @@ public abstract class Data2DHandleController extends BaseChildController {
 
     public boolean updateTable() {
         try {
-            if (targetController == null || !targetController.inTable() || handledData == null) {
+            if (targetController == null || !targetController.inTable() || outputData == null) {
                 return false;
             }
             int row = targetController.row();
@@ -337,9 +337,9 @@ public abstract class Data2DHandleController extends BaseChildController {
             }
             tableController.isSettingValues = true;
             if (targetController.replaceRadio.isSelected()) {
-                for (int r = row; r < Math.min(row + handledData.size(), rowsNumber); r++) {
+                for (int r = row; r < Math.min(row + outputData.size(), rowsNumber); r++) {
                     List<String> tableRow = tableController.tableData.get(r);
-                    List<String> dataRow = handledData.get(r - row);
+                    List<String> dataRow = outputData.get(r - row);
                     for (int c = col; c < Math.min(col + dataRow.size(), colsNumber); c++) {
                         tableRow.set(c + 1, dataRow.get(c - col));
                     }
@@ -347,9 +347,9 @@ public abstract class Data2DHandleController extends BaseChildController {
                 }
             } else {
                 List<List<String>> newRows = new ArrayList<>();
-                for (int r = 0; r < handledData.size(); r++) {
+                for (int r = 0; r < outputData.size(); r++) {
                     List<String> newRow = tableController.data2D.newRow();
-                    List<String> dataRow = handledData.get(r);
+                    List<String> dataRow = outputData.get(r);
                     for (int c = col; c < Math.min(col + dataRow.size(), colsNumber); c++) {
                         newRow.set(c + 1, dataRow.get(c - col));
                     }
@@ -373,29 +373,29 @@ public abstract class Data2DHandleController extends BaseChildController {
 
     public boolean outputExternal() {
         if (targetController == null || targetController.target == null
-                || handledData == null || handledData.isEmpty()) {
+                || outputData == null || outputData.isEmpty()) {
             popError(message("NoData"));
             return false;
         }
         switch (targetController.target) {
             case "systemClipboard":
-                tableController.copyToSystemClipboard(null, handledData);
+                tableController.copyToSystemClipboard(null, outputData);
                 break;
             case "myBoxClipboard":
-                tableController.copyToMyBoxClipboard2(handledColumns, handledData);
+                tableController.copyToMyBoxClipboard2(outputColumns, outputData);
                 break;
             case "csv":
-                DataFileCSVController.open(handledColumns, handledData);
+                DataFileCSVController.open(outputColumns, outputData);
                 break;
             case "excel":
-                DataFileExcelController.open(handledColumns, handledData);
+                DataFileExcelController.open(outputColumns, outputData);
                 break;
             case "texts":
-                DataFileTextController.open(handledColumns, handledData);
+                DataFileTextController.open(outputColumns, outputData);
                 break;
             case "matrix":
                 MatricesManageController controller = MatricesManageController.oneOpen();
-                controller.dataController.loadTmpData(handledColumns, handledData);
+                controller.dataController.loadTmpData(outputColumns, outputData);
                 break;
         }
         popDone();
@@ -407,8 +407,8 @@ public abstract class Data2DHandleController extends BaseChildController {
         try {
             tableController = null;
             data2D = null;
-            handledData = null;
-            handledColumns = null;
+            outputData = null;
+            outputColumns = null;
         } catch (Exception e) {
         }
         super.cleanPane();

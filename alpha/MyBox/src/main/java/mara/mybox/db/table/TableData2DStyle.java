@@ -46,6 +46,9 @@ public class TableData2DStyle extends BaseTable<Data2DStyle> {
     public static final String Create_Unique_Index
             = "CREATE UNIQUE INDEX Data2D_Style_unique_index on Data2D_Style ( d2id , row, colName  )";
 
+    public static final String QueryStyles
+            = "SELECT * FROM Data2D_Style WHERE d2id=?";
+
     public static final String QueryStyle
             = "SELECT * FROM Data2D_Style WHERE d2id=? AND row=? AND colName=? FETCH FIRST ROW ONLY";
 
@@ -176,6 +179,29 @@ public class TableData2DStyle extends BaseTable<Data2DStyle> {
             MyBoxLog.error(e);
             return false;
         }
+    }
+
+    public int copyStyles(Connection conn, long sourceid, long targetid) {
+        if (conn == null || sourceid < 0 || targetid < 0 || sourceid == targetid) {
+            return -1;
+        }
+        int count = 0;
+        try ( PreparedStatement statement = conn.prepareStatement(QueryStyles)) {
+            statement.setLong(1, sourceid);
+            ResultSet results = statement.executeQuery();
+            while (results.next()) {
+                Data2DStyle s = readData(results);
+                s.setD2sid(-1);
+                s.setD2id(targetid);
+                if (write(conn, s) != null) {
+                    count++;
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return -1;
+        }
+        return count;
     }
 
     /*

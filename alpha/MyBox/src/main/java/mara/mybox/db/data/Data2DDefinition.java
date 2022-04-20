@@ -72,6 +72,10 @@ public class Data2DDefinition extends BaseData {
             file = d.getFile();
             sheet = d.getSheet();
             modifyTime = d.getModifyTime();
+            delimiter = d.getDelimiter();
+            charset = d.getCharset();
+            hasHeader = d.isHasHeader();
+            comments = d.getComments();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -82,14 +86,10 @@ public class Data2DDefinition extends BaseData {
             if (d == null) {
                 return;
             }
-            delimiter = d.getDelimiter();
-            charset = d.getCharset();
-            hasHeader = d.isHasHeader();
-            colsNumber = d.getColsNumber();
-            rowsNumber = d.getRowsNumber();
             scale = d.getScale();
             maxRandom = d.getMaxRandom();
-            comments = d.getComments();
+            colsNumber = d.getColsNumber();
+            rowsNumber = d.getRowsNumber();
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }

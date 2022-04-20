@@ -143,11 +143,11 @@ public class DataFileText extends DataFile {
         return null;
     }
 
-    protected List<String> parseFileLine(String line) {
+    public List<String> parseFileLine(String line) {
         return TextTools.parseLine(line, delimiter);
     }
 
-    protected List<String> readValidLine(BufferedReader reader) {
+    public List<String> readValidLine(BufferedReader reader) {
         if (reader == null) {
             return null;
         }

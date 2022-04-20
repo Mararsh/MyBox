@@ -51,7 +51,7 @@ public class Data2DNormalizeController extends Data2DHandleController {
             if (matrix == null) {
                 return false;
             }
-            handledData = new ArrayList<>();
+            outputData = new ArrayList<>();
             for (int r = 0; r < rowsNumber; r++) {
                 List<String> row = new ArrayList<>();
                 if (showRowNumber()) {
@@ -60,12 +60,11 @@ public class Data2DNormalizeController extends Data2DHandleController {
                 for (int c = 0; c < colsNumber; c++) {
                     row.add(DoubleTools.format(matrix[r][c], scale));
                 }
-                handledData.add(row);
+                outputData.add(row);
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            popError(message(e.toString()));
+            MyBoxLog.error(e);
             return false;
         }
     }

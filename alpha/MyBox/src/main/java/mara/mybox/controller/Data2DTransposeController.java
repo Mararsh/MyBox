@@ -35,20 +35,20 @@ public class Data2DTransposeController extends Data2DHandleController {
     public boolean handleRows() {
         try {
             super.handleRows();
-            if (handledData == null) {
+            if (outputData == null) {
                 return false;
             }
-            int rowsNumber = handledData.size(), columnsNumber = handledData.get(0).size();
+            int rowsNumber = outputData.size(), columnsNumber = outputData.get(0).size();
             List<List<String>> transposed = new ArrayList<>();
             for (int r = 0; r < columnsNumber; ++r) {
                 List<String> row = new ArrayList<>();
                 for (int c = 0; c < rowsNumber; ++c) {
-                    row.add(handledData.get(c).get(r));
+                    row.add(outputData.get(c).get(r));
                 }
                 transposed.add(row);
             }
-            handledData = transposed;
-            handledColumns = null;
+            outputData = transposed;
+            outputColumns = null;
             return true;
         } catch (Exception e) {
             if (task != null) {

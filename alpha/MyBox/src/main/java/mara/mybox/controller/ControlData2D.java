@@ -485,7 +485,9 @@ public class ControlData2D extends BaseController {
                     data2D.setTask(task);
                     data2D.savePageData(targetData);
                     data2D.setTask(task);
+                    MyBoxLog.debug(targetData.getFile() + "  " + targetData.getCharset());
                     Data2D.saveAttributes(data2D, targetData);
+                    MyBoxLog.debug(targetData.getFile() + "  " + targetData.getCharset());
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
@@ -499,9 +501,12 @@ public class ControlData2D extends BaseController {
                 if (targetData.getFile() != null) {
                     recordFileWritten(targetData.getFile());
                 }
+                MyBoxLog.debug(targetData.getFile() + "  " + targetData.getCharset());
                 if (saveAsType == SaveAsType.Load) {
                     data2D.cloneAll(targetData);
+                    MyBoxLog.debug(data2D.getFile() + "  " + data2D.getCharset());
                     resetStatus();
+                    MyBoxLog.debug(data2D.getFile() + "  " + data2D.getCharset());
                     readDefinition();
                 } else if (saveAsType == SaveAsType.Open) {
                     Data2DDefinition.open(targetData);
@@ -742,6 +747,15 @@ public class ControlData2D extends BaseController {
             });
             menu.setDisable(empty);
             popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ColorBars"), StyleTools.getIconImage("iconBarChartH.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DColorBarsController.open(tableController);
+            });
+            menu.setDisable(empty);
+            popMenu.getItems().add(menu);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("Export"), StyleTools.getIconImage("iconExport.png"));
             menu.setOnAction((ActionEvent event) -> {

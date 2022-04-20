@@ -1,5 +1,6 @@
 package mara.mybox.data2d;
 
+import mara.mybox.data2d.scan.Data2DReader;
 import java.sql.Connection;
 import java.util.List;
 import mara.mybox.controller.BaseController;

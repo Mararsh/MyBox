@@ -193,6 +193,7 @@ public class Fxmls {
     public static final String Data2DNormalizeFxml = "/fxml/Data2DNormalize.fxml";
     public static final String Data2DFrequencyFxml = "/fxml/Data2DFrequency.fxml";
     public static final String Data2DChartFxml = "/fxml/Data2DChart.fxml";
+    public static final String Data2DColorBarsFxml = "/fxml/Data2DColorBars.fxml";
     public static final String Data2DConvertToDatabaseFxml = "/fxml/Data2DConvertToDatabase.fxml";
     public static final String Data2DColumnCreateFxml = "/fxml/Data2DColumnCreate.fxml";
     public static final String Data2DTableCreateFxml = "/fxml/Data2DTableCreate.fxml";

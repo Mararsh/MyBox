@@ -15,7 +15,7 @@ public class Normalization {
     protected Algorithm a = Algorithm.MinMax;
 
     public static enum Algorithm {
-        MinMax, Sum, ZScore
+        MinMax, Sum, ZScore, Width
     }
 
     public double[][] columnsNormalize(double[][] matrix) {
@@ -131,6 +131,48 @@ public class Normalization {
         }
     }
 
+    public static double[] width(double[] vector, int width) {
+        try {
+            if (vector == null) {
+                return vector;
+            }
+            int len = vector.length;
+            if (len == 0) {
+                return vector;
+            }
+            double maxPositive = 0, minNegative = 0;
+            for (double d : vector) {
+                if (d > 0) {
+                    if (d > maxPositive) {
+                        maxPositive = d;
+                    }
+                } else if (d < 0) {
+                    if (d < minNegative) {
+                        minNegative = d;
+                    }
+                }
+            }
+            double[] result = new double[len];
+            minNegative = Math.abs(minNegative);
+            for (int i = 0; i < len; i++) {
+                double d = vector[i];
+                if (d > 0) {
+                    if (maxPositive > 0) {
+                        result[i] = width * vector[i] / maxPositive;
+                    }
+                } else {
+                    if (minNegative > 0) {
+                        result[i] = width * vector[i] / minNegative;
+                    }
+                }
+            }
+            return result;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
     public static double[][] columnsNormalize(double[][] matrix, Algorithm a, double from, double to) {
         try {
             if (matrix == null || matrix.length == 0 || a == null) {
@@ -169,6 +211,11 @@ public class Normalization {
                         result[i] = zscore(matrix[i]);
                     }
                     break;
+                case Width:
+                    for (int i = 0; i < rlen; i++) {
+                        result[i] = width(matrix[i], (int) from);
+                    }
+                    break;
                 default:
                     return null;
             }
@@ -195,6 +242,9 @@ public class Normalization {
                     break;
                 case ZScore:
                     vector = zscore(vector);
+                    break;
+                case Width:
+                    vector = width(vector, (int) from);
                     break;
                 default:
                     return null;
