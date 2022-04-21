@@ -36,7 +36,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-12-12
  * @License Apache License Version 2.0
  */
-public class Data2DStatisticController extends Data2DHandleController {
+public class Data2DStatisticController extends BaseData2DHandleController {
 
     protected List<String> countRow, summationRow, meanRow, geometricMeanRow, sumOfSquaresRow,
             populationVarianceRow, sampleVarianceRow, populationStandardDeviationRow, sampleStandardDeviationRow, skewnessRow,

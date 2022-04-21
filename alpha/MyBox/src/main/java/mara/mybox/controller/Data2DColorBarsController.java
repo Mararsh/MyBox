@@ -26,7 +26,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-4-20
  * @License Apache License Version 2.0
  */
-public class Data2DColorBarsController extends Data2DHandleController {
+public class Data2DColorBarsController extends BaseData2DHandleController {
 
     protected int barWidth = 100;
 

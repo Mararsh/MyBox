@@ -10,7 +10,7 @@ import mara.mybox.value.Fxmls;
  * @CreateDate 2021-11-28
  * @License Apache License Version 2.0
  */
-public class Data2DCopyController extends Data2DHandleController {
+public class Data2DCopyController extends BaseData2DHandleController {
 
     @Override
     public boolean checkOptions() {

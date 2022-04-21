@@ -694,66 +694,83 @@ public class ControlData2D extends BaseController {
 
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            Menu cmenu = new Menu(message("Calculation"), StyleTools.getIconImage("iconCalculator.png"));
-            popMenu.getItems().add(cmenu);
+            Menu calMenu = new Menu(message("Calculation"), StyleTools.getIconImage("iconCalculator.png"));
+            popMenu.getItems().add(calMenu);
 
             menu = new MenuItem(message("Sort"), StyleTools.getIconImage("iconSort.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DSortController.open(tableController);
             });
             menu.setDisable(empty);
-            cmenu.getItems().add(menu);
+            calMenu.getItems().add(menu);
 
             menu = new MenuItem(message("DescriptiveStatistics"), StyleTools.getIconImage("iconStatistic.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DStatisticController.open(tableController);
             });
             menu.setDisable(empty);
-            cmenu.getItems().add(menu);
+            calMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("LinearRegression"), StyleTools.getIconImage("iconScatterChart.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DRegressionController.open(tableController);
+            });
+            menu.setDisable(empty);
+            calMenu.getItems().add(menu);
 
             menu = new MenuItem(message("FrequencyDistributions"), StyleTools.getIconImage("iconDistribution.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DFrequencyController.open(tableController);
             });
             menu.setDisable(empty);
-            cmenu.getItems().add(menu);
+            calMenu.getItems().add(menu);
 
             menu = new MenuItem(message("ValuePercentage"), StyleTools.getIconImage("iconPercentage.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DPercentageController.open(tableController);
             });
             menu.setDisable(empty);
-            cmenu.getItems().add(menu);
+            calMenu.getItems().add(menu);
 
             menu = new MenuItem(message("Normalize"), StyleTools.getIconImage("iconBinary.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DNormalizeController.open(tableController);
             });
             menu.setDisable(empty);
-            cmenu.getItems().add(menu);
+            calMenu.getItems().add(menu);
 
             menu = new MenuItem(message("Transpose"), StyleTools.getIconImage("iconRotateRight.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DTransposeController.open(tableController);
             });
             menu.setDisable(empty);
-            cmenu.getItems().add(menu);
+            calMenu.getItems().add(menu);
 
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            menu = new MenuItem(message("Charts"), StyleTools.getIconImage("iconCharts.png"));
+            Menu chartMenu = new Menu(message("Charts"), StyleTools.getIconImage("iconGraph.png"));
+            popMenu.getItems().add(chartMenu);
+
+            menu = new MenuItem(message("XYChart"), StyleTools.getIconImage("iconXY.png"));
             menu.setOnAction((ActionEvent event) -> {
-                Data2DChartController.open(tableController);
+                Data2DChartXYController.open(tableController);
             });
             menu.setDisable(empty);
-            popMenu.getItems().add(menu);
+            chartMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("PieChart"), StyleTools.getIconImage("iconPieChart.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DChartPieController.open(tableController);
+            });
+            menu.setDisable(empty);
+            chartMenu.getItems().add(menu);
 
             menu = new MenuItem(message("ColorBars"), StyleTools.getIconImage("iconBarChartH.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DColorBarsController.open(tableController);
             });
             menu.setDisable(empty);
-            popMenu.getItems().add(menu);
+            chartMenu.getItems().add(menu);
 
             popMenu.getItems().add(new SeparatorMenuItem());
 

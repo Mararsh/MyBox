@@ -7,7 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.chart.XYChart;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import mara.mybox.controller.Data2DChartController;
+import mara.mybox.controller.BaseData2DChartXYController;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.chart.ChartTools.ChartCoordinate;
@@ -23,7 +23,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class ChartOptions<X, Y> {
 
-    protected Data2DChartController chartController;
+    protected BaseData2DChartXYController chartController;
     protected XYChart xyChart;
     protected LabelType labelType;
     protected ChartCoordinate xCoordinate, yCoordinate, sCoordinate;
@@ -46,7 +46,7 @@ public class ChartOptions<X, Y> {
         labelLocation = ChartTools.LabelLocation.Above;
     }
 
-    public ChartOptions(Data2DChartController chartController) {
+    public ChartOptions(BaseData2DChartXYController chartController) {
         this.chartController = chartController;
         xyChart = chartController.getXyChart();
         labelFontSize = chartController.getLabelFontSize();

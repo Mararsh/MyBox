@@ -24,7 +24,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" spacing="5.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DChartController">
+<VBox fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" spacing="5.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DRegressionController">
     <children>
         <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
             <items>
@@ -34,85 +34,7 @@ License:    Apache License Version 2.0
                             <children>
                                 <HBox alignment="CENTER_LEFT" minHeight="-Infinity" spacing="2.0">
                                     <children>
-                                        <FlowPane alignment="CENTER_LEFT" hgap="5.0" maxWidth="1.7976931348623157E308" vgap="5.0" HBox.hgrow="ALWAYS">
-                                            <children>
-                                                <RadioButton fx:id="barChartRadio" mnemonicParsing="false" selected="true">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconBarChart.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                    <toggleGroup>
-                                                        <ToggleGroup fx:id="chartGroup" />
-                                                    </toggleGroup>
-                                                </RadioButton>
-                                                <RadioButton fx:id="stackedBarChartRadio" layoutX="255.0" layoutY="10.0" mnemonicParsing="false" toggleGroup="$chartGroup">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconStackedBarChart.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </RadioButton>
-                                                <RadioButton fx:id="lineChartRadio" mnemonicParsing="false" toggleGroup="$chartGroup">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconLineChart.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </RadioButton>
-                                                <RadioButton fx:id="scatterChartRadio" layoutX="51.0" layoutY="10.0" mnemonicParsing="false" toggleGroup="$chartGroup">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconScatterChart.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </RadioButton>
-                                                <RadioButton fx:id="bubbleChartRadio" layoutX="133.0" layoutY="10.0" mnemonicParsing="false" toggleGroup="$chartGroup">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconBubbleChart.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </RadioButton>
-                                                <RadioButton fx:id="areaChartRadio" layoutX="174.0" layoutY="10.0" mnemonicParsing="false" toggleGroup="$chartGroup">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconAreaChart.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </RadioButton>
-                                                <RadioButton fx:id="stackedAreaChartRadio" layoutX="214.0" layoutY="10.0" mnemonicParsing="false" toggleGroup="$chartGroup">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconStackedAreaChart.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </RadioButton>
-                                                <RadioButton fx:id="pieRadio" mnemonicParsing="false" toggleGroup="$chartGroup">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconPieChart.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </RadioButton>
-                                            </children>
-                                        </FlowPane>
+                                        <FlowPane alignment="CENTER_LEFT" hgap="5.0" maxWidth="1.7976931348623157E308" vgap="5.0" HBox.hgrow="ALWAYS" />
                               <ImageView fx:id="rightTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../buttons/Red/iconTipsRight.png" />
@@ -148,12 +70,7 @@ License:    Apache License Version 2.0
                                                                 <fx:include fx:id="source" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DSource.fxml" VBox.vgrow="ALWAYS" />
                                                                 <VBox fx:id="columnsBox" spacing="5.0">
                                                                     <children>
-                                                                        <FlowPane fx:id="valueColumnPane" hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
-                                                                            <children>
-                                                                                <Label minHeight="-Infinity" minWidth="-Infinity" text="%ValueColumn" />
-                                                                                <ComboBox fx:id="valueColumnSelector" prefWidth="200.0" />
-                                                                            </children>
-                                                                        </FlowPane>
+                                                                        <FlowPane fx:id="valueColumnPane" hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0" />
                                                                         <FlowPane fx:id="categoryColumnsPane" hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
                                                                             <children>
                                                                                 <Label minHeight="-Infinity" minWidth="-Infinity" text="%CategoryColumn" />
@@ -312,7 +229,6 @@ License:    Apache License Version 2.0
                                                 </FlowPane>
                                                                 <VBox spacing="10.0" fx:id="xyPlotBox">
                                                                     <children>
-                                                                        <CheckBox minHeight="-Infinity" mnemonicParsing="false" text="%AxisXYReverse" wrapText="true" fx:id="xyReverseCheck" />
                                                       <FlowPane hgap="5.0" vgap="5.0">
                                                          <children>
                                                                               <CheckBox fx:id="hlinesCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%DisplayHorizontalGridLines" wrapText="true" />
@@ -340,48 +256,6 @@ License:    Apache License Version 2.0
                                                                         <Label text="px" />
                                                                     </children>
                                                                 </HBox>
-                                                                <CheckBox fx:id="clockwiseCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%Clockwise" wrapText="true" />
-                                                <VBox fx:id="bubbleBox" spacing="10.0">
-                                                   <children>
-                                                                      <HBox alignment="CENTER_LEFT" spacing="2.0">
-                                                                          <children>
-                                                                              <Label minWidth="-Infinity" text="%BubbleStyle" />
-                                                                              <TextField fx:id="bubbleStyleInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                                              <Button fx:id="defaultBubbleButton" mnemonicParsing="false" onAction="#defaultBubbleStyle">
-                                                                                  <graphic>
-                                                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                                          <image>
-                                                                                              <Image url="@../buttons/Red/iconDefault.png" />
-                                                                                          </image>
-                                                                                      </ImageView>
-                                                                                  </graphic>
-                                                                              </Button>
-                                                                              <Button fx:id="goBubbleButton" layoutX="455.0" layoutY="10.0" mnemonicParsing="false" onAction="#applyBubbleStyle">
-                                                                                  <graphic>
-                                                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                                          <image>
-                                                                                              <Image url="@../buttons/Red/iconGo.png" />
-                                                                                          </image>
-                                                                                      </ImageView>
-                                                                                  </graphic>
-                                                                              </Button>
-                                                                          </children>
-                                                                      </HBox>
-                                                      <FlowPane fx:id="categoryCoordinatePane1" hgap="2.0" vgap="2.0">
-                                                         <children>
-                                                            <Label maxWidth="1.7976931348623157E308" text="%Coordinate" />
-                                                            <RadioButton fx:id="sizeCartesianRadio" mnemonicParsing="false" selected="true" text="%CartesianCoordinate">
-                                                               <toggleGroup>
-                                                                  <ToggleGroup fx:id="sizeCoordinateGroup" />
-                                                               </toggleGroup>
-                                                            </RadioButton>
-                                                            <RadioButton fx:id="sizeSquareRootRadio" mnemonicParsing="false" text="%SquareRootCoordinate" toggleGroup="$sizeCoordinateGroup" />
-                                                            <RadioButton fx:id="sizeLogarithmicERadio" mnemonicParsing="false" text="%LogarithmicECoordinate" toggleGroup="$sizeCoordinateGroup" />
-                                                            <RadioButton fx:id="sizeLogarithmic10Radio" mnemonicParsing="false" text="%Logarithmic10Coordinate" toggleGroup="$sizeCoordinateGroup" />
-                                                         </children>
-                                                      </FlowPane>
-                                                   </children>
-                                                </VBox>
                                                             </children>
                                                         </VBox>
                                                     </content>
@@ -457,23 +331,8 @@ License:    Apache License Version 2.0
                                                                         <Label text="px" />
                                                                     </children>
                                                                 </HBox>
-                                                                <HBox fx:id="barGapBox" alignment="CENTER_LEFT" spacing="5.0">
-                                                                    <children>
-                                                                        <Label minHeight="-Infinity" text="%BarGap" wrapText="true" />
-                                                                        <ComboBox fx:id="barGapSelector" editable="true" prefWidth="100.0" />
-                                                                        <Label text="px" />
-                                                                    </children>
-                                                                </HBox>
-                                                                <HBox fx:id="categoryGapBox" alignment="CENTER_LEFT" spacing="5.0">
-                                                                    <children>
-                                                                        <Label minHeight="-Infinity" text="%CategoryGap" wrapText="true" />
-                                                                        <ComboBox fx:id="categoryGapSelector" editable="true" prefWidth="100.0" />
-                                                                        <Label text="px" />
-                                                                    </children>
-                                                                </HBox>
                                                 <VBox fx:id="categoryNumbersBox" spacing="10.0">
                                                    <children>
-                                                      <CheckBox fx:id="categoryNumbersCheck" mnemonicParsing="false" selected="true" text="%ValuesAreNumbers" />
                                                       <FlowPane fx:id="categoryCoordinatePane" hgap="2.0" vgap="2.0">
                                                          <children>
                                                             <Label maxWidth="1.7976931348623157E308" text="%Coordinate" />

@@ -24,7 +24,7 @@ import org.apache.commons.math3.stat.Frequency;
  * @CreateDate 2022-4-15
  * @License Apache License Version 2.0
  */
-public class Data2DFrequencyController extends Data2DHandleController {
+public class Data2DFrequencyController extends BaseData2DHandleController {
 
     protected List<String> handledNames;
     protected int freCol;

@@ -28,7 +28,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-9-4
  * @License Apache License Version 2.0
  */
-public abstract class Data2DHandleController extends BaseChildController {
+public abstract class BaseData2DHandleController extends BaseChildController {
 
     protected ControlData2DEditTable tableController;
     protected Data2D data2D;
@@ -116,7 +116,6 @@ public abstract class Data2DHandleController extends BaseChildController {
             this.tableController = tableController;
 
             sourceController.setParameters(this, tableController);
-            sourceController.setLabel(message("SelectRowsColumnsToHanlde"));
 
             if (targetController != null) {
                 targetController.setParameters(this, tableController);
@@ -153,11 +152,18 @@ public abstract class Data2DHandleController extends BaseChildController {
                     checkOptions();
                 }
             });
+
+            setSourceLabel(message("SelectRowsColumnsToHanlde"));
+
             checkOptions();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    public void setSourceLabel(String message) {
+        sourceController.setLabel(message);
     }
 
     public boolean checkOptions() {

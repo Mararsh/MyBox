@@ -6,7 +6,7 @@ import javafx.scene.chart.BubbleChart;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import mara.mybox.controller.Data2DChartController;
+import mara.mybox.controller.BaseData2DChartXYController;
 
 /**
  * Reference:
@@ -19,7 +19,7 @@ import mara.mybox.controller.Data2DChartController;
  */
 public class LabeledBubbleChart<X, Y> extends BubbleChart<X, Y> {
 
-    protected Data2DChartController chartController;
+    protected BaseData2DChartXYController chartController;
     protected ChartOptions<X, Y> options;
 
     public LabeledBubbleChart(Axis xAxis, Axis yAxis) {
@@ -36,7 +36,7 @@ public class LabeledBubbleChart<X, Y> extends BubbleChart<X, Y> {
         options = new ChartOptions<>(this);
     }
 
-    public LabeledBubbleChart setChartController(Data2DChartController chartController) {
+    public LabeledBubbleChart setChartController(BaseData2DChartXYController chartController) {
         this.chartController = chartController;
         options = new ChartOptions<>(chartController);
         return this;

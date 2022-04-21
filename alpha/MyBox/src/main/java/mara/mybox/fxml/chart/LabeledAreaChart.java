@@ -6,7 +6,7 @@ import javafx.scene.chart.Axis;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import mara.mybox.controller.Data2DChartController;
+import mara.mybox.controller.BaseData2DChartXYController;
 
 /**
  * Reference:
@@ -19,7 +19,7 @@ import mara.mybox.controller.Data2DChartController;
  */
 public class LabeledAreaChart<X, Y> extends AreaChart<X, Y> {
 
-    protected Data2DChartController chartController;
+    protected BaseData2DChartXYController chartController;
     protected ChartOptions<X, Y> options;
 
     public LabeledAreaChart(Axis xAxis, Axis yAxis) {
@@ -36,14 +36,14 @@ public class LabeledAreaChart<X, Y> extends AreaChart<X, Y> {
         options = new ChartOptions<>(this);
     }
 
-    public LabeledAreaChart setChartController(Data2DChartController chartController) {
+    public LabeledAreaChart setChartController(BaseData2DChartXYController chartController) {
         this.chartController = chartController;
         options = new ChartOptions<>(chartController);
         setCreateSymbols(chartController.displayLabel());
         return this;
     }
 
-    public LabeledAreaChart setOptions(Data2DChartController chartController) {
+    public LabeledAreaChart setOptions(BaseData2DChartXYController chartController) {
         this.chartController = chartController;
         options = new ChartOptions<>(chartController);
         setCreateSymbols(chartController.displayLabel());

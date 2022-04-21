@@ -12,7 +12,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-12-9
  * @License Apache License Version 2.0
  */
-public class Data2DTransposeController extends Data2DHandleController {
+public class Data2DTransposeController extends BaseData2DHandleController {
 
     @Override
     public void setParameters(ControlData2DEditTable editController) {

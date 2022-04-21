@@ -24,7 +24,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-9-4
  * @License Apache License Version 2.0
  */
-public class Data2DSetValuesController extends Data2DHandleController {
+public class Data2DSetValuesController extends BaseData2DHandleController {
 
     protected String value;
 

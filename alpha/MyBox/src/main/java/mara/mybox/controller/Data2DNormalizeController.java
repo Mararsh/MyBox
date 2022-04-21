@@ -16,7 +16,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-12-28
  * @License Apache License Version 2.0
  */
-public class Data2DNormalizeController extends Data2DHandleController {
+public class Data2DNormalizeController extends BaseData2DHandleController {
 
     @FXML
     protected ControlData2DNormalize normalizeController;
