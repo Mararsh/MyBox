@@ -68,7 +68,8 @@ public class Data2DChartXYController extends BaseData2DChartXYController {
     protected ToggleGroup chartGroup, sizeCoordinateGroup;
 
     public Data2DChartXYController() {
-        TipsLabelKey = "DataChartTips";
+        baseTitle = message("XYChart");
+        TipsLabelKey = "DataChartXYTips";
     }
 
     @Override

@@ -38,6 +38,10 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
     @FXML
     protected FlowPane matrixPane;
 
+    public Data2DSetValuesController() {
+        baseTitle = message("SetValues");
+    }
+
     @Override
     public void initControls() {
         super.initControls();

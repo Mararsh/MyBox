@@ -270,7 +270,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             csvPrinter.printRecord(names);
             List<String> row = new ArrayList<>();
             row.add(message("All") + "-" + message("Summation"));
-            double sum = reader.getValue();
+            double sum = reader.gettValue();
             row.add(DoubleTools.format(sum, scale));
             if (withValues) {
                 row.add("100");
@@ -349,7 +349,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         CSVFormat targetFormat = CSVFormat.DEFAULT
                 .withIgnoreEmptyLines().withTrim().withNullString("")
                 .withDelimiter(',');
-        Data2DReader reader = null;
+        Data2DReader reader;
         try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
             List<String> row = new ArrayList<>();
             row.add(colName);

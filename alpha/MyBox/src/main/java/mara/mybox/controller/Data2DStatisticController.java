@@ -53,6 +53,10 @@ public class Data2DStatisticController extends BaseData2DHandleController {
     @FXML
     protected VBox operationBox;
 
+    public Data2DStatisticController() {
+        baseTitle = message("DescriptiveStatistics");
+    }
+
     @Override
     public void setControlsStyle() {
         try {

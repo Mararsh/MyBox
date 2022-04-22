@@ -21,6 +21,10 @@ public class Data2DNormalizeController extends BaseData2DHandleController {
     @FXML
     protected ControlData2DNormalize normalizeController;
 
+    public Data2DNormalizeController() {
+        baseTitle = message("Normalize");
+    }
+
     @Override
     public boolean checkOptions() {
         targetController.setNotInTable(sourceController.allPages());

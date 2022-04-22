@@ -34,7 +34,8 @@ public class Data2DChartPieController extends BaseData2DChartController {
     protected CheckBox clockwiseCheck;
 
     public Data2DChartPieController() {
-        TipsLabelKey = "DataChartTips";
+        baseTitle = message("PieChart");
+        TipsLabelKey = "DataChartPieTips";
     }
 
     @Override

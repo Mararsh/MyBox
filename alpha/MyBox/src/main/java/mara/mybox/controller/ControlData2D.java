@@ -711,9 +711,9 @@ public class ControlData2D extends BaseController {
             menu.setDisable(empty);
             calMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("LinearRegression"), StyleTools.getIconImage("iconScatterChart.png"));
+            menu = new MenuItem(message("SimpleLinearRegression"), StyleTools.getIconImage("iconLinearPgression.png"));
             menu.setOnAction((ActionEvent event) -> {
-                Data2DRegressionController.open(tableController);
+                Data2DSimpleLinearRegressionController.open(tableController);
             });
             menu.setDisable(empty);
             calMenu.getItems().add(menu);

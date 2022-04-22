@@ -48,6 +48,10 @@ public class Data2DSetStylesController extends BaseData2DHandleController {
     @FXML
     protected VBox styleBox;
 
+    public Data2DSetStylesController() {
+        baseTitle = message("SetStyles");
+    }
+
     @Override
     public void initControls() {
         try {

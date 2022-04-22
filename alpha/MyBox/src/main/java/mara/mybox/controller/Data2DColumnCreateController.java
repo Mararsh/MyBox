@@ -44,6 +44,7 @@ public class Data2DColumnCreateController extends BaseChildController {
     protected Label buttomLabel;
 
     public Data2DColumnCreateController() {
+        baseTitle = message("NewColumn");
         TipsLabelKey = message("SqlIdentifierComments");
     }
 

@@ -140,31 +140,19 @@ public class Normalization {
             if (len == 0) {
                 return vector;
             }
-            double maxPositive = 0, minNegative = 0;
+            double maxAbs = 0;
             for (double d : vector) {
-                if (d > 0) {
-                    if (d > maxPositive) {
-                        maxPositive = d;
-                    }
-                } else if (d < 0) {
-                    if (d < minNegative) {
-                        minNegative = d;
-                    }
+                if (Math.abs(d) > maxAbs) {
+                    maxAbs = d;
                 }
             }
+            if (maxAbs == 0) {
+                return vector;
+            }
             double[] result = new double[len];
-            minNegative = Math.abs(minNegative);
             for (int i = 0; i < len; i++) {
                 double d = vector[i];
-                if (d > 0) {
-                    if (maxPositive > 0) {
-                        result[i] = width * vector[i] / maxPositive;
-                    }
-                } else {
-                    if (minNegative > 0) {
-                        result[i] = width * vector[i] / minNegative;
-                    }
-                }
+                result[i] = width * vector[i] / maxAbs;
             }
             return result;
         } catch (Exception e) {

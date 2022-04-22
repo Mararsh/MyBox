@@ -41,6 +41,10 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
     @FXML
     protected Label memoryNoticeLabel;
 
+    public Data2DFrequencyController() {
+        baseTitle = message("FrequencyDistributions");
+    }
+
     @Override
     public void initValues() {
         try {
@@ -172,7 +176,6 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
     public boolean handleRows() {
         try {
             outputData = new ArrayList<>();
-            int scale = data2D.getScale();
             for (int r : sourceController.checkedRowsIndices) {
                 List<String> tableRow = tableController.tableData.get(r);
                 String d = tableRow.get(freCol + 1);

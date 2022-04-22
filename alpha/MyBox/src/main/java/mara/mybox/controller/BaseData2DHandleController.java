@@ -52,6 +52,10 @@ public abstract class BaseData2DHandleController extends BaseChildController {
     @FXML
     protected RadioButton columnsRadio, rowsRadio, allRadio;
 
+    public BaseData2DHandleController() {
+        baseTitle = message("Handle");
+    }
+
     @Override
     public void setStageStatus() {
         setAsNormal();
@@ -67,13 +71,7 @@ public abstract class BaseData2DHandleController extends BaseChildController {
                 objectGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                     @Override
                     public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                        if (rowsRadio.isSelected()) {
-                            objectType = ObjectType.Rows;
-                        } else if (allRadio.isSelected()) {
-                            objectType = ObjectType.All;
-                        } else {
-                            objectType = ObjectType.Columns;
-                        }
+                        objectChanged();
                     }
                 });
             }
@@ -90,18 +88,7 @@ public abstract class BaseData2DHandleController extends BaseChildController {
                 scaleSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                     @Override
                     public void changed(ObservableValue ov, String oldValue, String newValue) {
-                        try {
-                            int v = Integer.parseInt(scaleSelector.getValue());
-                            if (v >= 0 && v <= 15) {
-                                scale = (short) v;
-                                UserConfig.setInt(baseName + "Scale", v);
-                                scaleSelector.getEditor().setStyle(null);
-                            } else {
-                                scaleSelector.getEditor().setStyle(UserConfig.badStyle());
-                            }
-                        } catch (Exception e) {
-                            scaleSelector.getEditor().setStyle(UserConfig.badStyle());
-                        }
+                        scaleChanged();
                     }
                 });
             }
@@ -109,6 +96,23 @@ public abstract class BaseData2DHandleController extends BaseChildController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    public boolean scaleChanged() {
+        try {
+            int v = Integer.parseInt(scaleSelector.getValue());
+            if (v >= 0 && v <= 15) {
+                scale = (short) v;
+                UserConfig.setInt(baseName + "Scale", v);
+                scaleSelector.getEditor().setStyle(null);
+                return true;
+            } else {
+                scaleSelector.getEditor().setStyle(UserConfig.badStyle());
+            }
+        } catch (Exception e) {
+            scaleSelector.getEditor().setStyle(UserConfig.badStyle());
+        }
+        return false;
     }
 
     public void setParameters(ControlData2DEditTable tableController) {
@@ -126,7 +130,7 @@ public abstract class BaseData2DHandleController extends BaseChildController {
                 rowNumberCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(baseName + "CopyRowNumber", rowNumberCheck.isSelected());
+                        rowNumberCheckChanged();
                     }
                 });
             }
@@ -162,6 +166,20 @@ public abstract class BaseData2DHandleController extends BaseChildController {
         }
     }
 
+    public void objectChanged() {
+        if (rowsRadio.isSelected()) {
+            objectType = ObjectType.Rows;
+        } else if (allRadio.isSelected()) {
+            objectType = ObjectType.All;
+        } else {
+            objectType = ObjectType.Columns;
+        }
+    }
+
+    public void rowNumberCheckChanged() {
+        UserConfig.setBoolean(baseName + "CopyRowNumber", rowNumberCheck.isSelected());
+    }
+
     public void setSourceLabel(String message) {
         sourceController.setLabel(message);
     }
@@ -171,7 +189,7 @@ public abstract class BaseData2DHandleController extends BaseChildController {
             return false;
         }
         data2D = tableController.data2D;
-        getMyStage().setTitle(tableController.getTitle());
+        getMyStage().setTitle(baseTitle + (data2D == null ? "" : " - " + data2D.displayName()));
 
         if (dataLabel != null) {
             dataLabel.setText(tableController.data2D.displayName());

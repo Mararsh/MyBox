@@ -41,6 +41,10 @@ public class Data2DSortController extends BaseData2DHandleController {
     @FXML
     protected Label memoryNoticeLabel;
 
+    public Data2DSortController() {
+        baseTitle = message("Sort");
+    }
+
     @Override
     public void setParameters(ControlData2DEditTable tableController) {
         try {
@@ -90,15 +94,7 @@ public class Data2DSortController extends BaseData2DHandleController {
     public boolean checkOptions() {
         boolean ok = super.checkOptions();
         targetController.setNotInTable(sourceController.allPages());
-        if (!data2D.isTable() && sourceController.allPages()) {
-            if (!thisPane.getChildren().contains(memoryNoticeLabel)) {
-                thisPane.getChildren().add(3, memoryNoticeLabel);
-            }
-        } else {
-            if (thisPane.getChildren().contains(memoryNoticeLabel)) {
-                thisPane.getChildren().remove(memoryNoticeLabel);
-            }
-        }
+        memoryNoticeLabel.setVisible(!data2D.isTable() && sourceController.allPages());
         orderCol = data2D.colOrder(colSelector.getSelectionModel().getSelectedItem());
         colsIndices = sourceController.checkedColsIndices();
         if (colsIndices == null || colsIndices.isEmpty() || orderCol < 0) {

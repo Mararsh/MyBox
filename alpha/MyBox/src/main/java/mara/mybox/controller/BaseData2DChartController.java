@@ -277,6 +277,15 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     }
 
     @Override
+    public boolean scaleChanged() {
+        if (super.scaleChanged()) {
+            okAction();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public void setParameters(ControlData2DEditTable tableController) {
         try {
             super.setParameters(tableController);

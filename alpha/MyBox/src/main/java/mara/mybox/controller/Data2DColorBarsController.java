@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,6 +8,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.data.Normalization;
 import mara.mybox.data.StringTable;
@@ -34,18 +34,27 @@ public class Data2DColorBarsController extends BaseData2DHandleController {
     protected CheckBox zeroCheck, otherCheck;
     @FXML
     protected ComboBox<String> widthSelector;
+    @FXML
+    protected ControlWebView webViewController;
+
+    public Data2DColorBarsController() {
+        baseTitle = message("ColorBars");
+        TipsLabelKey = "ColorBarsTips";
+    }
 
     @Override
     public void initControls() {
         try {
             super.initControls();
 
-            barWidth = UserConfig.getInt(baseName + "Width", 100);
+            webViewController.setParent(this);
+
+            barWidth = UserConfig.getInt(baseName + "Width", 150);
             if (barWidth < 0) {
                 barWidth = 100;
             }
             widthSelector.getItems().addAll(
-                    Arrays.asList("100", "50", "150", "80", "120", "200", "300")
+                    Arrays.asList("150", "100", "200", "50", "80", "120", "300")
             );
             widthSelector.setValue(barWidth + "");
             widthSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -57,6 +66,7 @@ public class Data2DColorBarsController extends BaseData2DHandleController {
                             barWidth = v;
                             UserConfig.setInt(baseName + "Width", v);
                             widthSelector.getEditor().setStyle(null);
+                            okAction();
                         } else {
                             widthSelector.getEditor().setStyle(UserConfig.badStyle());
                         }
@@ -71,6 +81,16 @@ public class Data2DColorBarsController extends BaseData2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "ZeroBased", zeroCheck.isSelected());
+                    okAction();
+                }
+            });
+
+            otherCheck.setSelected(UserConfig.getBoolean(baseName + "WithOthers", true));
+            otherCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "WithOthers", otherCheck.isSelected());
+                    okAction();
                 }
             });
 
@@ -86,9 +106,23 @@ public class Data2DColorBarsController extends BaseData2DHandleController {
 
             sourceController.showAllPages(false);
 
+            okAction();
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @Override
+    public void objectChanged() {
+        super.objectChanged();
+        okAction();
+    }
+
+    @Override
+    public void rowNumberCheckChanged() {
+        super.rowNumberCheckChanged();
+        okAction();
     }
 
     @FXML
@@ -102,7 +136,7 @@ public class Data2DColorBarsController extends BaseData2DHandleController {
             private List<Integer> checkedRowsIndices, checkedColsIndices;
             private double[][] data, bars;
             private StringTable table;
-            private boolean zeroBased;
+            private boolean zeroBased, allNeg, allPos;
 
             @Override
             protected boolean handle() {
@@ -112,12 +146,20 @@ public class Data2DColorBarsController extends BaseData2DHandleController {
                     int rowsNumber = checkedRowsIndices.size();
                     int colsNumber = checkedColsIndices.size();
                     data = new double[rowsNumber][colsNumber];
+                    allNeg = true;
+                    allPos = true;
                     for (int r = 0; r < rowsNumber; r++) {
                         int row = checkedRowsIndices.get(r);
                         List<String> tableRow = tableController.tableData.get(row);
                         for (int c = 0; c < colsNumber; c++) {
                             int col = checkedColsIndices.get(c);
-                            data[r][c] = data2D.doubleValue(tableRow.get(col + 1));
+                            double d = data2D.doubleValue(tableRow.get(col + 1));
+                            data[r][c] = d;
+                            if (d > 0) {
+                                allNeg = false;
+                            } else if (d < 0) {
+                                allPos = false;
+                            }
                         }
                     }
                     zeroBased = zeroCheck.isSelected();
@@ -174,25 +216,14 @@ public class Data2DColorBarsController extends BaseData2DHandleController {
                         }
                     }
                     String title = data2D.displayName() + " - ";
-                    String object = null;
                     if (columnsRadio.isSelected()) {
                         title += message("ColumnComparison");
-                        object = message("Column");
                     } else if (rowsRadio.isSelected()) {
                         title += message("RowComparison");
-                        object = message("Row");
                     } else if (allRadio.isSelected()) {
                         title += message("AllComparison");
-                        object = message("All");
                     }
                     table = new StringTable(names, title);
-                    String comments;
-                    if (zeroBased) {
-                        comments = MessageFormat.format(message("ColorBarsBaseZeroComments"), object);
-                    } else {
-                        comments = MessageFormat.format(message("ColorBarsMinMaxComments"), object);
-                    }
-                    table.setComments(comments);
                     for (int r = 0; r < rowsNumber; r++) {
                         int row = checkedRowsIndices.get(r);
                         List<String> htmlRow = new ArrayList<>();
@@ -215,7 +246,11 @@ public class Data2DColorBarsController extends BaseData2DHandleController {
                                 if (zeroBased) {
                                     Color nColor = FxColorTools.invert(color);
                                     if (width == 0) {
-                                        v = "<SPAN style=\"display: inline-block; width:" + (barWidth * 2) + "px;text-align:center;\">" + value + "</SPAN>";
+                                        if (allNeg || allPos) {
+                                            v = "<SPAN>" + value + "</SPAN>";
+                                        } else {
+                                            v = "<SPAN style=\"display: inline-block; width:" + (barWidth * 2) + "px;text-align:center;\">" + value + "</SPAN>";
+                                        }
                                     } else if (width < 0) {
                                         double nWidth = Math.abs(width);
                                         v = "<SPAN style=\"display: inline-block; width:" + (barWidth - nWidth) + "px;\">&nbsp;</SPAN>";
@@ -223,18 +258,29 @@ public class Data2DColorBarsController extends BaseData2DHandleController {
                                                 + ";color:" + FxColorTools.color2rgb(FxColorTools.foreColor(nColor))
                                                 + ";display: inline-block; width:" + nWidth + "px;text-align:center;font-size:0.8em;\">-"
                                                 + (int) (nWidth * 100 / barWidth) + "%</SPAN>";
-                                        v += "<SPAN style=\"display: inline-block; width:" + barWidth + "px;text-align:left;\">" + value + "</SPAN>";
+                                        if (allNeg) {
+                                            v += "<SPAN>" + value + "</SPAN>";
+                                        } else {
+                                            v += "<SPAN style=\"display: inline-block; width:" + barWidth + "px;text-align:left;\">" + value + "</SPAN>";
+                                        }
                                     } else {
-                                        v = "<SPAN style=\"display: inline-block; width:" + barWidth + "px;text-align:right;\">" + value + "</SPAN>";
+                                        if (!allPos) {
+                                            v = "<SPAN style=\"display: inline-block; width:" + barWidth + "px;text-align:right;\">" + value + "</SPAN>";
+                                        } else {
+                                            v = "";
+                                        }
                                         v += "<SPAN style=\"background-color:" + FxColorTools.color2rgb(color)
                                                 + ";color:" + FxColorTools.color2rgb(FxColorTools.foreColor(color))
                                                 + ";display: inline-block; width:" + width + "px;text-align:center;font-size:0.8em;\">"
                                                 + (int) (width * 100 / barWidth) + "%</SPAN>";
                                         v += "<SPAN style=\"display: inline-block; width:" + (barWidth - width) + "px;\">&nbsp;</SPAN>";
+                                        if (allPos) {
+                                            v += "<SPAN>" + value + "</SPAN>";
+                                        }
                                     }
                                 } else {
                                     if (width == 0) {
-                                        v = "<SPAN style=\"display: inline-block; width:" + barWidth + "px;text-align:center;\">" + value + "</SPAN>";
+                                        v = "<SPAN>" + value + "</SPAN>";
                                     } else {
                                         v = "<SPAN style=\"background-color:" + FxColorTools.color2rgb(color)
                                                 + ";color:" + FxColorTools.color2rgb(FxColorTools.foreColor(color))
@@ -255,11 +301,21 @@ public class Data2DColorBarsController extends BaseData2DHandleController {
 
             @Override
             protected void whenSucceeded() {
-                table.htmlTable();
+                webViewController.loadContents(table.html());
             }
 
         };
         start(task);
+    }
+
+    @FXML
+    public void editAction() {
+        webViewController.editAction();
+    }
+
+    @FXML
+    public void popFunctionsMenu(MouseEvent mouseEvent) {
+        webViewController.popFunctionsMenu(mouseEvent);
     }
 
     /*

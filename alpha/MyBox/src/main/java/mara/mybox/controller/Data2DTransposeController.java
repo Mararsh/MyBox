@@ -14,6 +14,10 @@ import static mara.mybox.value.Languages.message;
  */
 public class Data2DTransposeController extends BaseData2DHandleController {
 
+    public Data2DTransposeController() {
+        baseTitle = message("Transpose");
+    }
+
     @Override
     public void setParameters(ControlData2DEditTable editController) {
         try {

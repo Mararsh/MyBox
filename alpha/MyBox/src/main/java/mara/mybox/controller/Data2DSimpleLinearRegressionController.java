@@ -13,11 +13,12 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-4-21
  * @License Apache License Version 2.0
  */
-public class Data2DRegressionController extends BaseData2DChartXYController {
+public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYController {
 
     protected LabeledScatterChart​ scatterChart​;
 
-    public Data2DRegressionController() {
+    public Data2DSimpleLinearRegressionController() {
+        baseTitle = message("LinearRegression");
         TipsLabelKey = "DataChartTips";
     }
 
@@ -144,10 +145,10 @@ public class Data2DRegressionController extends BaseData2DChartXYController {
     /*
         static
      */
-    public static Data2DRegressionController open(ControlData2DEditTable tableController) {
+    public static Data2DSimpleLinearRegressionController open(ControlData2DEditTable tableController) {
         try {
-            Data2DRegressionController controller = (Data2DRegressionController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DRegressionFxml, false);
+            Data2DSimpleLinearRegressionController controller = (Data2DSimpleLinearRegressionController) WindowTools.openChildStage(
+                    tableController.getMyWindow(), Fxmls.Data2DSimpleLinearRegressionFxml, false);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

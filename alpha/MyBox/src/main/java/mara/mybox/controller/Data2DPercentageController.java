@@ -37,6 +37,10 @@ public class Data2DPercentageController extends BaseData2DHandleController {
     @FXML
     protected RadioButton zeroRadio, absRadio;
 
+    public Data2DPercentageController() {
+        baseTitle = message("ValuePercentage");
+    }
+
     @Override
     public void initControls() {
         try {

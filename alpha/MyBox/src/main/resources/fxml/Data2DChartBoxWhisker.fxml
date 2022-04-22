@@ -70,22 +70,28 @@ License:    Apache License Version 2.0
                                                             </padding>
                                                             <children>
                                                                 <fx:include fx:id="source" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DSource.fxml" VBox.vgrow="ALWAYS" />
-                                                                <VBox fx:id="columnsBox" spacing="5.0">
-                                                                    <children>
-                                                                        <FlowPane fx:id="valueColumnPane" hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
-                                                                            <children>
-                                                                                <Label minHeight="-Infinity" minWidth="-Infinity" text="%ValueColumn" />
-                                                                                <ComboBox fx:id="valueColumnSelector" prefWidth="200.0" />
-                                                                            </children>
-                                                                        </FlowPane>
-                                                                        <FlowPane fx:id="categoryColumnsPane" hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
-                                                                            <children>
-                                                                                <Label minHeight="-Infinity" minWidth="-Infinity" text="%CategoryColumn" />
-                                                                                <ComboBox fx:id="categoryColumnSelector" prefWidth="200.0" />
-                                                                            </children>
-                                                                        </FlowPane>
-                                                                    </children>
-                                                                </VBox>
+                                                <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                   <children>
+                                                      <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="500.0" vgap="5.0">
+                                                         <children>
+                                                            <Label text="%AccordingTo" />
+                                                            <RadioButton fx:id="columnsRadio" mnemonicParsing="false" selected="true" text="%Columns">
+                                                               <toggleGroup>
+                                                                  <ToggleGroup fx:id="objectGroup" />
+                                                               </toggleGroup>
+                                                            </RadioButton>
+                                                            <RadioButton fx:id="rowsRadio" mnemonicParsing="false" text="%Rows" toggleGroup="$objectGroup" />
+                                                            <RadioButton fx:id="allRadio" mnemonicParsing="false" text="%All" toggleGroup="$objectGroup" />
+                                                         </children>
+                                                      </FlowPane>
+                                                      <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                                         <children>
+                                                            <Label minHeight="-Infinity" text="%DecimalScale" wrapText="true" />
+                                                            <ComboBox fx:id="scaleSelector1" editable="true" prefWidth="120.0" />
+                                                         </children>
+                                                      </HBox>
+                                                   </children>
+                                                </VBox>
                                                                 <HBox alignment="CENTER_LEFT" spacing="2.0"> 
                                                                     <children>
                                                                       <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />

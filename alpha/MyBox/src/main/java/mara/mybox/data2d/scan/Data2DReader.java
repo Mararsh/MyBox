@@ -45,7 +45,7 @@ public abstract class Data2DReader {
     protected List<List<String>> rows = new ArrayList<>();
     protected List<Integer> cols;
     protected boolean includeRowNumber, includeColName, withValues, failed, sumAbs;
-    protected double from, to, value;
+    protected double from, to, tValue;
     protected double[] colValues;
     protected ControlDataConvert convertController;
     protected Connection conn;
@@ -169,7 +169,7 @@ public abstract class Data2DReader {
                     return null;
                 }
                 if (scanPass == 1) {
-                    value = 0d;
+                    tValue = 0d;
                 } else if (csvPrinter == null) {
                     failed = true;
                     return null;
@@ -734,10 +734,10 @@ public abstract class Data2DReader {
                 double v = data2D.doubleValue(record.get(i));
                 if (v < 0) {
                     if (sumAbs) {
-                        value += Math.abs(v);
+                        tValue += Math.abs(v);
                     }
                 } else if (v > 0) {
-                    value += v;
+                    tValue += v;
                 }
             }
         } catch (Exception e) {
@@ -764,10 +764,10 @@ public abstract class Data2DReader {
                         v = 0;
                     }
                 }
-                if (value == 0) {
+                if (tValue == 0) {
                     row.add("0");
                 } else {
-                    row.add(DoubleTools.percentage(v, value, scale));
+                    row.add(DoubleTools.percentage(v, tValue, scale));
                 }
             }
             csvPrinter.printRecord(row);
@@ -928,7 +928,7 @@ public abstract class Data2DReader {
                     row.add(null);
                 } else {
                     double v = data2D.doubleValue(record.get(i));
-                    v = v * value;
+                    v = v * tValue;
                     row.add(DoubleTools.scale(v, scale) + "");
                 }
             }
@@ -1052,12 +1052,18 @@ public abstract class Data2DReader {
                     }
                     break;
                 case Frequency:
-                    count = 0;
+                    List<String> row = new ArrayList<>();
+                    row.add(message("All"));
+                    row.add(frequency.getSumFreq() + "");
+                    row.add("100");
+                    csvPrinter.printRecord(row);
+                    count = 1;
                     Iterator iterator = frequency.valuesIterator();
                     if (iterator != null) {
                         while (iterator.hasNext()) {
-                            List<String> row = new ArrayList<>();
-                            String value = (String) iterator.next();
+                            Object o = iterator.next();
+                            row.clear();
+                            String value = o == null ? null : (String) o;
                             row.add(value);
                             row.add(frequency.getCount(value) + "");
                             row.add(DoubleTools.format(frequency.getPct(value) * 100, scale));
@@ -1067,7 +1073,6 @@ public abstract class Data2DReader {
                     }
                     frequency.clear();
                     break;
-
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -1244,12 +1249,12 @@ public abstract class Data2DReader {
         return this;
     }
 
-    public double getValue() {
-        return value;
+    public double gettValue() {
+        return tValue;
     }
 
     public Data2DReader setValue(double value) {
-        this.value = value;
+        this.tValue = value;
         return this;
     }
 
