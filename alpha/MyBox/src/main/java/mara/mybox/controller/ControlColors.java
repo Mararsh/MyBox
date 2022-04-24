@@ -1028,7 +1028,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
     public void copyAction() {
         ColorCopyController controller = (ColorCopyController) openStage(Fxmls.ColorCopyFxml);
         controller.setValues(manageController);
-        controller.toFront();
+        controller.requestMouse();
     }
 
     protected void addColor(Color color) {

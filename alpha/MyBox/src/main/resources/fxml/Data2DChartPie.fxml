@@ -20,11 +20,13 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
 
-<VBox fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" spacing="5.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DChartPieController">
+<VBox fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" spacing="5.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DChartPieController">
     <children>
         <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
             <items>
@@ -232,6 +234,15 @@ License:    Apache License Version 2.0
                                             </image>
                                         </ImageView>
                                         <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                              <CheckBox fx:id="coordinateCheck" mnemonicParsing="false">
+                                 <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconLocation.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </CheckBox>
                                         <Button fx:id="htmlButton" layoutX="466.0" layoutY="10.0" mnemonicParsing="false" onAction="#htmlAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -255,11 +266,11 @@ License:    Apache License Version 2.0
                                 <VBox fx:id="snapBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="1.0" VBox.vgrow="ALWAYS">
                                     <children>
                                         <Label fx:id="dataLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" />
-                                        <VBox fx:id="chartBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                                            <padding>
-                                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                            </padding>
-                                        </VBox>
+                              <AnchorPane fx:id="chartPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" fx:id="xyText" />
+                                 </children>
+                              </AnchorPane>
                                     </children>
                                 </VBox>
                             </children>

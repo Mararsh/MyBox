@@ -99,7 +99,7 @@ public class ControllerTools {
         try {
             final ImageManufactureController controller = (ImageManufactureController) openScene(stage, Fxmls.ImageManufactureFxml);
             controller.loadImageFile(file);
-            controller.toFront();
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -111,7 +111,7 @@ public class ControllerTools {
         try {
             final ImageManufactureController controller = (ImageManufactureController) openScene(stage, Fxmls.ImageManufactureFxml);
             controller.loadImage(file, imageInfo);
-            controller.toFront();
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -123,7 +123,7 @@ public class ControllerTools {
         try {
             final ImageManufactureController controller = (ImageManufactureController) openScene(stage, Fxmls.ImageManufactureFxml);
             controller.loadImageInfo(imageInfo);
-            controller.toFront();
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -135,7 +135,7 @@ public class ControllerTools {
         try {
             final ImageManufactureController controller = (ImageManufactureController) openScene(stage, Fxmls.ImageManufactureFxml);
             controller.loadImage(image);
-            controller.toFront();
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -143,14 +143,14 @@ public class ControllerTools {
         }
     }
 
-    public static void openImageManufacture(String filename) {
-        ControllerTools.openImageManufacture(null, new File(filename));
+    public static ImageManufactureController openImageManufacture(File file) {
+        return openImageManufacture(null, file);
     }
 
     public static ImageViewerController openImageViewer(Stage stage) {
         try {
             final ImageViewerController controller = (ImageViewerController) openScene(stage, Fxmls.ImageViewerFxml);
-            controller.toFront();
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -163,7 +163,7 @@ public class ControllerTools {
             final ImageViewerController controller = openImageViewer(stage);
             if (controller != null && file != null) {
                 controller.loadImageFile(file);
-                controller.toFront();
+                controller.requestMouse();
             }
             return controller;
         } catch (Exception e) {
@@ -173,7 +173,7 @@ public class ControllerTools {
     }
 
     public static ImageViewerController openImageViewer(File file) {
-        return ControllerTools.openImageViewer(null, file);
+        return openImageViewer(null, file);
     }
 
     public static ImageViewerController openImageViewer(String file) {
@@ -207,7 +207,7 @@ public class ControllerTools {
     public static ImagesBrowserController openImagesBrowser(Stage stage) {
         try {
             final ImagesBrowserController controller = (ImagesBrowserController) openScene(stage, Fxmls.ImagesBrowserFxml);
-            controller.toFront();
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -219,7 +219,7 @@ public class ControllerTools {
         try {
             final ImageMetaDataController controller = (ImageMetaDataController) openScene(stage, Fxmls.ImageMetaDataFxml);
             controller.loadImageFileMeta(info);
-            controller.toFront();
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -248,7 +248,7 @@ public class ControllerTools {
             }
             final ImageInformationController controller = (ImageInformationController) openScene(stage, Fxmls.ImageInformationFxml);
             controller.loadImageFileInformation(info);
-            controller.toFront();
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -260,7 +260,7 @@ public class ControllerTools {
         try {
             final TextEditorController controller = (TextEditorController) openScene(stage, Fxmls.TextEditorFxml);
             controller.openFile(file);
-            controller.toFront();
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -272,7 +272,7 @@ public class ControllerTools {
         try {
             final MarkdownEditorController controller = (MarkdownEditorController) openScene(stage, Fxmls.MarkdownEditorFxml);
             controller.openFile(file);
-            controller.toFront();
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -284,7 +284,7 @@ public class ControllerTools {
         try {
             final MediaPlayerController controller = (MediaPlayerController) openScene(stage, Fxmls.MediaPlayerFxml);
             controller.loadFile(file);
-            controller.toFront();
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -296,7 +296,7 @@ public class ControllerTools {
         try {
             final BytesEditorController controller = (BytesEditorController) openScene(stage, Fxmls.BytesEditorFxml);
             controller.openFile(file);
-            controller.toFront();
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -308,7 +308,7 @@ public class ControllerTools {
         try {
             final HtmlTableController controller = (HtmlTableController) openScene(stage, Fxmls.HtmlTableFxml);
             controller.loadBody(body);
-            controller.toFront();
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -320,7 +320,7 @@ public class ControllerTools {
         try {
             final HtmlEditorController controller = (HtmlEditorController) openScene(stage, Fxmls.HtmlEditorFxml);
             controller.loadAddress(link);
-            controller.toFront();
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -332,7 +332,7 @@ public class ControllerTools {
         try {
             final HtmlEditorController controller = (HtmlEditorController) openScene(stage, Fxmls.HtmlEditorFxml);
             controller.sourceFileChanged(file);
-            controller.toFront();
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -343,7 +343,7 @@ public class ControllerTools {
     public static WebBrowserController openWebBrowser(Stage stage, File file) {
         try {
             WebBrowserController controller = WebBrowserController.oneOpen(file);
-            controller.toFront();
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -355,7 +355,7 @@ public class ControllerTools {
         try {
             final PdfViewController controller = (PdfViewController) openScene(stage, Fxmls.PdfViewFxml);
             controller.sourceFileChanged(file);
-            controller.toFront();
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -367,7 +367,7 @@ public class ControllerTools {
         try {
             DataFileCSVController controller = (DataFileCSVController) openScene(stage, Fxmls.DataFileCSVFxml);
             controller.sourceFileChanged(file);
-            controller.toFront();
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -379,7 +379,7 @@ public class ControllerTools {
         try {
             final PptViewController controller = (PptViewController) openScene(stage, Fxmls.PptViewFxml);
             controller.sourceFileChanged(file);
-            controller.toFront();
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -391,7 +391,7 @@ public class ControllerTools {
         try {
             final WordViewController controller = (WordViewController) openScene(stage, Fxmls.WordViewFxml);
             controller.sourceFileChanged(file);
-            controller.toFront();
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -403,7 +403,7 @@ public class ControllerTools {
         try {
             final DataFileExcelController controller = (DataFileExcelController) openScene(stage, Fxmls.DataFileExcelFxml);
             controller.sourceFileChanged(file);
-            controller.toFront();
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -415,7 +415,7 @@ public class ControllerTools {
         try {
             final FileDecompressUnarchiveController controller = (FileDecompressUnarchiveController) openScene(stage, Fxmls.FileDecompressUnarchiveFxml);
             controller.sourceFileChanged(file);
-            controller.toFront();
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

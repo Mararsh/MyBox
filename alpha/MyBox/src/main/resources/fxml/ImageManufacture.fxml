@@ -36,7 +36,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -196,7 +196,7 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </TitledPane>
-                              <TitledPane fx:id="renderPane" layoutX="10.0" layoutY="404.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Render">
+                              <TitledPane fx:id="renderPane" expanded="false" layoutX="10.0" layoutY="404.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Render">
                                  <content>
                                     <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                        <children>
@@ -672,6 +672,7 @@ License:    Apache License Version 2.0
                                                                             </toggleGroup>
                                                                         </RadioButton>
                                                                         <RadioButton fx:id="saveOpenRadio" mnemonicParsing="false" text="%OpenAfterSaveAs" toggleGroup="$saveAsGroup" />
+                                                      <RadioButton fx:id="saveEditRadio" layoutX="15.0" layoutY="33.0" mnemonicParsing="false" text="%EditAfterSaveAs" toggleGroup="$saveAsGroup" />
                                                                         <RadioButton fx:id="saveJustRadio" mnemonicParsing="false" text="%JustSaveAs" toggleGroup="$saveAsGroup" />
                                                                     </children>
                                                                     <VBox.margin>

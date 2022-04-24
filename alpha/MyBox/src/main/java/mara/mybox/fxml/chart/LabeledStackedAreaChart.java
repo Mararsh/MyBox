@@ -20,7 +20,7 @@ import mara.mybox.controller.BaseData2DChartXYController;
 public class LabeledStackedAreaChart<X, Y> extends StackedAreaChart<X, Y> {
 
     protected BaseData2DChartXYController chartController;
-    protected ChartOptions<X, Y> options;
+    protected XYChartOptions<X, Y> options;
 
     public LabeledStackedAreaChart(Axis xAxis, Axis yAxis) {
         super(xAxis, yAxis);
@@ -33,12 +33,12 @@ public class LabeledStackedAreaChart<X, Y> extends StackedAreaChart<X, Y> {
         this.setMaxHeight(Double.MAX_VALUE);
         VBox.setVgrow(this, Priority.ALWAYS);
         HBox.setHgrow(this, Priority.ALWAYS);
-        options = new ChartOptions<>(this);
+        options = new XYChartOptions<>(this);
     }
 
     public LabeledStackedAreaChart setChartController(BaseData2DChartXYController chartController) {
         this.chartController = chartController;
-        options = new ChartOptions<>(chartController);
+        options = new XYChartOptions<>(chartController);
         setCreateSymbols(chartController.displayLabel());
         return this;
     }

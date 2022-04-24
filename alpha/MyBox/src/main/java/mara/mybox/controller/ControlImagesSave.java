@@ -702,7 +702,7 @@ public class ControlImagesSave extends BaseController {
                     recordFileWritten(targetFile);
                     ImageViewerController controller = (ImageViewerController) openStage(Fxmls.ImageViewerFxml);
                     controller.selectSourceFile(targetFile);
-                    controller.toFront();
+                    controller.requestMouse();
                 }
 
             };
@@ -768,7 +768,7 @@ public class ControlImagesSave extends BaseController {
                     recordFileWritten(targetFile);
                     ImageViewerController controller = (ImageViewerController) openStage(Fxmls.ImageViewerFxml);
                     controller.selectSourceFile(targetFile);
-                    controller.toFront();
+                    controller.requestMouse();
                 }
 
             };
@@ -825,7 +825,7 @@ public class ControlImagesSave extends BaseController {
                     recordFileWritten(targetFile);
                     PptViewController controller = (PptViewController) openStage(Fxmls.PptViewFxml);
                     controller.sourceFileChanged(targetFile);
-                    controller.toFront();
+                    controller.requestMouse();
                 }
 
             };

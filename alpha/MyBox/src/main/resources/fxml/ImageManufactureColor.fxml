@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureColorController">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureColorController">
     <children>
         <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
             <children>
@@ -249,6 +249,7 @@
                                 <CheckBox fx:id="distanceExcludeCheck" minWidth="-Infinity" mnemonicParsing="false" text="%Excluded" />
                             </children>
                         </VBox>
+                  <CheckBox fx:id="ignoreTransparentCheck" mnemonicParsing="false" selected="true" text="%IgnoreTransparent" />
                         <HBox alignment="CENTER_LEFT" spacing="5.0">
                             <children>
                                 <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">

@@ -765,7 +765,14 @@ public class ControlData2D extends BaseController {
             menu.setDisable(empty);
             chartMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("ColorBars"), StyleTools.getIconImage("iconBarChartH.png"));
+            menu = new MenuItem(message("BoxWhiskerChart"), StyleTools.getIconImage("iconCandlestickChart.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DColorBarsController.open(tableController);
+            });
+            menu.setDisable(empty);
+            chartMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("SelfComparisonBars"), StyleTools.getIconImage("iconBarChartH.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DColorBarsController.open(tableController);
             });

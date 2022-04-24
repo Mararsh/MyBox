@@ -185,7 +185,7 @@ public abstract class BaseData2DFileController extends BaseData2DController {
         }
         TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
         controller.sourceFileChanged(dataController.data2D.getFile());
-        controller.toFront();
+        controller.requestMouse();
     }
 
 }

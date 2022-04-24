@@ -106,7 +106,7 @@ public class TreeNodesCopyController extends TreeNodesController {
             if (object != null && object instanceof TreeNodesCopyController) {
                 try {
                     controller = (TreeNodesCopyController) object;
-                    controller.toFront();
+                    controller.requestMouse();
                     break;
                 } catch (Exception e) {
                 }

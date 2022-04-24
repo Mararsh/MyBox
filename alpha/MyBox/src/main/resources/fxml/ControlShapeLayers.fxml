@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+
+  <VBox fx:id="mainPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ShapesManageController">
+      <children>
+          <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+              <items>
+                  <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                      <content>
+                          <VBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                     <children>
+                        <FlowPane hgap="5.0" maxWidth="1.7976931348623157E308" prefWrapLength="500.0" vgap="5.0" VBox.vgrow="NEVER">
+                           <children>
+                              <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconDelete.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconClear.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" onDragDetected="#refreshAction" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconRefresh.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </FlowPane>
+                        <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                           <columns>
+                              <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308" minWidth="100.0" prefWidth="-1.0">
+                                 <graphic>
+                                    <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
+                                 </graphic>
+                              </TableColumn>
+                              <TableColumn fx:id="addressColumn" editable="false" prefWidth="100.0" text="%Name" />
+                              <TableColumn fx:id="audioColumn" editable="false" prefWidth="100.0" text="%Type" />
+                              <TableColumn fx:id="videoColumn" editable="false" prefWidth="300.0" text="%Definition" />
+                           </columns>
+                        </TableView>
+                        <Label fx:id="tableLabel" />
+                     </children>
+                          </VBox>
+                      </content>
+                  </ScrollPane>
+                  <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                      <content>
+                          <VBox fx:id="mainBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                              <children>
+                                  <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
+                                      <children>
+                                          <ImageView fx:id="leftPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                              <image>
+                                                  <Image url="@../buttons/Red/iconDoubleLeft.png" />
+                                              </image>
+                                          </ImageView>
+                                          <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                              <image>
+                                                  <Image url="@../buttons/Red/iconTips.png" />
+                                              </image>
+                                          </ImageView>
+                                          <Label fx:id="nameLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
+                              <FlowPane alignment="CENTER_RIGHT" hgap="5.0" prefWrapLength="500.0" vgap="5.0">
+                                 <children>
+                                    <Button fx:id="straightLineButton" mnemonicParsing="false" onAction="#deleteAction">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconStraightLine.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
+                                    <Button fx:id="okButton" layoutX="474.0" layoutY="10.0" mnemonicParsing="false" onAction="#okAction">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconOK.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </FlowPane>
+                                      </children>
+                                  </HBox>
+                        <AnchorPane fx:id="shapesPane" VBox.vgrow="ALWAYS" />
+                              </children>
+                          </VBox>
+                      </content>
+                  </ScrollPane>
+              </items>
+          </SplitPane>
+      </children>
+  </VBox>

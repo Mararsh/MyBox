@@ -1,6 +1,8 @@
 package mara.mybox.fxml.chart;
 
+import javafx.collections.ObservableList;
 import javafx.geometry.Side;
+import javafx.scene.Node;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.layout.HBox;
@@ -20,7 +22,7 @@ import mara.mybox.controller.BaseData2DChartXYController;
 public class LabeledLineChart<X, Y> extends LineChart<X, Y> {
 
     protected BaseData2DChartXYController chartController;
-    protected ChartOptions<X, Y> options;
+    protected XYChartOptions<X, Y> options;
 
     public LabeledLineChart(Axis xAxis, Axis yAxis) {
         super(xAxis, yAxis);
@@ -33,12 +35,12 @@ public class LabeledLineChart<X, Y> extends LineChart<X, Y> {
         this.setMaxHeight(Double.MAX_VALUE);
         VBox.setVgrow(this, Priority.ALWAYS);
         HBox.setHgrow(this, Priority.ALWAYS);
-        options = new ChartOptions<>(this);
+        options = new XYChartOptions<>(this);
     }
 
     public LabeledLineChart setChartController(BaseData2DChartXYController chartController) {
         this.chartController = chartController;
-        options = new ChartOptions<>(chartController);
+        options = new XYChartOptions<>(chartController);
         setCreateSymbols(chartController.displayLabel());
         return this;
     }
@@ -59,6 +61,14 @@ public class LabeledLineChart<X, Y> extends LineChart<X, Y> {
     protected void layoutPlotChildren() {
         super.layoutPlotChildren();
         options.displayLabels();
+    }
+
+    public ObservableList<Node> getPlotNodes() {
+        return getPlotChildren();
+    }
+
+    public boolean addPlotNodes(Node node) {
+        return getPlotChildren().add(node);
     }
 
 }

@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javafx.application.Platform;
+import mara.mybox.bufferedimage.ImageAttributes;
+import mara.mybox.bufferedimage.ImageConvertTools;
 import mara.mybox.data.CoordinateSystem;
 import static mara.mybox.db.DerbyBase.BatchSize;
 import mara.mybox.db.data.ColorData;
@@ -53,6 +55,7 @@ import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
@@ -132,6 +135,9 @@ public class DataMigration {
                 if (lastVersion < 6005004) {
                     updateIn654(conn);
                 }
+                if (lastVersion < 6005005) {
+                    updateIn655(conn);
+                }
             }
             TableStringValues.add(conn, "InstalledVersions", AppValues.AppVersion);
             conn.setAutoCommit(true);
@@ -139,6 +145,60 @@ public class DataMigration {
             MyBoxLog.debug(e.toString());
         }
         return true;
+    }
+
+    private static void updateIn655(Connection conn) {
+        try ( Statement statement = conn.createStatement()) {
+            MyBoxLog.info("Updating tables in 6.5.5...");
+
+            ImageAttributes attributes = new ImageAttributes()
+                    .setImageFormat("png").setColorSpaceName("sRGB")
+                    .setAlpha(ImageAttributes.Alpha.Keep).setQuality(100);
+            File iconPath = new File(AppPaths.getIconsPath());
+            for (File s : iconPath.listFiles()) {
+                String name = s.getAbsolutePath();
+                if (s.isFile() && name.endsWith(".ico")) {
+                    File t = new File(name.substring(0, name.lastIndexOf(".")) + ".png");
+                    ImageConvertTools.convertColorSpace(s, attributes, t);
+                    if (t.exists()) {
+                        FileDeleteTools.delete(s);
+                    }
+                }
+            }
+
+            conn.setAutoCommit(false);
+            TableTreeNode tableTreeNode = new TableTreeNode();
+            ResultSet query = statement.executeQuery("SELECT * FROM Tree_Node "
+                    + "WHERE category='" + TreeNode.WebFavorite + "' AND more is not null");
+            while (query.next()) {
+                TreeNode node = tableTreeNode.readData(query);
+                String icon = node.getMore();
+                if (icon != null && icon.endsWith(".ico")) {
+                    icon = icon.replace(".ico", ".png");
+                    node.setMore(icon);
+                    tableTreeNode.updateData(conn, node);
+                }
+            }
+            conn.commit();
+
+            query = statement.executeQuery("SELECT * FROM Web_History "
+                    + "WHERE icon is not null");
+            TableWebHistory tableWebHistory = new TableWebHistory();
+            while (query.next()) {
+                WebHistory his = tableWebHistory.readData(query);
+                String icon = his.getIcon();
+                if (icon != null && icon.endsWith(".ico")) {
+                    icon = icon.substring(0, icon.lastIndexOf(".")) + ".png";
+                    his.setIcon(icon);
+                    tableWebHistory.updateData(conn, his);
+                }
+            }
+            conn.commit();
+
+            conn.setAutoCommit(true);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     private static void updateIn654(Connection conn) {

@@ -103,25 +103,6 @@ public class WebFavoriteEditor extends TreeNodeEditor {
         }
     }
 
-//    @Override
-//    public TreeNode pickNodeData() {
-//        TreeNode node = super.pickNodeData();
-//        if (node == null) {
-//            return null;
-//        }
-//        String address = node.getValue();
-//        if (address == null || address.isBlank()) {
-//            popError(message("InvalidParameters") + ": " + message("Address"));
-//            return null;
-//        }
-//        try {
-//            URL url = new URL(address);
-//        } catch (Exception e) {
-//            popError(message("InvalidParemeters") + ": " + message("Address"));
-//            return null;
-//        }
-//        return node;
-//    }
     @FXML
     @Override
     public void goAction() {

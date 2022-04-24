@@ -110,6 +110,10 @@ public class FxColorTools {
         return color.grayscale().getRed() > 0.5;
     }
 
+    public static boolean isTransparent(Color color) {
+        return color.equals(Color.TRANSPARENT);
+    }
+
     public static Color foreColor(Color backColor) {
         return isLightColor(backColor) ? Color.BLACK : Color.WHITE;
     }

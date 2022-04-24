@@ -384,7 +384,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Manufacture"), StyleTools.getIconImage("iconEdit.png"));
+            menu = new MenuItem(message("Edit"), StyleTools.getIconImage("iconEdit.png"));
             menu.setOnAction((ActionEvent event) -> {
                 manufactureAction();
             });

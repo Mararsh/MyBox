@@ -3,6 +3,8 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -96,6 +98,19 @@ public class MyBoxIconsController extends BaseBatchFileController {
                             ImageFileInformation finfo = ImageFileInformation.create(file);
                             infos.addAll(finfo.getImagesInformation());
                         }
+                        Collections.sort(infos, new Comparator<ImageInformation>() {
+                            @Override
+                            public int compare(ImageInformation v1, ImageInformation v2) {
+                                long diff = v2.getModifyTime() - v1.getModifyTime();
+                                if (diff == 0) {
+                                    return 0;
+                                } else if (diff > 0) {
+                                    return 1;
+                                } else {
+                                    return -1;
+                                }
+                            }
+                        });
                         return true;
                     }
 

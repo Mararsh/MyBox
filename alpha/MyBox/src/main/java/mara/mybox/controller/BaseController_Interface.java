@@ -166,6 +166,13 @@ public abstract class BaseController_Interface extends BaseController_Files {
                     case Open:
                         saveOpenRadio.setSelected(true);
                         break;
+                    case Edit:
+                        if (saveEditRadio != null) {
+                            saveEditRadio.setSelected(true);
+                        } else if (saveLoadRadio != null) {
+                            saveLoadRadio.setSelected(true);
+                        }
+                        break;
                     case None:
                         saveJustRadio.setSelected(true);
                         break;
@@ -181,6 +188,8 @@ public abstract class BaseController_Interface extends BaseController_Files {
                             saveAsType = BaseController.SaveAsType.None;
                         } else if (saveLoadRadio != null && saveLoadRadio.isSelected()) {
                             saveAsType = BaseController.SaveAsType.Load;
+                        } else if (saveEditRadio != null && saveEditRadio.isSelected()) {
+                            saveAsType = BaseController.SaveAsType.Edit;
                         } else {
                             saveAsType = BaseController.SaveAsType.Open;
                         }

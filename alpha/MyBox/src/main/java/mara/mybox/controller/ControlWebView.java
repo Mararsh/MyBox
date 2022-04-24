@@ -1202,7 +1202,7 @@ public class ControlWebView extends BaseController {
                     } else {
                         controller.loadContents(html);
                     }
-                    controller.toFront();
+                    controller.requestMouse();
                 });
                 items.add(menu);
 
@@ -1596,7 +1596,7 @@ public class ControlWebView extends BaseController {
     public void find(String html) {
         HtmlFindController controller = (HtmlFindController) WindowTools.openStage(Fxmls.HtmlFindFxml);
         controller.loadContents(address, html);
-        controller.toFront();
+        controller.requestMouse();
     }
 
     @FXML

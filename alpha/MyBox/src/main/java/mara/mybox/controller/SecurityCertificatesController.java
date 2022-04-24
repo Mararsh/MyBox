@@ -437,7 +437,7 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
             if (object != null && object instanceof SecurityCertificatesController) {
                 try {
                     controller = (SecurityCertificatesController) object;
-                    controller.toFront();
+                    controller.requestMouse();
                     break;
                 } catch (Exception e) {
                 }

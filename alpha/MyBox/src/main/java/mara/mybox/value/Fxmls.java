@@ -127,7 +127,7 @@ public class Fxmls {
     public static final String ImageManufactureBatchShadowFxml = "/fxml/ImageManufactureBatchShadow.fxml";
     public static final String ImageManufactureBatchTransformFxml = "/fxml/ImageManufactureBatchTransform.fxml";
     public static final String ImageManufactureBatchMarginsFxml = "/fxml/ImageManufactureBatchMargins.fxml";
-    public static final String ImageStatisticFxml = "/fxml/ImageStatistic.fxml";
+    public static final String ShapesManageFxml = "/fxml/ShapesManage.fxml";
 
     public static final String ImageConverterBatchFxml = "/fxml/ImageConverterBatch.fxml";
     public static final String ImagesSpliceFxml = "/fxml/ImagesSplice.fxml";
@@ -194,6 +194,7 @@ public class Fxmls {
     public static final String Data2DFrequencyFxml = "/fxml/Data2DFrequency.fxml";
     public static final String Data2DChartPieFxml = "/fxml/Data2DChartPie.fxml";
     public static final String Data2DChartXYFxml = "/fxml/Data2DChartXY.fxml";
+    public static final String Data2DChartBoxWhiskerFxml = "/fxml/Data2DChartBoxWhisker.fxml";
     public static final String Data2DColorBarsFxml = "/fxml/Data2DColorBars.fxml";
     public static final String Data2DConvertToDatabaseFxml = "/fxml/Data2DConvertToDatabase.fxml";
     public static final String Data2DColumnCreateFxml = "/fxml/Data2DColumnCreate.fxml";

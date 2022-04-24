@@ -140,45 +140,43 @@ License:    Apache License Version 2.0
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#openImageViewer" text="%ImageViewer" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImagesBrowser" text="%ImagesBrowser" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageData" text="%ImageAnalyse" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImageAnalyse" text="%ImageAnalyse" />
                                 <MenuItem mnemonicParsing="false" onAction="#ImagesPlay" text="%ImagesPlay" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageManufacture" text="%ImageManufacture" />
-                                <Menu mnemonicParsing="false" text="%ImageManufactureBatch">
-                                    <items>
-                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchSize" text="%Size" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchCrop" text="%Crop" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchPaste" text="%Paste" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchColor" text="%Color" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchEffects" text="%Effects" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchEnhancement" text="%Enhancement" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchReplaceColor" text="%ReplaceColor" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchText" text="%Text" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchArc" text="%Arc" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchShadow" text="%Shadow" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchTransform" text="%Transform" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchMargins" text="%Margins" />
-                                    </items>
+                                <Menu mnemonicParsing="false" text="%ImageManufacture">
+                                    <MenuItem mnemonicParsing="false" onAction="#openImageManufacture" text="%EditImage" />
+                                    <Menu mnemonicParsing="false" text="%ImageManufactureBatch">
+                                        <items>
+                                            <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchSize" text="%Size" />
+                                            <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchCrop" text="%Crop" />
+                                            <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchPaste" text="%Paste" />
+                                            <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchColor" text="%Color" />
+                                            <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchEffects" text="%Effects" />
+                                            <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchEnhancement" text="%Enhancement" />
+                                            <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchReplaceColor" text="%ReplaceColor" />
+                                            <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchText" text="%Text" />
+                                            <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchArc" text="%Arc" />
+                                            <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchShadow" text="%Shadow" />
+                                            <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchTransform" text="%Transform" />
+                                            <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchMargins" text="%Margins" />
+                                        </items>
+                                    </Menu>
+                                    <SeparatorMenuItem mnemonicParsing="false" />
+                                    <MenuItem mnemonicParsing="false" onAction="#ImagesEditor" text="%ImagesEditor" />
+                                    <MenuItem mnemonicParsing="false" onAction="#ImagesSplice" text="%ImagesSplice" />
+                                    <MenuItem mnemonicParsing="false" onAction="#openImageAlphaAdd" text="%ImageAlphaAdd" />
+                                    <SeparatorMenuItem mnemonicParsing="false" />
+                                    <MenuItem mnemonicParsing="false" onAction="#openImageSplit" text="%ImageSplit" />
+                                    <MenuItem mnemonicParsing="false" onAction="#openImageSample" text="%ImageSubsample" />
+                                    <MenuItem mnemonicParsing="false" onAction="#openImageAlphaExtract" text="%ImageAlphaExtract" />
+                                    <SeparatorMenuItem mnemonicParsing="false" />
+                                    <MenuItem mnemonicParsing="false" onAction="#openImageConverterBatch" text="%ImageConverterBatch" />
+                                    <MenuItem fx:id="imageOcrMenu" mnemonicParsing="false" onAction="#openImageOCR" text="%ImageOCR" />
+                                    <MenuItem fx:id="imageOcrBatchMenu" mnemonicParsing="false" onAction="#openImageOCRBatch" text="%ImageOCRBatch" />
+                                   
                                 </Menu>
-                                <MenuItem mnemonicParsing="false" onAction="#ImagesEditor" text="%ImagesEditor" />
-                                <Menu mnemonicParsing="false" text="%MergeImages">
-                                    <items>
-                                        <MenuItem mnemonicParsing="false" onAction="#ImagesSplice" text="%ImagesSplice" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openImageAlphaAdd" text="%ImageAlphaAdd" />
-                                    </items>
-                                </Menu>
-                                <Menu mnemonicParsing="false" text="%ImagePart">
-                                    <items>
-                                        <MenuItem mnemonicParsing="false" onAction="#openImageSplit" text="%ImageSplit" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openImageSample" text="%ImageSubsample" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openImageAlphaExtract" text="%ImageAlphaExtract" />
-                                    </items>
-                                </Menu>
-                                <MenuItem mnemonicParsing="false" onAction="#openImageConverterBatch" text="%ImageConverterBatch" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem fx:id="imageOcrMenu" mnemonicParsing="false" onAction="#openImageOCR" text="%ImageOCR" />
-                                <MenuItem fx:id="imageOcrBatchMenu" mnemonicParsing="false" onAction="#openImageOCRBatch" text="%ImageOCRBatch" />
-                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#ManageShapes" text="%ManageShapes" />
                                 <MenuItem mnemonicParsing="false" onAction="#openManageColors" text="%ManageColors" />
                                 <MenuItem mnemonicParsing="false" onAction="#queryColor" text="%ColorQuery" />
                                 <Menu mnemonicParsing="false" text="%ColorSpace">

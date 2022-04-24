@@ -607,6 +607,9 @@ public class StyleButton {
                     return new StyleData(id, message("Insert"), "", "iconInsert.png");
             }
         }
+        if (id.startsWith("straightLine")) {
+            return new StyleData(id, message("StraightLine"), "", "iconStraightLine.png");
+        }
         return null;
     }
 

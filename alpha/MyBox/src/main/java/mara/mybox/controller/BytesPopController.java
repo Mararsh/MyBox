@@ -54,7 +54,7 @@ public class BytesPopController extends TextPopController {
     public void editAction() {
         BytesEditorController controller = (BytesEditorController) WindowTools.openStage(Fxmls.BytesEditorFxml);
         controller.loadContents(textArea.getText());
-        controller.toFront();
+        controller.requestMouse();
     }
 
     @FXML

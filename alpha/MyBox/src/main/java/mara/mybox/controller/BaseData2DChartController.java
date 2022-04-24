@@ -7,6 +7,7 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Side;
 import javafx.scene.chart.Chart;
@@ -17,9 +18,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
@@ -53,11 +57,15 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     protected ComboBox<String> categoryColumnSelector, valueColumnSelector,
             titleFontSizeSelector;
     @FXML
-    protected VBox snapBox, chartBox;
+    protected VBox snapBox;
+    @FXML
+    protected AnchorPane chartPane;
+    @FXML
+    protected Text xyText;
     @FXML
     protected TextField titleInput;
     @FXML
-    protected CheckBox autoTitleCheck, popLabelCheck, animatedCheck;
+    protected CheckBox coordinateCheck, autoTitleCheck, popLabelCheck, animatedCheck;
     @FXML
     protected ToggleGroup titleSideGroup, labelGroup, legendGroup;
 
@@ -117,6 +125,14 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             if (tickFontSize < 0) {
                 tickFontSize = 12;
             }
+
+            coordinateCheck.setSelected(UserConfig.getBoolean(baseName + "PointCoordinate", false));
+            coordinateCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
+                if (isSettingValues) {
+                    return;
+                }
+                UserConfig.setBoolean(baseName + "PointCoordinate", coordinateCheck.isSelected());
+            });
 
             labelType = LabelType.NameAndValue;
             labelGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -468,22 +484,58 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
     public void clearChart() {
         chart = null;
-        chartBox.getChildren().clear();
+        chartPane.getChildren().clear();
     }
 
     public void makeFinalChart() {
-        if (chart == null) {
-            return;
-        }
-        chart.setStyle("-fx-font-size: " + titleFontSize + "px; -fx-tick-label-font-size: " + tickFontSize + "px; ");
+        try {
+            if (chart == null) {
+                return;
+            }
+            chart.setStyle("-fx-font-size: " + titleFontSize + "px; -fx-tick-label-font-size: " + tickFontSize + "px; ");
 
-        chart.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        VBox.setVgrow(chart, Priority.ALWAYS);
-        HBox.setHgrow(chart, Priority.ALWAYS);
-        chart.setAnimated(animatedCheck.isSelected());
-        chart.setTitle(titleInput.getText());
-        chart.setTitleSide(titleSide);
-        chartBox.getChildren().add(chart);
+            chart.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+            VBox.setVgrow(chart, Priority.ALWAYS);
+            HBox.setHgrow(chart, Priority.ALWAYS);
+            chart.setAnimated(animatedCheck.isSelected());
+            chart.setTitle(titleInput.getText());
+            chart.setTitleSide(titleSide);
+            chartPane.getChildren().addAll(chart, xyText);
+            AnchorPane.setTopAnchor(chart, 2d);
+            AnchorPane.setBottomAnchor​(chart, 2d);
+            AnchorPane.setLeftAnchor(chart, 2d);
+            AnchorPane.setRightAnchor​(chart, 2d);
+
+            xyText.setStyle("-fx-font-size: 10px; -fx-text-fill: #003472;");
+            chart.setOnMouseMoved(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    mouseMoved(event);
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    public void mouseMoved(MouseEvent event) {
+        try {
+            if (coordinateCheck.isSelected()) {
+                double x = event.getX();
+                double y = event.getY();
+                double w = xyText.getBoundsInParent().getWidth();
+                double h = xyText.getBoundsInParent().getHeight();
+                xyText.setText((int) x + "," + (int) y);
+                xyText.setX(x + w >= chartPane.getWidth() ? x - w - 2 : x);
+                xyText.setY(y + h >= chartPane.getHeight() ? y - h - 2 : y);
+                xyText.setVisible(true);
+            } else {
+                xyText.setVisible(false);
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
     }
 
     @FXML

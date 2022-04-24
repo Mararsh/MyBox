@@ -5,11 +5,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
@@ -63,9 +63,9 @@ public class Data2DChartXYController extends BaseData2DChartXYController {
     @FXML
     protected TextField bubbleStyleInput;
     @FXML
-    protected CheckBox categoryNumbersCheck;
+    protected RadioButton categoryStringRadio, categoryNumberRadio;
     @FXML
-    protected ToggleGroup chartGroup, sizeCoordinateGroup;
+    protected ToggleGroup chartGroup, sizeCoordinateGroup, categoryValuesGroup;
 
     public Data2DChartXYController() {
         baseTitle = message("XYChart");
@@ -224,15 +224,21 @@ public class Data2DChartXYController extends BaseData2DChartXYController {
                         }
                     });
 
-            categoryNumbersCheck.setSelected(UserConfig.getBoolean(baseName + "CategoryNumbers", false));
-            categoryNumbersCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
-                if (isSettingValues) {
-                    return;
+            if (UserConfig.getBoolean(baseName + "CountCategoryAsNumbers", false)) {
+                categoryNumberRadio.fire();
+            }
+            categoryCoordinatePane.setVisible(categoryNumberRadio.isSelected());
+            categoryValuesGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    UserConfig.setBoolean(baseName + "CountCategoryAsNumbers", categoryNumberRadio.isSelected());
+                    categoryCoordinatePane.setVisible(categoryNumberRadio.isSelected());
+                    okAction();
                 }
-                UserConfig.setBoolean(baseName + "CategoryNumbers", categoryNumbersCheck.isSelected());
-                okAction();
             });
-            categoryCoordinatePane.disableProperty().bind(categoryNumbersCheck.selectedProperty().not());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -256,9 +262,9 @@ public class Data2DChartXYController extends BaseData2DChartXYController {
             barGapBox.setDisable(!barChartRadio.isSelected() && !stackedBarChartRadio.isSelected());
             categoryGapBox.setDisable(!barChartRadio.isSelected());
 
-            bubbleBox.setDisable(!bubbleChartRadio.isSelected());
+            bubbleBox.setVisible(bubbleChartRadio.isSelected());
 
-            categoryNumbersBox.setDisable(barChartRadio.isSelected() || stackedBarChartRadio.isSelected());
+            categoryNumbersBox.setVisible(!barChartRadio.isSelected() && !stackedBarChartRadio.isSelected());
 
             checkAutoTitle();
         } catch (Exception e) {
@@ -278,7 +284,7 @@ public class Data2DChartXYController extends BaseData2DChartXYController {
 
     @Override
     public boolean isCategoryNumbers() {
-        return categoryNumbersCheck.isSelected()
+        return categoryNumberRadio.isSelected()
                 && !barChartRadio.isSelected() && !stackedBarChartRadio.isSelected();
     }
 
@@ -455,6 +461,7 @@ public class Data2DChartXYController extends BaseData2DChartXYController {
         } else {
             writeXYChart();
         }
+
     }
 
     public void writeBubbleChart() {

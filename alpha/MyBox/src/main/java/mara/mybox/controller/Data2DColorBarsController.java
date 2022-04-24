@@ -38,7 +38,7 @@ public class Data2DColorBarsController extends BaseData2DHandleController {
     protected ControlWebView webViewController;
 
     public Data2DColorBarsController() {
-        baseTitle = message("ColorBars");
+        baseTitle = message("SelfComparisonBars");
         TipsLabelKey = "ColorBarsTips";
     }
 

@@ -629,7 +629,7 @@ public class HtmlEditorController extends WebAddressController {
     public void editTextFile() {
         TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
         controller.loadContents(codesArea.getText());
-        controller.toFront();
+        controller.requestMouse();
     }
 
     public String htmlCodes(String html) {
@@ -800,7 +800,7 @@ public class HtmlEditorController extends WebAddressController {
     protected void editTexts() {
         TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
         controller.loadContents(textsArea.getText());
-        controller.toFront();
+        controller.requestMouse();
     }
 
     @FXML

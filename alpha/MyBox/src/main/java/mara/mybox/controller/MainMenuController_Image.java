@@ -22,7 +22,7 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
     }
 
     @FXML
-    protected void openImageData(ActionEvent event) {
+    protected void openImageAnalyse(ActionEvent event) {
         loadScene(Fxmls.ImageAnalyseFxml);
     }
 
@@ -122,11 +122,6 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
     }
 
     @FXML
-    protected void openImageStatistic(ActionEvent event) {
-        loadScene(Fxmls.ImageStatisticFxml);
-    }
-
-    @FXML
     protected void openImageAlphaExtract(ActionEvent event) {
         loadScene(Fxmls.ImageAlphaExtractBatchFxml);
     }
@@ -149,6 +144,11 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
     @FXML
     protected void openConvolutionKernelManager(ActionEvent event) {
         loadScene(Fxmls.ConvolutionKernelManagerFxml);
+    }
+
+    @FXML
+    protected void ManageShapes(ActionEvent event) {
+        ShapesManageController.oneOpen();
     }
 
     @FXML

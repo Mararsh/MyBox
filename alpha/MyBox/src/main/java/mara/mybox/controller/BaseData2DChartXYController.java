@@ -21,9 +21,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -580,95 +577,98 @@ public abstract class BaseData2DChartXYController extends BaseData2DChartControl
     }
 
     public void makeAxis() {
-        MyBoxLog.console(isCategoryNumbers());
-        if (isCategoryNumbers()) {
-            numberAxisX = new NumberAxis();
-            numberAxisX.setLabel(categoryName());
-            numberAxisX.setSide(categorySide);
-            numberAxisX.setTickLabelsVisible(categoryTickCheck.isSelected());
-            numberAxisX.setTickMarkVisible(numberMarkCheck.isSelected());
-            numberAxisX.setTickLabelRotation(categoryTickRotation);
-            numberAxisX.setAnimated(categoryAxisAnimatedCheck.isSelected());
-            ChartTools.setChartCoordinate(numberAxisX, cCoordinate);
-            categoryAxis = numberAxisX;
-        } else {
-            stringAxis = new CategoryAxis();
-            stringAxis.setLabel(categoryLabel.getText());
-            stringAxis.setSide(categorySide);
-            stringAxis.setTickLabelsVisible(categoryTickCheck.isSelected());
-            stringAxis.setTickMarkVisible(categoryMarkCheck.isSelected());
-            stringAxis.setTickLabelRotation(categoryTickRotation);
-            stringAxis.setGapStartAndEnd(true);
-            stringAxis.setAnimated(categoryAxisAnimatedCheck.isSelected());
-            if (isXY()) {
-                stringAxis.setEndMargin(100);
+        try {
+            if (isCategoryNumbers()) {
+                numberAxisX = new NumberAxis();
+                numberAxisX.setLabel(categoryName());
+                numberAxisX.setSide(categorySide);
+                numberAxisX.setTickLabelsVisible(categoryTickCheck.isSelected());
+                numberAxisX.setTickMarkVisible(numberMarkCheck.isSelected());
+                numberAxisX.setTickLabelRotation(categoryTickRotation);
+                numberAxisX.setAnimated(categoryAxisAnimatedCheck.isSelected());
+                ChartTools.setChartCoordinate(numberAxisX, cCoordinate);
+                categoryAxis = numberAxisX;
             } else {
-                stringAxis.setEndMargin(20);
+                stringAxis = new CategoryAxis();
+                stringAxis.setLabel(categoryLabel.getText());
+                stringAxis.setSide(categorySide);
+                stringAxis.setTickLabelsVisible(categoryTickCheck.isSelected());
+                stringAxis.setTickMarkVisible(categoryMarkCheck.isSelected());
+                stringAxis.setTickLabelRotation(categoryTickRotation);
+                stringAxis.setGapStartAndEnd(true);
+                stringAxis.setAnimated(categoryAxisAnimatedCheck.isSelected());
+                if (isXY()) {
+                    stringAxis.setEndMargin(100);
+                } else {
+                    stringAxis.setEndMargin(20);
+                }
+                categoryAxis = stringAxis;
             }
-            categoryAxis = stringAxis;
-        }
 
-        numberAxisY = new NumberAxis();
-        numberAxisY.setLabel(numberLabel.getText());
-        numberAxisY.setSide(numberSide);
-        numberAxisY.setTickLabelsVisible(numberTickCheck.isSelected());
-        numberAxisY.setTickMarkVisible(numberMarkCheck.isSelected());
-        numberAxisY.setTickLabelRotation(numberTickRotation);
-        numberAxisY.setAnimated(numberAxisAnimatedCheck.isSelected());
-        ChartTools.setChartCoordinate(numberAxisY, nCoordinate);
+            numberAxisY = new NumberAxis();
+            numberAxisY.setLabel(numberLabel.getText());
+            numberAxisY.setSide(numberSide);
+            numberAxisY.setTickLabelsVisible(numberTickCheck.isSelected());
+            numberAxisY.setTickMarkVisible(numberMarkCheck.isSelected());
+            numberAxisY.setTickLabelRotation(numberTickRotation);
+            numberAxisY.setAnimated(numberAxisAnimatedCheck.isSelected());
+            ChartTools.setChartCoordinate(numberAxisY, nCoordinate);
 
-        MyBoxLog.console(isXY());
-        if (isXY()) {
-            xAxis = categoryAxis;
-            yAxis = numberAxisY;
-            xCoordinate = cCoordinate;
-            yCoordinate = nCoordinate;
-        } else {
-            xAxis = numberAxisY;
-            yAxis = categoryAxis;
-            xCoordinate = nCoordinate;
-            yCoordinate = cCoordinate;
+            if (isXY()) {
+                xAxis = categoryAxis;
+                yAxis = numberAxisY;
+                xCoordinate = cCoordinate;
+                yCoordinate = nCoordinate;
+            } else {
+                xAxis = numberAxisY;
+                yAxis = categoryAxis;
+                xCoordinate = nCoordinate;
+                yCoordinate = cCoordinate;
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
         }
     }
 
     public void makeXYChart() {
-        xyChart.setAlternativeRowFillVisible(altRowsFillCheck.isSelected());
-        xyChart.setAlternativeColumnFillVisible(altColumnsFillCheck.isSelected());
-        xyChart.setVerticalGridLinesVisible(vlinesCheck.isSelected());
-        xyChart.setHorizontalGridLinesVisible(hlinesCheck.isSelected());
-        xyChart.setVerticalZeroLineVisible(vZeroCheck.isSelected());
-        xyChart.setHorizontalZeroLineVisible(hZeroCheck.isSelected());
+        try {
+            xyChart.setAlternativeRowFillVisible(altRowsFillCheck.isSelected());
+            xyChart.setAlternativeColumnFillVisible(altColumnsFillCheck.isSelected());
+            xyChart.setVerticalGridLinesVisible(vlinesCheck.isSelected());
+            xyChart.setHorizontalGridLinesVisible(hlinesCheck.isSelected());
+            xyChart.setVerticalZeroLineVisible(vZeroCheck.isSelected());
+            xyChart.setHorizontalZeroLineVisible(hZeroCheck.isSelected());
 
-        if (legendSide == null) {
-            xyChart.setLegendVisible(false);
-        } else {
-            xyChart.setLegendVisible(true);
-            xyChart.setLegendSide(legendSide);
+            if (legendSide == null) {
+                xyChart.setLegendVisible(false);
+            } else {
+                xyChart.setLegendVisible(true);
+                xyChart.setLegendSide(legendSide);
+            }
+
+            chart = xyChart;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
         }
-
-        chart = xyChart;
     }
 
     @Override
     public void makeFinalChart() {
-        if (chart == null) {
-            return;
-        }
-        chart.setStyle("-fx-font-size: " + titleFontSize + "px; -fx-tick-label-font-size: " + tickFontSize + "px; ");
-        if (categoryAxis != null) {
-            categoryAxis.setStyle("-fx-font-size: " + categoryFontSize + "px;");
-        }
-        if (numberAxisY != null) {
-            numberAxisY.setStyle("-fx-font-size: " + numberFontSize + "px;");
-        }
-        chart.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        VBox.setVgrow(chart, Priority.ALWAYS);
-        HBox.setHgrow(chart, Priority.ALWAYS);
-        chart.setAnimated(animatedCheck.isSelected());
-        chart.setTitle(titleInput.getText());
-        chart.setTitleSide(titleSide);
-        chartBox.getChildren().add(chart);
+        try {
+            if (chart == null) {
+                return;
+            }
+            if (categoryAxis != null) {
+                categoryAxis.setStyle("-fx-font-size: " + categoryFontSize + "px;");
+            }
+            if (numberAxisY != null) {
+                numberAxisY.setStyle("-fx-font-size: " + numberFontSize + "px;");
+            }
+            super.makeFinalChart();
 
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
     }
 
     public void writeXYChart() {

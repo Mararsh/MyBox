@@ -15,13 +15,14 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
@@ -70,9 +71,11 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     @FXML
     protected VBox conditionBox, timesBox;
     @FXML
-    protected CheckBox descendantsCheck;
+    protected ToggleGroup nodesGroup;
     @FXML
-    protected FlowPane tagsPane, namesPane;
+    protected RadioButton descendantsRadio, findNameRadio, findValueRadio;
+    @FXML
+    protected FlowPane tagsPane, namesPane, nodeGroupPane;
     @FXML
     protected Label conditionLabel;
     @FXML
@@ -85,8 +88,6 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     protected ControlTimesTree timesController;
     @FXML
     protected TextField findInput;
-    @FXML
-    protected RadioButton findNameRadio, findValueRadio;
 
     public TreeManageController() {
         baseTitle = message("InformationInTree");
@@ -140,10 +141,13 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
 
             nodesController.setParameters(this, true);
 
-            descendantsCheck.setSelected(UserConfig.getBoolean(baseName + "IncludeSub", false));
-            descendantsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            if (UserConfig.getBoolean(baseName + "AllDescendants", false)) {
+                descendantsRadio.fire();
+            }
+            nodesGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
-                public void changed(ObservableValue ov, Boolean oldTab, Boolean newTab) {
+                public void changed(ObservableValue ov, Toggle oldTab, Toggle newTab) {
+                    UserConfig.setBoolean(baseName + "AllDescendants", descendantsRadio.isSelected());
                     if (loadedParent != null) {
                         loadTableData();
                     }
@@ -450,7 +454,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
                     label.setMinHeight(Region.USE_PREF_SIZE);
                     nodes.add(label);
                     namesPane.getChildren().setAll(nodes);
-                    conditionBox.getChildren().setAll(namesPane, descendantsCheck);
+                    conditionBox.getChildren().setAll(namesPane, nodeGroupPane);
                     conditionBox.applyCss();
                 }
             };
@@ -461,8 +465,12 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
 
     @Override
     public long readDataSize(Connection conn) {
-        if (loadedParent != null && descendantsCheck.isSelected()) {
-            return tableTreeNode.withSubSize(conn, loadedParent.getNodeid());
+        if (loadedParent != null) {
+            if (descendantsRadio.isSelected()) {
+                return tableTreeNode.withSubSize(conn, loadedParent.getNodeid()) + 1;
+            } else {
+                return tableTreeNode.conditionSize(conn, queryConditions) + 1;
+            }
 
         } else if (queryConditions != null) {
             return tableTreeNode.conditionSize(conn, queryConditions);
@@ -475,7 +483,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
 
     @Override
     public List<TreeNode> readPageData(Connection conn) {
-        if (loadedParent != null && descendantsCheck.isSelected()) {
+        if (loadedParent != null && descendantsRadio.isSelected()) {
             return tableTreeNode.withSub(conn, loadedParent.getNodeid(), startRowOfCurrentPage, pageSize);
 
         } else if (queryConditions != null) {
