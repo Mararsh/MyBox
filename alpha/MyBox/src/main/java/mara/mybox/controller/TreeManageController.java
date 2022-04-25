@@ -73,7 +73,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     @FXML
     protected ToggleGroup nodesGroup;
     @FXML
-    protected RadioButton descendantsRadio, findNameRadio, findValueRadio;
+    protected RadioButton childrenRadio, descendantsRadio, findNameRadio, findValueRadio;
     @FXML
     protected FlowPane tagsPane, namesPane, nodeGroupPane;
     @FXML
@@ -195,7 +195,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             return;
         }
         if (loadedParent != null && parent.getNodeid() == loadedParent.getNodeid()) {
-            loadChildren(parent);
+            loadNodes(parent);
         }
     }
 
@@ -257,7 +257,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         }
         long id = node.getNodeid();
         if (loadedParent != null) {
-            loadChildren(loadedParent);
+            loadNodes(loadedParent);
         }
         if (nodeController.currentNode != null && id == nodeController.currentNode.getNodeid()) {
             nodeController.setParentNode(parent);
@@ -272,7 +272,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             return;
         }
         if (loadedParent != null && parent.getNodeid() == loadedParent.getNodeid()) {
-            loadChildren(parent);
+            loadNodes(parent);
         }
         for (TreeNode node : nodes) {
             if (nodeController.currentNode != null && node.getNodeid() == nodeController.currentNode.getNodeid()) {
@@ -341,7 +341,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             return;
         }
         if (loadedParent != null && nodeController.parentNode.getNodeid() == loadedParent.getNodeid()) {
-            loadChildren(nodeController.parentNode);
+            loadNodes(nodeController.parentNode);
         }
         nodesController.addNewNode(nodesController.find(nodeController.parentNode), nodeController.currentNode);
     }
@@ -369,7 +369,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     public void loadTree(TreeNode selectedNode) {
         if (!AppVariables.isTesting) {
             File file = TreeNode.exampleFile(category);
-            if (file != null && tableTreeNode.size(category) < 1
+            if (file != null && tableTreeNode.categorySize(category) < 1
                     && PopTools.askSure(this, getBaseTitle(), message("ImportExamples"))) {
                 nodesController.importExamples();
                 return;
@@ -391,7 +391,10 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     /*
         table
      */
-    public void loadChildren(TreeNode parentNode) {
+    public void loadNodes(TreeNode parentNode) {
+        if (leftPaneCheck != null) {
+            leftPaneCheck.setSelected(true);
+        }
         clearQuery();
         loadedParent = parentNode;
         if (loadedParent != null) {
@@ -399,6 +402,16 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
                     + "parentid=" + loadedParent.getNodeid() + " AND nodeid<>parentid";
             loadTableData();
         }
+    }
+
+    public void loadChildren(TreeNode parentNode) {
+        childrenRadio.fire();
+        loadNodes(parentNode);
+    }
+
+    public void loadDescendants(TreeNode parentNode) {
+        descendantsRadio.fire();
+        loadNodes(parentNode);
     }
 
     @Override
@@ -442,7 +455,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
                             link.setOnAction(new EventHandler<ActionEvent>() {
                                 @Override
                                 public void handle(ActionEvent event) {
-                                    loadChildren(node);
+                                    loadNodes(node);
                                 }
                             });
                             nodes.add(link);
@@ -467,7 +480,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     public long readDataSize(Connection conn) {
         if (loadedParent != null) {
             if (descendantsRadio.isSelected()) {
-                return tableTreeNode.withSubSize(conn, loadedParent.getNodeid()) + 1;
+                return tableTreeNode.decentantsSize(conn, loadedParent.getNodeid()) + 1;
             } else {
                 return tableTreeNode.conditionSize(conn, queryConditions) + 1;
             }
@@ -484,7 +497,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     @Override
     public List<TreeNode> readPageData(Connection conn) {
         if (loadedParent != null && descendantsRadio.isSelected()) {
-            return tableTreeNode.withSub(conn, loadedParent.getNodeid(), startRowOfCurrentPage, pageSize);
+            return tableTreeNode.decentants(conn, loadedParent.getNodeid(), startRowOfCurrentPage, pageSize);
 
         } else if (queryConditions != null) {
             return tableTreeNode.queryConditions(conn, queryConditions, orderColumns, startRowOfCurrentPage, pageSize);

@@ -315,6 +315,9 @@ public class TreeNodeImportController extends BaseBatchFileController {
                     if (parentNode == null) {
                         return -2;
                     }
+                    if (parents.size() > 20) {
+                        parents.clear();
+                    }
                     parents.put(parentChain, parentNode);
                 }
                 return parentNode.getNodeid();

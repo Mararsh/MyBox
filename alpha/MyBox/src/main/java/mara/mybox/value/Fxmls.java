@@ -195,7 +195,8 @@ public class Fxmls {
     public static final String Data2DChartPieFxml = "/fxml/Data2DChartPie.fxml";
     public static final String Data2DChartXYFxml = "/fxml/Data2DChartXY.fxml";
     public static final String Data2DChartBoxWhiskerFxml = "/fxml/Data2DChartBoxWhisker.fxml";
-    public static final String Data2DColorBarsFxml = "/fxml/Data2DColorBars.fxml";
+    public static final String Data2DChartSelfComparisonBarsFxml = "/fxml/Data2DChartSelfComparisonBars.fxml";
+    public static final String Data2DChartComparisonBarsFxml = "/fxml/Data2DChartComparisonBars.fxml";
     public static final String Data2DConvertToDatabaseFxml = "/fxml/Data2DConvertToDatabase.fxml";
     public static final String Data2DColumnCreateFxml = "/fxml/Data2DColumnCreate.fxml";
     public static final String Data2DTableCreateFxml = "/fxml/Data2DTableCreate.fxml";

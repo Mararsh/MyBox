@@ -10,14 +10,18 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.robot.Robot;
 import javafx.util.Callback;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
@@ -43,6 +47,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
     protected P ignoreNode = null;
     protected boolean expandAll, manageMode;
     protected int serialStartLevel = 1;
+    protected String defauleClickAction = "PopMenu";
 
     @FXML
     protected TreeView<P> treeView;
@@ -84,9 +89,11 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
     protected abstract P rename(P node, String name);
 
-    protected abstract void itemSelected(TreeItem<P> item);
-
     protected abstract void doubleClicked(TreeItem<P> item);
+
+    protected abstract void listChildren(TreeItem<P> item);
+
+    protected abstract void listDescentants(TreeItem<P> item);
 
     protected abstract void copyNode(TreeItem<P> item);
 
@@ -301,6 +308,36 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         return chainName;
     }
 
+    public void itemSelected(TreeItem<P> item) {
+        if (item == null) {
+            return;
+        }
+        String clickAction = UserConfig.getString("TreeWhenClickNode", defauleClickAction);
+        if (null == clickAction) {
+            popFunctionsMenu(null, item);
+        } else {
+            switch (clickAction) {
+                case "PopMenu":
+                    popFunctionsMenu(null, item);
+                    break;
+                case "Edit":
+                    editNode(item);
+                    break;
+                case "Paste":
+                    pasteNode(item);
+                    break;
+                case "LoadChildren":
+                    listChildren(item);
+                    break;
+                case "LoadDescendants":
+                    listDescentants(item);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
     @FXML
     public void popFunctionsMenu(MouseEvent event) {
         if (isSettingValues) {
@@ -313,7 +350,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         List<MenuItem> items = makeNodeMenu(node);
         items.add(new SeparatorMenuItem());
 
-        MenuItem menu = new MenuItem(message("PopupClose"));
+        MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
         menu.setStyle("-fx-text-fill: #2e598a;");
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             if (popMenu != null && popMenu.isShowing()) {
@@ -329,7 +366,12 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(items);
-        popMenu.show(treeView, event.getScreenX(), event.getScreenY());
+        if (event == null) {
+            Robot r = new Robot();
+            popMenu.show(treeView, r.getMouseX() + 40, r.getMouseY() + 20);
+        } else {
+            popMenu.show(treeView, event.getScreenX(), event.getScreenY());
+        }
     }
 
     protected List<MenuItem> makeNodeMenu(TreeItem<P> item) {
@@ -352,6 +394,67 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             }
         });
         items.add(editableMenu);
+
+        if (manageMode) {
+            Menu clickMenu = new Menu(message("WhenClickNode"));
+            ToggleGroup clickGroup = new ToggleGroup();
+            String currentClick = UserConfig.getString("TreeWhenClickNode", defauleClickAction);
+
+            RadioMenuItem clickPopMenu = new RadioMenuItem(message("PopMenu"), StyleTools.getIconImage("iconMenu.png"));
+            clickPopMenu.setSelected(currentClick == null || "PopMenu".equals(currentClick));
+            clickPopMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setString("TreeWhenClickNode", "PopMenu");
+                }
+            });
+            clickPopMenu.setToggleGroup(clickGroup);
+
+            RadioMenuItem editNodeMenu = new RadioMenuItem(message("Edit"), StyleTools.getIconImage("iconEdit.png"));
+            editNodeMenu.setSelected("Edit".equals(currentClick));
+            editNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setString("TreeWhenClickNode", "Edit");
+                }
+            });
+            editNodeMenu.setToggleGroup(clickGroup);
+
+            RadioMenuItem pasteNodeMenu = new RadioMenuItem(message("Paste"), StyleTools.getIconImage("iconPaste.png"));
+            pasteNodeMenu.setSelected("Paste".equals(currentClick));
+            pasteNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setString("TreeWhenClickNode", "Paste");
+                }
+            });
+            pasteNodeMenu.setToggleGroup(clickGroup);
+
+            RadioMenuItem loadChildrenMenu = new RadioMenuItem(message("LoadChildren"), StyleTools.getIconImage("iconList.png"));
+            loadChildrenMenu.setSelected("LoadChildren".equals(currentClick));
+            loadChildrenMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setString("TreeWhenClickNode", "LoadChildren");
+                }
+            });
+            loadChildrenMenu.setToggleGroup(clickGroup);
+
+            RadioMenuItem loadDescendantsMenu = new RadioMenuItem(message("LoadDescendants"), StyleTools.getIconImage("iconList.png"));
+            loadDescendantsMenu.setSelected("LoadDescendants".equals(currentClick));
+            loadDescendantsMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setString("TreeWhenClickNode", "LoadDescendants");
+                }
+            });
+            loadDescendantsMenu.setToggleGroup(clickGroup);
+
+            clickMenu.getItems().addAll(clickPopMenu, editNodeMenu, pasteNodeMenu, loadChildrenMenu, loadDescendantsMenu);
+
+            items.add(clickMenu);
+        }
+
         items.add(new SeparatorMenuItem());
 
         menu = new MenuItem(message("Add"), StyleTools.getIconImage("iconAdd.png"));
@@ -364,6 +467,15 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             menu = new MenuItem(message("Edit"), StyleTools.getIconImage("iconEdit.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 editNode(targetItem);
+            });
+            items.add(menu);
+
+            menu = new RadioMenuItem(message("Paste"), StyleTools.getIconImage("iconPaste.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    pasteNode(targetItem);
+                }
             });
             items.add(menu);
 
@@ -392,6 +504,26 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                 moveNode(targetItem);
             });
             menu.setDisable(isRoot);
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("LoadChildren"), StyleTools.getIconImage("iconList.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    listChildren(item);
+                }
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("LoadDescendants"), StyleTools.getIconImage("iconList.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    listDescentants(item);
+                }
+            });
             items.add(menu);
 
             items.add(new SeparatorMenuItem());

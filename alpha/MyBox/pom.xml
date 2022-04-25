@@ -247,6 +247,11 @@
             <artifactId>org.jfree.chart3d.fx</artifactId>
             <version>2.1.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-all</artifactId>
+            <version>1.14</version>
+        </dependency>
     </dependencies>
 
     <build>

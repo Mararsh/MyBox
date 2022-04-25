@@ -48,6 +48,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
@@ -636,6 +637,15 @@ public class HtmlEditorController extends WebAddressController {
         return html;
     }
 
+    public void pasteText(String text) {
+        if (!tabPane.getTabs().contains(codesTab) || text == null || text.isEmpty()) {
+            return;
+        }
+        tabPane.getSelectionModel().select(codesTab);
+        codesArea.replaceText(codesArea.getSelection(), text);
+        codesArea.requestFocus();
+        codesChanged(true);
+    }
 
     /*
         richText
@@ -1133,7 +1143,7 @@ public class HtmlEditorController extends WebAddressController {
             popMenu.getItems().addAll(items);
 
             popMenu.getItems().add(new SeparatorMenuItem());
-            MenuItem menu = new MenuItem(message("PopupClose"));
+            MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override

@@ -657,7 +657,7 @@ public abstract class BaseTable<D> {
             return 0;
         }
         String sql = null;
-        try {
+        try ( Statement statement = conn.createStatement()) {
             String c = "";
             if (condition != null && !condition.isBlank()) {
                 if (!condition.trim().startsWith("ORDER BY")) {
@@ -665,12 +665,12 @@ public abstract class BaseTable<D> {
                 }
             }
             sql = sizeStatement() + c;
-            ResultSet results = conn.createStatement().executeQuery(sql);
-            if (results.next()) {
+            ResultSet results = statement.executeQuery(sql);
+            if (results != null && results.next()) {
                 return results.getInt(1);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e, sql);
+//            MyBoxLog.error(e, sql);
         }
         return 0;
     }

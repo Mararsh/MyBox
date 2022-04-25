@@ -3,9 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import java.sql.Connection;
 import java.util.List;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.paint.Color;
 import mara.mybox.db.data.TreeNode;
@@ -15,7 +13,6 @@ import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -55,11 +52,19 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
     }
 
     @Override
-    public void itemSelected(TreeItem<TreeNode> item) {
+    public void listChildren(TreeItem<TreeNode> item) {
         if (item == null || caller != null || treeController == null) {
             return;
         }
         treeController.loadChildren(item.getValue());
+    }
+
+    @Override
+    public void listDescentants(TreeItem<TreeNode> item) {
+        if (item == null || caller != null || treeController == null) {
+            return;
+        }
+        treeController.loadDescendants(item.getValue());
     }
 
     @Override
@@ -142,12 +147,12 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
 
     @Override
     public int totalCount(Connection conn) {
-        return tableTreeNode.size(conn, category);
+        return tableTreeNode.categorySize(conn, category);
     }
 
     @Override
     public int childrenCount(Connection conn, TreeNode node) {
-        return tableTreeNode.size(conn, id(node));
+        return tableTreeNode.childrenSize(conn, id(node));
     }
 
     @Override
@@ -407,20 +412,6 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
             }
             return false;
         }
-    }
-
-    @Override
-    protected List<MenuItem> makeNodeMenu(TreeItem<TreeNode> item) {
-        List<MenuItem> items = super.makeNodeMenu(item);
-        if (manageMode && !category.equals(TreeNode.Notebook)) {
-            TreeItem<TreeNode> targetItem = item == null ? treeView.getRoot() : item;
-            MenuItem menu = new MenuItem(message("Paste"), StyleTools.getIconImage("iconPaste.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                pasteNode(targetItem);
-            });
-            items.add(3, menu);
-        }
-        return items;
     }
 
 }

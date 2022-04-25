@@ -21,7 +21,8 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DColorBarsController">
+<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="10.0" 
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DChartSelfComparisonBarsController">
     <children>
         <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
             <items>
@@ -78,7 +79,7 @@ License:    Apache License Version 2.0
                                                 <Image url="@../buttons/Red/iconDoubleLeft.png" />
                                             </image>
                                         </ImageView>
-                                        <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%SelfComparisonBars" HBox.hgrow="ALWAYS" />
+                                        <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%SelfComparisonBarsChart" HBox.hgrow="ALWAYS" />
                                     </children>
                                 </HBox>
                                 <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">

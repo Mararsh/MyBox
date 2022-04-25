@@ -35,7 +35,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-1-19
  * @License Apache License Version 2.0
  */
-public abstract class BaseData2DChartXYController extends BaseData2DChartController {
+public abstract class BaseData2DChartXYController extends BaseData2DFxChartController {
 
     protected ChartTools.ChartCoordinate nCoordinate, cCoordinate, xCoordinate, yCoordinate, sCoordinate;
     protected int categoryFontSize, categoryMargin, categoryTickRotation,

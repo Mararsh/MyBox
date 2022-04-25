@@ -329,7 +329,6 @@ public class Data2DChartXYController extends BaseData2DChartXYController {
     @Override
     public void makeChart() {
         try {
-            MyBoxLog.console("here");
             makeAxis();
 
             if (barChartRadio.isSelected()) {
@@ -383,7 +382,6 @@ public class Data2DChartXYController extends BaseData2DChartXYController {
 
     public boolean makeStackedBarChart() {
         try {
-            MyBoxLog.console(xAxis != null);
             stackedBarChart = new LabeledStackedBarChart(xAxis, yAxis);
             stackedBarChart.setCategoryGap(categoryGap);
             xyChart = stackedBarChart;

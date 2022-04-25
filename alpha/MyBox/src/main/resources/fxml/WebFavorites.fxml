@@ -203,7 +203,7 @@ License:    Apache License Version 2.0
                                                         <FlowPane fx:id="namesPane" hgap="2.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWrapLength="2000.0" vgap="2.0" HBox.hgrow="ALWAYS" />
                                                         <FlowPane fx:id="nodeGroupPane" hgap="2.0" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWrapLength="2000.0" vgap="2.0">
                                                             <children>
-                                                                <RadioButton mnemonicParsing="false" selected="true" text="%SelfAndChildren">
+                                                                <RadioButton  fx:id="childrenRadio" mnemonicParsing="false" selected="true" text="%SelfAndChildren">
                                                                     <toggleGroup>
                                                                         <ToggleGroup fx:id="nodesGroup" />
                                                                     </toggleGroup> 

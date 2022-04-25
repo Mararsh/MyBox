@@ -751,7 +751,7 @@ public class ControlData2D extends BaseController {
             Menu chartMenu = new Menu(message("Charts"), StyleTools.getIconImage("iconGraph.png"));
             popMenu.getItems().add(chartMenu);
 
-            menu = new MenuItem(message("XYChart"), StyleTools.getIconImage("iconXY.png"));
+            menu = new MenuItem(message("XYChart"), StyleTools.getIconImage("iconXYChart.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DChartXYController.open(tableController);
             });
@@ -765,16 +765,23 @@ public class ControlData2D extends BaseController {
             menu.setDisable(empty);
             chartMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("BoxWhiskerChart"), StyleTools.getIconImage("iconCandlestickChart.png"));
+            menu = new MenuItem(message("BoxWhiskerChart"), StyleTools.getIconImage("iconBoxWhiskerChart.png"));
             menu.setOnAction((ActionEvent event) -> {
-                Data2DColorBarsController.open(tableController);
+                Data2DChartSelfComparisonBarsController.open(tableController);
             });
             menu.setDisable(empty);
             chartMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("SelfComparisonBars"), StyleTools.getIconImage("iconBarChartH.png"));
+            menu = new MenuItem(message("SelfComparisonBarsChart"), StyleTools.getIconImage("iconBarChartH.png"));
             menu.setOnAction((ActionEvent event) -> {
-                Data2DColorBarsController.open(tableController);
+                Data2DChartSelfComparisonBarsController.open(tableController);
+            });
+            menu.setDisable(empty);
+            chartMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ComparisonBarsChart"), StyleTools.getIconImage("iconComparisonBarsChart.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DChartComparisonBarsController.open(tableController);
             });
             menu.setDisable(empty);
             chartMenu.getItems().add(menu);
