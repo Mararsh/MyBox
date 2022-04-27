@@ -82,7 +82,7 @@ public class ControlWebView extends BaseController {
     protected double linkX, linkY, scrollTop, scrollLeft;
     protected ScrollType scrollType;
     protected float zoomScale;
-    protected String address, style, defaultStyle;
+    protected String address, style, defaultStyle, initStyle;
     protected Charset charset;
     protected Map<Integer, Document> framesDoc;
     protected EventListener docListener;
@@ -496,8 +496,12 @@ public class ControlWebView extends BaseController {
 
     private void afterPageLoaded() {
         try {
-            String prefix = UserConfig.getBoolean(baseName + "ShareHtmlStyle", true) ? "AllInterface" : baseName;
-            setStyle(UserConfig.getString(prefix + "HtmlStyle", defaultStyle));
+            if (initStyle != null) {
+                writeStyle(initStyle);
+            } else {
+                String prefix = UserConfig.getBoolean(baseName + "ShareHtmlStyle", true) ? "AllInterface" : baseName;
+                setStyle(UserConfig.getString(prefix + "HtmlStyle", defaultStyle));
+            }
             setWebViewLabel(message("Loaded"));
 
             Document doc = webEngine.getDocument();
@@ -594,6 +598,10 @@ public class ControlWebView extends BaseController {
         String prefix = UserConfig.getBoolean(baseName + "ShareHtmlStyle", true) ? "AllInterface" : baseName;
         UserConfig.setString(prefix + "HtmlStyle", style);
 
+        writeStyle(style);
+    }
+
+    public void writeStyle(String style) {
         WebViewTools.removeNode(webEngine, StyleNodeID);
         this.style = style;
         if (style != null && !style.isBlank()) {

@@ -114,7 +114,9 @@ public class ControlData2DNormalize extends BaseController {
             if (matrix == null || matrix.length == 0) {
                 return matrix;
             }
-            Normalization n = Normalization.create().setFrom(from).setTo(to);
+            Normalization n = Normalization.create()
+                    .setFrom(from).setTo(to)
+                    .setSourceMatrix(matrix);
             if (sumRadio.isSelected()) {
                 n.setA(Algorithm.Sum);
             } else if (zscoreRadio.isSelected()) {
@@ -123,11 +125,11 @@ public class ControlData2DNormalize extends BaseController {
                 n.setA(Algorithm.MinMax);
             }
             if (columnsRadio.isSelected()) {
-                return n.columnsNormalize(matrix);
+                return n.columnsNormalize();
             } else if (rowsRadio.isSelected()) {
-                return n.rowsNormalize(matrix);
+                return n.rowsNormalize();
             } else if (allRadio.isSelected()) {
-                return n.allNormalize(matrix);
+                return n.allNormalize();
             }
             return null;
         } catch (Exception e) {

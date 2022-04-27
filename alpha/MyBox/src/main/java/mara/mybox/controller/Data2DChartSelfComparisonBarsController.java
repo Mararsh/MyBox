@@ -24,6 +24,8 @@ import mara.mybox.value.UserConfig;
  */
 public class Data2DChartSelfComparisonBarsController extends BaseData2DHtmlChartController {
 
+    protected Normalization normalization;
+
     @FXML
     protected CheckBox otherCheck;
 
@@ -54,6 +56,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DHtmlChart
     @Override
     protected String handleData() {
         try {
+            normalization = null;
             List<Integer> checkedRowsIndices = sourceController.checkedRowsIndices();
             checkedColsIndices = sourceController.checkedColsIndices();
             int rowsNumber = checkedRowsIndices.size();
@@ -74,10 +77,11 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DHtmlChart
                     }
                 }
             }
-            StringTable table = createHtml(calculate(data), checkedRowsIndices, allNeg, allPos);
-            if (table != null) {
-                return table.html();
+            StringTable table = dataTable(calculate(data), checkedRowsIndices, allNeg, allPos);
+            if (table == null) {
+                return null;
             }
+            return table.html();
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -91,20 +95,19 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DHtmlChart
             if (data == null || data.length == 0) {
                 return data;
             }
-            Normalization n = Normalization.create();
+            normalization = Normalization.create()
+                    .setSourceMatrix(data);
             if (zeroCheck.isSelected()) {
-                n.setFrom(barWidth)
-                        .setA(Normalization.Algorithm.Width);
+                normalization.setWidth(barWidth).setA(Normalization.Algorithm.Width);
             } else {
-                n.setFrom(0).setTo(barWidth)
-                        .setA(Normalization.Algorithm.MinMax);
+                normalization.setFrom(0).setTo(barWidth).setA(Normalization.Algorithm.MinMax);
             }
             if (columnsRadio.isSelected()) {
-                return n.columnsNormalize(data);
+                return normalization.columnsNormalize();
             } else if (rowsRadio.isSelected()) {
-                return n.rowsNormalize(data);
+                return normalization.rowsNormalize();
             } else if (allRadio.isSelected()) {
-                return n.allNormalize(data);
+                return normalization.allNormalize();
             }
         } catch (Exception e) {
             if (task != null) {
@@ -114,13 +117,32 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DHtmlChart
         return null;
     }
 
-    private StringTable createHtml(double[][] bars, List<Integer> checkedRowsIndices,
+    private StringTable dataTable(double[][] bars, List<Integer> checkedRowsIndices,
             boolean allNeg, boolean allPos) {
         try {
+            if (bars == null) {
+                return null;
+            }
             int rowsNumber = checkedRowsIndices.size();
             List<String> names = new ArrayList<>();
             if (rowNumberCheck.isSelected()) {
                 names.add(message("RowNumber"));
+            }
+            String title = data2D.displayName() + " - ";
+            if (columnsRadio.isSelected()) {
+                title += message("ColumnComparison");
+            } else if (rowsRadio.isSelected()) {
+                title += message("RowComparison");
+                if (calculatedCheck.isSelected()) {
+                    if (zeroCheck.isSelected()) {
+                        names.add(message("MaxAbsolute"));
+                    } else {
+                        names.add(message("Maximum"));
+                        names.add(message("Minimum"));
+                    }
+                }
+            } else if (allRadio.isSelected()) {
+                title += message("AllComparison");
             }
             if (otherCheck.isSelected()) {
                 for (Data2DColumn col : data2D.getColumns()) {
@@ -131,20 +153,35 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DHtmlChart
                     names.add(data2D.colName(col));
                 }
             }
-            String title = data2D.displayName() + " - ";
-            if (columnsRadio.isSelected()) {
-                title += message("ColumnComparison");
-            } else if (rowsRadio.isSelected()) {
-                title += message("RowComparison");
-            } else if (allRadio.isSelected()) {
-                title += message("AllComparison");
-            }
             StringTable table = new StringTable(names, title);
+            if (calculatedCheck.isSelected()) {
+                if (columnsRadio.isSelected()) {
+                    columnsNormalizationValues(table);
+                } else if (allRadio.isSelected()) {
+                    String comments;
+                    if (zeroCheck.isSelected()) {
+                        comments = "<P align=center>" + message("MaxAbsolute") + ": " + normalization.getMaxAbs() + "</P>\n";
+                    } else {
+                        comments = "<P align=center>" + message("Maximum") + ": " + normalization.getMax() + "&nbsp;".repeat(8)
+                                + message("Minimum") + ": " + normalization.getMin() + "</P>\n";
+                    }
+                    table.setComments(comments);
+                }
+            }
+            Normalization[] normalizationValues = normalization.getValues();
             for (int r = 0; r < rowsNumber; r++) {
                 int row = checkedRowsIndices.get(r);
                 List<String> htmlRow = new ArrayList<>();
                 if (rowNumberCheck.isSelected()) {
                     htmlRow.add(data2D.rowName(row));
+                }
+                if (calculatedCheck.isSelected() && rowsRadio.isSelected()) {
+                    if (zeroCheck.isSelected()) {
+                        htmlRow.add("" + normalizationValues[r].getMaxAbs());
+                    } else {
+                        htmlRow.add("" + normalizationValues[r].getMax());
+                        htmlRow.add("" + normalizationValues[r].getMin());
+                    }
                 }
                 List<String> tableRow = tableController.tableData.get(row);
                 for (int i = 0; i < data2D.getColumns().size(); i++) {
@@ -163,6 +200,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DHtmlChart
                 }
                 table.add(htmlRow);
             }
+
             return table;
         } catch (Exception e) {
             if (task != null) {
@@ -172,16 +210,65 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DHtmlChart
         return null;
     }
 
+    private void columnsNormalizationValues(StringTable table) {
+        if (table == null || normalization == null) {
+            return;
+        }
+        Normalization[] normalizationValues = normalization.getValues();
+        if (normalizationValues == null) {
+            return;
+        }
+        List<String> htmlRow = new ArrayList<>();
+        if (zeroCheck.isSelected()) {
+            for (int i = 0; i < data2D.getColumns().size(); i++) {
+                int c = checkedColsIndices.indexOf(i);
+                if (c < 0) {
+                    if (otherCheck.isSelected()) {
+                        htmlRow.add("");
+                    }
+                } else {
+                    htmlRow.add(message("MaxAbsolute") + ": " + normalizationValues[c].getMaxAbs());
+                }
+            }
+            table.add(htmlRow);
+        } else {
+            for (int i = 0; i < data2D.getColumns().size(); i++) {
+                int c = checkedColsIndices.indexOf(i);
+                if (c < 0) {
+                    if (otherCheck.isSelected()) {
+                        htmlRow.add("");
+                    }
+                } else {
+                    htmlRow.add(message("Maximum") + ": " + normalizationValues[c].getMax());
+                }
+            }
+            table.add(htmlRow);
+            htmlRow = new ArrayList<>();
+            for (int i = 0; i < data2D.getColumns().size(); i++) {
+                int c = checkedColsIndices.indexOf(i);
+                if (c < 0) {
+                    if (otherCheck.isSelected()) {
+                        htmlRow.add("");
+                    }
+                } else {
+                    htmlRow.add(message("Minimum") + ": " + normalizationValues[c].getMin());
+                }
+            }
+            table.add(htmlRow);
+        }
+    }
+
     protected String valueBar(String value, double width, Color color,
             boolean allNeg, boolean allPos) {
         String v;
+        String valueDis = valueCheck.isSelected() ? value : "&nbsp;";
         if (zeroCheck.isSelected()) {
             Color nColor = FxColorTools.invert(color);
             if (width == 0) {
                 if (allNeg || allPos) {
-                    v = "<SPAN>" + value + "</SPAN>";
+                    v = "<SPAN>" + valueDis + "</SPAN>";
                 } else {
-                    v = "<SPAN style=\"display: inline-block; width:" + (barWidth * 2) + "px;text-align:center;\">" + value + "</SPAN>";
+                    v = "<SPAN style=\"display: inline-block; width:" + (barWidth * 2) + "px;text-align:center;\">" + valueDis + "</SPAN>";
                 }
             } else if (width < 0) {
                 double nWidth = Math.abs(width);
@@ -189,36 +276,40 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DHtmlChart
                 v += "<SPAN style=\"background-color:" + FxColorTools.color2rgb(nColor)
                         + ";color:" + FxColorTools.color2rgb(FxColorTools.foreColor(nColor))
                         + ";display: inline-block; width:" + nWidth + "px;text-align:center;font-size:0.8em;\">-"
-                        + (int) (nWidth * 100 / barWidth) + "%</SPAN>";
+                        + (percentageCheck.isSelected() ? (int) (nWidth * 100 / barWidth) + "%" : "&nbsp;")
+                        + "</SPAN>";
+
                 if (allNeg) {
-                    v += "<SPAN>" + value + "</SPAN>";
+                    v += "<SPAN>" + valueDis + "</SPAN>";
                 } else {
-                    v += "<SPAN style=\"display: inline-block; width:" + barWidth + "px;text-align:left;\">" + value + "</SPAN>";
+                    v += "<SPAN style=\"display: inline-block; width:" + barWidth + "px;text-align:left;\">" + valueDis + "</SPAN>";
                 }
             } else {
                 if (!allPos) {
-                    v = "<SPAN style=\"display: inline-block; width:" + barWidth + "px;text-align:right;\">" + value + "</SPAN>";
+                    v = "<SPAN style=\"display: inline-block; width:" + barWidth + "px;text-align:right;\">" + valueDis + "</SPAN>";
                 } else {
                     v = "";
                 }
                 v += "<SPAN style=\"background-color:" + FxColorTools.color2rgb(color)
                         + ";color:" + FxColorTools.color2rgb(FxColorTools.foreColor(color))
                         + ";display: inline-block; width:" + width + "px;text-align:center;font-size:0.8em;\">"
-                        + (int) (width * 100 / barWidth) + "%</SPAN>";
+                        + (percentageCheck.isSelected() ? (int) (width * 100 / barWidth) + "%" : "&nbsp;")
+                        + "</SPAN>";
                 v += "<SPAN style=\"display: inline-block; width:" + (barWidth - width) + "px;\">&nbsp;</SPAN>";
                 if (allPos) {
-                    v += "<SPAN>" + value + "</SPAN>";
+                    v += "<SPAN>" + valueDis + "</SPAN>";
                 }
             }
         } else {
             if (width == 0) {
-                v = "<SPAN>" + value + "</SPAN>";
+                v = "<SPAN>" + valueDis + "</SPAN>";
             } else {
                 v = "<SPAN style=\"background-color:" + FxColorTools.color2rgb(color)
                         + ";color:" + FxColorTools.color2rgb(FxColorTools.foreColor(color))
                         + ";display: inline-block; width:" + width + "px;text-align:center;font-size:0.8em;\">"
-                        + (int) (width * 100 / barWidth) + "%</SPAN>"
-                        + "<SPAN>" + value + "</SPAN>";
+                        + (percentageCheck.isSelected() ? (int) (width * 100 / barWidth) + "%" : "&nbsp;")
+                        + "</SPAN>";
+                v += "<SPAN>" + valueDis + "</SPAN>";
             }
         }
         return v;

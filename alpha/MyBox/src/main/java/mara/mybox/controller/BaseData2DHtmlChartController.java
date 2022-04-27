@@ -21,7 +21,7 @@ public abstract class BaseData2DHtmlChartController extends BaseData2DChartContr
     protected int barWidth = 100;
 
     @FXML
-    protected CheckBox zeroCheck;
+    protected CheckBox zeroCheck, valueCheck, percentageCheck, calculatedCheck;
     @FXML
     protected ComboBox<String> widthSelector;
     @FXML
@@ -69,6 +69,39 @@ public abstract class BaseData2DHtmlChartController extends BaseData2DChartContr
                     okAction();
                 }
             });
+
+            if (valueCheck != null) {
+                valueCheck.setSelected(UserConfig.getBoolean(baseName + "ShowValue", true));
+                valueCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        UserConfig.setBoolean(baseName + "ShowValue", valueCheck.isSelected());
+                        okAction();
+                    }
+                });
+            }
+
+            if (percentageCheck != null) {
+                percentageCheck.setSelected(UserConfig.getBoolean(baseName + "ShowPercentage", true));
+                percentageCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        UserConfig.setBoolean(baseName + "ShowPercentage", percentageCheck.isSelected());
+                        okAction();
+                    }
+                });
+            }
+
+            if (calculatedCheck != null) {
+                calculatedCheck.setSelected(UserConfig.getBoolean(baseName + "ShowCalculatedValues", true));
+                calculatedCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        UserConfig.setBoolean(baseName + "ShowCalculatedValues", calculatedCheck.isSelected());
+                        okAction();
+                    }
+                });
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -119,7 +152,7 @@ public abstract class BaseData2DHtmlChartController extends BaseData2DChartContr
 
             @Override
             protected void whenSucceeded() {
-                webViewController.loadContents(html);
+                outputHtml(html);
             }
 
         };
@@ -128,6 +161,10 @@ public abstract class BaseData2DHtmlChartController extends BaseData2DChartContr
 
     protected String handleData() {
         return null;
+    }
+
+    protected void outputHtml(String html) {
+        webViewController.loadContents(html);
     }
 
     @FXML

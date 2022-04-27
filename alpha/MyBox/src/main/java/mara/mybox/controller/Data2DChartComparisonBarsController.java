@@ -1,22 +1,21 @@
 package mara.mybox.controller;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.paint.Color;
 import mara.mybox.data.Normalization;
-import mara.mybox.data.StringTable;
-import static mara.mybox.data.StringTable.body;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -26,9 +25,15 @@ import static mara.mybox.value.Languages.message;
 public class Data2DChartComparisonBarsController extends BaseData2DHtmlChartController {
 
     protected String selectedValue2;
+    protected List<Integer> checkedRowsIndices;
+    protected int categorysCol, col1, col2, rowsNumber;
+    protected double[] bar;
+    protected Normalization normalization;
 
     @FXML
     protected ComboBox<String> valueColumn2Selector;
+    @FXML
+    protected CheckBox categoryCheck;
 
     public Data2DChartComparisonBarsController() {
         baseTitle = message("ComparisonBarsChart");
@@ -44,6 +49,17 @@ public class Data2DChartComparisonBarsController extends BaseData2DHtmlChartCont
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     checkOptions();
+                }
+            });
+
+            webViewController.initStyle = "";
+
+            categoryCheck.setSelected(UserConfig.getBoolean(baseName + "ShowCategory", true));
+            categoryCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "ShowCategory", categoryCheck.isSelected());
+                    okAction();
                 }
             });
 
@@ -88,124 +104,116 @@ public class Data2DChartComparisonBarsController extends BaseData2DHtmlChartCont
             okButton.setDisable(true);
             return false;
         }
+        col1 = data2D.colOrder(selectedValue);
+        col2 = data2D.colOrder(selectedValue2);
+        categorysCol = data2D.colOrder(selectedCategory);
         return ok;
     }
 
     @Override
     protected String handleData() {
         try {
-            List<Integer> checkedRowsIndices = sourceController.checkedRowsIndices();
-            int rowsNumber = checkedRowsIndices.size();
-            int col1 = data2D.colOrder(selectedValue);
-            int col2 = data2D.colOrder(selectedValue2);
-            int categorysCol = data2D.colOrder(selectedCategory);
+            normalization = null;
+            checkedRowsIndices = sourceController.checkedRowsIndices();
+            rowsNumber = checkedRowsIndices.size();
             double[] data = new double[2 * rowsNumber];
-            String[] categorys = new String[rowsNumber];
-            boolean allNeg1 = true, allPos1 = true, allNeg2 = true, allPos2 = true;
             for (int r = 0; r < rowsNumber; r++) {
                 int row = checkedRowsIndices.get(r);
                 List<String> tableRow = tableController.tableData.get(row);
-                categorys[r] = tableRow.get(categorysCol + 1);
-                double d = data2D.doubleValue(tableRow.get(col1 + 1));
-                data[r] = d;
-                if (d > 0) {
-                    allNeg1 = false;
-                } else if (d < 0) {
-                    allPos1 = false;
-                }
-                d = data2D.doubleValue(tableRow.get(col2 + 1));
-                data[r + rowsNumber] = d;
-                if (d > 0) {
-                    allNeg2 = false;
-                } else if (d < 0) {
-                    allPos2 = false;
-                }
-
+                data[r] = data2D.doubleValue(tableRow.get(col1 + 1));
+                data[r + rowsNumber] = data2D.doubleValue(tableRow.get(col2 + 1));
             }
-            double[] bar;
+            normalization = Normalization.create().setSourceVector(data);
             if (zeroCheck.isSelected()) {
-                bar = Normalization.width(data, barWidth);
+                normalization.setWidth(barWidth).setA(Normalization.Algorithm.Width);
             } else {
-                bar = Normalization.minMax(data, 0, barWidth);
+                normalization.setFrom(0).setTo(barWidth).setA(Normalization.Algorithm.MinMax);
             }
+            bar = normalization.calculate();
 
             List<String> names = new ArrayList<>();
-            names.addAll(Arrays.asList(selectedValue, selectedCategory, selectedValue2));
+            names.add(selectedValue);
+            if (categoryCheck.isSelected()) {
+                names.add(selectedCategory);
+            }
+            names.add(selectedValue2);
+            StringBuilder s = new StringBuilder();
+            s.append("<BODY>\n");
             String title = data2D.displayName() + " - " + message("ComparisonBarsChart");
-            StringTable table = new StringTable(names, title);
+            s.append("<DIV align=\"center\">\n");
+            s.append("<H2>").append(title).append("</H2>\n");
+            if (zeroCheck.isSelected()) {
+                s.append("<P>").append(message("MaxAbsolute")).append(": ")
+                        .append(normalization.getMaxAbs()).append("</P>\n");
+            } else {
+                s.append("<P>").append(message("Maximum")).append(": ")
+                        .append(normalization.getMax()).append("&nbsp;".repeat(8))
+                        .append(message("Minimum")).append(": ").append(normalization.getMin()).append("</P>\n");
+            }
+            normalization = null;
             Color color1 = data2D.column(col1).getColor();
             Color color2 = data2D.column(col2).getColor();
-            for (int r = 0; r < rowsNumber; r++) {
-                List<String> htmlRow = new ArrayList<>();
-                List<String> tableRow = tableController.tableData.get(checkedRowsIndices.get(r));
-
-                htmlRow.add(valueBar(tableRow.get(col1 + 1), bar[r], color1, allNeg1, allPos1));
-
-                htmlRow.add(categorys[r]);
-
-                htmlRow.add(valueBar(tableRow.get(col2 + 1), bar[r + rowsNumber], color2, allNeg2, allPos2));
-
-                table.add(htmlRow);
+            s.append("<TABLE>\n");
+            s.append("<TR  style=\"font-weight:bold; \">\n");
+            for (int i = 0; i < names.size(); ++i) {
+                String name = names.get(i);
+                s.append("<TH>").append(name).append("</TH>\n");
             }
-            return HtmlWriteTools.html(table.getTitle(), "utf-8", null, body(table));
+            s.append("</TR>\n");
+            for (int r = 0; r < rowsNumber; r++) {
+                List<String> tableRow = tableController.tableData.get(checkedRowsIndices.get(r));
+                s.append("<TR>\n");
+                s.append("<TD align=right>")
+                        .append(valueCheck.isSelected() ? tableRow.get(col1 + 1) : "")
+                        .append(bar(bar[r], color1)).append("</TD>\n");
+
+                if (categoryCheck.isSelected()) {
+                    s.append("<TD align=center>").append(tableRow.get(categorysCol + 1)).append("</TD>\n");
+                }
+
+                s.append("<TD align=left>")
+                        .append(bar(bar[r + rowsNumber], color2))
+                        .append(valueCheck.isSelected() ? tableRow.get(col2 + 1) : "")
+                        .append("</TD>\n");
+
+                s.append("</TR>\n");
+            }
+            s.append("</Table>\n</DIV>\n</BODY>\n");
+            checkedRowsIndices = null;
+            bar = null;
+            return HtmlWriteTools.html(title, "utf-8", null, s.toString());
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
             }
         }
+        checkedRowsIndices = null;
+        bar = null;
+        normalization = null;
         return null;
     }
 
-    protected String valueBar(String value, double width, Color color,
-            boolean allNeg, boolean allPos) {
-        String v;
-        if (zeroCheck.isSelected()) {
-            Color nColor = FxColorTools.invert(color);
-            if (width == 0) {
-                if (allNeg || allPos) {
-                    v = "<SPAN>" + value + "</SPAN>";
-                } else {
-                    v = "<SPAN style=\"display: inline-block; width:" + (barWidth * 2) + "px;text-align:center;\">" + value + "</SPAN>";
-                }
-            } else if (width < 0) {
-                double nWidth = Math.abs(width);
-                v = "<SPAN style=\"display: inline-block; width:" + (barWidth - nWidth) + "px;\">&nbsp;</SPAN>";
-                v += "<SPAN style=\"background-color:" + FxColorTools.color2rgb(nColor)
-                        + ";color:" + FxColorTools.color2rgb(FxColorTools.foreColor(nColor))
-                        + ";display: inline-block; width:" + nWidth + "px;text-align:center;font-size:0.8em;\">-"
-                        + (int) (nWidth * 100 / barWidth) + "%</SPAN>";
-                if (allNeg) {
-                    v += "<SPAN>" + value + "</SPAN>";
-                } else {
-                    v += "<SPAN style=\"display: inline-block; width:" + barWidth + "px;text-align:left;\">" + value + "</SPAN>";
-                }
+    protected String bar(double width, Color color) {
+        Color dColor = color;
+        double dWitdh = width;
+        if (width < 0) {
+            dColor = FxColorTools.invert(color);
+            dWitdh = Math.abs(width);
+        }
+        int pec = (int) (dWitdh * 100 / barWidth);
+        if (pec == 0) {
+            if (percentageCheck.isSelected()) {
+                return "<SPAN>0%</SPAN>";
             } else {
-                if (!allPos) {
-                    v = "<SPAN style=\"display: inline-block; width:" + barWidth + "px;text-align:right;\">" + value + "</SPAN>";
-                } else {
-                    v = "";
-                }
-                v += "<SPAN style=\"background-color:" + FxColorTools.color2rgb(color)
-                        + ";color:" + FxColorTools.color2rgb(FxColorTools.foreColor(color))
-                        + ";display: inline-block; width:" + width + "px;text-align:center;font-size:0.8em;\">"
-                        + (int) (width * 100 / barWidth) + "%</SPAN>";
-                v += "<SPAN style=\"display: inline-block; width:" + (barWidth - width) + "px;\">&nbsp;</SPAN>";
-                if (allPos) {
-                    v += "<SPAN>" + value + "</SPAN>";
-                }
+                return "";
             }
         } else {
-            if (width == 0) {
-                v = "<SPAN>" + value + "</SPAN>";
-            } else {
-                v = "<SPAN style=\"background-color:" + FxColorTools.color2rgb(color)
-                        + ";color:" + FxColorTools.color2rgb(FxColorTools.foreColor(color))
-                        + ";display: inline-block; width:" + width + "px;text-align:center;font-size:0.8em;\">"
-                        + (int) (width * 100 / barWidth) + "%</SPAN>"
-                        + "<SPAN>" + value + "</SPAN>";
-            }
+            return "<SPAN style=\"background-color:" + FxColorTools.color2rgb(dColor)
+                    + ";color:" + FxColorTools.color2rgb(FxColorTools.foreColor(dColor))
+                    + ";display: inline-block; width:" + (int) dWitdh + "px;font-size:1em;\">"
+                    + (percentageCheck.isSelected() ? (width < 0 ? "-" : "") + pec + "%" : "&nbsp;")
+                    + "</SPAN>";
         }
-        return v;
     }
 
     /*

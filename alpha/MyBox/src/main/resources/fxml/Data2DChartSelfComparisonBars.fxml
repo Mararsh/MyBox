@@ -21,8 +21,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="10.0" 
-      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DChartSelfComparisonBarsController">
+<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="10.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DChartSelfComparisonBarsController">
     <children>
         <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
             <items>
@@ -103,6 +102,9 @@ License:    Apache License Version 2.0
                                                 <CheckBox fx:id="rowNumberCheck" mnemonicParsing="false" text="%RowNumber" />
                                                 <CheckBox fx:id="otherCheck" mnemonicParsing="false" selected="true" text="%WithOtherColumns" />
                                                 <CheckBox fx:id="zeroCheck" mnemonicParsing="false" selected="true" text="%BaseOnZero" />
+                                    <CheckBox fx:id="valueCheck" mnemonicParsing="false" selected="true" text="%Value" />
+                                    <CheckBox fx:id="percentageCheck" mnemonicParsing="false" selected="true" text="%Percentage" />
+                                    <CheckBox fx:id="calculatedCheck" layoutX="10.0" layoutY="59.0" mnemonicParsing="false" selected="true" text="%CalculatedValues" />
                                             </children>
                                         </FlowPane>
                                     </children>

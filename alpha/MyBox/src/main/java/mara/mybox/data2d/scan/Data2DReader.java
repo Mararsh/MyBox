@@ -977,16 +977,11 @@ public abstract class Data2DReader {
                     values[c] = data2D.doubleValue(record.get(i));
                 }
             }
-            switch (a) {
-                case Sum:
-                    values = Normalization.sum(values);
-                    break;
-                case ZScore:
-                    values = Normalization.zscore(values);
-                    break;
-                case MinMax:
-                    values = Normalization.minMax(values, from, to);
-                    break;
+            values = Normalization.create()
+                    .setA(a).setFrom(from).setTo(to).setSourceVector(values)
+                    .calculate();
+            if (values == null) {
+                return;
             }
             for (double d : values) {
                 row.add(DoubleTools.scale(d, scale) + "");

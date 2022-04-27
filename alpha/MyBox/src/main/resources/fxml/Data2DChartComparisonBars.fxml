@@ -108,6 +108,9 @@ License:    Apache License Version 2.0
                                                 <Label minHeight="-Infinity" text="%MaximumWidth" wrapText="true" />
                                                 <ComboBox fx:id="widthSelector" editable="true" prefWidth="80.0" />
                                                 <CheckBox fx:id="zeroCheck" mnemonicParsing="false" selected="true" text="%BaseOnZero" />
+                                    <CheckBox fx:id="categoryCheck" layoutX="193.0" layoutY="14.0" mnemonicParsing="false" selected="true" text="%Category" />
+                                    <CheckBox fx:id="valueCheck" layoutX="294.0" layoutY="14.0" mnemonicParsing="false" selected="true" text="%Value" />
+                                    <CheckBox fx:id="percentageCheck" layoutX="10.0" layoutY="38.0" mnemonicParsing="false" selected="true" text="%Percentage" />
                                             </children>
                                         </FlowPane>
                                     </children>

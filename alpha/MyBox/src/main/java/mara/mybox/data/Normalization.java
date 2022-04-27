@@ -11,43 +11,95 @@ import mara.mybox.value.AppValues;
  */
 public class Normalization {
 
-    protected double from = 0, to = 1;
-    protected Algorithm a = Algorithm.MinMax;
+    protected double from, to, max, min, sum, mean, variance, width, maxAbs;
+    protected Algorithm a;
+    protected double[] sourceVector, resultVector;
+    protected double[][] sourceMatrix, resultMatrix;
+    protected Normalization[] values;
 
     public static enum Algorithm {
         MinMax, Sum, ZScore, Width
     }
 
-    public double[][] columnsNormalize(double[][] matrix) {
-        return columnsNormalize(matrix, a, from, to);
+    public Normalization() {
+        initParameters();
+        resetResults();
     }
 
-    public double[][] rowsNormalize(double[][] matrix) {
-        return rowsNormalize(matrix, a, from, to);
+    private void initParameters() {
+        from = 0;
+        to = 1;
+        width = 0;
+        a = Algorithm.MinMax;
+        sourceVector = null;
+        sourceMatrix = null;
     }
 
-    public double[][] allNormalize(double[][] matrix) {
-        return allNormalize(matrix, a, from, to);
+    private void resetResults() {
+        max = min = sum = mean = variance = maxAbs = Double.NaN;
+        resultVector = null;
     }
 
-    /*
-        static
-     */
-    public static Normalization create() {
-        return new Normalization();
-    }
-
-    public static double[] minMax(double[] vector, double from, double to) {
+    public Normalization cloneValues() {
         try {
-            if (vector == null) {
-                return vector;
+            Normalization n = new Normalization();
+            n.a = a;
+            n.from = from;
+            n.to = to;
+            n.max = max;
+            n.min = min;
+            n.sum = sum;
+            n.mean = mean;
+            n.variance = variance;
+            n.width = width;
+            n.maxAbs = maxAbs;
+            return n;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
+        }
+    }
+
+    public double[] calculate() {
+        try {
+            resetResults();
+            if (a == null) {
+                return null;
             }
-            int len = vector.length;
+            switch (a) {
+                case MinMax:
+                    minMax();
+                    break;
+                case Sum:
+                    sum();
+                    break;
+                case ZScore:
+                    zscore();
+                    break;
+                case Width:
+                    width();
+                    break;
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+        return resultVector;
+    }
+
+    public boolean minMax() {
+        try {
+            resetResults();
+            if (sourceVector == null) {
+                return false;
+            }
+            int len = sourceVector.length;
             if (len == 0) {
-                return vector;
+                return false;
             }
-            double min = Double.MAX_VALUE, max = -Double.MAX_VALUE;
-            for (double d : vector) {
+            min = Double.MAX_VALUE;
+            max = -Double.MAX_VALUE;
+            for (double d : sourceVector) {
                 if (d > max) {
                     max = d;
                 }
@@ -60,189 +112,176 @@ public class Normalization {
                 k = AppValues.TinyDouble;
             }
             k = (to - from) / k;
-            double[] result = new double[len];
+            resultVector = new double[len];
             for (int i = 0; i < len; i++) {
-                result[i] = from + k * (vector[i] - min);
+                resultVector[i] = from + k * (sourceVector[i] - min);
             }
-            return result;
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return null;
+            return false;
         }
     }
 
-    public static double[] zscore(double[] vector) {
+    public boolean zscore() {
         try {
-            if (vector == null) {
-                return vector;
+            resetResults();
+            if (sourceVector == null) {
+                return false;
             }
-            int len = vector.length;
+            int len = sourceVector.length;
             if (len == 0) {
-                return vector;
+                return false;
             }
-            double sum = 0;
-            for (double d : vector) {
+            sum = 0;
+            for (double d : sourceVector) {
                 sum += d;
             }
-            double mean = sum / len;
-            double variance = 0;
-            for (double d : vector) {
+            mean = sum / len;
+            variance = 0;
+            for (double d : sourceVector) {
                 variance += Math.pow(d - mean, 2);
             }
             variance = Math.sqrt(variance / len);
             if (variance == 0) {
                 variance = AppValues.TinyDouble;
             }
-            double[] result = new double[len];
+            resultVector = new double[len];
             for (int i = 0; i < len; i++) {
-                result[i] = (vector[i] - mean) / variance;
+                resultVector[i] = (sourceVector[i] - mean) / variance;
             }
-            return result;
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return null;
+            return false;
         }
     }
 
-    public static double[] sum(double[] vector) {
+    public boolean sum() {
         try {
-            if (vector == null) {
-                return vector;
+            resetResults();
+            if (sourceVector == null) {
+                return false;
             }
-            int len = vector.length;
+            int len = sourceVector.length;
             if (len == 0) {
-                return vector;
+                return false;
             }
-            double sum = 0;
-            for (double d : vector) {
+            sum = 0;
+            for (double d : sourceVector) {
                 sum += Math.abs(d);
             }
             if (sum == 0) {
                 sum = AppValues.TinyDouble;
             }
-            double[] result = new double[len];
+            resultVector = new double[len];
             for (int i = 0; i < len; i++) {
-                result[i] = vector[i] / sum;
+                resultVector[i] = sourceVector[i] / sum;
             }
-            return result;
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return null;
+            return false;
         }
     }
 
-    public static double[] width(double[] vector, int width) {
+    public boolean width() {
         try {
-            if (vector == null) {
-                return vector;
+            resetResults();
+            if (sourceVector == null) {
+                return false;
             }
-            int len = vector.length;
+            int len = sourceVector.length;
             if (len == 0) {
-                return vector;
+                return false;
             }
-            double maxAbs = 0;
-            for (double d : vector) {
-                if (Math.abs(d) > maxAbs) {
-                    maxAbs = d;
+            maxAbs = 0;
+            for (double d : sourceVector) {
+                double abs = Math.abs(d);
+                if (abs > maxAbs) {
+                    maxAbs = abs;
                 }
             }
-            if (maxAbs == 0) {
-                return vector;
-            }
-            double[] result = new double[len];
+            resultVector = new double[len];
             for (int i = 0; i < len; i++) {
-                double d = vector[i];
-                result[i] = width * vector[i] / maxAbs;
+                if (maxAbs == 0 || width == 0) {
+                    resultVector[i] = 0;
+                } else {
+                    resultVector[i] = width * sourceVector[i] / maxAbs;
+                }
             }
-            return result;
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return null;
+            return false;
         }
     }
 
-    public static double[][] columnsNormalize(double[][] matrix, Algorithm a, double from, double to) {
+    public double[][] columnsNormalize() {
         try {
-            if (matrix == null || matrix.length == 0 || a == null) {
-                return matrix;
+            if (sourceMatrix == null || sourceMatrix.length == 0 || a == null) {
+                return null;
             }
-            double[][] result = DoubleMatrixTools.transpose(matrix);
-            result = rowsNormalize(result, a, from, to);
-            result = DoubleMatrixTools.transpose(result);
-            return result;
+            double[][] orignalSource = sourceMatrix;
+            sourceMatrix = DoubleMatrixTools.transpose(sourceMatrix);
+            if (rowsNormalize() == null) {
+                resetResults();
+                return null;
+            }
+            resultMatrix = DoubleMatrixTools.transpose(resultMatrix);
+            sourceMatrix = orignalSource;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return null;
         }
+        return resultMatrix;
     }
 
-    public static double[][] rowsNormalize(double[][] matrix, Algorithm a, double from, double to) {
+    public double[][] rowsNormalize() {
         try {
-            if (matrix == null || matrix.length == 0 || a == null) {
-                return matrix;
+            if (sourceMatrix == null || sourceMatrix.length == 0 || a == null) {
+                return null;
             }
-            int rlen = matrix.length, clen = matrix[0].length;
-            double[][] result = new double[rlen][clen];
-            switch (a) {
-                case MinMax:
-                    for (int i = 0; i < rlen; i++) {
-                        result[i] = minMax(matrix[i], from, to);
-                    }
-                    break;
-                case Sum:
-                    for (int i = 0; i < rlen; i++) {
-                        result[i] = sum(matrix[i]);
-                    }
-                    break;
-                case ZScore:
-                    for (int i = 0; i < rlen; i++) {
-                        result[i] = zscore(matrix[i]);
-                    }
-                    break;
-                case Width:
-                    for (int i = 0; i < rlen; i++) {
-                        result[i] = width(matrix[i], (int) from);
-                    }
-                    break;
-                default:
+            int rlen = sourceMatrix.length, clen = sourceMatrix[0].length;
+            resultMatrix = new double[rlen][clen];
+            values = new Normalization[rlen];
+            for (int i = 0; i < rlen; i++) {
+                sourceVector = sourceMatrix[i];
+                if (calculate() == null) {
+                    resetResults();
                     return null;
+                }
+                resultMatrix[i] = resultVector;
+                values[i] = this.cloneValues();
             }
-            return result;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return null;
         }
+        return resultMatrix;
     }
 
-    public static double[][] allNormalize(double[][] matrix, Algorithm a, double from, double to) {
+    public double[][] allNormalize() {
         try {
-            if (matrix == null || matrix.length == 0 || a == null) {
-                return matrix;
+            if (sourceMatrix == null || sourceMatrix.length == 0 || a == null) {
+                return null;
             }
-            int w = matrix[0].length;
-            double[] vector = DoubleMatrixTools.matrix2Array(matrix);
-            switch (a) {
-                case MinMax:
-                    vector = minMax(vector, from, to);
-                    break;
-                case Sum:
-                    vector = sum(vector);
-                    break;
-                case ZScore:
-                    vector = zscore(vector);
-                    break;
-                case Width:
-                    vector = width(vector, (int) from);
-                    break;
-                default:
-                    return null;
+            int w = sourceMatrix[0].length;
+            sourceVector = DoubleMatrixTools.matrix2Array(sourceMatrix);
+            if (calculate() == null) {
+                resetResults();
+                return null;
             }
-            double[][] result = DoubleMatrixTools.array2Matrix(vector, w);
-            return result;
+            resultMatrix = DoubleMatrixTools.array2Matrix(resultVector, w);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return null;
         }
+        return resultMatrix;
+    }
+
+    /*
+        static
+     */
+    public static Normalization create() {
+        return new Normalization();
     }
 
     /*
@@ -272,6 +311,114 @@ public class Normalization {
 
     public Normalization setA(Algorithm a) {
         this.a = a;
+        return this;
+    }
+
+    public double getWidth() {
+        return width;
+    }
+
+    public Normalization setWidth(double width) {
+        this.width = width;
+        return this;
+    }
+
+    public double getMax() {
+        return max;
+    }
+
+    public Normalization setMax(double max) {
+        this.max = max;
+        return this;
+    }
+
+    public double getMin() {
+        return min;
+    }
+
+    public Normalization setMin(double min) {
+        this.min = min;
+        return this;
+    }
+
+    public double getSum() {
+        return sum;
+    }
+
+    public Normalization setSum(double sum) {
+        this.sum = sum;
+        return this;
+    }
+
+    public double getMean() {
+        return mean;
+    }
+
+    public Normalization setMean(double mean) {
+        this.mean = mean;
+        return this;
+    }
+
+    public double getVariance() {
+        return variance;
+    }
+
+    public Normalization setVariance(double variance) {
+        this.variance = variance;
+        return this;
+    }
+
+    public double[] getSourceVector() {
+        return sourceVector;
+    }
+
+    public Normalization setSourceVector(double[] sourceVector) {
+        this.sourceVector = sourceVector;
+        return this;
+    }
+
+    public double[] getResultVector() {
+        return resultVector;
+    }
+
+    public Normalization setResultVector(double[] resultVector) {
+        this.resultVector = resultVector;
+        return this;
+    }
+
+    public double[][] getSourceMatrix() {
+        return sourceMatrix;
+    }
+
+    public Normalization setSourceMatrix(double[][] sourceMatrix) {
+        this.sourceMatrix = sourceMatrix;
+        return this;
+    }
+
+    public double[][] getResultMatrix() {
+        return resultMatrix;
+    }
+
+    public Normalization setResultMatrix(double[][] resultMatrix) {
+        this.resultMatrix = resultMatrix;
+        return this;
+    }
+
+    public double getMaxAbs() {
+        return maxAbs;
+    }
+
+    public Normalization setMaxAbs(double maxAbs) {
+        this.maxAbs = maxAbs;
+        return this;
+    }
+
+    public Normalization[] getValues() {
+        return values;
+    }
+
+    public Normalization setValues(Normalization[] values) {
+        this.values = values;
         return this;
     }
 
