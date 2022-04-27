@@ -1,8 +1,6 @@
 package mara.mybox.fxml.chart;
 
-import javafx.collections.ObservableList;
 import javafx.geometry.Side;
-import javafx.scene.Node;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.layout.HBox;
@@ -61,14 +59,6 @@ public class LabeledLineChart<X, Y> extends LineChart<X, Y> {
     protected void layoutPlotChildren() {
         super.layoutPlotChildren();
         options.displayLabels();
-    }
-
-    public ObservableList<Node> getPlotNodes() {
-        return getPlotChildren();
-    }
-
-    public boolean addPlotNodes(Node node) {
-        return getPlotChildren().add(node);
     }
 
 }

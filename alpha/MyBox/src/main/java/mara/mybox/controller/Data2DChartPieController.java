@@ -62,9 +62,10 @@ public class Data2DChartPieController extends BaseData2DFxChartController {
     @Override
     public void setParameters(ControlData2DEditTable tableController) {
         try {
-            super.setParameters(tableController);
 
             sourceController.noColumnSelection(true);
+
+            super.setParameters(tableController);
 
             setSourceLabel(message("PieChartLabel"));
 

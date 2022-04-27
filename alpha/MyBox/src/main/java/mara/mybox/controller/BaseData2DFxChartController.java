@@ -90,7 +90,7 @@ public abstract class BaseData2DFxChartController extends BaseData2DChartControl
                     } else {
                         labelType = LabelType.NameAndValue;
                     }
-                    okAction();
+                    redrawChart();
                 }
             });
 
@@ -100,7 +100,7 @@ public abstract class BaseData2DFxChartController extends BaseData2DChartControl
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "PopLabel", popLabelCheck.isSelected());
                     if (chart != null) {
-                        okAction();
+                        redrawChart();
                     }
                 }
             });
@@ -132,7 +132,7 @@ public abstract class BaseData2DFxChartController extends BaseData2DChartControl
                             titleFontSizeSelector.getEditor().setStyle(null);
                             UserConfig.setInt(baseName + "TitleFontSize", titleFontSize);
                             if (chart != null) {
-                                okAction();
+                                redrawChart();
                             }
                         } else {
                             titleFontSizeSelector.getEditor().setStyle(UserConfig.badStyle());

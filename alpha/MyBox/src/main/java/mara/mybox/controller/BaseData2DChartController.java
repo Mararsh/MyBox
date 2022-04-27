@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -176,10 +177,20 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                 return false;
             }
         }
+        if (ok && sourceController.allPages()) {
+            infoLabel.setText(message("AllRowsLoadComments"));
+        }
         return ok;
     }
 
     public boolean initData() {
+        colsIndices = new ArrayList<>();
+        checkedColsIndices = sourceController.checkedColsIndices();
+        if (checkedColsIndices == null || checkedColsIndices.isEmpty()) {
+            popError(message("SelectToHandle"));
+            return false;
+        }
+        colsIndices.addAll(checkedColsIndices);
         return true;
     }
 
@@ -198,12 +209,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             protected boolean handle() {
                 try {
                     data2D.setTask(task);
-                    if (sourceController.allPages()) {
-                        outputData = data2D.allRows(colsIndices, false);
-                    } else {
-                        outputData = sourceController.selectedData(
-                                sourceController.checkedRowsIndices(), colsIndices, false);
-                    }
+                    readData();
                     return outputData != null && !outputData.isEmpty();
                 } catch (Exception e) {
                     MyBoxLog.error(e);
@@ -221,6 +227,15 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         start(task);
     }
 
+    public void readData() {
+        if (sourceController.allPages()) {
+            outputData = data2D.allRows(colsIndices, false);
+        } else {
+            outputData = sourceController.selectedData(
+                    sourceController.checkedRowsIndices(), colsIndices, false);
+        }
+    }
+
     public void drawChart() {
         try {
             if (outputData == null || outputData.isEmpty()) {
@@ -236,6 +251,10 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
     public void clearChart() {
         chartPane.getChildren().clear();
+    }
+
+    public void redrawChart() {
+        okAction();
     }
 
     @FXML

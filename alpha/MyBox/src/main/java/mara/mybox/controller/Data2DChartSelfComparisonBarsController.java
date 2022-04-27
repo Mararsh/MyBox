@@ -2,10 +2,6 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.paint.Color;
 import mara.mybox.data.Normalization;
 import mara.mybox.data.StringTable;
@@ -15,7 +11,6 @@ import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -26,49 +21,46 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DHtmlChart
 
     protected Normalization normalization;
 
-    @FXML
-    protected CheckBox otherCheck;
-
     public Data2DChartSelfComparisonBarsController() {
         baseTitle = message("SelfComparisonBarsChart");
         TipsLabelKey = "SelfComparisonBarsChartTips";
     }
 
     @Override
-    public void initControls() {
-        try {
-            super.initControls();
+    public boolean initData() {
+        super.initData();
+        if (categoryCheck.isSelected() && !colsIndices.contains(categorysCol)) {
+            colsIndices.add(categorysCol);
+        }
+        return true;
+    }
 
-            otherCheck.setSelected(UserConfig.getBoolean(baseName + "WithOthers", true));
-            otherCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "WithOthers", otherCheck.isSelected());
-                    okAction();
-                }
-            });
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+    @Override
+    public void readData() {
+        if (sourceController.allPages()) {
+            outputData = data2D.allRows(colsIndices, true);
+        } else {
+            outputData = sourceController.selectedData(
+                    sourceController.checkedRowsIndices(), colsIndices, true);
         }
     }
 
     @Override
     protected String handleData() {
         try {
+            if (outputData == null) {
+                return null;
+            }
             normalization = null;
-            List<Integer> checkedRowsIndices = sourceController.checkedRowsIndices();
             checkedColsIndices = sourceController.checkedColsIndices();
-            int rowsNumber = checkedRowsIndices.size();
+            int rowsNumber = outputData.size();
             int colsNumber = checkedColsIndices.size();
             double[][] data = new double[rowsNumber][colsNumber];
             boolean allNeg = true, allPos = true;
             for (int r = 0; r < rowsNumber; r++) {
-                int row = checkedRowsIndices.get(r);
-                List<String> tableRow = tableController.tableData.get(row);
+                List<String> tableRow = outputData.get(r);
                 for (int c = 0; c < colsNumber; c++) {
-                    int col = checkedColsIndices.get(c);
-                    double d = data2D.doubleValue(tableRow.get(col + 1));
+                    double d = data2D.doubleValue(tableRow.get(c + 1));
                     data[r][c] = d;
                     if (d > 0) {
                         allNeg = false;
@@ -77,7 +69,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DHtmlChart
                     }
                 }
             }
-            StringTable table = dataTable(calculate(data), checkedRowsIndices, allNeg, allPos);
+            StringTable table = dataTable(calculate(data), allNeg, allPos);
             if (table == null) {
                 return null;
             }
@@ -117,16 +109,19 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DHtmlChart
         return null;
     }
 
-    private StringTable dataTable(double[][] bars, List<Integer> checkedRowsIndices,
-            boolean allNeg, boolean allPos) {
+    private StringTable dataTable(double[][] bars, boolean allNeg, boolean allPos) {
         try {
             if (bars == null) {
                 return null;
             }
-            int rowsNumber = checkedRowsIndices.size();
+            int rowsNumber = bars.length;
+            int colsNumber = checkedColsIndices.size();
             List<String> names = new ArrayList<>();
             if (rowNumberCheck.isSelected()) {
                 names.add(message("RowNumber"));
+            }
+            if (categoryCheck.isSelected()) {
+                names.add(selectedCategory);
             }
             String title = data2D.displayName() + " - ";
             if (columnsRadio.isSelected()) {
@@ -144,14 +139,8 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DHtmlChart
             } else if (allRadio.isSelected()) {
                 title += message("AllComparison");
             }
-            if (otherCheck.isSelected()) {
-                for (Data2DColumn col : data2D.getColumns()) {
-                    names.add(col.getColumnName());
-                }
-            } else {
-                for (int col : checkedColsIndices) {
-                    names.add(data2D.colName(col));
-                }
+            for (int col : checkedColsIndices) {
+                names.add(data2D.colName(col));
             }
             StringTable table = new StringTable(names, title);
             if (calculatedCheck.isSelected()) {
@@ -169,11 +158,26 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DHtmlChart
                 }
             }
             Normalization[] normalizationValues = normalization.getValues();
+            Color[] color = new Color[checkedColsIndices.size()];
+            for (int i = 0; i < colsNumber; i++) {
+                Data2DColumn column = data2D.column(checkedColsIndices.get(i));
+                color[i] = column.getColor();
+            }
             for (int r = 0; r < rowsNumber; r++) {
-                int row = checkedRowsIndices.get(r);
+                List<String> tableRow = outputData.get(r);
                 List<String> htmlRow = new ArrayList<>();
                 if (rowNumberCheck.isSelected()) {
-                    htmlRow.add(data2D.rowName(row));
+                    htmlRow.add(message("Row") + tableRow.get(0));
+                }
+                if (categoryCheck.isSelected()) {
+                    int pos = checkedColsIndices.indexOf(categorysCol);
+                    if (pos >= 0) {
+                        htmlRow.add(tableRow.get(pos));
+                    } else if (tableRow.size() > colsNumber + 1) {
+                        htmlRow.add(tableRow.get(colsNumber + 1));
+                    } else {
+                        htmlRow.add("");
+                    }
                 }
                 if (calculatedCheck.isSelected() && rowsRadio.isSelected()) {
                     if (zeroCheck.isSelected()) {
@@ -183,26 +187,15 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DHtmlChart
                         htmlRow.add("" + normalizationValues[r].getMin());
                     }
                 }
-                List<String> tableRow = tableController.tableData.get(row);
-                for (int i = 0; i < data2D.getColumns().size(); i++) {
-                    String value = tableRow.get(i + 1);
-                    int c = checkedColsIndices.indexOf(i);
-                    if (c < 0) {
-                        if (otherCheck.isSelected()) {
-                            htmlRow.add(value);
-                        }
-                    } else {
-                        double width = bars[r][c];
-                        Data2DColumn column = data2D.column(i);
-                        Color color = column.getColor();
-                        htmlRow.add(valueBar(value, width, color, allNeg, allPos));
-                    }
+                for (int i = 0; i < colsNumber; i++) {
+                    htmlRow.add(valueBar(tableRow.get(i + 1), bars[r][i], color[i], allNeg, allPos));
                 }
                 table.add(htmlRow);
             }
 
             return table;
         } catch (Exception e) {
+            MyBoxLog.debug(e);
             if (task != null) {
                 task.setError(e.toString());
             }
@@ -218,41 +211,42 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DHtmlChart
         if (normalizationValues == null) {
             return;
         }
-        List<String> htmlRow = new ArrayList<>();
+        int colsNumber = checkedColsIndices.size();
         if (zeroCheck.isSelected()) {
-            for (int i = 0; i < data2D.getColumns().size(); i++) {
-                int c = checkedColsIndices.indexOf(i);
-                if (c < 0) {
-                    if (otherCheck.isSelected()) {
-                        htmlRow.add("");
-                    }
-                } else {
-                    htmlRow.add(message("MaxAbsolute") + ": " + normalizationValues[c].getMaxAbs());
-                }
+            List<String> htmlRow = new ArrayList<>();
+            if (rowNumberCheck.isSelected()) {
+                htmlRow.add("");
+            }
+            if (categoryCheck.isSelected()) {
+                htmlRow.add("");
+            }
+            for (int i = 0; i < colsNumber; i++) {
+                htmlRow.add(message("MaxAbsolute") + ": " + normalizationValues[i].getMaxAbs());
             }
             table.add(htmlRow);
+
         } else {
-            for (int i = 0; i < data2D.getColumns().size(); i++) {
-                int c = checkedColsIndices.indexOf(i);
-                if (c < 0) {
-                    if (otherCheck.isSelected()) {
-                        htmlRow.add("");
-                    }
-                } else {
-                    htmlRow.add(message("Maximum") + ": " + normalizationValues[c].getMax());
-                }
+            List<String> htmlRow = new ArrayList<>();
+            if (rowNumberCheck.isSelected()) {
+                htmlRow.add("");
+            }
+            if (categoryCheck.isSelected()) {
+                htmlRow.add("");
+            }
+            for (int i = 0; i < colsNumber; i++) {
+                htmlRow.add(message("Maximum") + ": " + normalizationValues[i].getMax());
             }
             table.add(htmlRow);
+
             htmlRow = new ArrayList<>();
-            for (int i = 0; i < data2D.getColumns().size(); i++) {
-                int c = checkedColsIndices.indexOf(i);
-                if (c < 0) {
-                    if (otherCheck.isSelected()) {
-                        htmlRow.add("");
-                    }
-                } else {
-                    htmlRow.add(message("Minimum") + ": " + normalizationValues[c].getMin());
-                }
+            if (rowNumberCheck.isSelected()) {
+                htmlRow.add("");
+            }
+            if (categoryCheck.isSelected()) {
+                htmlRow.add("");
+            }
+            for (int i = 0; i < colsNumber; i++) {
+                htmlRow.add(message("Minimum") + ": " + normalizationValues[i].getMin());
             }
             table.add(htmlRow);
         }

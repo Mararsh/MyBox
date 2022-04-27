@@ -103,7 +103,7 @@ public abstract class BaseData2DChartXYController extends BaseData2DFxChartContr
                             tickFontSizeSelector.getEditor().setStyle(null);
                             UserConfig.setInt(baseName + "TickFontSize", tickFontSize);
                             if (chart != null) {
-                                okAction();
+                                redrawChart();
                             }
                         } else {
                             tickFontSizeSelector.getEditor().setStyle(UserConfig.badStyle());
@@ -128,7 +128,7 @@ public abstract class BaseData2DChartXYController extends BaseData2DFxChartContr
                             labelFontSizeSelector.getEditor().setStyle(null);
                             UserConfig.setInt(baseName + "LabelFontSize", labelFontSize);
                             if (chart != null) {
-                                okAction();
+                                redrawChart();
                             }
                         } else {
                             labelFontSizeSelector.getEditor().setStyle(UserConfig.badStyle());
@@ -154,7 +154,7 @@ public abstract class BaseData2DChartXYController extends BaseData2DFxChartContr
                     } else if (message("Center").equals(value)) {
                         labelLocation = LabelLocation.Center;
                     }
-                    okAction();
+                    redrawChart();
                 }
             });
 
@@ -166,7 +166,7 @@ public abstract class BaseData2DChartXYController extends BaseData2DFxChartContr
                     }
                     checkXYReverse();
                     UserConfig.setBoolean(baseName + "YX", xyReverseCheck.isSelected());
-                    okAction();
+                    redrawChart();
                 });
             }
             checkXYReverse();
@@ -389,7 +389,7 @@ public abstract class BaseData2DChartXYController extends BaseData2DFxChartContr
                         } else {
                             cCoordinate = ChartTools.ChartCoordinate.Cartesian;
                         }
-                        okAction();
+                        redrawChart();
                     });
 
         } catch (Exception e) {
@@ -511,7 +511,7 @@ public abstract class BaseData2DChartXYController extends BaseData2DFxChartContr
                         } else {
                             nCoordinate = ChartTools.ChartCoordinate.Cartesian;
                         }
-                        okAction();
+                        redrawChart();
                     });
 
             numberAxisAnimatedCheck.setSelected(UserConfig.getBoolean(baseName + "NumberAxisAnimated", false));

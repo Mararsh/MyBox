@@ -18,10 +18,10 @@ import mara.mybox.value.UserConfig;
  */
 public abstract class BaseData2DHtmlChartController extends BaseData2DChartController {
 
-    protected int barWidth = 100;
+    protected int barWidth = 100, categorysCol;
 
     @FXML
-    protected CheckBox zeroCheck, valueCheck, percentageCheck, calculatedCheck;
+    protected CheckBox zeroCheck, valueCheck, percentageCheck, calculatedCheck, categoryCheck;
     @FXML
     protected ComboBox<String> widthSelector;
     @FXML
@@ -103,6 +103,17 @@ public abstract class BaseData2DHtmlChartController extends BaseData2DChartContr
                 });
             }
 
+            if (categoryCheck != null) {
+                categoryCheck.setSelected(UserConfig.getBoolean(baseName + "ShowCategory", true));
+                categoryCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        UserConfig.setBoolean(baseName + "ShowCategory", categoryCheck.isSelected());
+                        okAction();
+                    }
+                });
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -112,9 +123,6 @@ public abstract class BaseData2DHtmlChartController extends BaseData2DChartContr
     public void setParameters(ControlData2DEditTable editController) {
         try {
             super.setParameters(editController);
-
-            sourceController.showAllPages(false);
-
             okAction();
 
         } catch (Exception e) {
@@ -134,11 +142,24 @@ public abstract class BaseData2DHtmlChartController extends BaseData2DChartContr
         okAction();
     }
 
+    @Override
+    public boolean checkOptions() {
+        if (isSettingValues) {
+            return true;
+        }
+        boolean ok = super.checkOptions();
+        categorysCol = data2D.colOrder(selectedCategory);
+        return ok;
+    }
+
     @FXML
     @Override
     public void okAction() {
-        if (!checkOptions()) {
+        if (!checkOptions() || !initData()) {
             return;
+        }
+        if (task != null) {
+            task.cancel();
         }
         task = new SingletonTask<Void>(this) {
 
@@ -146,8 +167,16 @@ public abstract class BaseData2DHtmlChartController extends BaseData2DChartContr
 
             @Override
             protected boolean handle() {
-                html = handleData();
-                return html != null;
+                try {
+                    data2D.setTask(task);
+                    readData();
+                    html = handleData();
+                    return html != null;
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                    error = e.toString();
+                    return false;
+                }
             }
 
             @Override

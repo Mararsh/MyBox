@@ -40,9 +40,15 @@ License:    Apache License Version 2.0
                                     </children>
                                 </HBox>
                                 <fx:include fx:id="source" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DSource.fxml" VBox.vgrow="ALWAYS" />
+                        <FlowPane fx:id="categoryColumnsPane" hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+                           <children>
+                              <Label minHeight="-Infinity" minWidth="-Infinity" text="%CategoryColumn" />
+                              <ComboBox fx:id="categoryColumnSelector" prefWidth="200.0" />
+                           </children>
+                        </FlowPane>
                                 <HBox alignment="CENTER_LEFT" spacing="2.0">
                                     <children>
-                                        <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
+                                        <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" />
                                         <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -100,8 +106,8 @@ License:    Apache License Version 2.0
                                                 <Label minHeight="-Infinity" text="%MaximumWidth" wrapText="true" />
                                                 <ComboBox fx:id="widthSelector" editable="true" prefWidth="80.0" />
                                                 <CheckBox fx:id="rowNumberCheck" mnemonicParsing="false" text="%RowNumber" />
-                                                <CheckBox fx:id="otherCheck" mnemonicParsing="false" selected="true" text="%WithOtherColumns" />
                                                 <CheckBox fx:id="zeroCheck" mnemonicParsing="false" selected="true" text="%BaseOnZero" />
+                                    <CheckBox fx:id="categoryCheck" mnemonicParsing="false" selected="true" text="%Category" />
                                     <CheckBox fx:id="valueCheck" mnemonicParsing="false" selected="true" text="%Value" />
                                     <CheckBox fx:id="percentageCheck" mnemonicParsing="false" selected="true" text="%Percentage" />
                                     <CheckBox fx:id="calculatedCheck" layoutX="10.0" layoutY="59.0" mnemonicParsing="false" selected="true" text="%CalculatedValues" />

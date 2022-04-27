@@ -767,7 +767,7 @@ public class ControlData2D extends BaseController {
 
             menu = new MenuItem(message("BoxWhiskerChart"), StyleTools.getIconImage("iconBoxWhiskerChart.png"));
             menu.setOnAction((ActionEvent event) -> {
-                Data2DChartSelfComparisonBarsController.open(tableController);
+                Data2DChartBoxWhiskerController.open(tableController);
             });
             menu.setDisable(empty);
             chartMenu.getItems().add(menu);

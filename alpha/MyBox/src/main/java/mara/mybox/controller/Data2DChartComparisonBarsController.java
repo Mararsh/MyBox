@@ -5,7 +5,6 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.paint.Color;
 import mara.mybox.data.Normalization;
@@ -15,7 +14,6 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -25,15 +23,12 @@ import mara.mybox.value.UserConfig;
 public class Data2DChartComparisonBarsController extends BaseData2DHtmlChartController {
 
     protected String selectedValue2;
-    protected List<Integer> checkedRowsIndices;
-    protected int categorysCol, col1, col2, rowsNumber;
+    protected int col1, col2, rowsNumber;
     protected double[] bar;
     protected Normalization normalization;
 
     @FXML
     protected ComboBox<String> valueColumn2Selector;
-    @FXML
-    protected CheckBox categoryCheck;
 
     public Data2DChartComparisonBarsController() {
         baseTitle = message("ComparisonBarsChart");
@@ -54,14 +49,16 @@ public class Data2DChartComparisonBarsController extends BaseData2DHtmlChartCont
 
             webViewController.initStyle = "";
 
-            categoryCheck.setSelected(UserConfig.getBoolean(baseName + "ShowCategory", true));
-            categoryCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "ShowCategory", categoryCheck.isSelected());
-                    okAction();
-                }
-            });
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
+    public void setParameters(ControlData2DEditTable tableController) {
+        try {
+            sourceController.noColumnSelection(true);
+            super.setParameters(tableController);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -106,22 +103,43 @@ public class Data2DChartComparisonBarsController extends BaseData2DHtmlChartCont
         }
         col1 = data2D.colOrder(selectedValue);
         col2 = data2D.colOrder(selectedValue2);
-        categorysCol = data2D.colOrder(selectedCategory);
         return ok;
+    }
+
+    @Override
+    public boolean initData() {
+        colsIndices = new ArrayList<>();
+        colsIndices.add(col1);
+        colsIndices.add(col2);
+        if (categoryCheck.isSelected() && !colsIndices.contains(categorysCol)) {
+            colsIndices.add(categorysCol);
+        }
+        return true;
+    }
+
+    @Override
+    public void readData() {
+        if (sourceController.allPages()) {
+            outputData = data2D.allRows(colsIndices, true);
+        } else {
+            outputData = sourceController.selectedData(
+                    sourceController.checkedRowsIndices(), colsIndices, true);
+        }
     }
 
     @Override
     protected String handleData() {
         try {
+            if (outputData == null) {
+                return null;
+            }
             normalization = null;
-            checkedRowsIndices = sourceController.checkedRowsIndices();
-            rowsNumber = checkedRowsIndices.size();
+            rowsNumber = outputData.size();
             double[] data = new double[2 * rowsNumber];
             for (int r = 0; r < rowsNumber; r++) {
-                int row = checkedRowsIndices.get(r);
-                List<String> tableRow = tableController.tableData.get(row);
-                data[r] = data2D.doubleValue(tableRow.get(col1 + 1));
-                data[r + rowsNumber] = data2D.doubleValue(tableRow.get(col2 + 1));
+                List<String> tableRow = outputData.get(r);
+                data[r] = data2D.doubleValue(tableRow.get(1));
+                data[r + rowsNumber] = data2D.doubleValue(tableRow.get(2));
             }
             normalization = Normalization.create().setSourceVector(data);
             if (zeroCheck.isSelected()) {
@@ -161,25 +179,38 @@ public class Data2DChartComparisonBarsController extends BaseData2DHtmlChartCont
             }
             s.append("</TR>\n");
             for (int r = 0; r < rowsNumber; r++) {
-                List<String> tableRow = tableController.tableData.get(checkedRowsIndices.get(r));
+                List<String> tableRow = outputData.get(r);
                 s.append("<TR>\n");
+
+                if (rowNumberCheck.isSelected()) {
+                    s.append("<TD align=center>").append(message("Row")).append(tableRow.get(0)).append("</TD>\n");
+                }
+
                 s.append("<TD align=right>")
-                        .append(valueCheck.isSelected() ? tableRow.get(col1 + 1) : "")
+                        .append(valueCheck.isSelected() ? tableRow.get(1) : "")
                         .append(bar(bar[r], color1)).append("</TD>\n");
 
                 if (categoryCheck.isSelected()) {
-                    s.append("<TD align=center>").append(tableRow.get(categorysCol + 1)).append("</TD>\n");
+                    int pos = colsIndices.indexOf(categorysCol);
+                    String v;
+                    if (pos >= 0) {
+                        v = tableRow.get(pos);
+                    } else if (tableRow.size() > 2) {
+                        v = tableRow.get(2);
+                    } else {
+                        v = "";
+                    }
+                    s.append("<TD align=center>").append(v).append("</TD>\n");
                 }
 
                 s.append("<TD align=left>")
                         .append(bar(bar[r + rowsNumber], color2))
-                        .append(valueCheck.isSelected() ? tableRow.get(col2 + 1) : "")
+                        .append(valueCheck.isSelected() ? tableRow.get(2) : "")
                         .append("</TD>\n");
 
                 s.append("</TR>\n");
             }
             s.append("</Table>\n</DIV>\n</BODY>\n");
-            checkedRowsIndices = null;
             bar = null;
             return HtmlWriteTools.html(title, "utf-8", null, s.toString());
         } catch (Exception e) {
@@ -187,7 +218,6 @@ public class Data2DChartComparisonBarsController extends BaseData2DHtmlChartCont
                 task.setError(e.toString());
             }
         }
-        checkedRowsIndices = null;
         bar = null;
         normalization = null;
         return null;

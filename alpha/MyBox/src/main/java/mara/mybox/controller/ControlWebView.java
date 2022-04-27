@@ -1323,7 +1323,7 @@ public class ControlWebView extends BaseController {
         UserConfig.setBoolean("WebViewEditable", e);
         webEngine.executeScript("document.body.contentEditable=" + e);
         if (e) {
-            popInformation(message("HtmlEditableComments"));
+            alertInformation(message("HtmlEditableComments"));
         }
     }
 
