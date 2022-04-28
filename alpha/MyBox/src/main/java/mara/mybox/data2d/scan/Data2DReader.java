@@ -8,7 +8,7 @@ import java.util.List;
 import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.data.DoubleStatistic;
 import mara.mybox.data.Normalization;
-import mara.mybox.data.StatisticOptions;
+import mara.mybox.data.StatisticCalculation;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.data2d.DataFileCSV;
@@ -54,7 +54,7 @@ public abstract class Data2DReader {
     protected List<Skewness> skewnessList;
     protected DoubleStatistic statisticAll;
     protected Skewness skewnessAll;
-    protected StatisticOptions statisticSelection;
+    protected StatisticCalculation statisticSelection;
     protected Frequency frequency;
     protected CSVPrinter csvPrinter;
     protected boolean readerHasHeader, readerStopped, needCheckTask;
@@ -1199,7 +1199,7 @@ public abstract class Data2DReader {
         return this;
     }
 
-    public Data2DReader setStatisticSelection(StatisticOptions statisticSelection) {
+    public Data2DReader setStatisticSelection(StatisticCalculation statisticSelection) {
         this.statisticSelection = statisticSelection;
         return this;
     }

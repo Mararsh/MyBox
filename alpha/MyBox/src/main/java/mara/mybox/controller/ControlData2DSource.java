@@ -101,6 +101,7 @@ public class ControlData2DSource extends ControlData2DLoad {
             tableStatusListener = new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    MyBoxLog.console("tableStatusListener");
                     updateData();
                 }
             };
@@ -134,7 +135,7 @@ public class ControlData2DSource extends ControlData2DLoad {
     }
 
     public boolean allPages() {
-        checkChanged();
+//        checkChanged();
         return allPagesCheck.isSelected();
     }
 
@@ -236,6 +237,9 @@ public class ControlData2DSource extends ControlData2DLoad {
     @FXML
     public void selectAllCols() {
         try {
+            if (noColumnSelection) {
+                return;
+            }
             isSettingValues = true;
             for (int i = 2; i < tableView.getColumns().size(); i++) {
                 TableColumn tableColumn = tableView.getColumns().get(i);
@@ -252,6 +256,9 @@ public class ControlData2DSource extends ControlData2DLoad {
     @FXML
     public void selectNoneCols() {
         try {
+            if (noColumnSelection) {
+                return;
+            }
             isSettingValues = true;
             for (int i = 2; i < tableView.getColumns().size(); i++) {
                 TableColumn tableColumn = tableView.getColumns().get(i);
@@ -301,6 +308,9 @@ public class ControlData2DSource extends ControlData2DLoad {
     // If none selected then select all
     public List<String> checkedColsNames() {
         try {
+            if (noColumnSelection) {
+                return null;
+            }
             List<String> names = new ArrayList<>();
             List<String> all = new ArrayList<>();
             int idOrder = -1;
@@ -331,6 +341,9 @@ public class ControlData2DSource extends ControlData2DLoad {
     // If none selected then select all
     public List<Data2DColumn> checkedCols() {
         try {
+            if (noColumnSelection) {
+                return null;
+            }
             List<Data2DColumn> cols = new ArrayList<>();
             List<Data2DColumn> all = new ArrayList<>();
             int idOrder = -1;
@@ -422,6 +435,9 @@ public class ControlData2DSource extends ControlData2DLoad {
 
     public void selectCols(List<Integer> cols) {
         try {
+            if (noColumnSelection) {
+                return;
+            }
             isSettingValues = true;
             if (cols != null && !cols.isEmpty() && cols.size() != tableView.getColumns().size() - 2) {
                 for (int i = 2; i < tableView.getColumns().size(); i++) {

@@ -383,7 +383,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         if (data2D != null) {
             data2D.setTableChanged(false);
         }
-        notifyStatus();
     }
 
     public void notifyStatus() {

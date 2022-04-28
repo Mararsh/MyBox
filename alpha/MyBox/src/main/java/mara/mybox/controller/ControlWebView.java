@@ -489,6 +489,18 @@ public class ControlWebView extends BaseController {
         }
     }
 
+    public Object executeScript(String js) {
+        try {
+            if (js == null || js.isBlank()) {
+                return null;
+            }
+            return webEngine.executeScript(js);
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
+            return null;
+        }
+    }
+
     private void pageIsLoading() {
         setWebViewLabel(message("Loading..."));
         pageLoadingNotify.set(!pageLoadingNotify.get());

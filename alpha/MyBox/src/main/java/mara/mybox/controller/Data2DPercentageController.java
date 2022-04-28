@@ -81,8 +81,7 @@ public class Data2DPercentageController extends BaseData2DHandleController {
     @Override
     public void okAction() {
         try {
-            if ((sourceController.allPages() && !tableController.checkBeforeLoadingTableData())
-                    || !checkOptions() || !prepare()) {
+            if (!checkOptions() || !prepare()) {
                 return;
             }
             if (sourceController.allPages()) {
@@ -396,6 +395,7 @@ public class Data2DPercentageController extends BaseData2DHandleController {
 
     @Override
     public DataFileCSV generatedFile() {
+        MyBoxLog.console("generatedFile");
         switch (objectType) {
             case Rows:
                 return data2D.percentageRows(handledNames, sourceController.checkedColsIndices,

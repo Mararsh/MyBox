@@ -1,32 +1,23 @@
 package mara.mybox.controller;
 
-import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Toggle;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.DoubleStatistic;
-import mara.mybox.data.StatisticOptions;
-import mara.mybox.data.StatisticOptions.StatisticObject;
+import mara.mybox.data.StatisticCalculation;
+import mara.mybox.data.StatisticCalculation.StatisticObject;
 import mara.mybox.data2d.Data2D_Operations.ObjectType;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
-import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.tools.DoubleTools;
-import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -38,11 +29,7 @@ import mara.mybox.value.UserConfig;
  */
 public class Data2DStatisticController extends BaseData2DHandleController {
 
-    protected List<String> countRow, summationRow, meanRow, geometricMeanRow, sumOfSquaresRow,
-            populationVarianceRow, sampleVarianceRow, populationStandardDeviationRow, sampleStandardDeviationRow, skewnessRow,
-            maximumRow, minimumRow, medianRow, upperQuartileRow, lowerQuartileRow, modeRow;
-    protected List<String> handledNames;
-    protected StatisticOptions options;
+    protected StatisticCalculation calculation;
 
     @FXML
     protected CheckBox countCheck, summationCheck, meanCheck, geometricMeanCheck, sumOfSquaresCheck,
@@ -81,13 +68,6 @@ public class Data2DStatisticController extends BaseData2DHandleController {
     public void initControls() {
         try {
             super.initControls();
-
-            objectGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    checkMemoryLabel();
-                }
-            });
 
             countCheck.setSelected(UserConfig.getBoolean(baseName + "Count", true));
             countCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -263,9 +243,15 @@ public class Data2DStatisticController extends BaseData2DHandleController {
     }
 
     @Override
+    public void objectChanged() {
+        super.objectChanged();
+        checkMemoryLabel();
+    }
+
+    @Override
     public boolean checkOptions() {
         boolean ok = super.checkOptions();
-        options = new StatisticOptions()
+        calculation = new StatisticCalculation()
                 .setCount(countCheck.isSelected())
                 .setSum(summationCheck.isSelected())
                 .setMean(meanCheck.isSelected())
@@ -285,15 +271,18 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 .setScale(scale);
         switch (objectType) {
             case Rows:
-                options.setStatisticObject(StatisticObject.Rows);
+                calculation.setStatisticObject(StatisticObject.Rows);
                 break;
             case All:
-                options.setStatisticObject(StatisticObject.All);
+                calculation.setStatisticObject(StatisticObject.All);
                 break;
             default:
-                options.setStatisticObject(StatisticObject.Columns);
+                calculation.setStatisticObject(StatisticObject.Columns);
                 break;
         }
+        calculation.setHandleController(this).setData2D(data2D)
+                .setColsIndices(sourceController.checkedColsIndices())
+                .setColsNames(sourceController.checkedColsNames());
         checkMemoryLabel();
         return ok;
     }
@@ -368,8 +357,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
     @Override
     public void okAction() {
         try {
-            if ((sourceController.allPages() && !tableController.checkBeforeLoadingTableData())
-                    || !checkOptions() || !prepare()) {
+            if (!checkOptions() || !calculation.prepare()) {
                 return;
             }
             if (sourceController.allPages()) {
@@ -392,460 +380,14 @@ public class Data2DStatisticController extends BaseData2DHandleController {
         }
     }
 
-    public boolean prepare() {
-        try {
-            switch (objectType) {
-                case Rows:
-                    return prepareByRows();
-                case All:
-                    return prepareByColumns("", Arrays.asList(message("All")));
-                default:
-                    return prepareByColumns(message("Column") + "-", sourceController.checkedColsNames());
-            }
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-    public boolean prepareByColumns(String prefix, List<String> names) {
-        try {
-
-            if (names == null || names.isEmpty()) {
-                return false;
-            }
-            String cName = prefix + message("Calculation");
-            while (names.contains(cName)) {
-                cName += "m";
-            }
-            handledNames = new ArrayList<>();
-            handledNames.add(cName);
-            handledNames.addAll(names);
-
-            outputColumns = new ArrayList<>();
-            outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.String, 300));
-            for (String name : names) {
-                outputColumns.add(new Data2DColumn(name, ColumnDefinition.ColumnType.Double));
-            }
-
-            outputData = new ArrayList<>();
-
-            countRow = null;
-            if (countCheck.isSelected()) {
-                countRow = new ArrayList<>();
-                countRow.add(prefix + message("Count"));
-                outputData.add(countRow);
-            }
-
-            summationRow = null;
-            if (summationCheck.isSelected()) {
-                summationRow = new ArrayList<>();
-                summationRow.add(prefix + message("Summation"));
-                outputData.add(summationRow);
-            }
-
-            meanRow = null;
-            if (meanCheck.isSelected()) {
-                meanRow = new ArrayList<>();
-                meanRow.add(prefix + message("Mean"));
-                outputData.add(meanRow);
-            }
-
-            geometricMeanRow = null;
-            if (geometricMeanCheck.isSelected()) {
-                geometricMeanRow = new ArrayList<>();
-                geometricMeanRow.add(prefix + message("GeometricMean"));
-                outputData.add(geometricMeanRow);
-            }
-
-            sumOfSquaresRow = null;
-            if (sumOfSquaresCheck.isSelected()) {
-                sumOfSquaresRow = new ArrayList<>();
-                sumOfSquaresRow.add(prefix + message("SumOfSquares"));
-                outputData.add(sumOfSquaresRow);
-            }
-
-            populationVarianceRow = null;
-            if (populationVarianceCheck.isSelected()) {
-                populationVarianceRow = new ArrayList<>();
-                populationVarianceRow.add(prefix + message("PopulationVariance"));
-                outputData.add(populationVarianceRow);
-            }
-
-            sampleVarianceRow = null;
-            if (sampleVarianceCheck.isSelected()) {
-                sampleVarianceRow = new ArrayList<>();
-                sampleVarianceRow.add(prefix + message("SampleVariance"));
-                outputData.add(sampleVarianceRow);
-            }
-
-            populationStandardDeviationRow = null;
-            if (populationStandardDeviationCheck.isSelected()) {
-                populationStandardDeviationRow = new ArrayList<>();
-                populationStandardDeviationRow.add(prefix + message("PopulationStandardDeviation"));
-                outputData.add(populationStandardDeviationRow);
-            }
-
-            sampleStandardDeviationRow = null;
-            if (sampleStandardDeviationCheck.isSelected()) {
-                sampleStandardDeviationRow = new ArrayList<>();
-                sampleStandardDeviationRow.add(prefix + message("SampleStandardDeviation"));
-                outputData.add(sampleStandardDeviationRow);
-            }
-
-            skewnessRow = null;
-            if (skewnessCheck.isSelected()) {
-                skewnessRow = new ArrayList<>();
-                skewnessRow.add(prefix + message("Skewness"));
-                outputData.add(skewnessRow);
-            }
-
-            minimumRow = null;
-            if (minimumCheck.isSelected()) {
-                minimumRow = new ArrayList<>();
-                minimumRow.add(prefix + message("MinimumQ0"));
-                outputData.add(minimumRow);
-            }
-
-            upperQuartileRow = null;
-            if (upperQuartileCheck.isSelected()) {
-                upperQuartileRow = new ArrayList<>();
-                upperQuartileRow.add(prefix + message("UpperQuartile"));
-                outputData.add(upperQuartileRow);
-            }
-
-            medianRow = null;
-            if (medianCheck.isSelected()) {
-                medianRow = new ArrayList<>();
-                medianRow.add(prefix + message("Median"));
-                outputData.add(medianRow);
-            }
-
-            lowerQuartileRow = null;
-            if (lowerQuartileCheck.isSelected()) {
-                lowerQuartileRow = new ArrayList<>();
-                lowerQuartileRow.add(prefix + message("LowerQuartile"));
-                outputData.add(lowerQuartileRow);
-            }
-
-            maximumRow = null;
-            if (maximumCheck.isSelected()) {
-                maximumRow = new ArrayList<>();
-                maximumRow.add(prefix + message("MaximumQ4"));
-                outputData.add(maximumRow);
-            }
-
-            modeRow = null;
-            if (modeCheck.isSelected()) {
-                modeRow = new ArrayList<>();
-                modeRow.add(prefix + message("Mode"));
-                outputData.add(modeRow);
-            }
-
-            if (outputData.size() < 1) {
-                popError(prefix + message("SelectToHandle"));
-                return false;
-            }
-
-            return true;
-        } catch (Exception e) {
-            popError(e.toString());
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-    public boolean prepareByRows() {
-        try {
-            handledNames = new ArrayList<>();
-            outputColumns = new ArrayList<>();
-
-            String cName = message("SourceRowNumber");
-            handledNames.add(cName);
-            outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.String));
-
-            String prefix = message("Rows") + "-";
-            int width = 150;
-            if (countCheck.isSelected()) {
-                cName = prefix + message("Count");
-                handledNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (summationCheck.isSelected()) {
-                cName = prefix + message("Summation");
-                handledNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (meanCheck.isSelected()) {
-                cName = prefix + message("Mean");
-                handledNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (geometricMeanCheck.isSelected()) {
-                cName = prefix + message("GeometricMean");
-                handledNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (sumOfSquaresCheck.isSelected()) {
-                cName = prefix + message("SumOfSquares");
-                handledNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (populationVarianceCheck.isSelected()) {
-                cName = prefix + message("PopulationVariance");
-                handledNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (sampleVarianceCheck.isSelected()) {
-                cName = prefix + message("SampleVariance");
-                handledNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (populationStandardDeviationCheck.isSelected()) {
-                cName = prefix + message("PopulationStandardDeviation");
-                handledNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (sampleStandardDeviationCheck.isSelected()) {
-                cName = prefix + message("SampleStandardDeviation");
-                handledNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (skewnessCheck.isSelected()) {
-                cName = prefix + message("Skewness");
-                handledNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (minimumCheck.isSelected()) {
-                cName = prefix + message("MinimumQ0");
-                handledNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (upperQuartileCheck.isSelected()) {
-                cName = prefix + message("UpperQuartile");
-                handledNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (medianCheck.isSelected()) {
-                cName = prefix + message("Median");
-                handledNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (lowerQuartileCheck.isSelected()) {
-                cName = prefix + message("LowerQuartile");
-                handledNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (maximumCheck.isSelected()) {
-                cName = prefix + message("MaximumQ4");
-                handledNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (modeCheck.isSelected()) {
-                cName = prefix + message("Mode");
-                handledNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (handledNames.size() < 2) {
-                popError(message("SelectToHandle"));
-                return false;
-            }
-
-            return true;
-        } catch (Exception e) {
-            popError(e.toString());
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
     @Override
     public boolean handleRows() {
-        return statisticData(sourceController.selectedData(true));
-    }
-
-    public boolean statisticData(List<List<String>> rows) {
-        try {
-            if (rows == null || rows.isEmpty()) {
-                if (task != null) {
-                    task.setError(message("SelectToHandle"));
-                }
-                return false;
-            }
-            switch (options.statisticObject) {
-                case Rows:
-                    return statisticByRows(rows);
-                case All:
-                    return statisticByAll(rows);
-                default:
-                    return statisticByColumns(rows);
-            }
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
+        if (!calculation.statisticData(sourceController.selectedData(true))) {
             return false;
         }
-    }
-
-    public boolean statisticByColumns(List<List<String>> rows) {
-        try {
-            if (rows == null || rows.isEmpty()) {
-                return false;
-            }
-            int rowsNumber = rows.size();
-            int colsNumber = rows.get(0).size();
-            for (int c = 1; c < colsNumber; c++) {
-                String[] colData = new String[rowsNumber];
-                for (int r = 0; r < rowsNumber; r++) {
-                    colData[r] = rows.get(r).get(c);
-                }
-                DoubleStatistic statistic = new DoubleStatistic(colData, options);
-                statisticByColumnsWrite(statistic);
-            }
-            return true;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-    public boolean statisticByColumnsWrite(DoubleStatistic statistic) {
-        if (statistic == null) {
-            return false;
-        }
-        if (countRow != null) {
-            countRow.add(StringTools.format(statistic.getCount()));
-        }
-        if (summationRow != null) {
-            summationRow.add(DoubleTools.format(statistic.getSum(), scale));
-        }
-        if (meanRow != null) {
-            meanRow.add(DoubleTools.format(statistic.getMean(), scale));
-        }
-        if (maximumRow != null) {
-            maximumRow.add(DoubleTools.format(statistic.getMaximum(), scale));
-        }
-        if (minimumRow != null) {
-            minimumRow.add(DoubleTools.format(statistic.getMinimum(), scale));
-        }
-        if (geometricMeanRow != null) {
-            geometricMeanRow.add(DoubleTools.format(statistic.getGeometricMean(), scale));
-        }
-        if (sumOfSquaresRow != null) {
-            sumOfSquaresRow.add(DoubleTools.format(statistic.getSumSquares(), scale));
-        }
-        if (populationVarianceRow != null) {
-            populationVarianceRow.add(DoubleTools.format(statistic.getPopulationVariance(), scale));
-        }
-        if (sampleVarianceRow != null) {
-            sampleVarianceRow.add(DoubleTools.format(statistic.getSampleVariance(), scale));
-        }
-        if (populationStandardDeviationRow != null) {
-            populationStandardDeviationRow.add(DoubleTools.format(statistic.getPopulationStandardDeviation(), scale));
-        }
-        if (sampleStandardDeviationRow != null) {
-            sampleStandardDeviationRow.add(DoubleTools.format(statistic.getSampleStandardDeviation(), scale));
-        }
-        if (skewnessRow != null) {
-            skewnessRow.add(DoubleTools.format(statistic.getSkewness(), scale));
-        }
-        if (medianRow != null) {
-            medianRow.add(DoubleTools.format(statistic.getMedian(), scale));
-        }
-        if (upperQuartileRow != null) {
-            upperQuartileRow.add(DoubleTools.format(statistic.getUpperQuartile(), scale));
-        }
-        if (lowerQuartileRow != null) {
-            lowerQuartileRow.add(DoubleTools.format(statistic.getLowerQuartile(), scale));
-        }
-        if (modeRow != null) {
-            try {
-                modeRow.add(DoubleTools.format((double) statistic.getMode(), scale));
-            } catch (Exception e) {
-                modeRow.add(statistic.getMode().toString());
-            }
-        }
+        outputColumns = calculation.getOutputColumns();
+        outputData = calculation.getOutputData();
         return true;
-    }
-
-    public boolean statisticByRows(List<List<String>> rows) {
-        try {
-            if (rows == null || rows.isEmpty()) {
-                return false;
-            }
-            outputData = new ArrayList<>();
-            int rowsNumber = rows.size();
-            for (int r = 0; r < rowsNumber; r++) {
-                List<String> rowStatistic = new ArrayList<>();
-                List<String> row = rows.get(r);
-                rowStatistic.add(message("Row") + " " + row.get(0));
-                int colsNumber = row.size();
-                String[] rowData = new String[colsNumber - 1];
-                for (int c = 1; c < colsNumber; c++) {
-                    rowData[c - 1] = row.get(c);
-                }
-                DoubleStatistic statistic = new DoubleStatistic(rowData, options);
-                rowStatistic.addAll(statistic.toStringList());
-                outputData.add(rowStatistic);
-            }
-            return true;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-    public boolean statisticByAll(List<List<String>> rows) {
-        try {
-            if (rows == null || rows.isEmpty()) {
-                return false;
-            }
-            int rowsNumber = rows.size();
-            int colsNumber = rows.get(0).size();
-            String[] allData = new String[rowsNumber * (colsNumber - 1)];
-            int index = 0;
-            for (int r = 0; r < rowsNumber; r++) {
-                for (int c = 1; c < colsNumber; c++) {
-                    allData[index++] = rows.get(r).get(c);
-                }
-            }
-            DoubleStatistic statistic = new DoubleStatistic(allData, options);
-            statisticByColumnsWrite(statistic);
-            return true;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return false;
-        }
     }
 
     public void handleAllByColumnsTask() {
@@ -855,14 +397,15 @@ public class Data2DStatisticController extends BaseData2DHandleController {
             protected boolean handle() {
                 try {
                     data2D.setTask(task);
-                    if (options.needStored()) {
+                    calculation.setTask(task);
+                    if (calculation.needStored()) {
                         if (data2D instanceof DataTable) {
-                            return statisticAllByColumnsInDataTable();
+                            return calculation.statisticAllByColumnsInDataTable();
                         } else {
-                            return statisticData(data2D.allRows(sourceController.checkedColsIndices(), true));
+                            return calculation.statisticData(data2D.allRows(sourceController.checkedColsIndices(), true));
                         }
                     } else {
-                        return statisticAllByColumnsWithoutStored();
+                        return calculation.statisticAllByColumnsWithoutStored();
                     }
                 } catch (Exception e) {
                     error = e.toString();
@@ -872,6 +415,8 @@ public class Data2DStatisticController extends BaseData2DHandleController {
 
             @Override
             protected void whenSucceeded() {
+                outputColumns = calculation.getOutputColumns();
+                outputData = calculation.getOutputData();
                 if (targetController.inTable()) {
                     updateTable();
                 } else {
@@ -883,6 +428,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
             protected void finalAction() {
                 super.finalAction();
                 data2D.setTask(null);
+                calculation.setTask(null);
                 task = null;
                 if (targetController != null) {
                     targetController.refreshControls();
@@ -893,69 +439,6 @@ public class Data2DStatisticController extends BaseData2DHandleController {
         start(task);
     }
 
-    public boolean statisticAllByColumnsWithoutStored() {
-        DoubleStatistic[] statisticData = data2D.statisticByColumns(sourceController.checkedColsIndices, options);
-        if (statisticData == null) {
-            return false;
-        }
-        for (DoubleStatistic statistic : statisticData) {
-            statisticByColumnsWrite(statistic);
-        }
-        return true;
-    }
-
-    public boolean statisticAllByColumnsInDataTable() {
-        if (!statisticAllByColumnsWithoutStored() || !(data2D instanceof DataTable)) {
-            return false;
-        }
-        try ( Connection conn = DerbyBase.getConnection()) {
-            List<Integer> cols = sourceController.checkedColsIndices();
-            DataTable dataTable = (DataTable) data2D;
-            for (int c : cols) {
-                Data2DColumn column = data2D.getColumns().get(c);
-                if (medianRow != null) {
-                    Object median = dataTable.percentile(conn, column, 50);
-                    if (column.isNumberType()) {
-                        medianRow.add(DoubleTools.format(Double.valueOf(median + ""), scale));
-                    } else {
-                        medianRow.add(column.toString(median));
-                    }
-                }
-                if (upperQuartileRow != null) {
-                    Object o = dataTable.percentile(conn, column, 25);
-                    if (column.isNumberType()) {
-                        upperQuartileRow.add(DoubleTools.format(Double.valueOf(o + ""), scale));
-                    } else {
-                        upperQuartileRow.add(column.toString(o));
-                    }
-                }
-                if (lowerQuartileRow != null) {
-                    Object o = dataTable.percentile(conn, column, 75);
-                    if (column.isNumberType()) {
-                        lowerQuartileRow.add(DoubleTools.format(Double.valueOf(o + ""), scale));
-                    } else {
-                        lowerQuartileRow.add(column.toString(o));
-                    }
-                }
-                if (modeRow != null) {
-                    Object mode = dataTable.mode(conn, column.getColumnName());
-                    if (column.isNumberType()) {
-                        modeRow.add(DoubleTools.format(Double.valueOf(mode + ""), scale));
-                    } else {
-                        modeRow.add(column.toString(mode));
-                    }
-                }
-            }
-            return true;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e.toString());
-            return false;
-        }
-    }
-
     public void handleAllByAllTask() {
         task = new SingletonTask<Void>(this) {
 
@@ -963,14 +446,15 @@ public class Data2DStatisticController extends BaseData2DHandleController {
             protected boolean handle() {
                 try {
                     data2D.setTask(task);
-                    if (options.needStored()) {
-                        return statisticData(data2D.allRows(sourceController.checkedColsIndices(), true));
+                    calculation.setTask(task);
+                    if (calculation.needStored()) {
+                        return calculation.statisticData(data2D.allRows(sourceController.checkedColsIndices(), true));
                     } else {
-                        DoubleStatistic statisticData = data2D.statisticByAll(sourceController.checkedColsIndices, options);
+                        DoubleStatistic statisticData = data2D.statisticByAll(sourceController.checkedColsIndices, calculation);
                         if (statisticData == null) {
                             return false;
                         }
-                        statisticByColumnsWrite(statisticData);
+                        calculation.statisticByColumnsWrite(statisticData);
                         return true;
                     }
                 } catch (Exception e) {
@@ -981,6 +465,8 @@ public class Data2DStatisticController extends BaseData2DHandleController {
 
             @Override
             protected void whenSucceeded() {
+                outputColumns = calculation.getOutputColumns();
+                outputData = calculation.getOutputData();
                 if (targetController.inTable()) {
                     updateTable();
                 } else {
@@ -992,6 +478,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
             protected void finalAction() {
                 super.finalAction();
                 data2D.setTask(null);
+                calculation.setTask(null);
                 task = null;
                 if (targetController != null) {
                     targetController.refreshControls();
@@ -1004,7 +491,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
 
     @Override
     public DataFileCSV generatedFile() {
-        return data2D.statisticByRows(handledNames, sourceController.checkedColsIndices(), options);
+        return data2D.statisticByRows(calculation.getOutputNames(), sourceController.checkedColsIndices(), calculation);
     }
 
     /*

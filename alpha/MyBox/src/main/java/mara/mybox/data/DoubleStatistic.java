@@ -25,7 +25,7 @@ public class DoubleStatistic {
             populationVariance, sampleVariance, populationStandardDeviation, sampleStandardDeviation, skewness,
             minimum, maximum, median, upperQuartile, lowerQuartile, vTmp;
     public Object mode;
-    public StatisticOptions options;
+    public StatisticCalculation options;
     public double[] doubles;
 
     public DoubleStatistic() {
@@ -53,21 +53,21 @@ public class DoubleStatistic {
     }
 
     public DoubleStatistic(double[] values) {
-        calculate(values, StatisticOptions.all(true));
+        calculate(values, StatisticCalculation.all(true));
     }
 
-    public DoubleStatistic(double[] values, StatisticOptions options) {
+    public DoubleStatistic(double[] values, StatisticCalculation options) {
         calculate(values, options);
     }
 
-    public DoubleStatistic(String[] values, StatisticOptions options) {
+    public DoubleStatistic(String[] values, StatisticCalculation options) {
         if (options != null && options.isMode()) {
             mode = modeObject(values);
         }
         calculate(toDouble(values), options);
     }
 
-    public final void calculate(double[] values, StatisticOptions options) {
+    public final void calculate(double[] values, StatisticCalculation options) {
         try {
             init();
             if (values == null || options == null) {
@@ -566,11 +566,11 @@ public class DoubleStatistic {
         this.vTmp = vTmp;
     }
 
-    public StatisticOptions getOptions() {
+    public StatisticCalculation getOptions() {
         return options;
     }
 
-    public DoubleStatistic setOptions(StatisticOptions options) {
+    public DoubleStatistic setOptions(StatisticCalculation options) {
         this.options = options;
         return this;
     }

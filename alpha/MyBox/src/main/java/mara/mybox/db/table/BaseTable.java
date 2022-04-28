@@ -656,23 +656,23 @@ public abstract class BaseTable<D> {
         if (conn == null) {
             return 0;
         }
-        String sql = null;
-        try ( Statement statement = conn.createStatement()) {
-            String c = "";
-            if (condition != null && !condition.isBlank()) {
-                if (!condition.trim().startsWith("ORDER BY")) {
-                    c = " WHERE " + condition;
-                }
+        String c = "";
+        if (condition != null && !condition.isBlank()) {
+            if (!condition.trim().startsWith("ORDER BY")) {
+                c = " WHERE " + condition;
             }
-            sql = sizeStatement() + c;
-            ResultSet results = statement.executeQuery(sql);
+        }
+        String sql = sizeStatement() + c;
+        int size = 0;
+        try ( PreparedStatement sizeQuery = conn.prepareStatement(sql);
+                 ResultSet results = sizeQuery.executeQuery()) {
             if (results != null && results.next()) {
-                return results.getInt(1);
+                size = results.getInt(1);
             }
         } catch (Exception e) {
-//            MyBoxLog.error(e, sql);
+            MyBoxLog.debug(e);
         }
-        return 0;
+        return size;
     }
 
     public String queryStatement() {
@@ -1043,6 +1043,8 @@ public abstract class BaseTable<D> {
                     D data = readData(results);
                     dataList.add(data);
                 }
+            } catch (Exception e) {
+                MyBoxLog.error(e, sql);
             }
         } catch (Exception e) {
             MyBoxLog.error(e, sql);

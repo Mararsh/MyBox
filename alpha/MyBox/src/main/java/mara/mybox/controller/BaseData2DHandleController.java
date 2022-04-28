@@ -191,8 +191,8 @@ public abstract class BaseData2DHandleController extends BaseChildController {
         data2D = tableController.data2D;
         getMyStage().setTitle(baseTitle + (data2D == null ? "" : " - " + data2D.displayName()));
 
-        if (dataLabel != null) {
-            dataLabel.setText(tableController.data2D.displayName());
+        if (dataLabel != null && data2D != null) {
+            dataLabel.setText(data2D.displayName());
         }
         if (infoLabel != null) {
             infoLabel.setText("");
@@ -211,7 +211,6 @@ public abstract class BaseData2DHandleController extends BaseChildController {
             okButton.setDisable(true);
             return false;
         }
-
         okButton.setDisable(false);
         return true;
     }
@@ -436,6 +435,29 @@ public abstract class BaseData2DHandleController extends BaseChildController {
         } catch (Exception e) {
         }
         super.cleanPane();
+    }
+
+    /*
+        get/set
+     */
+    public ControlData2DEditTable getTableController() {
+        return tableController;
+    }
+
+    public Data2D getData2D() {
+        return data2D;
+    }
+
+    public List<Data2DColumn> getOutputColumns() {
+        return outputColumns;
+    }
+
+    public ControlData2DSource getSourceController() {
+        return sourceController;
+    }
+
+    public ControlData2DTarget getTargetController() {
+        return targetController;
     }
 
 }

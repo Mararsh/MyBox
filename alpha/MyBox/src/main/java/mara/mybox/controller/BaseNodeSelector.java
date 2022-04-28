@@ -980,8 +980,6 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                             + "  </script>\n\n");
                     s.append("<DIV>\n")
                             .append("<DIV>\n")
-                            .append("    <SPAN style=\"font-size:0.8em\">").append("*")
-                            .append(message("HtmlEditableComments")).append("</SPANE><BR>\n")
                             .append("    <INPUT type=\"checkbox\" checked=true onclick=\"showClass('TreeNode', this.checked);\">")
                             .append(message("Unfold")).append("</INPUT>\n")
                             .append("    <INPUT type=\"checkbox\" checked=true onclick=\"showClass('SerialNumber', this.checked);\">")
@@ -990,14 +988,15 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                             .append(message("Tags")).append("</INPUT>\n")
                             .append("    <INPUT type=\"checkbox\" checked=true onclick=\"showClass('nodeValue', this.checked);\">")
                             .append(message("Values")).append("</INPUT>\n")
-                            .append("    <HR>\n")
-                            .append("</DIV>\n");
+                            .append("</DIV>\n")
+                            .append("<HR>\n");
                     try ( Connection conn = DerbyBase.getConnection()) {
                         treeView(conn, nodeValue, 4, "", s);
                     } catch (Exception e) {
                         error = e.toString();
                         return false;
                     }
+                    s.append("\n<HR>\n<P style=\"font-size:0.8em\">*").append(message("HtmlEditableComments")).append("</P>\n");
                     return true;
                 }
 

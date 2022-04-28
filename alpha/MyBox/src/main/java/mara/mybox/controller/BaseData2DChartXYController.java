@@ -676,9 +676,11 @@ public abstract class BaseData2DChartXYController extends BaseData2DFxChartContr
             palette = new HashMap();
             Random random = new Random();
             XYChart.Data xyData;
-            for (int i = 0; i < checkedColsIndices.size(); i++) {
-                int colIndex = checkedColsIndices.get(i);
-                Data2DColumn column = data2D.column(colIndex);
+            if (outputColumns == null) {
+                outputColumns = sourceController.checkedCols();
+            }
+            for (int i = 0; i < outputColumns.size(); i++) {
+                Data2DColumn column = outputColumns.get(i);
                 String colName = column.getColumnName();
                 XYChart.Series series = new XYChart.Series();
                 series.setName(colName);

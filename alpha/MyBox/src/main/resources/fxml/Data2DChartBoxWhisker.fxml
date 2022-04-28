@@ -242,7 +242,6 @@ License:    Apache License Version 2.0
                                                                 </FlowPane>
                                                                 <VBox spacing="10.0" fx:id="xyPlotBox">
                                                                     <children>
-                                                                        <CheckBox minHeight="-Infinity" mnemonicParsing="false" text="%AxisXYReverse" wrapText="true" fx:id="xyReverseCheck" />
                                                                         <FlowPane hgap="5.0" vgap="5.0">
                                                                             <children>
                                                                                 <CheckBox fx:id="hlinesCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%DisplayHorizontalGridLines" wrapText="true" />

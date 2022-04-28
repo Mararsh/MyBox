@@ -163,24 +163,34 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         boolean ok = super.checkOptions();
         if (categoryColumnSelector != null) {
             selectedCategory = categoryColumnSelector.getSelectionModel().getSelectedItem();
-            if (selectedCategory == null) {
-                infoLabel.setText(message("SelectToHandle"));
-                okButton.setDisable(true);
-                return false;
-            }
+//            if (selectedCategory == null) {
+//                infoLabel.setText(message("SelectToHandle"));
+//                okButton.setDisable(true);
+//                return false;
+//            }
         }
         if (valueColumnSelector != null) {
             selectedValue = valueColumnSelector.getSelectionModel().getSelectedItem();
-            if (selectedValue == null) {
-                infoLabel.setText(message("SelectToHandle"));
-                okButton.setDisable(true);
-                return false;
-            }
+//            if (selectedValue == null) {
+//                infoLabel.setText(message("SelectToHandle"));
+//                okButton.setDisable(true);
+//                return false;
+//            }
         }
-        if (ok && sourceController.allPages()) {
-            infoLabel.setText(message("AllRowsLoadComments"));
+        outputColumns = sourceController.checkedCols();
+        if (ok) {
+            noticeMemory();
         }
         return ok;
+    }
+
+    public void noticeMemory() {
+        if (isSettingValues) {
+            return;
+        }
+        if (sourceController.allPages()) {
+            infoLabel.setText(message("AllRowsLoadComments"));
+        }
     }
 
     public boolean initData() {

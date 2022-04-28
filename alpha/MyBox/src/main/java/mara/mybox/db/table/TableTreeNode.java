@@ -423,7 +423,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
     }
 
     public int decentantsSize(Connection conn, PreparedStatement sizeQuery, long parentid) {
-        if (conn == null || parentid < 0) {
+        if (conn == null || sizeQuery == null || parentid < 0) {
             return 0;
         }
         int count = 0;
@@ -436,7 +436,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
                 }
             }
         } catch (Exception e) {
-//            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
         }
         return count;
     }
@@ -452,9 +452,11 @@ public class TableTreeNode extends BaseTable<TreeNode> {
                 if (results != null && results.next()) {
                     size = results.getInt(1);
                 }
+            } catch (Exception e) {
+                MyBoxLog.debug(e);
             }
         } catch (Exception e) {
-//            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
         }
         return size;
     }

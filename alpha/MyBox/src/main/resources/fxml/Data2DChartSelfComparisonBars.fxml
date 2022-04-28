@@ -105,12 +105,7 @@ License:    Apache License Version 2.0
                                             <children>
                                                 <Label minHeight="-Infinity" text="%MaximumWidth" wrapText="true" />
                                                 <ComboBox fx:id="widthSelector" editable="true" prefWidth="80.0" />
-                                                <CheckBox fx:id="rowNumberCheck" mnemonicParsing="false" text="%RowNumber" />
                                                 <CheckBox fx:id="zeroCheck" mnemonicParsing="false" selected="true" text="%BaseOnZero" />
-                                    <CheckBox fx:id="categoryCheck" mnemonicParsing="false" selected="true" text="%Category" />
-                                    <CheckBox fx:id="valueCheck" mnemonicParsing="false" selected="true" text="%Value" />
-                                    <CheckBox fx:id="percentageCheck" mnemonicParsing="false" selected="true" text="%Percentage" />
-                                    <CheckBox fx:id="calculatedCheck" layoutX="10.0" layoutY="59.0" mnemonicParsing="false" selected="true" text="%CalculatedValues" />
                                             </children>
                                         </FlowPane>
                                     </children>

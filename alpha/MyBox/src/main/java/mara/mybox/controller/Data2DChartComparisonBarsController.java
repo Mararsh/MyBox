@@ -111,20 +111,10 @@ public class Data2DChartComparisonBarsController extends BaseData2DHtmlChartCont
         colsIndices = new ArrayList<>();
         colsIndices.add(col1);
         colsIndices.add(col2);
-        if (categoryCheck.isSelected() && !colsIndices.contains(categorysCol)) {
+        if (!colsIndices.contains(categorysCol)) {
             colsIndices.add(categorysCol);
         }
         return true;
-    }
-
-    @Override
-    public void readData() {
-        if (sourceController.allPages()) {
-            outputData = data2D.allRows(colsIndices, true);
-        } else {
-            outputData = sourceController.selectedData(
-                    sourceController.checkedRowsIndices(), colsIndices, true);
-        }
     }
 
     @Override
@@ -149,22 +139,16 @@ public class Data2DChartComparisonBarsController extends BaseData2DHtmlChartCont
             }
             bar = normalization.calculate();
 
-            List<String> names = new ArrayList<>();
-            names.add(selectedValue);
-            if (categoryCheck.isSelected()) {
-                names.add(selectedCategory);
-            }
-            names.add(selectedValue2);
             StringBuilder s = new StringBuilder();
-            s.append("<BODY>\n");
+            s.append(jsBody());
             String title = data2D.displayName() + " - " + message("ComparisonBarsChart");
             s.append("<DIV align=\"center\">\n");
             s.append("<H2>").append(title).append("</H2>\n");
             if (zeroCheck.isSelected()) {
-                s.append("<P>").append(message("MaxAbsolute")).append(": ")
+                s.append("<P class=\"Calculated\" align=center>").append(message("MaxAbsolute")).append(": ")
                         .append(normalization.getMaxAbs()).append("</P>\n");
             } else {
-                s.append("<P>").append(message("Maximum")).append(": ")
+                s.append("<P class=\"Calculated\" align=center>").append(message("Maximum")).append(": ")
                         .append(normalization.getMax()).append("&nbsp;".repeat(8))
                         .append(message("Minimum")).append(": ").append(normalization.getMin()).append("</P>\n");
             }
@@ -173,44 +157,43 @@ public class Data2DChartComparisonBarsController extends BaseData2DHtmlChartCont
             Color color2 = data2D.column(col2).getColor();
             s.append("<TABLE>\n");
             s.append("<TR  style=\"font-weight:bold; \">\n");
-            for (int i = 0; i < names.size(); ++i) {
-                String name = names.get(i);
-                s.append("<TH>").append(name).append("</TH>\n");
-            }
+            s.append("<TH align=center class=\"RowNumber\">").append(message("RowNumber")).append("</TH>\n");
+            s.append("<TH>").append(selectedValue).append("</TH>\n");
+            s.append("<TH align=center class=\"Category\">").append(selectedCategory).append("</TH>\n");
+            s.append("<TH>").append(selectedValue2).append("</TH>\n");
             s.append("</TR>\n");
             for (int r = 0; r < rowsNumber; r++) {
                 List<String> tableRow = outputData.get(r);
                 s.append("<TR>\n");
 
-                if (rowNumberCheck.isSelected()) {
-                    s.append("<TD align=center>").append(message("Row")).append(tableRow.get(0)).append("</TD>\n");
-                }
+                s.append("<TD align=center class=\"RowNumber\">")
+                        .append(message("Row")).append(tableRow.get(0)).append("</TD>\n");
 
                 s.append("<TD align=right>")
-                        .append(valueCheck.isSelected() ? tableRow.get(1) : "")
+                        .append("<SPAN class=\"DataValue\">").append(tableRow.get(1)).append("</SPAN>")
                         .append(bar(bar[r], color1)).append("</TD>\n");
 
-                if (categoryCheck.isSelected()) {
-                    int pos = colsIndices.indexOf(categorysCol);
-                    String v;
-                    if (pos >= 0) {
-                        v = tableRow.get(pos);
-                    } else if (tableRow.size() > 2) {
-                        v = tableRow.get(2);
-                    } else {
-                        v = "";
-                    }
-                    s.append("<TD align=center>").append(v).append("</TD>\n");
+                int pos = colsIndices.indexOf(categorysCol);
+                String v;
+                if (pos >= 0) {
+                    v = tableRow.get(pos);
+                } else if (tableRow.size() > 2) {
+                    v = tableRow.get(2);
+                } else {
+                    v = "";
                 }
+                s.append("<TD align=center class=\"Category\">").append(v).append("</TD>\n");
 
                 s.append("<TD align=left>")
                         .append(bar(bar[r + rowsNumber], color2))
-                        .append(valueCheck.isSelected() ? tableRow.get(2) : "")
+                        .append("<SPAN class=\"DataValue\">").append(tableRow.get(2)).append("</SPAN>")
                         .append("</TD>\n");
 
                 s.append("</TR>\n");
             }
-            s.append("</Table>\n</DIV>\n</BODY>\n");
+            s.append("</Table>\n</DIV>\n");
+            s.append(jsComments());
+            s.append("</BODY>\n");
             bar = null;
             return HtmlWriteTools.html(title, "utf-8", null, s.toString());
         } catch (Exception e) {
@@ -232,17 +215,13 @@ public class Data2DChartComparisonBarsController extends BaseData2DHtmlChartCont
         }
         int pec = (int) (dWitdh * 100 / barWidth);
         if (pec == 0) {
-            if (percentageCheck.isSelected()) {
-                return "<SPAN>0%</SPAN>";
-            } else {
-                return "";
-            }
+            return "<SPAN class=\"Percentage\">0%</SPAN>";
         } else {
             return "<SPAN style=\"background-color:" + FxColorTools.color2rgb(dColor)
                     + ";color:" + FxColorTools.color2rgb(FxColorTools.foreColor(dColor))
                     + ";display: inline-block; width:" + (int) dWitdh + "px;font-size:1em;\">"
-                    + (percentageCheck.isSelected() ? (width < 0 ? "-" : "") + pec + "%" : "&nbsp;")
-                    + "</SPAN>";
+                    + "<SPAN class=\"Percentage\">" + (width < 0 ? "-" : "") + pec + "%</SPAN>"
+                    + "&nbsp;</SPAN>";
         }
     }
 

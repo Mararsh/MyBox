@@ -42,7 +42,7 @@ import mara.mybox.dev.MyBoxLog;
  * @License Apache License Version 2.0
  */
 public class NodeTools {
-
+    
     public static String getFxmlName(URL url) {
         if (url == null) {
             return null;
@@ -64,11 +64,11 @@ public class NodeTools {
             return null;
         }
     }
-
+    
     public static String getFxmlFile(URL url) {
         return "/fxml/" + getFxmlName(url) + ".fxml";
     }
-
+    
     public static Node findNode(Pane pane, String nodeId) {
         try {
             Node node = pane.lookup("#" + nodeId);
@@ -77,39 +77,39 @@ public class NodeTools {
             return null;
         }
     }
-
-    public static void children(Node node) {
+    
+    public static void children(int level, Node node) {
         try {
             if (node == null) {
                 return;
             }
-            MyBoxLog.debug(node.getClass() + " " + node.getId() + " " + node.getStyle());
+            MyBoxLog.debug("  ".repeat(level) + node.getClass() + " " + node.getId() + " " + node.getStyle());
             if (node instanceof SplitPane) {
                 for (Node child : ((SplitPane) node).getItems()) {
-                    children(child);
+                    children(level + 1, child);
                 }
             } else if (node instanceof ScrollPane) {
-                children(((ScrollPane) node).getContent());
+                children(level + 1, ((ScrollPane) node).getContent());
             } else if (node instanceof TitledPane) {
-                children(((TitledPane) node).getContent());
+                children(level + 1, ((TitledPane) node).getContent());
             } else if (node instanceof StackPane) {
                 for (Node child : ((StackPane) node).getChildren()) {
-                    children(child);
+                    children(level + 1, child);
                 }
             } else if (node instanceof TabPane) {
                 for (Tab tab : ((TabPane) node).getTabs()) {
-                    children(tab.getContent());
+                    children(level + 1, tab.getContent());
                 }
             } else if (node instanceof Parent) {
                 for (Node child : ((Parent) node).getChildrenUnmodifiable()) {
-                    children(child);
+                    children(level + 1, child);
                 }
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-
+    
     public static Window getWindow(Node node) {
         try {
             return node.getScene().getWindow();
@@ -117,7 +117,7 @@ public class NodeTools {
             return null;
         }
     }
-
+    
     public static BaseController getController(Node node) {
         try {
             Window window = getWindow(node);
@@ -126,7 +126,7 @@ public class NodeTools {
             return null;
         }
     }
-
+    
     public static boolean setRadioFirstSelected(ToggleGroup group) {
         if (group == null) {
             return false;
@@ -139,7 +139,7 @@ public class NodeTools {
         }
         return false;
     }
-
+    
     public static boolean setRadioSelected(ToggleGroup group, String text) {
         if (group == null || text == null) {
             return false;
@@ -154,7 +154,7 @@ public class NodeTools {
         }
         return false;
     }
-
+    
     public static boolean setItemSelected(ComboBox<String> box, String text) {
         if (box == null || text == null) {
             return false;
@@ -168,7 +168,7 @@ public class NodeTools {
         }
         return false;
     }
-
+    
     public static int getInputInt(TextField input) {
         try {
             return Integer.parseInt(input.getText());
@@ -177,14 +177,14 @@ public class NodeTools {
                     "InvalidData");
         }
     }
-
+    
     public static Object textInputFocus(Scene scene) {
         if (scene == null) {
             return null;
         }
         return isTextInput(scene.getFocusOwner());
     }
-
+    
     public static Object isTextInput(Object node) {
         if (node == null) {
             return null;
@@ -201,7 +201,7 @@ public class NodeTools {
         }
         return null;
     }
-
+    
     public static Rectangle2D getScreen() {
         return Screen.getPrimary().getVisualBounds();
     }
@@ -217,20 +217,20 @@ public class NodeTools {
             stage.setHeight(primaryScreenBounds.getHeight());
         }
     }
-
+    
     public static double getWidth(Control control) {
         return control.getBoundsInParent().getWidth();
     }
-
+    
     public static double getHeight(Control control) {
         return control.getBoundsInParent().getHeight();
     }
-
+    
     public static void setScrollPane(ScrollPane scrollPane, double xOffset, double yOffset) {
         final Bounds visibleBounds = scrollPane.getViewportBounds();
         double scrollWidth = scrollPane.getContent().getBoundsInParent().getWidth() - visibleBounds.getWidth();
         double scrollHeight = scrollPane.getContent().getBoundsInParent().getHeight() - visibleBounds.getHeight();
-
+        
         scrollPane.setHvalue(scrollPane.getHvalue() + xOffset / scrollWidth);
         scrollPane.setVvalue(scrollPane.getVvalue() + yOffset / scrollHeight);
     }
@@ -246,19 +246,19 @@ public class NodeTools {
             MyBoxLog.debug(e.toString());
         }
     }
-
+    
     public static double screenDpi() {
         return Screen.getPrimary().getDpi();
     }
-
+    
     public static double screenResolution() {
         return Toolkit.getDefaultToolkit().getScreenResolution();
     }
-
+    
     public static double dpiScale() {
         return dpiScale(screenResolution());
     }
-
+    
     public static double dpiScale(double dpi) {
         try {
             double scale = dpi / screenDpi();
@@ -267,7 +267,7 @@ public class NodeTools {
             return 1;
         }
     }
-
+    
     public static Image snap(Node node) {
         try {
             double scale = dpiScale();
@@ -281,5 +281,5 @@ public class NodeTools {
             return null;
         }
     }
-
+    
 }

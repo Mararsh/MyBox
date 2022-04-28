@@ -813,7 +813,7 @@ public class DerbyBase {
     public static int size(Connection conn, String sql) {
         int size = 0;
         try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
-            if (results.next()) {
+            if (results != null && results.next()) {
                 size = results.getInt(1);
             }
         } catch (Exception e) {
