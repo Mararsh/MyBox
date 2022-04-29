@@ -23,7 +23,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="5.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DStatisticController">
+<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DStatisticController">
     <children>
         <HBox alignment="CENTER" VBox.vgrow="NEVER">
             <children>
@@ -105,7 +105,7 @@ License:    Apache License Version 2.0
                                         <Label fx:id="memoryNoticeLabel" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" text="%AllRowsLoadComments" wrapText="true" />
                                     </children>
                                 </VBox>
-                              <VBox layoutX="20.0" layoutY="316.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                              <VBox fx:id="dataOptionsBox" layoutX="20.0" layoutY="316.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                  <children>
                                     <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="500.0" vgap="5.0">
                                        <children>
@@ -117,6 +117,12 @@ License:    Apache License Version 2.0
                                           </RadioButton>
                                           <RadioButton fx:id="rowsRadio" mnemonicParsing="false" text="%Rows" toggleGroup="$objectGroup" />
                                           <RadioButton fx:id="allRadio" mnemonicParsing="false" text="%All" toggleGroup="$objectGroup" />
+                                       </children>
+                                    </FlowPane>
+                                    <FlowPane fx:id="categoryColumnsPane" hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+                                       <children>
+                                          <Label minHeight="-Infinity" minWidth="-Infinity" text="%CategoryColumn" />
+                                          <ComboBox fx:id="categoryColumnSelector" prefWidth="200.0" />
                                        </children>
                                     </FlowPane>
                                     <HBox alignment="CENTER_LEFT" spacing="2.0">

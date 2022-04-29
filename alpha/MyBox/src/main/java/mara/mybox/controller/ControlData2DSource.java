@@ -101,7 +101,6 @@ public class ControlData2DSource extends ControlData2DLoad {
             tableStatusListener = new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    MyBoxLog.console("tableStatusListener");
                     updateData();
                 }
             };

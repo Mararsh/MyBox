@@ -168,6 +168,7 @@ public abstract class BaseData2DFxChartController extends BaseData2DChartControl
                     if (chart != null) {
                         chart.setTitleSide(titleSide);
                         chart.requestLayout();
+                        setChartStyle();
                     }
                 }
             });
@@ -198,6 +199,7 @@ public abstract class BaseData2DFxChartController extends BaseData2DChartControl
                                 chart.setLegendSide(legendSide);
                             }
                             chart.requestLayout();
+                            setChartStyle();
                         }
                     });
 

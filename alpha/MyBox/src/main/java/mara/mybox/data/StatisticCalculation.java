@@ -36,6 +36,7 @@ public class StatisticCalculation {
             maximumRow, minimumRow, medianRow, upperQuartileRow, lowerQuartileRow, modeRow;
     protected List<List<String>> outputData;
     protected List<Data2DColumn> outputColumns;
+    protected String categoryName;
     protected List<String> colsNames, outputNames;
     protected List<Integer> colsIndices;
 
@@ -194,11 +195,11 @@ public class StatisticCalculation {
                 outputData.add(minimumRow);
             }
 
-            upperQuartileRow = null;
-            if (upperQuartile) {
-                upperQuartileRow = new ArrayList<>();
-                upperQuartileRow.add(prefix + message("UpperQuartile"));
-                outputData.add(upperQuartileRow);
+            lowerQuartileRow = null;
+            if (lowerQuartile) {
+                lowerQuartileRow = new ArrayList<>();
+                lowerQuartileRow.add(prefix + message("LowerQuartile"));
+                outputData.add(lowerQuartileRow);
             }
 
             medianRow = null;
@@ -208,11 +209,11 @@ public class StatisticCalculation {
                 outputData.add(medianRow);
             }
 
-            lowerQuartileRow = null;
-            if (lowerQuartile) {
-                lowerQuartileRow = new ArrayList<>();
-                lowerQuartileRow.add(prefix + message("LowerQuartile"));
-                outputData.add(lowerQuartileRow);
+            upperQuartileRow = null;
+            if (upperQuartile) {
+                upperQuartileRow = new ArrayList<>();
+                upperQuartileRow.add(prefix + message("UpperQuartile"));
+                outputData.add(upperQuartileRow);
             }
 
             maximumRow = null;
@@ -247,7 +248,7 @@ public class StatisticCalculation {
             outputNames = new ArrayList<>();
             outputColumns = new ArrayList<>();
 
-            String cName = message("SourceRowNumber");
+            String cName = categoryName != null ? categoryName : message("SourceRowNumber");
             outputNames.add(cName);
             outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.String));
 
@@ -319,8 +320,8 @@ public class StatisticCalculation {
                 outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
             }
 
-            if (upperQuartile) {
-                cName = prefix + message("UpperQuartile");
+            if (lowerQuartile) {
+                cName = prefix + message("LowerQuartile");
                 outputNames.add(cName);
                 outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
             }
@@ -331,8 +332,8 @@ public class StatisticCalculation {
                 outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
             }
 
-            if (lowerQuartile) {
-                cName = prefix + message("LowerQuartile");
+            if (upperQuartile) {
+                cName = prefix + message("UpperQuartile");
                 outputNames.add(cName);
                 outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
             }
@@ -394,7 +395,7 @@ public class StatisticCalculation {
             }
             int rowsNumber = rows.size();
             int colsNumber = rows.get(0).size();
-            for (int c = 1; c < colsNumber; c++) {
+            for (int c = 0; c < colsNumber; c++) {
                 String[] colData = new String[rowsNumber];
                 for (int r = 0; r < rowsNumber; r++) {
                     colData[r] = rows.get(r).get(c);
@@ -481,7 +482,11 @@ public class StatisticCalculation {
             for (int r = 0; r < rowsNumber; r++) {
                 List<String> rowStatistic = new ArrayList<>();
                 List<String> row = rows.get(r);
-                rowStatistic.add(message("Row") + " " + row.get(0));
+                if (categoryName == null) {
+                    rowStatistic.add(message("Row") + row.get(0));
+                } else {
+                    rowStatistic.add(row.get(0));
+                }
                 int colsNumber = row.size();
                 String[] rowData = new String[colsNumber - 1];
                 for (int c = 1; c < colsNumber; c++) {
@@ -508,10 +513,10 @@ public class StatisticCalculation {
             }
             int rowsNumber = rows.size();
             int colsNumber = rows.get(0).size();
-            String[] allData = new String[rowsNumber * (colsNumber - 1)];
+            String[] allData = new String[rowsNumber * colsNumber];
             int index = 0;
             for (int r = 0; r < rowsNumber; r++) {
-                for (int c = 1; c < colsNumber; c++) {
+                for (int c = 0; c < colsNumber; c++) {
                     allData[index++] = rows.get(r).get(c);
                 }
             }
@@ -555,7 +560,7 @@ public class StatisticCalculation {
                     }
                 }
                 if (upperQuartileRow != null) {
-                    Object o = dataTable.percentile(conn, column, 25);
+                    Object o = dataTable.percentile(conn, column, 75);
                     if (column.isNumberType()) {
                         upperQuartileRow.add(DoubleTools.format(Double.valueOf(o + ""), scale));
                     } else {
@@ -563,7 +568,7 @@ public class StatisticCalculation {
                     }
                 }
                 if (lowerQuartileRow != null) {
-                    Object o = dataTable.percentile(conn, column, 75);
+                    Object o = dataTable.percentile(conn, column, 25);
                     if (column.isNumberType()) {
                         lowerQuartileRow.add(DoubleTools.format(Double.valueOf(o + ""), scale));
                     } else {
@@ -970,6 +975,14 @@ public class StatisticCalculation {
     public StatisticCalculation setColsIndices(List<Integer> colsIndices) {
         this.colsIndices = colsIndices;
         return this;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
 }

@@ -1,12 +1,15 @@
 package mara.mybox.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.DoubleStatistic;
 import mara.mybox.data.StatisticCalculation;
@@ -30,6 +33,9 @@ import mara.mybox.value.UserConfig;
 public class Data2DStatisticController extends BaseData2DHandleController {
 
     protected StatisticCalculation calculation;
+    protected int categorysCol;
+    protected String selectedCategory;
+    protected ChangeListener<Boolean> tableStatusListener;
 
     @FXML
     protected CheckBox countCheck, summationCheck, meanCheck, geometricMeanCheck, sumOfSquaresCheck,
@@ -38,7 +44,11 @@ public class Data2DStatisticController extends BaseData2DHandleController {
     @FXML
     protected Label memoryNoticeLabel;
     @FXML
-    protected VBox operationBox;
+    protected VBox operationBox, dataOptionsBox;
+    @FXML
+    protected FlowPane categoryColumnsPane;
+    @FXML
+    protected ComboBox<String> categoryColumnSelector;
 
     public Data2DStatisticController() {
         baseTitle = message("DescriptiveStatistics");
@@ -68,6 +78,13 @@ public class Data2DStatisticController extends BaseData2DHandleController {
     public void initControls() {
         try {
             super.initControls();
+
+            categoryColumnSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    checkOptions();
+                }
+            });
 
             countCheck.setSelected(UserConfig.getBoolean(baseName + "Count", true));
             countCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -243,14 +260,75 @@ public class Data2DStatisticController extends BaseData2DHandleController {
     }
 
     @Override
+    public void setParameters(ControlData2DEditTable tableController) {
+        try {
+            super.setParameters(tableController);
+
+            tableStatusListener = new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    refreshControls();
+                }
+            };
+            tableController.statusNotify.addListener(tableStatusListener);
+
+            refreshControls();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void refreshControls() {
+        try {
+            List<String> names = tableController.data2D.columnNames();
+            if (names == null || names.isEmpty()) {
+                return;
+            }
+            isSettingValues = true;
+
+            selectedCategory = categoryColumnSelector.getSelectionModel().getSelectedItem();
+            names.add(0, message("RowNumber"));
+            categoryColumnSelector.getItems().setAll(names);
+            if (selectedCategory != null && names.contains(selectedCategory)) {
+                categoryColumnSelector.setValue(selectedCategory);
+            } else {
+                categoryColumnSelector.getSelectionModel().select(0);
+            }
+            isSettingValues = false;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
     public void objectChanged() {
         super.objectChanged();
+        if (rowsRadio.isSelected()) {
+            if (!dataOptionsBox.getChildren().contains(categoryColumnsPane)) {
+                dataOptionsBox.getChildren().add(1, categoryColumnsPane);
+            }
+        } else {
+            if (dataOptionsBox.getChildren().contains(categoryColumnsPane)) {
+                dataOptionsBox.getChildren().remove(categoryColumnsPane);
+            }
+        }
         checkMemoryLabel();
     }
 
     @Override
     public boolean checkOptions() {
         boolean ok = super.checkOptions();
+        objectChanged();
+
+        categorysCol = -1;
+        if (rowsRadio.isSelected()) {
+            selectedCategory = categoryColumnSelector.getSelectionModel().getSelectedItem();
+            if (selectedCategory != null && categoryColumnSelector.getSelectionModel().getSelectedIndex() != 0) {
+                categorysCol = data2D.colOrder(selectedCategory);
+            }
+        }
         calculation = new StatisticCalculation()
                 .setCount(countCheck.isSelected())
                 .setSum(summationCheck.isSelected())
@@ -282,7 +360,8 @@ public class Data2DStatisticController extends BaseData2DHandleController {
         }
         calculation.setHandleController(this).setData2D(data2D)
                 .setColsIndices(sourceController.checkedColsIndices())
-                .setColsNames(sourceController.checkedColsNames());
+                .setColsNames(sourceController.checkedColsNames())
+                .setCategoryName(categorysCol >= 0 ? selectedCategory : null);
         checkMemoryLabel();
         return ok;
     }
@@ -382,7 +461,12 @@ public class Data2DStatisticController extends BaseData2DHandleController {
 
     @Override
     public boolean handleRows() {
-        if (!calculation.statisticData(sourceController.selectedData(true))) {
+        List<Integer> colsIndices = sourceController.checkedColsIndices();
+        if (rowsRadio.isSelected() && categorysCol >= 0) {
+            colsIndices.add(0, categorysCol);
+        }
+        if (!calculation.statisticData(sourceController.selectedData(
+                sourceController.checkedRowsIndices(), colsIndices, rowsRadio.isSelected() && categorysCol < 0))) {
             return false;
         }
         outputColumns = calculation.getOutputColumns();
@@ -402,7 +486,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                         if (data2D instanceof DataTable) {
                             return calculation.statisticAllByColumnsInDataTable();
                         } else {
-                            return calculation.statisticData(data2D.allRows(sourceController.checkedColsIndices(), true));
+                            return calculation.statisticData(data2D.allRows(sourceController.checkedColsIndices(), false));
                         }
                     } else {
                         return calculation.statisticAllByColumnsWithoutStored();
@@ -448,7 +532,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                     data2D.setTask(task);
                     calculation.setTask(task);
                     if (calculation.needStored()) {
-                        return calculation.statisticData(data2D.allRows(sourceController.checkedColsIndices(), true));
+                        return calculation.statisticData(data2D.allRows(sourceController.checkedColsIndices(), false));
                     } else {
                         DoubleStatistic statisticData = data2D.statisticByAll(sourceController.checkedColsIndices, calculation);
                         if (statisticData == null) {
@@ -491,7 +575,21 @@ public class Data2DStatisticController extends BaseData2DHandleController {
 
     @Override
     public DataFileCSV generatedFile() {
-        return data2D.statisticByRows(calculation.getOutputNames(), sourceController.checkedColsIndices(), calculation);
+        List<Integer> colsIndices = sourceController.checkedColsIndices();
+        if (rowsRadio.isSelected() && categorysCol >= 0) {
+            colsIndices.add(0, categorysCol);
+        }
+        return data2D.statisticByRows(calculation.getOutputNames(), colsIndices, calculation);
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            tableController.statusNotify.removeListener(tableStatusListener);
+            tableStatusListener = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
     /*

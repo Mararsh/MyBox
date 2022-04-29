@@ -128,7 +128,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             }
             isSettingValues = true;
             if (categoryColumnSelector != null) {
-                categoryColumnSelector.getItems().clear();
                 selectedCategory = categoryColumnSelector.getSelectionModel().getSelectedItem();
                 categoryColumnSelector.getItems().setAll(names);
                 if (selectedCategory != null && names.contains(selectedCategory)) {
@@ -138,8 +137,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                 }
             }
             if (valueColumnSelector != null) {
-                valueColumnSelector.getItems().clear();
-
                 selectedValue = valueColumnSelector.getSelectionModel().getSelectedItem();
                 valueColumnSelector.getItems().setAll(names);
                 if (selectedValue != null && names.contains(selectedValue)) {
@@ -264,7 +261,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     }
 
     public void redrawChart() {
-        okAction();
+        drawChart();
     }
 
     @FXML

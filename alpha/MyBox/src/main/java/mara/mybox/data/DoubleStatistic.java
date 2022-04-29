@@ -163,10 +163,10 @@ public class DoubleStatistic {
                 median = percentile.evaluate(50);
             }
             if (options.isUpperQuartile()) {
-                upperQuartile = percentile.evaluate(25);
+                upperQuartile = percentile.evaluate(75);
             }
             if (options.isLowerQuartile()) {
-                lowerQuartile = percentile.evaluate(75);
+                lowerQuartile = percentile.evaluate(25);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
