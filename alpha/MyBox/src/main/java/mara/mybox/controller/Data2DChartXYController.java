@@ -290,27 +290,31 @@ public class Data2DChartXYController extends BaseData2DChartXYController {
 
     @Override
     public boolean initData() {
-        colsIndices = new ArrayList<>();
+        dataColsIndices = new ArrayList<>();
+        outputColumns = new ArrayList<>();
         int categoryCol = data2D.colOrder(selectedCategory);
         if (categoryCol < 0) {
             popError(message("SelectToHandle"));
             return false;
         }
-        colsIndices.add(categoryCol);
+        dataColsIndices.add(categoryCol);
+        outputColumns.add(data2D.column(categoryCol));
         if (bubbleChartRadio.isSelected()) {
             int valueCol = data2D.colOrder(selectedValue);
             if (valueCol < 0) {
                 popError(message("SelectToHandle"));
                 return false;
             }
-            colsIndices.add(valueCol);
+            dataColsIndices.add(valueCol);
+            outputColumns.add(data2D.column(valueCol));
         }
         checkedColsIndices = sourceController.checkedColsIndices();
         if (checkedColsIndices == null || checkedColsIndices.isEmpty()) {
             popError(message("SelectToHandle"));
             return false;
         }
-        colsIndices.addAll(checkedColsIndices);
+        dataColsIndices.addAll(checkedColsIndices);
+        outputColumns.addAll(sourceController.checkedCols());
         return true;
     }
 
@@ -457,7 +461,7 @@ public class Data2DChartXYController extends BaseData2DChartXYController {
         if (bubbleChartRadio.isSelected()) {
             writeBubbleChart();
         } else {
-            writeXYChart();
+            writeXYChart(outputColumns, outputData);
         }
 
     }
@@ -515,6 +519,7 @@ public class Data2DChartXYController extends BaseData2DChartXYController {
         if (chart == null) {
             return;
         }
+        makePalette();
         if (barChart != null) {
             ChartTools.setBarChartColors(barChart, palette, legendSide != null);
         } else if (stackedBarChart != null) {

@@ -606,6 +606,10 @@ public class ControlWebView extends BaseController {
         return HtmlReadTools.removeNode(WebViewTools.getHtml(webEngine), StyleNodeID);
     }
 
+    public String currentHtml() {
+        return WebViewTools.getHtml(webEngine);
+    }
+
     public void setStyle(String style) {
         String prefix = UserConfig.getBoolean(baseName + "ShareHtmlStyle", true) ? "AllInterface" : baseName;
         UserConfig.setString(prefix + "HtmlStyle", style);

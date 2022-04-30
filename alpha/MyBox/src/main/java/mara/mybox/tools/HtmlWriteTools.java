@@ -435,7 +435,8 @@ public class HtmlWriteTools {
         if (nodeList == null || nodeList.getLength() < 1) {
             return 0;
         }
-        FindReplaceString finder = FindReplaceString.create().setOperation(FindReplaceString.Operation.FindNext).setFindString(findString).setIsRegex(reg).setCaseInsensitive(caseInsensitive).setMultiline(true);
+        FindReplaceString finder = FindReplaceString.create().setOperation(FindReplaceString.Operation.FindNext)
+                .setFindString(findString).setIsRegex(reg).setCaseInsensitive(caseInsensitive).setMultiline(true);
         String replaceSuffix = " style=\"color:" + color + "; background: " + bgColor + "; font-size:" + font + ";\">" + findString + "</span>";
         return replace(finder, nodeList.item(0), 0, replaceSuffix);
     }

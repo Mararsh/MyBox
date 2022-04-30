@@ -6,7 +6,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.input.MouseEvent;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import static mara.mybox.value.Languages.message;
@@ -30,15 +29,12 @@ public abstract class BaseData2DHtmlChartController extends BaseData2DChartContr
     protected CheckBox zeroCheck;
     @FXML
     protected ComboBox<String> widthSelector;
-    @FXML
-    protected ControlWebView webViewController;
 
     @Override
     public void initControls() {
         try {
             super.initControls();
 
-            webViewController.setParent(this);
             clickListener = new EventListener() {
                 @Override
                 public void handleEvent(Event ev) {
@@ -194,10 +190,9 @@ public abstract class BaseData2DHtmlChartController extends BaseData2DChartContr
     @Override
     public void readData() {
         if (sourceController.allPages()) {
-            outputData = data2D.allRows(colsIndices, true);
+            outputData = data2D.allRows(dataColsIndices, true);
         } else {
-            outputData = sourceController.selectedData(
-                    sourceController.checkedRowsIndices(), colsIndices, true);
+            outputData = sourceController.selectedData(sourceController.checkedRowsIndices(), dataColsIndices, true);
         }
     }
 
@@ -275,16 +270,6 @@ public abstract class BaseData2DHtmlChartController extends BaseData2DChartContr
         EventTarget t = (EventTarget) docNode;
         t.removeEventListener("click", clickListener, false);
         t.addEventListener("click", clickListener, false);
-    }
-
-    @FXML
-    public void editAction() {
-        webViewController.editAction();
-    }
-
-    @FXML
-    public void popFunctionsMenu(MouseEvent mouseEvent) {
-        webViewController.popFunctionsMenu(mouseEvent);
     }
 
     @Override

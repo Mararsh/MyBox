@@ -27,8 +27,8 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DHtmlChart
     @Override
     public boolean initData() {
         super.initData();
-        if (!colsIndices.contains(categorysCol)) {
-            colsIndices.add(categorysCol);
+        if (!dataColsIndices.contains(categorysCol)) {
+            dataColsIndices.add(categorysCol);
         }
         return true;
     }
@@ -152,7 +152,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DHtmlChart
                 Data2DColumn column = data2D.column(checkedColsIndices.get(i));
                 color[i] = column.getColor();
             }
-            int categoryIndex = colsIndices.indexOf(categorysCol);
+            int categoryIndex = dataColsIndices.indexOf(categorysCol);
             if (categoryIndex < 0) {
                 categoryIndex = colsNumber + 1;
             }

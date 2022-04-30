@@ -3,22 +3,30 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import mara.mybox.data.StringTable;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.AppPaths;
 import static mara.mybox.value.Languages.message;
@@ -33,7 +41,8 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     protected ChangeListener<Boolean> tableStatusListener, tableLoadListener;
     protected String selectedCategory, selectedValue;
     protected List<Integer> checkedColsIndices;
-    protected List<Integer> colsIndices;
+    protected List<Integer> dataColsIndices;
+    protected Map<String, String> palette;
 
     @FXML
     protected ComboBox<String> categoryColumnSelector, valueColumnSelector;
@@ -41,6 +50,8 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     protected VBox snapBox;
     @FXML
     protected AnchorPane chartPane;
+    @FXML
+    protected ControlWebView webViewController;
 
     @Override
     public void initControls() {
@@ -48,6 +59,10 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             super.initControls();
 
             initDataTab();
+
+            if (webViewController != null) {
+                webViewController.setParent(this);
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -160,21 +175,10 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         boolean ok = super.checkOptions();
         if (categoryColumnSelector != null) {
             selectedCategory = categoryColumnSelector.getSelectionModel().getSelectedItem();
-//            if (selectedCategory == null) {
-//                infoLabel.setText(message("SelectToHandle"));
-//                okButton.setDisable(true);
-//                return false;
-//            }
         }
         if (valueColumnSelector != null) {
             selectedValue = valueColumnSelector.getSelectionModel().getSelectedItem();
-//            if (selectedValue == null) {
-//                infoLabel.setText(message("SelectToHandle"));
-//                okButton.setDisable(true);
-//                return false;
-//            }
         }
-        outputColumns = sourceController.checkedCols();
         if (ok) {
             noticeMemory();
         }
@@ -191,14 +195,19 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     }
 
     public boolean initData() {
-        colsIndices = new ArrayList<>();
+        dataColsIndices = new ArrayList<>();
         checkedColsIndices = sourceController.checkedColsIndices();
         if (checkedColsIndices == null || checkedColsIndices.isEmpty()) {
             popError(message("SelectToHandle"));
             return false;
         }
-        colsIndices.addAll(checkedColsIndices);
+        dataColsIndices.addAll(checkedColsIndices);
+        outputColumns = sourceController.checkedCols();
         return true;
+    }
+
+    public String chartTitle() {
+        return null;
     }
 
     @FXML
@@ -236,10 +245,9 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
     public void readData() {
         if (sourceController.allPages()) {
-            outputData = data2D.allRows(colsIndices, false);
+            outputData = data2D.allRows(dataColsIndices, false);
         } else {
-            outputData = sourceController.selectedData(
-                    sourceController.checkedRowsIndices(), colsIndices, false);
+            outputData = sourceController.selectedData(sourceController.checkedRowsIndices(), dataColsIndices, false);
         }
     }
 
@@ -256,6 +264,28 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         }
     }
 
+    public void makePalette() {
+        try {
+            Random random = new Random();
+            palette = new HashMap();
+            for (int i = 0; i < outputColumns.size(); i++) {
+                Data2DColumn column = outputColumns.get(i);
+                Color color = column.getColor();
+                if (color == null) {
+                    color = FxColorTools.randomColor(random);
+                }
+                String rgb = FxColorTools.color2rgb(color);
+                palette.put(column.getColumnName(), rgb);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void setChartStyle() {
+        makePalette();
+    }
+
     public void clearChart() {
         chartPane.getChildren().clear();
     }
@@ -270,18 +300,21 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     }
 
     @FXML
-    public void snapAction() {
-        ImageViewerController.load(NodeTools.snap(snapBox));
+    public void editAction() {
+        webViewController.editAction();
     }
 
-    public String chartTitle() {
-        return null;
+    @FXML
+    @Override
+    public boolean popAction() {
+        ImagePopController.openImage(this, NodeTools.snap(snapBox));
+        return true;
     }
 
     @FXML
     public void htmlAction() {
         try {
-            if (colsIndices == null || outputData == null || outputData.isEmpty()) {
+            if (outputData == null || outputData.isEmpty()) {
                 popError(message("NoData"));
                 return;
             }
@@ -289,11 +322,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             File imageFile = new File(AppPaths.getGeneratedPath() + File.separator + DateTools.nowFileString() + ".jpg");
             BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
             ImageFileWriters.writeImageFile(bufferedImage, "jpg", imageFile.getAbsolutePath());
-
-            StringTable table = new StringTable(data2D.columnNames(colsIndices));
-            for (List<String> row : outputData) {
-                table.add(row);
-            }
 
             StringBuilder s = new StringBuilder();
             String title = chartTitle();
@@ -304,7 +332,12 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             s.append("<h2  class=\"center\">").append(message("Image")).append("</h2>\n");
             s.append("<div align=\"center\"><img src=\"").append(imageFile.toURI().toString()).append("\"  style=\"max-width:95%;\"></div>\n");
             s.append("<hr>\n");
-            s.append(table.div());
+
+            if (webViewController != null) {
+                s.append(HtmlReadTools.body(webViewController.currentHtml(), false));
+            } else if (outputData != null) {
+                s.append(dataHtmlTable().div());
+            }
 
             String html = HtmlWriteTools.html("", HtmlStyles.styleValue("Default"), s.toString());
             HtmlEditorController.load(html);
@@ -312,7 +345,36 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
 
+    public void loadDataHtml() {
+        if (webViewController != null && outputData != null) {
+            webViewController.loadContents(dataHtmlTable().html());
+        }
+    }
+
+    public StringTable dataHtmlTable() {
+        try {
+            List<String> names = new ArrayList<>();
+            if (outputColumns != null) {
+                for (Data2DColumn c : outputColumns) {
+                    names.add(c.getColumnName());
+                }
+            }
+            StringTable table = new StringTable(names);
+            for (List<String> row : outputData) {
+                table.add(row);
+            }
+            return table;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return null;
+        }
+    }
+
+    @FXML
+    public void popFunctionsMenu(MouseEvent mouseEvent) {
+        webViewController.popFunctionsMenu(mouseEvent);
     }
 
     @Override

@@ -42,13 +42,9 @@ public abstract class BaseData2DFxChartController extends BaseData2DChartControl
     @FXML
     protected ToggleGroup titleSideGroup, labelGroup, legendGroup;
 
-    public abstract void checkChartType();
-
     public abstract void makeChart();
 
     public abstract void writeChartData();
-
-    public abstract void setChartStyle();
 
     @Override
     public void initControls() {
@@ -69,7 +65,7 @@ public abstract class BaseData2DFxChartController extends BaseData2DChartControl
                 tickFontSize = 12;
             }
 
-            labelType = LabelType.NameAndValue;
+            labelType = LabelType.Value;
             labelGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
@@ -268,6 +264,15 @@ public abstract class BaseData2DFxChartController extends BaseData2DChartControl
         return labelType != null && labelType != LabelType.NotDisplay;
     }
 
+    public void checkChartType() {
+        try {
+            setSourceLabel(message("SelectRowsColumnsToHanlde"));
+            checkAutoTitle();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     @Override
     public boolean checkOptions() {
         checkAutoTitle();
@@ -285,15 +290,11 @@ public abstract class BaseData2DFxChartController extends BaseData2DChartControl
             makeChart();
             writeChartData();
             setChartStyle();
+
+            loadDataHtml();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    @Override
-    public void clearChart() {
-        chart = null;
-        chartPane.getChildren().clear();
     }
 
     public void makeFinalChart() {
@@ -335,6 +336,12 @@ public abstract class BaseData2DFxChartController extends BaseData2DChartControl
     @Override
     public String chartTitle() {
         return titleInput.getText();
+    }
+
+    @Override
+    public void clearChart() {
+        chart = null;
+        chartPane.getChildren().clear();
     }
 
     /*

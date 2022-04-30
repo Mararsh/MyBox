@@ -90,19 +90,19 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
 
     @Override
     public boolean initData() {
-        colsIndices = new ArrayList<>();
+        dataColsIndices = new ArrayList<>();
         int categoryCol = data2D.colOrder(selectedCategory);
         if (categoryCol < 0) {
             popError(message("SelectToHandle"));
             return false;
         }
-        colsIndices.add(categoryCol);
+        dataColsIndices.add(categoryCol);
         checkedColsIndices = sourceController.checkedColsIndices();
         if (checkedColsIndices == null || checkedColsIndices.isEmpty()) {
             popError(message("SelectToHandle"));
             return false;
         }
-        colsIndices.addAll(checkedColsIndices);
+        dataColsIndices.addAll(checkedColsIndices);
         return true;
     }
 
@@ -130,7 +130,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
 
     @Override
     public void writeChartData() {
-        writeXYChart();
+        writeXYChart(outputColumns, outputData);
     }
 
     @Override
@@ -138,6 +138,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
         if (scatterChart == null) {
             return;
         }
+        makePalette();
         ChartTools.setScatterChart​Colors(scatterChart, palette, legendSide != null);
         scatterChart.requestLayout();
     }

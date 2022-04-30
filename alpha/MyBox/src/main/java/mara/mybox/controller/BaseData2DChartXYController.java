@@ -1,10 +1,7 @@
 package mara.mybox.controller;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -21,10 +18,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.paint.Color;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.chart.ChartTools;
 import mara.mybox.fxml.chart.ChartTools.LabelLocation;
 import static mara.mybox.value.Languages.message;
@@ -46,7 +41,6 @@ public abstract class BaseData2DChartXYController extends BaseData2DFxChartContr
     protected Axis xAxis, yAxis, categoryAxis;
     protected CategoryAxis stringAxis;
     protected NumberAxis numberAxisY, numberAxisX;
-    protected Map<String, String> palette;
 
     @FXML
     protected Tab categoryTab, valueTab;
@@ -139,7 +133,7 @@ public abstract class BaseData2DChartXYController extends BaseData2DFxChartContr
                 }
             });
 
-            labelLocation = LabelLocation.Above;
+            labelLocation = LabelLocation.Below;
             labelLocaionGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
@@ -671,30 +665,23 @@ public abstract class BaseData2DChartXYController extends BaseData2DFxChartContr
         }
     }
 
-    public void writeXYChart() {
+    // The first column is "Category"
+    public void writeXYChart(List<Data2DColumn> columns, List<List<String>> data) {
         try {
-            palette = new HashMap();
-            Random random = new Random();
-            XYChart.Data xyData;
-            if (outputColumns == null) {
-                outputColumns = sourceController.checkedCols();
+            if (columns == null || data == null) {
+                return;
             }
-            for (int i = 0; i < outputColumns.size(); i++) {
-                Data2DColumn column = outputColumns.get(i);
+            XYChart.Data xyData;
+            for (int col = 1; col < columns.size(); col++) {
+                Data2DColumn column = columns.get(col);
                 String colName = column.getColumnName();
                 XYChart.Series series = new XYChart.Series();
                 series.setName(colName);
 
-                Color color = column.getColor();
-                if (color == null) {
-                    color = FxColorTools.randomColor(random);
-                }
-                String rgb = FxColorTools.color2rgb(color);
-                palette.put(colName, rgb);
                 double categoryValue, categoryCoordinateValue, numberValue, numberCoordinateValue;
-                for (List<String> rowData : outputData) {
+                for (List<String> rowData : data) {
                     String category = rowData.get(0);
-                    numberValue = data2D.doubleValue(rowData.get(i + 1));
+                    numberValue = data2D.doubleValue(rowData.get(col));
                     numberCoordinateValue = ChartTools.coordinateValue(nCoordinate, numberValue);
                     categoryValue = data2D.doubleValue(category);
                     categoryCoordinateValue = ChartTools.coordinateValue(cCoordinate, categoryValue);
@@ -714,8 +701,7 @@ public abstract class BaseData2DChartXYController extends BaseData2DFxChartContr
                     series.getData().add(xyData);
                 }
 
-                xyChart.getData().add(i, series);
-
+                xyChart.getData().add(col - 1, series);
             }
 
         } catch (Exception e) {

@@ -20,12 +20,13 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
 
-<VBox fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" spacing="5.0" VBox.vgrow="ALWAYS" 
-      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DSimpleLinearRegressionController">
+<VBox fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" spacing="5.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DSimpleLinearRegressionController">
     <children>
         <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
             <items>
@@ -166,21 +167,6 @@ License:    Apache License Version 2.0
                                                                         <RadioButton mnemonicParsing="false" text="%Bottom" toggleGroup="$legendGroup" />
                                                                         <RadioButton mnemonicParsing="false" text="%Left" toggleGroup="$legendGroup" />
                                                                         <RadioButton mnemonicParsing="false" text="%NotDisplay" toggleGroup="$legendGroup" />
-                                                                    </children>
-                                                                </FlowPane>
-                                                                <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
-                                                                    <children>
-                                                                        <Label maxWidth="1.7976931348623157E308" text="%Label" />
-                                                                        <RadioButton mnemonicParsing="false" selected="true" text="%NameAndValue">
-                                                                            <toggleGroup>
-                                                                                <ToggleGroup fx:id="labelGroup" />
-                                                                            </toggleGroup>
-                                                                        </RadioButton>
-                                                                        <RadioButton mnemonicParsing="false" text="%Value" toggleGroup="$labelGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="%Name" toggleGroup="$labelGroup" />
-                                                                        <RadioButton layoutX="285.0" layoutY="10.0" mnemonicParsing="false" text="%Point" toggleGroup="$labelGroup" />
-                                                                        <RadioButton layoutX="379.0" layoutY="10.0" mnemonicParsing="false" text="%NotDisplay" toggleGroup="$labelGroup" />
-                                                                        <CheckBox fx:id="popLabelCheck" mnemonicParsing="false" text="%Pop" />
                                                                     </children>
                                                                 </FlowPane>
                                                                 <FlowPane hgap="5.0" layoutX="15.0" layoutY="111.0" vgap="5.0">
@@ -454,36 +440,126 @@ License:    Apache License Version 2.0
                                             </image>
                                         </ImageView>
                                         <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                        <Button fx:id="htmlButton" layoutX="466.0" layoutY="10.0" mnemonicParsing="false" onAction="#htmlAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconHtml.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="snapshotButton" mnemonicParsing="false" onAction="#snapAction" HBox.hgrow="NEVER">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconSnapshot.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
                                     </children>
                                 </HBox>
-                                <VBox fx:id="snapBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="1.0" VBox.vgrow="ALWAYS">
-                                    <children>
-                                        <Label fx:id="dataLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" />
-                                        <VBox fx:id="chartBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                                            <padding>
-                                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                            </padding>
-                                        </VBox>
-                                    </children>
-                                </VBox>
+                        <TabPane fx:id="chartTabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                           <tabs>
+                              <Tab fx:id="chartTab" text="%Chart">
+                                 <content>
+                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                             <children>
+                                                <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS" />
+                                                <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/Red/iconPop.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
+                                                <Button fx:id="htmlButton" mnemonicParsing="false" onAction="#htmlAction">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/Red/iconHtml.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
+                                             </children>
+                                          </HBox>
+                                          <FlowPane hgap="2.0" vgap="2.0">
+                                             <children>
+                                                <Label text="%Line2" />
+                                                <CheckBox fx:id="q0Check" mnemonicParsing="false" selected="true" text="Q0" />
+                                                <CheckBox fx:id="q1Check" layoutX="27.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="Q1" />
+                                                <CheckBox fx:id="q2Check" layoutX="70.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="Q2" />
+                                                <CheckBox fx:id="q3Check" layoutX="114.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="Q3" />
+                                                <CheckBox fx:id="q4Check" layoutX="158.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="Q4" />
+                                                <CheckBox fx:id="dottedCheck" layoutX="201.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Dotted" />
+                                                <Button fx:id="colorButton" mnemonicParsing="false" onAction="#randomColors">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/iconColor.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
+                                             </children>
+                                          </FlowPane>
+                                          <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
+                                             <children>
+                                                <Label maxWidth="1.7976931348623157E308" text="%Label" />
+                                                <RadioButton mnemonicParsing="false" selected="true" text="%NameAndValue">
+                                                   <toggleGroup>
+                                                      <ToggleGroup fx:id="labelGroup" />
+                                                   </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton mnemonicParsing="false" text="%Value" toggleGroup="$labelGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%Name" toggleGroup="$labelGroup" />
+                                                <RadioButton layoutX="285.0" layoutY="10.0" mnemonicParsing="false" text="%Point" toggleGroup="$labelGroup" />
+                                                <RadioButton layoutX="379.0" layoutY="10.0" mnemonicParsing="false" text="%NotDisplay" toggleGroup="$labelGroup" />
+                                                <CheckBox fx:id="popLabelCheck" mnemonicParsing="false" text="%Pop" />
+                                             </children>
+                                          </FlowPane>
+                                          <VBox fx:id="snapBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="1.0" VBox.vgrow="ALWAYS">
+                                             <children>
+                                                <Label fx:id="dataLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" />
+                                                <AnchorPane fx:id="chartPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                                   <children>
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" fx:id="xyText" />
+                                                   </children>
+                                                </AnchorPane>
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                       </padding>
+                                    </VBox>
+                                 </content>
+                              </Tab>
+                              <Tab fx:id="charDataTab" text="%ChartData">
+                                 <content>
+                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                             <children>
+                                                <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                <Button fx:id="editButton" mnemonicParsing="false" onAction="#editAction">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/Red/iconEdit.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
+                                                <Button fx:id="functionsButton" mnemonicParsing="false" onMouseEntered="#popFunctionsMenu">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/Red/iconFunction.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
+                                             </children>
+                                          </HBox>
+                                          <fx:include fx:id="webView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlWebView.fxml" VBox.vgrow="ALWAYS" />
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                       </padding>
+                                    </VBox>
+                                 </content>
+                              </Tab>
+                           </tabs>
+                        </TabPane>
                             </children>
                         </VBox>
                     </content>

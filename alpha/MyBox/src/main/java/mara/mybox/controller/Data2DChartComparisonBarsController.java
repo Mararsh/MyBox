@@ -108,11 +108,11 @@ public class Data2DChartComparisonBarsController extends BaseData2DHtmlChartCont
 
     @Override
     public boolean initData() {
-        colsIndices = new ArrayList<>();
-        colsIndices.add(col1);
-        colsIndices.add(col2);
-        if (!colsIndices.contains(categorysCol)) {
-            colsIndices.add(categorysCol);
+        dataColsIndices = new ArrayList<>();
+        dataColsIndices.add(col1);
+        dataColsIndices.add(col2);
+        if (!dataColsIndices.contains(categorysCol)) {
+            dataColsIndices.add(categorysCol);
         }
         return true;
     }
@@ -173,7 +173,7 @@ public class Data2DChartComparisonBarsController extends BaseData2DHtmlChartCont
                         .append("<SPAN class=\"DataValue\">").append(tableRow.get(1)).append("</SPAN>")
                         .append(bar(bar[r], color1)).append("</TD>\n");
 
-                int pos = colsIndices.indexOf(categorysCol);
+                int pos = dataColsIndices.indexOf(categorysCol);
                 String v;
                 if (pos >= 0) {
                     v = tableRow.get(pos);

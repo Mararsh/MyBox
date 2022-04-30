@@ -67,8 +67,6 @@ public class Data2DChartPieController extends BaseData2DFxChartController {
 
             super.setParameters(tableController);
 
-            setSourceLabel(message("PieChartLabel"));
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -77,6 +75,7 @@ public class Data2DChartPieController extends BaseData2DFxChartController {
     @Override
     public void checkChartType() {
         try {
+            setSourceLabel(message("PieChartLabel"));
             checkAutoTitle();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -85,19 +84,22 @@ public class Data2DChartPieController extends BaseData2DFxChartController {
 
     @Override
     public boolean initData() {
-        colsIndices = new ArrayList<>();
+        dataColsIndices = new ArrayList<>();
+        outputColumns = new ArrayList<>();
         int categoryCol = data2D.colOrder(selectedCategory);
         if (categoryCol < 0) {
             popError(message("SelectToHandle"));
             return false;
         }
-        colsIndices.add(categoryCol);
+        dataColsIndices.add(categoryCol);
+        outputColumns.add(data2D.column(categoryCol));
         int valueCol = data2D.colOrder(selectedValue);
         if (valueCol < 0) {
             popError(message("SelectToHandle"));
             return false;
         }
-        colsIndices.add(valueCol);
+        dataColsIndices.add(valueCol);
+        outputColumns.add(data2D.column(valueCol));
         return true;
     }
 
