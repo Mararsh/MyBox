@@ -98,6 +98,10 @@ License:    Apache License Version 2.0
                                                 <CheckBox fx:id="medianCheck" mnemonicParsing="false" text="%Median" />
                                           <CheckBox fx:id="lowerQuartileCheck" layoutX="190.0" layoutY="10.0" mnemonicParsing="false" text="%LowerQuartile" />
                                                 <CheckBox fx:id="maximumCheck" mnemonicParsing="false" text="%MaximumQ4" />
+                                          <CheckBox fx:id="UpperExtremeOutlierLineCheck" layoutX="610.0" layoutY="10.0" mnemonicParsing="false" text="%UpperExtremeOutlierLine" />
+                                          <CheckBox fx:id="UpperMildOutlierLineCheck" layoutX="462.0" layoutY="10.0" mnemonicParsing="false" text="%UpperMildOutlierLine" />
+                                          <CheckBox fx:id="LowerMildOutlierLineCheck" layoutX="610.0" layoutY="10.0" mnemonicParsing="false" text="%LowerMildOutlierLine" />
+                                          <CheckBox fx:id="LowerExtremeOutlierLineCheck" layoutX="10.0" layoutY="29.0" mnemonicParsing="false" text="%LowerExtremeOutlierLine" />
                                                 <CheckBox fx:id="modeCheck" mnemonicParsing="false" text="%Mode" />
                                        </children>
                                     </FlowPane>

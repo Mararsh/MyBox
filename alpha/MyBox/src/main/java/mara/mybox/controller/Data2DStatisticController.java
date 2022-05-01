@@ -40,7 +40,9 @@ public class Data2DStatisticController extends BaseData2DHandleController {
     @FXML
     protected CheckBox countCheck, summationCheck, meanCheck, geometricMeanCheck, sumOfSquaresCheck,
             populationVarianceCheck, sampleVarianceCheck, populationStandardDeviationCheck, sampleStandardDeviationCheck, skewnessCheck,
-            maximumCheck, minimumCheck, medianCheck, upperQuartileCheck, lowerQuartileCheck, modeCheck;
+            maximumCheck, minimumCheck, medianCheck, upperQuartileCheck, lowerQuartileCheck,
+            UpperMildOutlierLineCheck, UpperExtremeOutlierLineCheck, LowerMildOutlierLineCheck, LowerExtremeOutlierLineCheck,
+            modeCheck;
     @FXML
     protected Label memoryNoticeLabel;
     @FXML
@@ -69,6 +71,10 @@ public class Data2DStatisticController extends BaseData2DHandleController {
             NodeStyleTools.setTooltip(medianCheck, new Tooltip("50%"));
             NodeStyleTools.setTooltip(upperQuartileCheck, new Tooltip("25%"));
             NodeStyleTools.setTooltip(lowerQuartileCheck, new Tooltip("75%"));
+            NodeStyleTools.setTooltip(UpperMildOutlierLineCheck, new Tooltip("Q3 + 1.5 * ( Q3 - Q1 )"));
+            NodeStyleTools.setTooltip(UpperExtremeOutlierLineCheck, new Tooltip("Q3 + 3 * ( Q3 - Q1 )"));
+            NodeStyleTools.setTooltip(LowerMildOutlierLineCheck, new Tooltip("Q1 - 1.5 * ( Q3 - Q1 )"));
+            NodeStyleTools.setTooltip(LowerExtremeOutlierLineCheck, new Tooltip("Q1 - 3 * ( Q3 - Q1 )"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -230,6 +236,40 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 }
             });
 
+            UpperMildOutlierLineCheck.setSelected(UserConfig.getBoolean(baseName + "UpperMildOutlierLine", true));
+            UpperMildOutlierLineCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "UpperMildOutlierLine", UpperMildOutlierLineCheck.isSelected());
+                    checkMemoryLabel();
+                }
+            });
+
+            UpperExtremeOutlierLineCheck.setSelected(UserConfig.getBoolean(baseName + "UpperExtremeOutlierLine", true));
+            UpperExtremeOutlierLineCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "UpperExtremeOutlierLine", UpperExtremeOutlierLineCheck.isSelected());
+                    checkMemoryLabel();
+                }
+            });
+            LowerMildOutlierLineCheck.setSelected(UserConfig.getBoolean(baseName + "LowerMildOutlierLine", true));
+            LowerMildOutlierLineCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "LowerMildOutlierLine", LowerMildOutlierLineCheck.isSelected());
+                    checkMemoryLabel();
+                }
+            });
+            LowerExtremeOutlierLineCheck.setSelected(UserConfig.getBoolean(baseName + "LowerExtremeOutlierLine", true));
+            LowerExtremeOutlierLineCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "LowerExtremeOutlierLine", LowerExtremeOutlierLineCheck.isSelected());
+                    checkMemoryLabel();
+                }
+            });
+
             scale = (short) UserConfig.getInt(baseName + "Scale", 2);
             if (scale < 0) {
                 scale = 2;
@@ -345,6 +385,10 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 .setMinimum(minimumCheck.isSelected())
                 .setUpperQuartile(upperQuartileCheck.isSelected())
                 .setLowerQuartile(lowerQuartileCheck.isSelected())
+                .setUpperExtremeOutlierLine(UpperExtremeOutlierLineCheck.isSelected())
+                .setUpperMildOutlierLine(UpperMildOutlierLineCheck.isSelected())
+                .setLowerExtremeOutlierLine(LowerExtremeOutlierLineCheck.isSelected())
+                .setLowerMildOutlierLine(LowerMildOutlierLineCheck.isSelected())
                 .setMode(modeCheck.isSelected())
                 .setScale(scale);
         switch (objectType) {
@@ -372,7 +416,9 @@ public class Data2DStatisticController extends BaseData2DHandleController {
         }
         if (sourceController.allPages() && objectType != ObjectType.Rows
                 && (medianCheck.isSelected() || upperQuartileCheck.isSelected()
-                || lowerQuartileCheck.isSelected() || modeCheck.isSelected())
+                || lowerQuartileCheck.isSelected() || modeCheck.isSelected()
+                || UpperExtremeOutlierLineCheck.isSelected() || UpperMildOutlierLineCheck.isSelected()
+                || LowerExtremeOutlierLineCheck.isSelected() || LowerMildOutlierLineCheck.isSelected())
                 && (!data2D.isTable() || allRadio.isSelected())) {
             if (!operationBox.getChildren().contains(memoryNoticeLabel)) {
                 operationBox.getChildren().add(memoryNoticeLabel);
@@ -404,6 +450,10 @@ public class Data2DStatisticController extends BaseData2DHandleController {
         medianCheck.setSelected(true);
         upperQuartileCheck.setSelected(true);
         lowerQuartileCheck.setSelected(true);
+        UpperMildOutlierLineCheck.setSelected(true);
+        UpperExtremeOutlierLineCheck.setSelected(true);
+        LowerMildOutlierLineCheck.setSelected(true);
+        LowerExtremeOutlierLineCheck.setSelected(true);
         isSettingValues = false;
         checkMemoryLabel();
     }
@@ -428,6 +478,10 @@ public class Data2DStatisticController extends BaseData2DHandleController {
         sampleStandardDeviationCheck.setSelected(false);
         upperQuartileCheck.setSelected(false);
         lowerQuartileCheck.setSelected(false);
+        UpperMildOutlierLineCheck.setSelected(false);
+        UpperExtremeOutlierLineCheck.setSelected(false);
+        LowerMildOutlierLineCheck.setSelected(false);
+        LowerExtremeOutlierLineCheck.setSelected(false);
         isSettingValues = false;
         checkMemoryLabel();
     }

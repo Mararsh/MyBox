@@ -383,14 +383,14 @@ public class StatisticCalculation {
                 outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
             }
 
-            if (upperMildOutlierLine) {
-                cName = prefix + message("UpperMildOutlierLine");
+            if (upperExtremeOutlierLine) {
+                cName = prefix + message("UpperExtremeOutlierLine");
                 outputNames.add(cName);
                 outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
             }
 
-            if (upperExtremeOutlierLine) {
-                cName = prefix + message("UpperExtremeOutlierLine");
+            if (upperMildOutlierLine) {
+                cName = prefix + message("UpperMildOutlierLine");
                 outputNames.add(cName);
                 outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
             }
@@ -489,12 +489,6 @@ public class StatisticCalculation {
         if (meanRow != null) {
             meanRow.add(DoubleTools.format(statistic.getMean(), scale));
         }
-        if (maximumRow != null) {
-            maximumRow.add(DoubleTools.format(statistic.getMaximum(), scale));
-        }
-        if (minimumRow != null) {
-            minimumRow.add(DoubleTools.format(statistic.getMinimum(), scale));
-        }
         if (geometricMeanRow != null) {
             geometricMeanRow.add(DoubleTools.format(statistic.getGeometricMean(), scale));
         }
@@ -516,14 +510,20 @@ public class StatisticCalculation {
         if (skewnessRow != null) {
             skewnessRow.add(DoubleTools.format(statistic.getSkewness(), scale));
         }
-        if (medianRow != null) {
-            medianRow.add(DoubleTools.format(statistic.getMedian(), scale));
-        }
-        if (upperQuartileRow != null) {
-            upperQuartileRow.add(DoubleTools.format(statistic.getUpperQuartile(), scale));
+        if (minimumRow != null) {
+            minimumRow.add(DoubleTools.format(statistic.getMinimum(), scale));
         }
         if (lowerQuartileRow != null) {
             lowerQuartileRow.add(DoubleTools.format(statistic.getLowerQuartile(), scale));
+        }
+        if (medianRow != null) {
+            medianRow.add(DoubleTools.format(statistic.getMedian(), scale));
+        }
+        if (maximumRow != null) {
+            maximumRow.add(DoubleTools.format(statistic.getMaximum(), scale));
+        }
+        if (upperQuartileRow != null) {
+            upperQuartileRow.add(DoubleTools.format(statistic.getUpperQuartile(), scale));
         }
         if (upperExtremeOutlierLineRow != null) {
             upperExtremeOutlierLineRow.add(DoubleTools.format(statistic.getUpperExtremeOutlierLine(), scale));
