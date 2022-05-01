@@ -596,6 +596,24 @@ License:    Apache License Version 2.0
                                                       <RadioButton layoutX="285.0" layoutY="10.0" mnemonicParsing="false" text="%Point" toggleGroup="$labelGroup" />
                                                                         <RadioButton layoutX="379.0" layoutY="10.0" mnemonicParsing="false" text="%NotDisplay" toggleGroup="$labelGroup" />
                                                                         <CheckBox fx:id="popLabelCheck" mnemonicParsing="false" text="%Pop" />
+                                                      <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn">
+                                                         <graphic>
+                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                               <image>
+                                                                  <Image url="@../buttons/Red/iconZoomIn.png" />
+                                                               </image>
+                                                            </ImageView>
+                                                         </graphic>
+                                                      </Button>
+                                                      <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize">
+                                                         <graphic>
+                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                               <image>
+                                                                  <Image url="@../buttons/Red/iconPaneSize.png" />
+                                                               </image>
+                                                            </ImageView>
+                                                         </graphic>
+                                                      </Button>
                                                                     </children>
                                                                 </FlowPane>
                                                 <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
@@ -621,11 +639,15 @@ License:    Apache License Version 2.0
                                                   <VBox fx:id="snapBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="1.0" VBox.vgrow="ALWAYS">
                                                       <children>
                                                           <Label fx:id="dataLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" />
-                                                <AnchorPane fx:id="chartPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                                                   <children>
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" fx:id="xyText" />
-                                                   </children>
-                                                </AnchorPane>
+                                                <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                                   <content>
+                                                      <AnchorPane fx:id="chartPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                                         <children>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" fx:id="xyText" />
+                                                         </children>
+                                                      </AnchorPane>
+                                                   </content>
+                                                </ScrollPane>
                                                       </children>
                                                   </VBox>
                                        </children>
@@ -642,6 +664,15 @@ License:    Apache License Version 2.0
                                           <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                                              <children>
                                                 <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                <Button fx:id="dataButton" mnemonicParsing="false" onAction="#dataAction">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/Red/iconData.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
                                                 <Button fx:id="editButton" mnemonicParsing="false" onAction="#editAction">
                                                    <graphic>
                                                       <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">

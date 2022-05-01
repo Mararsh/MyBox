@@ -1,11 +1,13 @@
 package mara.mybox.controller;
 
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -124,6 +126,14 @@ public class BaseData2DController extends BaseController {
             return;
         }
         loadController.loadDef(def);
+        checkButtons();
+    }
+
+    public void loadData(List<Data2DColumn> cols, List<List<String>> data) {
+        if (loadController == null || !checkBeforeNextAction()) {
+            return;
+        }
+        loadController.loadTmpData(cols, data);
         checkButtons();
     }
 

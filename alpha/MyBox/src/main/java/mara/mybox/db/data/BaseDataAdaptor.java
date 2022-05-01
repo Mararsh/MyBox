@@ -26,7 +26,6 @@ import mara.mybox.db.table.TableImageScope;
 import mara.mybox.db.table.TableLocationData;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.db.table.TableNamedValues;
-import mara.mybox.db.table.TableShapeDescription;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableTag;
 import mara.mybox.db.table.TableTextClipboard;
@@ -129,9 +128,6 @@ public class BaseDataAdaptor {
         } else if (data instanceof Data2DStyle) {
             return new TableData2DStyle();
 
-        } else if (data instanceof ShapeDescription) {
-            return new TableShapeDescription();
-
         }
         return null;
     }
@@ -221,9 +217,6 @@ public class BaseDataAdaptor {
         } else if (data instanceof Data2DStyle) {
             return Data2DStyle.valid((Data2DStyle) data);
 
-        } else if (data instanceof ShapeDescription) {
-            return ShapeDescription.valid((ShapeDescription) data);
-
         }
 
         return false;
@@ -311,9 +304,6 @@ public class BaseDataAdaptor {
         } else if (data instanceof Data2DStyle) {
             return Data2DStyle.getValue((Data2DStyle) data, name);
 
-        } else if (data instanceof ShapeDescription) {
-            return ShapeDescription.getValue((ShapeDescription) data, name);
-
         }
 
         return null;
@@ -394,9 +384,6 @@ public class BaseDataAdaptor {
 
         } else if (data instanceof Data2DStyle) {
             return Data2DStyle.setValue((Data2DStyle) data, name, value);
-
-        } else if (data instanceof ShapeDescription) {
-            return ShapeDescription.setValue((ShapeDescription) data, name, value);
 
         }
         return false;

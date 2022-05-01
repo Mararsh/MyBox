@@ -227,17 +227,17 @@
             <artifactId>jsoup</artifactId>
             <version>1.14.2</version>
         </dependency>
-        <dependency>
+        <!--        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-jexl</artifactId>
             <version>3.2.1</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
             <version>3.6.1</version>
         </dependency>
-        <dependency>
+        <!--        <dependency>
             <groupId>org.jfree</groupId>
             <artifactId>jfreechart</artifactId>
             <version>1.5.3</version>
@@ -246,12 +246,12 @@
             <groupId>org.jfree</groupId>
             <artifactId>org.jfree.chart3d.fx</artifactId>
             <version>2.1.1</version>
-        </dependency>
-        <dependency>
+        </dependency>-->
+        <!--        <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-all</artifactId>
             <version>1.14</version>
-        </dependency>
+        </dependency>-->
     </dependencies>
 
     <build>

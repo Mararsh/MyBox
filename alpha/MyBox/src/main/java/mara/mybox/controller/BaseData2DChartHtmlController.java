@@ -20,7 +20,7 @@ import org.w3c.dom.events.EventTarget;
  * @CreateDate 2022-4-20
  * @License Apache License Version 2.0
  */
-public abstract class BaseData2DHtmlChartController extends BaseData2DChartController {
+public abstract class BaseData2DChartHtmlController extends BaseData2DChartController {
 
     protected int barWidth = 100, categorysCol;
     protected EventListener clickListener;
@@ -262,7 +262,7 @@ public abstract class BaseData2DHtmlChartController extends BaseData2DChartContr
     }
 
     protected String jsComments() {
-        return "\n<HR>\n<P style=\"font-size:0.8em\">*" + message("HtmlEditableComments") + "</P>\n";
+        return "\n<HR>\n<P style=\"font-size:0.8em\">* " + message("HtmlEditableComments") + "</P>\n";
     }
 
     public void pageLoaded() {

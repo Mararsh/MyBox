@@ -20,7 +20,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-4-25
  * @License Apache License Version 2.0
  */
-public class Data2DChartComparisonBarsController extends BaseData2DHtmlChartController {
+public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlController {
 
     protected String selectedValue2;
     protected int col1, col2, rowsNumber;
@@ -191,9 +191,9 @@ public class Data2DChartComparisonBarsController extends BaseData2DHtmlChartCont
 
                 s.append("</TR>\n");
             }
-            s.append("</Table>\n</DIV>\n");
+            s.append("</Table>\n");
             s.append(jsComments());
-            s.append("</BODY>\n");
+            s.append("</DIV>\n</BODY>\n");
             bar = null;
             return HtmlWriteTools.html(title, "utf-8", null, s.toString());
         } catch (Exception e) {

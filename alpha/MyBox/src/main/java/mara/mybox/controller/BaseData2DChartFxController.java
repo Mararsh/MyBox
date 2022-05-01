@@ -4,6 +4,7 @@ import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.geometry.Side;
 import javafx.scene.chart.Chart;
 import javafx.scene.control.CheckBox;
@@ -12,11 +13,13 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.chart.ChartTools.LabelType;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -26,7 +29,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-1-19
  * @License Apache License Version 2.0
  */
-public abstract class BaseData2DFxChartController extends BaseData2DChartController {
+public abstract class BaseData2DChartFxController extends BaseData2DChartController {
 
     protected LabelType labelType;
     protected int tickFontSize, titleFontSize, labelFontSize;
@@ -342,6 +345,40 @@ public abstract class BaseData2DFxChartController extends BaseData2DChartControl
     public void clearChart() {
         chart = null;
         chartPane.getChildren().clear();
+    }
+
+    @FXML
+    public void paneSize() {
+        if (chartPane == null || chart == null) {
+            return;
+        }
+        try {
+            AnchorPane.setTopAnchor(chart, 2d);
+            AnchorPane.setBottomAnchor​(chart, 2d);
+            AnchorPane.setLeftAnchor(chart, 2d);
+            AnchorPane.setRightAnchor​(chart, 2d);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void zoomIn() {
+        if (chartPane == null || chart == null) {
+            return;
+        }
+        try {
+            Bounds bounds = chart.getBoundsInLocal();
+            AnchorPane.clearConstraints(chart);
+            chart.setPrefSize(bounds.getWidth() + 40, bounds.getHeight() + 40);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
+    public Image snapChart() {
+        return NodeTools.snap(chart);
     }
 
     /*

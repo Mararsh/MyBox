@@ -15,7 +15,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-4-20
  * @License Apache License Version 2.0
  */
-public class Data2DChartSelfComparisonBarsController extends BaseData2DHtmlChartController {
+public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtmlController {
 
     protected Normalization normalization;
 
@@ -187,9 +187,9 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DHtmlChart
 
                 s.append("</TR>\n");
             }
-            s.append("</Table>\n</DIV>\n");
+            s.append("</Table>\n");
             s.append(jsComments());
-            s.append("</BODY>\n");
+            s.append("</DIV>\n</BODY>\n");
             return s.toString();
         } catch (Exception e) {
             MyBoxLog.debug(e);

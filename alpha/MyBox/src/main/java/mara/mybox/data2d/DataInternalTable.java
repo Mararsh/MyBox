@@ -14,7 +14,7 @@ public class DataInternalTable extends DataTable {
     public static List<String> InternalTables = new ArrayList<String>() {
         {
             addAll(Arrays.asList(
-                    "COLOR", "COLOR_PALETTE", "COLOR_PALETTE_NAME", "SHAPE_DESCRIPTION",
+                    "COLOR", "COLOR_PALETTE", "COLOR_PALETTE_NAME",
                     "IMAGE_EDIT_HISTORY", "IMAGE_SCOPE", "IMAGE_CLIPBOARD", "CONVOLUTION_KERNEL",
                     "GEOGRAPHY_CODE", "EPIDEMIC_REPORT", "LOCATION_DATA", "DATASET", "QUERY_CONDITION",
                     "FILE_BACKUP", "TEXT_CLIPBOARD", "WEB_HISTORY",

@@ -147,11 +147,6 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
     }
 
     @FXML
-    protected void ManageShapes(ActionEvent event) {
-        ShapesManageController.oneOpen();
-    }
-
-    @FXML
     protected void openManageColors(ActionEvent event) {
         ColorsManageController.oneOpen();
     }

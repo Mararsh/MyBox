@@ -23,7 +23,9 @@ public class DoubleStatistic {
     public long count;
     public double sum, mean, geometricMean, sumSquares,
             populationVariance, sampleVariance, populationStandardDeviation, sampleStandardDeviation, skewness,
-            minimum, maximum, median, upperQuartile, lowerQuartile, vTmp;
+            minimum, maximum, median, upperQuartile, lowerQuartile,
+            upperMildOutlierLine, upperExtremeOutlierLine, lowerMildOutlierLine, lowerExtremeOutlierLine,
+            vTmp;
     public Object mode;
     public StatisticCalculation options;
     public double[] doubles;
@@ -48,6 +50,10 @@ public class DoubleStatistic {
         median = 0;
         upperQuartile = 0;
         lowerQuartile = 0;
+        upperMildOutlierLine = 0;
+        upperExtremeOutlierLine = 0;
+        lowerMildOutlierLine = 0;
+        lowerExtremeOutlierLine = 0;
         mode = null;
         vTmp = 0;
     }
@@ -162,11 +168,27 @@ public class DoubleStatistic {
             if (options.isMedian()) {
                 median = percentile.evaluate(50);
             }
-            if (options.isUpperQuartile()) {
+            boolean needOutlier = options.needOutlier();
+            if (options.isUpperQuartile() || needOutlier) {
                 upperQuartile = percentile.evaluate(75);
             }
-            if (options.isLowerQuartile()) {
+            if (options.isLowerQuartile() || needOutlier) {
                 lowerQuartile = percentile.evaluate(25);
+            }
+            if (needOutlier) {
+                double qi = upperQuartile - lowerQuartile;
+                if (options.isUpperExtremeOutlierLine()) {
+                    upperExtremeOutlierLine = upperQuartile + 3 * qi;
+                }
+                if (options.isUpperMildOutlierLine()) {
+                    upperMildOutlierLine = upperQuartile + 1.5 * qi;
+                }
+                if (options.isLowerExtremeOutlierLine()) {
+                    lowerExtremeOutlierLine = lowerQuartile - 3 * qi;
+                }
+                if (options.isLowerMildOutlierLine()) {
+                    lowerMildOutlierLine = lowerQuartile - 1.5 * qi;
+                }
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -248,6 +270,18 @@ public class DoubleStatistic {
         }
         if (options.isLowerQuartile()) {
             list.add(DoubleTools.format(lowerQuartile, scale));
+        }
+        if (options.isUpperExtremeOutlierLine()) {
+            list.add(DoubleTools.format(upperExtremeOutlierLine, scale));
+        }
+        if (options.isUpperMildOutlierLine()) {
+            list.add(DoubleTools.format(upperMildOutlierLine, scale));
+        }
+        if (options.isLowerExtremeOutlierLine()) {
+            list.add(DoubleTools.format(lowerMildOutlierLine, scale));
+        }
+        if (options.isLowerMildOutlierLine()) {
+            list.add(DoubleTools.format(lowerExtremeOutlierLine, scale));
         }
         if (options.isMode()) {
             try {
@@ -556,6 +590,38 @@ public class DoubleStatistic {
 
     public void setLowerQuartile(double lowerQuartile) {
         this.lowerQuartile = lowerQuartile;
+    }
+
+    public double getUpperMildOutlierLine() {
+        return upperMildOutlierLine;
+    }
+
+    public void setUpperMildOutlierLine(double upperMildOutlierLine) {
+        this.upperMildOutlierLine = upperMildOutlierLine;
+    }
+
+    public double getUpperExtremeOutlierLine() {
+        return upperExtremeOutlierLine;
+    }
+
+    public void setUpperExtremeOutlierLine(double upperExtremeOutlierLine) {
+        this.upperExtremeOutlierLine = upperExtremeOutlierLine;
+    }
+
+    public double getLowerMildOutlierLine() {
+        return lowerMildOutlierLine;
+    }
+
+    public void setLowerMildOutlierLine(double lowerMildOutlierLine) {
+        this.lowerMildOutlierLine = lowerMildOutlierLine;
+    }
+
+    public double getLowerExtremeOutlierLine() {
+        return lowerExtremeOutlierLine;
+    }
+
+    public void setLowerExtremeOutlierLine(double lowerExtremeOutlierLine) {
+        this.lowerExtremeOutlierLine = lowerExtremeOutlierLine;
     }
 
     public double getvTmp() {

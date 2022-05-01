@@ -42,11 +42,6 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
             loadScene(Fxmls.ImagesPlayFxml);
         });
 
-        MenuItem ManageShapes = new MenuItem(Languages.message("ManageShapes"));
-        ManageShapes.setOnAction((ActionEvent event1) -> {
-            ShapesManageController.oneOpen();
-        });
-
         MenuItem ManageColors = new MenuItem(Languages.message("ManageColors"));
         ManageColors.setOnAction((ActionEvent event1) -> {
             ColorsManageController.oneOpen();
@@ -72,7 +67,7 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
         popMenu.getItems().addAll(
                 imageViewer, imagesBrowser, ImageAnalyse, ImagesPlay, new SeparatorMenuItem(),
                 imageManufactureMenu(), new SeparatorMenuItem(),
-                ManageShapes, ManageColors, QueryColor, colorSpaceMenu(), new SeparatorMenuItem(),
+                ManageColors, QueryColor, colorSpaceMenu(), new SeparatorMenuItem(),
                 ImagesInMyBoxClipboard, ImagesInSystemClipboard, miscellaneousMenu());
 
         popMenu.getItems().add(new SeparatorMenuItem());

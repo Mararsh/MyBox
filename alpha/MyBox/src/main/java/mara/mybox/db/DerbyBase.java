@@ -38,7 +38,6 @@ import mara.mybox.db.table.TableMediaList;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.db.table.TableNamedValues;
 import mara.mybox.db.table.TableQueryCondition;
-import mara.mybox.db.table.TableShapeDescription;
 import mara.mybox.db.table.TableStringValue;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableSystemConf;
@@ -600,10 +599,6 @@ public class DerbyBase {
             if (!tables.contains("Data2D_Style".toLowerCase())) {
                 new TableData2DStyle().createTable(conn);
                 loadingController.info("Data2D_Style");
-            }
-            if (!tables.contains("Shape_Description".toLowerCase())) {
-                new TableShapeDescription().createTable(conn);
-                loadingController.info("Shape_Description");
             }
             return true;
         } catch (Exception e) {

@@ -30,7 +30,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-1-19
  * @License Apache License Version 2.0
  */
-public abstract class BaseData2DChartXYController extends BaseData2DFxChartController {
+public abstract class BaseData2DChartXYController extends BaseData2DChartFxController {
 
     protected ChartTools.ChartCoordinate nCoordinate, cCoordinate, xCoordinate, yCoordinate, sCoordinate;
     protected int categoryFontSize, categoryMargin, categoryTickRotation,
@@ -667,12 +667,20 @@ public abstract class BaseData2DChartXYController extends BaseData2DFxChartContr
 
     // The first column is "Category"
     public void writeXYChart(List<Data2DColumn> columns, List<List<String>> data) {
+        writeXYChart(columns, data, null);
+    }
+
+    public void writeXYChart(List<Data2DColumn> columns, List<List<String>> data, List<Integer> colIndics) {
         try {
             if (columns == null || data == null) {
                 return;
             }
             XYChart.Data xyData;
+            int index = 0;
             for (int col = 1; col < columns.size(); col++) {
+                if (colIndics != null && !colIndics.contains(col)) {
+                    continue;
+                }
                 Data2DColumn column = columns.get(col);
                 String colName = column.getColumnName();
                 XYChart.Series series = new XYChart.Series();
@@ -701,7 +709,7 @@ public abstract class BaseData2DChartXYController extends BaseData2DFxChartContr
                     series.getData().add(xyData);
                 }
 
-                xyChart.getData().add(col - 1, series);
+                xyChart.getData().add(index++, series);
             }
 
         } catch (Exception e) {

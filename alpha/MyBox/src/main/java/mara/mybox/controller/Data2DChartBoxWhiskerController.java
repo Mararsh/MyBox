@@ -4,19 +4,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.StatisticCalculation;
@@ -27,8 +26,6 @@ import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.chart.ChartTools;
 import mara.mybox.fxml.chart.LabeledBoxWhiskerChart;
-import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -43,7 +40,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
     protected int lineWidth, categorysCol, boxWidth;
     protected LabeledBoxWhiskerChart boxWhiskerChart;
     protected StatisticCalculation calculation;
-    protected Node line0, line1, line2, line3, line4, line5, line6, line7, line8;
+    protected Map<String, Node> lines;
 
     @FXML
     protected ComboBox<String> lineWdithSelector, boxWdithSelector;
@@ -57,9 +54,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
     protected ToggleGroup categoryValuesGroup;
     @FXML
     protected CheckBox q0Check, q1Check, q2Check, q3Check, q4Check, q5Check, q6Check, q7Check, q8Check,
-            dottedCheck, outliersCheck;
-    @FXML
-    protected Button colorButton;
+            dottedCheck, outliersCheck, meanCheck, meanLineCheck;
 
     public Data2DChartBoxWhiskerController() {
         baseTitle = message("BoxWhiskerChart");
@@ -74,16 +69,6 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-            NodeStyleTools.setTooltip(colorButton, new Tooltip(message("RandomColors")));
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -167,17 +152,17 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
 
     public void initBoxOptions() {
         try {
-            super.initPlotTab();
+            lines = new HashMap<>();
 
             q0Check.setSelected(UserConfig.getBoolean(baseName + "LineQ0", true));
             q0Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    if (isSettingValues || line0 == null) {
+                    if (isSettingValues) {
                         return;
                     }
                     UserConfig.setBoolean(baseName + "LineQ0", q0Check.isSelected());
-                    line0.setVisible(q0Check.isSelected());
+                    setLineVisible(message("MinimumQ0"), q0Check.isSelected());
                 }
             });
 
@@ -185,11 +170,11 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
             q1Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    if (isSettingValues || line1 == null) {
+                    if (isSettingValues) {
                         return;
                     }
                     UserConfig.setBoolean(baseName + "LineQ1", q1Check.isSelected());
-                    line1.setVisible(q1Check.isSelected());
+                    setLineVisible(message("LowerQuartile"), q1Check.isSelected());
                 }
             });
 
@@ -197,11 +182,11 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
             q2Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    if (isSettingValues || line2 == null) {
+                    if (isSettingValues) {
                         return;
                     }
                     UserConfig.setBoolean(baseName + "LineQ2", q2Check.isSelected());
-                    line2.setVisible(q2Check.isSelected());
+                    setLineVisible(message("Median"), q2Check.isSelected());
                 }
             });
 
@@ -209,11 +194,11 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
             q3Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    if (isSettingValues || line3 == null) {
+                    if (isSettingValues) {
                         return;
                     }
                     UserConfig.setBoolean(baseName + "LineQ3", q3Check.isSelected());
-                    line3.setVisible(q3Check.isSelected());
+                    setLineVisible(message("UpperQuartile"), q3Check.isSelected());
                 }
             });
 
@@ -221,11 +206,11 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
             q4Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    if (isSettingValues || line4 == null) {
+                    if (isSettingValues) {
                         return;
                     }
                     UserConfig.setBoolean(baseName + "LineQ4", q4Check.isSelected());
-                    line4.setVisible(q4Check.isSelected());
+                    setLineVisible(message("MaximumQ4"), q4Check.isSelected());
                 }
             });
 
@@ -233,11 +218,11 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
             q5Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    if (isSettingValues || line5 == null) {
+                    if (isSettingValues) {
                         return;
                     }
                     UserConfig.setBoolean(baseName + "LineQ5", q5Check.isSelected());
-                    line5.setVisible(q5Check.isSelected());
+                    setLineVisible(message("UpperExtremeOutlierLine"), q5Check.isSelected());
                 }
             });
 
@@ -245,11 +230,11 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
             q6Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    if (isSettingValues || line6 == null) {
+                    if (isSettingValues) {
                         return;
                     }
                     UserConfig.setBoolean(baseName + "LineQ6", q6Check.isSelected());
-                    line6.setVisible(q6Check.isSelected());
+                    setLineVisible(message("UpperMildOutlierLine"), q6Check.isSelected());
                 }
             });
 
@@ -257,11 +242,11 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
             q7Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    if (isSettingValues || line7 == null) {
+                    if (isSettingValues) {
                         return;
                     }
                     UserConfig.setBoolean(baseName + "LineQ7", q7Check.isSelected());
-                    line7.setVisible(q7Check.isSelected());
+                    setLineVisible(message("LowerMildOutlierLine"), q7Check.isSelected());
                 }
             });
 
@@ -269,11 +254,23 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
             q8Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    if (isSettingValues || line8 == null) {
+                    if (isSettingValues) {
                         return;
                     }
                     UserConfig.setBoolean(baseName + "LineQ8", q8Check.isSelected());
-                    line8.setVisible(q8Check.isSelected());
+                    setLineVisible(message("LowerExtremeOutlierLine"), q8Check.isSelected());
+                }
+            });
+
+            meanLineCheck.setSelected(UserConfig.getBoolean(baseName + "LineMean", true));
+            meanLineCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    UserConfig.setBoolean(baseName + "LineMean", meanLineCheck.isSelected());
+                    setLineVisible(message("Mean"), meanLineCheck.isSelected());
                 }
             });
 
@@ -281,7 +278,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
             dottedCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    if (isSettingValues || line4 == null) {
+                    if (isSettingValues) {
                         return;
                     }
                     UserConfig.setBoolean(baseName + "Dotted", dottedCheck.isSelected());
@@ -300,10 +297,24 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
                     redrawChart();
                 }
             });
+
             q5Check.disableProperty().bind(outliersCheck.selectedProperty().not());
             q6Check.disableProperty().bind(outliersCheck.selectedProperty().not());
             q7Check.disableProperty().bind(outliersCheck.selectedProperty().not());
             q8Check.disableProperty().bind(outliersCheck.selectedProperty().not());
+
+            meanCheck.setSelected(UserConfig.getBoolean(baseName + "Mean", true));
+            meanCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    UserConfig.setBoolean(baseName + "Mean", meanCheck.isSelected());
+                    redrawChart();
+                }
+            });
+            meanLineCheck.disableProperty().bind(meanCheck.selectedProperty().not());
 
             boxWidth = UserConfig.getInt(baseName + "BoxWidth", 40);
             if (boxWidth <= 0) {
@@ -387,11 +398,16 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
             categorysCol = data2D.colOrder(selectedCategory);
         }
         calculation = new StatisticCalculation()
+                .setMean(true)
                 .setMedian(true)
                 .setMaximum(true)
                 .setMinimum(true)
                 .setUpperQuartile(true)
                 .setLowerQuartile(true)
+                .setUpperExtremeOutlierLine(true)
+                .setUpperMildOutlierLine(true)
+                .setLowerMildOutlierLine(true)
+                .setLowerExtremeOutlierLine(true)
                 .setScale(scale);
         switch (objectType) {
             case Rows:
@@ -444,7 +460,6 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
             calculation.setTask(null);
             outputColumns = calculation.getOutputColumns();
             outputData = calculation.getOutputData();
-            String prefix;
             if (!rowsRadio.isSelected()) {
                 List<List<String>> transposed = new ArrayList<>();
                 for (int r = 1; r < outputColumns.size(); ++r) {
@@ -457,29 +472,18 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
                 }
                 outputColumns = new ArrayList<>();
                 outputColumns.add(new Data2DColumn(categoryName(), ColumnDefinition.ColumnType.String));
-                prefix = (allRadio.isSelected() ? message("All") : message("Column")) + "-";
+                String prefix = (allRadio.isSelected() ? message("All") : message("Column")) + "-";
+                outputColumns.add(new Data2DColumn(prefix + message("Mean"), ColumnDefinition.ColumnType.Double));
                 outputColumns.add(new Data2DColumn(prefix + message("MinimumQ0"), ColumnDefinition.ColumnType.Double));
                 outputColumns.add(new Data2DColumn(prefix + message("LowerQuartile"), ColumnDefinition.ColumnType.Double));
                 outputColumns.add(new Data2DColumn(prefix + message("Median"), ColumnDefinition.ColumnType.Double));
                 outputColumns.add(new Data2DColumn(prefix + message("UpperQuartile"), ColumnDefinition.ColumnType.Double));
                 outputColumns.add(new Data2DColumn(prefix + message("MaximumQ4"), ColumnDefinition.ColumnType.Double));
+                outputColumns.add(new Data2DColumn(prefix + message("UpperExtremeOutlierLine"), ColumnDefinition.ColumnType.Double));
+                outputColumns.add(new Data2DColumn(prefix + message("UpperMildOutlierLine"), ColumnDefinition.ColumnType.Double));
+                outputColumns.add(new Data2DColumn(prefix + message("LowerMildOutlierLine"), ColumnDefinition.ColumnType.Double));
+                outputColumns.add(new Data2DColumn(prefix + message("LowerExtremeOutlierLine"), ColumnDefinition.ColumnType.Double));
                 outputData = transposed;
-            } else {
-                prefix = message("Row") + "-";
-            }
-            outputColumns.add(new Data2DColumn(prefix + message("UpperExtremeOutlierLine"), ColumnDefinition.ColumnType.Double));
-            outputColumns.add(new Data2DColumn(prefix + message("UpperMildOutlierLine"), ColumnDefinition.ColumnType.Double));
-            outputColumns.add(new Data2DColumn(prefix + message("LowerMildOutlierLine"), ColumnDefinition.ColumnType.Double));
-            outputColumns.add(new Data2DColumn(prefix + message("LowerExtremeOutlierLine"), ColumnDefinition.ColumnType.Double));
-            for (int r = 0; r < outputData.size(); ++r) {
-                List<String> row = outputData.get(r);
-                double q3 = data2D.doubleValue(row.get(4));
-                double q1 = data2D.doubleValue(row.get(2));
-                double IQR = q3 - q1;
-                row.add(DoubleTools.format(q3 + 3 * IQR, scale));
-                row.add(DoubleTools.format(q3 + 1.5 * IQR, scale));
-                row.add(DoubleTools.format(q1 - 1.5 * IQR, scale));
-                row.add(DoubleTools.format(q1 - 3 * IQR, scale));
             }
 
         } catch (Exception e) {
@@ -494,15 +498,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
     public void clearChart() {
         super.clearChart();
         boxWhiskerChart = null;
-        line0 = null;
-        line1 = null;
-        line2 = null;
-        line3 = null;
-        line4 = null;
-        line5 = null;
-        line6 = null;
-        line7 = null;
-        line8 = null;
+        lines.clear();
     }
 
     @Override
@@ -528,17 +524,59 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
             makePalette();
             boxWhiskerChart.setBoxWidth(boxWidth)
                     .setHandleOutliers(outliersCheck.isSelected())
+                    .setHandleMean(meanCheck.isSelected())
                     .setPalette(palette);
-            List<Data2DColumn> displayColumns;
-            if (outliersCheck.isSelected()) {
-                displayColumns = outputColumns;
+            List<Integer> displayCols;
+            if (outliersCheck.isSelected() && meanCheck.isSelected()) {
+                displayCols = null;
             } else {
-                displayColumns = new ArrayList<>();
-                displayColumns.addAll(outputColumns.subList(0, 6));
+                displayCols = new ArrayList<>();
+                if (meanCheck.isSelected()) {
+                    displayCols.add(1);
+                }
+                for (int i = 2; i < 7; i++) {
+                    displayCols.add(i);
+                }
+                if (outliersCheck.isSelected()) {
+                    for (int i = 7; i < 11; i++) {
+                        displayCols.add(i);
+                    }
+                }
             }
-            writeXYChart(displayColumns, outputData);
+            writeXYChart(outputColumns, outputData, displayCols);
         } catch (Exception e) {
             MyBoxLog.debug(e);
+        }
+    }
+
+    public void setLineVisible(String name, boolean visible) {
+        List<XYChart.Series> seriesList = boxWhiskerChart.getData();
+        if (name == null || seriesList == null) {
+            return;
+        }
+        for (XYChart.Series series : seriesList) {
+            if (series.getName().endsWith(name)) {
+                Node node = series.getNode().lookup(".chart-series-line");
+                if (node != null) {
+                    node.setVisible(visible);
+                }
+                return;
+            }
+        }
+    }
+
+    public void setStyle(XYChart.Series series, String name, CheckBox checkbox) {
+        if (name == null || series == null || checkbox == null) {
+            return;
+        }
+        if (series.getName().endsWith(name)) {
+            Node node = series.getNode().lookup(".chart-series-line");
+            if (node != null) {
+                node.setVisible(checkbox.isSelected());
+                if (dottedCheck.isSelected()) {
+                    node.setStyle(node.getStyle() + "; -fx-stroke-dash-array: 8 8;");
+                }
+            }
         }
     }
 
@@ -550,9 +588,10 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
             }
             boxWhiskerChart.setBoxWidth(boxWidth)
                     .setHandleOutliers(outliersCheck.isSelected())
+                    .setHandleMean(meanCheck.isSelected())
                     .setPalette(palette);
             List<XYChart.Series> seriesList = boxWhiskerChart.getData();
-            if (seriesList == null || seriesList.size() != (outliersCheck.isSelected() ? 9 : 5)) {
+            if (seriesList == null || seriesList.size() != boxWhiskerChart.seriesSize()) {
                 return;
             }
             boxWhiskerChart.applyCss();
@@ -560,60 +599,20 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
 
             ChartTools.setLineChartColors(boxWhiskerChart, lineWidth, palette, legendSide != null);
 
-            String style = "; -fx-stroke-dash-array: 8 8;";
-            line0 = seriesList.get(0).getNode().lookup(".chart-series-line");
-            line0.setVisible(q0Check.isSelected());
-            if (dottedCheck.isSelected()) {
-                line0.setStyle(line0.getStyle() + style);
-            }
-
-            line1 = seriesList.get(1).getNode().lookup(".chart-series-line");
-            line1.setVisible(q1Check.isSelected());
-            if (dottedCheck.isSelected()) {
-                line1.setStyle(line1.getStyle() + style);
-            }
-
-            line2 = seriesList.get(2).getNode().lookup(".chart-series-line");
-            line2.setVisible(q2Check.isSelected());
-            if (dottedCheck.isSelected()) {
-                line2.setStyle(line2.getStyle() + style);
-            }
-
-            line3 = seriesList.get(3).getNode().lookup(".chart-series-line");
-            line3.setVisible(q3Check.isSelected());
-            if (dottedCheck.isSelected()) {
-                line3.setStyle(line3.getStyle() + style);
-            }
-
-            line4 = seriesList.get(4).getNode().lookup(".chart-series-line");
-            line4.setVisible(q4Check.isSelected());
-            if (dottedCheck.isSelected()) {
-                line4.setStyle(line4.getStyle() + style);
-            }
-
-            if (outliersCheck.isSelected()) {
-                line5 = seriesList.get(5).getNode().lookup(".chart-series-line");
-                line5.setVisible(q5Check.isSelected());
-                if (dottedCheck.isSelected()) {
-                    line5.setStyle(line5.getStyle() + style);
+            for (XYChart.Series series : seriesList) {
+                if (meanCheck.isSelected()) {
+                    setStyle(series, message("Mean"), meanLineCheck);
                 }
-
-                line6 = seriesList.get(6).getNode().lookup(".chart-series-line");
-                line6.setVisible(q6Check.isSelected());
-                if (dottedCheck.isSelected()) {
-                    line6.setStyle(line6.getStyle() + style);
-                }
-
-                line7 = seriesList.get(7).getNode().lookup(".chart-series-line");
-                line7.setVisible(q7Check.isSelected());
-                if (dottedCheck.isSelected()) {
-                    line7.setStyle(line7.getStyle() + style);
-                }
-
-                line8 = seriesList.get(8).getNode().lookup(".chart-series-line");
-                line8.setVisible(q8Check.isSelected());
-                if (dottedCheck.isSelected()) {
-                    line8.setStyle(line8.getStyle() + style);
+                setStyle(series, message("MinimumQ0"), q0Check);
+                setStyle(series, message("LowerQuartile"), q1Check);
+                setStyle(series, message("Median"), q2Check);
+                setStyle(series, message("UpperQuartile"), q3Check);
+                setStyle(series, message("MaximumQ4"), q4Check);
+                if (outliersCheck.isSelected()) {
+                    setStyle(series, message("UpperExtremeOutlierLine"), q5Check);
+                    setStyle(series, message("UpperMildOutlierLine"), q6Check);
+                    setStyle(series, message("LowerMildOutlierLine"), q7Check);
+                    setStyle(series, message("LowerExtremeOutlierLine"), q8Check);
                 }
             }
 
@@ -663,6 +662,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
         q6Check.setSelected(true);
         q7Check.setSelected(true);
         q8Check.setSelected(true);
+        meanLineCheck.setSelected(true);
         isSettingValues = false;
         setChartStyle();
     }
@@ -680,6 +680,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
         q6Check.setSelected(false);
         q7Check.setSelected(false);
         q8Check.setSelected(false);
+        meanLineCheck.setSelected(false);
         isSettingValues = false;
         setChartStyle();
     }

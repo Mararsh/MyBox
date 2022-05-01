@@ -305,10 +305,23 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     }
 
     @FXML
+    public void dataAction() {
+        if (outputData == null || outputData.isEmpty()) {
+            popError(message("NoData"));
+            return;
+        }
+        DataManufactureController.open(outputColumns, outputData);
+    }
+
+    @FXML
     @Override
     public boolean popAction() {
-        ImagePopController.openImage(this, NodeTools.snap(snapBox));
+        ImagePopController.openImage(this, snapChart());
         return true;
+    }
+
+    public Image snapChart() {
+        return NodeTools.snap(snapBox);
     }
 
     @FXML
@@ -318,7 +331,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                 popError(message("NoData"));
                 return;
             }
-            Image image = NodeTools.snap(snapBox);
+            Image image = snapChart();
             File imageFile = new File(AppPaths.getGeneratedPath() + File.separator + DateTools.nowFileString() + ".jpg");
             BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
             ImageFileWriters.writeImageFile(bufferedImage, "jpg", imageFile.getAbsolutePath());

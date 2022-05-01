@@ -176,7 +176,6 @@ License:    Apache License Version 2.0
                                    
                                 </Menu>
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#ManageShapes" text="%ManageShapes" />
                                 <MenuItem mnemonicParsing="false" onAction="#openManageColors" text="%ManageColors" />
                                 <MenuItem mnemonicParsing="false" onAction="#queryColor" text="%ColorQuery" />
                                 <Menu mnemonicParsing="false" text="%ColorSpace">

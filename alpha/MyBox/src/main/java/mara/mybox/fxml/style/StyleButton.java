@@ -136,7 +136,11 @@ public class StyleButton {
             return new StyleData(id, message("Default"), "", "iconDefault.png");
         }
         if (id.startsWith("random")) {
-            return new StyleData(id, message("Random"), "", "iconRandom.png");
+            if (id.startsWith("randomColors")) {
+                return new StyleData(id, message("RandomColors"), "", "iconRandom.png");
+            } else {
+                return new StyleData(id, message("Random"), "", "iconRandom.png");
+            }
         }
         if (id.startsWith("examplePop")) {
             return new StyleData(id, "", "", "iconExamples.png");

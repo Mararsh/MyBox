@@ -25,7 +25,8 @@ public class StatisticCalculation {
 
     public boolean count, sum, mean, geometricMean, sumSquares,
             populationVariance, sampleVariance, populationStandardDeviation, sampleStandardDeviation, skewness,
-            minimum, maximum, median, upperQuartile, lowerQuartile, mode;
+            minimum, maximum, median, upperQuartile, lowerQuartile, mode,
+            upperMildOutlierLine, upperExtremeOutlierLine, lowerMildOutlierLine, lowerExtremeOutlierLine;
     public int scale;
 
     protected BaseData2DHandleController handleController;
@@ -33,7 +34,8 @@ public class StatisticCalculation {
     protected Data2D data2D;
     protected List<String> countRow, summationRow, meanRow, geometricMeanRow, sumOfSquaresRow,
             populationVarianceRow, sampleVarianceRow, populationStandardDeviationRow, sampleStandardDeviationRow, skewnessRow,
-            maximumRow, minimumRow, medianRow, upperQuartileRow, lowerQuartileRow, modeRow;
+            maximumRow, minimumRow, medianRow, upperQuartileRow, lowerQuartileRow, modeRow,
+            upperMildOutlierLineRow, upperExtremeOutlierLineRow, lowerMildOutlierLineRow, lowerExtremeOutlierLineRow;
     protected List<List<String>> outputData;
     protected List<Data2DColumn> outputColumns;
     protected String categoryName;
@@ -63,7 +65,11 @@ public class StatisticCalculation {
                 .setMedian(select)
                 .setUpperQuartile(select)
                 .setLowerQuartile(select)
-                .setMode(select);
+                .setMode(select)
+                .setUpperMildOutlierLine(select)
+                .setUpperExtremeOutlierLine(select)
+                .setLowerMildOutlierLine(select)
+                .setLowerExtremeOutlierLine(select);
     }
 
     public boolean needVariance() {
@@ -71,7 +77,12 @@ public class StatisticCalculation {
     }
 
     public boolean needPercentile() {
-        return median || upperQuartile || lowerQuartile;
+        return median || upperQuartile || lowerQuartile || needOutlier();
+    }
+
+    public boolean needOutlier() {
+        return upperMildOutlierLine || upperExtremeOutlierLine
+                || lowerMildOutlierLine || lowerExtremeOutlierLine;
     }
 
     public boolean needStored() {
@@ -223,6 +234,34 @@ public class StatisticCalculation {
                 outputData.add(maximumRow);
             }
 
+            upperExtremeOutlierLineRow = null;
+            if (upperExtremeOutlierLine) {
+                upperExtremeOutlierLineRow = new ArrayList<>();
+                upperExtremeOutlierLineRow.add(prefix + message("UpperExtremeOutlierLine"));
+                outputData.add(upperExtremeOutlierLineRow);
+            }
+
+            upperMildOutlierLineRow = null;
+            if (upperMildOutlierLine) {
+                upperMildOutlierLineRow = new ArrayList<>();
+                upperMildOutlierLineRow.add(prefix + message("UpperMildOutlierLine"));
+                outputData.add(upperMildOutlierLineRow);
+            }
+
+            lowerMildOutlierLineRow = null;
+            if (lowerMildOutlierLine) {
+                lowerMildOutlierLineRow = new ArrayList<>();
+                lowerMildOutlierLineRow.add(prefix + message("LowerMildOutlierLine"));
+                outputData.add(lowerMildOutlierLineRow);
+            }
+
+            lowerExtremeOutlierLineRow = null;
+            if (lowerExtremeOutlierLine) {
+                lowerExtremeOutlierLineRow = new ArrayList<>();
+                lowerExtremeOutlierLineRow.add(prefix + message("LowerExtremeOutlierLine"));
+                outputData.add(lowerExtremeOutlierLineRow);
+            }
+
             modeRow = null;
             if (mode) {
                 modeRow = new ArrayList<>();
@@ -340,6 +379,30 @@ public class StatisticCalculation {
 
             if (maximum) {
                 cName = prefix + message("MaximumQ4");
+                outputNames.add(cName);
+                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
+            }
+
+            if (upperMildOutlierLine) {
+                cName = prefix + message("UpperMildOutlierLine");
+                outputNames.add(cName);
+                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
+            }
+
+            if (upperExtremeOutlierLine) {
+                cName = prefix + message("UpperExtremeOutlierLine");
+                outputNames.add(cName);
+                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
+            }
+
+            if (lowerMildOutlierLine) {
+                cName = prefix + message("LowerMildOutlierLine");
+                outputNames.add(cName);
+                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
+            }
+
+            if (lowerExtremeOutlierLine) {
+                cName = prefix + message("LowerExtremeOutlierLine");
                 outputNames.add(cName);
                 outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
             }
@@ -462,6 +525,18 @@ public class StatisticCalculation {
         if (lowerQuartileRow != null) {
             lowerQuartileRow.add(DoubleTools.format(statistic.getLowerQuartile(), scale));
         }
+        if (upperExtremeOutlierLineRow != null) {
+            upperExtremeOutlierLineRow.add(DoubleTools.format(statistic.getUpperExtremeOutlierLine(), scale));
+        }
+        if (upperMildOutlierLineRow != null) {
+            upperMildOutlierLineRow.add(DoubleTools.format(statistic.getUpperMildOutlierLine(), scale));
+        }
+        if (lowerMildOutlierLineRow != null) {
+            lowerMildOutlierLineRow.add(DoubleTools.format(statistic.getLowerMildOutlierLine(), scale));
+        }
+        if (lowerExtremeOutlierLineRow != null) {
+            lowerExtremeOutlierLineRow.add(DoubleTools.format(statistic.getLowerExtremeOutlierLine(), scale));
+        }
         if (modeRow != null) {
             try {
                 modeRow.add(DoubleTools.format((double) statistic.getMode(), scale));
@@ -559,20 +634,61 @@ public class StatisticCalculation {
                         medianRow.add(column.toString(m));
                     }
                 }
-                if (upperQuartileRow != null) {
-                    Object o = dataTable.percentile(conn, column, 75);
-                    if (column.isNumberType()) {
-                        upperQuartileRow.add(DoubleTools.format(Double.valueOf(o + ""), scale));
-                    } else {
-                        upperQuartileRow.add(column.toString(o));
+                Object q1 = null, q3 = null;
+                if (upperQuartileRow != null || needOutlier()) {
+                    q3 = dataTable.percentile(conn, column, 75);
+                    if (upperQuartileRow != null) {
+                        if (column.isNumberType()) {
+                            upperQuartileRow.add(DoubleTools.format(Double.valueOf(q3 + ""), scale));
+                        } else {
+                            upperQuartileRow.add(column.toString(q3));
+                        }
                     }
                 }
-                if (lowerQuartileRow != null) {
-                    Object o = dataTable.percentile(conn, column, 25);
-                    if (column.isNumberType()) {
-                        lowerQuartileRow.add(DoubleTools.format(Double.valueOf(o + ""), scale));
-                    } else {
-                        lowerQuartileRow.add(column.toString(o));
+                if (lowerQuartileRow != null || needOutlier()) {
+                    q1 = dataTable.percentile(conn, column, 25);
+                    if (lowerQuartileRow != null) {
+                        if (column.isNumberType()) {
+                            lowerQuartileRow.add(DoubleTools.format(Double.valueOf(q1 + ""), scale));
+                        } else {
+                            lowerQuartileRow.add(column.toString(q1));
+                        }
+                    }
+                }
+                if (upperExtremeOutlierLineRow != null) {
+                    try {
+                        double d1 = Double.valueOf(q1 + "");
+                        double d3 = Double.valueOf(q3 + "");
+                        upperExtremeOutlierLineRow.add(DoubleTools.format(d3 + 3 * (d3 - d1), scale));
+                    } catch (Exception e) {
+                        upperExtremeOutlierLineRow.add(Double.NaN + "");
+                    }
+                }
+                if (upperMildOutlierLineRow != null) {
+                    try {
+                        double d1 = Double.valueOf(q1 + "");
+                        double d3 = Double.valueOf(q3 + "");
+                        upperMildOutlierLineRow.add(DoubleTools.format(d3 + 1.5 * (d3 - d1), scale));
+                    } catch (Exception e) {
+                        upperMildOutlierLineRow.add(Double.NaN + "");
+                    }
+                }
+                if (lowerMildOutlierLineRow != null) {
+                    try {
+                        double d1 = Double.valueOf(q1 + "");
+                        double d3 = Double.valueOf(q3 + "");
+                        lowerMildOutlierLineRow.add(DoubleTools.format(d1 - 1.5 * (d3 - d1), scale));
+                    } catch (Exception e) {
+                        lowerMildOutlierLineRow.add(Double.NaN + "");
+                    }
+                }
+                if (lowerExtremeOutlierLineRow != null) {
+                    try {
+                        double d1 = Double.valueOf(q1 + "");
+                        double d3 = Double.valueOf(q3 + "");
+                        lowerExtremeOutlierLineRow.add(DoubleTools.format(d1 - 3 * (d3 - d1), scale));
+                    } catch (Exception e) {
+                        lowerExtremeOutlierLineRow.add(Double.NaN + "");
                     }
                 }
                 if (modeRow != null) {
@@ -739,6 +855,42 @@ public class StatisticCalculation {
 
     public StatisticCalculation setLowerQuartile(boolean lowerQuartile) {
         this.lowerQuartile = lowerQuartile;
+        return this;
+    }
+
+    public boolean isUpperMildOutlierLine() {
+        return upperMildOutlierLine;
+    }
+
+    public StatisticCalculation setUpperMildOutlierLine(boolean upperMildOutlierLine) {
+        this.upperMildOutlierLine = upperMildOutlierLine;
+        return this;
+    }
+
+    public boolean isUpperExtremeOutlierLine() {
+        return upperExtremeOutlierLine;
+    }
+
+    public StatisticCalculation setUpperExtremeOutlierLine(boolean upperExtremeOutlierLine) {
+        this.upperExtremeOutlierLine = upperExtremeOutlierLine;
+        return this;
+    }
+
+    public boolean isLowerMildOutlierLine() {
+        return lowerMildOutlierLine;
+    }
+
+    public StatisticCalculation setLowerMildOutlierLine(boolean lowerMildOutlierLine) {
+        this.lowerMildOutlierLine = lowerMildOutlierLine;
+        return this;
+    }
+
+    public boolean isLowerExtremeOutlierLine() {
+        return lowerExtremeOutlierLine;
+    }
+
+    public StatisticCalculation setLowerExtremeOutlierLine(boolean lowerExtremeOutlierLine) {
+        this.lowerExtremeOutlierLine = lowerExtremeOutlierLine;
         return this;
     }
 
@@ -911,6 +1063,42 @@ public class StatisticCalculation {
 
     public StatisticCalculation setModeRow(List<String> modeRow) {
         this.modeRow = modeRow;
+        return this;
+    }
+
+    public List<String> getUpperMildOutlierLineRow() {
+        return upperMildOutlierLineRow;
+    }
+
+    public StatisticCalculation setUpperMildOutlierLineRow(List<String> upperMildOutlierLineRow) {
+        this.upperMildOutlierLineRow = upperMildOutlierLineRow;
+        return this;
+    }
+
+    public List<String> getUpperExtremeOutlierLineRow() {
+        return upperExtremeOutlierLineRow;
+    }
+
+    public StatisticCalculation setUpperExtremeOutlierLineRow(List<String> upperExtremeOutlierLineRow) {
+        this.upperExtremeOutlierLineRow = upperExtremeOutlierLineRow;
+        return this;
+    }
+
+    public List<String> getLowerMildOutlierLineRow() {
+        return lowerMildOutlierLineRow;
+    }
+
+    public StatisticCalculation setLowerMildOutlierLineRow(List<String> lowerMildOutlierLineRow) {
+        this.lowerMildOutlierLineRow = lowerMildOutlierLineRow;
+        return this;
+    }
+
+    public List<String> getLowerExtremeOutlierLineRow() {
+        return lowerExtremeOutlierLineRow;
+    }
+
+    public StatisticCalculation setLowerExtremeOutlierLineRow(List<String> lowerExtremeOutlierLineRow) {
+        this.lowerExtremeOutlierLineRow = lowerExtremeOutlierLineRow;
         return this;
     }
 

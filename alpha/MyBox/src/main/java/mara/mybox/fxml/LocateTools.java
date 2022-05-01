@@ -8,6 +8,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Region;
 import javafx.stage.PopupWindow;
 import javafx.stage.Stage;
 
@@ -168,6 +169,19 @@ public class LocateTools {
     public static void moveCenter(Node node) {
         moveXCenter(node);
         moveYCenter(node);
+    }
+
+    public static void fitSize(Node pNnode, Region region, int margin) {
+        try {
+            if (pNnode == null || region == null) {
+                return;
+            }
+            Bounds bounds = pNnode.getBoundsInLocal();
+            region.setPrefSize(bounds.getWidth() - 2 * margin, bounds.getHeight() - 2 * margin);
+            LocateTools.moveCenter(pNnode, region);
+        } catch (Exception e) {
+            //            MyBoxLog.error(e.toString());
+        }
     }
 
     public static double getScreenX(Node node) {

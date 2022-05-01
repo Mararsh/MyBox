@@ -567,12 +567,6 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         });
         items.add(menu);
 
-        menu = new MenuItem(message("Refresh"), StyleTools.getIconImage("iconRefresh.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            refreshAction();
-        });
-        items.add(menu);
-
         return items;
     }
 
@@ -996,7 +990,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                         error = e.toString();
                         return false;
                     }
-                    s.append("\n<HR>\n<P style=\"font-size:0.8em\">*").append(message("HtmlEditableComments")).append("</P>\n");
+                    s.append("\n<HR>\n<P style=\"font-size:0.8em\">* ").append(message("HtmlEditableComments")).append("</P>\n");
                     return true;
                 }
 
