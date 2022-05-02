@@ -130,27 +130,27 @@ public class TreeNode extends BaseData {
     public static File exampleFile(String category) {
         String lang = Languages.isChinese() ? "zh" : "en";
         if (WebFavorite.equals(category)) {
-            return getInternalFile("/data/db/WebFavorites_Examples_" + lang + ".txt",
+            return getInternalFile("/data/examples/WebFavorites_Examples_" + lang + ".txt",
                     "data", "WebFavorites_Examples_" + lang + ".txt", true);
 
         } else if (Notebook.equals(category)) {
-            return getInternalFile("/data/db/Notes_Examples_" + lang + ".txt",
+            return getInternalFile("/data/examples/Notes_Examples_" + lang + ".txt",
                     "data", "Notes_Examples_" + lang + ".txt", true);
 
         } else if (JShellCode.equals(category)) {
-            return getInternalFile("/data/db/JShell_Examples_" + lang + ".txt",
+            return getInternalFile("/data/examples/JShell_Examples_" + lang + ".txt",
                     "data", "JShell_Examples_" + lang + ".txt", true);
 
         } else if (SQL.equals(category)) {
-            return getInternalFile("/data/db/Sql_Examples_" + lang + ".txt",
+            return getInternalFile("/data/examples/Sql_Examples_" + lang + ".txt",
                     "data", "Sql_Examples_" + lang + ".txt", true);
 
         } else if (JavaScript.equals(category)) {
-            return getInternalFile("/data/db/JavaScript_Examples_" + lang + ".txt",
+            return getInternalFile("/data/examples/JavaScript_Examples_" + lang + ".txt",
                     "data", "JavaScript_Examples_" + lang + ".txt", true);
 
         } else if (InformationInTree.equals(category)) {
-            return getInternalFile("/data/db/Tree_Examples_" + lang + ".txt",
+            return getInternalFile("/data/examples/Tree_Examples_" + lang + ".txt",
                     "data", "Tree_Examples_" + lang + ".txt", true);
 
         } else {

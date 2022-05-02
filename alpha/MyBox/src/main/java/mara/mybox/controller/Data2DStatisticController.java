@@ -12,8 +12,8 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.DoubleStatistic;
-import mara.mybox.data.StatisticCalculation;
-import mara.mybox.data.StatisticCalculation.StatisticObject;
+import mara.mybox.data.DescriptiveStatistic;
+import mara.mybox.data.DescriptiveStatistic.StatisticObject;
 import mara.mybox.data2d.Data2D_Operations.ObjectType;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
@@ -32,7 +32,7 @@ import mara.mybox.value.UserConfig;
  */
 public class Data2DStatisticController extends BaseData2DHandleController {
 
-    protected StatisticCalculation calculation;
+    protected DescriptiveStatistic calculation;
     protected int categorysCol;
     protected String selectedCategory;
     protected ChangeListener<Boolean> tableStatusListener;
@@ -369,7 +369,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 categorysCol = data2D.colOrder(selectedCategory);
             }
         }
-        calculation = new StatisticCalculation()
+        calculation = new DescriptiveStatistic()
                 .setCount(countCheck.isSelected())
                 .setSum(summationCheck.isSelected())
                 .setMean(meanCheck.isSelected())

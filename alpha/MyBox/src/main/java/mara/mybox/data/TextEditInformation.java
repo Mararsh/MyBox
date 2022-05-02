@@ -12,6 +12,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.tools.TextTools.bomBytes;
+import static mara.mybox.tools.TextTools.bomSize;
 import mara.mybox.tools.TmpFileTools;
 
 /**
@@ -225,11 +226,14 @@ public class TextEditInformation extends FileEditInformation {
             try ( BufferedReader reader = new BufferedReader(new FileReader(sourceInfo.getFile(), sourceInfo.charset));
                      BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile));
                      OutputStreamWriter writer = new OutputStreamWriter(outputStream, charset)) {
+                if (sourceInfo.isWithBom()) {
+                    reader.skip(bomSize(sourceInfo.getCharset().name()));
+                }
                 if (withBom) {
                     byte[] bytes = bomBytes(charset.name());
                     outputStream.write(bytes);
                 }
-                String line, text = null;
+                String line, text;
                 long lineIndex = 0, pageLineStart = sourceInfo.getCurrentPageLineStart(),
                         pageLineEnd = sourceInfo.getCurrentPageLineEnd();
                 while ((line = reader.readLine()) != null) {

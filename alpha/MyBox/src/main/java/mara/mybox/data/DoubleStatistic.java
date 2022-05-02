@@ -27,7 +27,7 @@ public class DoubleStatistic {
             upperMildOutlierLine, upperExtremeOutlierLine, lowerMildOutlierLine, lowerExtremeOutlierLine,
             vTmp;
     public Object mode;
-    public StatisticCalculation options;
+    public DescriptiveStatistic options;
     public double[] doubles;
 
     public DoubleStatistic() {
@@ -59,21 +59,21 @@ public class DoubleStatistic {
     }
 
     public DoubleStatistic(double[] values) {
-        calculate(values, StatisticCalculation.all(true));
+        calculate(values, DescriptiveStatistic.all(true));
     }
 
-    public DoubleStatistic(double[] values, StatisticCalculation options) {
+    public DoubleStatistic(double[] values, DescriptiveStatistic options) {
         calculate(values, options);
     }
 
-    public DoubleStatistic(String[] values, StatisticCalculation options) {
+    public DoubleStatistic(String[] values, DescriptiveStatistic options) {
         if (options != null && options.isMode()) {
             mode = modeObject(values);
         }
         calculate(toDouble(values), options);
     }
 
-    public final void calculate(double[] values, StatisticCalculation options) {
+    public final void calculate(double[] values, DescriptiveStatistic options) {
         try {
             init();
             if (values == null || options == null) {
@@ -632,11 +632,11 @@ public class DoubleStatistic {
         this.vTmp = vTmp;
     }
 
-    public StatisticCalculation getOptions() {
+    public DescriptiveStatistic getOptions() {
         return options;
     }
 
-    public DoubleStatistic setOptions(StatisticCalculation options) {
+    public DoubleStatistic setOptions(DescriptiveStatistic options) {
         this.options = options;
         return this;
     }

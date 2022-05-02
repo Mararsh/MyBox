@@ -252,7 +252,11 @@ public abstract class BaseData2DChartFxController extends BaseData2DChartControl
     }
 
     public String valuesNames() {
-        return sourceController.checkedColsNames().toString();
+        try {
+            return sourceController.checkedColsNames().toString();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public String numberName(int index) {
@@ -379,6 +383,18 @@ public abstract class BaseData2DChartFxController extends BaseData2DChartControl
     @Override
     public Image snapChart() {
         return NodeTools.snap(chart);
+    }
+
+    @Override
+    public boolean controlAlt2() {
+        paneSize();
+        return true;
+    }
+
+    @Override
+    public boolean controlAlt3() {
+        zoomIn();
+        return true;
     }
 
     /*

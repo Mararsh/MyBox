@@ -1,10 +1,12 @@
 package mara.mybox.data2d.scan;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -28,7 +30,8 @@ public class DataFileCSVReader extends Data2DReader {
     @Override
     public void scanData() {
         readerCSV.checkForLoad();
-        try ( CSVParser parser = CSVParser.parse(readerFile, readerCSV.getCharset(), readerCSV.cvsFormat())) {
+        File validFile = FileTools.removeBOM(readerFile);
+        try ( CSVParser parser = CSVParser.parse(validFile, readerCSV.getCharset(), readerCSV.cvsFormat())) {
             csvParser = parser;
             iterator = parser.iterator();
             handleData();

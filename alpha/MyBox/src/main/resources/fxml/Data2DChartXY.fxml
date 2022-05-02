@@ -582,40 +582,41 @@ License:    Apache License Version 2.0
                                  <content>
                                     <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                        <children>
-                                          <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                          <HBox alignment="CENTER_LEFT" spacing="2.0">
                                              <children>
-                                                                <FlowPane alignment="CENTER_LEFT" hgap="5.0" maxWidth="1.7976931348623157E308" vgap="5.0" HBox.hgrow="ALWAYS">
+                                                                <FlowPane alignment="CENTER_LEFT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
                                                                     <children>
                                                                         <Label maxWidth="1.7976931348623157E308" text="%Label" />
                                                                         <RadioButton mnemonicParsing="false" selected="true" text="%Value">
                                                          <toggleGroup>
                                                                                 <ToggleGroup fx:id="labelGroup" />
-                                                         </toggleGroup></RadioButton>
+                                                         </toggleGroup>
+                                                      </RadioButton>
                                                                         <RadioButton mnemonicParsing="false" text="%NameAndValue" toggleGroup="$labelGroup" />
                                                                         <RadioButton mnemonicParsing="false" text="%Name" toggleGroup="$labelGroup" />
                                                       <RadioButton layoutX="285.0" layoutY="10.0" mnemonicParsing="false" text="%Point" toggleGroup="$labelGroup" />
                                                                         <RadioButton layoutX="379.0" layoutY="10.0" mnemonicParsing="false" text="%NotDisplay" toggleGroup="$labelGroup" />
                                                                         <CheckBox fx:id="popLabelCheck" mnemonicParsing="false" text="%Pop" />
-                                                      <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn">
-                                                         <graphic>
-                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@../buttons/Red/iconZoomIn.png" />
-                                                               </image>
-                                                            </ImageView>
-                                                         </graphic>
-                                                      </Button>
-                                                      <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize">
-                                                         <graphic>
-                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@../buttons/Red/iconPaneSize.png" />
-                                                               </image>
-                                                            </ImageView>
-                                                         </graphic>
-                                                      </Button>
                                                                     </children>
                                                                 </FlowPane>
+                                                <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/Red/iconZoomIn.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
+                                                <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/Red/iconPaneSize.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
                                                 <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
                                                    <graphic>
                                                       <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -652,7 +653,7 @@ License:    Apache License Version 2.0
                                                   </VBox>
                                        </children>
                                        <padding>
-                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                          <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                        </padding>
                                     </VBox>
                                  </content>
@@ -696,7 +697,7 @@ License:    Apache License Version 2.0
                                           <fx:include fx:id="webView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlWebView.fxml" VBox.vgrow="ALWAYS" />
                                        </children>
                                        <padding>
-                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                          <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                        </padding>
                                     </VBox>
                                  </content>

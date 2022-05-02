@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -31,6 +32,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
@@ -569,6 +571,23 @@ public class ControlData2D extends BaseController {
         }
     }
 
+    public void loadCSVFile(File csvFile) {
+        try {
+            if (csvFile == null || !csvFile.exists()) {
+                popError("Nonexistent");
+                return;
+            }
+            if (!checkBeforeNextAction()) {
+                return;
+            }
+            setData(Data2D.create(type));
+            tableController.loadCSVFile(csvFile);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+
     /*
         paigination
      */
@@ -824,6 +843,10 @@ public class ControlData2D extends BaseController {
             });
             popMenu.getItems().add(menu);
 
+            Menu examplesMenu = new Menu(message("Examples"), StyleTools.getIconImage("iconExamples.png"));
+            examplesMenu.getItems().addAll(examplesMenu());
+            popMenu.getItems().add(examplesMenu);
+
             popMenu.getItems().add(new SeparatorMenuItem());
             menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
@@ -838,6 +861,28 @@ public class ControlData2D extends BaseController {
             LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    public List<MenuItem> examplesMenu() {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+
+            MenuItem menu;
+
+            String lang = Languages.isChinese() ? "zh" : "en";
+            menu = new MenuItem(message("SimpleLinearRegressionExperienceSalary"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/ExperienceSalary_" + lang + ".csv",
+                        "data", "ExperienceSalary_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            items.add(menu);
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
         }
     }
 

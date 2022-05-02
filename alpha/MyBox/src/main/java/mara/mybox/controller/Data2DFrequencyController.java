@@ -46,9 +46,9 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
     }
 
     @Override
-    public void initValues() {
+    public void initControls() {
         try {
-            super.initValues();
+            super.initControls();
 
             sourceController.noColumnSelection(true);
 

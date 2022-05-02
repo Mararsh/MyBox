@@ -21,7 +21,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-4-14
  * @License Apache License Version 2.0
  */
-public class StatisticCalculation {
+public class DescriptiveStatistic {
 
     public boolean count, sum, mean, geometricMean, sumSquares,
             populationVariance, sampleVariance, populationStandardDeviation, sampleStandardDeviation, skewness,
@@ -48,8 +48,8 @@ public class StatisticCalculation {
         Columns, Rows, All
     }
 
-    public static StatisticCalculation all(boolean select) {
-        return new StatisticCalculation()
+    public static DescriptiveStatistic all(boolean select) {
+        return new DescriptiveStatistic()
                 .setCount(select)
                 .setSum(select)
                 .setMean(select)
@@ -718,7 +718,7 @@ public class StatisticCalculation {
         return count;
     }
 
-    public StatisticCalculation setCount(boolean count) {
+    public DescriptiveStatistic setCount(boolean count) {
         this.count = count;
         return this;
     }
@@ -727,7 +727,7 @@ public class StatisticCalculation {
         return sum;
     }
 
-    public StatisticCalculation setSum(boolean sum) {
+    public DescriptiveStatistic setSum(boolean sum) {
         this.sum = sum;
         return this;
     }
@@ -736,7 +736,7 @@ public class StatisticCalculation {
         return mean;
     }
 
-    public StatisticCalculation setMean(boolean mean) {
+    public DescriptiveStatistic setMean(boolean mean) {
         this.mean = mean;
         return this;
     }
@@ -745,7 +745,7 @@ public class StatisticCalculation {
         return geometricMean;
     }
 
-    public StatisticCalculation setGeometricMean(boolean geometricMean) {
+    public DescriptiveStatistic setGeometricMean(boolean geometricMean) {
         this.geometricMean = geometricMean;
         return this;
     }
@@ -754,7 +754,7 @@ public class StatisticCalculation {
         return minimum;
     }
 
-    public StatisticCalculation setMinimum(boolean minimum) {
+    public DescriptiveStatistic setMinimum(boolean minimum) {
         this.minimum = minimum;
         return this;
     }
@@ -763,7 +763,7 @@ public class StatisticCalculation {
         return maximum;
     }
 
-    public StatisticCalculation setMaximum(boolean maximum) {
+    public DescriptiveStatistic setMaximum(boolean maximum) {
         this.maximum = maximum;
         return this;
     }
@@ -772,7 +772,7 @@ public class StatisticCalculation {
         return sumSquares;
     }
 
-    public StatisticCalculation setSumSquares(boolean sumSquares) {
+    public DescriptiveStatistic setSumSquares(boolean sumSquares) {
         this.sumSquares = sumSquares;
         return this;
     }
@@ -781,7 +781,7 @@ public class StatisticCalculation {
         return populationVariance;
     }
 
-    public StatisticCalculation setPopulationVariance(boolean populationVariance) {
+    public DescriptiveStatistic setPopulationVariance(boolean populationVariance) {
         this.populationVariance = populationVariance;
         return this;
     }
@@ -790,7 +790,7 @@ public class StatisticCalculation {
         return sampleVariance;
     }
 
-    public StatisticCalculation setSampleVariance(boolean sampleVariance) {
+    public DescriptiveStatistic setSampleVariance(boolean sampleVariance) {
         this.sampleVariance = sampleVariance;
         return this;
     }
@@ -799,7 +799,7 @@ public class StatisticCalculation {
         return populationStandardDeviation;
     }
 
-    public StatisticCalculation setPopulationStandardDeviation(boolean populationStandardDeviation) {
+    public DescriptiveStatistic setPopulationStandardDeviation(boolean populationStandardDeviation) {
         this.populationStandardDeviation = populationStandardDeviation;
         return this;
     }
@@ -808,7 +808,7 @@ public class StatisticCalculation {
         return sampleStandardDeviation;
     }
 
-    public StatisticCalculation setSampleStandardDeviation(boolean sampleStandardDeviation) {
+    public DescriptiveStatistic setSampleStandardDeviation(boolean sampleStandardDeviation) {
         this.sampleStandardDeviation = sampleStandardDeviation;
         return this;
     }
@@ -817,7 +817,7 @@ public class StatisticCalculation {
         return skewness;
     }
 
-    public StatisticCalculation setSkewness(boolean skewness) {
+    public DescriptiveStatistic setSkewness(boolean skewness) {
         this.skewness = skewness;
         return this;
     }
@@ -826,7 +826,7 @@ public class StatisticCalculation {
         return mode;
     }
 
-    public StatisticCalculation setMode(boolean mode) {
+    public DescriptiveStatistic setMode(boolean mode) {
         this.mode = mode;
         return this;
     }
@@ -835,7 +835,7 @@ public class StatisticCalculation {
         return median;
     }
 
-    public StatisticCalculation setMedian(boolean median) {
+    public DescriptiveStatistic setMedian(boolean median) {
         this.median = median;
         return this;
     }
@@ -844,7 +844,7 @@ public class StatisticCalculation {
         return upperQuartile;
     }
 
-    public StatisticCalculation setUpperQuartile(boolean upperQuartile) {
+    public DescriptiveStatistic setUpperQuartile(boolean upperQuartile) {
         this.upperQuartile = upperQuartile;
         return this;
     }
@@ -853,7 +853,7 @@ public class StatisticCalculation {
         return lowerQuartile;
     }
 
-    public StatisticCalculation setLowerQuartile(boolean lowerQuartile) {
+    public DescriptiveStatistic setLowerQuartile(boolean lowerQuartile) {
         this.lowerQuartile = lowerQuartile;
         return this;
     }
@@ -862,7 +862,7 @@ public class StatisticCalculation {
         return upperMildOutlierLine;
     }
 
-    public StatisticCalculation setUpperMildOutlierLine(boolean upperMildOutlierLine) {
+    public DescriptiveStatistic setUpperMildOutlierLine(boolean upperMildOutlierLine) {
         this.upperMildOutlierLine = upperMildOutlierLine;
         return this;
     }
@@ -871,7 +871,7 @@ public class StatisticCalculation {
         return upperExtremeOutlierLine;
     }
 
-    public StatisticCalculation setUpperExtremeOutlierLine(boolean upperExtremeOutlierLine) {
+    public DescriptiveStatistic setUpperExtremeOutlierLine(boolean upperExtremeOutlierLine) {
         this.upperExtremeOutlierLine = upperExtremeOutlierLine;
         return this;
     }
@@ -880,7 +880,7 @@ public class StatisticCalculation {
         return lowerMildOutlierLine;
     }
 
-    public StatisticCalculation setLowerMildOutlierLine(boolean lowerMildOutlierLine) {
+    public DescriptiveStatistic setLowerMildOutlierLine(boolean lowerMildOutlierLine) {
         this.lowerMildOutlierLine = lowerMildOutlierLine;
         return this;
     }
@@ -889,7 +889,7 @@ public class StatisticCalculation {
         return lowerExtremeOutlierLine;
     }
 
-    public StatisticCalculation setLowerExtremeOutlierLine(boolean lowerExtremeOutlierLine) {
+    public DescriptiveStatistic setLowerExtremeOutlierLine(boolean lowerExtremeOutlierLine) {
         this.lowerExtremeOutlierLine = lowerExtremeOutlierLine;
         return this;
     }
@@ -898,7 +898,7 @@ public class StatisticCalculation {
         return statisticObject;
     }
 
-    public StatisticCalculation setStatisticObject(StatisticObject statisticObject) {
+    public DescriptiveStatistic setStatisticObject(StatisticObject statisticObject) {
         this.statisticObject = statisticObject;
         return this;
     }
@@ -907,7 +907,7 @@ public class StatisticCalculation {
         return scale;
     }
 
-    public StatisticCalculation setScale(int scale) {
+    public DescriptiveStatistic setScale(int scale) {
         this.scale = scale;
         return this;
     }
@@ -916,7 +916,7 @@ public class StatisticCalculation {
         return handleController;
     }
 
-    public StatisticCalculation setHandleController(BaseData2DHandleController handleController) {
+    public DescriptiveStatistic setHandleController(BaseData2DHandleController handleController) {
         this.handleController = handleController;
         return this;
     }
@@ -925,7 +925,7 @@ public class StatisticCalculation {
         return countRow;
     }
 
-    public StatisticCalculation setCountRow(List<String> countRow) {
+    public DescriptiveStatistic setCountRow(List<String> countRow) {
         this.countRow = countRow;
         return this;
     }
@@ -934,7 +934,7 @@ public class StatisticCalculation {
         return summationRow;
     }
 
-    public StatisticCalculation setSummationRow(List<String> summationRow) {
+    public DescriptiveStatistic setSummationRow(List<String> summationRow) {
         this.summationRow = summationRow;
         return this;
     }
@@ -943,7 +943,7 @@ public class StatisticCalculation {
         return meanRow;
     }
 
-    public StatisticCalculation setMeanRow(List<String> meanRow) {
+    public DescriptiveStatistic setMeanRow(List<String> meanRow) {
         this.meanRow = meanRow;
         return this;
     }
@@ -952,7 +952,7 @@ public class StatisticCalculation {
         return geometricMeanRow;
     }
 
-    public StatisticCalculation setGeometricMeanRow(List<String> geometricMeanRow) {
+    public DescriptiveStatistic setGeometricMeanRow(List<String> geometricMeanRow) {
         this.geometricMeanRow = geometricMeanRow;
         return this;
     }
@@ -961,7 +961,7 @@ public class StatisticCalculation {
         return sumOfSquaresRow;
     }
 
-    public StatisticCalculation setSumOfSquaresRow(List<String> sumOfSquaresRow) {
+    public DescriptiveStatistic setSumOfSquaresRow(List<String> sumOfSquaresRow) {
         this.sumOfSquaresRow = sumOfSquaresRow;
         return this;
     }
@@ -970,7 +970,7 @@ public class StatisticCalculation {
         return populationVarianceRow;
     }
 
-    public StatisticCalculation setPopulationVarianceRow(List<String> populationVarianceRow) {
+    public DescriptiveStatistic setPopulationVarianceRow(List<String> populationVarianceRow) {
         this.populationVarianceRow = populationVarianceRow;
         return this;
     }
@@ -979,7 +979,7 @@ public class StatisticCalculation {
         return sampleVarianceRow;
     }
 
-    public StatisticCalculation setSampleVarianceRow(List<String> sampleVarianceRow) {
+    public DescriptiveStatistic setSampleVarianceRow(List<String> sampleVarianceRow) {
         this.sampleVarianceRow = sampleVarianceRow;
         return this;
     }
@@ -988,7 +988,7 @@ public class StatisticCalculation {
         return populationStandardDeviationRow;
     }
 
-    public StatisticCalculation setPopulationStandardDeviationRow(List<String> populationStandardDeviationRow) {
+    public DescriptiveStatistic setPopulationStandardDeviationRow(List<String> populationStandardDeviationRow) {
         this.populationStandardDeviationRow = populationStandardDeviationRow;
         return this;
     }
@@ -997,7 +997,7 @@ public class StatisticCalculation {
         return sampleStandardDeviationRow;
     }
 
-    public StatisticCalculation setSampleStandardDeviationRow(List<String> sampleStandardDeviationRow) {
+    public DescriptiveStatistic setSampleStandardDeviationRow(List<String> sampleStandardDeviationRow) {
         this.sampleStandardDeviationRow = sampleStandardDeviationRow;
         return this;
 
@@ -1007,7 +1007,7 @@ public class StatisticCalculation {
         return skewnessRow;
     }
 
-    public StatisticCalculation setSkewnessRow(List<String> skewnessRow) {
+    public DescriptiveStatistic setSkewnessRow(List<String> skewnessRow) {
         this.skewnessRow = skewnessRow;
         return this;
     }
@@ -1016,7 +1016,7 @@ public class StatisticCalculation {
         return maximumRow;
     }
 
-    public StatisticCalculation setMaximumRow(List<String> maximumRow) {
+    public DescriptiveStatistic setMaximumRow(List<String> maximumRow) {
         this.maximumRow = maximumRow;
         return this;
     }
@@ -1025,7 +1025,7 @@ public class StatisticCalculation {
         return minimumRow;
     }
 
-    public StatisticCalculation setMinimumRow(List<String> minimumRow) {
+    public DescriptiveStatistic setMinimumRow(List<String> minimumRow) {
         this.minimumRow = minimumRow;
         return this;
     }
@@ -1034,7 +1034,7 @@ public class StatisticCalculation {
         return medianRow;
     }
 
-    public StatisticCalculation setMedianRow(List<String> medianRow) {
+    public DescriptiveStatistic setMedianRow(List<String> medianRow) {
         this.medianRow = medianRow;
         return this;
     }
@@ -1043,7 +1043,7 @@ public class StatisticCalculation {
         return upperQuartileRow;
     }
 
-    public StatisticCalculation setUpperQuartileRow(List<String> upperQuartileRow) {
+    public DescriptiveStatistic setUpperQuartileRow(List<String> upperQuartileRow) {
         this.upperQuartileRow = upperQuartileRow;
         return this;
     }
@@ -1052,7 +1052,7 @@ public class StatisticCalculation {
         return lowerQuartileRow;
     }
 
-    public StatisticCalculation setLowerQuartileRow(List<String> lowerQuartileRow) {
+    public DescriptiveStatistic setLowerQuartileRow(List<String> lowerQuartileRow) {
         this.lowerQuartileRow = lowerQuartileRow;
         return this;
     }
@@ -1061,7 +1061,7 @@ public class StatisticCalculation {
         return modeRow;
     }
 
-    public StatisticCalculation setModeRow(List<String> modeRow) {
+    public DescriptiveStatistic setModeRow(List<String> modeRow) {
         this.modeRow = modeRow;
         return this;
     }
@@ -1070,7 +1070,7 @@ public class StatisticCalculation {
         return upperMildOutlierLineRow;
     }
 
-    public StatisticCalculation setUpperMildOutlierLineRow(List<String> upperMildOutlierLineRow) {
+    public DescriptiveStatistic setUpperMildOutlierLineRow(List<String> upperMildOutlierLineRow) {
         this.upperMildOutlierLineRow = upperMildOutlierLineRow;
         return this;
     }
@@ -1079,7 +1079,7 @@ public class StatisticCalculation {
         return upperExtremeOutlierLineRow;
     }
 
-    public StatisticCalculation setUpperExtremeOutlierLineRow(List<String> upperExtremeOutlierLineRow) {
+    public DescriptiveStatistic setUpperExtremeOutlierLineRow(List<String> upperExtremeOutlierLineRow) {
         this.upperExtremeOutlierLineRow = upperExtremeOutlierLineRow;
         return this;
     }
@@ -1088,7 +1088,7 @@ public class StatisticCalculation {
         return lowerMildOutlierLineRow;
     }
 
-    public StatisticCalculation setLowerMildOutlierLineRow(List<String> lowerMildOutlierLineRow) {
+    public DescriptiveStatistic setLowerMildOutlierLineRow(List<String> lowerMildOutlierLineRow) {
         this.lowerMildOutlierLineRow = lowerMildOutlierLineRow;
         return this;
     }
@@ -1097,7 +1097,7 @@ public class StatisticCalculation {
         return lowerExtremeOutlierLineRow;
     }
 
-    public StatisticCalculation setLowerExtremeOutlierLineRow(List<String> lowerExtremeOutlierLineRow) {
+    public DescriptiveStatistic setLowerExtremeOutlierLineRow(List<String> lowerExtremeOutlierLineRow) {
         this.lowerExtremeOutlierLineRow = lowerExtremeOutlierLineRow;
         return this;
     }
@@ -1106,7 +1106,7 @@ public class StatisticCalculation {
         return task;
     }
 
-    public StatisticCalculation setTask(SingletonTask<Void> task) {
+    public DescriptiveStatistic setTask(SingletonTask<Void> task) {
         this.task = task;
         return this;
     }
@@ -1115,7 +1115,7 @@ public class StatisticCalculation {
         return data2D;
     }
 
-    public StatisticCalculation setData2D(Data2D data2D) {
+    public DescriptiveStatistic setData2D(Data2D data2D) {
         this.data2D = data2D;
         return this;
     }
@@ -1124,7 +1124,7 @@ public class StatisticCalculation {
         return outputData;
     }
 
-    public StatisticCalculation setOutputData(List<List<String>> outputData) {
+    public DescriptiveStatistic setOutputData(List<List<String>> outputData) {
         this.outputData = outputData;
         return this;
     }
@@ -1133,7 +1133,7 @@ public class StatisticCalculation {
         return outputColumns;
     }
 
-    public StatisticCalculation setOutputColumns(List<Data2DColumn> outputColumns) {
+    public DescriptiveStatistic setOutputColumns(List<Data2DColumn> outputColumns) {
         this.outputColumns = outputColumns;
         return this;
     }
@@ -1142,7 +1142,7 @@ public class StatisticCalculation {
         return outputNames;
     }
 
-    public StatisticCalculation setHandledNames(List<String> handledNames) {
+    public DescriptiveStatistic setHandledNames(List<String> handledNames) {
         this.outputNames = handledNames;
         return this;
     }
@@ -1151,7 +1151,7 @@ public class StatisticCalculation {
         return colsNames;
     }
 
-    public StatisticCalculation setColsNames(List<String> colsNames) {
+    public DescriptiveStatistic setColsNames(List<String> colsNames) {
         this.colsNames = colsNames;
         return this;
     }
@@ -1160,7 +1160,7 @@ public class StatisticCalculation {
         return colsIndices;
     }
 
-    public StatisticCalculation setColsIndices(List<Integer> colsIndices) {
+    public DescriptiveStatistic setColsIndices(List<Integer> colsIndices) {
         this.colsIndices = colsIndices;
         return this;
     }

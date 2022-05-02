@@ -7,9 +7,9 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.controller.ControlDataConvert;
+import mara.mybox.data.DescriptiveStatistic;
 import mara.mybox.data.DoubleStatistic;
 import mara.mybox.data.Normalization;
-import mara.mybox.data.StatisticCalculation;
 import mara.mybox.data2d.scan.Data2DReader;
 import mara.mybox.data2d.scan.Data2DReader.Operation;
 import mara.mybox.db.table.TableData2D;
@@ -20,6 +20,7 @@ import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.math3.stat.Frequency;
+import org.apache.commons.math3.stat.regression.SimpleRegression;
 
 /**
  * @Author Mara
@@ -69,7 +70,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         return reader.getRows();
     }
 
-    public DoubleStatistic[] statisticByColumns(List<Integer> cols, StatisticCalculation selections) {
+    public DoubleStatistic[] statisticByColumns(List<Integer> cols, DescriptiveStatistic selections) {
         if (cols == null || cols.isEmpty()) {
             return null;
         }
@@ -98,7 +99,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         return sData;
     }
 
-    public DataFileCSV statisticByRows(List<String> names, List<Integer> cols, StatisticCalculation selections) {
+    public DataFileCSV statisticByRows(List<String> names, List<Integer> cols, DescriptiveStatistic selections) {
         if (names == null || names.isEmpty() || cols == null || cols.isEmpty()) {
             return null;
         }
@@ -130,7 +131,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         }
     }
 
-    public DoubleStatistic statisticByAll(List<Integer> cols, StatisticCalculation selections) {
+    public DoubleStatistic statisticByAll(List<Integer> cols, DescriptiveStatistic selections) {
         if (cols == null || cols.isEmpty()) {
             return null;
         }
@@ -390,7 +391,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         for (int c = 0; c < colLen; c++) {
             sData[c] = new DoubleStatistic();
         }
-        StatisticCalculation selections = StatisticCalculation.all(false)
+        DescriptiveStatistic selections = DescriptiveStatistic.all(false)
                 .setSum(true).setMaximum(true).setMinimum(true);
         Data2DReader reader = Data2DReader.create(this).setCols(cols).setScale(scale)
                 .setStatisticData(sData).setStatisticSelection(selections).setScanPass(1)
@@ -454,7 +455,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         for (int c = 0; c < colLen; c++) {
             sData[c] = new DoubleStatistic();
         }
-        StatisticCalculation selections = StatisticCalculation.all(false);
+        DescriptiveStatistic selections = DescriptiveStatistic.all(false);
         Data2DReader reader = Data2DReader.create(this).setCols(cols).setSumAbs(true)
                 .setStatisticData(sData).setStatisticSelection(selections)
                 .setScanPass(1).setScale(scale)
@@ -523,7 +524,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         for (int c = 0; c < colLen; c++) {
             sData[c] = new DoubleStatistic();
         }
-        StatisticCalculation selections = StatisticCalculation.all(false)
+        DescriptiveStatistic selections = DescriptiveStatistic.all(false)
                 .setPopulationStandardDeviation(true);
         Data2DReader reader = Data2DReader.create(this).setCols(cols)
                 .setStatisticData(sData).setStatisticSelection(selections)
@@ -587,7 +588,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             return null;
         }
         DoubleStatistic sData = new DoubleStatistic();
-        StatisticCalculation selections = StatisticCalculation.all(false)
+        DescriptiveStatistic selections = DescriptiveStatistic.all(false)
                 .setSum(true).setMaximum(true).setMinimum(true);
         Data2DReader reader = Data2DReader.create(this)
                 .setStatisticAll(sData).setCols(cols)
@@ -646,7 +647,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             return null;
         }
         DoubleStatistic sData = new DoubleStatistic();
-        StatisticCalculation selections = StatisticCalculation.all(false);
+        DescriptiveStatistic selections = DescriptiveStatistic.all(false);
         Data2DReader reader = Data2DReader.create(this).setCols(cols).setSumAbs(true)
                 .setStatisticAll(sData).setStatisticSelection(selections)
                 .setScanPass(1).setScale(scale)
@@ -709,7 +710,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         }
         int tcolsNumber = 0;
         DoubleStatistic sData = new DoubleStatistic();
-        StatisticCalculation selections = StatisticCalculation.all(false)
+        DescriptiveStatistic selections = DescriptiveStatistic.all(false)
                 .setPopulationStandardDeviation(true);
         Data2DReader reader = Data2DReader.create(this).setCols(cols)
                 .setStatisticAll(sData).setStatisticSelection(selections)
@@ -825,6 +826,16 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         } else {
             return null;
         }
+    }
+
+    public boolean simpleLinearRegression(List<Integer> cols, SimpleRegression simpleRegression) {
+        if (cols == null || cols.isEmpty() || simpleRegression == null) {
+            return false;
+        }
+        Data2DReader reader = Data2DReader.create(this)
+                .setCols(cols).setSimpleRegression(simpleRegression)
+                .setReaderTask(task).start(Data2DReader.Operation.SimpleLinearRegression);
+        return reader != null;
     }
 
 }

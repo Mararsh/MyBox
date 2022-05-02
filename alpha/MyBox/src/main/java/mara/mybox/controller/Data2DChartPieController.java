@@ -39,6 +39,18 @@ public class Data2DChartPieController extends BaseData2DChartFxController {
     }
 
     @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            sourceController.noColumnSelection(true);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
     public void initPlotTab() {
         try {
             super.initPlotTab();
@@ -53,19 +65,6 @@ public class Data2DChartPieController extends BaseData2DChartFxController {
                     pieChart.setClockwise(clockwiseCheck.isSelected());
                 }
             });
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void setParameters(ControlData2DEditTable tableController) {
-        try {
-
-            sourceController.noColumnSelection(true);
-
-            super.setParameters(tableController);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

@@ -947,7 +947,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
         EpidemicReportsImportExternalCSVController controller
                 = (EpidemicReportsImportExternalCSVController) openStage(Fxmls.EpidemicReportsImportExternalCSVFxml);
         controller.parent = this;
-        File file = FxFileTools.getInternalFile("/data/db/Epidemic_Report_examples.csv",
+        File file = FxFileTools.getInternalFile("/data/examples/Epidemic_Report_examples.csv",
                 "data", "Epidemic_Report_examples.csv");
         controller.predefined = false;
         controller.startFile(file, true, true);

@@ -420,7 +420,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
 
                 @Override
                 protected boolean handle() {
-                    File file = FxFileTools.getInternalFile("/data/db/Geography_Code_china_towns_internal.csv",
+                    File file = FxFileTools.getInternalFile("/data/examples/Geography_Code_china_towns_internal.csv",
                             "data", "Geography_Code_china_towns_internal.csv");
                     GeographyCodeTools.importInternalCSV(loading, file, true);
                     return true;

@@ -16,9 +16,10 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import mara.mybox.data.StatisticCalculation;
+import mara.mybox.data.DescriptiveStatistic;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -26,6 +27,7 @@ import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.chart.ChartTools;
 import mara.mybox.fxml.chart.LabeledBoxWhiskerChart;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -39,7 +41,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
 
     protected int lineWidth, categorysCol, boxWidth;
     protected LabeledBoxWhiskerChart boxWhiskerChart;
-    protected StatisticCalculation calculation;
+    protected DescriptiveStatistic calculation;
     protected Map<String, Node> lines;
 
     @FXML
@@ -53,11 +55,30 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
     @FXML
     protected ToggleGroup categoryValuesGroup;
     @FXML
-    protected CheckBox q0Check, q1Check, q2Check, q3Check, q4Check, q5Check, q6Check, q7Check, q8Check,
+    protected CheckBox q0Check, q1Check, q2Check, q3Check, q4Check, e4Check, e3Check, e2Check, e1Check,
             dottedCheck, outliersCheck, meanCheck, meanLineCheck;
 
     public Data2DChartBoxWhiskerController() {
         baseTitle = message("BoxWhiskerChart");
+        TipsLabelKey = "BoxWhiskerChartTips";
+    }
+
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+            NodeStyleTools.setTooltip(q0Check, new Tooltip(message("MinimumQ0") + "\n0%"));
+            NodeStyleTools.setTooltip(q1Check, new Tooltip(message("LowerQuartile") + "\n25%"));
+            NodeStyleTools.setTooltip(q2Check, new Tooltip(message("Median") + "\n50%"));
+            NodeStyleTools.setTooltip(q3Check, new Tooltip(message("UpperQuartile") + "\n75%"));
+            NodeStyleTools.setTooltip(q4Check, new Tooltip(message("MaximumQ4") + "\n100%"));
+            NodeStyleTools.setTooltip(e4Check, new Tooltip(message("UpperExtremeOutlierLine") + "\n E4 =Q3 + 1.5 * ( Q3 - Q1 )"));
+            NodeStyleTools.setTooltip(e3Check, new Tooltip(message("UpperMildOutlierLine") + "\n E3 =Q3 + 3 * ( Q3 - Q1 )"));
+            NodeStyleTools.setTooltip(e2Check, new Tooltip(message("LowerMildOutlierLine") + "\n E2 = Q1 - 1.5 * ( Q3 - Q1 )"));
+            NodeStyleTools.setTooltip(e1Check, new Tooltip(message("LowerExtremeOutlierLine") + "\n E1 = Q1 - 3 * ( Q3 - Q1 )"));
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
     }
 
     @Override
@@ -214,51 +235,51 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
                 }
             });
 
-            q5Check.setSelected(UserConfig.getBoolean(baseName + "LineQ5", true));
-            q5Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            e4Check.setSelected(UserConfig.getBoolean(baseName + "LineQ5", true));
+            e4Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     if (isSettingValues) {
                         return;
                     }
-                    UserConfig.setBoolean(baseName + "LineQ5", q5Check.isSelected());
-                    setLineVisible(message("UpperExtremeOutlierLine"), q5Check.isSelected());
+                    UserConfig.setBoolean(baseName + "LineQ5", e4Check.isSelected());
+                    setLineVisible(message("UpperExtremeOutlierLine"), e4Check.isSelected());
                 }
             });
 
-            q6Check.setSelected(UserConfig.getBoolean(baseName + "LineQ6", true));
-            q6Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            e3Check.setSelected(UserConfig.getBoolean(baseName + "LineQ6", true));
+            e3Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     if (isSettingValues) {
                         return;
                     }
-                    UserConfig.setBoolean(baseName + "LineQ6", q6Check.isSelected());
-                    setLineVisible(message("UpperMildOutlierLine"), q6Check.isSelected());
+                    UserConfig.setBoolean(baseName + "LineQ6", e3Check.isSelected());
+                    setLineVisible(message("UpperMildOutlierLine"), e3Check.isSelected());
                 }
             });
 
-            q7Check.setSelected(UserConfig.getBoolean(baseName + "LineQ7", true));
-            q7Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            e2Check.setSelected(UserConfig.getBoolean(baseName + "LineQ7", true));
+            e2Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     if (isSettingValues) {
                         return;
                     }
-                    UserConfig.setBoolean(baseName + "LineQ7", q7Check.isSelected());
-                    setLineVisible(message("LowerMildOutlierLine"), q7Check.isSelected());
+                    UserConfig.setBoolean(baseName + "LineQ7", e2Check.isSelected());
+                    setLineVisible(message("LowerMildOutlierLine"), e2Check.isSelected());
                 }
             });
 
-            q8Check.setSelected(UserConfig.getBoolean(baseName + "LineQ8", true));
-            q8Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            e1Check.setSelected(UserConfig.getBoolean(baseName + "LineQ8", true));
+            e1Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     if (isSettingValues) {
                         return;
                     }
-                    UserConfig.setBoolean(baseName + "LineQ8", q8Check.isSelected());
-                    setLineVisible(message("LowerExtremeOutlierLine"), q8Check.isSelected());
+                    UserConfig.setBoolean(baseName + "LineQ8", e1Check.isSelected());
+                    setLineVisible(message("LowerExtremeOutlierLine"), e1Check.isSelected());
                 }
             });
 
@@ -298,10 +319,10 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
                 }
             });
 
-            q5Check.disableProperty().bind(outliersCheck.selectedProperty().not());
-            q6Check.disableProperty().bind(outliersCheck.selectedProperty().not());
-            q7Check.disableProperty().bind(outliersCheck.selectedProperty().not());
-            q8Check.disableProperty().bind(outliersCheck.selectedProperty().not());
+            e4Check.disableProperty().bind(outliersCheck.selectedProperty().not());
+            e3Check.disableProperty().bind(outliersCheck.selectedProperty().not());
+            e2Check.disableProperty().bind(outliersCheck.selectedProperty().not());
+            e1Check.disableProperty().bind(outliersCheck.selectedProperty().not());
 
             meanCheck.setSelected(UserConfig.getBoolean(baseName + "Mean", true));
             meanCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -397,7 +418,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
                 && categoryColumnSelector.getSelectionModel().getSelectedIndex() != 0) {
             categorysCol = data2D.colOrder(selectedCategory);
         }
-        calculation = new StatisticCalculation()
+        calculation = new DescriptiveStatistic()
                 .setMean(true)
                 .setMedian(true)
                 .setMaximum(true)
@@ -411,13 +432,13 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
                 .setScale(scale);
         switch (objectType) {
             case Rows:
-                calculation.setStatisticObject(StatisticCalculation.StatisticObject.Rows);
+                calculation.setStatisticObject(DescriptiveStatistic.StatisticObject.Rows);
                 break;
             case All:
-                calculation.setStatisticObject(StatisticCalculation.StatisticObject.All);
+                calculation.setStatisticObject(DescriptiveStatistic.StatisticObject.All);
                 break;
             default:
-                calculation.setStatisticObject(StatisticCalculation.StatisticObject.Columns);
+                calculation.setStatisticObject(DescriptiveStatistic.StatisticObject.Columns);
                 break;
         }
         calculation.setHandleController(this).setData2D(data2D)
@@ -609,10 +630,10 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
                 setStyle(series, message("UpperQuartile"), q3Check);
                 setStyle(series, message("MaximumQ4"), q4Check);
                 if (outliersCheck.isSelected()) {
-                    setStyle(series, message("UpperExtremeOutlierLine"), q5Check);
-                    setStyle(series, message("UpperMildOutlierLine"), q6Check);
-                    setStyle(series, message("LowerMildOutlierLine"), q7Check);
-                    setStyle(series, message("LowerExtremeOutlierLine"), q8Check);
+                    setStyle(series, message("UpperExtremeOutlierLine"), e4Check);
+                    setStyle(series, message("UpperMildOutlierLine"), e3Check);
+                    setStyle(series, message("LowerMildOutlierLine"), e2Check);
+                    setStyle(series, message("LowerExtremeOutlierLine"), e1Check);
                 }
             }
 
@@ -658,10 +679,10 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
         q2Check.setSelected(true);
         q3Check.setSelected(true);
         q4Check.setSelected(true);
-        q5Check.setSelected(true);
-        q6Check.setSelected(true);
-        q7Check.setSelected(true);
-        q8Check.setSelected(true);
+        e4Check.setSelected(true);
+        e3Check.setSelected(true);
+        e2Check.setSelected(true);
+        e1Check.setSelected(true);
         meanLineCheck.setSelected(true);
         isSettingValues = false;
         setChartStyle();
@@ -676,10 +697,10 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
         q2Check.setSelected(false);
         q3Check.setSelected(false);
         q4Check.setSelected(false);
-        q5Check.setSelected(false);
-        q6Check.setSelected(false);
-        q7Check.setSelected(false);
-        q8Check.setSelected(false);
+        e4Check.setSelected(false);
+        e3Check.setSelected(false);
+        e2Check.setSelected(false);
+        e1Check.setSelected(false);
         meanLineCheck.setSelected(false);
         isSettingValues = false;
         setChartStyle();

@@ -20,6 +20,10 @@ import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.DataFileExcel;
+import mara.mybox.data2d.DataFileText;
+import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
@@ -341,6 +345,51 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             MyBoxLog.error(e.toString());
             return false;
         }
+    }
+
+    public void loadCSVFile(File csvFile) {
+        if (csvFile == null || !csvFile.exists()) {
+            return;
+        }
+        task = new SingletonTask<Void>(this) {
+            private Data2D fileData;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    if (data2D.getType() == Data2D.Type.Texts) {
+                        fileData = new DataFileText(csvFile);
+                    } else {
+                        DataFileCSV csvData = new DataFileCSV(csvFile);
+                        switch (data2D.getType()) {
+                            case CSV:
+                                fileData = csvData;
+                                break;
+                            case Excel: {
+                                DataFileExcel excelData = DataFileExcel.toExcel(task, csvData);
+                                fileData = excelData;
+                                break;
+                            }
+                            case DatabaseTable: {
+                                DataTable dataTable = DataTable.toTable(task, csvData, true);
+                                fileData = dataTable;
+                                break;
+                            }
+                        }
+                    }
+                    return fileData != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                loadDef(fileData);
+            }
+        };
+        start(task);
     }
 
     public void loadMatrix(double[][] matrix) {

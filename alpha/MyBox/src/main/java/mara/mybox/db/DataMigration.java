@@ -1340,7 +1340,7 @@ public class DataMigration {
                             "WebFavorites_Examples_en.txt", "WebFavorites_Examples_zh.txt"
                     );
                     for (String name : names) {
-                        FxFileTools.getInternalFile("/data/db/" + name, "data", name, true);
+                        FxFileTools.getInternalFile("/data/examples/" + name, "data", name, true);
                     }
                     MyBoxLog.info("Internal data loaded.");
                 } catch (Exception e) {

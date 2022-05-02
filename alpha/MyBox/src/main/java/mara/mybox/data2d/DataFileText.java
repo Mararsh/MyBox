@@ -30,6 +30,19 @@ public class DataFileText extends DataFile {
         type = Type.Texts;
     }
 
+    public DataFileText(File file) {
+        type = Type.Texts;
+        this.file = file;
+        guessDelimiter();
+    }
+
+    public String[] delimters() {
+        String[] delimiters = {",", " ", "    ", "        ", "\t", "|", "@",
+            "#", ";", ":", "*", "%", "$", "_", "&", "-", "=", "!", "\"",
+            "'", "<", ">"};
+        return delimiters;
+    }
+
     public void setOptions(boolean hasHeader, Charset charset, String delimiter) {
         options = new HashMap<>();
         options.put("hasHeader", hasHeader);
@@ -73,32 +86,27 @@ public class DataFileText extends DataFile {
         return super.checkForLoad();
     }
 
-    public String guessDelimiter() {
-        String[] values = {",", " ", "    ", "        ", "\t", "|", "@",
-            "#", ";", ":", "*", "%", "$", "_", "&", "-", "=", "!", "\"",
-            "'", "<", ">"};
-        return guessDelimiter(values);
-    }
-
-    public String guessDelimiter(String[] values) {
-        if (file == null || values == null) {
+    public final String guessDelimiter() {
+        if (file == null) {
             return null;
         }
+        String[] delimiters = delimters();
         if (charset == null) {
             charset = TextFileTools.charset(file);
         }
         if (charset == null) {
             charset = Charset.forName("UTF-8");
         }
-        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+        File validFile = FileTools.removeBOM(file);
+        try ( BufferedReader reader = new BufferedReader(new FileReader(validFile, charset))) {
             String line1 = reader.readLine();
             if (line1 == null) {
                 return null;
             }
-            int[] count1 = new int[values.length];
+            int[] count1 = new int[delimiters.length];
             int maxCount1 = 0, maxCountIndex1 = -1;
-            for (int i = 0; i < values.length; i++) {
-                count1[i] = FindReplaceString.count(line1, values[i]);
+            for (int i = 0; i < delimiters.length; i++) {
+                count1[i] = FindReplaceString.count(line1, delimiters[i]);
 //                MyBoxLog.console(">>" + values[i] + "<<<   " + count1[i]);
                 if (count1[i] > maxCount1) {
                     maxCount1 = count1[i];
@@ -109,16 +117,16 @@ public class DataFileText extends DataFile {
             String line2 = reader.readLine();
             if (line2 == null) {
                 if (maxCountIndex1 >= 0) {
-                    return values[maxCountIndex1];
+                    return delimiters[maxCountIndex1];
                 } else {
                     hasHeader = false;
                     return null;
                 }
             }
-            int[] count2 = new int[values.length];
+            int[] count2 = new int[delimiters.length];
             int maxCount2 = 0, maxCountIndex2 = -1;
-            for (int i = 0; i < values.length; i++) {
-                count2[i] = FindReplaceString.count(line2, values[i]);
+            for (int i = 0; i < delimiters.length; i++) {
+                count2[i] = FindReplaceString.count(line2, delimiters[i]);
 //                MyBoxLog.console(">>" + values[i] + "<<<   " + count1[i]);
                 if (count1[i] == count2[i] && count2[i] > maxCount2) {
                     maxCount2 = count2[i];
@@ -127,10 +135,10 @@ public class DataFileText extends DataFile {
             }
 //            MyBoxLog.console(maxCount2);
             if (maxCountIndex2 >= 0) {
-                return values[maxCountIndex2];
+                return delimiters[maxCountIndex2];
             } else {
                 if (maxCountIndex1 >= 0) {
-                    return values[maxCountIndex1];
+                    return delimiters[maxCountIndex1];
                 } else {
                     hasHeader = false;
                     return null;
@@ -186,7 +194,8 @@ public class DataFileText extends DataFile {
         checkForLoad();
         boolean tHasHeader = targetTextFile.isHasHeader();
         if (file != null && file.exists() && file.length() > 0) {
-            try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset));
+            File validFile = FileTools.removeBOM(file);
+            try ( BufferedReader reader = new BufferedReader(new FileReader(validFile, charset));
                      BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, tCharset, false))) {
                 List<String> colsNames = columnNames();
                 if (hasHeader) {
@@ -304,7 +313,8 @@ public class DataFileText extends DataFile {
             return false;
         }
         File tmpFile = TmpFileTools.getTempFile();
-        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset));
+        File validFile = FileTools.removeBOM(file);
+        try ( BufferedReader reader = new BufferedReader(new FileReader(validFile, charset));
                  BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, charset, false))) {
             List<String> names = columnNames();
             if (hasHeader && names != null) {
@@ -372,7 +382,8 @@ public class DataFileText extends DataFile {
         File tmpFile = TmpFileTools.getTempFile();
         checkForLoad();
         if (file != null && file.exists() && file.length() > 0) {
-            try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset));
+            File validFile = FileTools.removeBOM(file);
+            try ( BufferedReader reader = new BufferedReader(new FileReader(validFile, charset));
                      BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, charset, false))) {
                 List<String> colsNames = columnNames();
                 if (hasHeader && colsNames != null) {

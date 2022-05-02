@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import mara.mybox.controller.ControlDataConvert;
+import mara.mybox.data.DescriptiveStatistic;
 import mara.mybox.data.DoubleStatistic;
 import mara.mybox.data.Normalization;
-import mara.mybox.data.StatisticCalculation;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.data2d.DataFileCSV;
@@ -28,6 +28,7 @@ import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.math3.stat.Frequency;
 import org.apache.commons.math3.stat.descriptive.moment.Skewness;
+import org.apache.commons.math3.stat.regression.SimpleRegression;
 
 /**
  * @Author Mara
@@ -55,8 +56,9 @@ public abstract class Data2DReader {
     protected DoubleStatistic statisticAll;
     protected String categoryName;
     protected Skewness skewnessAll;
-    protected StatisticCalculation statisticCalculation;
+    protected DescriptiveStatistic statisticCalculation;
     protected Frequency frequency;
+    protected SimpleRegression simpleRegression;
     protected CSVPrinter csvPrinter;
     protected boolean readerHasHeader, readerStopped, needCheckTask;
     protected SingletonTask readerTask;
@@ -69,7 +71,7 @@ public abstract class Data2DReader {
         NormalizeMinMaxColumns, NormalizeSumColumns, NormalizeZscoreColumns,
         NormalizeMinMaxRows, NormalizeSumRows, NormalizeZscoreRows,
         NormalizeMinMaxAll, NormalizeSumAll, NormalizeZscoreAll,
-        Frequency
+        Frequency, SimpleLinearRegression
     }
 
     public abstract void scanData();
@@ -282,6 +284,12 @@ public abstract class Data2DReader {
                     return null;
                 }
                 break;
+            case SimpleLinearRegression:
+                if (cols == null || cols.size() < 2 || simpleRegression == null) {
+                    failed = true;
+                    return null;
+                }
+                break;
         }
 
         this.operation = operation;
@@ -440,6 +448,9 @@ public abstract class Data2DReader {
                     break;
                 case NormalizeZscoreRows:
                     handleNormalizeRows(Normalization.Algorithm.ZScore);
+                    break;
+                case SimpleLinearRegression:
+                    handleSimpleLinearRegression();
                     break;
                 default:
                     break;
@@ -999,6 +1010,16 @@ public abstract class Data2DReader {
         }
     }
 
+    public void handleSimpleLinearRegression() {
+        try {
+            double x = data2D.doubleValue(record.get(cols.get(0)));
+            double y = data2D.doubleValue(record.get(cols.get(1)));
+            simpleRegression.addData(x, y);
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+        }
+    }
+
     public void afterScanned() {
         try {
             switch (operation) {
@@ -1207,7 +1228,7 @@ public abstract class Data2DReader {
         return this;
     }
 
-    public Data2DReader setStatisticSelection(StatisticCalculation statisticSelection) {
+    public Data2DReader setStatisticSelection(DescriptiveStatistic statisticSelection) {
         this.statisticCalculation = statisticSelection;
         return this;
     }
@@ -1277,6 +1298,15 @@ public abstract class Data2DReader {
     public Data2DReader setCategoryName(String categoryName) {
         this.categoryName = categoryName;
         return null;
+    }
+
+    public SimpleRegression getSimpleRegression() {
+        return simpleRegression;
+    }
+
+    public Data2DReader setSimpleRegression(SimpleRegression simpleRegression) {
+        this.simpleRegression = simpleRegression;
+        return this;
     }
 
 }

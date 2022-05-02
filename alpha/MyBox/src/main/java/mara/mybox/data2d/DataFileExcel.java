@@ -1,6 +1,5 @@
 package mara.mybox.data2d;
 
-import mara.mybox.data2d.scan.Data2DReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.sql.Connection;
@@ -9,6 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import mara.mybox.data2d.scan.Data2DReader;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -555,7 +555,8 @@ public class DataFileExcel extends DataFile {
         boolean targetHasHeader = false;
         int tcolsNumber = 0, trowsNumber = 0;
         String targetSheetName = message("Sheet") + "1";
-        try ( CSVParser parser = CSVParser.parse(csvFile, csvData.getCharset(), csvData.cvsFormat());
+        File validFile = FileTools.removeBOM(csvFile);
+        try ( CSVParser parser = CSVParser.parse(validFile, csvData.getCharset(), csvData.cvsFormat());
                  Workbook targetBook = new XSSFWorkbook()) {
             Sheet targetSheet = targetBook.createSheet(targetSheetName);
             int targetRowIndex = 0;

@@ -134,7 +134,7 @@ public class ControlData2DSource extends ControlData2DLoad {
     }
 
     public boolean allPages() {
-//        checkChanged();
+        checkChanged();
         return allPagesCheck.isSelected();
     }
 

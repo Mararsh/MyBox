@@ -40,6 +40,8 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
         try {
             super.initControls();
 
+            sourceController.noColumnSelection(true);
+
             valueColumn2Selector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -48,17 +50,6 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
             });
 
             webViewController.initStyle = "";
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void setParameters(ControlData2DEditTable tableController) {
-        try {
-            sourceController.noColumnSelection(true);
-            super.setParameters(tableController);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

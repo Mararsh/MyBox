@@ -100,7 +100,7 @@ public class ControlNewDataTable extends BaseController {
         }
     }
 
-    public boolean makeTable(Connection conn) {
+    public boolean makeTable() {
         try {
             tableData2D.reset();
             String tableName = DerbyBase.fixedIdentifier(nameInput.getText().trim());
@@ -137,7 +137,7 @@ public class ControlNewDataTable extends BaseController {
     public boolean createTable(Connection conn) {
         try {
             dataTable.resetData();
-            if (!makeTable(conn)) {
+            if (!makeTable()) {
                 return false;
             }
             String sql = tableData2D.createTableStatement();
@@ -242,7 +242,7 @@ public class ControlNewDataTable extends BaseController {
     @FXML
     public void sqlAction() {
         try ( Connection conn = DerbyBase.getConnection()) {
-            if (!checkOptions(conn) || !makeTable(conn)) {
+            if (!checkOptions(conn) || !makeTable()) {
                 return;
             }
             String sql = tableData2D.createTableStatement();

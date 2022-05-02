@@ -23,6 +23,7 @@ import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.FileTools;
 import mara.mybox.tools.IconTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.AppValues;
@@ -109,8 +110,9 @@ public class TreeNodeImportController extends BaseBatchFileController {
         if (file == null || !file.exists()) {
             return -1;
         }
+        File validFile = FileTools.removeBOM(file);
         try ( Connection conn = DerbyBase.getConnection();
-                 BufferedReader reader = new BufferedReader(new FileReader(file, TextFileTools.charset(file)))) {
+                 BufferedReader reader = new BufferedReader(new FileReader(validFile, TextFileTools.charset(validFile)))) {
             conn.setAutoCommit(false);
             rootNode = tableTreeNode.findAndCreateRoot(conn, category);
             if (rootNode == null) {

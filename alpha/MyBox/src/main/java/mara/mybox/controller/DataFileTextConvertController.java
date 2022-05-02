@@ -9,6 +9,7 @@ import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.Languages;
@@ -68,7 +69,8 @@ public class DataFileTextConvertController extends BaseDataConvertController {
             sourceCharset = TextFileTools.charset(srcFile);
         }
         List<String> names = null;
-        try ( BufferedReader reader = new BufferedReader(new FileReader(srcFile, sourceCharset))) {
+        File validFile = FileTools.removeBOM(srcFile);
+        try ( BufferedReader reader = new BufferedReader(new FileReader(validFile, sourceCharset))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (task == null || task.isCancelled()) {

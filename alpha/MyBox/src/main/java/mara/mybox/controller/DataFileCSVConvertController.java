@@ -7,6 +7,7 @@ import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -73,7 +74,8 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
         } else {
             fileCharset = csvReadController.charset;
         }
-        try ( CSVParser parser = CSVParser.parse(srcFile, fileCharset, csvFormat)) {
+        File validFile = FileTools.removeBOM(srcFile);
+        try ( CSVParser parser = CSVParser.parse(validFile, fileCharset, csvFormat)) {
             List<String> names = new ArrayList<>();
             names.addAll(parser.getHeaderNames());
             convertController.setParameters(targetPath, names, filePrefix(srcFile), skip);
@@ -106,7 +108,8 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
         } else {
             fileCharset = csvReadController.charset;
         }
-        try ( CSVParser parser = CSVParser.parse(srcFile, fileCharset, csvFormat)) {
+        File validFile = FileTools.removeBOM(srcFile);
+        try ( CSVParser parser = CSVParser.parse(validFile, fileCharset, csvFormat)) {
             List<String> names = null;
             for (CSVRecord record : parser) {
                 if (task == null || task.isCancelled()) {

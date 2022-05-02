@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -19,28 +20,80 @@ public class Data2DTransposeController extends BaseData2DHandleController {
     }
 
     @Override
-    public void setParameters(ControlData2DEditTable editController) {
-        try {
-            super.setParameters(editController);
-
-            sourceController.showAllPages(false);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+    public boolean checkOptions() {
+        if (isSettingValues) {
+            return true;
         }
+        boolean ok = super.checkOptions();
+        if (sourceController.allPages()) {
+            infoLabel.setText(message("AllRowsLoadComments"));
+        }
+        return ok;
     }
 
     @Override
     public void handleAllTask() {
-        popError(message("NotSupport"));
+        if (targetController == null) {
+            return;
+        }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                data2D.setTask(task);
+                outputData = data2D.allRows(sourceController.checkedColsIndices, showRowNumber());
+                return transpose();
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (targetController == null || targetController.inTable()) {
+                    updateTable();
+                } else {
+                    outputExternal();
+                }
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                data2D.setTask(null);
+                task = null;
+            }
+
+        };
+        start(task);
     }
 
     @Override
     public boolean handleRows() {
         try {
-            super.handleRows();
+            outputData = sourceController.selectedData(showRowNumber());
             if (outputData == null) {
                 return false;
+            }
+            return transpose();
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e.toString());
+            return false;
+        }
+    }
+
+    public boolean transpose() {
+        try {
+            outputColumns = null;
+            if (outputData == null) {
+                return false;
+            }
+            if (showColNames()) {
+                List<String> names = sourceController.checkedColsNames();
+                if (showRowNumber()) {
+                    names.add(0, message("SourceRowNumber"));
+                }
+                outputData.add(0, names);
             }
             int rowsNumber = outputData.size(), columnsNumber = outputData.get(0).size();
             List<List<String>> transposed = new ArrayList<>();
@@ -52,7 +105,6 @@ public class Data2DTransposeController extends BaseData2DHandleController {
                 transposed.add(row);
             }
             outputData = transposed;
-            outputColumns = null;
             return true;
         } catch (Exception e) {
             if (task != null) {

@@ -14,8 +14,7 @@ import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.tools.DateTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
+import mara.mybox.tools.FileTools;
 import mara.mybox.value.Languages;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -61,7 +60,8 @@ public class EpidemicReportsImportExternalCSVController extends EpidemicReportsI
     @Override
     public long importFile(Connection conn, File file) {
         long importCount = 0, insertCount = 0, updateCount = 0, skipCount = 0, failedCount = 0, lineCount = 0;
-        try ( CSVParser parser = CSVParser.parse(file, StandardCharsets.UTF_8,
+        File validFile = FileTools.removeBOM(file);
+        try ( CSVParser parser = CSVParser.parse(validFile, StandardCharsets.UTF_8,
                 CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(',').withTrim().withNullString(""))) {
             List<String> names = parser.getHeaderNames();
             if ((!names.contains("DataSet") && !names.contains(Languages.message("en", "DataSet")) && !names.contains(Languages.message("zh", "DataSet")))

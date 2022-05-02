@@ -1,10 +1,12 @@
 package mara.mybox.data2d.scan;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.util.List;
 import mara.mybox.data2d.DataFileText;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.FileTools;
 
 /**
  * @Author Mara
@@ -23,7 +25,8 @@ public class DataFileTextReader extends Data2DReader {
 
     @Override
     public void scanData() {
-        try ( BufferedReader reader = new BufferedReader(new FileReader(readerFile, readerText.getCharset()))) {
+        File validFile = FileTools.removeBOM(readerFile);
+        try ( BufferedReader reader = new BufferedReader(new FileReader(validFile, readerText.getCharset()))) {
             textReader = reader;
             handleData();
             textReader = null;
