@@ -15,7 +15,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.Data2DColumn;
@@ -47,8 +46,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     @FXML
     protected ComboBox<String> categoryColumnSelector, valueColumnSelector;
     @FXML
-    protected VBox snapBox;
-    @FXML
     protected AnchorPane chartPane;
     @FXML
     protected ControlWebView webViewController;
@@ -63,6 +60,8 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             if (webViewController != null) {
                 webViewController.setParent(this);
             }
+
+            palette = new HashMap();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -267,7 +266,11 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     public void makePalette() {
         try {
             Random random = new Random();
-            palette = new HashMap();
+            if (palette == null) {
+                palette = new HashMap();
+            } else {
+                palette.clear();
+            }
             for (int i = 0; i < outputColumns.size(); i++) {
                 Data2DColumn column = outputColumns.get(i);
                 Color color = column.getColor();
@@ -321,7 +324,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     }
 
     public Image snapChart() {
-        return NodeTools.snap(snapBox);
+        return NodeTools.snap(chartPane);
     }
 
     @FXML
@@ -407,6 +410,10 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
      */
     public int getScale() {
         return scale;
+    }
+
+    public Map<String, String> getPalette() {
+        return palette;
     }
 
 }

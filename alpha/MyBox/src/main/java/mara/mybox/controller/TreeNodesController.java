@@ -146,13 +146,13 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
     }
 
     @Override
-    public int totalCount(Connection conn) {
+    public int categorySize(Connection conn) {
         return tableTreeNode.categorySize(conn, category);
     }
 
     @Override
-    public int childrenCount(Connection conn, TreeNode node) {
-        return tableTreeNode.childrenSize(conn, id(node));
+    public boolean childrenEmpty(Connection conn, TreeNode node) {
+        return tableTreeNode.childrenEmpty(conn, id(node));
     }
 
     @Override

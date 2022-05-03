@@ -657,7 +657,11 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
     public void makePalette() {
         try {
             Random random = new Random();
-            palette = new HashMap();
+            if (palette == null) {
+                palette = new HashMap();
+            } else {
+                palette.clear();
+            }
             for (int i = 0; i < outputColumns.size(); i++) {
                 Data2DColumn column = outputColumns.get(i);
                 column.setColor(FxColorTools.randomColor(random));

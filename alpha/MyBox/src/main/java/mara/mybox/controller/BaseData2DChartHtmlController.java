@@ -229,9 +229,6 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
                 + "    }\n"
                 + "  </script>\n\n");
         s.append("<DIV>\n");
-
-        s.append("<DIV>\n");
-
         s.append("    <INPUT id=\"RowNumberCheck\" type=\"checkbox\" ")
                 .append(UserConfig.getBoolean(baseName + "ShowRowNumber", false) ? "checked" : "")
                 .append(" onclick=\"showClass('RowNumber', this.checked);\">")
@@ -256,13 +253,12 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
                 .append(UserConfig.getBoolean(baseName + "ShowCalculatedValues", true) ? "checked" : "")
                 .append(" onclick=\"showClass('Calculated', this.checked);\">")
                 .append(message("CalculatedValues")).append("</INPUT>\n");
-
-        s.append("</DIV>\n").append("<HR>\n");
+        s.append("</DIV>\n").append("<HR/>\n");
         return s.toString();
     }
 
     protected String jsComments() {
-        return "\n<HR>\n<P style=\"font-size:0.8em\">* " + message("HtmlEditableComments") + "</P>\n";
+        return "\n<HR/>\n<P align=left style=\"font-size:0.8em;\">* " + message("HtmlEditableComments") + "</P>\n";
     }
 
     public void pageLoaded() {

@@ -71,8 +71,14 @@ public class TableTreeNode extends BaseTable<TreeNode> {
     public static final String ChildrenCount
             = "SELECT count(nodeid) FROM Tree_Node WHERE parentid=? AND nodeid<>parentid";
 
+    public static final String ChildrenEmpty
+            = "SELECT nodeid FROM Tree_Node WHERE parentid=? AND nodeid<>parentid FETCH FIRST ROW ONLY";
+
     public static final String CategoryCount
             = "SELECT count(nodeid) FROM Tree_Node WHERE category=? AND nodeid<>parentid";
+
+    public static final String CategoryEmpty
+            = "SELECT nodeid FROM Tree_Node WHERE category=? AND nodeid<>parentid FETCH FIRST ROW ONLY";
 
     public static final String DeleteParent
             = "DELETE FROM Tree_Node WHERE parentid=?";
@@ -486,6 +492,19 @@ public class TableTreeNode extends BaseTable<TreeNode> {
         return size;
     }
 
+    public boolean childrenEmpty(Connection conn, long parent) {
+        boolean isEmpty = true;
+        try ( PreparedStatement statement = conn.prepareStatement(ChildrenEmpty)) {
+            statement.setLong(1, parent);
+            try ( ResultSet results = statement.executeQuery()) {
+                isEmpty = results == null || !results.next();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return isEmpty;
+    }
+
     public int categorySize(String category) {
         try ( Connection conn = DerbyBase.getConnection()) {
             return categorySize(conn, category);
@@ -506,11 +525,29 @@ public class TableTreeNode extends BaseTable<TreeNode> {
                 if (results != null && results.next()) {
                     size = results.getInt(1);
                 }
+            } catch (Exception e) {
+                MyBoxLog.error(e);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
         return size;
+    }
+
+    public boolean categoryEmpty(String category) {
+        boolean isEmpty = true;
+        try ( Connection conn = DerbyBase.getConnection();
+                 PreparedStatement statement = conn.prepareStatement(CategoryEmpty)) {
+            statement.setString(1, category);
+            try ( ResultSet results = statement.executeQuery()) {
+                isEmpty = results == null || !results.next();
+            } catch (Exception e) {
+                MyBoxLog.error(e);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return isEmpty;
     }
 
     public int deleteChildren(long parent) {
@@ -561,11 +598,12 @@ public class TableTreeNode extends BaseTable<TreeNode> {
         }
         try ( PreparedStatement statement = conn.prepareStatement(Times)) {
             statement.setString(1, category);
-            ResultSet results = statement.executeQuery();
-            while (results.next()) {
-                Date time = results.getTimestamp("update_time");
-                if (time != null) {
-                    times.add(time);
+            try ( ResultSet results = statement.executeQuery()) {
+                while (results.next()) {
+                    Date time = results.getTimestamp("update_time");
+                    if (time != null) {
+                        times.add(time);
+                    }
                 }
             }
         } catch (Exception e) {

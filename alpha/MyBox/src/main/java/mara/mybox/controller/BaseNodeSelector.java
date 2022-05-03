@@ -73,9 +73,9 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
     protected abstract P root(Connection conn);
 
-    protected abstract int totalCount(Connection conn);
+    protected abstract int categorySize(Connection conn);
 
-    protected abstract int childrenCount(Connection conn, P node);
+    protected abstract boolean childrenEmpty(Connection conn, P node);
 
     protected abstract List<P> children(Connection conn, P node);
 
@@ -230,7 +230,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                         P rootNode = root(conn);
                         rootItem = new TreeItem(rootNode);
                         ignoreNode = getIgnoreNode();
-                        int size = totalCount(conn);
+                        int size = categorySize(conn);
                         if (size < 1) {
                             return true;
                         }
@@ -855,7 +855,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                 TreeItem<P> childItem = new TreeItem(child);
                 item.getChildren().add(childItem);
                 childItem.setExpanded(false);
-                if (childrenCount(conn, child) > 0) {
+                if (!childrenEmpty(conn, child)) {
                     childItem.expandedProperty().addListener(
                             (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
                                 if (newVal && !childItem.isLeaf() && !loaded(childItem)) {

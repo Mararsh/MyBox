@@ -15,10 +15,12 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
@@ -88,6 +90,12 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     protected ControlTimesTree timesController;
     @FXML
     protected TextField findInput;
+    @FXML
+    protected CheckBox nodesListCheck;
+    @FXML
+    protected SplitPane managePane;
+    @FXML
+    protected VBox nodesListBox;
 
     public TreeManageController() {
         baseTitle = message("InformationInTree");
@@ -109,29 +117,6 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         tableTag = new TableTag();
         tableTreeNodeTag = new TableTreeNodeTag();
         tableDefinition = tableTreeNode;
-    }
-
-    @Override
-    protected void initColumns() {
-        try {
-            super.initColumns();
-            nodeidColumn.setCellValueFactory(new PropertyValueFactory<>("nodeid"));
-            nameColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
-            nameColumn.setText(nameMsg);
-            if (valueColumn != null) {
-                valueColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
-                valueColumn.setText(valueMsg);
-            }
-            if (moreColumn != null) {
-                moreColumn.setCellValueFactory(new PropertyValueFactory<>("more"));
-                moreColumn.setText(moreMsg);
-            }
-            timeColumn.setCellValueFactory(new PropertyValueFactory<>("updateTime"));
-            timeColumn.setText(timeMsg);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
     }
 
     @Override
@@ -161,6 +146,43 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             initTimes();
             initFind();
 
+            if (nodesListCheck != null) {
+                nodesListCheck.setSelected(UserConfig.getBoolean(baseName + "NodesList", true));
+                nodesListCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        UserConfig.setBoolean(baseName + "NodesList", nodesListCheck.isSelected());
+                        showNodesList(nodesListCheck.isSelected());
+                    }
+                });
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
+    protected void initColumns() {
+        try {
+            super.initColumns();
+            nodeidColumn.setCellValueFactory(new PropertyValueFactory<>("nodeid"));
+            nameColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+            nameColumn.setText(nameMsg);
+            if (valueColumn != null) {
+                valueColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
+                valueColumn.setText(valueMsg);
+            }
+            if (moreColumn != null) {
+                moreColumn.setCellValueFactory(new PropertyValueFactory<>("more"));
+                moreColumn.setText(moreMsg);
+            }
+            timeColumn.setCellValueFactory(new PropertyValueFactory<>("updateTime"));
+            timeColumn.setText(timeMsg);
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -185,6 +207,27 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             clearAction();
         }
         return true;
+    }
+
+    public void showNodesList(boolean show) {
+        if (isSettingValues || nodesListCheck == null) {
+            return;
+        }
+        isSettingValues = true;
+        nodesListCheck.setSelected(show);
+        if (show) {
+            if (!managePane.getItems().contains(nodesListBox)) {
+                managePane.getItems().add(1, nodesListBox);
+            }
+        } else {
+            if (managePane.getItems().contains(nodesListBox)) {
+                managePane.getItems().remove(nodesListBox);
+            }
+        }
+        isSettingValues = false;
+        if (show) {
+            showLeftPane();
+        }
     }
 
     /*
@@ -369,7 +412,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     public void loadTree(TreeNode selectedNode) {
         if (!AppVariables.isTesting) {
             File file = TreeNode.exampleFile(category);
-            if (file != null && tableTreeNode.categorySize(category) < 1
+            if (file != null && tableTreeNode.categoryEmpty(category)
                     && PopTools.askSure(this, getBaseTitle(), message("ImportExamples"))) {
                 nodesController.importExamples();
                 return;
@@ -392,8 +435,8 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         table
      */
     public void loadNodes(TreeNode parentNode) {
-        if (leftPaneCheck != null) {
-            leftPaneCheck.setSelected(true);
+        if (nodesListCheck != null) {
+            nodesListCheck.setSelected(true);
         }
         clearQuery();
         loadedParent = parentNode;
@@ -717,7 +760,9 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         queryConditions = " category='" + category + "' " + (c.isBlank() ? "" : " AND " + c);
         queryConditionsString = timesController.getFinalTitle();
         loadTableData();
-        showLeftPane();
+        if (nodesListCheck != null) {
+            nodesListCheck.setSelected(true);
+        }
     }
 
     /*
@@ -774,7 +819,9 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         }
         queryConditions = " category='" + category + "' AND " + queryConditions;
         loadTableData();
-        showLeftPane();
+        if (nodesListCheck != null) {
+            nodesListCheck.setSelected(true);
+        }
     }
 
     @FXML

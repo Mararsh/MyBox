@@ -527,11 +527,11 @@ public abstract class BaseData2DChartXYController extends BaseData2DChartFxContr
     public void checkXYReverse() {
         try {
             if (isXY()) {
-                categoryTab.setText(message("CategoryAxis") + "(X)");
-                valueTab.setText(message("ValueAxis") + "(Y)");
+                categoryTab.setText(message("CategoryAxis") + "(" + message("HorizontalAxis") + ")");
+                valueTab.setText(message("ValueAxis") + "(" + message("VerticalAxis") + ")");
             } else {
-                categoryTab.setText(message("CategoryAxis") + "(Y)");
-                valueTab.setText(message("ValueAxis") + "(X)");
+                categoryTab.setText(message("CategoryAxis") + "(" + message("VerticalAxis") + ")");
+                valueTab.setText(message("ValueAxis") + "(" + message("HorizontalAxis") + ")");
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -574,7 +574,7 @@ public abstract class BaseData2DChartXYController extends BaseData2DChartFxContr
         try {
             if (isCategoryNumbers()) {
                 numberAxisX = new NumberAxis();
-                numberAxisX.setLabel(categoryName());
+                numberAxisX.setLabel(categoryLabel.getText());
                 numberAxisX.setSide(categorySide);
                 numberAxisX.setTickLabelsVisible(categoryTickCheck.isSelected());
                 numberAxisX.setTickMarkVisible(numberMarkCheck.isSelected());
@@ -719,7 +719,7 @@ public abstract class BaseData2DChartXYController extends BaseData2DChartFxContr
 
     @FXML
     public void defaultCategoryLabel() {
-        categoryLabel.setText(categoryName());
+        categoryLabel.setText(message("Category") + ": " + categoryName());
     }
 
     @FXML
@@ -733,7 +733,12 @@ public abstract class BaseData2DChartXYController extends BaseData2DChartFxContr
 
     @FXML
     public void defaultValueLabel() {
-        numberLabel.setText(valuesNames());
+        String v = valuesNames();
+        if (v != null) {
+            numberLabel.setText(message("Values") + ": " + v);
+        } else {
+            numberLabel.setText(message("Value") + ": " + valueName());
+        }
     }
 
     @FXML

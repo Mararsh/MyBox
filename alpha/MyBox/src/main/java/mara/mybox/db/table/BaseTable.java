@@ -675,6 +675,32 @@ public abstract class BaseTable<D> {
         return size;
     }
 
+    public boolean isEmpty() {
+        String sql = "SELECT * FROM " + tableName + " FETCH FIRST ROW ONLY";
+        return isEmpty(sql);
+    }
+
+    public boolean isEmpty(String sql) {
+        try ( Connection conn = DerbyBase.getConnection()) {
+            conn.setReadOnly(true);
+            return isEmpty(conn, sql);
+        } catch (Exception e) {
+            MyBoxLog.error(e, sql);
+            return true;
+        }
+    }
+
+    public boolean isEmpty(Connection conn, String sql) {
+        boolean isEmpty = true;
+        try ( PreparedStatement statement = conn.prepareStatement(sql);
+                 ResultSet results = statement.executeQuery()) {
+            isEmpty = results == null || !results.next();
+        } catch (Exception e) {
+            MyBoxLog.error(e, sql);
+        }
+        return isEmpty;
+    }
+
     public String queryStatement() {
         if (tableName == null || columns.isEmpty() || primaryColumns.isEmpty()) {
             return null;

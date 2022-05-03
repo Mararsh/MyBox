@@ -30,11 +30,6 @@ License:    Apache License Version 2.0
                                 <HBox alignment="CENTER_LEFT" minHeight="-Infinity" spacing="2.0">
                                     <children>
                                         <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%NonnumericCountAsZero" wrapText="true" HBox.hgrow="ALWAYS" />
-                                        <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconDoubleRight.png" />
-                                            </image>
-                                        </ImageView>
                                     </children>
                                 </HBox>
                                 <fx:include fx:id="source" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DSource.fxml" VBox.vgrow="ALWAYS" />
@@ -92,34 +87,33 @@ License:    Apache License Version 2.0
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                             <children>
                                 <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                    <children>
-                                        <ImageView fx:id="leftPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconDoubleLeft.png" />
-                                            </image>
-                                        </ImageView>
-                                        <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%ComparisonBarsChart" HBox.hgrow="ALWAYS" />
-                                    </children>
-                                </HBox>
-                                <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                    <children>
-                                        <FlowPane alignment="CENTER_LEFT" hgap="5.0" layoutX="15.0" layoutY="15.0" prefWrapLength="500.0" vgap="5.0">
-                                            <children>
-                                                <Label minHeight="-Infinity" text="%MaximumWidth" wrapText="true" />
-                                                <ComboBox fx:id="widthSelector" editable="true" prefWidth="80.0" />
-                                                <CheckBox fx:id="zeroCheck" mnemonicParsing="false" selected="true" text="%BaseOnZero" />
-                                            </children>
-                                        </FlowPane>
-                                    </children>
-                                </VBox>
-                                <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                    <children>
+                           <children>
                                         <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
                                                 <Image url="@../buttons/Red/iconTips.png" />
                                             </image>
                                         </ImageView>
-                                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                              <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                          <CheckBox fx:id="zeroCheck" mnemonicParsing="false" selected="true" text="%BaseOnZero" />
+                              <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
+                                 <graphic>
+                                    <ImageView fx:id="leftPaneControl1" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconDoubleLeft.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </CheckBox>
+                           </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                    <children>
+                                        <FlowPane alignment="CENTER_LEFT" hgap="5.0" maxWidth="1.7976931348623157E308" prefWrapLength="500.0" vgap="5.0" HBox.hgrow="ALWAYS">
+                                            <children>
+                                                <Label minHeight="-Infinity" text="%MaximumWidth" wrapText="true" />
+                                                <ComboBox fx:id="widthSelector" editable="true" prefWidth="80.0" />
+                                            </children>
+                                        </FlowPane>
                               <Button fx:id="dataButton" mnemonicParsing="false" onAction="#dataAction">
                                  <graphic>
                                     <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">

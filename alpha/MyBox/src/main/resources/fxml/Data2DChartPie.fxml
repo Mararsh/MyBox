@@ -278,20 +278,15 @@ License:    Apache License Version 2.0
                                                 </Button>
                                              </children>
                                           </HBox>
-                                          <VBox fx:id="snapBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="1.0" VBox.vgrow="ALWAYS">
-                                             <children>
-                                                <Label fx:id="dataLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" />
-                                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-                                                   <content>
-                                                      <AnchorPane fx:id="chartPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                                         <children>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" fx:id="xyText" />
-                                                         </children>
-                                                      </AnchorPane>
-                                                   </content>
-                                                </ScrollPane>
-                                             </children>
-                                          </VBox>
+                                          <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                             <content>
+                                                <AnchorPane fx:id="chartPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                                   <children>
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" fx:id="xyText" />
+                                                   </children>
+                                                </AnchorPane>
+                                             </content>
+                                          </ScrollPane>
                                        </children>
                                        <padding>
                                           <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

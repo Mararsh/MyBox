@@ -248,7 +248,11 @@ public abstract class BaseData2DChartFxController extends BaseData2DChartControl
 
     public String title() {
         String prefix = categoryName() + " - ";
-        return prefix + valueName();
+        if (valuesNames() != null) {
+            return prefix + valuesNames();
+        } else {
+            return prefix + valueName();
+        }
     }
 
     public String valuesNames() {
