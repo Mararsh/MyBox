@@ -9,6 +9,8 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.CheckBox;
+import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.WindowTools;
@@ -85,6 +87,7 @@ public class Data2DChartPieController extends BaseData2DChartFxController {
     public boolean initData() {
         dataColsIndices = new ArrayList<>();
         outputColumns = new ArrayList<>();
+        outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
         int categoryCol = data2D.colOrder(selectedCategory);
         if (categoryCol < 0) {
             popError(message("SelectToHandle"));
@@ -130,7 +133,7 @@ public class Data2DChartPieController extends BaseData2DChartFxController {
             pieChart.setData(pieData);
             double total = 0;
             for (List<String> rowData : outputData) {
-                double d = data2D.doubleValue(rowData.get(1));
+                double d = data2D.doubleValue(rowData.get(2));
                 if (d > 0) {
                     total += d;
                 }
@@ -141,8 +144,8 @@ public class Data2DChartPieController extends BaseData2DChartFxController {
             String label;
             paletteList = new ArrayList();
             for (List<String> rowData : outputData) {
-                String name = rowData.get(0);
-                double d = data2D.doubleValue(rowData.get(1));
+                String name = rowData.get(1);
+                double d = data2D.doubleValue(rowData.get(2));
                 if (d <= 0) {
                     continue;
                 }

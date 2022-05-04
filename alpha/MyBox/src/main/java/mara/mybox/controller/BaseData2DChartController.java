@@ -17,6 +17,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import mara.mybox.data.StringTable;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
@@ -201,7 +202,10 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             return false;
         }
         dataColsIndices.addAll(checkedColsIndices);
-        outputColumns = sourceController.checkedCols();
+
+        outputColumns = new ArrayList<>();
+        outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
+        outputColumns.addAll(sourceController.checkedCols());
         return true;
     }
 
@@ -244,9 +248,9 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
     public void readData() {
         if (sourceController.allPages()) {
-            outputData = data2D.allRows(dataColsIndices, false);
+            outputData = data2D.allRows(dataColsIndices, true);
         } else {
-            outputData = sourceController.selectedData(sourceController.checkedRowsIndices(), dataColsIndices, false);
+            outputData = sourceController.selectedData(sourceController.checkedRowsIndices(), dataColsIndices, true);
         }
     }
 

@@ -38,6 +38,13 @@ public class Data2DColumn extends ColumnDefinition {
         this.type = type;
     }
 
+    public Data2DColumn(String name, String label, ColumnType type) {
+        initData2DColumn();
+        this.columnName = name;
+        this.type = type;
+        this.label = label;
+    }
+
     public Data2DColumn(String name, ColumnType type, int width) {
         initData2DColumn();
         this.columnName = name;

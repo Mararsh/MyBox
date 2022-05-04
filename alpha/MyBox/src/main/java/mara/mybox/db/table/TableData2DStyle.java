@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.List;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DDefinition;
@@ -148,9 +149,9 @@ public class TableData2DStyle extends BaseTable<Data2DStyle> {
         String in = null;
         for (String col : colNames) {
             if (in == null) {
-                in = "'" + col + "'";
+                in = "'" + DerbyBase.stringValue(col) + "'";
             } else {
-                in += ", '" + col + "'";
+                in += ", '" + DerbyBase.stringValue(col) + "'";
             }
         }
         String sql = "DELETE FROM Data2D_Style WHERE d2id=" + d2id
@@ -160,7 +161,7 @@ public class TableData2DStyle extends BaseTable<Data2DStyle> {
             conn.commit();
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.error(e, sql);
             return false;
         }
     }

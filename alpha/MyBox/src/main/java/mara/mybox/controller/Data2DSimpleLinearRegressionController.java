@@ -12,7 +12,10 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import mara.mybox.calculation.SimpleLinearRegression;
 import mara.mybox.data.StringTable;
+import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -25,7 +28,6 @@ import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
-import org.apache.commons.math3.stat.regression.SimpleRegression;
 
 /**
  * @Author Mara
@@ -35,19 +37,21 @@ import org.apache.commons.math3.stat.regression.SimpleRegression;
 public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYController {
 
     protected LabeledSimpleRegressionChart regressionChart​;
-    protected SimpleRegression simpleRegression;
-    protected List<Data2DColumn> resultColumns;
-    protected List<List<String>> resultData;
-    protected double alpha, intercept, slope, rSquare, r, confidenceIntervals;
+    protected SimpleLinearRegression simpleRegression;
+    protected double alpha, intercept, slope, rSquare, r, slopeError;
+    protected DataFileCSV regressionFile;
+    protected List<List<String>> regressionData;
 
     @FXML
     protected CheckBox interceptCheck, displayAllCheck, textCheck,
             fittedPointsCheck, confidenceLowerPointsCheck, confidenceUpPointsCheck,
             fittedLineCheck, confidenceLowerLineCheck, confidenceUpLineCheck;
     @FXML
-    protected ControlWebView resultsViewController;
-    @FXML
     protected ComboBox<String> alphaSelector;
+    @FXML
+    protected ControlData2DLoad regressionDataController;
+    @FXML
+    protected ControlWebView modelViewController;
 
     public Data2DSimpleLinearRegressionController() {
         baseTitle = message("SimpleLinearRegression");
@@ -60,7 +64,10 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
             super.initControls();
 
             sourceController.noColumnSelection(true);
-            resultsViewController.setParent(this);
+
+            regressionDataController.setData(Data2D.create(Data2D.Type.CSV));
+
+            modelViewController.setParent(this);
 
             initChartTab();
 
@@ -230,39 +237,38 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
     @Override
     public boolean initData() {
         dataColsIndices = new ArrayList<>();
-        outputColumns = new ArrayList<>();
         int categoryCol = data2D.colOrder(selectedCategory);
         if (categoryCol < 0) {
             popError(message("SelectToHandle"));
             return false;
         }
         dataColsIndices.add(categoryCol);
-        outputColumns.add(data2D.column(categoryCol));
         int valueCol = data2D.colOrder(selectedValue);
         if (valueCol < 0) {
             popError(message("SelectToHandle"));
             return false;
         }
         dataColsIndices.add(valueCol);
-        outputColumns.add(data2D.column(valueCol));
         simpleRegression = null;
+        regressionFile = null;
+        regressionData = null;
         return true;
     }
 
     @Override
     public void readData() {
         try {
-            simpleRegression = new SimpleRegression(interceptCheck.isSelected());
+            simpleRegression = new SimpleLinearRegression(interceptCheck.isSelected(), selectedCategory, selectedValue);
             if (sourceController.allPages()) {
                 if (displayAllCheck.isSelected()) {
-                    outputData = data2D.allRows(dataColsIndices, false);
+                    outputData = data2D.allRows(dataColsIndices, true);
                     handleData(outputData);
                 } else {
-                    data2D.simpleLinearRegression(dataColsIndices, simpleRegression);
-                    outputData = sourceController.selectedData(sourceController.checkedRowsIndices(), dataColsIndices, false);
+                    regressionFile = data2D.simpleLinearRegression(dataColsIndices, simpleRegression);
+                    outputData = sourceController.selectedData(sourceController.checkedRowsIndices(), dataColsIndices, true);
                 }
             } else {
-                outputData = sourceController.selectedData(sourceController.checkedRowsIndices(), dataColsIndices, false);
+                outputData = sourceController.selectedData(sourceController.checkedRowsIndices(), dataColsIndices, true);
                 handleData(outputData);
             }
 
@@ -271,109 +277,24 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
             rSquare = simpleRegression.getRSquare();
             r = simpleRegression.getR();
             alpha = alpha <= 0 || alpha >= 1 ? 0.05 : alpha;
-            confidenceIntervals = simpleRegression.getSlopeConfidenceInterval(alpha);
+            slopeError = simpleRegression.getSlopeStdErr();
 
+            outputColumns = new ArrayList<>();
+            outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
+            outputColumns.add(data2D.col(selectedCategory));
+            outputColumns.add(data2D.col(selectedValue));
             outputColumns.add(new Data2DColumn(selectedValue + "_" + message("FittedValue"), ColumnDefinition.ColumnType.Double));
             outputColumns.add(new Data2DColumn(selectedValue + "_" + message("ConfidenceLowerLimit"), ColumnDefinition.ColumnType.Double));
             outputColumns.add(new Data2DColumn(selectedValue + "_" + message("ConfidenceUpperLimit"), ColumnDefinition.ColumnType.Double));
             for (int i = 0; i < outputData.size(); i++) {
                 List<String> rowData = outputData.get(i);
-                double x = data2D.doubleValue(rowData.get(0));
-                rowData.add(DoubleTools.format(intercept + slope * x, scale));
-                rowData.add(DoubleTools.format(intercept + (slope - confidenceIntervals) * x, scale));
-                rowData.add(DoubleTools.format(intercept + (slope + confidenceIntervals) * x, scale));
+                double x = data2D.doubleValue(rowData.get(1));
+                double py = intercept + slope * x;
+                rowData.add(DoubleTools.format(py, scale));
+                rowData.add(DoubleTools.format(py - slopeError, scale));
+                rowData.add(DoubleTools.format(py + slopeError, scale));
             }
 
-            resultColumns = new ArrayList<>();
-            resultColumns.add(new Data2DColumn(message("Name"), ColumnDefinition.ColumnType.String, 300));
-            resultColumns.add(new Data2DColumn(message("Value"), ColumnDefinition.ColumnType.Double));
-
-            resultData = new ArrayList<>();
-            List<String> data;
-
-            data = new ArrayList<>();
-            data.add(message("IndependentVariable"));
-            data.add(selectedCategory);
-            resultData.add(data);
-
-            data = new ArrayList<>();
-            data.add(message("DependentVariable"));
-            data.add(selectedValue);
-            resultData.add(data);
-
-            data = new ArrayList<>();
-            data.add(message("LinearModel"));
-            data.add(selectedValue + " = "
-                    + (intercept == 0 ? "" : DoubleTools.format(intercept, scale) + " + ")
-                    + DoubleTools.format(slope, scale) + " * " + selectedCategory);
-            resultData.add(data);
-
-            data = new ArrayList<>();
-            data.add(message("NumberOfObservations"));
-            data.add(DoubleTools.format(simpleRegression.getN(), scale));
-            resultData.add(data);
-
-            data = new ArrayList<>();
-            data.add(message("Intercept"));
-            data.add(DoubleTools.format(intercept, scale));
-            resultData.add(data);
-
-            data = new ArrayList<>();
-            data.add(message("Slope"));
-            data.add(DoubleTools.format(slope, scale));
-            resultData.add(data);
-
-            data = new ArrayList<>();
-            data.add(message("CoefficientOfDetermination"));
-            data.add(DoubleTools.format(rSquare, scale));
-            resultData.add(data);
-
-            data = new ArrayList<>();
-            data.add(message("PearsonsR"));
-            data.add(DoubleTools.format(r, scale));
-            resultData.add(data);
-
-            data = new ArrayList<>();
-            data.add(message("ConfidenceIntervals"));
-            data.add(DoubleTools.format(confidenceIntervals, scale));
-            resultData.add(data);
-
-            data = new ArrayList<>();
-            data.add(message("SignificanceLevelSlopeCorrelation"));
-            data.add(DoubleTools.format(simpleRegression.getSignificance(), scale));
-            resultData.add(data);
-
-            data = new ArrayList<>();
-            data.add(message("StandardErrorOfIntercept"));
-            data.add(interceptCheck.isSelected() ? DoubleTools.format(simpleRegression.getInterceptStdErr(), scale) : "0");
-            resultData.add(data);
-
-            data = new ArrayList<>();
-            data.add(message("StandardErrorOfSlope"));
-            data.add(DoubleTools.format(simpleRegression.getSlopeStdErr(), scale));
-            resultData.add(data);
-
-            data = new ArrayList<>();
-            data.add(message("MeanSquareError"));
-            data.add(DoubleTools.format(simpleRegression.getMeanSquareError(), scale));
-            resultData.add(data);
-
-            data = new ArrayList<>();
-            data.add(message("SumSquaredRegression"));
-            data.add(DoubleTools.format(simpleRegression.getRegressionSumSquares(), scale));
-            resultData.add(data);
-
-            data = new ArrayList<>();
-            data.add(message("SumSquaredErrors"));
-            data.add(DoubleTools.format(simpleRegression.getSumSquaredErrors(), scale));
-            resultData.add(data);
-
-            data = new ArrayList<>();
-            data.add(message("SumSquaredDeviations"));
-            data.add(DoubleTools.format(simpleRegression.getTotalSumSquares(), scale));
-            resultData.add(data);
-
-            simpleRegression.clear();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -383,11 +304,14 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
         if (data == null || simpleRegression == null) {
             return;
         }
+        regressionData = new ArrayList<>();
         for (List<String> row : data) {
             try {
-                double x = data2D.doubleValue(row.get(0));
-                double y = data2D.doubleValue(row.get(1));
-                simpleRegression.addData(x, y);
+                long index = Long.parseLong(row.get(0));
+                double x = data2D.doubleValue(row.get(1));
+                double y = data2D.doubleValue(row.get(2));
+                List<String> resultRow = simpleRegression.addData(index, x, y);
+                regressionData.add(resultRow);
             } catch (Exception e) {
                 MyBoxLog.debug(e);
             }
@@ -426,14 +350,19 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
     @Override
     public void writeChartData() {
         try {
-            List<String> names = new ArrayList<>();
-            for (Data2DColumn c : resultColumns) {
-                names.add(c.getColumnName());
-            }
-            StringTable table = new StringTable(names);
-            for (List<String> row : resultData) {
-                table.add(row);
-            }
+            writeXYChart(outputColumns, outputData, true);
+
+            writeModelView();
+
+            writeRegressionData();
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    public void writeModelView() {
+        try {
             StringBuilder s = new StringBuilder();
             s.append("<BODY>\n");
             s.append(" <script>\n"
@@ -441,25 +370,72 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
                     + "      var x = document.getElementById('inputX').value;  　\n"
                     + "      var y =  " + intercept + "  + " + slope + " * x ;\n"
                     + "      document.getElementById('outputY').value = y;\n"
+                    + "      var v1 =  y - " + slopeError + ";\n"
+                    + "      var v2 =  y + " + slopeError + ";\n"
+                    + "      document.getElementById('ConfidenceIntervals').value = v1 + ' - ' + v2;\n"
                     + "    }\n"
                     + "  </script>\n\n");
             s.append("<DIV>\n");
             s.append("<P>").append(message("IndependentVariable")).append(": ").append(selectedCategory).append(" = \n");
-            s.append("<INPUT id=\"inputX\" type=\"text\"/>\n");
+            s.append("<INPUT id=\"inputX\" type=\"text\" style=\"width:200px\"/>\n");
             s.append("<INPUT type=\"submit\" onclick=\"calculate();\"/></P>\n");
             s.append("<P>").append(message("DependentVariable")).append(": ").append(selectedValue).append(" = \n");
-            s.append("<INPUT id=\"outputY\"  type=\"text\"/></P>\n");
-            s.append("</DIV>\n").append("<HR/>\n");
-            s.append("<P align=left style=\"font-size:0.8em;\">* ")
-                    .append(message("HtmlEditableComments")).append("</P>\n");
-            s.append(table.div());
-            s.append("</BODY>\n");
-            resultsViewController.loadContents(HtmlWriteTools.html(s.toString()));
+            s.append("<INPUT id=\"outputY\"  type=\"text\" style=\"width:200px\"/></P>\n");
+            s.append("<P>").append(message("ConfidenceIntervals")).append(" = \n");
+            s.append("<INPUT id=\"ConfidenceIntervals\"  type=\"text\" style=\"width:300px\"/></P>\n");
+            s.append("</DIV>\n");
 
-            writeXYChart(outputColumns, outputData);
+            String m = message("LinearModel") + ": " + selectedValue + " = "
+                    + (this.intercept == 0 ? "" : DoubleTools.format(intercept, scale) + " + ")
+                    + DoubleTools.format(slope, scale) + " * " + selectedCategory;
+            s.append("\n<DIV>").append(m).append("</DIV><HR/>\n");
+
+            List<String> names = new ArrayList<>();
+            names.add(message("Name"));
+            names.add(message("Value"));
+            StringTable table = new StringTable(names);
+            List<Data2DColumn> columns = simpleRegression.getColumns();
+            List<String> lastData = simpleRegression.getLastData();
+            for (int i = 0; i < columns.size(); i++) {
+                List<String> row = new ArrayList<>();
+                Data2DColumn c = columns.get(i);
+                row.add(c.getColumnName());
+                row.add(lastData.get(i));
+                table.add(row);
+            }
+            s.append(table.div());
+
+            s.append("\n<HR/><P align=left style=\"font-size:1em;\">* ")
+                    .append(message("HtmlEditableComments")).append("</P>\n");
+
+            s.append("</BODY>\n");
+            modelViewController.loadContents(HtmlWriteTools.html(s.toString()));
+
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
+    }
+
+    public void writeRegressionData() {
+        try {
+            if (regressionFile != null) {
+                regressionDataController.loadDef(regressionFile);
+            } else {
+                regressionDataController.loadTmpData(simpleRegression.getColumns(), regressionData);
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    public String model() {
+        return message("IndependentVariable") + ": " + selectedCategory + "\n"
+                + message("DependentVariable") + ": " + selectedValue + "\n"
+                + message("LinearModel") + ": " + selectedValue + " = "
+                + (this.intercept == 0 ? "" : DoubleTools.format(intercept, scale) + " + ")
+                + DoubleTools.format(slope, scale) + " * " + selectedCategory + "\n"
+                + message("CoefficientOfDetermination") + ": " + DoubleTools.format(rSquare, scale) + "\n"
+                + message("PearsonsR") + ": " + DoubleTools.format(r, scale);
     }
 
     @Override
@@ -468,14 +444,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
             return;
         }
         makePalette();
-        String model = message("IndependentVariable") + ": " + selectedCategory + "\n"
-                + message("DependentVariable") + ": " + selectedValue + "\n"
-                + message("LinearModel") + ": " + selectedValue + " = "
-                + (this.intercept == 0 ? "" : DoubleTools.format(intercept, scale) + " + ")
-                + DoubleTools.format(slope, scale) + " * " + selectedCategory + "\n"
-                + message("CoefficientOfDetermination") + ": " + DoubleTools.format(rSquare, scale) + "\n"
-                + message("PearsonsR") + ": " + DoubleTools.format(r, scale);
-        regressionChart.setModel(model)
+        regressionChart.setModel(model())
                 .setDisplayText(textCheck.isSelected())
                 .setDisplayFittedPoints(fittedPointsCheck.isSelected())
                 .setDisplayConfidenceLowerPoints(confidenceLowerPointsCheck.isSelected())
@@ -499,7 +468,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
             for (int i = 0; i < outputColumns.size(); i++) {
                 Data2DColumn column = outputColumns.get(i);
                 Color color = column.getColor();
-                if (i > 1 || color == null) {
+                if (i > 2 || color == null) {
                     color = FxColorTools.randomColor(random);
                 }
                 String rgb = FxColorTools.color2rgb(color);
@@ -521,21 +490,21 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
 
     @FXML
     public void editResultsAction() {
-        resultsViewController.editAction();
-    }
-
-    @FXML
-    public void resultsDataAction() {
-        if (resultData == null || resultData.isEmpty()) {
-            popError(message("NoData"));
-            return;
+        if (regressionFile != null) {
+            DataFileCSVController.open(regressionFile);
+        } else {
+            DataFileCSVController.open(simpleRegression.getColumns(), regressionData);
         }
-        DataManufactureController.open(resultColumns, resultData);
     }
 
     @FXML
-    public void popResultsMenu(MouseEvent mouseEvent) {
-        resultsViewController.popFunctionsMenu(mouseEvent);
+    public void editModelAction() {
+        modelViewController.editAction();
+    }
+
+    @FXML
+    public void popModelMenu(MouseEvent mouseEvent) {
+        modelViewController.popFunctionsMenu(mouseEvent);
     }
 
 

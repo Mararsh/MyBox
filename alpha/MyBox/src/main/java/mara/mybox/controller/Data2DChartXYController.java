@@ -461,7 +461,7 @@ public class Data2DChartXYController extends BaseData2DChartXYController {
         if (bubbleChartRadio.isSelected()) {
             writeBubbleChart();
         } else {
-            writeXYChart(outputColumns, outputData);
+            writeXYChart(outputColumns, outputData, true);
         }
 
     }

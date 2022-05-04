@@ -187,15 +187,6 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
         start(task);
     }
 
-    @Override
-    public void readData() {
-        if (sourceController.allPages()) {
-            outputData = data2D.allRows(dataColsIndices, true);
-        } else {
-            outputData = sourceController.selectedData(sourceController.checkedRowsIndices(), dataColsIndices, true);
-        }
-    }
-
     protected String handleData() {
         return null;
     }

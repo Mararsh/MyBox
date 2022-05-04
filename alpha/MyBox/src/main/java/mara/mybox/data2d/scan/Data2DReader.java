@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import mara.mybox.calculation.SimpleLinearRegression;
 import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.data.DescriptiveStatistic;
 import mara.mybox.data.DoubleStatistic;
@@ -58,7 +59,7 @@ public abstract class Data2DReader {
     protected Skewness skewnessAll;
     protected DescriptiveStatistic statisticCalculation;
     protected Frequency frequency;
-    protected SimpleRegression simpleRegression;
+    protected SimpleLinearRegression simpleRegression;
     protected CSVPrinter csvPrinter;
     protected boolean readerHasHeader, readerStopped, needCheckTask;
     protected SingletonTask readerTask;
@@ -285,7 +286,7 @@ public abstract class Data2DReader {
                 }
                 break;
             case SimpleLinearRegression:
-                if (cols == null || cols.size() < 2 || simpleRegression == null) {
+                if (cols == null || cols.size() < 2 || simpleRegression == null || csvPrinter == null) {
                     failed = true;
                     return null;
                 }
@@ -1014,7 +1015,8 @@ public abstract class Data2DReader {
         try {
             double x = data2D.doubleValue(record.get(cols.get(0)));
             double y = data2D.doubleValue(record.get(cols.get(1)));
-            simpleRegression.addData(x, y);
+            List<String> row = simpleRegression.addData(rowIndex, x, y);
+            csvPrinter.printRecord(row);
         } catch (Exception e) {
             MyBoxLog.console(e);
         }
@@ -1304,7 +1306,7 @@ public abstract class Data2DReader {
         return simpleRegression;
     }
 
-    public Data2DReader setSimpleRegression(SimpleRegression simpleRegression) {
+    public Data2DReader setSimpleRegression(SimpleLinearRegression simpleRegression) {
         this.simpleRegression = simpleRegression;
         return this;
     }

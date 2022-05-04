@@ -6,12 +6,14 @@ import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+import mara.mybox.calculation.SimpleLinearRegression;
 import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.data.DescriptiveStatistic;
 import mara.mybox.data.DoubleStatistic;
 import mara.mybox.data.Normalization;
 import mara.mybox.data2d.scan.Data2DReader;
 import mara.mybox.data2d.scan.Data2DReader.Operation;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleTools;
@@ -20,7 +22,6 @@ import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.math3.stat.Frequency;
-import org.apache.commons.math3.stat.regression.SimpleRegression;
 
 /**
  * @Author Mara
@@ -828,14 +829,45 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         }
     }
 
-    public boolean simpleLinearRegression(List<Integer> cols, SimpleRegression simpleRegression) {
+    public DataFileCSV simpleLinearRegression(List<Integer> cols, SimpleLinearRegression simpleRegression) {
         if (cols == null || cols.isEmpty() || simpleRegression == null) {
-            return false;
+            return null;
         }
-        Data2DReader reader = Data2DReader.create(this)
-                .setCols(cols).setSimpleRegression(simpleRegression)
-                .setReaderTask(task).start(Data2DReader.Operation.SimpleLinearRegression);
-        return reader != null;
+        File csvFile = tmpCSV("simpleLinearRegression");
+        CSVFormat targetFormat = CSVFormat.DEFAULT
+                .withIgnoreEmptyLines().withTrim().withNullString("")
+                .withDelimiter(',');
+        int tcolsNumber = 0;
+        Data2DReader reader = null;
+        try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
+            List<String> names = new ArrayList<>();
+            List<Data2DColumn> resultColumns = simpleRegression.getColumns();
+            for (Data2DColumn c : resultColumns) {
+                names.add(c.getColumnName());
+            }
+            csvPrinter.printRecord(names);
+            tcolsNumber = names.size();
+
+            reader = Data2DReader.create(this)
+                    .setCols(cols).setSimpleRegression(simpleRegression).setCsvPrinter(csvPrinter)
+                    .setReaderTask(task).start(Data2DReader.Operation.SimpleLinearRegression);
+
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return null;
+        }
+        if (reader != null && csvFile != null && csvFile.exists()) {
+            DataFileCSV targetData = new DataFileCSV();
+            targetData.setFile(csvFile).setCharset(Charset.forName("UTF-8"))
+                    .setDelimiter(",").setHasHeader(true)
+                    .setColsNumber(tcolsNumber).setRowsNumber(reader.getRowIndex());
+            return targetData;
+        } else {
+            return null;
+        }
     }
 
 }

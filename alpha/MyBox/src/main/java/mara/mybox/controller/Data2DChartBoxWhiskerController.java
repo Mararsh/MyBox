@@ -564,7 +564,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
                     }
                 }
             }
-            writeXYChart(outputColumns, outputData, displayCols);
+            writeXYChart(outputColumns, outputData, displayCols, false);
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }

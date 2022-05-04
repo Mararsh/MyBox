@@ -665,19 +665,19 @@ public abstract class BaseData2DChartXYController extends BaseData2DChartFxContr
         }
     }
 
-    // The first column is "Category"
-    public void writeXYChart(List<Data2DColumn> columns, List<List<String>> data) {
-        writeXYChart(columns, data, null);
+    public void writeXYChart(List<Data2DColumn> columns, List<List<String>> data, boolean rowNumber) {
+        writeXYChart(columns, data, null, rowNumber);
     }
 
-    public void writeXYChart(List<Data2DColumn> columns, List<List<String>> data, List<Integer> colIndics) {
+    // The first column is  and the second columns is "Category"
+    public void writeXYChart(List<Data2DColumn> columns, List<List<String>> data, List<Integer> colIndics, boolean rowNumber) {
         try {
             if (columns == null || data == null) {
                 return;
             }
             XYChart.Data xyData;
-            int index = 0;
-            for (int col = 1; col < columns.size(); col++) {
+            int index = 0, startIndex = rowNumber ? 1 : 0;
+            for (int col = 1 + startIndex; col < columns.size(); col++) {
                 if (colIndics != null && !colIndics.contains(col)) {
                     continue;
                 }
@@ -688,7 +688,7 @@ public abstract class BaseData2DChartXYController extends BaseData2DChartFxContr
 
                 double categoryValue, categoryCoordinateValue, numberValue, numberCoordinateValue;
                 for (List<String> rowData : data) {
-                    String category = rowData.get(0);
+                    String category = rowData.get(startIndex);
                     numberValue = data2D.doubleValue(rowData.get(col));
                     numberCoordinateValue = ChartTools.coordinateValue(nCoordinate, numberValue);
                     categoryValue = data2D.doubleValue(category);

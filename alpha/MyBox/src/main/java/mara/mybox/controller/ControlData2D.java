@@ -869,12 +869,31 @@ public class ControlData2D extends BaseController {
             List<MenuItem> items = new ArrayList<>();
 
             MenuItem menu;
-
             String lang = Languages.isChinese() ? "zh" : "en";
-            menu = new MenuItem(message("SimpleLinearRegressionExperienceSalary"));
+
+            // https://www.scribbr.com/statistics/simple-linear-regression/
+            menu = new MenuItem(message("IncomeHappiness"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/IncomeHappiness_" + lang + ".csv",
+                        "data", "IncomeHappiness_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            items.add(menu);
+
+            // https://github.com/krishnaik06/simple-Linear-Regression
+            menu = new MenuItem(message("ExperienceSalary"));
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ExperienceSalary_" + lang + ".csv",
                         "data", "ExperienceSalary_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            items.add(menu);
+
+            // https://github.com/tomsharp/SVR/tree/master/data
+            menu = new MenuItem(message("BostonHousingPrices"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/BostonHousingPrices_" + lang + ".csv",
+                        "data", "BostonHousingPrices_" + lang + ".csv", true);
                 loadCSVFile(file);
             });
             items.add(menu);
