@@ -18,9 +18,11 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Window;
+import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -127,6 +129,15 @@ public class MenuHtmlCodesController extends MenuTextEditController {
                 }
             });
             aNodes.add(image);
+
+            Button imageBase64 = new Button(message("ImageBase64"));
+            imageBase64.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    imageBase64();
+                }
+            });
+            aNodes.add(imageBase64);
 
             Button link = new Button(message("Link"));
             link.setOnAction(new EventHandler<ActionEvent>() {
@@ -408,6 +419,34 @@ public class MenuHtmlCodesController extends MenuTextEditController {
             s += "</table>\n";
         }
         insertText(s);
+    }
+
+    protected void imageBase64() {
+        File file = FxFileTools.selectFile(this, VisitHistory.FileType.Image);
+        if (file == null) {
+            return;
+        }
+        SingletonTask htmlTask = new SingletonTask<Void>(this) {
+            private String imageBase64;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    imageBase64 = BufferedImageTools.base64(file, "jpg");
+                    imageBase64 = "<img src=\"data:image/jpg;base64," + imageBase64 + "\" >";
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                insertText(imageBase64);
+            }
+        };
+        start(htmlTask, true);
     }
 
     @FXML

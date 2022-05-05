@@ -19,11 +19,12 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
-import mara.mybox.dev.MyBoxLog;
+import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageConvertTools;
 import static mara.mybox.bufferedimage.ImageConvertTools.dpi2dpm;
 import mara.mybox.bufferedimage.ImageInformation;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TmpFileTools;
 
@@ -92,10 +93,10 @@ public class ImageBmpFile {
         }
     }
 
-    public static boolean writeBmpImageFile(BufferedImage image,
+    public static boolean writeBmpImageFile(BufferedImage srcimage,
             ImageAttributes attributes, File file) {
+        BufferedImage image = AlphaTools.removeAlpha(srcimage);
         try {
-
             ImageWriter writer = getWriter();
             ImageWriteParam param = getPara(attributes, writer);
             IIOMetadata metaData = getWriterMeta(attributes, image, writer, param);

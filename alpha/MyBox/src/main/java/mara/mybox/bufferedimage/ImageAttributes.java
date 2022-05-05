@@ -57,6 +57,7 @@ public class ImageAttributes {
             case "jpg":
             case "jpeg":
                 compressionType = "JPEG";
+                alpha = Alpha.Remove;
                 break;
             case "gif":
                 compressionType = "LZW";
@@ -71,10 +72,12 @@ public class ImageAttributes {
                 break;
             case "bmp":
                 compressionType = "BI_RGB";
+                alpha = Alpha.Remove;
                 break;
         }
         density = 96;
         quality = 100;
+
     }
 
     /*

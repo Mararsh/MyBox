@@ -95,7 +95,7 @@ public class ImageFileWriters {
                 case "jpeg 2000":
                 case "jp2":
                 case "jpm":
-                    return ImageIO.write(image, "JPEG2000", new File(targetFile));
+                    return ImageIO.write(AlphaTools.removeAlpha(image), "JPEG2000", new File(targetFile));
                 case "wbmp":
                     image = ImageBinary.byteBinary(image);
                     break;

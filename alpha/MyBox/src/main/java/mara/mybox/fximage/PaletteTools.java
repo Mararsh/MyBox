@@ -156,7 +156,7 @@ public class PaletteTools {
 
             @Override
             protected void whenSucceeded() {
-                afterPaletteImported(parent, message("MyBoxColors"));
+                afterPaletteChanged(parent, message("MyBoxColors"));
             }
         };
         parent.setTask(task);
@@ -192,14 +192,14 @@ public class PaletteTools {
 
             @Override
             protected void whenSucceeded() {
-                afterPaletteImported(parent, paletteName);
+                afterPaletteChanged(parent, paletteName);
             }
         };
         parent.setTask(task);
         parent.start(task);
     }
 
-    public static void afterPaletteImported(BaseController parent, String paletteName) {
+    public static void afterPaletteChanged(BaseController parent, String paletteName) {
         UserConfig.setString("ColorPalettePopupPalette", paletteName);
         List<Window> windows = new ArrayList<>();
         windows.addAll(Window.getWindows());

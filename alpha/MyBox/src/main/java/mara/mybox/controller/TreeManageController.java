@@ -53,7 +53,7 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public class TreeManageController extends BaseSysTableController<TreeNode> {
-
+    
     protected String category;
     protected TableTreeNode tableTreeNode;
     protected TableTag tableTag;
@@ -61,7 +61,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     protected String queryLabel;
     protected String nameMsg, valueMsg, moreMsg, timeMsg;
     protected TreeNode loadedParent;
-
+    
     @FXML
     protected TreeNodesController nodesController;
     @FXML
@@ -96,7 +96,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     protected SplitPane managePane;
     @FXML
     protected VBox nodesListBox;
-
+    
     public TreeManageController() {
         baseTitle = message("InformationInTree");
         category = TreeNode.InformationInTree;
@@ -105,12 +105,12 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         moreMsg = message("More");
         timeMsg = message("UpdateTime");
     }
-
+    
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.Text);
     }
-
+    
     @Override
     public void setTableDefinition() {
         tableTreeNode = new TableTreeNode();
@@ -118,14 +118,14 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         tableTreeNodeTag = new TableTreeNodeTag();
         tableDefinition = tableTreeNode;
     }
-
+    
     @Override
     public void initControls() {
         try {
             super.initControls();
-
+            
             nodesController.setParameters(this, true);
-
+            
             if (UserConfig.getBoolean(baseName + "AllDescendants", false)) {
                 descendantsRadio.fire();
             }
@@ -138,14 +138,14 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
                     }
                 }
             });
-
+            
             nodeController.setParameters(this);
             tagsController.setParameters(this);
             tagsController.loadTableData();
-
+            
             initTimes();
             initFind();
-
+            
             if (nodesListCheck != null) {
                 nodesListCheck.setSelected(UserConfig.getBoolean(baseName + "NodesList", true));
                 nodesListCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -159,12 +159,12 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
                     }
                 });
             }
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-
+    
     @Override
     protected void initColumns() {
         try {
@@ -182,23 +182,23 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             }
             timeColumn.setCellValueFactory(new PropertyValueFactory<>("updateTime"));
             timeColumn.setText(timeMsg);
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-
+    
     @Override
     public void afterSceneLoaded() {
         try {
             super.afterSceneLoaded();
-
+            
             loadTree(null);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
-
+    
     @Override
     public boolean controlAltG() {
         if (nodeController.valueInput.isFocused()) {
@@ -208,7 +208,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         }
         return true;
     }
-
+    
     public void showNodesList(boolean show) {
         if (isSettingValues || nodesListCheck == null) {
             return;
@@ -226,7 +226,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         }
         isSettingValues = false;
         if (show) {
-            showLeftPane();
+            leftPaneCheck.setSelected(true);
         }
     }
 
@@ -241,7 +241,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             loadNodes(parent);
         }
     }
-
+    
     public void nodeRenamed(TreeNode node) {
         if (node == null) {
             return;
@@ -266,7 +266,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             nodeController.renamed(node.getTitle());
         }
     }
-
+    
     public void nodeDeleted(TreeNode node) {
         if (node == null) {
             return;
@@ -293,7 +293,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             nodeController.copyNode();
         }
     }
-
+    
     public void nodeMoved(TreeNode parent, TreeNode node) {
         if (parent == null || node == null) {
             return;
@@ -309,7 +309,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             nodeController.setParentNode(node);
         }
     }
-
+    
     public void nodesMoved(TreeNode parent, List<TreeNode> nodes) {
         if (parent == null || nodes == null || nodes.isEmpty()) {
             return;
@@ -327,17 +327,17 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         }
         nodesController.loadTree(parent);
     }
-
+    
     public void nodesCopied(TreeNode parent) {
         if (parent == null) {
             return;
         }
         nodesController.loadChildren(nodesController.find(parent));
     }
-
+    
     public void nodesDeleted() {
         task = new SingletonTask<Void>(this) {
-
+            
             @Override
             protected boolean handle() {
                 try ( Connection conn = DerbyBase.getConnection()) {
@@ -350,7 +350,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
                 }
                 return true;
             }
-
+            
             @Override
             protected void whenSucceeded() {
                 nodeController.editNode(nodeController.currentNode);
@@ -359,7 +359,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         };
         start(task);
     }
-
+    
     public void nodeSaved() {
         if (nodeController.currentNode == null) {
             return;
@@ -378,7 +378,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         }
         nodesController.updateChild(nodesController.find(nodeController.parentNode), nodeController.currentNode);
     }
-
+    
     public void newNodeSaved() {
         if (nodeController.currentNode == null) {
             return;
@@ -388,7 +388,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         }
         nodesController.addNewNode(nodesController.find(nodeController.parentNode), nodeController.currentNode);
     }
-
+    
     public void nodeChanged() {
         if (isSettingValues) {
             return;
@@ -420,7 +420,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         }
         nodesController.loadTree(selectedNode);
     }
-
+    
     public void clearQuery() {
         loadedParent = null;
         queryConditions = null;
@@ -446,17 +446,17 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             loadTableData();
         }
     }
-
+    
     public void loadChildren(TreeNode parentNode) {
         childrenRadio.fire();
         loadNodes(parentNode);
     }
-
+    
     public void loadDescendants(TreeNode parentNode) {
         descendantsRadio.fire();
         loadNodes(parentNode);
     }
-
+    
     @Override
     public void postLoadedTableData() {
         super.postLoadedTableData();
@@ -465,7 +465,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         }
         makeConditionPane();
     }
-
+    
     public void makeConditionPane() {
         conditionBox.getChildren().clear();
         if (loadedParent == null) {
@@ -480,13 +480,13 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         synchronized (this) {
             SingletonTask bookTask = new SingletonTask<Void>(this) {
                 private List<TreeNode> ancestor;
-
+                
                 @Override
                 protected boolean handle() {
                     ancestor = tableTreeNode.ancestor(loadedParent.getNodeid());
                     return true;
                 }
-
+                
                 @Override
                 protected void whenSucceeded() {
                     List<Node> nodes = new ArrayList<>();
@@ -516,9 +516,9 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             };
             start(bookTask, false);
         }
-
+        
     }
-
+    
     @Override
     public long readDataSize(Connection conn) {
         if (loadedParent != null) {
@@ -527,57 +527,57 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             } else {
                 return tableTreeNode.conditionSize(conn, queryConditions) + 1;
             }
-
+            
         } else if (queryConditions != null) {
             return tableTreeNode.conditionSize(conn, queryConditions);
-
+            
         } else {
             return 0;
         }
-
+        
     }
-
+    
     @Override
     public List<TreeNode> readPageData(Connection conn) {
         if (loadedParent != null && descendantsRadio.isSelected()) {
             return tableTreeNode.decentants(conn, loadedParent.getNodeid(), startRowOfCurrentPage, pageSize);
-
+            
         } else if (queryConditions != null) {
             return tableTreeNode.queryConditions(conn, queryConditions, orderColumns, startRowOfCurrentPage, pageSize);
-
+            
         } else {
             return null;
         }
     }
-
+    
     @Override
     protected long clearData() {
         if (queryConditions != null) {
             return tableTreeNode.deleteCondition(queryConditions);
-
+            
         } else {
             return -1;
         }
     }
-
+    
     @Override
     protected void afterDeletion() {
         super.afterDeletion();
         nodesDeleted();
     }
-
+    
     @Override
     protected void afterClear() {
         super.afterClear();
         nodesDeleted();
     }
-
+    
     @Override
     protected List<MenuItem> makeTableContextMenu() {
         try {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
-
+            
             if (pasteButton != null) {
                 menu = new MenuItem(message("Paste"), StyleTools.getIconImage("iconPaste.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -586,36 +586,36 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
                 menu.setDisable(pasteButton.isDisabled());
                 items.add(menu);
             }
-
+            
             menu = new MenuItem(message("Move"), StyleTools.getIconImage("iconRef.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 moveAction();
             });
             menu.setDisable(moveDataButton.isDisabled());
             items.add(menu);
-
+            
             menu = new MenuItem(message("Copy"), StyleTools.getIconImage("iconCopy.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 copyAction();
             });
             menu.setDisable(copyButton.isDisabled());
             items.add(menu);
-
+            
             items.addAll(super.makeTableContextMenu());
-
+            
             return items;
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
         }
     }
-
+    
     @Override
     public void itemClicked() {
         editAction();
     }
-
+    
     @Override
     protected void checkButtons() {
         if (isSettingValues) {
@@ -631,7 +631,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             pasteButton.setDisable(none);
         }
     }
-
+    
     @FXML
     @Override
     public void addAction() {
@@ -643,37 +643,37 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         }
         editNode(null);
     }
-
+    
     @FXML
     @Override
     public void editAction() {
         editNode(tableView.getSelectionModel().getSelectedItem());
     }
-
+    
     public void editNode(TreeNode node) {
         if (!checkBeforeNextAction()) {
             return;
         }
         nodeController.editNode(node);
     }
-
+    
     @FXML
     @Override
     public void copyAction() {
         TreeNodesCopyController.oneOpen(this);
     }
-
+    
     @FXML
     protected void moveAction() {
         TreeNodesMoveController.oneOpen(this);
     }
-
+    
     @FXML
     @Override
     public void pasteAction() {
         pasteNode(tableView.getSelectionModel().getSelectedItem());
     }
-
+    
     public void pasteNode(TreeNode node) {
         if (node == null) {
             popError(message("NoData"));
@@ -689,23 +689,23 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     protected void addNode() {
         editNode(null);
     }
-
+    
     @FXML
     protected void copyNode() {
         nodeController.copyNode();
     }
-
+    
     @FXML
     protected void recoverNode() {
         nodeController.editNode(nodeController.currentNode);
     }
-
+    
     @FXML
     @Override
     public void saveAction() {
         nodeController.saveNode();
     }
-
+    
     @Override
     public void sourceFileChanged(File file) {
         if (file == null || !file.exists() || !checkBeforeNextAction()) {
@@ -713,7 +713,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         }
         nodeController.loadFile(file);
     }
-
+    
     public boolean isNodeChanged() {
         return nodeController.nodeChanged;
     }
@@ -724,7 +724,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     public void initTimes() {
         try {
             timesController.setParent(this, " category='" + category + "' ", "Tree_Node", "update_time");
-
+            
             timesController.queryNodesButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
@@ -737,18 +737,18 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
                     refreshTimes();
                 }
             });
-
+            
             refreshTimes();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-
+    
     @FXML
     protected void refreshTimes() {
         timesController.loadTree();
     }
-
+    
     @FXML
     protected void queryTimes() {
         String c = timesController.check();
@@ -776,7 +776,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             MyBoxLog.error(e.toString());
         }
     }
-
+    
     @FXML
     protected void find() {
         String s = findInput.getText();
@@ -803,7 +803,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
                 queryConditions += " ( title like '%" + DerbyBase.stringValue(v) + "%' ) ";
                 queryConditionsString += " " + v;
             }
-
+            
         } else {
             queryConditions = null;
             queryConditionsString = message("Contents") + ":";
@@ -823,12 +823,12 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             nodesListCheck.setSelected(true);
         }
     }
-
+    
     @FXML
     protected void popFindHistories(MouseEvent mouseEvent) {
         PopTools.popStringValues(this, findInput, mouseEvent, baseName + category + "Histories");
     }
-
+    
     @Override
     public boolean checkBeforeNextAction() {
         if (!isNodeChanged()) {
@@ -845,7 +845,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
             stage.setAlwaysOnTop(true);
             stage.toFront();
-
+            
             Optional<ButtonType> result = alert.showAndWait();
             if (result == null || !result.isPresent()) {
                 return false;
@@ -858,5 +858,5 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             }
         }
     }
-
+    
 }

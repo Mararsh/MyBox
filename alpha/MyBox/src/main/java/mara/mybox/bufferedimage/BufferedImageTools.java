@@ -11,13 +11,17 @@ import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Hashtable;
 import java.util.Map;
 import javax.imageio.ImageIO;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.MessageDigestTools;
 import mara.mybox.value.AppVariables;
+import mara.mybox.value.FileExtensions;
 
 /**
  * @Author Mara
@@ -73,15 +77,48 @@ public class BufferedImageTools {
     }
 
     // https://stackoverflow.com/questions/24038524/how-to-get-byte-from-javafx-imageview
-    public static byte[] bytes(BufferedImage image, String format) {
+    public static byte[] bytes(BufferedImage srcImage, String format) {
         byte[] bytes = null;
         try ( ByteArrayOutputStream stream = new ByteArrayOutputStream();) {
-            ImageIO.write(image, format, stream);
+            BufferedImage tmpImage = srcImage;
+            if (!FileExtensions.AlphaImages.contains(format)) {
+                tmpImage = AlphaTools.removeAlpha(srcImage);
+            }
+            ImageIO.write(tmpImage, format, stream);
             bytes = stream.toByteArray();
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
         return bytes;
+    }
+
+    public static String base64(BufferedImage image, String format) {
+        try {
+            if (image == null || format == null) {
+                return null;
+            }
+            Base64.Encoder encoder = Base64.getEncoder();
+            byte[] bytes = bytes(image, format);
+            if (bytes == null) {
+                return null;
+            }
+            return encoder.encodeToString(bytes);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static String base64(File file, String format) {
+        try {
+            if (file == null) {
+                return null;
+            }
+            return base64(ImageFileReaders.readImage(file), format == null ? "jpg" : format);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
     }
 
     public static boolean same(BufferedImage imageA, BufferedImage imageB) {

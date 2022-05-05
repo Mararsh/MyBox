@@ -713,15 +713,32 @@ public class ControlData2D extends BaseController {
 
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            Menu calMenu = new Menu(message("Calculation"), StyleTools.getIconImage("iconCalculator.png"));
-            popMenu.getItems().add(calMenu);
+            Menu trimMenu = new Menu(message("Trim"), StyleTools.getIconImage("iconClean.png"));
+            popMenu.getItems().add(trimMenu);
 
             menu = new MenuItem(message("Sort"), StyleTools.getIconImage("iconSort.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DSortController.open(tableController);
             });
             menu.setDisable(empty);
-            calMenu.getItems().add(menu);
+            trimMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Transpose"), StyleTools.getIconImage("iconRotateRight.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DTransposeController.open(tableController);
+            });
+            menu.setDisable(empty);
+            trimMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Normalize"), StyleTools.getIconImage("iconBinary.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DNormalizeController.open(tableController);
+            });
+            menu.setDisable(empty);
+            trimMenu.getItems().add(menu);
+
+            Menu calMenu = new Menu(message("Calculation"), StyleTools.getIconImage("iconCalculator.png"));
+            popMenu.getItems().add(calMenu);
 
             menu = new MenuItem(message("DescriptiveStatistics"), StyleTools.getIconImage("iconStatistic.png"));
             menu.setOnAction((ActionEvent event) -> {
@@ -747,20 +764,6 @@ public class ControlData2D extends BaseController {
             menu = new MenuItem(message("ValuePercentage"), StyleTools.getIconImage("iconPercentage.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DPercentageController.open(tableController);
-            });
-            menu.setDisable(empty);
-            calMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("Normalize"), StyleTools.getIconImage("iconBinary.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DNormalizeController.open(tableController);
-            });
-            menu.setDisable(empty);
-            calMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("Transpose"), StyleTools.getIconImage("iconRotateRight.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DTransposeController.open(tableController);
             });
             menu.setDisable(empty);
             calMenu.getItems().add(menu);

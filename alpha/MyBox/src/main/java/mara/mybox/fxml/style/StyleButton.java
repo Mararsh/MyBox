@@ -72,6 +72,9 @@ public class StyleButton {
                     return new StyleData(id, message("Create"), "", "iconAdd.png");
             }
         }
+        if (id.startsWith("newItem")) {
+            return new StyleData(id, message("New"), "", "iconNewItem.png");
+        }
         if (id.startsWith("add")) {
             switch (id) {
                 case "addButton":
@@ -501,7 +504,12 @@ public class StyleButton {
             return new StyleData(id, "", "", "iconNumber.png");
         }
         if (id.startsWith("trim")) {
-            return new StyleData(id, "", "", "iconNumber.png");
+            switch (id) {
+                case "trimData":
+                    return new StyleData(id, message("Trim"), "", "iconClean.png");
+                default:
+                    return new StyleData(id, "", "", "iconNumber.png");
+            }
         }
         if (id.startsWith("lowerLetter")) {
             return new StyleData(id, "", "", "iconLowerLetter.png");

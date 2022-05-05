@@ -206,7 +206,7 @@ public class ColorPalettePopupController extends BaseChildController {
 
     }
 
-    protected Rectangle makeColorRect(ColorData data) {
+    public Rectangle makeColorRect(ColorData data) {
         try {
             if (data == null) {
                 return null;
@@ -219,19 +219,7 @@ public class ColorPalettePopupController extends BaseChildController {
             rect.setStroke(Color.BLACK);
             rect.setOnMouseClicked((MouseEvent event) -> {
                 Platform.runLater(() -> {
-                    if (isSettingValues || parentController == null || parentRect == null) {
-                        return;
-                    }
-                    try {
-                        parentRect.setFill(color);
-                        parentRect.setUserData(data);
-                        NodeStyleTools.setTooltip(parentRect, data.display());
-                        parentController.closePopup();
-                        setNotify.set(!setNotify.get());
-                    } catch (Exception e) {
-                        MyBoxLog.debug(e.toString());
-                    }
-
+                    takeColor(data);
                 });
             });
             rect.setOnMouseEntered((MouseEvent event) -> {
@@ -262,8 +250,25 @@ public class ColorPalettePopupController extends BaseChildController {
         }
     }
 
+    public void takeColor(ColorData data) {
+        if (isSettingValues || data == null
+                || parentController == null || parentRect == null) {
+            return;
+        }
+        try {
+            Color color = data.getColor();
+            parentRect.setFill(color);
+            parentRect.setUserData(data);
+            NodeStyleTools.setTooltip(parentRect, data.display());
+            parentController.closePopup();
+            setNotify.set(!setNotify.get());
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
     @FXML
-    protected void popPaletteMenu(MouseEvent mouseEvent) {
+    public void popPaletteMenu(MouseEvent mouseEvent) {
         try {
             List<MenuItem> items = new ArrayList<>();
 
@@ -310,7 +315,7 @@ public class ColorPalettePopupController extends BaseChildController {
     }
 
     @FXML
-    protected void popDataMenu(MouseEvent mouseEvent) {
+    public void popDataMenu(MouseEvent mouseEvent) {
         try {
             List<MenuItem> items = new ArrayList<>();
 
@@ -361,6 +366,30 @@ public class ColorPalettePopupController extends BaseChildController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @FXML
+    public void addAction() {
+        ColorNewController.open(this);
+    }
+
+    public void addColor(ColorData colorData) {
+        if (colorData == null) {
+            popError(message("InvalidParameters") + ": " + message("Color"));
+            return;
+        }
+        SingletonTask addTask = new SingletonTask<Void>(this) {
+            @Override
+            protected boolean handle() {
+                return tableColorPalette.findAndCreate(currentPalette.getCpnid(), colorData, false) != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                PaletteTools.afterPaletteChanged(parentController, currentPalette.getName());
+            }
+        };
+        start(addTask, false);
     }
 
     @FXML

@@ -201,4 +201,9 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
         openStage(Fxmls.PixelsCalculatorFxml);
     }
 
+    @FXML
+    protected void ImageBase64(ActionEvent event) {
+        loadScene(Fxmls.ImageBase64Fxml);
+    }
+
 }

@@ -791,7 +791,7 @@ public class DataTable extends Data2D {
             File validFile = FileTools.removeBOM(csvFile);
             try ( CSVParser parser = CSVParser.parse(validFile, csvData.getCharset(), csvData.cvsFormat())) {
                 Iterator<CSVRecord> iterator = parser.iterator();
-                int colsNumber = columns.size();
+                int colsNumber = columns.size() - 1;
                 int count = 0;
                 conn.setAutoCommit(false);
                 while (iterator.hasNext() && task != null && !task.isCancelled()) {
@@ -800,7 +800,7 @@ public class DataTable extends Data2D {
                         if (record != null) {
                             Data2DRow data2DRow = tableData2D.newRow();
                             for (int i = 0; i < Math.min(colsNumber, record.size()); i++) {
-                                Data2DColumn column = columns.get(i);
+                                Data2DColumn column = columns.get(i + 1);
                                 String name = column.getColumnName();
                                 Object value = column.fromString(record.get(i));
                                 if (value != null) {

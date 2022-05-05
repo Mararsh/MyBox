@@ -271,6 +271,11 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
 
     private Menu miscellaneousMenu() {
 
+        MenuItem ImageBase64 = new MenuItem(Languages.message("ImageBase64"));
+        ImageBase64.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.ImageBase64Fxml);
+        });
+
         MenuItem convolutionKernelManager = new MenuItem(Languages.message("ConvolutionKernelManager"));
         convolutionKernelManager.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.ConvolutionKernelManagerFxml);
@@ -283,7 +288,7 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
 
         Menu miscellaneousMenu = new Menu(Languages.message("Miscellaneous"));
         miscellaneousMenu.getItems().addAll(
-                convolutionKernelManager, pixelsCalculator
+                ImageBase64, convolutionKernelManager, pixelsCalculator
         );
 
         return miscellaneousMenu;

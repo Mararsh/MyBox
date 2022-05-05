@@ -1469,14 +1469,7 @@ public abstract class BaseTable<D> {
         if (conn == null) {
             return -1;
         }
-        String sql = null;
-        try {
-            sql = "TRUNCATE TABLE " + tableName;
-            return conn.createStatement().executeUpdate(sql);
-        } catch (Exception e) {
-            MyBoxLog.error(e, sql);
-            return -1;
-        }
+        return DerbyBase.update("DELETE FROM " + tableName);
     }
 
     public BaseTable readDefinitionFromDB(String tableName) {

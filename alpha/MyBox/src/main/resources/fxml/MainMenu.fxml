@@ -194,6 +194,7 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#ImagesInSystemClipboard" text="%ImagesInSystemClipboard" />
                                 <Menu mnemonicParsing="false" text="%Miscellaneous">
                                     <items>
+                                        <MenuItem mnemonicParsing="false" onAction="#ImageBase64" text="%ImageBase64" />
                                         <MenuItem mnemonicParsing="false" onAction="#openConvolutionKernelManager" text="%ConvolutionKernelManager" />
                                         <MenuItem mnemonicParsing="false" onAction="#openPixelsCalculator" text="%PixelsCalculator" />
                                     </items>

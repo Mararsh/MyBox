@@ -145,6 +145,7 @@ public class Fxmls {
     public static final String ColorInputFxml = "/fxml/ColorInput.fxml";
     public static final String ColorCopyFxml = "/fxml/ColorCopy.fxml";
     public static final String ColorQueryFxml = "/fxml/ColorQuery.fxml";
+    public static final String ColorNewFxml = "/fxml/ColorNew.fxml";
 
     public static final String IccProfileEditorFxml = "/fxml/IccProfileEditor.fxml";
     public static final String ChromaticityDiagramFxml = "/fxml/ChromaticityDiagram.fxml";
@@ -160,6 +161,7 @@ public class Fxmls {
 
     public static final String PixelsCalculatorFxml = "/fxml/PixelsCalculator.fxml";
     public static final String ConvolutionKernelManagerFxml = "/fxml/ConvolutionKernelManager.fxml";
+    public static final String ImageBase64Fxml = "/fxml/ImageBase64.fxml";
 
     public static final String ImagePopFxml = "/fxml/ImagePop.fxml";
     public static final String ImageScopePopFxml = "/fxml/ImageScopePop.fxml";

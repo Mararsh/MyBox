@@ -88,6 +88,10 @@ public class ImageConvertTools {
         return 25.4f / dpi;
     }
 
+    public static BufferedImage convert(BufferedImage srcImage, String format) {
+        return convertColorSpace(srcImage, new ImageAttributes(srcImage, format));
+    }
+
     public static BufferedImage convertBinary(BufferedImage srcImage, ImageAttributes attributes) {
         try {
             if (srcImage == null || attributes == null) {
