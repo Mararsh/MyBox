@@ -874,6 +874,93 @@ public class ControlData2D extends BaseController {
             MenuItem menu;
             String lang = Languages.isChinese() ? "zh" : "en";
 
+            // https://data.stats.gov.cn/index.htm
+            Menu chinaMenu = new Menu(message("StatisticDataOfChina"), StyleTools.getIconImage("iconChina.png"));
+            items.add(chinaMenu);
+
+            menu = new MenuItem(message("ChinaPopulation"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/ChinaPopulation_" + lang + ".csv",
+                        "data", "ChinaPopulation_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ChinaCensus"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/ChinaCensus_" + lang + ".csv",
+                        "data", "ChinaCensus_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ChinaGDP"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/ChinaGDP_" + lang + ".csv",
+                        "data", "ChinaGDP_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ChinaCPI"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/ChinaCPI_" + lang + ".csv",
+                        "data", "ChinaCPI_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ChinaFoodConsumption"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/ChinaFoods_" + lang + ".csv",
+                        "data", "ChinaFoods_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ChinaGraduates"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/ChinaGraduates_" + lang + ".csv",
+                        "data", "ChinaGraduates_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ChinaMuseums"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/ChinaMuseums_" + lang + ".csv",
+                        "data", "ChinaMuseums_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ChinaSportWorldChampions"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/ChinaSportWorldChampions_" + lang + ".csv",
+                        "data", "ChinaSportWorldChampions_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("CrimesFiledByChinaPolice"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/ChinaCrimesFiledByPolice_" + lang + ".csv",
+                        "data", "ChinaCrimesFiledByPolice_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("CrimesFiledByChinaProcuratorate"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/ChinaCrimesFiledByProcuratorate_" + lang + ".csv",
+                        "data", "ChinaCrimesFiledByProcuratorate_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            chinaMenu.getItems().add(menu);
+
+            Menu regressionMenu = new Menu(message("Regression"), StyleTools.getIconImage("iconLinearPgression.png"));
+            items.add(regressionMenu);
+
             // https://www.scribbr.com/statistics/simple-linear-regression/
             menu = new MenuItem(message("IncomeHappiness"));
             menu.setOnAction((ActionEvent event) -> {
@@ -881,7 +968,7 @@ public class ControlData2D extends BaseController {
                         "data", "IncomeHappiness_" + lang + ".csv", true);
                 loadCSVFile(file);
             });
-            items.add(menu);
+            regressionMenu.getItems().add(menu);
 
             // https://github.com/krishnaik06/simple-Linear-Regression
             menu = new MenuItem(message("ExperienceSalary"));
@@ -890,17 +977,25 @@ public class ControlData2D extends BaseController {
                         "data", "ExperienceSalary_" + lang + ".csv", true);
                 loadCSVFile(file);
             });
-            items.add(menu);
+            regressionMenu.getItems().add(menu);
 
-            // https://github.com/tomsharp/SVR/tree/master/data
-            menu = new MenuItem(message("BostonHousingPrices"));
-            menu.setOnAction((ActionEvent event) -> {
-                File file = FxFileTools.getInternalFile("/data/examples/BostonHousingPrices_" + lang + ".csv",
-                        "data", "BostonHousingPrices_" + lang + ".csv", true);
-                loadCSVFile(file);
-            });
-            items.add(menu);
-
+//            // http://archive.ics.uci.edu/ml/datasets/Iris
+//            menu = new MenuItem(message("IrisSpecies"));
+//            menu.setOnAction((ActionEvent event) -> {
+//                File file = FxFileTools.getInternalFile("/data/examples/IrisSpecies_" + lang + ".csv",
+//                        "data", "IrisSpecies_" + lang + ".csv", true);
+//                loadCSVFile(file);
+//            });
+//            regressionMenu.getItems().add(menu);
+//
+//            // https://github.com/tomsharp/SVR/tree/master/data
+//            menu = new MenuItem(message("BostonHousingPrices"));
+//            menu.setOnAction((ActionEvent event) -> {
+//                File file = FxFileTools.getInternalFile("/data/examples/BostonHousingPrices_" + lang + ".csv",
+//                        "data", "BostonHousingPrices_" + lang + ".csv", true);
+//                loadCSVFile(file);
+//            });
+//            regressionMenu.getItems().add(menu);
             return items;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

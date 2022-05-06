@@ -18,6 +18,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
@@ -292,6 +293,7 @@ public class Data2DChartXYController extends BaseData2DChartXYController {
     public boolean initData() {
         dataColsIndices = new ArrayList<>();
         outputColumns = new ArrayList<>();
+        outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
         int categoryCol = data2D.colOrder(selectedCategory);
         if (categoryCol < 0) {
             popError(message("SelectToHandle"));

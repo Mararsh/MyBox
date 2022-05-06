@@ -68,30 +68,14 @@ public abstract class BaseData2DChartFxController extends BaseData2DChartControl
                 tickFontSize = 12;
             }
 
-            labelType = LabelType.Value;
             labelGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    if (isSettingValues || newValue == null) {
-                        return;
-                    }
-                    String value = ((RadioButton) newValue).getText();
-                    if (message("NameAndValue").equals(value)) {
-                        labelType = LabelType.NameAndValue;
-                    } else if (message("Value").equals(value)) {
-                        labelType = LabelType.Value;
-                    } else if (message("Name").equals(value)) {
-                        labelType = LabelType.Name;
-                    } else if (message("Point").equals(value)) {
-                        labelType = LabelType.Point;
-                    } else if (message("NotDisplay").equals(value)) {
-                        labelType = LabelType.NotDisplay;
-                    } else {
-                        labelType = LabelType.NameAndValue;
-                    }
+                    checkLabelType();
                     redrawChart();
                 }
             });
+            checkLabelType();
 
             popLabelCheck.setSelected(UserConfig.getBoolean(baseName + "PopLabel", true));
             popLabelCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -212,6 +196,31 @@ public abstract class BaseData2DChartFxController extends BaseData2DChartControl
                     chart.setAnimated(animatedCheck.isSelected());
                 }
             });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void checkLabelType() {
+        try {
+            if (isSettingValues) {
+                return;
+            }
+            String value = ((RadioButton) legendGroup.getSelectedToggle()).getText();
+            if (message("NameAndValue").equals(value)) {
+                labelType = LabelType.NameAndValue;
+            } else if (message("Value").equals(value)) {
+                labelType = LabelType.Value;
+            } else if (message("Name").equals(value)) {
+                labelType = LabelType.Name;
+            } else if (message("Point").equals(value)) {
+                labelType = LabelType.Point;
+            } else if (message("NotDisplay").equals(value)) {
+                labelType = LabelType.NotDisplay;
+            } else {
+                labelType = LabelType.NotDisplay;
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

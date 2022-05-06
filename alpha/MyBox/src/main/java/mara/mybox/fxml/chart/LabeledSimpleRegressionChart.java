@@ -165,7 +165,7 @@ public class LabeledSimpleRegressionChart<X, Y> extends LabeledScatterChart<X, Y
             text.setStyle("-fx-font-size:" + options.labelFontSize + "px; -fx-text-fill: black;");
             text.setText(model);
             getPlotChildren().add(text);
-            if (regressionLine.getStartX() > 60) {
+            if (regressionLine.getStartY() > 60) {
                 text.setLayoutX(10);
                 text.setLayoutY(10);
             } else {

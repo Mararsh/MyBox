@@ -44,7 +44,7 @@ public abstract class BaseData2DHandleController extends BaseChildController {
     @FXML
     protected CheckBox rowNumberCheck, colNameCheck;
     @FXML
-    protected Label dataLabel, infoLabel;
+    protected Label dataLabel, infoLabel, dataSelectionLabel;
     @FXML
     protected ComboBox<String> scaleSelector;
     @FXML
@@ -169,7 +169,7 @@ public abstract class BaseData2DHandleController extends BaseChildController {
     public void objectChanged() {
         if (rowsRadio.isSelected()) {
             objectType = ObjectType.Rows;
-        } else if (allRadio.isSelected()) {
+        } else if (allRadio != null && allRadio.isSelected()) {
             objectType = ObjectType.All;
         } else {
             objectType = ObjectType.Columns;

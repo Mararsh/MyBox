@@ -1,14 +1,19 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.Clipboard;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataClipboard;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;
 
@@ -21,9 +26,22 @@ public class ControlData2DEditTable extends ControlData2DLoad {
 
     protected SimpleBooleanProperty columnChangedNotify;
 
+    @FXML
+    protected Button headerButton;
+
     public ControlData2DEditTable() {
         readOnly = false;
         columnChangedNotify = new SimpleBooleanProperty(false);
+    }
+
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+            NodeStyleTools.setTooltip(headerButton, new Tooltip(message("FirstLineDefineNames")));
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
     }
 
     protected void setParameters(ControlData2DEdit editController) {
@@ -49,6 +67,18 @@ public class ControlData2DEditTable extends ControlData2DLoad {
         }
     }
 
+    @Override
+    public void setData(Data2D data) {
+        try {
+            super.setData(data);
+
+            headerButton.setVisible(data2D.isTmpData() || data2D.isDataFile() || data.isClipboard());
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     public void notifyColumnChanged() {
         columnChangedNotify.set(!columnChangedNotify.get());
     }
@@ -63,6 +93,35 @@ public class ControlData2DEditTable extends ControlData2DLoad {
             readDefinition();
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    @FXML
+    public void headerAction() {
+        try {
+            if (data2D == null || tableData.isEmpty()) {
+                popError(message("NoData"));
+                return;
+            }
+            List<String> row = tableData.get(0);
+            if (row == null || row.size() < 2) {
+                popError(message("InvalidData"));
+                return;
+            }
+            List<String> names = new ArrayList<>();
+            for (int i = 1; i < row.size(); i++) {
+                String name = row.get(i);
+                if (name == null || name.isBlank()) {
+                    name = message("Column") + i;
+                }
+                while (names.contains(name)) {
+                    name += "m";
+                }
+                names.add(name);
+            }
+            dataController.columnsController.setNames(names);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
     }
 

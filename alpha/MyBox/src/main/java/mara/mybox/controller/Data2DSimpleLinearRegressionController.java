@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -289,10 +290,9 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
             for (int i = 0; i < outputData.size(); i++) {
                 List<String> rowData = outputData.get(i);
                 double x = data2D.doubleValue(rowData.get(1));
-                double py = intercept + slope * x;
-                rowData.add(DoubleTools.format(py, scale));
-                rowData.add(DoubleTools.format(py - slopeError, scale));
-                rowData.add(DoubleTools.format(py + slopeError, scale));
+                rowData.add(DoubleTools.format(intercept + slope * x, scale));
+                rowData.add(DoubleTools.format(intercept + (slope - slopeError) * x, scale));
+                rowData.add(DoubleTools.format(intercept + (slope + slopeError) * x, scale));
             }
 
         } catch (Exception e) {
@@ -375,6 +375,10 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
                     + "      document.getElementById('ConfidenceIntervals').value = v1 + ' - ' + v2;\n"
                     + "    }\n"
                     + "  </script>\n\n");
+            String m = message("LinearModel") + ": " + selectedValue + " = "
+                    + (this.intercept == 0 ? "" : DoubleTools.format(intercept, scale) + " + ")
+                    + DoubleTools.format(slope, scale) + " * " + selectedCategory;
+            s.append("\n<DIV>").append(m).append("</DIV>\n");
             s.append("<DIV>\n");
             s.append("<P>").append(message("IndependentVariable")).append(": ").append(selectedCategory).append(" = \n");
             s.append("<INPUT id=\"inputX\" type=\"text\" style=\"width:200px\"/>\n");
@@ -383,13 +387,9 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
             s.append("<INPUT id=\"outputY\"  type=\"text\" style=\"width:200px\"/></P>\n");
             s.append("<P>").append(message("ConfidenceIntervals")).append(" = \n");
             s.append("<INPUT id=\"ConfidenceIntervals\"  type=\"text\" style=\"width:300px\"/></P>\n");
-            s.append("</DIV>\n");
+            s.append("</DIV>\n<HR/>\n");
 
-            String m = message("LinearModel") + ": " + selectedValue + " = "
-                    + (this.intercept == 0 ? "" : DoubleTools.format(intercept, scale) + " + ")
-                    + DoubleTools.format(slope, scale) + " * " + selectedCategory;
-            s.append("\n<DIV>").append(m).append("</DIV><HR/>\n");
-
+            s.append("<H3 align=center>").append(message("LastStatus")).append("</H3>\n");
             List<String> names = new ArrayList<>();
             names.add(message("Name"));
             names.add(message("Value"));
@@ -505,6 +505,28 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
     @FXML
     public void popModelMenu(MouseEvent mouseEvent) {
         modelViewController.popFunctionsMenu(mouseEvent);
+    }
+
+    @FXML
+    public void about() {
+        try {
+            StringTable table = new StringTable(null, message("AboutSimpleLinearRegression"));
+            table.newLinkRow(message("Guide"), "https://www.itl.nist.gov/div898/handbook/");
+            table.newLinkRow(message("Example"), "https://www.xycoon.com/simple_linear_regression.htm");
+            table.newLinkRow("", "https://www.scribbr.com/statistics/simple-linear-regression/");
+            table.newLinkRow("", "http://www.datasetsanalysis.com/regressions/simple-linear-regression.html");
+            table.newLinkRow(message("Dataset"), "http://archive.ics.uci.edu/ml/datasets/Iris");
+            table.newLinkRow("", "https://github.com/tomsharp/SVR/tree/master/data");
+            table.newLinkRow("", "https://github.com/krishnaik06/simple-Linear-Regression");
+            table.newLinkRow("", "https://github.com/susanli2016/Machine-Learning-with-Python/tree/master/data");
+            table.newLinkRow("Apache-Math", "https://commons.apache.org/proper/commons-math/");
+            table.newLinkRow("", "https://commons.apache.org/proper/commons-math/apidocs/index.html");
+
+            File htmFile = HtmlWriteTools.writeHtml(table.html());
+            openLink(htmFile);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
 

@@ -464,6 +464,20 @@ public class ControlData2DSource extends ControlData2DLoad {
         titleLabel.setText(s);
     }
 
+    public boolean notSelectColumn() {
+        if (noColumnSelection) {
+            return true;
+        }
+        for (int i = 2; i < tableView.getColumns().size(); i++) {
+            TableColumn tableColumn = tableView.getColumns().get(i);
+            CheckBox cb = (CheckBox) tableColumn.getGraphic();
+            if (cb.isSelected()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Override
     public void cleanPane() {
         try {

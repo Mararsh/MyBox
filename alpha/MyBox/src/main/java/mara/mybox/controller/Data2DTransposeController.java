@@ -2,11 +2,17 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
+import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -15,8 +21,29 @@ import static mara.mybox.value.Languages.message;
  */
 public class Data2DTransposeController extends BaseData2DHandleController {
 
+    @FXML
+    protected CheckBox firstCheck;
+
     public Data2DTransposeController() {
         baseTitle = message("Transpose");
+    }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            firstCheck.setSelected(UserConfig.getBoolean(baseName + "FirstAsNames", false));
+            firstCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
+                if (isSettingValues) {
+                    return;
+                }
+                UserConfig.setBoolean(baseName + "FirstAsNames", firstCheck.isSelected());
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @Override
@@ -88,6 +115,7 @@ public class Data2DTransposeController extends BaseData2DHandleController {
             if (outputData == null) {
                 return false;
             }
+
             if (showColNames()) {
                 List<String> names = sourceController.checkedColsNames();
                 if (showRowNumber()) {
@@ -96,6 +124,26 @@ public class Data2DTransposeController extends BaseData2DHandleController {
                 outputData.add(0, names);
             }
             int rowsNumber = outputData.size(), columnsNumber = outputData.get(0).size();
+
+            if (firstCheck.isSelected()) {
+                outputColumns = new ArrayList<>();
+                if (showRowNumber()) {
+                    outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
+                }
+                List<String> names = new ArrayList<>();
+                for (int c = 0; c < rowsNumber; ++c) {
+                    String name = outputData.get(c).get(0);
+                    if (name == null || name.isBlank()) {
+                        name = message("Columns") + (c + 1);
+                    }
+                    while (names.contains(name)) {
+                        name += "m";
+                    }
+                    names.add(name);
+                    outputColumns.add(new Data2DColumn(name, ColumnDefinition.ColumnType.String));
+                }
+            }
+
             List<List<String>> transposed = new ArrayList<>();
             for (int r = 0; r < columnsNumber; ++r) {
                 List<String> row = new ArrayList<>();
@@ -105,6 +153,7 @@ public class Data2DTransposeController extends BaseData2DHandleController {
                 transposed.add(row);
             }
             outputData = transposed;
+
             return true;
         } catch (Exception e) {
             if (task != null) {

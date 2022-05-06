@@ -26,7 +26,7 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
     protected EventListener clickListener;
 
     @FXML
-    protected CheckBox zeroCheck;
+    protected CheckBox absoluateCheck;
     @FXML
     protected ComboBox<String> widthSelector;
 
@@ -104,11 +104,11 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
                 }
             });
 
-            zeroCheck.setSelected(UserConfig.getBoolean(baseName + "ZeroBased", true));
-            zeroCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            absoluateCheck.setSelected(UserConfig.getBoolean(baseName + "Absoluate", true));
+            absoluateCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "ZeroBased", zeroCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "Absoluate", absoluateCheck.isSelected());
                     okAction();
                 }
             });

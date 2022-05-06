@@ -123,8 +123,8 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
                 data[r + rowsNumber] = data2D.doubleValue(tableRow.get(2));
             }
             normalization = Normalization.create().setSourceVector(data);
-            if (zeroCheck.isSelected()) {
-                normalization.setWidth(barWidth).setA(Normalization.Algorithm.Width);
+            if (absoluateCheck.isSelected()) {
+                normalization.setWidth(barWidth).setA(Normalization.Algorithm.Absoluate);
             } else {
                 normalization.setFrom(0).setTo(barWidth).setA(Normalization.Algorithm.MinMax);
             }
@@ -135,7 +135,7 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
             String title = data2D.displayName() + " - " + message("ComparisonBarsChart");
             s.append("<DIV align=\"center\">\n");
             s.append("<H2>").append(title).append("</H2>\n");
-            if (zeroCheck.isSelected()) {
+            if (absoluateCheck.isSelected()) {
                 s.append("<P class=\"Calculated\" align=center>").append(message("MaxAbsolute")).append(": ")
                         .append(normalization.getMaxAbs()).append("</P>\n");
             } else {

@@ -19,7 +19,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-5-5
  * @License Apache License Version 2.0
  */
-public class ColorNewController extends BaseChildController {
+public class ColorPaletteInputController extends BaseChildController {
 
     protected ColorPalettePopupController paletteManager;
 
@@ -28,7 +28,7 @@ public class ColorNewController extends BaseChildController {
     @FXML
     protected TextField colorInput;
 
-    public ColorNewController() {
+    public ColorPaletteInputController() {
         baseTitle = message("InputColors");
     }
 
@@ -90,7 +90,7 @@ public class ColorNewController extends BaseChildController {
 
     @FXML
     @Override
-    public void goAction() {
+    public void okAction() {
         ColorData colorData = getInputColor();
         if (colorData != null) {
             paletteManager.takeColor(colorData);
@@ -105,12 +105,18 @@ public class ColorNewController extends BaseChildController {
         close();
     }
 
+    @FXML
+    public void queryAction() {
+        openStage(Fxmls.ColorQueryFxml);
+    }
+
+
     /*
         static methods
      */
-    public static ColorNewController open(ColorPalettePopupController palette) {
-        ColorNewController controller = (ColorNewController) WindowTools.openChildStage(
-                palette.parentController.getMyStage(), Fxmls.ColorNewFxml, false);
+    public static ColorPaletteInputController open(ColorPalettePopupController palette) {
+        ColorPaletteInputController controller = (ColorPaletteInputController) WindowTools.openChildStage(
+                palette.parentController.getMyStage(), Fxmls.ColorPaletteInputFxml, false);
         controller.setParameters(palette);
         return controller;
     }

@@ -163,7 +163,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                             setGraphic(null);
                             return;
                         }
-                        if (UserConfig.getBoolean("TreeDisplaySerialNumbers", true)) {
+                        if (UserConfig.getBoolean("TreeDisplaySequenceNumber", true)) {
                             String serialNumber = serialNumber(getTreeItem());
                             setText(serialNumber + "  " + display(item));
                         } else {
@@ -384,12 +384,12 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         items.add(menu);
         items.add(new SeparatorMenuItem());
 
-        CheckMenuItem editableMenu = new CheckMenuItem(message("SerialNumbers"), StyleTools.getIconImage("iconNumber.png"));
-        editableMenu.setSelected(UserConfig.getBoolean("TreeDisplaySerialNumbers", true));
+        CheckMenuItem editableMenu = new CheckMenuItem(message("SequenceNumber"), StyleTools.getIconImage("iconNumber.png"));
+        editableMenu.setSelected(UserConfig.getBoolean("TreeDisplaySequenceNumber", true));
         editableMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                UserConfig.setBoolean("TreeDisplaySerialNumbers", editableMenu.isSelected());
+                UserConfig.setBoolean("TreeDisplaySequenceNumber", editableMenu.isSelected());
                 treeView.refresh();
             }
         });
@@ -977,7 +977,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                             .append("    <INPUT type=\"checkbox\" checked=true onclick=\"showClass('TreeNode', this.checked);\">")
                             .append(message("Unfold")).append("</INPUT>\n")
                             .append("    <INPUT type=\"checkbox\" checked=true onclick=\"showClass('SerialNumber', this.checked);\">")
-                            .append(message("SerialNumbers")).append("</INPUT>\n")
+                            .append(message("SequenceNumber")).append("</INPUT>\n")
                             .append("    <INPUT type=\"checkbox\" checked=true onclick=\"showClass('NodeTag', this.checked);\">")
                             .append(message("Tags")).append("</INPUT>\n")
                             .append("    <INPUT type=\"checkbox\" checked=true onclick=\"showClass('nodeValue', this.checked);\">")

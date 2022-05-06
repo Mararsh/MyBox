@@ -1,9 +1,11 @@
 package mara.mybox.calculation;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 
@@ -29,7 +31,7 @@ public class SimpleLinearRegression extends SimpleRegression {
 
     private List<Data2DColumn> makeColumns() {
         columns = new ArrayList<>();
-        columns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.Long));
+        columns.add(new Data2DColumn(message("RowsNumber"), ColumnDefinition.ColumnType.Long));
         columns.add(new Data2DColumn(xName, ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn(yName, ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn(message("NumberOfObservations"), ColumnDefinition.ColumnType.Long));
@@ -47,6 +49,13 @@ public class SimpleLinearRegression extends SimpleRegression {
         columns.add(new Data2DColumn(message("StandardErrorOfIntercept"), ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn("XSumSquares", ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn("SumOfCrossProducts", ColumnDefinition.ColumnType.Double));
+        columns.add(new Data2DColumn("Xbar", ColumnDefinition.ColumnType.Double));
+        columns.add(new Data2DColumn("SumX", ColumnDefinition.ColumnType.Double));
+        columns.add(new Data2DColumn("SumXX", ColumnDefinition.ColumnType.Double));
+        columns.add(new Data2DColumn("Ybar", ColumnDefinition.ColumnType.Double));
+        columns.add(new Data2DColumn("SumY", ColumnDefinition.ColumnType.Double));
+        columns.add(new Data2DColumn("SumYY", ColumnDefinition.ColumnType.Double));
+        columns.add(new Data2DColumn("SumXY", ColumnDefinition.ColumnType.Double));
         return columns;
     }
 
@@ -71,6 +80,42 @@ public class SimpleLinearRegression extends SimpleRegression {
         lastData.add(getInterceptStdErr() + "");
         lastData.add(getXSumSquares() + "");
         lastData.add(getSumOfCrossProducts() + "");
+
+        try {
+            Class superClass = getClass().getSuperclass();
+
+            Field xbar = superClass.getDeclaredField("xbar");
+            xbar.setAccessible(true);
+            lastData.add((double) xbar.get(this) + "");
+
+            Field sumX = superClass.getDeclaredField("sumX");
+            sumX.setAccessible(true);
+            lastData.add((double) sumX.get(this) + "");
+
+            Field sumXX = superClass.getDeclaredField("sumXX");
+            sumXX.setAccessible(true);
+            lastData.add((double) sumXX.get(this) + "");
+
+            Field ybar = superClass.getDeclaredField("ybar");
+            ybar.setAccessible(true);
+            lastData.add((double) ybar.get(this) + "");
+
+            Field sumY = superClass.getDeclaredField("sumY");
+            sumY.setAccessible(true);
+            lastData.add((double) sumY.get(this) + "");
+
+            Field sumYY = superClass.getDeclaredField("sumYY");
+            sumYY.setAccessible(true);
+            lastData.add((double) sumYY.get(this) + "");
+
+            Field sumXY = superClass.getDeclaredField("sumXY");
+            sumXY.setAccessible(true);
+            lastData.add((double) sumXY.get(this) + "");
+
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+        }
+
         return lastData;
     }
 

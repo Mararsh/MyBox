@@ -18,7 +18,7 @@ public class Normalization {
     protected Normalization[] values;
 
     public static enum Algorithm {
-        MinMax, Sum, ZScore, Width
+        MinMax, Sum, ZScore, Absoluate
     }
 
     public Normalization() {
@@ -76,8 +76,8 @@ public class Normalization {
                 case ZScore:
                     zscore();
                     break;
-                case Width:
-                    width();
+                case Absoluate:
+                    absoluate();
                     break;
             }
 
@@ -185,7 +185,7 @@ public class Normalization {
         }
     }
 
-    public boolean width() {
+    public boolean absoluate() {
         try {
             resetResults();
             if (sourceVector == null) {

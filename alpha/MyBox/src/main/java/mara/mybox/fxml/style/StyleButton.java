@@ -278,7 +278,7 @@ public class StyleButton {
             }
         }
         if (id.startsWith("input")) {
-            return new StyleData(id, message("Input"), "", "iconData.png");
+            return new StyleData(id, message("Input"), "", "iconRename.png");
         }
         if (id.startsWith("dataImport") || id.startsWith("import")) {
             return new StyleData(id, message("Import"), "", "iconImport.png");

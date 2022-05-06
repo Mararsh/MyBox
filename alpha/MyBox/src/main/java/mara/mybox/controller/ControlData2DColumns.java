@@ -698,7 +698,24 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
         if (status == null || status == Status.Loaded) {
             status(Status.Applied);
         }
+    }
 
+    public void setNames(List<String> names) {
+        try {
+            if (names == null || names.size() != tableData.size()) {
+                return;
+            }
+            isSettingValues = true;
+            for (int i = 0; i < tableData.size(); i++) {
+                tableData.get(i).setColumnName(names.get(i));
+            }
+            tableView.refresh();
+            isSettingValues = false;
+            status = Status.Modified;
+            okAction();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @FXML

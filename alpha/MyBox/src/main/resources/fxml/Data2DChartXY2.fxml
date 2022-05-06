@@ -46,8 +46,20 @@ License:    Apache License Version 2.0
                                                             </padding>
                                                             <children>
                                                                 <fx:include fx:id="source" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DSource.fxml" VBox.vgrow="ALWAYS" />
+                                                <Label fx:id="dataSelectionLabel" text="Label" />
                                                                 <VBox fx:id="columnsBox" spacing="5.0">
                                                                     <children>
+                                                      <FlowPane alignment="CENTER_LEFT" hgap="5.0" maxWidth="1.7976931348623157E308" prefWrapLength="500.0" vgap="5.0">
+                                                         <children>
+                                                            <Label text="%AccordingTo" />
+                                                            <RadioButton fx:id="columnsRadio" mnemonicParsing="false" selected="true" text="%Columns">
+                                                               <toggleGroup>
+                                                                  <ToggleGroup fx:id="objectGroup" />
+                                                               </toggleGroup>
+                                                            </RadioButton>
+                                                            <RadioButton fx:id="rowsRadio" mnemonicParsing="false" text="%Rows" toggleGroup="$objectGroup" />
+                                                         </children>
+                                                      </FlowPane>
                                                                         <FlowPane fx:id="categoryColumnsPane" hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
                                                                             <children>
                                                                                 <Label minHeight="-Infinity" minWidth="-Infinity" text="%CategoryColumn" />
@@ -587,14 +599,15 @@ License:    Apache License Version 2.0
                                                                 <FlowPane alignment="CENTER_LEFT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
                                                                     <children>
                                                                         <Label maxWidth="1.7976931348623157E308" text="%Label" />
-                                                                        <RadioButton layoutX="379.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%NotDisplay">
+                                                                        <RadioButton mnemonicParsing="false" selected="true" text="%Value">
                                                          <toggleGroup>
                                                                                 <ToggleGroup fx:id="labelGroup" />
-                                                         </toggleGroup></RadioButton>
-                                                                        <RadioButton mnemonicParsing="false" text="%Value" toggleGroup="$labelGroup" />
+                                                         </toggleGroup>
+                                                      </RadioButton>
                                                                         <RadioButton mnemonicParsing="false" text="%NameAndValue" toggleGroup="$labelGroup" />
                                                                         <RadioButton mnemonicParsing="false" text="%Name" toggleGroup="$labelGroup" />
                                                       <RadioButton layoutX="285.0" layoutY="10.0" mnemonicParsing="false" text="%Point" toggleGroup="$labelGroup" />
+                                                                        <RadioButton layoutX="379.0" layoutY="10.0" mnemonicParsing="false" text="%NotDisplay" toggleGroup="$labelGroup" />
                                                                         <CheckBox fx:id="popLabelCheck" mnemonicParsing="false" text="%Pop" />
                                                                     </children>
                                                                 </FlowPane>

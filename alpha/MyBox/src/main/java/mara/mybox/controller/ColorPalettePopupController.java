@@ -369,8 +369,8 @@ public class ColorPalettePopupController extends BaseChildController {
     }
 
     @FXML
-    public void addAction() {
-        ColorNewController.open(this);
+    public void inputAction() {
+        ColorPaletteInputController.open(this);
     }
 
     public void addColor(ColorData colorData) {

@@ -133,6 +133,8 @@ public class TableColorPalette extends BaseTable<ColorPalette> {
                 if (results != null && results.next()) {
                     data = readData(results);
                 }
+            } catch (Exception e) {
+                MyBoxLog.error(e);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -168,6 +170,8 @@ public class TableColorPalette extends BaseTable<ColorPalette> {
         }
         try {
             int colorValue = color.getColorValue();
+            boolean ac = conn.getAutoCommit();
+            conn.setAutoCommit(true);
             ColorPalette colorPalette = find(conn, paletteid, colorValue);
             if (colorPalette == null) {
                 ColorData existColor = getTableColor().findAndCreate(conn, colorValue, color.getColorName());
@@ -181,6 +185,7 @@ public class TableColorPalette extends BaseTable<ColorPalette> {
                         .setPaletteid(paletteid).setOrderNumber(order);
                 colorPalette = insertData(conn, colorPalette);
             }
+            conn.setAutoCommit(ac);
             return colorPalette;
         } catch (Exception e) {
             MyBoxLog.error(e);
