@@ -54,7 +54,7 @@ public class Data2DChartXYController extends BaseData2DChartXYController {
 
     @FXML
     protected RadioButton barChartRadio, stackedBarChartRadio, lineChartRadio, scatterChartRadio,
-            bubbleChartRadio, areaChartRadio, stackedAreaChartRadio;
+            bubbleChartRadio, areaChartRadio, stackedAreaChartRadio, labelLocaionAboveRadio;
     @FXML
     protected ComboBox<String> lineWdithSelector, barGapSelector, categoryGapSelector;
     @FXML
@@ -258,6 +258,10 @@ public class Data2DChartXYController extends BaseData2DChartXYController {
             } else {
                 columnsBox.getChildren().addAll(categoryColumnsPane);
                 setSourceLabel(message("XYChartLabel"));
+            }
+
+            if (barChartRadio.isSelected()) {
+                labelLocaionAboveRadio.fire();
             }
 
             barGapBox.setDisable(!barChartRadio.isSelected() && !stackedBarChartRadio.isSelected());

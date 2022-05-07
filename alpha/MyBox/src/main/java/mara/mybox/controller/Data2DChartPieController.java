@@ -151,14 +151,14 @@ public class Data2DChartPieController extends BaseData2DChartFxController {
                 }
                 double percent = DoubleTools.scale(d * 100 / total, scale);
                 String value = DoubleTools.format(d, scale);
-                switch (labelType) {
-                    case Name:
+                switch (chartController.labelType) {
+                    case Category:
                         label = selectedCategory + ": " + name;
                         break;
                     case Value:
                         label = selectedValue + ": " + value + "=" + percent + "%";
                         break;
-                    case NameAndValue:
+                    case CategoryAndValue:
                         label = selectedCategory + ": " + name + "\n"
                                 + selectedValue + ": " + value + "=" + percent + "%";
                         break;
@@ -171,7 +171,7 @@ public class Data2DChartPieController extends BaseData2DChartFxController {
                 }
                 PieChart.Data item = new PieChart.Data(label, d);
                 pieData.add(item);
-                if (popLabelCheck.isSelected() || labelType == LabelType.Pop) {
+                if (chartController.popLabel() || chartController.labelType == LabelType.Pop) {
                     NodeStyleTools.setTooltip(item.getNode(),
                             selectedCategory + ": " + name + "\n"
                             + selectedValue + ": " + value + "=" + percent + "%");
@@ -179,8 +179,9 @@ public class Data2DChartPieController extends BaseData2DChartFxController {
                 paletteList.add(FxColorTools.randomRGB(random));
             }
 
-            pieChart.setLabelsVisible(labelType == LabelType.Name
-                    || labelType == LabelType.Value || labelType == LabelType.NameAndValue);
+            pieChart.setLabelsVisible(chartController.labelType == LabelType.Category
+                    || chartController.labelType == LabelType.Value
+                    || chartController.labelType == LabelType.CategoryAndValue);
 
         } catch (Exception e) {
             MyBoxLog.debug(e);

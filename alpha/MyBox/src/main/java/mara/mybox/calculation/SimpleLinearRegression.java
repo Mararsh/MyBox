@@ -34,6 +34,10 @@ public class SimpleLinearRegression extends SimpleRegression {
         columns.add(new Data2DColumn(message("RowsNumber"), ColumnDefinition.ColumnType.Long));
         columns.add(new Data2DColumn(xName, ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn(yName, ColumnDefinition.ColumnType.Double));
+//        columns.add(new Data2DColumn(yName + "_" + message("Predict"), ColumnDefinition.ColumnType.Double));
+//        columns.add(new Data2DColumn(yName + "_" + message("DataError"), ColumnDefinition.ColumnType.Double));
+//        columns.add(new Data2DColumn(yName + "_" + message("ConfidenceLowerLimit"), ColumnDefinition.ColumnType.Double));
+//        columns.add(new Data2DColumn(yName + "_" + message("ConfidenceUpperLimit"), ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn(message("NumberOfObservations"), ColumnDefinition.ColumnType.Long));
         columns.add(new Data2DColumn(message("Slope"), ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn(message("Intercept"), ColumnDefinition.ColumnType.Double));
@@ -41,7 +45,7 @@ public class SimpleLinearRegression extends SimpleRegression {
         columns.add(new Data2DColumn(message("PearsonsR"), ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn(message("ConfidenceIntervals"), ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn(message("SignificanceLevelSlopeCorrelation"), ColumnDefinition.ColumnType.Double));
-        columns.add(new Data2DColumn(message("SumSquaredDeviations"), ColumnDefinition.ColumnType.Double));
+        columns.add(new Data2DColumn(message("TotalSumSquares"), ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn(message("SumSquaredRegression"), ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn(message("SumSquaredErrors"), ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn(message("MeanSquareError"), ColumnDefinition.ColumnType.Double));
@@ -51,11 +55,8 @@ public class SimpleLinearRegression extends SimpleRegression {
         columns.add(new Data2DColumn("SumOfCrossProducts", ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn("Xbar", ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn("SumX", ColumnDefinition.ColumnType.Double));
-        columns.add(new Data2DColumn("SumXX", ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn("Ybar", ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn("SumY", ColumnDefinition.ColumnType.Double));
-        columns.add(new Data2DColumn("SumYY", ColumnDefinition.ColumnType.Double));
-        columns.add(new Data2DColumn("SumXY", ColumnDefinition.ColumnType.Double));
         return columns;
     }
 
@@ -65,6 +66,16 @@ public class SimpleLinearRegression extends SimpleRegression {
         lastData.add(rowIndex + "");
         lastData.add(x + "");
         lastData.add(y + "");
+
+//        double intercept = getIntercept();
+//        double slope = getSlope();
+//        double slopeError = getSlopeStdErr();
+//        double py = predict(x);
+//
+//        lastData.add(py + "");
+//        lastData.add((py - y) + "");
+//        lastData.add(DoubleTools.format(intercept + (slope - slopeError) * x, scale));
+//        lastData.add(DoubleTools.format(intercept + (slope + slopeError) * x, scale));
         lastData.add(getN() + "");
         lastData.add(getSlope() + "");
         lastData.add(getIntercept() + "");
@@ -92,10 +103,6 @@ public class SimpleLinearRegression extends SimpleRegression {
             sumX.setAccessible(true);
             lastData.add((double) sumX.get(this) + "");
 
-            Field sumXX = superClass.getDeclaredField("sumXX");
-            sumXX.setAccessible(true);
-            lastData.add((double) sumXX.get(this) + "");
-
             Field ybar = superClass.getDeclaredField("ybar");
             ybar.setAccessible(true);
             lastData.add((double) ybar.get(this) + "");
@@ -103,14 +110,6 @@ public class SimpleLinearRegression extends SimpleRegression {
             Field sumY = superClass.getDeclaredField("sumY");
             sumY.setAccessible(true);
             lastData.add((double) sumY.get(this) + "");
-
-            Field sumYY = superClass.getDeclaredField("sumYY");
-            sumYY.setAccessible(true);
-            lastData.add((double) sumYY.get(this) + "");
-
-            Field sumXY = superClass.getDeclaredField("sumXY");
-            sumXY.setAccessible(true);
-            lastData.add((double) sumXY.get(this) + "");
 
         } catch (Exception e) {
             MyBoxLog.console(e);

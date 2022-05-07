@@ -171,6 +171,9 @@ public class LabeledBoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
                 return;
             }
             clearMain();
+            if (!chartController.displayLabel()) {
+                return;
+            }
             dataSize = seriesList.get(startIndex + 0).getData().size();
             boxs = new Rectangle[dataSize];
             vLines = new Line[dataSize];
@@ -219,6 +222,9 @@ public class LabeledBoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
                 return;
             }
             clearMean();
+            if (!chartController.displayLabel()) {
+                return;
+            }
             dataSize = seriesList.get(0).getData().size();
             meanLines = new Line[dataSize];
             if (boxWidth <= 0) {
@@ -243,6 +249,9 @@ public class LabeledBoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
                 return;
             }
             clearOutliers();
+            if (!chartController.displayLabel()) {
+                return;
+            }
             dataSize = seriesList.get(startIndex + 5).getData().size();
             uMidOutlierLines = new Line[dataSize];
             uExOutlierLines = new Line[dataSize];
@@ -289,6 +298,9 @@ public class LabeledBoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
             List<XYChart.Series<X, Y>> seriesList = this.getData();
             int startIndex = handleMean ? 1 : 0;
             if (seriesList == null || seriesList.size() < 5 + startIndex) {
+                return;
+            }
+            if (!chartController.displayLabel()) {
                 return;
             }
             if (boxWidth <= 0) {
@@ -410,6 +422,9 @@ public class LabeledBoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
             if (seriesList == null || seriesList.size() < 1) {
                 return;
             }
+            if (!chartController.displayLabel()) {
+                return;
+            }
             if (boxWidth <= 0) {
                 boxWidth = 40;
             }
@@ -454,6 +469,9 @@ public class LabeledBoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
             List<XYChart.Series<X, Y>> seriesList = this.getData();
             int startIndex = handleMean ? 1 : 0;
             if (seriesList == null || seriesList.size() < 9 + startIndex) {
+                return;
+            }
+            if (!chartController.displayLabel()) {
                 return;
             }
             if (boxWidth <= 0) {

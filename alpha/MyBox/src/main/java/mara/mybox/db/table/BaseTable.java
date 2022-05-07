@@ -1465,11 +1465,23 @@ public abstract class BaseTable<D> {
         }
     }
 
-    public int clearData(Connection conn) {
-        if (conn == null) {
-            return -1;
+    public long clearData(Connection conn) {
+        int count = -1;
+        String clearSQL = "DELETE FROM " + tableName;
+        try ( PreparedStatement clear = conn.prepareStatement(clearSQL)) {
+            count = clear.executeUpdate();
+            if (count >= 0 && idColumn != null) {
+                String resetSQL = "ALTER TABLE " + tableName + " ALTER COLUMN " + idColumn + " RESTART WITH 1";
+                try ( PreparedStatement reset = conn.prepareStatement(resetSQL)) {
+                    reset.executeUpdate();
+                } catch (Exception e) {
+                    MyBoxLog.error(e, resetSQL);
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e, clearSQL);
         }
-        return DerbyBase.update("DELETE FROM " + tableName);
+        return count;
     }
 
     public BaseTable readDefinitionFromDB(String tableName) {

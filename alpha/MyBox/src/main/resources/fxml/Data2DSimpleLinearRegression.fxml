@@ -21,11 +21,9 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Text?>
 
 <VBox fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" spacing="5.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DSimpleLinearRegressionController">
     <children>
@@ -459,7 +457,7 @@ License:    Apache License Version 2.0
                                 </HBox>
                         <TabPane fx:id="chartTabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                            <tabs>
-                              <Tab fx:id="chartTab" text="%Chart">
+                              <Tab fx:id="chartTab" text="%Fitting">
                                  <content>
                                     <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                        <padding>
@@ -489,7 +487,7 @@ License:    Apache License Version 2.0
                                                       </CheckBox>
                                                    </children>
                                                 </FlowPane>
-                                                <Button fx:id="randomColorsButton" mnemonicParsing="false" onAction="#randomColors">
+                                                <Button fx:id="randomColorsButton" mnemonicParsing="false" onAction="#randomColorsFitting">
                                                    <graphic>
                                                       <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                          <image>
@@ -500,68 +498,33 @@ License:    Apache License Version 2.0
                                                 </Button>
                                              </children>
                                           </HBox>
-                                          <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                          <fx:include fx:id="chart" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlFxChart.fxml" VBox.vgrow="ALWAYS" />
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </Tab>
+                              <Tab fx:id="residualTab" text="%Residual">
+                                 <content>
+                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                       <padding>
+                                          <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                       </padding>
+                                       <children>
+                                          <HBox alignment="CENTER_RIGHT" spacing="2.0">
                                              <children>
-                                                <FlowPane alignment="CENTER_LEFT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
-                                                   <children>
-                                                      <Label maxWidth="1.7976931348623157E308" text="%Label" />
-                                                      <RadioButton layoutX="285.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Point">
-                                                         <toggleGroup>
-                                                            <ToggleGroup fx:id="labelGroup" />
-                                                         </toggleGroup></RadioButton>
-                                                      <RadioButton mnemonicParsing="false" text="%Value" toggleGroup="$labelGroup" />
-                                                      <RadioButton mnemonicParsing="false" text="%NameAndValue" toggleGroup="$labelGroup" />
-                                                      <RadioButton mnemonicParsing="false" text="%Name" toggleGroup="$labelGroup" />
-                                                      <CheckBox fx:id="popLabelCheck" mnemonicParsing="false" text="%Pop" />
-                                                   </children>
-                                                </FlowPane>
-                                                <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn">
+                                                <CheckBox fx:id="standardResidualCheck" minWidth="-Infinity" mnemonicParsing="false" selected="true" text="%Standardized" wrapText="true" />
+                                                <Button fx:id="randomColorsResidualButton" mnemonicParsing="false" onAction="#randomColorResidual">
                                                    <graphic>
                                                       <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                          <image>
-                                                            <Image url="@../buttons/Red/iconZoomIn.png" />
+                                                            <Image url="@../buttons/Red/iconRandom.png" />
                                                          </image>
                                                       </ImageView>
                                                    </graphic>
                                                 </Button>
-                                                <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/Red/iconPaneSize.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </Button>
-                                                                <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconPop.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                                <Button fx:id="htmlButton" mnemonicParsing="false" onAction="#htmlAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconHtml.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
                                              </children>
                                           </HBox>
-                                          <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-                                             <content>
-                                                                <AnchorPane fx:id="chartPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                                                    <children>
-                                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" fx:id="xyText" />
-                                                                    </children>
-                                                                </AnchorPane>
-                                             </content>
-                                          </ScrollPane>
+                                          <fx:include fx:id="residual" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlFxChart.fxml" VBox.vgrow="ALWAYS" />
                                        </children>
                                     </VBox>
                                  </content>

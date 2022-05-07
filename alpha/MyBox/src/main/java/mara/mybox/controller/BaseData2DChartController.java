@@ -1,7 +1,5 @@
 package mara.mybox.controller;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,26 +7,16 @@ import java.util.Map;
 import java.util.Random;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
-import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.style.HtmlStyles;
-import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.tools.DateTools;
-import mara.mybox.tools.HtmlReadTools;
-import mara.mybox.tools.HtmlWriteTools;
-import mara.mybox.value.AppPaths;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -46,8 +34,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
     @FXML
     protected ComboBox<String> categoryColumnSelector, valueColumnSelector;
-    @FXML
-    protected AnchorPane chartPane;
     @FXML
     protected ControlWebView webViewController;
 
@@ -239,7 +225,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
             @Override
             protected void whenSucceeded() {
-                drawChart();
+                outputData();
             }
 
         };
@@ -254,13 +240,16 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         }
     }
 
+    public void outputData() {
+        drawChart();
+    }
+
     public void drawChart() {
         try {
             if (outputData == null || outputData.isEmpty()) {
                 popError(message("NoData"));
                 return;
             }
-            clearChart();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -293,10 +282,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         makePalette();
     }
 
-    public void clearChart() {
-        chartPane.getChildren().clear();
-    }
-
     public void redrawChart() {
         drawChart();
     }
@@ -304,67 +289,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     @FXML
     public void refreshAction() {
         okAction();
-    }
-
-    @FXML
-    public void editAction() {
-        webViewController.editAction();
-    }
-
-    @FXML
-    public void dataAction() {
-        if (outputData == null || outputData.isEmpty()) {
-            popError(message("NoData"));
-            return;
-        }
-        DataManufactureController.open(outputColumns, outputData);
-    }
-
-    @FXML
-    @Override
-    public boolean popAction() {
-        ImagePopController.openImage(this, snapChart());
-        return true;
-    }
-
-    public Image snapChart() {
-        return NodeTools.snap(chartPane);
-    }
-
-    @FXML
-    public void htmlAction() {
-        try {
-            if (outputData == null || outputData.isEmpty()) {
-                popError(message("NoData"));
-                return;
-            }
-            Image image = snapChart();
-            File imageFile = new File(AppPaths.getGeneratedPath() + File.separator + DateTools.nowFileString() + ".jpg");
-            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-            ImageFileWriters.writeImageFile(bufferedImage, "jpg", imageFile.getAbsolutePath());
-
-            StringBuilder s = new StringBuilder();
-            String title = chartTitle();
-            if (title != null) {
-                s.append("<h1  class=\"center\">").append(title).append("</h1>\n");
-                s.append("<hr>\n");
-            }
-            s.append("<h2  class=\"center\">").append(message("Image")).append("</h2>\n");
-            s.append("<div align=\"center\"><img src=\"").append(imageFile.toURI().toString()).append("\"  style=\"max-width:95%;\"></div>\n");
-            s.append("<hr>\n");
-
-            if (webViewController != null) {
-                s.append(HtmlReadTools.body(webViewController.currentHtml(), false));
-            } else if (outputData != null) {
-                s.append(dataHtmlTable().div());
-            }
-
-            String html = HtmlWriteTools.html("", HtmlStyles.styleValue("Default"), s.toString());
-            HtmlEditorController.load(html);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
     }
 
     public void loadDataHtml() {
@@ -390,6 +314,20 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             MyBoxLog.debug(e);
             return null;
         }
+    }
+
+    @FXML
+    public void dataAction() {
+        if (outputData == null || outputData.isEmpty()) {
+            popError(message("NoData"));
+            return;
+        }
+        DataManufactureController.open(outputColumns, outputData);
+    }
+
+    @FXML
+    public void editAction() {
+        webViewController.editAction();
     }
 
     @FXML

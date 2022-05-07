@@ -7,6 +7,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import mara.mybox.controller.BaseData2DChartXYController;
+import mara.mybox.controller.ControlFxChart;
 
 /**
  * Reference:
@@ -39,6 +40,12 @@ public class LabeledScatterChart<X, Y> extends ScatterChart<X, Y> {
     public LabeledScatterChart setChartController(BaseData2DChartXYController chartController) {
         this.chartController = chartController;
         options = new XYChartOptions<>(chartController);
+        return this;
+    }
+
+    public LabeledScatterChart setChartController(BaseData2DChartXYController chartController, ControlFxChart paneController) {
+        this.chartController = chartController;
+        options = new XYChartOptions<>(chartController, paneController);
         return this;
     }
 

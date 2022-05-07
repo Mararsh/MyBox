@@ -958,6 +958,15 @@ public class ControlData2D extends BaseController {
             });
             chinaMenu.getItems().add(menu);
 
+            chinaMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("ChinaNationalBureauOfStatistics"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction((ActionEvent event) -> {
+                browse("https://data.stats.gov.cn/");
+            });
+            chinaMenu.getItems().add(menu);
+
             Menu regressionMenu = new Menu(message("Regression"), StyleTools.getIconImage("iconLinearPgression.png"));
             items.add(regressionMenu);
 

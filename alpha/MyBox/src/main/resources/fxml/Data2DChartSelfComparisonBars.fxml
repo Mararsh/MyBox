@@ -79,8 +79,18 @@ License:    Apache License Version 2.0
                                                 <Image url="@../buttons/Red/iconTips.png" />
                                             </image>
                                         </ImageView>
-                              <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                              <CheckBox fx:id="absoluateCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%CompareAbsoluateValues" wrapText="true" />
+                                        <FlowPane alignment="CENTER_RIGHT" hgap="5.0" maxWidth="1.7976931348623157E308" prefWrapLength="500.0" vgap="5.0" HBox.hgrow="ALWAYS">
+                                            <children>
+                                    <Label text="%Compare" />
+                                                <RadioButton fx:id="columnsRadio" mnemonicParsing="false" selected="true" text="%Columns">
+                                                    <toggleGroup>
+                                                        <ToggleGroup fx:id="objectGroup" />
+                                                    </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton fx:id="rowsRadio" mnemonicParsing="false" text="%Rows" toggleGroup="$objectGroup" />
+                                                <RadioButton fx:id="allRadio" mnemonicParsing="false" text="%All" toggleGroup="$objectGroup" />
+                                            </children>
+                                        </FlowPane>
                               <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
                                  <graphic>
                                     <ImageView fx:id="leftPaneControl1" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -92,18 +102,17 @@ License:    Apache License Version 2.0
                               </CheckBox>
                            </children>
                                 </HBox>
-                                  <FlowPane alignment="CENTER_RIGHT" hgap="5.0" maxWidth="1.7976931348623157E308" prefWrapLength="500.0" vgap="5.0">
-                                      <children>
+                        <FlowPane alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="600.0" vgap="2.0">
+                           <children>
                                           <Label text="%AccordingTo" />
-                                          <RadioButton fx:id="columnsRadio" mnemonicParsing="false" selected="true" text="%Columns">
-                                              <toggleGroup>
-                                                  <ToggleGroup fx:id="objectGroup" />
-                                              </toggleGroup>
-                                          </RadioButton>
-                                          <RadioButton fx:id="rowsRadio" mnemonicParsing="false" text="%Rows" toggleGroup="$objectGroup" />
-                                          <RadioButton fx:id="allRadio" mnemonicParsing="false" text="%All" toggleGroup="$objectGroup" />
-                                      </children>
-                                  </FlowPane>
+                              <RadioButton fx:id="absoluateRadio" mnemonicParsing="false" selected="true" text="%AbsoluateValue">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="compareGroup" />
+                                 </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="minMaxRadio" layoutX="237.0" layoutY="12.0" mnemonicParsing="false" text="%MinMaxRange" toggleGroup="$compareGroup" />
+                           </children>
+                        </FlowPane>
                                 <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
                                         <FlowPane alignment="CENTER_LEFT" hgap="5.0" maxWidth="1.7976931348623157E308" prefWrapLength="500.0" vgap="5.0" HBox.hgrow="ALWAYS">

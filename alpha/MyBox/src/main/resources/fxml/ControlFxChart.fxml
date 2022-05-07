@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" spacing="2.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlFxChart">
+    <children>
+      <HBox alignment="CENTER_LEFT" spacing="2.0">
+         <children>
+            <FlowPane alignment="CENTER_LEFT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label maxWidth="1.7976931348623157E308" text="%Label" />
+                  <RadioButton fx:id="pointRadio" layoutX="285.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Point">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="labelGroup" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton fx:id="valueRadio" mnemonicParsing="false" text="%Value" toggleGroup="$labelGroup" />
+                  <RadioButton fx:id="categoryValueRadio" mnemonicParsing="false" text="%CategoryAndValue" toggleGroup="$labelGroup" />
+                  <RadioButton fx:id="categoryRadio" mnemonicParsing="false" text="%Category" toggleGroup="$labelGroup" />
+                  <RadioButton fx:id="noRadio" mnemonicParsing="false" text="%NotDisplay" toggleGroup="$labelGroup" />
+                  <CheckBox fx:id="nameCheck" layoutX="274.0" layoutY="16.0" mnemonicParsing="false" text="%Name" />
+                  <CheckBox fx:id="popLabelCheck" mnemonicParsing="false" text="%Pop" />
+               </children>
+            </FlowPane>
+            <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconZoomIn.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconPaneSize.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconPop.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="htmlButton" mnemonicParsing="false" onAction="#htmlAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconHtml.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </HBox>
+      <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+         <content>
+            <AnchorPane fx:id="chartPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+         </content>
+      </ScrollPane>
+
+    </children>
+</VBox>

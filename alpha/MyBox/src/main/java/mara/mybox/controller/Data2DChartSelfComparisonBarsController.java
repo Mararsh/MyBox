@@ -73,7 +73,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
             }
             normalization = Normalization.create()
                     .setSourceMatrix(data);
-            if (absoluateCheck.isSelected()) {
+            if (absoluateRadio.isSelected()) {
                 normalization.setWidth(barWidth).setA(Normalization.Algorithm.Absoluate);
             } else {
                 normalization.setFrom(0).setTo(barWidth).setA(Normalization.Algorithm.MinMax);
@@ -115,7 +115,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
             s.append("<H2>").append(title).append("</H2>\n");
 
             if (allRadio.isSelected()) {
-                if (absoluateCheck.isSelected()) {
+                if (absoluateRadio.isSelected()) {
                     s.append("<P class=\"Calculated\" align=center>").append(message("MaxAbsolute")).append(": ")
                             .append(normalization.getMaxAbs()).append("</P>\n");
                 } else {
@@ -130,7 +130,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
             s.append("<TH align=center class=\"RowNumber\">").append(message("RowNumber")).append("</TH>\n");
             s.append("<TH align=center class=\"Category\">").append(selectedCategory).append("</TH>\n");
             if (rowsRadio.isSelected()) {
-                if (absoluateCheck.isSelected()) {
+                if (absoluateRadio.isSelected()) {
                     s.append("<TH class=\"Calculated\">").append(message("MaxAbsolute")).append("</TH>\n");
                 } else {
                     s.append("<TH class=\"Calculated\">").append(message("Maximum")).append("</TH>\n");
@@ -165,11 +165,11 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
                         .append(message("Row")).append(tableRow.get(0)).append("</TD>\n");
 
                 s.append("<TD align=center class=\"Category\">")
-                        .append(tableRow.size() > categoryIndex ? tableRow.get(categoryIndex) : "")
+                        .append(tableRow.size() > categoryIndex ? tableRow.get(categoryIndex + 1) : "")
                         .append("</TD>\n");
 
                 if (rowsRadio.isSelected()) {
-                    if (absoluateCheck.isSelected()) {
+                    if (absoluateRadio.isSelected()) {
                         s.append("<TD align=center class=\"Calculated\">")
                                 .append(normalizationValues[r].getMaxAbs()).append("</TD>\n");
                     } else {
@@ -209,7 +209,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
             return;
         }
         int colsNumber = checkedColsIndices.size();
-        if (absoluateCheck.isSelected()) {
+        if (absoluateRadio.isSelected()) {
             s.append("<TR class=\"Calculated\">\n");
             s.append("<TD class=\"RowNumber\"></TD>\n");
             s.append("<TD class=\"Category\"></TD>\n");
@@ -247,7 +247,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
             boolean allNeg, boolean allPos) {
         StringBuilder s = new StringBuilder();
         String vSpan = "<SPAN class=\"DataValue\">" + value + "</SPAN>";
-        if (absoluateCheck.isSelected()) {
+        if (absoluateRadio.isSelected()) {
             Color nColor = FxColorTools.invert(color);
             if (width == 0) {
                 if (allNeg || allPos) {

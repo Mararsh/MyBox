@@ -123,7 +123,7 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
                 data[r + rowsNumber] = data2D.doubleValue(tableRow.get(2));
             }
             normalization = Normalization.create().setSourceVector(data);
-            if (absoluateCheck.isSelected()) {
+            if (absoluateRadio.isSelected()) {
                 normalization.setWidth(barWidth).setA(Normalization.Algorithm.Absoluate);
             } else {
                 normalization.setFrom(0).setTo(barWidth).setA(Normalization.Algorithm.MinMax);
@@ -135,7 +135,7 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
             String title = data2D.displayName() + " - " + message("ComparisonBarsChart");
             s.append("<DIV align=\"center\">\n");
             s.append("<H2>").append(title).append("</H2>\n");
-            if (absoluateCheck.isSelected()) {
+            if (absoluateRadio.isSelected()) {
                 s.append("<P class=\"Calculated\" align=center>").append(message("MaxAbsolute")).append(": ")
                         .append(normalization.getMaxAbs()).append("</P>\n");
             } else {
@@ -167,9 +167,9 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
                 int pos = dataColsIndices.indexOf(categorysCol);
                 String v;
                 if (pos >= 0) {
-                    v = tableRow.get(pos);
-                } else if (tableRow.size() > 2) {
-                    v = tableRow.get(2);
+                    v = tableRow.get(pos + 1);
+                } else if (tableRow.size() > 3) {
+                    v = tableRow.get(3);
                 } else {
                     v = "";
                 }

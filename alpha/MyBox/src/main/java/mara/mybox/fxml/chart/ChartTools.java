@@ -23,7 +23,7 @@ public class ChartTools {
             = "radial-gradient(center 50% 50%, radius 50%, transparent 0%, transparent 90%, derive(-fx-bubble-fill,0%) 100%)";
 
     public enum LabelType {
-        NotDisplay, NameAndValue, Value, Name, Pop, Point
+        NotDisplay, CategoryAndValue, Value, Category, Pop, Point
     }
 
     public enum LabelLocation {

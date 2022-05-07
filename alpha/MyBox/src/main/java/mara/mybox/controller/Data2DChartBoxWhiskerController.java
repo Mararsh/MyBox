@@ -175,7 +175,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
         try {
             lines = new HashMap<>();
 
-            q0Check.setSelected(UserConfig.getBoolean(baseName + "LineQ0", true));
+            q0Check.setSelected(UserConfig.getBoolean(baseName + "LineQ0", false));
             q0Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
@@ -187,7 +187,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
                 }
             });
 
-            q1Check.setSelected(UserConfig.getBoolean(baseName + "LineQ1", true));
+            q1Check.setSelected(UserConfig.getBoolean(baseName + "LineQ1", false));
             q1Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
@@ -199,7 +199,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
                 }
             });
 
-            q2Check.setSelected(UserConfig.getBoolean(baseName + "LineQ2", true));
+            q2Check.setSelected(UserConfig.getBoolean(baseName + "LineQ2", false));
             q2Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
@@ -211,7 +211,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
                 }
             });
 
-            q3Check.setSelected(UserConfig.getBoolean(baseName + "LineQ3", true));
+            q3Check.setSelected(UserConfig.getBoolean(baseName + "LineQ3", false));
             q3Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
@@ -223,7 +223,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
                 }
             });
 
-            q4Check.setSelected(UserConfig.getBoolean(baseName + "LineQ4", true));
+            q4Check.setSelected(UserConfig.getBoolean(baseName + "LineQ4", false));
             q4Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
@@ -235,7 +235,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
                 }
             });
 
-            e4Check.setSelected(UserConfig.getBoolean(baseName + "LineQ5", true));
+            e4Check.setSelected(UserConfig.getBoolean(baseName + "LineQ5", false));
             e4Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
@@ -247,7 +247,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
                 }
             });
 
-            e3Check.setSelected(UserConfig.getBoolean(baseName + "LineQ6", true));
+            e3Check.setSelected(UserConfig.getBoolean(baseName + "LineQ6", false));
             e3Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
@@ -259,7 +259,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
                 }
             });
 
-            e2Check.setSelected(UserConfig.getBoolean(baseName + "LineQ7", true));
+            e2Check.setSelected(UserConfig.getBoolean(baseName + "LineQ7", false));
             e2Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
@@ -271,7 +271,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
                 }
             });
 
-            e1Check.setSelected(UserConfig.getBoolean(baseName + "LineQ8", true));
+            e1Check.setSelected(UserConfig.getBoolean(baseName + "LineQ8", false));
             e1Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
@@ -283,7 +283,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
                 }
             });
 
-            meanLineCheck.setSelected(UserConfig.getBoolean(baseName + "LineMean", true));
+            meanLineCheck.setSelected(UserConfig.getBoolean(baseName + "LineMean", false));
             meanLineCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
@@ -307,7 +307,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
                 }
             });
 
-            outliersCheck.setSelected(UserConfig.getBoolean(baseName + "Outliers", true));
+            outliersCheck.setSelected(UserConfig.getBoolean(baseName + "Outliers", false));
             outliersCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
@@ -324,7 +324,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
             e2Check.disableProperty().bind(outliersCheck.selectedProperty().not());
             e1Check.disableProperty().bind(outliersCheck.selectedProperty().not());
 
-            meanCheck.setSelected(UserConfig.getBoolean(baseName + "Mean", true));
+            meanCheck.setSelected(UserConfig.getBoolean(baseName + "Mean", false));
             meanCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
@@ -564,7 +564,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartXYController
                     }
                 }
             }
-            writeXYChart(outputColumns, outputData, displayCols, false);
+            writeXYChart(xyChart, outputColumns, outputData, displayCols, false);
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }

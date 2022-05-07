@@ -4,7 +4,6 @@ import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
 import javafx.geometry.Side;
 import javafx.scene.chart.Chart;
 import javafx.scene.control.CheckBox;
@@ -13,13 +12,11 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.chart.ChartTools.LabelType;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -31,19 +28,20 @@ import mara.mybox.value.UserConfig;
  */
 public abstract class BaseData2DChartFxController extends BaseData2DChartController {
 
-    protected LabelType labelType;
     protected int tickFontSize, titleFontSize, labelFontSize;
     protected Side titleSide, legendSide;
     protected Chart chart;
 
     @FXML
+    protected ControlFxChart chartController;
+    @FXML
     protected TextField titleInput;
     @FXML
     protected ComboBox<String> titleFontSizeSelector;
     @FXML
-    protected CheckBox autoTitleCheck, popLabelCheck, animatedCheck;
+    protected CheckBox autoTitleCheck, animatedCheck;
     @FXML
-    protected ToggleGroup titleSideGroup, labelGroup, legendGroup;
+    protected ToggleGroup titleSideGroup, legendGroup;
 
     public abstract void makeChart();
 
@@ -56,6 +54,7 @@ public abstract class BaseData2DChartFxController extends BaseData2DChartControl
 
             initPlotTab();
 
+            initChartPane();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -67,26 +66,6 @@ public abstract class BaseData2DChartFxController extends BaseData2DChartControl
             if (tickFontSize < 0) {
                 tickFontSize = 12;
             }
-
-            labelGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    checkLabelType();
-                    redrawChart();
-                }
-            });
-            checkLabelType();
-
-            popLabelCheck.setSelected(UserConfig.getBoolean(baseName + "PopLabel", true));
-            popLabelCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "PopLabel", popLabelCheck.isSelected());
-                    if (chart != null) {
-                        redrawChart();
-                    }
-                }
-            });
 
             autoTitleCheck.setSelected(UserConfig.getBoolean(baseName + "AutoTitle", true));
             autoTitleCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
@@ -202,25 +181,16 @@ public abstract class BaseData2DChartFxController extends BaseData2DChartControl
         }
     }
 
-    public void checkLabelType() {
+    public void initChartPane() {
         try {
-            if (isSettingValues) {
-                return;
-            }
-            String value = ((RadioButton) legendGroup.getSelectedToggle()).getText();
-            if (message("NameAndValue").equals(value)) {
-                labelType = LabelType.NameAndValue;
-            } else if (message("Value").equals(value)) {
-                labelType = LabelType.Value;
-            } else if (message("Name").equals(value)) {
-                labelType = LabelType.Name;
-            } else if (message("Point").equals(value)) {
-                labelType = LabelType.Point;
-            } else if (message("NotDisplay").equals(value)) {
-                labelType = LabelType.NotDisplay;
-            } else {
-                labelType = LabelType.NotDisplay;
-            }
+            chartController.initType("Point");
+
+            chartController.redrawNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    redrawChart();
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -281,7 +251,7 @@ public abstract class BaseData2DChartFxController extends BaseData2DChartControl
     }
 
     public boolean displayLabel() {
-        return labelType != null && labelType != LabelType.NotDisplay;
+        return chartController.labelType != null && chartController.labelType != LabelType.NotDisplay;
     }
 
     public void checkChartType() {
@@ -330,11 +300,12 @@ public abstract class BaseData2DChartFxController extends BaseData2DChartControl
             chart.setAnimated(animatedCheck.isSelected());
             chart.setTitle(titleInput.getText());
             chart.setTitleSide(titleSide);
-            chartPane.getChildren().add(chart);
             AnchorPane.setTopAnchor(chart, 2d);
             AnchorPane.setBottomAnchor​(chart, 2d);
             AnchorPane.setLeftAnchor(chart, 2d);
             AnchorPane.setRightAnchor​(chart, 2d);
+
+            chartController.setChart(chart, outputColumns, outputData);
 
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -358,71 +329,20 @@ public abstract class BaseData2DChartFxController extends BaseData2DChartControl
         return titleInput.getText();
     }
 
-    @Override
     public void clearChart() {
         chart = null;
-        chartPane.getChildren().clear();
-    }
-
-    @FXML
-    public void paneSize() {
-        if (chartPane == null || chart == null) {
-            return;
-        }
-        try {
-            AnchorPane.setTopAnchor(chart, 2d);
-            AnchorPane.setBottomAnchor​(chart, 2d);
-            AnchorPane.setLeftAnchor(chart, 2d);
-            AnchorPane.setRightAnchor​(chart, 2d);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
-    public void zoomIn() {
-        if (chartPane == null || chart == null) {
-            return;
-        }
-        try {
-            Bounds bounds = chart.getBoundsInLocal();
-            AnchorPane.clearConstraints(chart);
-            chart.setPrefSize(bounds.getWidth() + 40, bounds.getHeight() + 40);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public Image snapChart() {
-        return NodeTools.snap(chart);
-    }
-
-    @Override
-    public boolean controlAlt2() {
-        paneSize();
-        return true;
-    }
-
-    @Override
-    public boolean controlAlt3() {
-        zoomIn();
-        return true;
+        chartController.chartPane.getChildren().clear();
     }
 
     /*
         get/set
      */
-    public CheckBox getPopLabelCheck() {
-        return popLabelCheck;
-    }
-
-    public LabelType getLabelType() {
-        return labelType;
-    }
-
     public int getLabelFontSize() {
         return labelFontSize;
+    }
+
+    public ControlFxChart getChartController() {
+        return chartController;
     }
 
 }

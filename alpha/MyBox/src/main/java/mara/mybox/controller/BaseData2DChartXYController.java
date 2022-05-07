@@ -666,15 +666,17 @@ public abstract class BaseData2DChartXYController extends BaseData2DChartFxContr
     }
 
     public void writeXYChart(List<Data2DColumn> columns, List<List<String>> data, boolean rowNumber) {
-        writeXYChart(columns, data, null, rowNumber);
+        writeXYChart(xyChart, columns, data, null, rowNumber);
     }
 
-    // The first column is  and the second columns is "Category"
-    public void writeXYChart(List<Data2DColumn> columns, List<List<String>> data, List<Integer> colIndics, boolean rowNumber) {
+    // The first column is and the second columns is "Category"
+    public void writeXYChart(XYChart targetChart, List<Data2DColumn> columns, List<List<String>> data,
+            List<Integer> colIndics, boolean rowNumber) {
         try {
             if (columns == null || data == null) {
                 return;
             }
+            targetChart.getData().clear();
             XYChart.Data xyData;
             int index = 0, startIndex = rowNumber ? 1 : 0;
             for (int col = 1 + startIndex; col < columns.size(); col++) {
@@ -694,13 +696,13 @@ public abstract class BaseData2DChartXYController extends BaseData2DChartFxContr
                     categoryValue = data2D.doubleValue(category);
                     categoryCoordinateValue = ChartTools.coordinateValue(cCoordinate, categoryValue);
                     if (isXY()) {
-                        if (xyChart.getXAxis() instanceof NumberAxis) {
+                        if (targetChart.getXAxis() instanceof NumberAxis) {
                             xyData = new XYChart.Data(categoryCoordinateValue, numberCoordinateValue);
                         } else {
                             xyData = new XYChart.Data(category, numberCoordinateValue);
                         }
                     } else {
-                        if (xyChart.getYAxis() instanceof NumberAxis) {
+                        if (targetChart.getYAxis() instanceof NumberAxis) {
                             xyData = new XYChart.Data(numberCoordinateValue, categoryCoordinateValue);
                         } else {
                             xyData = new XYChart.Data(numberCoordinateValue, category);
@@ -709,7 +711,7 @@ public abstract class BaseData2DChartXYController extends BaseData2DChartFxContr
                     series.getData().add(xyData);
                 }
 
-                xyChart.getData().add(index++, series);
+                targetChart.getData().add(index++, series);
             }
 
         } catch (Exception e) {

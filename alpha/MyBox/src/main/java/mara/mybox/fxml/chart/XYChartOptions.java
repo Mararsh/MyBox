@@ -8,6 +8,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import mara.mybox.controller.BaseData2DChartXYController;
+import mara.mybox.controller.ControlFxChart;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.chart.ChartTools.ChartCoordinate;
@@ -24,22 +25,24 @@ import static mara.mybox.value.Languages.message;
 public class XYChartOptions<X, Y> {
 
     protected BaseData2DChartXYController chartController;
+    protected ControlFxChart paneController;
     protected XYChart xyChart;
     protected LabelType labelType;
     protected ChartCoordinate xCoordinate, yCoordinate, sCoordinate;
     protected int labelFontSize, scale;
-    protected boolean popLabel, isXY, isCategoryNumbers;
+    protected boolean popLabel, disName, isXY, isCategoryNumbers;
     protected ChartTools.LabelLocation labelLocation;
     protected Map<Node, Node> nodeLabels = new HashMap<>();
 
     public XYChartOptions(XYChart xyChart) {
         this.xyChart = xyChart;
-        labelType = LabelType.NameAndValue;
+        labelType = LabelType.CategoryAndValue;
         xCoordinate = ChartCoordinate.Cartesian;
         yCoordinate = ChartCoordinate.Cartesian;
         labelFontSize = 10;
         scale = 2;
         popLabel = true;
+        disName = false;
         isXY = true;
         isCategoryNumbers = false;
         labelLocation = ChartTools.LabelLocation.Above;
@@ -47,21 +50,32 @@ public class XYChartOptions<X, Y> {
 
     public XYChartOptions(BaseData2DChartXYController chartController) {
         this.chartController = chartController;
+        this.paneController = chartController.getChartController();
+        refreshOptions();
+    }
+
+    public XYChartOptions(BaseData2DChartXYController chartController, ControlFxChart paneController) {
+        this.chartController = chartController;
+        this.paneController = paneController;
         refreshOptions();
     }
 
     public final void refreshOptions() {
+        if (chartController == null) {
+            return;
+        }
         xyChart = chartController.getXyChart();
         labelFontSize = chartController.getLabelFontSize();
-        labelType = chartController.getLabelType();
         scale = chartController.getScale();
-        popLabel = chartController.getPopLabelCheck().isSelected();
         isXY = chartController.isXY();
         isCategoryNumbers = chartController.isCategoryNumbers();
         xCoordinate = chartController.getxCoordinate();
         yCoordinate = chartController.getyCoordinate();
         sCoordinate = chartController.getsCoordinate();
         labelLocation = chartController.getLabelLocation();
+        labelType = paneController.getLabelType();
+        popLabel = paneController.popLabel();
+        disName = paneController.disName();
     }
 
     protected void makeLabels(XYChart.Series<X, Y> series, ObservableList<Node> nodes) {
@@ -115,8 +129,8 @@ public class XYChartOptions<X, Y> {
 
             if (item.getExtraValue() != null) {
                 double d = (double) item.getExtraValue();
-                extra = "\n" + message("Size") + ": " + DoubleTools.format(d, scale);
-                extraDis = "\n" + message("Size") + ": " + DoubleTools.format(ChartTools.realValue(sCoordinate, d), scale);
+                extra = "\n" + (disName ? message("Size") + ": " : "") + DoubleTools.format(d, scale);
+                extraDis = "\n" + (disName ? message("Size") + ": " : "") + DoubleTools.format(ChartTools.realValue(sCoordinate, d), scale);
             } else {
                 extra = "";
                 extraDis = "";
@@ -132,15 +146,15 @@ public class XYChartOptions<X, Y> {
             String display = null;
 
             switch (labelType) {
-                case Name:
-                    display = categoryName + ": " + categoryDis;
+                case Category:
+                    display = (disName ? categoryName + ": " : "") + categoryDis;
                     break;
                 case Value:
-                    display = numberName + ": " + numberDis + extraDis;
+                    display = (disName ? numberName + ": " : "") + numberDis + extraDis;
                     break;
-                case NameAndValue:
-                    display = categoryName + ": " + categoryDis + "\n"
-                            + numberName + ": " + numberDis + extraDis;
+                case CategoryAndValue:
+                    display = (disName ? categoryName + ": " : "") + categoryDis + "\n"
+                            + (disName ? numberName + ": " : "") + numberDis + extraDis;
                     break;
             }
             if (display != null && !display.isBlank()) {
@@ -204,6 +218,10 @@ public class XYChartOptions<X, Y> {
     public XYChartOptions<X, Y> setIsXY(boolean isXY) {
         this.isXY = isXY;
         return this;
+    }
+
+    public void setPaneController(ControlFxChart paneController) {
+        this.paneController = paneController;
     }
 
 }

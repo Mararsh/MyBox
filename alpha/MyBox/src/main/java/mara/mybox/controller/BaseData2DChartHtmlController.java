@@ -4,8 +4,10 @@ import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import static mara.mybox.value.Languages.message;
@@ -26,7 +28,9 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
     protected EventListener clickListener;
 
     @FXML
-    protected CheckBox absoluateCheck;
+    protected ToggleGroup compareGroup;
+    @FXML
+    protected RadioButton absoluateRadio, minMaxRadio;
     @FXML
     protected ComboBox<String> widthSelector;
 
@@ -104,11 +108,15 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
                 }
             });
 
-            absoluateCheck.setSelected(UserConfig.getBoolean(baseName + "Absoluate", true));
-            absoluateCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            if (UserConfig.getBoolean(baseName + "Absoluate", true)) {
+                absoluateRadio.fire();
+            } else {
+                minMaxRadio.fire();
+            }
+            compareGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "Absoluate", absoluateCheck.isSelected());
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    UserConfig.setBoolean(baseName + "Absoluate", absoluateRadio.isSelected());
                     okAction();
                 }
             });
@@ -147,7 +155,10 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
             return true;
         }
         boolean ok = super.checkOptions();
-        categorysCol = data2D.colOrder(selectedCategory);
+        categorysCol = -1;
+        if (data2D != null) {
+            categorysCol = data2D.colOrder(selectedCategory);
+        }
         return ok;
     }
 

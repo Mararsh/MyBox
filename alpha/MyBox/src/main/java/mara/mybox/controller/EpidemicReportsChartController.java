@@ -176,24 +176,24 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                         drawChart();
                     });
 
-            labelType = LabelType.NameAndValue;
+            labelType = LabelType.CategoryAndValue;
             labelGroup.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) -> {
                 if (isSettingValues || newValue == null) {
                     return;
                 }
                 String value = ((RadioButton) newValue).getText();
                 if (message("NameAndValue").equals(value)) {
-                    labelType = LabelType.NameAndValue;
+                    labelType = LabelType.CategoryAndValue;
                 } else if (message("Value").equals(value)) {
                     labelType = LabelType.Value;
                 } else if (message("Name").equals(value)) {
-                    labelType = LabelType.Name;
+                    labelType = LabelType.Category;
                 } else if (message("NotDisplay").equals(value)) {
                     labelType = LabelType.NotDisplay;
                 } else if (message("Pop").equals(value)) {
                     labelType = LabelType.Pop;
                 } else {
-                    labelType = LabelType.NameAndValue;
+                    labelType = LabelType.CategoryAndValue;
                 }
                 drawChart();
             });
@@ -787,13 +787,13 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 double percent = DoubleTools.scale(d * 100 / total, 1);
                 String labelValue = StringTools.format(d);
                 switch (labelType) {
-                    case Name:
+                    case Category:
                         label = name;
                         break;
                     case Value:
                         label = percent + "% " + labelValue;
                         break;
-                    case NameAndValue:
+                    case CategoryAndValue:
                         label = name + " " + percent + "% " + labelValue;
                         break;
                     case NotDisplay:
@@ -876,10 +876,10 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
         } else {
             String valueLabel;
             switch (labelType) {
-                case Name:
+                case Category:
                     valueLabel = finalLabel;
                     break;
-                case NameAndValue:
+                case CategoryAndValue:
                     valueLabel = finalLabel + " " + finalValue;
                     break;
                 case Value:
@@ -1204,10 +1204,10 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 }
                 String label;
                 switch (labelType) {
-                    case Name:
+                    case Category:
                         label = "<div>" + name + "</div>";
                         break;
-                    case NameAndValue:
+                    case CategoryAndValue:
                         label = "<div>" + name + value + "</div>";
                         break;
                     case NotDisplay:
