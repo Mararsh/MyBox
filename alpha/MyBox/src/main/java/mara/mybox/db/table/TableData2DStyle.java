@@ -186,6 +186,7 @@ public class TableData2DStyle extends BaseTable<Data2DStyle> {
         if (conn == null || sourceid < 0 || targetid < 0 || sourceid == targetid) {
             return -1;
         }
+        clear(conn, targetid);
         int count = 0;
         try ( PreparedStatement statement = conn.prepareStatement(QueryStyles)) {
             statement.setLong(1, sourceid);

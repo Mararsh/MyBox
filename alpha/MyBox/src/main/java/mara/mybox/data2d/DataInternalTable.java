@@ -20,7 +20,7 @@ public class DataInternalTable extends DataTable {
                     "FILE_BACKUP", "TEXT_CLIPBOARD", "WEB_HISTORY",
                     "MEDIA", "MEDIA_LIST", "ALARM_CLOCK",
                     "DATA2D_DEFINITION", "DATA2D_COLUMN", "DATA2D_CELL", "DATA2D_STYLE",
-                    "TREE", "TREE_NODE", "TAG", "TREE_NODE_TAG",
+                    "TREE_NODE", "TAG", "TREE_NODE_TAG",
                     "MYBOX_LOG", "VISIT_HISTORY", "SYSTEM_CONF", "USER_CONF",
                     "STRING_VALUE", "STRING_VALUES", "FLOAT_MATRIX", "NAMED_VALUES", "BLOB_VALUE"
             ));

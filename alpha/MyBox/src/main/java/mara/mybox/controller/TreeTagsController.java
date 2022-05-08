@@ -262,7 +262,7 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
             treeController.queryConditionsString += " " + tag.getTag();
         }
         treeController.loadTableData();
-        treeController.showLeftPane();
+        treeController.showNodesList(true);
     }
 
     @FXML

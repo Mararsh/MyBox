@@ -10,8 +10,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextInputControl;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
@@ -85,26 +87,67 @@ public class ImageBase64Controller extends BaseController {
             popError(message("InvalidParameter"));
             return;
         }
-        if (sourceFile.length() > 100 * 1024) {
-            if (!PopTools.askSure(this, baseTitle, message("GeneratedDataMayLarge"))) {
+        String format = ((RadioButton) formatGroup.getSelectedToggle()).getText();
+        convert(this, sourceFile, resultArea, bottomLabel, format, tagCheck.isSelected());
+    }
+
+    @FXML
+    @Override
+    public void saveAction() {
+        saveAsAction();
+    }
+
+    @FXML
+    @Override
+    public void saveAsAction() {
+        String format = ((RadioButton) formatGroup.getSelectedToggle()).getText();
+        saveAs(this, resultArea.getText(), format);
+    }
+
+    @FXML
+    @Override
+    public void clearAction() {
+        resultArea.clear();
+        bottomLabel.setText("");
+    }
+
+    @FXML
+    @Override
+    public void copyAction() {
+        TextClipboardTools.copyToSystemClipboard(this, resultArea.getText());
+
+    }
+
+    public static void convert(BaseController controller, File file, TextInputControl resultArea, Label label,
+            String format, boolean withTag) {
+        if (file == null) {
+            controller.popError(message("InvalidParameter"));
+            return;
+        }
+        if (file.length() > 100 * 1024) {
+            if (!PopTools.askSure(controller, controller.baseTitle, message("GeneratedDataMayLarge"))) {
                 return;
             }
         }
-        clearAction();
-        String format = ((RadioButton) formatGroup.getSelectedToggle()).getText();
-        synchronized (this) {
-            if (task != null) {
-                task.cancel();
+        if (!(controller instanceof MenuHtmlCodesController)) {
+            resultArea.clear();
+        }
+        if (label != null) {
+            label.setText("");
+        }
+        synchronized (controller) {
+            if (controller.task != null) {
+                controller.task.cancel();
             }
-            task = new SingletonTask<Void>(this) {
+            controller.task = new SingletonTask<Void>(controller) {
 
                 private String imageBase64;
 
                 @Override
                 protected boolean handle() {
                     try {
-                        imageBase64 = BufferedImageTools.base64(sourceFile, format);
-                        if (tagCheck.isSelected()) {
+                        imageBase64 = BufferedImageTools.base64(file, format);
+                        if (withTag) {
                             imageBase64 = "<img src=\"data:image/" + format + ";base64," + imageBase64 + "\" >";
                         }
                         return true;
@@ -118,9 +161,9 @@ public class ImageBase64Controller extends BaseController {
                 protected void whenSucceeded() {
                     long len = imageBase64.length();
                     String lenString = StringTools.format(len);
-                    if (len > 1024 * 1024) {
+                    if (len > 500 * 1024) {
                         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                        alert.setTitle(baseTitle);
+                        alert.setTitle(controller.baseTitle);
                         alert.setContentText(message("Length") + ": " + lenString);
                         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                         ButtonType buttonLoad = new ButtonType(message("Load"));
@@ -136,46 +179,41 @@ public class ImageBase64Controller extends BaseController {
                             return;
                         }
                         if (result.get() == buttonSave) {
-                            saveAs(imageBase64);
+                            saveAs(controller, imageBase64, format);
                             return;
                         }
                     }
-                    resultArea.setText(imageBase64);
-                    bottomLabel.setText(lenString);
+                    if (controller instanceof MenuHtmlCodesController) {
+                        ((MenuHtmlCodesController) controller).insertText(imageBase64);
+                    } else {
+                        resultArea.setText(imageBase64);
+                    }
+                    if (label != null) {
+                        label.setText(lenString);
+                    }
                 }
 
             };
-            start(task);
+            controller.start(controller.task);
         }
     }
 
-    @FXML
-    @Override
-    public void saveAction() {
-        saveAsAction();
-    }
-
-    @FXML
-    @Override
-    public void saveAsAction() {
-        saveAs(resultArea.getText());
-    }
-
-    public void saveAs(String results) {
+    public static void saveAs(BaseController controller, String results, String format) {
         if (results == null || results.isEmpty()) {
-            popError(message("NoData"));
+            controller.popError(message("NoData"));
             return;
         }
-        String name = sourceFile != null ? FileNameTools.prefix(sourceFile.getName()) : DateTools.nowFileString();
-        File file = chooseSaveFile(VisitHistory.FileType.Text, name + "_Base64");
+        String name = controller.sourceFile != null
+                ? FileNameTools.prefix(controller.sourceFile.getName()) : DateTools.nowFileString();
+        File file = controller.chooseSaveFile(VisitHistory.FileType.Text, name + "_" + format + "_Base64");
         if (file == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null) {
-                task.cancel();
+        synchronized (controller) {
+            if (controller.task != null) {
+                controller.task.cancel();
             }
-            task = new SingletonTask<Void>(this) {
+            controller.task = new SingletonTask<Void>(controller) {
 
                 @Override
                 protected boolean handle() {
@@ -184,27 +222,13 @@ public class ImageBase64Controller extends BaseController {
 
                 @Override
                 protected void whenSucceeded() {
-                    recordFileWritten(file);
-                    browse(file.getParentFile());
+                    controller.recordFileWritten(file);
+                    controller.browse(file.getParentFile());
                 }
 
             };
-            start(task);
+            controller.start(controller.task);
         }
-
-    }
-
-    @FXML
-    @Override
-    public void clearAction() {
-        resultArea.clear();
-        bottomLabel.setText("");
-    }
-
-    @FXML
-    @Override
-    public void copyAction() {
-        TextClipboardTools.copyToSystemClipboard(this, resultArea.getText());
     }
 
 }

@@ -4,21 +4,23 @@
 这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。
 
 ## 新内容
-2022-4-3 版本6.5.4          
+2022-5-8 版本6.5.5          
 
-* 树形信息：管理树型；编辑节点；带标签的导入、导出；输出树图；提供示例；延展为笔记、收藏的网址、JShell代码、Javascript代码、SQL代码。                
-* 完善：JShell可以执行多行语句；管理和执行数据表的查询语句；网页“左键点击链接或图片时”有更多选项；输入框的历史值用弹出窗口实现。                     
-* 解决：批量图片OCR时信息粒度没有生效；编辑网页时保存新网页会弹出错误；以时间查询树时无返回；
-数据表定义“定界标识符”后可能出错；文件编辑器“自动保存”失效。        
+* 数据编辑：设置单元风格；可把第一行设为列名；转置可对所有页实施，可选把第一列设为列名；数据库执行结果不限行数；示例数据。                
+* 数据计算：描述性统计可计算更多的值；统计/百分比/归一化可选按照列/行/全部；计算频度；简单线性回归。                
+* 数据图：XY表的类别列可为字串或数字；显示图的数据；比较条图；自比较条图；箱线图。
+* 树形信息：可显示序列号；可选复制子节点或所有后代；左键点击节点的选项。                     
+* 其它：生成/粘贴图片的base64代码；在调色盘上输入/选择新颜色；。                     
+* 解决：数据文件的自动备份失效；数据统计所有页时所选列未生效；另存文本文件时没有按要求删除BOM；无法清除所有颜色。        
  
-[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.4)             
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.5)             
    
 
 ## 下载与运行
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases)目录下（点击上面的`releases`页签）。       
 
 ### 源码
-[MyBox-6.5.4-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.4/MyBox-6.5.4-src.zip)   40M（大约值）       
+[MyBox-6.5.5-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.5/MyBox-6.5.5-src.zip)   40M（大约值）       
 
 关于源码的结构、编辑、和构建，请参考[开发指南](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-DevGuide-2.1-zh.pdf) 和
 [打包步骤](https://mararsh.github.io/MyBox/pack_steps.html)       
@@ -29,9 +31,9 @@
 
 | 平台 | 链接 | 大小（大约值） | 启动文件 |
 | --- | --- | --- |  --- |
-| win10 x64 | [MyBox-6.5.4-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.4/MyBox-6.5.4-win10-x64.zip)  | 220MB | MyBox.exe |
-| CentOS 7 x64 | [MyBox-6.5.4-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.4/MyBox-6.5.4-CentOS7-x64.tar.gz)  | 252MB  | bin/MyBox  |
-| mac x64| [MyBox-6.5.4-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.4/MyBox-6.5.4-mac.dmg)  | 232MB  |  MyBox-6.5.4.app   |
+| win10 x64 | [MyBox-6.5.5-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.5/MyBox-6.5.5-win10-x64.zip)  | 220MB | MyBox.exe |
+| CentOS 7 x64 | [MyBox-6.5.5-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.5/MyBox-6.5.5-CentOS7-x64.tar.gz)  | 252MB  | bin/MyBox  |
+| mac x64| [MyBox-6.5.5-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.5/MyBox-6.5.5-mac.dmg)  | 232MB  |  MyBox-6.5.5.app   |
 
 双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。        
   
@@ -43,14 +45,14 @@
 
 | 平台 | 链接 | 大小（大约值） | 运行需要 |
 | --- | --- | --- |  --- |
-| win | [MyBox-6.5.4-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.4/MyBox-6.5.4-win-jar.zip)  | 156MB | Java 17或更高版本 |
-| linux | [MyBox-6.5.4-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.4/MyBox-6.5.4-linux-jar.zip)  | 186MB  | Java 17或更高版本 |
-| mac | [MyBox-6.5.4-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.4/MyBox-6.5.4-mac-jar.zip)  |  159MB  | Java 16 |
+| win | [MyBox-6.5.5-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.5/MyBox-6.5.5-win-jar.zip)  | 156MB | Java 18或更高版本 |
+| linux | [MyBox-6.5.5-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.5/MyBox-6.5.5-linux-jar.zip)  | 186MB  | Java 18或更高版本 |
+| mac | [MyBox-6.5.5-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.5/MyBox-6.5.5-mac-jar.zip)  |  159MB  | Java 16 |
 
 执行以下命令来启动程序：       
-<PRE><CODE>     java   -jar   MyBox-6.5.4.jar</CODE></PRE>       
+<PRE><CODE>     java   -jar   MyBox-6.5.5.jar</CODE></PRE>       
 程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：       
-<PRE><CODE>     java   -jar   MyBox-6.5.4.jar   /tmp/a1.jpg</CODE></PRE>       
+<PRE><CODE>     java   -jar   MyBox-6.5.5.jar   /tmp/a1.jpg</CODE></PRE>       
 
 ### 其它下载地址       
 从云盘下载：  [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)       
@@ -70,9 +72,9 @@
 
 | 平台 | MyBox配置文件的目录 |
 | --- | --- |
-| win | `C:\用户\用户名\mybox\MyBox_v6.5.4.ini`  |
-| linux | `/home/用户名/mybox/MyBox_v6.5.4.ini` |
-| mac | `/Users/用户名/mybox/MyBox_v6.5.4.ini` |       
+| win | `C:\用户\用户名\mybox\MyBox_v6.5.5.ini`  |
+| linux | `/home/用户名/mybox/MyBox_v6.5.5.ini` |
+| mac | `/Users/用户名/mybox/MyBox_v6.5.5.ini` |       
 
 可以临时改变配置文件：在命令行启动jar包时设置参数"config=\"配置文件名\""。       
 利用“设置”功能也可以修改配置参数。       
@@ -91,7 +93,7 @@
 # 文档       
 | 文档名 | 版本 | 修改时间  | 链接 |       
 | --- | --- | --- | --- |
-| 开发日志 | 6.5.4 | 2022-4-3 | [html](#devLog) |
+| 开发日志 | 6.5.5 | 2022-5-8 | [html](#devLog) |
 | 快捷键 | 6.4.7 |  2021-8-17 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
 | 打包步骤 | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps.html) |
 | 开发指南 | 2.1 |  2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf) |
@@ -161,12 +163,13 @@ MyBox基于以下开放资源：
 | sfds | 书法 | http://www.sfds.cn/725B/ |
 | PaginatedPdfTable | PDF | https://github.com/eduardohl/Paginated-PDFBox-Table-Sample |
 | jsoup | DOM | https://jsoup.org/ |       
-| 微博 | 素材 | https://weibo.com/2328516855/LhFIHy26O#repost |
+| 微博 | 素材 | https://weibo.com/2328516855/LhFIHy26O |
 | 知乎 | 素材 | https://www.zhihu.com/question/41580677/answer/1300242801 |
+| commons-math | 计算 | https://commons.apache.org/proper/commons-math/index.html |
 
 
 # 当前版本       
-当前是版本6.5.4，已实现的特点概述如下:      
+当前是版本6.5.5，已实现的特点概述如下:      
   
 * [跨平台](#cross-platform)
 * [国际化](#international)
@@ -245,7 +248,7 @@ MyBox基于以下开放资源：
 * [帮助](#helps)
 
 ## 跨平台<a id="cross-platform" />       
-MyBox用纯Java实现且只基于开放资源，MyBox可运行于支持Java 17的平台。       
+MyBox用纯Java实现且只基于开放资源，MyBox可运行于支持Java 18的平台。       
 MyBox v5.3以前的版本均基于Java 8。       
 
 ## 国际化<a id="international" />       
@@ -768,7 +771,7 @@ MyBox v5.3以前的版本均基于Java 8。
 1. 支持图像格式：png,jpg,bmp,tif,gif,ico,wbmp,pnm,pcx。可读Adobe YCCK/CMYK的jpg图像。
 2. 像素计算器
 3. 卷积核管理器
-
+4. 把图片转换为base64码           
 
 ### 大图片的处理<a id="bigImage" />
 1. 评估加载整个图像所需内存,判断能否加载整个图像。

@@ -206,13 +206,13 @@ public abstract class Data2D_Edit extends Data2D_Data {
             statement.setLong(1, d2did);
             statement.setLong(2, startRowOfCurrentPage);
             statement.setLong(3, endRowOfCurrentPage);
-            ResultSet results = statement.executeQuery();
-            while (results.next()) {
-                Data2DStyle d = tableData2DStyle.readData(results);
-                if (d == null) {
-                    continue;
+            try ( ResultSet results = statement.executeQuery()) {
+                while (results.next()) {
+                    Data2DStyle d = tableData2DStyle.readData(results);
+                    if (d != null) {
+                        setStyle(d.getRow() - startRowOfCurrentPage, d.getColName(), d.getStyle());
+                    }
                 }
-                setStyle(d.getRow() - startRowOfCurrentPage, d.getColName(), d.getStyle());
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -367,8 +367,6 @@ public abstract class Data2D_Edit extends Data2D_Data {
             if (!saveColumns(conn, target, source.getColumns())) {
                 return false;
             }
-            long targetid = target.getD2did();
-            target.getTableData2DStyle().clear(conn, targetid);
             target.getTableData2DStyle().copyStyles(conn, source.getD2did(), target.getD2did());
             return target.savePageStyles(conn);
         } catch (Exception e) {

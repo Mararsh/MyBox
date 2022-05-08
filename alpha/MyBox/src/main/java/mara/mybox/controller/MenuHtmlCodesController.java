@@ -18,11 +18,9 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Window;
-import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -426,27 +424,7 @@ public class MenuHtmlCodesController extends MenuTextEditController {
         if (file == null) {
             return;
         }
-        SingletonTask htmlTask = new SingletonTask<Void>(this) {
-            private String imageBase64;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    imageBase64 = BufferedImageTools.base64(file, "jpg");
-                    imageBase64 = "<img src=\"data:image/jpg;base64," + imageBase64 + "\" >";
-                    return true;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                insertText(imageBase64);
-            }
-        };
-        start(htmlTask, true);
+        ImageBase64Controller.convert(this, file, textInput, null, "jpg", true);
     }
 
     @FXML
