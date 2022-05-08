@@ -31,14 +31,14 @@ public class SimpleLinearRegression extends SimpleRegression {
 
     private List<Data2DColumn> makeColumns() {
         columns = new ArrayList<>();
-        columns.add(new Data2DColumn(message("RowsNumber"), ColumnDefinition.ColumnType.Long));
+        columns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.Long));
+        columns.add(new Data2DColumn(message("NumberOfObservations"), ColumnDefinition.ColumnType.Long));
         columns.add(new Data2DColumn(xName, ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn(yName, ColumnDefinition.ColumnType.Double));
 //        columns.add(new Data2DColumn(yName + "_" + message("Predict"), ColumnDefinition.ColumnType.Double));
 //        columns.add(new Data2DColumn(yName + "_" + message("DataError"), ColumnDefinition.ColumnType.Double));
 //        columns.add(new Data2DColumn(yName + "_" + message("ConfidenceLowerLimit"), ColumnDefinition.ColumnType.Double));
 //        columns.add(new Data2DColumn(yName + "_" + message("ConfidenceUpperLimit"), ColumnDefinition.ColumnType.Double));
-        columns.add(new Data2DColumn(message("NumberOfObservations"), ColumnDefinition.ColumnType.Long));
         columns.add(new Data2DColumn(message("Slope"), ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn(message("Intercept"), ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn(message("CoefficientOfDetermination"), ColumnDefinition.ColumnType.Double));
@@ -64,6 +64,7 @@ public class SimpleLinearRegression extends SimpleRegression {
         super.addData(x, y);
         lastData = new ArrayList<>();
         lastData.add(rowIndex + "");
+        lastData.add(getN() + "");
         lastData.add(x + "");
         lastData.add(y + "");
 
@@ -76,7 +77,6 @@ public class SimpleLinearRegression extends SimpleRegression {
 //        lastData.add((py - y) + "");
 //        lastData.add(DoubleTools.format(intercept + (slope - slopeError) * x, scale));
 //        lastData.add(DoubleTools.format(intercept + (slope + slopeError) * x, scale));
-        lastData.add(getN() + "");
         lastData.add(getSlope() + "");
         lastData.add(getIntercept() + "");
         lastData.add(getRSquare() + "");

@@ -9,7 +9,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ColumnDefinition;
@@ -34,8 +33,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
     @FXML
     protected ComboBox<String> categoryColumnSelector, valueColumnSelector;
-    @FXML
-    protected ControlWebView webViewController;
 
     @Override
     public void initControls() {
@@ -43,10 +40,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             super.initControls();
 
             initDataTab();
-
-            if (webViewController != null) {
-                webViewController.setParent(this);
-            }
 
             palette = new HashMap();
 
@@ -291,12 +284,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         okAction();
     }
 
-    public void loadDataHtml() {
-        if (webViewController != null && outputData != null) {
-            webViewController.loadContents(dataHtmlTable().html());
-        }
-    }
-
     public StringTable dataHtmlTable() {
         try {
             List<String> names = new ArrayList<>();
@@ -314,25 +301,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             MyBoxLog.debug(e);
             return null;
         }
-    }
-
-    @FXML
-    public void dataAction() {
-        if (outputData == null || outputData.isEmpty()) {
-            popError(message("NoData"));
-            return;
-        }
-        DataManufactureController.open(outputColumns, outputData);
-    }
-
-    @FXML
-    public void editAction() {
-        webViewController.editAction();
-    }
-
-    @FXML
-    public void popFunctionsMenu(MouseEvent mouseEvent) {
-        webViewController.popFunctionsMenu(mouseEvent);
     }
 
     @Override

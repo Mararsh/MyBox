@@ -1,5 +1,6 @@
-package mara.mybox.data;
+package mara.mybox.calculation;
 
+import mara.mybox.calculation.DoubleStatistic;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;

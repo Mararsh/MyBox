@@ -1,4 +1,4 @@
-package mara.mybox.data;
+package mara.mybox.calculation;
 
 import java.util.HashMap;
 import java.util.Map;

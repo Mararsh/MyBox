@@ -23,7 +23,8 @@ public class TestCase {
     protected BaseController controller;
 
     public static enum Type {
-        Function, UserInterface, Bundary, Data, API, IO, Exception, Performance, Robustness, Usability, Compatibility, Security, Document
+        Function, UserInterface, Bundary, Data, API, IO, Exception, Performance, Robustness,
+        Usability, Compatibility, Security, Document
     }
 
     public static enum Operation {
@@ -158,6 +159,7 @@ public class TestCase {
             cases.add(new TestCase(index++, message("ImagesInSystemClipboard"), Fxmls.ImageInSystemClipboardFxml));
             cases.add(new TestCase(index++, message("ConvolutionKernelManager"), Fxmls.ConvolutionKernelManagerFxml));
             cases.add(new TestCase(index++, message("PixelsCalculator"), Fxmls.PixelsCalculatorFxml));
+            cases.add(new TestCase(index++, message("ImageBase64"), Fxmls.ImageBase64Fxml));
 
             cases.add(new TestCase(index++, message("DataManufacture"), Fxmls.DataManufactureFxml));
             cases.add(new TestCase(index++, message("ManageData"), Fxmls.Data2DManageFxml));

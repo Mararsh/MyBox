@@ -1,35 +1,36 @@
-package mara.mybox.data;
+package mara.mybox.calculation;
 
 import java.util.HashMap;
 import java.util.Map;
-import mara.mybox.tools.LongTools;
+import mara.mybox.tools.IntTools;
 import mara.mybox.value.AppValues;
 
 /**
  * @Author Mara
- * @CreateDate 2021-10-4
+ * @CreateDate 2019-2-11 12:53:19
  * @License Apache License Version 2.0
  */
-public class LongStatistic {
+public class IntStatistic {
 
     private String name;
     private int count;
-    private long minimum, maximum, mode, median;
-    private double sum, mean, variance, skewness;
+    private long sum;
+    private int minimum, maximum, mode, median;
+    private double mean, standardDeviation, skewness;
 
-    public LongStatistic() {
+    public IntStatistic() {
     }
 
-    public LongStatistic(long[] values) {
+    public IntStatistic(int[] values) {
         if (values == null || values.length == 0) {
             return;
         }
         count = values.length;
         sum = 0;
-        minimum = Long.MAX_VALUE;
-        maximum = Long.MIN_VALUE;
+        minimum = Integer.MAX_VALUE;
+        maximum = Integer.MIN_VALUE;
         for (int i = 0; i < count; ++i) {
-            long v = values[i];
+            int v = values[i];
             sum += v;
             if (v > maximum) {
                 maximum = v;
@@ -39,39 +40,53 @@ public class LongStatistic {
             }
         }
         mean = sum / values.length;
-        variance = 0;
+        standardDeviation = 0;
         skewness = 0;
         mode = mode(values);
         median = median(values);
         for (int i = 0; i < values.length; ++i) {
-            long v = values[i];
-            variance += Math.pow(v - mean, 2);
-            skewness += Math.pow(v - mean, 3);
+            double v = values[i] - mean;
+            double v2 = v * v;
+            standardDeviation += v2;
+            skewness += v2 * v;
         }
-        variance = Math.sqrt(variance / count);
+        standardDeviation = Math.sqrt(standardDeviation / count);
         skewness = Math.cbrt(skewness / count);
+    }
+
+    public IntStatistic(String name, long sum, int mean, int variance, int skewness,
+            int minimum, int maximum, int[] histogram) {
+        this.name = name;
+        this.sum = sum;
+        this.mean = mean;
+        this.standardDeviation = variance;
+        this.skewness = skewness;
+        this.minimum = minimum;
+        this.maximum = maximum;
+        this.mode = maximumIndex(histogram);
+        this.median = medianIndex(histogram);
     }
 
 
     /*
         static methods
      */
-    public static double sum(long[] values) {
+    public static long sum(int[] values) {
         if (values == null || values.length == 0) {
             return AppValues.InvalidLong;
         }
-        double sum = 0;
+        long sum = 0;
         for (int i = 0; i < values.length; ++i) {
             sum += values[i];
         }
         return sum;
     }
 
-    public static long maximum(long[] values) {
+    public static int maximum(int[] values) {
         if (values == null || values.length == 0) {
-            return AppValues.InvalidLong;
+            return AppValues.InvalidInteger;
         }
-        long max = Long.MIN_VALUE;
+        int max = Integer.MIN_VALUE;
         for (int i = 0; i < values.length; ++i) {
             if (values[i] > max) {
                 max = values[i];
@@ -80,11 +95,11 @@ public class LongStatistic {
         return max;
     }
 
-    public static long minimum(long[] values) {
+    public static int minimum(int[] values) {
         if (values == null || values.length == 0) {
-            return AppValues.InvalidLong;
+            return AppValues.InvalidInteger;
         }
-        long min = Long.MAX_VALUE;
+        int min = Integer.MAX_VALUE;
         for (int i = 0; i < values.length; ++i) {
             if (values[i] < min) {
                 min = values[i];
@@ -93,29 +108,28 @@ public class LongStatistic {
         return min;
     }
 
-    public static double mean(long[] values) {
+    public static double mean(int[] values) {
         if (values == null || values.length == 0) {
-            return AppValues.InvalidLong;
+            return AppValues.InvalidInteger;
         }
-        return sum(values) / values.length;
+        return sum(values) * 1d / values.length;
     }
 
-    public static long mode(long[] values) {
-
+    public static int mode(int[] values) {
         if (values == null || values.length == 0) {
-            return AppValues.InvalidLong;
+            return AppValues.InvalidInteger;
         }
-        long mode = 0;
-        Map<Long, Integer> number = new HashMap<>();
-        for (long value : values) {
+        int mode = 0;
+        Map<Integer, Integer> number = new HashMap<>();
+        for (int value : values) {
             if (number.containsKey(value)) {
                 number.put(value, number.get(value) + 1);
             } else {
                 number.put(value, 1);
             }
         }
-        long num = 0;
-        for (long value : number.keySet()) {
+        int num = 0;
+        for (int value : number.keySet()) {
             if (num < number.get(value)) {
                 mode = value;
             }
@@ -123,11 +137,11 @@ public class LongStatistic {
         return mode;
     }
 
-    public static long median(long[] values) {
+    public static int median(int[] values) {
         if (values == null || values.length == 0) {
-            return AppValues.InvalidLong;
+            return AppValues.InvalidInteger;
         }
-        long[] sorted = LongTools.sortArray(values);
+        int[] sorted = IntTools.sortArray(values);
         int len = sorted.length;
         if (len == 2) {
             return (sorted[0] + sorted[1]) / 2;
@@ -138,17 +152,17 @@ public class LongStatistic {
         }
     }
 
-    public static double variance(long[] values) {
+    public static double variance(int[] values) {
         if (values == null || values.length == 0) {
-            return AppValues.InvalidLong;
+            return AppValues.InvalidDouble;
         }
         double mean = mean(values);
         return variance(values, mean);
     }
 
-    public static double variance(long[] values, double mean) {
+    public static double variance(int[] values, double mean) {
         if (values == null || values.length == 0) {
-            return AppValues.InvalidLong;
+            return AppValues.InvalidDouble;
         }
         double variance = 0;
         for (int i = 0; i < values.length; ++i) {
@@ -158,9 +172,9 @@ public class LongStatistic {
         return variance;
     }
 
-    public static double skewness(long[] values, double mean) {
+    public static double skewness(int[] values, double mean) {
         if (values == null || values.length == 0) {
-            return AppValues.InvalidLong;
+            return AppValues.InvalidDouble;
         }
         double skewness = 0;
         for (int i = 0; i < values.length; ++i) {
@@ -169,6 +183,35 @@ public class LongStatistic {
         skewness = Math.cbrt(skewness / values.length);
         return skewness;
     }
+
+    public static int medianIndex(int[] values) {
+        if (values == null || values.length == 0) {
+            return -1;
+        }
+        int[] sorted = IntTools.sortArray(values);
+        int mid = sorted[sorted.length / 2];
+        for (int i = 0; i < values.length; ++i) {
+            if (values[i] == mid) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public static int maximumIndex(int[] values) {
+        if (values == null || values.length == 0) {
+            return -1;
+        }
+        int max = Integer.MIN_VALUE, maxIndex = -1;
+        for (int i = 0; i < values.length; ++i) {
+            if (values[i] > max) {
+                max = values[i];
+                maxIndex = i;
+            }
+        }
+        return maxIndex;
+    }
+
 
     /*
         get/set
@@ -181,7 +224,7 @@ public class LongStatistic {
         this.name = name;
     }
 
-    public double getSum() {
+    public long getSum() {
         return sum;
     }
 
@@ -193,55 +236,55 @@ public class LongStatistic {
         return mean;
     }
 
-    public void setMean(long mean) {
+    public void setMean(double mean) {
         this.mean = mean;
     }
 
-    public double getVariance() {
-        return variance;
+    public double getStandardDeviation() {
+        return standardDeviation;
     }
 
-    public void setVariance(long variance) {
-        this.variance = variance;
+    public void setStandardDeviation(double standardDeviation) {
+        this.standardDeviation = standardDeviation;
     }
 
     public double getSkewness() {
         return skewness;
     }
 
-    public void setSkewness(long skewness) {
+    public void setSkewness(int skewness) {
         this.skewness = skewness;
     }
 
-    public long getMinimum() {
+    public int getMinimum() {
         return minimum;
     }
 
-    public void setMinimum(long minimum) {
+    public void setMinimum(int minimum) {
         this.minimum = minimum;
     }
 
-    public long getMaximum() {
+    public int getMaximum() {
         return maximum;
     }
 
-    public void setMaximum(long maximum) {
+    public void setMaximum(int maximum) {
         this.maximum = maximum;
     }
 
-    public long getMode() {
+    public int getMode() {
         return mode;
     }
 
-    public void setMode(long mode) {
+    public void setMode(int mode) {
         this.mode = mode;
     }
 
-    public long getMedian() {
+    public int getMedian() {
         return median;
     }
 
-    public void setMedian(long median) {
+    public void setMedian(int median) {
         this.median = median;
     }
 

@@ -42,6 +42,8 @@ public abstract class BaseData2DChartFxController extends BaseData2DChartControl
     protected CheckBox autoTitleCheck, animatedCheck;
     @FXML
     protected ToggleGroup titleSideGroup, legendGroup;
+    @FXML
+    protected ControlData2DHtml chartDataController;
 
     public abstract void makeChart();
 
@@ -53,8 +55,11 @@ public abstract class BaseData2DChartFxController extends BaseData2DChartControl
             super.initControls();
 
             initPlotTab();
-
             initChartPane();
+
+            if (chartDataController != null) {
+                chartDataController.setParameters(this);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -270,6 +275,12 @@ public abstract class BaseData2DChartFxController extends BaseData2DChartControl
     }
 
     @Override
+    public void outputData() {
+        drawChart();
+        displayChartData();
+    }
+
+    @Override
     public void drawChart() {
         try {
             if (outputData == null || outputData.isEmpty()) {
@@ -280,8 +291,6 @@ public abstract class BaseData2DChartFxController extends BaseData2DChartControl
             makeChart();
             writeChartData();
             setChartStyle();
-
-            loadDataHtml();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -292,23 +301,39 @@ public abstract class BaseData2DChartFxController extends BaseData2DChartControl
             if (chart == null) {
                 return;
             }
+            styleChart(chart);
+            chart.setTitle(titleInput.getText());
+            chartController.setChart(chart, outputColumns, outputData);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    public void styleChart(Chart chart) {
+        try {
+            if (chart == null) {
+                return;
+            }
             chart.setStyle("-fx-font-size: " + titleFontSize + "px; -fx-tick-label-font-size: " + tickFontSize + "px; ");
 
             chart.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
             VBox.setVgrow(chart, Priority.ALWAYS);
             HBox.setHgrow(chart, Priority.ALWAYS);
             chart.setAnimated(animatedCheck.isSelected());
-            chart.setTitle(titleInput.getText());
             chart.setTitleSide(titleSide);
             AnchorPane.setTopAnchor(chart, 2d);
             AnchorPane.setBottomAnchor​(chart, 2d);
             AnchorPane.setLeftAnchor(chart, 2d);
             AnchorPane.setRightAnchor​(chart, 2d);
 
-            chartController.setChart(chart, outputColumns, outputData);
-
         } catch (Exception e) {
             MyBoxLog.debug(e);
+        }
+    }
+
+    public void displayChartData() {
+        if (chartDataController != null) {
+            chartDataController.loadData(outputColumns, outputData);
         }
     }
 

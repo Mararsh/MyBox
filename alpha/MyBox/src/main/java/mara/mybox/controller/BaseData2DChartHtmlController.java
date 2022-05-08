@@ -8,6 +8,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.MouseEvent;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import static mara.mybox.value.Languages.message;
@@ -33,11 +34,15 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
     protected RadioButton absoluateRadio, minMaxRadio;
     @FXML
     protected ComboBox<String> widthSelector;
+    @FXML
+    protected ControlWebView webViewController;
 
     @Override
     public void initControls() {
         try {
             super.initControls();
+
+            webViewController.setParent(this);
 
             clickListener = new EventListener() {
                 @Override
@@ -268,6 +273,25 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
         EventTarget t = (EventTarget) docNode;
         t.removeEventListener("click", clickListener, false);
         t.addEventListener("click", clickListener, false);
+    }
+
+    @FXML
+    public void dataAction() {
+        if (outputData == null || outputData.isEmpty()) {
+            popError(message("NoData"));
+            return;
+        }
+        DataManufactureController.open(outputColumns, outputData);
+    }
+
+    @FXML
+    public void editAction() {
+        webViewController.editAction();
+    }
+
+    @FXML
+    public void popFunctionsMenu(MouseEvent mouseEvent) {
+        webViewController.popFunctionsMenu(mouseEvent);
     }
 
     @Override

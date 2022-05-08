@@ -1,4 +1,4 @@
-package mara.mybox.data;
+package mara.mybox.calculation;
 
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleMatrixTools;

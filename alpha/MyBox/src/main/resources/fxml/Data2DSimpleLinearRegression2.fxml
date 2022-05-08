@@ -531,12 +531,16 @@ License:    Apache License Version 2.0
                                                    <children>
                                                       <Label text="%Points" />
                                                       <CheckBox fx:id="fittedPointsCheck" minWidth="-Infinity" mnemonicParsing="false" selected="true" text="%Fitted" wrapText="true" />
+                                                      <CheckBox fx:id="confidenceLowerPointsCheck" minWidth="-Infinity" mnemonicParsing="false" selected="true" text="%ConfidenceLowerLimit" wrapText="true" />
+                                                      <CheckBox fx:id="confidenceUpPointsCheck" minWidth="-Infinity" mnemonicParsing="false" selected="true" text="%ConfidenceUpperLimit" wrapText="true" />
                                                       <Label text="%Line2">
                                                          <FlowPane.margin>
                                                             <Insets left="20.0" />
                                                          </FlowPane.margin>
                                                       </Label>
                                                       <CheckBox fx:id="fittedLineCheck" minWidth="-Infinity" mnemonicParsing="false" selected="true" text="%Fitted" wrapText="true" />
+                                                      <CheckBox fx:id="confidenceLowerLineCheck" minWidth="-Infinity" mnemonicParsing="false" selected="true" text="%ConfidenceLowerLimit" wrapText="true" />
+                                                      <CheckBox fx:id="confidenceUpLineCheck" minWidth="-Infinity" mnemonicParsing="false" selected="true" text="%ConfidenceUpperLimit" wrapText="true" />
                                                       <CheckBox fx:id="textCheck" layoutX="484.0" layoutY="16.0" minWidth="-Infinity" mnemonicParsing="false" selected="true" text="%Text" wrapText="true">
                                                          <FlowPane.margin>
                                                             <Insets left="20.0" />
@@ -593,6 +597,10 @@ License:    Apache License Version 2.0
                                                       <RadioButton fx:id="residualActualRadio" mnemonicParsing="false" text="%ActualValue" toggleGroup="$residualXGroup" />
                                                    </children>
                                                 </FlowPane>
+                                                <CheckBox fx:id="standardResidualCheck" minWidth="-Infinity" mnemonicParsing="false" selected="true" text="%Standardized" wrapText="true">
+                                                   <HBox.margin>
+                                                      <Insets left="20.0" />
+                                                   </HBox.margin></CheckBox>
                                                 <Button fx:id="randomColorsResidualButton" mnemonicParsing="false" onAction="#randomColorResidual">
                                                    <graphic>
                                                       <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

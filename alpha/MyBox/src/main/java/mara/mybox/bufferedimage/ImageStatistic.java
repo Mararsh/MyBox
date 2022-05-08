@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 import mara.mybox.bufferedimage.ColorComponentTools.ColorComponent;
-import mara.mybox.data.IntStatistic;
+import mara.mybox.calculation.IntStatistic;
 import mara.mybox.dev.MyBoxLog;
 
 /**

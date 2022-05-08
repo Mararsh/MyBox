@@ -574,39 +574,15 @@ public abstract class BaseData2DChartXYController extends BaseData2DChartFxContr
         try {
             if (isCategoryNumbers()) {
                 numberAxisX = new NumberAxis();
-                numberAxisX.setLabel(categoryLabel.getText());
-                numberAxisX.setSide(categorySide);
-                numberAxisX.setTickLabelsVisible(categoryTickCheck.isSelected());
-                numberAxisX.setTickMarkVisible(numberMarkCheck.isSelected());
-                numberAxisX.setTickLabelRotation(categoryTickRotation);
-                numberAxisX.setAnimated(categoryAxisAnimatedCheck.isSelected());
-                ChartTools.setChartCoordinate(numberAxisX, cCoordinate);
                 categoryAxis = numberAxisX;
             } else {
                 stringAxis = new CategoryAxis();
-                stringAxis.setLabel(categoryLabel.getText());
-                stringAxis.setSide(categorySide);
-                stringAxis.setTickLabelsVisible(categoryTickCheck.isSelected());
-                stringAxis.setTickMarkVisible(categoryMarkCheck.isSelected());
-                stringAxis.setTickLabelRotation(categoryTickRotation);
-                stringAxis.setGapStartAndEnd(true);
-                stringAxis.setAnimated(categoryAxisAnimatedCheck.isSelected());
-                if (isXY()) {
-                    stringAxis.setEndMargin(100);
-                } else {
-                    stringAxis.setEndMargin(20);
-                }
                 categoryAxis = stringAxis;
             }
+            initCategoryAxis(categoryAxis);
 
             numberAxisY = new NumberAxis();
-            numberAxisY.setLabel(numberLabel.getText());
-            numberAxisY.setSide(numberSide);
-            numberAxisY.setTickLabelsVisible(numberTickCheck.isSelected());
-            numberAxisY.setTickMarkVisible(numberMarkCheck.isSelected());
-            numberAxisY.setTickLabelRotation(numberTickRotation);
-            numberAxisY.setAnimated(numberAxisAnimatedCheck.isSelected());
-            ChartTools.setChartCoordinate(numberAxisY, nCoordinate);
+            initValueAxis(numberAxisY);
 
             if (isXY()) {
                 xAxis = categoryAxis;
@@ -626,6 +602,56 @@ public abstract class BaseData2DChartXYController extends BaseData2DChartFxContr
 
     public void makeXYChart() {
         try {
+            initXYChart(xyChart);
+            chart = xyChart;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    public void initCategoryAxis(Axis axis) {
+        try {
+            if (axis instanceof NumberAxis) {
+                ChartTools.setChartCoordinate((NumberAxis) axis, cCoordinate);
+            } else {
+                CategoryAxis axisC = (CategoryAxis) axis;
+                axisC.setGapStartAndEnd(true);
+                if (isXY()) {
+                    axisC.setEndMargin(100);
+                } else {
+                    axisC.setEndMargin(20);
+                }
+            }
+            axis.setLabel(categoryLabel.getText());
+            axis.setSide(categorySide);
+            axis.setTickLabelsVisible(categoryTickCheck.isSelected());
+            axis.setTickMarkVisible(numberMarkCheck.isSelected());
+            axis.setTickLabelRotation(categoryTickRotation);
+            axis.setAnimated(categoryAxisAnimatedCheck.isSelected());
+            axis.setStyle("-fx-font-size: " + categoryFontSize + "px;");
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    public void initValueAxis(NumberAxis axis) {
+        try {
+            axis.setLabel(numberLabel.getText());
+            axis.setSide(numberSide);
+            axis.setTickLabelsVisible(numberTickCheck.isSelected());
+            axis.setTickMarkVisible(numberMarkCheck.isSelected());
+            axis.setTickLabelRotation(numberTickRotation);
+            axis.setAnimated(numberAxisAnimatedCheck.isSelected());
+            ChartTools.setChartCoordinate(axis, nCoordinate);
+
+            axis.setStyle("-fx-font-size: " + numberFontSize + "px;");
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    public void initXYChart(XYChart xyChart) {
+        try {
             xyChart.setAlternativeRowFillVisible(altRowsFillCheck.isSelected());
             xyChart.setAlternativeColumnFillVisible(altColumnsFillCheck.isSelected());
             xyChart.setVerticalGridLinesVisible(vlinesCheck.isSelected());
@@ -639,27 +665,6 @@ public abstract class BaseData2DChartXYController extends BaseData2DChartFxContr
                 xyChart.setLegendVisible(true);
                 xyChart.setLegendSide(legendSide);
             }
-
-            chart = xyChart;
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
-    @Override
-    public void makeFinalChart() {
-        try {
-            if (chart == null) {
-                return;
-            }
-            if (categoryAxis != null) {
-                categoryAxis.setStyle("-fx-font-size: " + categoryFontSize + "px;");
-            }
-            if (numberAxisY != null) {
-                numberAxisY.setStyle("-fx-font-size: " + numberFontSize + "px;");
-            }
-            super.makeFinalChart();
-
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }

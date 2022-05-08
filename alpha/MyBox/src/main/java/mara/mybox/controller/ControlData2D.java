@@ -846,9 +846,11 @@ public class ControlData2D extends BaseController {
             });
             popMenu.getItems().add(menu);
 
-            Menu examplesMenu = new Menu(message("Examples"), StyleTools.getIconImage("iconExamples.png"));
-            examplesMenu.getItems().addAll(examplesMenu());
-            popMenu.getItems().add(examplesMenu);
+            if (data2D.isDataFile() || data2D.isUserTable() || data2D.isClipboard()) {
+                Menu examplesMenu = new Menu(message("Examples"), StyleTools.getIconImage("iconExamples.png"));
+                examplesMenu.getItems().addAll(examplesMenu());
+                popMenu.getItems().add(examplesMenu);
+            }
 
             popMenu.getItems().add(new SeparatorMenuItem());
             menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
@@ -934,6 +936,22 @@ public class ControlData2D extends BaseController {
             });
             chinaMenu.getItems().add(menu);
 
+            menu = new MenuItem(message("ChinaHealthPersonnel"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/ChinaHealthPersonnel_" + lang + ".csv",
+                        "data", "ChinaHealthPersonnel_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ChinaMarriage"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/ChinaMarriage_" + lang + ".csv",
+                        "data", "ChinaMarriage_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            chinaMenu.getItems().add(menu);
+
             menu = new MenuItem(message("ChinaSportWorldChampions"));
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaSportWorldChampions_" + lang + ".csv",
@@ -988,23 +1006,23 @@ public class ControlData2D extends BaseController {
             });
             regressionMenu.getItems().add(menu);
 
-//            // http://archive.ics.uci.edu/ml/datasets/Iris
-//            menu = new MenuItem(message("IrisSpecies"));
-//            menu.setOnAction((ActionEvent event) -> {
-//                File file = FxFileTools.getInternalFile("/data/examples/IrisSpecies_" + lang + ".csv",
-//                        "data", "IrisSpecies_" + lang + ".csv", true);
-//                loadCSVFile(file);
-//            });
-//            regressionMenu.getItems().add(menu);
-//
-//            // https://github.com/tomsharp/SVR/tree/master/data
-//            menu = new MenuItem(message("BostonHousingPrices"));
-//            menu.setOnAction((ActionEvent event) -> {
-//                File file = FxFileTools.getInternalFile("/data/examples/BostonHousingPrices_" + lang + ".csv",
-//                        "data", "BostonHousingPrices_" + lang + ".csv", true);
-//                loadCSVFile(file);
-//            });
-//            regressionMenu.getItems().add(menu);
+            // http://archive.ics.uci.edu/ml/datasets/Iris
+            menu = new MenuItem(message("IrisSpecies"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/IrisSpecies_" + lang + ".csv",
+                        "data", "IrisSpecies_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            regressionMenu.getItems().add(menu);
+
+            // https://github.com/tomsharp/SVR/tree/master/data
+            menu = new MenuItem(message("BostonHousingPrices"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/BostonHousingPrices_" + lang + ".csv",
+                        "data", "BostonHousingPrices_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            regressionMenu.getItems().add(menu);
             return items;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

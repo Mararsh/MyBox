@@ -8,7 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.FlowPane;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.UserConfig;
@@ -30,7 +30,7 @@ public class ControlData2DSource extends ControlData2DLoad {
     @FXML
     protected Label titleLabel;
     @FXML
-    protected HBox buttonsBox;
+    protected FlowPane buttonsPane;
 
     @Override
     public void initControls() {
@@ -67,13 +67,13 @@ public class ControlData2DSource extends ControlData2DLoad {
 
     public void showAllPages(boolean show) {
         if (show) {
-            if (!buttonsBox.getChildren().contains(allPagesCheck)) {
-                buttonsBox.getChildren().add(allPagesCheck);
+            if (!buttonsPane.getChildren().contains(allPagesCheck)) {
+                buttonsPane.getChildren().add(allPagesCheck);
             }
         } else {
-            if (buttonsBox.getChildren().contains(allPagesCheck)) {
+            if (buttonsPane.getChildren().contains(allPagesCheck)) {
                 allPagesCheck.setSelected(false);
-                buttonsBox.getChildren().remove(allPagesCheck);
+                buttonsPane.getChildren().remove(allPagesCheck);
             }
         }
     }

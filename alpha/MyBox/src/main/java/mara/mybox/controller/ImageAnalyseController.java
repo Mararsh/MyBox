@@ -45,7 +45,7 @@ import static mara.mybox.bufferedimage.ImageQuantization.QuantizationAlgorithm.K
 import mara.mybox.bufferedimage.ImageQuantizationFactory;
 import mara.mybox.bufferedimage.ImageQuantizationFactory.KMeansClusteringQuantization;
 import mara.mybox.bufferedimage.ImageStatistic;
-import mara.mybox.data.IntStatistic;
+import mara.mybox.calculation.IntStatistic;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;

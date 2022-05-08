@@ -2,7 +2,7 @@ package mara.mybox.controller;
 
 import java.util.List;
 import javafx.scene.paint.Color;
-import mara.mybox.data.Normalization;
+import mara.mybox.calculation.Normalization;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;

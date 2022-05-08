@@ -1,9 +1,10 @@
-package mara.mybox.data;
+package mara.mybox.calculation;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import mara.mybox.data.IntValue;
 import mara.mybox.tools.IntTools;
 
 /**
