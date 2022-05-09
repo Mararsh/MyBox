@@ -1,4 +1,4 @@
-year,population at year-end(ten thousand),male(ten thousand),female(ten thousand),urban(ten thousand),rural(ten thousand)
+year_,population at year-end(ten thousand),male(ten thousand),female(ten thousand),urban(ten thousand),rural(ten thousand)
 1949,54167,28145,26022,5765,48402
 1950,55196,28669,26527,6169,49027
 1951,56300,29231,27069,6632,49668

@@ -35,24 +35,20 @@ public class SimpleLinearRegression extends SimpleRegression {
         columns.add(new Data2DColumn(message("NumberOfObservations"), ColumnDefinition.ColumnType.Long));
         columns.add(new Data2DColumn(xName, ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn(yName, ColumnDefinition.ColumnType.Double));
-//        columns.add(new Data2DColumn(yName + "_" + message("Predict"), ColumnDefinition.ColumnType.Double));
-//        columns.add(new Data2DColumn(yName + "_" + message("DataError"), ColumnDefinition.ColumnType.Double));
-//        columns.add(new Data2DColumn(yName + "_" + message("ConfidenceLowerLimit"), ColumnDefinition.ColumnType.Double));
-//        columns.add(new Data2DColumn(yName + "_" + message("ConfidenceUpperLimit"), ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn(message("Slope"), ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn(message("Intercept"), ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn(message("CoefficientOfDetermination"), ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn(message("PearsonsR"), ColumnDefinition.ColumnType.Double));
-        columns.add(new Data2DColumn(message("ConfidenceIntervals"), ColumnDefinition.ColumnType.Double));
-        columns.add(new Data2DColumn(message("SignificanceLevelSlopeCorrelation"), ColumnDefinition.ColumnType.Double));
+        columns.add(new Data2DColumn(message("MeanSquareError"), ColumnDefinition.ColumnType.Double));
+        columns.add(new Data2DColumn(message("SumSquaredErrors"), ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn(message("TotalSumSquares"), ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn(message("SumSquaredRegression"), ColumnDefinition.ColumnType.Double));
-        columns.add(new Data2DColumn(message("SumSquaredErrors"), ColumnDefinition.ColumnType.Double));
-        columns.add(new Data2DColumn(message("MeanSquareError"), ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn(message("StandardErrorOfSlope"), ColumnDefinition.ColumnType.Double));
+        columns.add(new Data2DColumn(message("SignificanceLevelSlopeCorrelation"), ColumnDefinition.ColumnType.Double));
+        columns.add(new Data2DColumn(message("HalfWidthConfidenceIntervalOfSlope"), ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn(message("StandardErrorOfIntercept"), ColumnDefinition.ColumnType.Double));
-        columns.add(new Data2DColumn("XSumSquares", ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn("SumOfCrossProducts", ColumnDefinition.ColumnType.Double));
+        columns.add(new Data2DColumn("XSumSquares", ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn("Xbar", ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn("SumX", ColumnDefinition.ColumnType.Double));
         columns.add(new Data2DColumn("Ybar", ColumnDefinition.ColumnType.Double));
@@ -67,30 +63,20 @@ public class SimpleLinearRegression extends SimpleRegression {
         lastData.add(getN() + "");
         lastData.add(x + "");
         lastData.add(y + "");
-
-//        double intercept = getIntercept();
-//        double slope = getSlope();
-//        double slopeError = getSlopeStdErr();
-//        double py = predict(x);
-//
-//        lastData.add(py + "");
-//        lastData.add((py - y) + "");
-//        lastData.add(DoubleTools.format(intercept + (slope - slopeError) * x, scale));
-//        lastData.add(DoubleTools.format(intercept + (slope + slopeError) * x, scale));
         lastData.add(getSlope() + "");
         lastData.add(getIntercept() + "");
         lastData.add(getRSquare() + "");
         lastData.add(getR() + "");
-        lastData.add(getSlopeConfidenceInterval() + "");
-        lastData.add(getSignificance() + "");
+        lastData.add(getMeanSquareError() + "");
+        lastData.add(getSumSquaredErrors() + "");
         lastData.add(getTotalSumSquares() + "");
         lastData.add(getRegressionSumSquares() + "");
-        lastData.add(getSumSquaredErrors() + "");
-        lastData.add(getMeanSquareError() + "");
         lastData.add(getSlopeStdErr() + "");
+        lastData.add(getSignificance() + "");
+        lastData.add(getSlopeConfidenceInterval() + "");
         lastData.add(getInterceptStdErr() + "");
-        lastData.add(getXSumSquares() + "");
         lastData.add(getSumOfCrossProducts() + "");
+        lastData.add(getXSumSquares() + "");
 
         try {
             Class superClass = getClass().getSuperclass();

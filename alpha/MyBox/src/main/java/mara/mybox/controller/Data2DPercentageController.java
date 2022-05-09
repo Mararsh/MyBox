@@ -395,7 +395,6 @@ public class Data2DPercentageController extends BaseData2DHandleController {
 
     @Override
     public DataFileCSV generatedFile() {
-        MyBoxLog.console("generatedFile");
         switch (objectType) {
             case Rows:
                 return data2D.percentageRows(handledNames, sourceController.checkedColsIndices,

@@ -625,10 +625,11 @@ public abstract class BaseData2DChartXYController extends BaseData2DChartFxContr
             axis.setLabel(categoryLabel.getText());
             axis.setSide(categorySide);
             axis.setTickLabelsVisible(categoryTickCheck.isSelected());
-            axis.setTickMarkVisible(numberMarkCheck.isSelected());
+            axis.setTickMarkVisible(categoryMarkCheck.isSelected());
             axis.setTickLabelRotation(categoryTickRotation);
             axis.setAnimated(categoryAxisAnimatedCheck.isSelected());
             axis.setStyle("-fx-font-size: " + categoryFontSize + "px;");
+
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }

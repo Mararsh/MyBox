@@ -143,7 +143,7 @@ public class DoubleStatistic {
                 vTmp += p2;
             }
             populationVariance = vTmp / count;
-            sampleVariance = vTmp / (count - 1);
+            sampleVariance = count == 1 ? Double.NaN : vTmp / (count - 1);
             if (options.populationStandardDeviation) {
                 populationStandardDeviation = Math.sqrt(populationVariance);
             }

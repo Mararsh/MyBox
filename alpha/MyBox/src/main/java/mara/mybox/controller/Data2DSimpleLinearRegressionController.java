@@ -29,7 +29,7 @@ import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.chart.ChartTools;
 import mara.mybox.fxml.chart.LabeledScatterChart;
-import mara.mybox.fxml.chart.LabeledSimpleRegressionChart;
+import mara.mybox.fxml.chart.SimpleRegressionChart;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
@@ -43,9 +43,9 @@ import mara.mybox.value.UserConfig;
  */
 public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYController {
 
-    protected LabeledSimpleRegressionChart regressionChart​;
+    protected SimpleRegressionChart regressionChart​;
     protected SimpleLinearRegression simpleRegression;
-    protected double alpha, intercept, slope, rSquare, r, slopeError;
+    protected double alpha, intercept, slope, rSquare, r;
     protected DataFileCSV regressionFile;
     protected List<List<String>> regressionData;
     protected List<List<String>> residualData;
@@ -54,7 +54,8 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
     protected Map<String, String> residualPalette;
 
     @FXML
-    protected CheckBox interceptCheck, displayAllCheck, textCheck, fittedPointsCheck, fittedLineCheck;
+    protected CheckBox interceptCheck, displayAllCheck, textCheck, fittedPointsCheck, fittedLineCheck,
+            residualStdCheck;
     @FXML
     protected ComboBox<String> alphaSelector;
     @FXML
@@ -195,6 +196,15 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
                 }
             });
 
+            residualStdCheck.setSelected(UserConfig.getBoolean(baseName + "StandardResidual", true));
+            residualStdCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "StandardResidual", residualStdCheck.isSelected());
+                    redrawResidualChart();
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -282,22 +292,16 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
             slope = simpleRegression.getSlope();
             rSquare = simpleRegression.getRSquare();
             r = simpleRegression.getR();
-            alpha = alpha <= 0 || alpha >= 1 ? 0.05 : alpha;
-            slopeError = simpleRegression.getSlopeStdErr();
 
             outputColumns = new ArrayList<>();
             outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
             outputColumns.add(data2D.col(selectedCategory));
             outputColumns.add(data2D.col(selectedValue));
             outputColumns.add(new Data2DColumn(selectedValue + "_" + message("FittedValue"), ColumnDefinition.ColumnType.Double));
-//            outputColumns.add(new Data2DColumn(selectedValue + "_" + message("ConfidenceLowerLimit"), ColumnDefinition.ColumnType.Double));
-//            outputColumns.add(new Data2DColumn(selectedValue + "_" + message("ConfidenceUpperLimit"), ColumnDefinition.ColumnType.Double));
             for (int i = 0; i < outputData.size(); i++) {
                 List<String> rowData = outputData.get(i);
                 double x = data2D.doubleValue(rowData.get(1));
                 rowData.add(DoubleTools.format(intercept + slope * x, scale));
-//                rowData.add(DoubleTools.format(intercept + (slope - slopeError) * x, scale));
-//                rowData.add(DoubleTools.format(intercept + (slope + slopeError) * x, scale));
             }
 
             makeResidualData();
@@ -318,7 +322,15 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
             } else {
                 residualColumns.add(new Data2DColumn(message("PredictedValue"), ColumnDefinition.ColumnType.Double));
             }
-            residualColumns.add(new Data2DColumn(message("Residual"), ColumnDefinition.ColumnType.Double));
+            double stdDeviation = 1;
+            if (residualStdCheck.isSelected()) {
+                residualColumns.add(new Data2DColumn(message("StandardizedResidual"), ColumnDefinition.ColumnType.Double));
+                residualColumns.add(new Data2DColumn(message("Sigma2UpperLine"), ColumnDefinition.ColumnType.Double));
+                residualColumns.add(new Data2DColumn(message("Sigma2lLowerLine"), ColumnDefinition.ColumnType.Double));
+                stdDeviation = Math.sqrt(simpleRegression.getMeanSquareError());
+            } else {
+                residualColumns.add(new Data2DColumn(message("Residual"), ColumnDefinition.ColumnType.Double));
+            }
             residualData = new ArrayList<>();
             for (int i = 0; i < outputData.size(); i++) {
                 List<String> rowData = outputData.get(i);
@@ -326,18 +338,25 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
                 double x = data2D.doubleValue(rowData.get(1));
                 double y = data2D.doubleValue(rowData.get(2));
                 double predict = intercept + slope * x;
-                double residual = predict - y;
-                residualRow.add(DoubleTools.format(data2D.doubleValue(rowData.get(0)), scale));
+                double residual = y - predict;
+                residualRow.add(rowData.get(0));
                 if (residualIndRadio.isSelected()) {
-                    residualRow.add(DoubleTools.format(x, scale));
+                    residualRow.add(x + "");
                 } else if (residualActualRadio.isSelected()) {
-                    residualRow.add(DoubleTools.format(y, scale));
+                    residualRow.add(y + "");
                 } else {
-                    residualRow.add(DoubleTools.format(predict, scale));
+                    residualRow.add(predict + "");
                 }
-                residualRow.add(DoubleTools.format(residual, scale));
+                if (residualStdCheck.isSelected()) {
+                    residualRow.add(residual / stdDeviation + "");
+                    residualRow.add("1.96");
+                    residualRow.add("-1.96");
+                } else {
+                    residualRow.add(residual + "");
+                }
                 residualData.add(residualRow);
             }
+
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -373,7 +392,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
         try {
             makeAxis();
 
-            regressionChart = new LabeledSimpleRegressionChart(xAxis, yAxis)
+            regressionChart = new SimpleRegressionChart(xAxis, yAxis)
                     .setDisplayText(textCheck.isSelected())
                     .setDisplayFittedPoints(fittedPointsCheck.isSelected())
                     .setDisplayFittedLine(fittedLineCheck.isSelected());
@@ -451,8 +470,8 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
                     + "    }\n"
                     + "  </script>\n\n");
             String m = message("LinearModel") + ": " + selectedValue + " = "
-                    + (this.intercept == 0 ? "" : DoubleTools.format(intercept, scale) + " + ")
-                    + DoubleTools.format(slope, scale) + " * " + selectedCategory;
+                    + intercept + (slope > 0 ? " + " : " - ")
+                    + Math.abs(slope) + " * " + selectedCategory;
             s.append("\n<DIV>").append(m).append("</DIV>\n");
             s.append("<DIV>\n");
             s.append("<P>").append(message("IndependentVariable")).append(": ").append(selectedCategory).append(" = \n");
@@ -513,10 +532,10 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
         return message("IndependentVariable") + ": " + selectedCategory + "\n"
                 + message("DependentVariable") + ": " + selectedValue + "\n"
                 + message("LinearModel") + ": " + selectedValue + " = "
-                + (this.intercept == 0 ? "" : DoubleTools.format(intercept, scale) + " + ")
-                + DoubleTools.format(slope, scale) + " * " + selectedCategory + "\n"
-                + message("CoefficientOfDetermination") + ": " + DoubleTools.format(rSquare, scale) + "\n"
-                + message("PearsonsR") + ": " + DoubleTools.format(r, scale);
+                + intercept + (slope > 0 ? " + " : " - ")
+                + Math.abs(slope) + " * " + selectedCategory + "\n"
+                + message("CoefficientOfDetermination") + ": " + rSquare + "\n"
+                + message("PearsonsR") + ": " + r;
     }
 
     @Override

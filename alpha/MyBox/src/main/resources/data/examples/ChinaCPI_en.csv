@@ -1,4 +1,4 @@
-year,"consumer price index(CPI,last_year=100)",urban consumer price index(last_year=100),rural consumer price index(last_year=100),"retail price index(RPI,last_year=100)","producer price index(PPI,last_year=100)","producer price pndices of raw material(PPIRM,last_year=100)",price indices of investment in fixed assets(last_year=100)
+year_,consumer price index(CPI last_year=100),urban consumer price index(last_year=100),rural consumer price index(last_year=100),retail price index(RPI last_year=100),producer price index(PPI last_year=100),producer price pndices of raw material(PPIRM last_year=100),price indices of investment in fixed assets(last_year=100)
 1951,112.5,,,112.2,,,
 1952,102.7,,,99.6,,,
 1953,105.1,,,103.4,,,

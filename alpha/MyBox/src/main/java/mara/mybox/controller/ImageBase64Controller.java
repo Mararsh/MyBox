@@ -161,7 +161,7 @@ public class ImageBase64Controller extends BaseController {
                 protected void whenSucceeded() {
                     long len = imageBase64.length();
                     String lenString = StringTools.format(len);
-                    if (len > 500 * 1024) {
+                    if (len > 50 * 1024) {
                         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                         alert.setTitle(controller.baseTitle);
                         alert.setContentText(message("Length") + ": " + lenString);

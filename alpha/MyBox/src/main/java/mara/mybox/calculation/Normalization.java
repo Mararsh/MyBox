@@ -140,9 +140,10 @@ public class Normalization {
             mean = sum / len;
             variance = 0;
             for (double d : sourceVector) {
-                variance += Math.pow(d - mean, 2);
+                double v = d - mean;
+                variance += v * v;
             }
-            variance = Math.sqrt(variance / len);
+            variance = Math.sqrt(variance / (len == 1 ? len : len - 1));
             if (variance == 0) {
                 variance = AppValues.TinyDouble;
             }

@@ -143,6 +143,7 @@ public class Data2DChartPieController extends BaseData2DChartFxController {
             }
             String label;
             paletteList = new ArrayList();
+            boolean disName = chartController.disName();
             for (List<String> rowData : outputData) {
                 String name = rowData.get(1);
                 double d = data2D.doubleValue(rowData.get(2));
@@ -153,14 +154,14 @@ public class Data2DChartPieController extends BaseData2DChartFxController {
                 String value = DoubleTools.format(d, scale);
                 switch (chartController.labelType) {
                     case Category:
-                        label = selectedCategory + ": " + name;
+                        label = (disName ? selectedCategory + ": " : "") + name;
                         break;
                     case Value:
-                        label = selectedValue + ": " + value + "=" + percent + "%";
+                        label = (disName ? selectedValue + ": " : "") + value + "=" + percent + "%";
                         break;
                     case CategoryAndValue:
-                        label = selectedCategory + ": " + name + "\n"
-                                + selectedValue + ": " + value + "=" + percent + "%";
+                        label = (disName ? selectedCategory + ": " : "") + name + "\n"
+                                + (disName ? selectedValue + ": " : "") + value + "=" + percent + "%";
                         break;
                     case NotDisplay:
                     case Point:

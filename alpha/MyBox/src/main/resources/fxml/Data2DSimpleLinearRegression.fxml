@@ -591,6 +591,11 @@ License:    Apache License Version 2.0
                                                       </RadioButton>
                                                       <RadioButton fx:id="residualIndRadio" mnemonicParsing="false" text="%IndependentVariable" toggleGroup="$residualXGroup" />
                                                       <RadioButton fx:id="residualActualRadio" mnemonicParsing="false" text="%ActualValue" toggleGroup="$residualXGroup" />
+                                                      <CheckBox fx:id="residualStdCheck" mnemonicParsing="false" text="%Standardized">
+                                                         <FlowPane.margin>
+                                                            <Insets left="20.0" />
+                                                         </FlowPane.margin>
+                                                      </CheckBox>
                                                    </children>
                                                 </FlowPane>
                                                 <Button fx:id="randomColorsResidualButton" mnemonicParsing="false" onAction="#randomColorResidual">
