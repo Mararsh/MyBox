@@ -911,7 +911,7 @@ or defined location in table to insert/append/replace.
 or defined location in table to insert/append/replace.                             
 4. When all data rows/pages selected, target can be following: new csv/excel/text file, matrix, system clipboard, MyBox clipboard.
       
-![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataNormalize.jpg)         
+![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataNormalize-en.jpg)         
 
 ### Calculate Data<a id="calculateData" />        
 
@@ -934,7 +934,7 @@ or defined location in table to insert/append/replace.
  		- According to all.
  		- According to columsn, and data is not database table.             
    
-![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataStatistic.jpg)            
+![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataStatistic-en.jpg)            
 
 #### Simple Linear Regression             
 This tool is based on Apache Commons Math.                  
@@ -971,7 +971,7 @@ The regression does not store data, so calculation itself has not memory limitat
 	- Set random color to points and lines.
 	- Display residual chart's data in table.
 
-![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataSimpleRegression.jpg)            
+![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataSimpleRegression-en.jpg)            
 
 
 #### Frequency Distributions             
@@ -1033,7 +1033,7 @@ or defined location in table to insert/append/replace.
        - "Category" column is always counted as strings.
 10. Display data of XY chart in table.      
      
-![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataChartXY.jpg)            
+![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataChartXY-en.jpg)            
 
 #### Pie Chart             
 1. Data: Select rows in table or select all data rows(all pages), and select columns. 
@@ -1045,7 +1045,7 @@ or defined location in table to insert/append/replace.
 	- When display all data rows(all pages), need concern memory limitation.
 3. Display data of pie chart in table.        
 
-![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataChartPie.jpg)            
+![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataChartPie-en.jpg)            
 
 #### Box-and-whisker Chart             
 1. Box-and-whisker chart represents data distribution:               
@@ -1073,7 +1073,7 @@ or defined location in table to insert/append/replace.
 	- Random colors.
 4. Display data of pie chart in table.        
 
-![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataChartBox.jpg)            
+![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataChartBox-en.jpg)            
    
 #### Self Comparison Bars Chart   
 1. Self comparison bars show difference between data and reference values.               
@@ -1102,7 +1102,7 @@ or defined location in table to insert/append/replace.
 5. Edit data in chart.
 6. Edit html of chart.      		-     
 
-![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataChartSelfComparison.jpg)            
+![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataChartSelfComparison-en.jpg)            
     
 #### Comparison Bars Chart          
 1. Comparison bars show difference between two series of data.                 
@@ -1131,7 +1131,7 @@ or defined location in table to insert/append/replace.
 5. Edit data in chart.
 6. Edit html of chart.    	-     
 
-![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataChartComparison.jpg)            
+![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataChartComparison-en.jpg)            
  
 ### Manage Data<a id="manageData" />          
 This tool manages following objects:            
