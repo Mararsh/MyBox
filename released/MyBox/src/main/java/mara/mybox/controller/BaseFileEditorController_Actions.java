@@ -188,6 +188,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
             targetInformation.setCharset(Charset.forName(targetCharsetSelector.getSelectionModel().getSelectedItem()));
             targetInformation.setPageSize(sourceInformation.getPageSize());
             targetInformation.setCurrentPage(sourceInformation.getCurrentPage());
+            MyBoxLog.console(targetBomCheck != null);
             if (targetBomCheck != null) {
                 targetInformation.setWithBom(targetBomCheck.isSelected());
             } else {

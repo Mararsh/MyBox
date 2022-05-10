@@ -1,15 +1,21 @@
 package mara.mybox.data2d;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
-import mara.mybox.data2d.Data2DReader.Operation;
+import mara.mybox.data2d.scan.Data2DReader;
+import mara.mybox.data2d.scan.Data2DReader.Operation;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.db.data.Data2DStyle;
+import mara.mybox.db.table.TableData2DStyle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.tools.DateTools;
@@ -80,11 +86,10 @@ public abstract class Data2D_Edit extends Data2D_Data {
             List<String> colNames = readColumnNames();
             if (colNames == null || colNames.isEmpty()) {
                 hasHeader = false;
-                tableData2DColumn.clear(conn, d2did);
+                columns = savedColumns;
             } else {
                 List<String> validNames = new ArrayList<>();
                 columns = new ArrayList<>();
-                Random random = new Random();
                 for (int i = 0; i < colNames.size(); i++) {
                     String name = colNames.get(i);
                     Data2DColumn column;
@@ -102,6 +107,14 @@ public abstract class Data2D_Edit extends Data2D_Data {
                     }
                     validNames.add(vname);
                     column.setColumnName(vname);
+                    columns.add(column);
+                }
+            }
+            if (columns != null && !columns.isEmpty()) {
+                Random random = new Random();
+                List<String> names = new ArrayList<>();
+                for (int i = 0; i < columns.size(); i++) {
+                    Data2DColumn column = columns.get(i);
                     column.setD2id(d2did);
                     column.setIndex(i);
                     if (column.getColor() == null) {
@@ -114,13 +127,21 @@ public abstract class Data2D_Edit extends Data2D_Data {
                     if (isMatrix()) {
                         column.setType(ColumnDefinition.ColumnType.Double);
                     }
-                    columns.add(column);
-                }
-                if (!isTmpData()) {
-                    tableData2DColumn.save(conn, d2did, columns);
+                    names.add(column.getColumnName());
                 }
                 colsNumber = columns.size();
-                tableData2DDefinition.updateData(conn, this);
+                if (d2did >= 0) {
+                    tableData2DColumn.save(conn, d2did, columns);
+                    tableData2DDefinition.updateData(conn, this);
+                    tableData2DStyle.checkColumns(conn, d2did, names);
+                }
+            } else {
+                colsNumber = 0;
+                if (d2did >= 0) {
+                    tableData2DColumn.clear(conn, d2did);
+                    tableData2DDefinition.updateData(conn, this);
+                    tableData2DStyle.clear(conn, d2did);
+                }
             }
             return true;
         } catch (Exception e) {
@@ -140,7 +161,15 @@ public abstract class Data2D_Edit extends Data2D_Data {
             dataSize = reader.getRowIndex();
         }
         rowsNumber = dataSize;
-        tableData2DDefinition.updateData(this);
+        try ( Connection conn = DerbyBase.getConnection()) {
+            tableData2DDefinition.updateData(conn, this);
+            tableData2DStyle.checkRows(conn, d2did, dataSize);
+        } catch (Exception e) {
+            if (backgroundTask != null) {
+                backgroundTask.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+        }
         return dataSize;
     }
 
@@ -164,7 +193,30 @@ public abstract class Data2D_Edit extends Data2D_Data {
         if (rows != null) {
             endRowOfCurrentPage = startRowOfCurrentPage + rows.size();
         }
+        readPageStyles(conn);
         return rows;
+    }
+
+    public void readPageStyles(Connection conn) {
+        styles.clear();
+        if (d2did < 0 || startRowOfCurrentPage >= endRowOfCurrentPage) {
+            return;
+        }
+        try ( PreparedStatement statement = conn.prepareStatement(TableData2DStyle.QueryPageStyles)) {
+            statement.setLong(1, d2did);
+            statement.setLong(2, startRowOfCurrentPage);
+            statement.setLong(3, endRowOfCurrentPage);
+            try ( ResultSet results = statement.executeQuery()) {
+                while (results.next()) {
+                    Data2DStyle d = tableData2DStyle.readData(results);
+                    if (d != null) {
+                        setStyle(d.getRow() - startRowOfCurrentPage, d.getColName(), d.getStyle());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     public void countSize() {
@@ -192,19 +244,11 @@ public abstract class Data2D_Edit extends Data2D_Data {
         return true;
     }
 
-    public boolean saveDefinition() {
+    public boolean saveAttributes() {
+        countSize();
         try ( Connection conn = DerbyBase.getConnection()) {
-            return saveDefinition(conn);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-    public boolean saveDefinition(Connection conn) {
-        try {
-            countSize();
-            return save(conn, (Data2D) this, columns);
+            return saveColumns(conn, (Data2D) this, columns)
+                    && savePageStyles(conn);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -214,12 +258,132 @@ public abstract class Data2D_Edit extends Data2D_Data {
         }
     }
 
-    public static boolean save(Data2D d, List<Data2DColumn> cols) {
+    public boolean savePageStyles(Connection conn) {
+        if (conn == null || d2did < 0) {
+            return false;
+        }
+        try ( Statement statement = conn.createStatement()) {
+            if (endRowOfCurrentPage > startRowOfCurrentPage) {
+                String sql = "DELETE FROM Data2D_Style WHERE d2id=" + d2did
+                        + " AND row>=" + startRowOfCurrentPage + " AND row<" + endRowOfCurrentPage;
+                statement.executeUpdate(sql);
+                conn.commit();
+            }
+            if (isMutiplePages()) {
+                long offset = tableRowsNumber() - (endRowOfCurrentPage - startRowOfCurrentPage);
+                if (offset != 0) {
+                    String sql = "UPDATE Data2D_Style SET row=row+" + offset
+                            + " WHERE d2id=" + d2did + " AND row >= " + endRowOfCurrentPage;
+                    statement.executeUpdate(sql);
+                    conn.commit();
+                }
+            }
+            if (styles.isEmpty()) {
+                return true;
+            }
+            conn.setAutoCommit(false);
+            long count = 0;
+            for (String key : styles.keySet()) {
+                String style = styles.get(key);
+                int pos = key.indexOf(",");
+                int row = Integer.valueOf(key.substring(0, pos));
+                String colName = key.substring(pos + 1);
+                Data2DStyle d2Style = new Data2DStyle(d2did, row + startRowOfCurrentPage, colName, style);
+                tableData2DStyle.write(conn, d2Style);
+                if (++count >= DerbyBase.BatchSize) {
+                    conn.commit();
+                }
+            }
+            conn.commit();
+            return true;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public boolean saveStyles(List<String> cols, String style) {
+        if (cols == null || cols.isEmpty() || tableChanged || d2did < 0) {
+            return false;
+        }
+        try ( Connection conn = DerbyBase.getConnection();
+                 Statement statement = conn.createStatement()) {
+            if (dataSize <= 0) {
+                String in = null;
+                for (String col : cols) {
+                    if (in == null) {
+                        in = col;
+                    } else {
+                        in += "," + col;
+                    }
+                }
+                String sql = "DELETE FROM Data2D_Style WHERE d2id=" + d2did;
+                statement.executeUpdate(sql);
+                conn.commit();
+            } else if (style == null || style.isBlank()) {
+                String in = null;
+                for (String col : cols) {
+                    if (in == null) {
+                        in = "'" + col + "'";
+                    } else {
+                        in += ", '" + col + "'";
+                    }
+                }
+                String sql = "DELETE FROM Data2D_Style WHERE d2id=" + d2did
+                        + " AND colName IN (" + in + ")";
+                statement.executeUpdate(sql);
+                conn.commit();
+            } else {
+                conn.setAutoCommit(false);
+                long count = 0;
+                for (int row = 0; row < dataSize; row++) {
+                    for (String colName : cols) {
+                        Data2DStyle d2Style = new Data2DStyle(d2did, row, colName, style);
+                        tableData2DStyle.write(conn, d2Style);
+                    }
+                    if (++count >= DerbyBase.BatchSize) {
+                        conn.commit();
+                    }
+                }
+                conn.commit();
+            }
+            return true;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public static boolean saveAttributes(Data2D source, Data2D target) {
+        try ( Connection conn = DerbyBase.getConnection()) {
+            source.countSize();
+            target.cloneAttributes(source);
+            if (!saveColumns(conn, target, source.getColumns())) {
+                return false;
+            }
+            target.getTableData2DStyle().copyStyles(conn, source.getD2did(), target.getD2did());
+            return target.savePageStyles(conn);
+        } catch (Exception e) {
+            if (source.getTask() != null) {
+                source.getTask().setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public static boolean saveColumns(Data2D d, List<Data2DColumn> cols) {
         if (d == null) {
             return false;
         }
         try ( Connection conn = DerbyBase.getConnection()) {
-            return save(conn, d, cols);
+            return saveColumns(conn, d, cols);
         } catch (Exception e) {
             if (d.getTask() != null) {
                 d.getTask().setError(e.toString());
@@ -229,7 +393,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
         }
     }
 
-    public static boolean save(Connection conn, Data2D d, List<Data2DColumn> inColumns) {
+    public static boolean saveColumns(Connection conn, Data2D d, List<Data2DColumn> inColumns) {
         if (d == null) {
             return false;
         }
@@ -240,6 +404,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
             Data2DDefinition def;
             long did = d.getD2did();
             d.setModifyTime(new Date());
+            d.setColsNumber(inColumns == null ? 0 : inColumns.size());
             if (did >= 0) {
                 def = d.getTableData2DDefinition().updateData(conn, d);
             } else {

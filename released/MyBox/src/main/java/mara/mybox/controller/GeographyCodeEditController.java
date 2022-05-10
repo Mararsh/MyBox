@@ -17,6 +17,7 @@ import mara.mybox.db.data.GeographyCodeLevel;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -345,12 +346,12 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
             } else {
                 latitudeInput.clear();
             }
-            if (code.getAltitude() != AppValues.InvalidDouble) {
+            if (!DoubleTools.invalidDouble(code.getAltitude())) {
                 altitudeInput.setText(code.getAltitude() + "");
             } else {
                 altitudeInput.clear();
             }
-            if (code.getPrecision() != AppValues.InvalidDouble) {
+            if (!DoubleTools.invalidDouble(code.getPrecision())) {
                 precisionInput.setText(code.getPrecision() + "");
             } else {
                 precisionInput.clear();

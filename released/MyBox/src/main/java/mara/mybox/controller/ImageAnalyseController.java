@@ -45,7 +45,7 @@ import static mara.mybox.bufferedimage.ImageQuantization.QuantizationAlgorithm.K
 import mara.mybox.bufferedimage.ImageQuantizationFactory;
 import mara.mybox.bufferedimage.ImageQuantizationFactory.KMeansClusteringQuantization;
 import mara.mybox.bufferedimage.ImageStatistic;
-import mara.mybox.data.IntStatistic;
+import mara.mybox.calculation.IntStatistic;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -225,7 +225,7 @@ public class ImageAnalyseController extends ImageViewerController {
                 protected boolean handle() {
                     Image aImage = null;
                     if (selectAreaCheck.isSelected()) {
-                        aImage = scopeImage();
+                        aImage = imageToHandle();
                     }
                     if (aImage == null) {
                         aImage = image;
@@ -797,7 +797,7 @@ public class ImageAnalyseController extends ImageViewerController {
                     append("<TR  style=\"font-weight:bold; \">");
             s.append("<TH>").append(message("ColorComponent")).append("</TH>");
             s.append("<TH>").append(message("Mean")).append("</TH>");
-            s.append("<TH>").append(message("Variance")).append("</TH>");
+            s.append("<TH>").append(message("StandardDeviation")).append("</TH>");
             s.append("<TH>").append(message("Skewness")).append("</TH>");
             s.append("<TH>").append(message("Mode")).append("</TH>");
             s.append("<TH>").append(message("Median")).append("</TH>");
@@ -835,7 +835,7 @@ public class ImageAnalyseController extends ImageViewerController {
             s.append(indent).append(indent).append(indent).append(indent).append("<TR>");
             s.append("<TD>").append(message(component.name())).append("</TD>");
             s.append(componentColumn(component, (int) d.getMean()));
-            s.append(componentColumn(component, (int) d.getVariance()));
+            s.append(componentColumn(component, (int) d.getStandardDeviation()));
             s.append(componentColumn(component, (int) d.getSkewness()));
             s.append(componentColumn(component, d.getMode()));
             s.append(componentColumn(component, d.getMedian()));

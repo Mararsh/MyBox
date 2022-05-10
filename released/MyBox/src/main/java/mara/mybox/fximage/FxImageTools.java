@@ -4,7 +4,6 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -85,12 +84,7 @@ public class FxImageTools {
             if (image == null || format == null) {
                 return null;
             }
-            Base64.Encoder encoder = Base64.getEncoder();
-            byte[] bytes = bytes(image, format);
-            if (bytes == null) {
-                return null;
-            }
-            return encoder.encodeToString(bytes);
+            return BufferedImageTools.base64(SwingFXUtils.fromFXImage(image, null), format);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;

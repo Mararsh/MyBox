@@ -235,7 +235,7 @@ public class ImageOCRController extends ImageViewerController {
             @Override
             public void run() {
                 try {
-                    Image selected = preprocessController.scopeImage();
+                    Image selected = preprocessController.imageToHandle();
                     if (selected == null) {
                         selected = preprocessController.imageView.getImage();
                     }
@@ -375,7 +375,7 @@ public class ImageOCRController extends ImageViewerController {
                         if (ocrOptionsController.selectedLanguages != null) {
                             instance.setLanguage(ocrOptionsController.selectedLanguages);
                         }
-                        Image selected = preprocessController.scopeImage();
+                        Image selected = preprocessController.imageToHandle();
                         if (selected == null) {
                             selected = preprocessController.imageView.getImage();
                         }

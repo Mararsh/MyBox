@@ -23,7 +23,8 @@ public class TextFileTools {
 
     public static String readTexts(File file, Charset charset) {
         StringBuilder s = new StringBuilder();
-        try (final BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+        File validFile = FileTools.removeBOM(file);
+        try (final BufferedReader reader = new BufferedReader(new FileReader(validFile, charset))) {
             String line = reader.readLine();
             if (line != null) {
                 s.append(line);
@@ -87,7 +88,8 @@ public class TextFileTools {
         String line;
         try (final FileWriter writer = new FileWriter(targetFile, Charset.forName("utf-8"))) {
             for (File file : files) {
-                try (final BufferedReader reader = new BufferedReader(new FileReader(file, charset(file)))) {
+                File validFile = FileTools.removeBOM(file);
+                try (final BufferedReader reader = new BufferedReader(new FileReader(validFile, charset(validFile)))) {
                     while ((line = reader.readLine()) != null) {
                         writer.write(line + System.lineSeparator());
                     }

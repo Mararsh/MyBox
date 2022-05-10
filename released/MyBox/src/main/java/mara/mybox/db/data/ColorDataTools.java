@@ -14,6 +14,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.FileTools;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -137,7 +138,8 @@ public class ColorDataTools {
 
     public static List<ColorData> readCSV(File file, boolean reOrder) {
         List<ColorData> data = new ArrayList();
-        try (final CSVParser parser = CSVParser.parse(file, StandardCharsets.UTF_8,
+        File validFile = FileTools.removeBOM(file);
+        try (final CSVParser parser = CSVParser.parse(validFile, StandardCharsets.UTF_8,
                 CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(',').withTrim().withNullString(""))) {
             List<String> names = parser.getHeaderNames();
             if (names == null || (!names.contains("rgba") && !names.contains("rgb"))) {

@@ -149,7 +149,7 @@ public class TableUserConf extends BaseTable<StringValue> {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+//            MyBoxLog.debug(e);
         }
         return defaultValue;
     }

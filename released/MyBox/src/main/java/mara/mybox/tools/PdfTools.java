@@ -6,16 +6,12 @@ import com.vladsch.flexmark.profile.pegdown.Extensions;
 import com.vladsch.flexmark.profile.pegdown.PegdownOptionsAdapter;
 import com.vladsch.flexmark.util.data.DataHolder;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
-import javax.imageio.ImageIO;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.bufferedimage.CropTools;
 import mara.mybox.bufferedimage.ImageAttributes;
@@ -422,19 +418,6 @@ public class PdfTools {
             }
         }
         return imageList;
-    }
-
-    public static InputStream getImageInputStream(PDImageXObject iamge) throws
-            Exception {
-
-        if (null != iamge && null != iamge.getImage()) {
-            BufferedImage bufferImage = iamge.getImage();
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
-            ImageIO.write(bufferImage, iamge.getSuffix(), os);
-            return new ByteArrayInputStream(os.toByteArray());
-        }
-        return null;
-
     }
 
     public static boolean writeSplitImages(String sourceFormat, String sourceFile,

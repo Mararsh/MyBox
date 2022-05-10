@@ -31,6 +31,7 @@ public class NodeStyleTools {
     public static String darkRedText = "-fx-text-fill: #961c1c;  -fx-font-weight: bolder;";
     public static String darkBlueText = "-fx-text-fill: #2e598a;  -fx-font-weight: bolder;";
     public static String selectedData = "-fx-background-color:  #0096C9; -fx-text-background-color: white;";
+    public static String selectedRow = "-fx-background-color:  lightgray; -fx-text-fill: -fx-selection-bar-text;";
 
     public static void applyStyle(Node node) {
         try {

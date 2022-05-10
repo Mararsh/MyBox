@@ -113,7 +113,7 @@ public class HtmlCodesPopController extends TextPopController {
     public void editAction() {
         HtmlEditorController controller = (HtmlEditorController) WindowTools.openStage(Fxmls.HtmlEditorFxml);
         controller.loadContents(textArea.getText());
-        controller.toFront();
+        controller.requestMouse();
     }
 
     @FXML

@@ -42,4 +42,9 @@ public class NoteAttributes extends TreeNodeEditor {
         return node;
     }
 
+    @Override
+    public void pasteText(String text) {
+        editorController.pasteText(text);
+    }
+
 }

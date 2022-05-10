@@ -458,8 +458,8 @@ License:    Apache License Version 2.0
                                         </VBox>
                                     </content>
                                 </Tab>
-                                <Tab closable="false">
-                                    <graphic>
+                        <Tab closable="false">
+                           <graphic>
                                         <HBox nodeOrientation="LEFT_TO_RIGHT">
                                             <children> 
                                                 <Button fx:id="panesMenuButton" mnemonicParsing="false" onMouseEntered="#popPanesMenu">
@@ -473,8 +473,8 @@ License:    Apache License Version 2.0
                                                 </Button>
                                             </children>
                                         </HBox>
-                                    </graphic>
-                                </Tab>                            
+                           </graphic>
+                        </Tab>                            
                             </tabs>
                         </TabPane>
                     </children>

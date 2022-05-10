@@ -656,23 +656,49 @@ public abstract class BaseTable<D> {
         if (conn == null) {
             return 0;
         }
-        String sql = null;
-        try {
-            String c = "";
-            if (condition != null && !condition.isBlank()) {
-                if (!condition.trim().startsWith("ORDER BY")) {
-                    c = " WHERE " + condition;
-                }
+        String c = "";
+        if (condition != null && !condition.isBlank()) {
+            if (!condition.trim().startsWith("ORDER BY")) {
+                c = " WHERE " + condition;
             }
-            sql = sizeStatement() + c;
-            ResultSet results = conn.createStatement().executeQuery(sql);
-            if (results.next()) {
-                return results.getInt(1);
+        }
+        String sql = sizeStatement() + c;
+        int size = 0;
+        try ( PreparedStatement sizeQuery = conn.prepareStatement(sql);
+                 ResultSet results = sizeQuery.executeQuery()) {
+            if (results != null && results.next()) {
+                size = results.getInt(1);
             }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+        return size;
+    }
+
+    public boolean isEmpty() {
+        String sql = "SELECT * FROM " + tableName + " FETCH FIRST ROW ONLY";
+        return isEmpty(sql);
+    }
+
+    public boolean isEmpty(String sql) {
+        try ( Connection conn = DerbyBase.getConnection()) {
+            conn.setReadOnly(true);
+            return isEmpty(conn, sql);
+        } catch (Exception e) {
+            MyBoxLog.error(e, sql);
+            return true;
+        }
+    }
+
+    public boolean isEmpty(Connection conn, String sql) {
+        boolean isEmpty = true;
+        try ( PreparedStatement statement = conn.prepareStatement(sql);
+                 ResultSet results = statement.executeQuery()) {
+            isEmpty = results == null || !results.next();
         } catch (Exception e) {
             MyBoxLog.error(e, sql);
         }
-        return 0;
+        return isEmpty;
     }
 
     public String queryStatement() {
@@ -1043,6 +1069,8 @@ public abstract class BaseTable<D> {
                     D data = readData(results);
                     dataList.add(data);
                 }
+            } catch (Exception e) {
+                MyBoxLog.error(e, sql);
             }
         } catch (Exception e) {
             MyBoxLog.error(e, sql);
@@ -1437,18 +1465,23 @@ public abstract class BaseTable<D> {
         }
     }
 
-    public int clearData(Connection conn) {
-        if (conn == null) {
-            return -1;
-        }
-        String sql = null;
-        try {
-            sql = "TRUNCATE TABLE " + tableName;
-            return conn.createStatement().executeUpdate(sql);
+    public long clearData(Connection conn) {
+        int count = -1;
+        String clearSQL = "DELETE FROM " + tableName;
+        try ( PreparedStatement clear = conn.prepareStatement(clearSQL)) {
+            count = clear.executeUpdate();
+            if (count >= 0 && idColumn != null) {
+                String resetSQL = "ALTER TABLE " + tableName + " ALTER COLUMN " + idColumn + " RESTART WITH 1";
+                try ( PreparedStatement reset = conn.prepareStatement(resetSQL)) {
+                    reset.executeUpdate();
+                } catch (Exception e) {
+                    MyBoxLog.error(e, resetSQL);
+                }
+            }
         } catch (Exception e) {
-            MyBoxLog.error(e, sql);
-            return -1;
+            MyBoxLog.error(e, clearSQL);
         }
+        return count;
     }
 
     public BaseTable readDefinitionFromDB(String tableName) {

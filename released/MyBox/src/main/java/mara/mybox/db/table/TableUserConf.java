@@ -149,7 +149,7 @@ public class TableUserConf extends BaseTable<StringValue> {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+//            MyBoxLog.debug(e);
         }
         return defaultValue;
     }
@@ -163,9 +163,11 @@ public class TableUserConf extends BaseTable<StringValue> {
             queryStatement.setMaxRows(1);
             queryStatement.setString(1, keyName);
             try ( ResultSet resultSet = queryStatement.executeQuery()) {
-                if (resultSet.next()) {
+                if (resultSet != null && resultSet.next()) {
                     value = resultSet.getInt(1);
                 }
+            } catch (Exception e) {
+                MyBoxLog.debug(e);
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);

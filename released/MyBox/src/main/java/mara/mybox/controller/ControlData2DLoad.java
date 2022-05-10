@@ -20,6 +20,10 @@ import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.DataFileExcel;
+import mara.mybox.data2d.DataFileText;
+import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
@@ -45,7 +49,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;
     protected char copyDelimiter = ',';
-    protected boolean readOnly;
+    protected boolean readOnly, notUpdateTitle;
     protected SimpleBooleanProperty statusNotify;
     protected Label dataLabel;
 
@@ -269,86 +273,61 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     }
 
     public synchronized void loadTmpData(List<Data2DColumn> cols, List<List<String>> data) {
-        if (data2D == null) {
-            return;
+        try {
+            if (data2D == null) {
+                return;
+            }
+            if (dataController != null) {
+                dataController.resetStatus();
+            } else {
+                resetStatus();
+            }
+            data2D.resetData();
+            List<Data2DColumn> columns = new ArrayList<>();
+            if (cols == null || cols.isEmpty()) {
+                data2D.setHasHeader(false);
+                if (data != null && !data.isEmpty()) {
+                    for (int i = 0; i < data.get(0).size(); i++) {
+                        Data2DColumn column = new Data2DColumn(data2D.colPrefix() + (i + 1), data2D.defaultColumnType());
+                        columns.add(column);
+                    }
+                }
+            } else {
+                data2D.setHasHeader(true);
+                for (Data2DColumn col : cols) {
+                    columns.add(col.cloneAll());
+                }
+            }
+            for (Data2DColumn column : columns) {
+                column.setIndex(data2D.newColumnIndex());
+            }
+            data2D.setColumns(columns);
+            StringTable validateTable = Data2DColumn.validate(columns);
+            List<List<String>> rows = new ArrayList<>();
+            if (data != null) {
+                for (int i = 0; i < data.size(); i++) {
+                    List<String> row = new ArrayList<>();
+                    row.add("-1");
+                    row.addAll(data.get(i));
+                    rows.add(row);
+                }
+            }
+            data2D.checkForLoad();
+            resetView(false);
+            if (dataController != null) {
+                dataController.setData(data2D);
+            }
+            displayTmpData(rows);
+            if (dataController != null) {
+                dataController.attributesController.loadData();
+                dataController.columnsController.loadData();
+            }
+            if (validateTable != null && !validateTable.isEmpty()) {
+                validateTable.htmlTable();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
-        if (dataController != null) {
-            dataController.resetStatus();
-        } else {
-            resetStatus();
-        }
-        task = new SingletonTask<Void>(this) {
-
-            private StringTable validateTable;
-            private List<List<String>> rows;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    data2D.resetData();
-                    data2D.setTask(task);
-                    List<Data2DColumn> columns = new ArrayList<>();
-                    if (cols == null || cols.isEmpty()) {
-                        data2D.setHasHeader(false);
-                        if (data == null || data.isEmpty()) {
-                            return true;
-                        }
-                        for (int i = 0; i < data.get(0).size(); i++) {
-                            Data2DColumn column = new Data2DColumn(data2D.colPrefix() + (i + 1), data2D.defaultColumnType());
-                            columns.add(column);
-                        }
-                    } else {
-                        data2D.setHasHeader(true);
-                        columns.addAll(cols);
-                    }
-                    for (Data2DColumn column : columns) {
-                        column.setIndex(data2D.newColumnIndex());
-                    }
-                    data2D.setColumns(columns);
-                    validateTable = Data2DColumn.validate(columns);
-                    rows = new ArrayList<>();
-                    if (data != null) {
-                        for (int i = 0; i < data.size(); i++) {
-                            List<String> row = new ArrayList<>();
-                            row.add("-1");
-                            row.addAll(data.get(i));
-                            rows.add(row);
-                        }
-                    }
-                    data2D.checkForLoad();
-                    return true;
-                } catch (Exception e) {
-                    error = e.toString();
-                    MyBoxLog.console(e);
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-            }
-
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                data2D.setTask(null);
-                task = null;
-                resetView(false);
-                if (dataController != null) {
-                    dataController.setData(data2D);
-                }
-                displayTmpData(rows);
-                if (dataController != null) {
-                    dataController.attributesController.loadData();
-                    dataController.columnsController.loadData();
-                }
-                if (validateTable != null && !validateTable.isEmpty()) {
-                    validateTable.htmlTable();
-                }
-            }
-
-        };
-        start(task);
     }
 
     public synchronized boolean displayTmpData(List<List<String>> newData) {
@@ -366,6 +345,51 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             MyBoxLog.error(e.toString());
             return false;
         }
+    }
+
+    public void loadCSVFile(File csvFile) {
+        if (csvFile == null || !csvFile.exists()) {
+            return;
+        }
+        task = new SingletonTask<Void>(this) {
+            private Data2D fileData;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    if (data2D.getType() == Data2D.Type.Texts) {
+                        fileData = new DataFileText(csvFile);
+                    } else {
+                        DataFileCSV csvData = new DataFileCSV(csvFile);
+                        switch (data2D.getType()) {
+                            case CSV:
+                                fileData = csvData;
+                                break;
+                            case Excel: {
+                                DataFileExcel excelData = DataFileExcel.toExcel(task, csvData);
+                                fileData = excelData;
+                                break;
+                            }
+                            case DatabaseTable: {
+                                DataTable dataTable = DataTable.toTable(task, csvData, true);
+                                fileData = dataTable;
+                                break;
+                            }
+                        }
+                    }
+                    return fileData != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                loadDef(fileData);
+            }
+        };
+        start(task);
     }
 
     public void loadMatrix(double[][] matrix) {
@@ -408,7 +432,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         if (data2D != null) {
             data2D.setTableChanged(false);
         }
-        notifyStatus();
     }
 
     public void notifyStatus() {
@@ -534,13 +557,27 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                     }
                 });
 
-                if (!readOnly) {
+                if (tableColumn.isEditable()) {
                     tableColumn.setCellFactory(new Callback<TableColumn<List<String>, String>, TableCell<List<String>, String>>() {
                         @Override
                         public TableCell<List<String>, String> call(TableColumn<List<String>, String> param) {
                             try {
                                 TableAutoCommitCell<List<String>, String> cell
                                         = new TableAutoCommitCell<List<String>, String>(new DefaultStringConverter()) {
+                                    @Override
+                                    public void updateItem(String item, boolean empty) {
+                                        setStyle(null);
+                                        try {
+                                            setStyle(data2D.getStyle(getTableRow().getIndex(), name));
+                                        } catch (Exception e) {
+                                        }
+                                        super.updateItem(item, empty);
+                                        if (empty || item == null) {
+                                            setText(null);
+                                            setGraphic(null);
+                                        }
+                                    }
+
                                     @Override
                                     public boolean valid(String value) {
                                         return dataColumn.validValue(value);
@@ -572,15 +609,44 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                     }
 
                                 };
+
                                 return cell;
                             } catch (Exception e) {
                                 return null;
                             }
                         }
                     });
-                    if (tableColumn.isEditable()) {
-                        tableColumn.getStyleClass().add("editable-column");
-                    }
+                    tableColumn.getStyleClass().add("editable-column");
+                } else {
+                    tableColumn.setCellFactory(new Callback<TableColumn<List<String>, String>, TableCell<List<String>, String>>() {
+                        @Override
+                        public TableCell<List<String>, String> call(TableColumn<List<String>, String> param) {
+                            try {
+                                TableCell<List<String>, String> cell = new TableCell<List<String>, String>() {
+                                    @Override
+                                    public void updateItem(String item, boolean empty) {
+                                        setStyle(null);
+                                        try {
+                                            setStyle(data2D.getStyle(getTableRow().getIndex(), name));
+                                        } catch (Exception e) {
+                                        }
+                                        super.updateItem(item, empty);
+                                        if (empty || item == null) {
+                                            setText(null);
+                                            setGraphic(null);
+                                            return;
+                                        }
+                                        setText(item);
+                                    }
+                                };
+
+                                return cell;
+                            } catch (Exception e) {
+                                return null;
+                            }
+                        }
+                    });
+
                 }
 
                 if (dataController != null) {
@@ -664,7 +730,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
 
                     @Override
                     protected boolean handle() {
-                        return data2D.saveDefinition();
+                        return data2D.saveAttributes();
                     }
 
                     @Override
@@ -805,6 +871,35 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     }
 
     @Override
+    public void addRows(int index, int number) {
+        data2D.moveDownStyles(index, number);
+        super.addRows(index, number);
+    }
+
+    @FXML
+    @Override
+    public void deleteRowsAction() {
+        List<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
+        if (selected == null || selected.isEmpty()) {
+            data2D.getStyles().clear();
+            return;
+        }
+        for (Integer index : selected) {
+            data2D.moveUpStyles(index);
+        }
+        super.deleteRowsAction();
+    }
+
+    @Override
+    protected void afterClear() {
+        data2D.getStyles().clear();
+        super.afterClear();
+    }
+
+    /*
+        interface
+     */
+    @Override
     public void updateStatus() {
         super.updateStatus();
         myStage = getMyStage();
@@ -813,7 +908,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             if (dataLabel != null) {
                 dataLabel.setText(name);
             }
-            if (myStage != null) {
+            if (myStage != null && !notUpdateTitle) {
                 String title = getRootBaseTitle() + " : " + name;
                 if (data2D.isTableChanged()) {
                     title += " *";
@@ -824,7 +919,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             if (dataLabel != null) {
                 dataLabel.setText("");
             }
-            if (myStage != null) {
+            if (myStage != null && !notUpdateTitle) {
                 myStage.setTitle(baseTitle);
             }
         }
@@ -860,6 +955,10 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
 
     public void setTableView(TableView<List<String>> tableView) {
         this.tableView = tableView;
+    }
+
+    public void setNotUpdateTitle(boolean notUpdateTitle) {
+        this.notUpdateTitle = notUpdateTitle;
     }
 
 }

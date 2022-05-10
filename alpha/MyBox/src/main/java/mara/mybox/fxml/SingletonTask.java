@@ -2,6 +2,7 @@ package mara.mybox.fxml;
 
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.LoadingController;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -36,6 +37,7 @@ public class SingletonTask<Void> extends BaseTask<Void> {
                     controller.popError(error);
                 } else {
                     controller.alertError(error);
+                    MyBoxLog.debug(error);
                 }
             } else {
                 controller.popFailed();

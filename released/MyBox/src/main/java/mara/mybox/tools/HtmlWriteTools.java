@@ -19,6 +19,7 @@ import mara.mybox.data.Link;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
+import mara.mybox.fxml.style.HtmlStyles;
 import static mara.mybox.tools.HtmlReadTools.charsetInHead;
 import static mara.mybox.tools.HtmlReadTools.tag;
 import static mara.mybox.value.AppValues.Indent;
@@ -113,6 +114,10 @@ public class HtmlWriteTools {
         s.append(body);
         s.append("</HTML>\n");
         return s.toString();
+    }
+
+    public static String html(String body) {
+        return html(null, "utf-8", HtmlStyles.DefaultStyle, body);
     }
 
     public static String style(String html, String styleValue) {
@@ -435,7 +440,8 @@ public class HtmlWriteTools {
         if (nodeList == null || nodeList.getLength() < 1) {
             return 0;
         }
-        FindReplaceString finder = FindReplaceString.create().setOperation(FindReplaceString.Operation.FindNext).setFindString(findString).setIsRegex(reg).setCaseInsensitive(caseInsensitive).setMultiline(true);
+        FindReplaceString finder = FindReplaceString.create().setOperation(FindReplaceString.Operation.FindNext)
+                .setFindString(findString).setIsRegex(reg).setCaseInsensitive(caseInsensitive).setMultiline(true);
         String replaceSuffix = " style=\"color:" + color + "; background: " + bgColor + "; font-size:" + font + ";\">" + findString + "</span>";
         return replace(finder, nodeList.item(0), 0, replaceSuffix);
     }

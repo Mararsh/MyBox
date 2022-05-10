@@ -43,7 +43,7 @@ public class MyBoxPropertiesController extends HtmlTableController {
             addData(message("MyBoxDataPath"), AppVariables.MyboxDataPath);
             addData(message("MyBoxDatabase"),
                     DerbyBase.protocol + "<BR>" + DerbyBase.dbHome() + "<BR>" + DerbyBase.login);
-            addData(message("JvmName"), System.getProperty("java.version"));
+            addData(message("JavaVersion"), System.getProperty("java.version"));
             addData(message("JavaVendor"), System.getProperty("java.vendor"));
             addData(message("JvmName"), System.getProperty("java.vm.name"));
             addData(message("JvmInfo"), System.getProperty("java.vm.info"));

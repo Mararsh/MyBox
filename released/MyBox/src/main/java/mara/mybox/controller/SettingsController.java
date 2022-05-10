@@ -1149,7 +1149,7 @@ public class SettingsController extends BaseController {
             if (object != null && object instanceof SettingsController) {
                 try {
                     controller = (SettingsController) object;
-                    controller.toFront();
+                    controller.requestMouse();
                     break;
                 } catch (Exception e) {
                 }

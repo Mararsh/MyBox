@@ -555,7 +555,7 @@ public class PdfViewController extends PdfViewController_Html {
     public static PdfViewController open(File file) {
         PdfViewController controller = (PdfViewController) WindowTools.openStage(Fxmls.PdfViewFxml);
         controller.sourceFileChanged(file);
-        controller.toFront();
+        controller.requestMouse();
         return controller;
     }
 

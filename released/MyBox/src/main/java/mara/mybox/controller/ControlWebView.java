@@ -82,7 +82,7 @@ public class ControlWebView extends BaseController {
     protected double linkX, linkY, scrollTop, scrollLeft;
     protected ScrollType scrollType;
     protected float zoomScale;
-    protected String address, style, defaultStyle;
+    protected String address, style, defaultStyle, initStyle;
     protected Charset charset;
     protected Map<Integer, Document> framesDoc;
     protected EventListener docListener;
@@ -489,6 +489,18 @@ public class ControlWebView extends BaseController {
         }
     }
 
+    public Object executeScript(String js) {
+        try {
+            if (js == null || js.isBlank()) {
+                return null;
+            }
+            return webEngine.executeScript(js);
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
+            return null;
+        }
+    }
+
     private void pageIsLoading() {
         setWebViewLabel(message("Loading..."));
         pageLoadingNotify.set(!pageLoadingNotify.get());
@@ -496,39 +508,46 @@ public class ControlWebView extends BaseController {
 
     private void afterPageLoaded() {
         try {
-            String prefix = UserConfig.getBoolean(baseName + "ShareHtmlStyle", true) ? "AllInterface" : baseName;
-            setStyle(UserConfig.getString(prefix + "HtmlStyle", defaultStyle));
+            if (initStyle != null) {
+                writeStyle(initStyle);
+            } else {
+                String prefix = UserConfig.getBoolean(baseName + "ShareHtmlStyle", true) ? "AllInterface" : baseName;
+                setStyle(UserConfig.getString(prefix + "HtmlStyle", defaultStyle));
+            }
             setWebViewLabel(message("Loaded"));
 
-            try {
-                if (null == scrollType) {
-                    webEngine.executeScript("window.scrollTo(" + scrollLeft + "," + scrollTop + ");");
-                } else {
-                    switch (scrollType) {
-                        case Bottom:
-                            webEngine.executeScript("window.scrollTo(0, document.documentElement.scrollHeight || document.body.scrollHeight);");
-                            break;
-                        case Top:
-                            webEngine.executeScript("window.scrollTo(0, 0);");
-                            break;
-                        default:
-                            webEngine.executeScript("window.scrollTo(" + scrollLeft + "," + scrollTop + ");");
-                            break;
-                    }
-                }
-            } catch (Exception e) {
-            }
+            Document doc = webEngine.getDocument();
+            charset = HtmlReadTools.charset(doc);
+            framesDoc.clear();
+            addDocListener(doc);
+            pageLoadedNotify.set(!pageLoadedNotify.get());
+
             if (!(this instanceof ControlHtmlEditor)) {
                 try {
                     webEngine.executeScript("document.body.contentEditable=" + UserConfig.getBoolean("WebViewEditable", false));
                 } catch (Exception e) {
                 }
             }
-            Document doc = webEngine.getDocument();
-            charset = HtmlReadTools.charset(doc);
-            framesDoc.clear();
-            addDocListener(doc);
-            pageLoadedNotify.set(!pageLoadedNotify.get());
+
+            try {
+                if (null == scrollType) {
+                    webEngine.executeScript("setTimeout(window.scrollTo(" + scrollLeft + "," + scrollTop + "), 1000);");
+                } else {
+                    switch (scrollType) {
+                        case Bottom:
+                            webEngine.executeScript("setTimeout(window.scrollTo(0, document.documentElement.scrollHeight || document.body.scrollHeight), 1000);");
+                            break;
+                        case Top:
+                            webEngine.executeScript("window.scrollTo(0, 0);");
+                            break;
+                        default:
+                            webEngine.executeScript("setTimeout(window.scrollTo(" + scrollLeft + "," + scrollTop + "), 1000);");
+                            break;
+                    }
+                }
+            } catch (Exception e) {
+//                MyBoxLog.debug(e);
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -587,10 +606,18 @@ public class ControlWebView extends BaseController {
         return HtmlReadTools.removeNode(WebViewTools.getHtml(webEngine), StyleNodeID);
     }
 
+    public String currentHtml() {
+        return WebViewTools.getHtml(webEngine);
+    }
+
     public void setStyle(String style) {
         String prefix = UserConfig.getBoolean(baseName + "ShareHtmlStyle", true) ? "AllInterface" : baseName;
         UserConfig.setString(prefix + "HtmlStyle", style);
 
+        writeStyle(style);
+    }
+
+    public void writeStyle(String style) {
         WebViewTools.removeNode(webEngine, StyleNodeID);
         this.style = style;
         if (style != null && !style.isBlank()) {
@@ -988,6 +1015,7 @@ public class ControlWebView extends BaseController {
             String currentClick = UserConfig.getString("WebViewWhenClickImageLink", "PopMenu");
 
             RadioMenuItem clickPopMenu = new RadioMenuItem(message("PopMenu"), StyleTools.getIconImage("iconMenu.png"));
+            clickPopMenu.setSelected(currentClick == null || "PopMenu".equals(currentClick));
             clickPopMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -995,9 +1023,9 @@ public class ControlWebView extends BaseController {
                 }
             });
             clickPopMenu.setToggleGroup(clickGroup);
-            clickPopMenu.setSelected(currentClick == null || "PopMenu".equals(currentClick));
 
             RadioMenuItem clickAsPageMenu = new RadioMenuItem(message("HandleAsPage"), StyleTools.getIconImage("iconHtml.png"));
+            clickAsPageMenu.setSelected("AsPage".equals(currentClick));
             clickAsPageMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -1005,9 +1033,9 @@ public class ControlWebView extends BaseController {
                 }
             });
             clickAsPageMenu.setToggleGroup(clickGroup);
-            clickAsPageMenu.setSelected("AsPage".equals(currentClick));
 
             RadioMenuItem clickOpenSwitchMenu = new RadioMenuItem(message("OpenLinkInNewTabSwitch"), StyleTools.getIconImage("iconWindow.png"));
+            clickOpenSwitchMenu.setSelected("OpenSwitch".equals(currentClick));
             clickOpenSwitchMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -1015,9 +1043,9 @@ public class ControlWebView extends BaseController {
                 }
             });
             clickOpenSwitchMenu.setToggleGroup(clickGroup);
-            clickOpenSwitchMenu.setSelected("OpenSwitch".equals(currentClick));
 
             RadioMenuItem clickOpenMenu = new RadioMenuItem(message("OpenLinkInNewTab"), StyleTools.getIconImage("iconWindow.png"));
+            clickOpenMenu.setSelected("Open".equals(currentClick));
             clickOpenMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -1025,9 +1053,9 @@ public class ControlWebView extends BaseController {
                 }
             });
             clickOpenMenu.setToggleGroup(clickGroup);
-            clickOpenMenu.setSelected("Open".equals(currentClick));
 
             RadioMenuItem clickLoadMenu = new RadioMenuItem(message("OpenLinkByCurrent"), StyleTools.getIconImage("iconWindow.png"));
+            clickLoadMenu.setSelected("Load".equals(currentClick));
             clickLoadMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -1035,7 +1063,6 @@ public class ControlWebView extends BaseController {
                 }
             });
             clickLoadMenu.setToggleGroup(clickGroup);
-            clickLoadMenu.setSelected("Load".equals(currentClick));
 
             clickMenu.getItems().addAll(clickPopMenu, clickAsPageMenu, clickOpenSwitchMenu, clickOpenMenu, clickLoadMenu);
 
@@ -1076,8 +1103,7 @@ public class ControlWebView extends BaseController {
                 editableMenu.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        UserConfig.setBoolean("WebViewEditable", editableMenu.isSelected());
-                        webEngine.executeScript("document.body.contentEditable=" + editableMenu.isSelected());
+                        setEditable(editableMenu.isSelected());
                     }
                 });
                 items.add(editableMenu);
@@ -1200,7 +1226,7 @@ public class ControlWebView extends BaseController {
                     } else {
                         controller.loadContents(html);
                     }
-                    controller.toFront();
+                    controller.requestMouse();
                 });
                 items.add(menu);
 
@@ -1306,6 +1332,14 @@ public class ControlWebView extends BaseController {
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void setEditable(boolean e) {
+        UserConfig.setBoolean("WebViewEditable", e);
+        webEngine.executeScript("document.body.contentEditable=" + e);
+        if (e) {
+            alertInformation(message("HtmlEditableComments"));
         }
     }
 
@@ -1586,7 +1620,7 @@ public class ControlWebView extends BaseController {
     public void find(String html) {
         HtmlFindController controller = (HtmlFindController) WindowTools.openStage(Fxmls.HtmlFindFxml);
         controller.loadContents(address, html);
-        controller.toFront();
+        controller.requestMouse();
     }
 
     @FXML

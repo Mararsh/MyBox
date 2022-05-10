@@ -40,6 +40,7 @@ import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -147,7 +148,7 @@ public class ColorPalettePopupController extends BaseChildController {
                         if (defaultPalette == null) {
                             return false;
                         }
-                        String paletteName = UserConfig.getString(baseName + "Palette", defaultPalette.getName());
+                        String paletteName = UserConfig.getString("ColorPalettePopupPalette", defaultPalette.getName());
                         currentPalette = tableColorPaletteName.find(conn, paletteName);
                         if (currentPalette == null) {
                             currentPalette = defaultPalette;
@@ -156,7 +157,7 @@ public class ColorPalettePopupController extends BaseChildController {
                             return false;
                         }
                         paletteName = currentPalette.getName();
-                        UserConfig.setString(baseName + "Palette", paletteName);
+                        UserConfig.setString("ColorPalettePopupPalette", paletteName);
                         colors = tableColorPalette.colors(conn, currentPalette.getCpnid());
                         palettes = tableColorPaletteName.readAll(conn);
                     } catch (Exception e) {
@@ -205,7 +206,7 @@ public class ColorPalettePopupController extends BaseChildController {
 
     }
 
-    protected Rectangle makeColorRect(ColorData data) {
+    public Rectangle makeColorRect(ColorData data) {
         try {
             if (data == null) {
                 return null;
@@ -218,19 +219,7 @@ public class ColorPalettePopupController extends BaseChildController {
             rect.setStroke(Color.BLACK);
             rect.setOnMouseClicked((MouseEvent event) -> {
                 Platform.runLater(() -> {
-                    if (isSettingValues || parentController == null || parentRect == null) {
-                        return;
-                    }
-                    try {
-                        parentRect.setFill(color);
-                        parentRect.setUserData(data);
-                        NodeStyleTools.setTooltip(parentRect, data.display());
-                        parentController.closePopup();
-                        setNotify.set(!setNotify.get());
-                    } catch (Exception e) {
-                        MyBoxLog.debug(e.toString());
-                    }
-
+                    takeColor(data);
                 });
             });
             rect.setOnMouseEntered((MouseEvent event) -> {
@@ -261,8 +250,25 @@ public class ColorPalettePopupController extends BaseChildController {
         }
     }
 
+    public void takeColor(ColorData data) {
+        if (isSettingValues || data == null
+                || parentController == null || parentRect == null) {
+            return;
+        }
+        try {
+            Color color = data.getColor();
+            parentRect.setFill(color);
+            parentRect.setUserData(data);
+            NodeStyleTools.setTooltip(parentRect, data.display());
+            parentController.closePopup();
+            setNotify.set(!setNotify.get());
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
     @FXML
-    protected void popPaletteMenu(MouseEvent mouseEvent) {
+    public void popPaletteMenu(MouseEvent mouseEvent) {
         try {
             List<MenuItem> items = new ArrayList<>();
 
@@ -284,7 +290,7 @@ public class ColorPalettePopupController extends BaseChildController {
 
             items.add(new SeparatorMenuItem());
 
-            MenuItem menu = new MenuItem(message("PopupClose"));
+            MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 if (popMenu != null && popMenu.isShowing()) {
@@ -309,7 +315,7 @@ public class ColorPalettePopupController extends BaseChildController {
     }
 
     @FXML
-    protected void popDataMenu(MouseEvent mouseEvent) {
+    public void popDataMenu(MouseEvent mouseEvent) {
         try {
             List<MenuItem> items = new ArrayList<>();
 
@@ -338,7 +344,7 @@ public class ColorPalettePopupController extends BaseChildController {
 
             items.add(new SeparatorMenuItem());
 
-            menu = new MenuItem(message("PopupClose"));
+            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 if (popMenu != null && popMenu.isShowing()) {
@@ -360,6 +366,30 @@ public class ColorPalettePopupController extends BaseChildController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @FXML
+    public void inputAction() {
+        ColorPaletteInputController.open(this);
+    }
+
+    public void addColor(ColorData colorData) {
+        if (colorData == null) {
+            popError(message("InvalidParameters") + ": " + message("Color"));
+            return;
+        }
+        SingletonTask addTask = new SingletonTask<Void>(this) {
+            @Override
+            protected boolean handle() {
+                return tableColorPalette.findAndCreate(currentPalette.getCpnid(), colorData, false) != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                PaletteTools.afterPaletteChanged(parentController, currentPalette.getName());
+            }
+        };
+        start(addTask, false);
     }
 
     @FXML

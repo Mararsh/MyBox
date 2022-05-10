@@ -58,6 +58,16 @@ public class MenuWebviewController extends MenuController {
         setFileType(VisitHistory.FileType.Html);
     }
 
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+            NodeStyleTools.setTooltip(editableCheck, new Tooltip(message("Editable") + "\n" + message("HtmlEditableComments")));
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
     public void setParameters(ControlWebView webViewController, Element element, double x, double y) {
         try {
             if (webViewController == null) {
@@ -95,8 +105,7 @@ public class MenuWebviewController extends MenuController {
                 editableCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldv, Boolean newv) {
-                        UserConfig.setBoolean("WebViewEditable", editableCheck.isSelected());
-                        webView.getEngine().executeScript("document.body.contentEditable=" + editableCheck.isSelected());
+                        webViewController.setEditable(editableCheck.isSelected());
                     }
                 });
             }

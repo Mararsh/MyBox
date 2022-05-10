@@ -49,7 +49,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;
     protected char copyDelimiter = ',';
-    protected boolean readOnly;
+    protected boolean readOnly, notUpdateTitle;
     protected SimpleBooleanProperty statusNotify;
     protected Label dataLabel;
 
@@ -908,7 +908,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             if (dataLabel != null) {
                 dataLabel.setText(name);
             }
-            if (myStage != null) {
+            if (myStage != null && !notUpdateTitle) {
                 String title = getRootBaseTitle() + " : " + name;
                 if (data2D.isTableChanged()) {
                     title += " *";
@@ -919,7 +919,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             if (dataLabel != null) {
                 dataLabel.setText("");
             }
-            if (myStage != null) {
+            if (myStage != null && !notUpdateTitle) {
                 myStage.setTitle(baseTitle);
             }
         }
@@ -955,6 +955,10 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
 
     public void setTableView(TableView<List<String>> tableView) {
         this.tableView = tableView;
+    }
+
+    public void setNotUpdateTitle(boolean notUpdateTitle) {
+        this.notUpdateTitle = notUpdateTitle;
     }
 
 }

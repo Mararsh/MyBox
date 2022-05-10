@@ -31,11 +31,17 @@ public class DataFileCSV extends DataFileText {
         type = Type.CSV;
     }
 
+    public DataFileCSV(File file) {
+        type = Type.CSV;
+        this.file = file;
+        this.delimiter = guessDelimiter();
+    }
+
     @Override
-    public String guessDelimiter() {
-        String[] values = {",", " ", "|", "@", "#", ";", ":", "*",
+    public String[] delimters() {
+        String[] delimiters = {",", " ", "|", "@", "#", ";", ":", "*",
             "%", "$", "_", "&", "-", "=", "!", "\"", "'", "<", ">"};
-        return guessDelimiter(values);
+        return delimiters;
     }
 
     public CSVFormat cvsFormat() {
@@ -68,7 +74,8 @@ public class DataFileCSV extends DataFileText {
         CSVFormat tFormat = targetCSVFile.cvsFormat();
         checkForLoad();
         if (file != null && file.exists() && file.length() > 0) {
-            try ( CSVParser parser = CSVParser.parse(file, charset, cvsFormat());
+            File validFile = FileTools.removeBOM(file);
+            try ( CSVParser parser = CSVParser.parse(validFile, charset, cvsFormat());
                      CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, tCharset), tFormat)) {
                 if (tHasHeader) {
                     writeHeader(csvPrinter);
@@ -225,7 +232,8 @@ public class DataFileCSV extends DataFileText {
         }
         File tmpFile = TmpFileTools.getTempFile();
         CSVFormat format = cvsFormat();
-        try ( CSVParser parser = CSVParser.parse(file, charset, format);
+        File validFile = FileTools.removeBOM(file);
+        try ( CSVParser parser = CSVParser.parse(validFile, charset, format);
                  CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, charset), format)) {
             Iterator<CSVRecord> iterator = parser.iterator();
             if (iterator != null) {

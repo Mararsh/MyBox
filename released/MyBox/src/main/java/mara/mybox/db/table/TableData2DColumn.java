@@ -221,28 +221,31 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
             conn.setAutoCommit(false);
             List<Data2DColumn> existed = read(conn, d2id);
             conn.setAutoCommit(true);
-            for (Data2DColumn ecolumn : existed) {
-                boolean keep = false;
-                for (Data2DColumn icolumn : columns) {
-                    if (ecolumn.getD2cid() == icolumn.getD2cid()) {
-                        keep = true;
-                        break;
+            if (existed != null) {
+                for (Data2DColumn ecolumn : existed) {
+                    boolean keep = false;
+                    for (Data2DColumn icolumn : columns) {
+                        if (ecolumn.getD2cid() == icolumn.getD2cid()) {
+                            keep = true;
+                            break;
+                        }
+                    }
+                    if (!keep) {
+                        deleteData(conn, ecolumn);
                     }
                 }
-                if (!keep) {
-                    deleteData(conn, ecolumn);
-                }
+                conn.commit();
             }
-            conn.commit();
             for (int i = 0; i < columns.size(); i++) {
                 Data2DColumn column = columns.get(i);
                 column.setD2id(d2id);
                 column.setIndex(i);
                 if (column.getD2cid() >= 0) {
-                    updateData(conn, column);
+                    column = updateData(conn, column);
                 } else {
-                    insertData(conn, column);
+                    column = insertData(conn, column);
                 }
+                columns.set(i, column);
             }
             conn.commit();
             conn.setAutoCommit(ac);

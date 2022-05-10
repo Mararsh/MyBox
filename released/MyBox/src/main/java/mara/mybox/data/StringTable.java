@@ -16,7 +16,7 @@ import mara.mybox.value.Languages;
  */
 public class StringTable {
 
-    protected String title, style = HtmlStyles.DefaultStyle;
+    protected String title, style = HtmlStyles.DefaultStyle, comments;
     protected List<List<String>> data;
     protected List<String> names;
     protected List<Integer> colorIndices;    // Color column should be RGBA
@@ -122,6 +122,10 @@ public class StringTable {
             String title = table.getTitle();
             if (title != null && !title.trim().isEmpty()) {
                 s.append(indent).append(indent).append("<H2 align=\"center\">").append(title).append("</H2>\n");
+            }
+            String comments = table.getComments();
+            if (comments != null && !comments.trim().isEmpty()) {
+                s.append(indent).append(indent).append("<PRE>").append(comments).append("</PRE>\n");
             }
             s.append(indent).append(indent).append("<DIV align=\"center\">\n");
             s.append(indent).append(indent).append(indent).append("<TABLE>\n");
@@ -298,8 +302,12 @@ public class StringTable {
         return indent;
     }
 
-    public StringTable setIndent(String indent) {
-        this.indent = indent;
+    public String getComments() {
+        return comments;
+    }
+
+    public StringTable setComments(String comments) {
+        this.comments = comments;
         return this;
     }
 

@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,13 +13,11 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
-import mara.mybox.data.StringTable;
+import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
@@ -37,10 +34,7 @@ import mara.mybox.value.UserConfig;
  */
 public class DatabaseSqlEditor extends TreeNodeEditor {
 
-    protected List<Data2DColumn> db2Columns;
-    protected List<List<String>> data;
     protected boolean internal;
-    protected int maxLines;
 
     @FXML
     protected TabPane sqlPane;
@@ -51,9 +45,7 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
     @FXML
     protected Button listButton, tableDefinitionButton;
     @FXML
-    protected ControlWebView dataController;
-    @FXML
-    protected TextField maxLinesinput;
+    protected ControlData2DResults dataController;
     @FXML
     protected CheckBox wrapOutputsCheck;
 
@@ -65,31 +57,6 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
     public void initControls() {
         try {
             super.initControls();
-
-            dataController.setParent(this);
-
-            maxLines = UserConfig.getInt(baseName + "MaxLinesNumber", 5000);
-            if (maxLines <= 0) {
-                maxLines = 5000;
-            }
-            maxLinesinput.setText(maxLines + "");
-            maxLinesinput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> v, String ov, String nv) {
-                    try {
-                        int iv = Integer.parseInt(maxLinesinput.getText());
-                        if (iv > 0) {
-                            maxLines = iv;
-                            maxLinesinput.setStyle(null);
-                            UserConfig.setInt(baseName + "MaxLinesNumber", maxLines);
-                        } else {
-                            maxLinesinput.setStyle(UserConfig.badStyle());
-                        }
-                    } catch (Exception e) {
-                        maxLinesinput.setStyle(UserConfig.badStyle());
-                    }
-                }
-            });
 
             wrapOutputsCheck.setSelected(UserConfig.getBoolean(category + "OutputsWrap", false));
             wrapOutputsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -142,11 +109,11 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
         }
         task = new SingletonTask<Void>(this) {
 
-            private String html;
+            private DataFileCSV data;
 
             @Override
             protected boolean handle() {
-                html = null;
+                data = null;
                 try ( Connection conn = DerbyBase.getConnection();
                          Statement statement = conn.createStatement()) {
                     for (String sql : sqls) {
@@ -159,33 +126,7 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
                                     outputArea.appendText(DateTools.nowString() + "  " + message("UpdatedCount") + ": " + count);
                                 } else {
                                     ResultSet results = statement.getResultSet();
-                                    if (results != null) {
-                                        ResultSetMetaData meta = results.getMetaData();
-                                        int cols = meta.getColumnCount();
-                                        List<String> names = new ArrayList<>();
-                                        db2Columns = new ArrayList<>();
-                                        data = new ArrayList<>();
-                                        for (int col = 1; col <= cols; col++) {
-                                            String name = meta.getColumnName(col);
-                                            names.add(name);
-                                            Data2DColumn dc = new Data2DColumn(name,
-                                                    ColumnDefinition.sqlColumnType(meta.getColumnType(col)),
-                                                    meta.isNullable(col) == ResultSetMetaData.columnNoNulls);
-                                            db2Columns.add(dc);
-                                        }
-                                        StringTable table = new StringTable(names, sql);
-                                        count = 0;
-                                        while (results.next() && count++ < maxLines) {
-                                            List<String> row = new ArrayList<>();
-                                            for (String name : names) {
-                                                Object v = results.getObject(name);
-                                                row.add(v == null ? "" : (v + ""));
-                                            }
-                                            table.add(row);
-                                            data.add(row);
-                                        }
-                                        html = table.html();
-                                    }
+                                    data = DataTable.save(results, false);
                                 }
                             }
                             conn.commit();
@@ -204,9 +145,9 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
 
             @Override
             protected void whenSucceeded() {
-                if (html != null) {
+                if (data != null) {
                     sqlPane.getSelectionModel().select(dataTab);
-                    dataController.loadContents(html);
+                    dataController.loadDef(data);
                 } else {
                     sqlPane.getSelectionModel().select(resultsTab);
                 }
@@ -219,11 +160,6 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
     @FXML
     public void clearOutput() {
         outputArea.clear();
-    }
-
-    @FXML
-    public void clearDataAction() {
-        dataController.loadContents("");
     }
 
     @FXML
@@ -244,16 +180,6 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
     @FXML
     protected void popTableDefinition(MouseEvent mouseEvent) {
         PopTools.popTableDefinition(this, valueInput, mouseEvent, internal);
-    }
-
-    @FXML
-    @Override
-    public void dataAction() {
-        if (db2Columns == null || data == null || data.isEmpty()) {
-            popError(message("NoData"));
-            return;
-        }
-        DataFileTextController.open(db2Columns, data);
     }
 
     public void setInternal(boolean internal) {

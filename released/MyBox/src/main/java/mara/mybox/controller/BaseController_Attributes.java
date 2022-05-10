@@ -62,7 +62,7 @@ public abstract class BaseController_Attributes {
     protected SaveAsType saveAsType;
 
     protected enum SaveAsType {
-        Load, Open, None
+        Load, Open, Edit, None
     }
 
     @FXML
@@ -98,7 +98,7 @@ public abstract class BaseController_Attributes {
     @FXML
     protected ToggleGroup saveAsGroup, fileTypeGroup;
     @FXML
-    protected RadioButton saveLoadRadio, saveOpenRadio, saveJustRadio;
+    protected RadioButton saveLoadRadio, saveOpenRadio, saveEditRadio, saveJustRadio;
     @FXML
     protected SplitPane splitPane;
     @FXML

@@ -8,6 +8,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -21,6 +22,12 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
     @FXML
     protected void showDataMenu(MouseEvent event) {
         hideMenu(event);
+
+        MenuItem DataManufacture = new MenuItem(message("DataManufacture"));
+        DataManufacture.setOnAction((ActionEvent event1) -> {
+            DataManufactureController c = (DataManufactureController) loadScene(Fxmls.DataManufactureFxml);
+            c.createAction();
+        });
 
         MenuItem ManageData = new MenuItem(message("ManageData"));
         ManageData.setOnAction((ActionEvent event1) -> {
@@ -212,7 +219,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
-                ManageData, new SeparatorMenuItem(),
+                DataManufacture, ManageData, new SeparatorMenuItem(),
                 DataFile, matrix, database, DataInSystemClipboard, DataInMyBoxClipboard, new SeparatorMenuItem(),
                 calculation, new SeparatorMenuItem(),
                 Location, new SeparatorMenuItem(),
@@ -220,7 +227,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
         );
 
         popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem closeMenu = new MenuItem(message("PopupClose"));
+        MenuItem closeMenu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
         closeMenu.setStyle("-fx-text-fill: #2e598a;");
         closeMenu.setOnAction((ActionEvent cevent) -> {
             popMenu.hide();

@@ -1,21 +1,33 @@
 package mara.mybox.controller;
 
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Region;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.style.StyleTools;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
  * @CreateDate 2022-2-21
  * @License Apache License Version 2.0
  */
-public abstract class BaseData2DController extends BaseController {
+public class BaseData2DController extends BaseController {
 
     protected Data2D.Type type;
 
@@ -66,6 +78,7 @@ public abstract class BaseData2DController extends BaseController {
     // subclass should call this
     public void setDataType(Data2D.Type type) {
         try {
+            this.type = type;
             if (dataController != null) {
                 dataController.setDataType(this, type);
                 loadController = dataController.editController.tableController;
@@ -127,6 +140,14 @@ public abstract class BaseData2DController extends BaseController {
         checkButtons();
     }
 
+    public void loadData(List<Data2DColumn> cols, List<List<String>> data) {
+        if (loadController == null || !checkBeforeNextAction()) {
+            return;
+        }
+        loadController.loadTmpData(cols, data);
+        checkButtons();
+    }
+
     @FXML
     @Override
     public void createAction() {
@@ -174,6 +195,35 @@ public abstract class BaseData2DController extends BaseController {
             return;
         }
         dataController.save();
+    }
+
+    @FXML
+    protected void popExamplesMenu(MouseEvent mouseEvent) {
+        try {
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            popMenu.getItems().addAll(dataController.examplesMenu());
+
+            MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    popMenu.hide();
+                }
+            });
+            popMenu.getItems().add(menu);
+
+            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @Override

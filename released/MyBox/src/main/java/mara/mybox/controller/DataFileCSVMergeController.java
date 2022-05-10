@@ -13,6 +13,7 @@ import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -115,7 +116,8 @@ public class DataFileCSVMergeController extends FilesMergeController {
             sourceCharset = TextFileTools.charset(srcFile);
         }
         String result;
-        try ( CSVParser parser = CSVParser.parse(srcFile, sourceCharset, sourceFormat)) {
+        File validFile = FileTools.removeBOM(srcFile);
+        try ( CSVParser parser = CSVParser.parse(validFile, sourceCharset, sourceFormat)) {
             if (headers == null && targetWithName && sourceWithName) {
                 headers = new ArrayList<>();
                 headers.addAll(parser.getHeaderNames());

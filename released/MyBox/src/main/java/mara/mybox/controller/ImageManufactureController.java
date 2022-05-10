@@ -20,7 +20,7 @@ import mara.mybox.value.Languages;
 public class ImageManufactureController extends ImageManufactureController_Actions {
 
     public ImageManufactureController() {
-        baseTitle = Languages.message("ImageManufacture");
+        baseTitle = Languages.message("EditImage");
         TipsLabelKey = "ImageManufactureTips";
     }
 

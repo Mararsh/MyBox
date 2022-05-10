@@ -182,7 +182,7 @@ public class TextInMyBoxClipboardController extends BaseSysTableController<TextC
         }
         TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
         controller.loadContents(s);
-        controller.toFront();
+        controller.requestMouse();
     }
 
     @FXML

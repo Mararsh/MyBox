@@ -17,7 +17,6 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableImageFileCell;
@@ -36,7 +35,7 @@ public class WebHistoriesController extends BaseSysTableController<WebHistory> {
     protected TableWebHistory tableWebHistory;
 
     @FXML
-    protected ControlTimeTree timeController;
+    protected ControlTimesTree timesController;
     @FXML
     protected TextField findInput;
     @FXML
@@ -76,14 +75,14 @@ public class WebHistoriesController extends BaseSysTableController<WebHistory> {
         try {
             super.initControls();
 
-            timeController.setParent(this, false);
-            timeController.queryNodesButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            timesController.setParent(this, null, "Web_History", "visit_time");
+            timesController.queryNodesButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
                     queryTimes();
                 }
             });
-            timeController.refreshNodesButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            timesController.refreshNodesButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
                     refreshTimes();
@@ -130,37 +129,19 @@ public class WebHistoriesController extends BaseSysTableController<WebHistory> {
      */
     @FXML
     protected void refreshTimes() {
-        synchronized (this) {
-            timeController.clearTree();
-            SingletonTask timesTask = new SingletonTask<Void>(this) {
-                private List<Date> times;
-
-                @Override
-                protected boolean handle() {
-                    times = TableWebHistory.times();
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    timeController.loadTree("visit_time", times, false);
-                }
-
-            };
-            start(timesTask, false);
-        }
+        timesController.loadTree();
     }
 
     @FXML
     protected void queryTimes() {
-        String c = timeController.check();
+        String c = timesController.check();
         if (c == null) {
             popError(Languages.message("MissTime"));
             return;
         }
         clearQuery();
         queryConditions = c;
-        queryConditionsString = timeController.getFinalTitle();
+        queryConditionsString = timesController.getFinalTitle();
         loadTableData();
     }
 

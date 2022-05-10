@@ -72,6 +72,9 @@ public class StyleButton {
                     return new StyleData(id, message("Create"), "", "iconAdd.png");
             }
         }
+        if (id.startsWith("newItem")) {
+            return new StyleData(id, message("New"), "", "iconNewItem.png");
+        }
         if (id.startsWith("add")) {
             switch (id) {
                 case "addButton":
@@ -136,7 +139,11 @@ public class StyleButton {
             return new StyleData(id, message("Default"), "", "iconDefault.png");
         }
         if (id.startsWith("random")) {
-            return new StyleData(id, message("Random"), "", "iconRandom.png");
+            if (id.startsWith("randomColors")) {
+                return new StyleData(id, message("RandomColors"), "", "iconRandom.png");
+            } else {
+                return new StyleData(id, message("Random"), "", "iconRandom.png");
+            }
         }
         if (id.startsWith("examplePop")) {
             return new StyleData(id, "", "", "iconExamples.png");
@@ -271,7 +278,7 @@ public class StyleButton {
             }
         }
         if (id.startsWith("input")) {
-            return new StyleData(id, message("Input"), "", "iconData.png");
+            return new StyleData(id, message("Input"), "", "iconRename.png");
         }
         if (id.startsWith("dataImport") || id.startsWith("import")) {
             return new StyleData(id, message("Import"), "", "iconImport.png");
@@ -497,7 +504,12 @@ public class StyleButton {
             return new StyleData(id, "", "", "iconNumber.png");
         }
         if (id.startsWith("trim")) {
-            return new StyleData(id, "", "", "iconNumber.png");
+            switch (id) {
+                case "trimData":
+                    return new StyleData(id, message("Trim"), "", "iconClean.png");
+                default:
+                    return new StyleData(id, "", "", "iconNumber.png");
+            }
         }
         if (id.startsWith("lowerLetter")) {
             return new StyleData(id, "", "", "iconLowerLetter.png");
@@ -606,6 +618,9 @@ public class StyleButton {
                 default:
                     return new StyleData(id, message("Insert"), "", "iconInsert.png");
             }
+        }
+        if (id.startsWith("straightLine")) {
+            return new StyleData(id, message("StraightLine"), "", "iconStraightLine.png");
         }
         return null;
     }

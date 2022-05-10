@@ -72,32 +72,35 @@ public class TableColor extends BaseTable<ColorData> {
             = "DELETE FROM Color WHERE color_value=?";
 
     public ColorData read(int value) {
+        ColorData data = null;
         try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
-            return read(conn, value);
+            data = read(conn, value);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-        return null;
+        return data;
     }
 
     public ColorData read(Connection conn, int value) {
         if (conn == null) {
             return null;
         }
+        ColorData data = null;
         try ( PreparedStatement statement = conn.prepareStatement(QueryValue)) {
             statement.setInt(1, value);
             statement.setMaxRows(1);
             try ( ResultSet results = statement.executeQuery()) {
-                if (results.next()) {
-                    ColorData data = readData(results);
-                    return data;
+                if (results != null && results.next()) {
+                    data = readData(results);
                 }
+            } catch (Exception e) {
+                MyBoxLog.error(e);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-        return null;
+        return data;
     }
 
     public ColorData read(String web) {
@@ -132,12 +135,13 @@ public class TableColor extends BaseTable<ColorData> {
     }
 
     public ColorData findAndCreate(int value, String name) {
+        ColorData data = null;
         try ( Connection conn = DerbyBase.getConnection()) {
-            return findAndCreate(conn, value, name);
+            data = findAndCreate(conn, value, name);
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return null;
         }
+        return data;
     }
 
     public ColorData findAndCreate(Connection conn, int value, String name) {

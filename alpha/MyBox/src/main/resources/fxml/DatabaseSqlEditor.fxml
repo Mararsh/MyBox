@@ -148,23 +148,9 @@ License:    Apache License Version 2.0
                                         <Tab fx:id="dataTab" text="%Data">
                                             <content>
                                                   <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                                      <children>
-                                          <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                             <children>
-                                                <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="editDataButton" mnemonicParsing="false" onAction="#editDataAction">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/Red/iconEdit.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </Button>
-                                             </children>
-                                          </HBox>
-                                          <fx:include fx:id="data" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DLoad.fxml" VBox.vgrow="ALWAYS" />
-                                                      </children>
+                                       <children>
+                                          <fx:include fx:id="data" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DResults.fxml" VBox.vgrow="ALWAYS" />
+                                       </children>
                                                   </VBox>
                                             </content>
                                         </Tab>

@@ -1,7 +1,7 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -14,6 +14,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
@@ -25,13 +26,13 @@ import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataClipboard;
-import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
@@ -54,6 +55,7 @@ public class ControlData2D extends BaseController {
     protected ControlData2DEditText textController;
     protected final SimpleBooleanProperty statusNotify, loadedNotify, savedNotify;
     protected ControlFileBackup backupController;
+    protected boolean isManufacture;
 
     @FXML
     protected Tab editTab, viewTab, attributesTab, columnsTab;
@@ -78,6 +80,7 @@ public class ControlData2D extends BaseController {
         statusNotify = new SimpleBooleanProperty(false);
         loadedNotify = new SimpleBooleanProperty(false);
         savedNotify = new SimpleBooleanProperty(false);
+        isManufacture = false;
     }
 
     @Override
@@ -120,7 +123,7 @@ public class ControlData2D extends BaseController {
             attributesController.setParameters(this);
             columnsController.setParameters(this);
 
-            setData(Data2D.create(type));
+            loadNull();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -408,8 +411,12 @@ public class ControlData2D extends BaseController {
         if (checkBeforeSave() < 0) {
             return;
         }
+        if (isManufacture) {
+            DataManufactureSaveController.open(tableController);
+            return;
+        }
         if (data2D.isTable() && data2D.getSheet() == null) {
-            saveNewTable();
+            Data2DTableCreateController.open(tableController);
             return;
         }
         Data2D targetData = data2D.cloneAll();
@@ -440,9 +447,8 @@ public class ControlData2D extends BaseController {
                     }
                     data2D.setTask(task);
                     data2D.savePageData(targetData);
+                    Data2D.saveAttributes(data2D, targetData);
                     data2D.cloneAll(targetData);
-                    data2D.setTask(task);
-                    data2D.saveDefinition();
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
@@ -465,10 +471,6 @@ public class ControlData2D extends BaseController {
         start(task);
     }
 
-    public void saveNewTable() {
-        Data2DTableCreateController.open(tableController);
-    }
-
     public synchronized void saveAs(Data2D targetData, SaveAsType saveAsType) {
         setData(tableController.data2D);
         if (targetData == null || targetData.getFile() == null) {
@@ -481,10 +483,13 @@ public class ControlData2D extends BaseController {
 
             @Override
             protected boolean handle() {
-                try ( Connection conn = DerbyBase.getConnection()) {
+                try {
                     data2D.setTask(task);
                     data2D.savePageData(targetData);
-                    Data2D.save(conn, targetData, data2D.getColumns());
+                    data2D.setTask(task);
+                    MyBoxLog.debug(targetData.getFile() + "  " + targetData.getCharset());
+                    Data2D.saveAttributes(data2D, targetData);
+                    MyBoxLog.debug(targetData.getFile() + "  " + targetData.getCharset());
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
@@ -498,9 +503,12 @@ public class ControlData2D extends BaseController {
                 if (targetData.getFile() != null) {
                     recordFileWritten(targetData.getFile());
                 }
+                MyBoxLog.debug(targetData.getFile() + "  " + targetData.getCharset());
                 if (saveAsType == SaveAsType.Load) {
                     data2D.cloneAll(targetData);
+                    MyBoxLog.debug(data2D.getFile() + "  " + data2D.getCharset());
                     resetStatus();
+                    MyBoxLog.debug(data2D.getFile() + "  " + data2D.getCharset());
                     readDefinition();
                 } else if (saveAsType == SaveAsType.Open) {
                     Data2DDefinition.open(targetData);
@@ -562,6 +570,23 @@ public class ControlData2D extends BaseController {
             MyBoxLog.error(e.toString());
         }
     }
+
+    public void loadCSVFile(File csvFile) {
+        try {
+            if (csvFile == null || !csvFile.exists()) {
+                popError("Nonexistent");
+                return;
+            }
+            if (!checkBeforeNextAction()) {
+                return;
+            }
+            setData(Data2D.create(type));
+            tableController.loadCSVFile(csvFile);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
 
     /*
         paigination
@@ -658,6 +683,13 @@ public class ControlData2D extends BaseController {
             menu.setDisable(empty);
             popMenu.getItems().add(menu);
 
+            menu = new MenuItem(message("SetStyles"), StyleTools.getIconImage("iconColor.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DSetStylesController.open(tableController);
+            });
+            menu.setDisable(empty);
+            popMenu.getItems().add(menu);
+
             menu = new MenuItem(message("Copy"), StyleTools.getIconImage("iconCopy.png"));
             menu.setOnAction((ActionEvent event) -> {
                 tableController.copyAction();
@@ -679,47 +711,104 @@ public class ControlData2D extends BaseController {
             menu.setDisable(invalidData);
             popMenu.getItems().add(menu);
 
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            Menu trimMenu = new Menu(message("Trim"), StyleTools.getIconImage("iconClean.png"));
+            popMenu.getItems().add(trimMenu);
+
             menu = new MenuItem(message("Sort"), StyleTools.getIconImage("iconSort.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DSortController.open(tableController);
             });
             menu.setDisable(empty);
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("Charts"), StyleTools.getIconImage("iconCharts.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DChartController.open(tableController);
-            });
-            menu.setDisable(empty);
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("Statistic"), StyleTools.getIconImage("iconStatistic.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DStatisticController.open(tableController);
-            });
-            menu.setDisable(empty);
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("Percentage"), StyleTools.getIconImage("iconPercentage.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DPercentageController.open(tableController);
-            });
-            menu.setDisable(empty);
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("Normalize"), StyleTools.getIconImage("iconBinary.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DNormalizeController.open(tableController);
-            });
-            menu.setDisable(empty);
-            popMenu.getItems().add(menu);
+            trimMenu.getItems().add(menu);
 
             menu = new MenuItem(message("Transpose"), StyleTools.getIconImage("iconRotateRight.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DTransposeController.open(tableController);
             });
             menu.setDisable(empty);
-            popMenu.getItems().add(menu);
+            trimMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Normalize"), StyleTools.getIconImage("iconBinary.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DNormalizeController.open(tableController);
+            });
+            menu.setDisable(empty);
+            trimMenu.getItems().add(menu);
+
+            Menu calMenu = new Menu(message("Calculation"), StyleTools.getIconImage("iconCalculator.png"));
+            popMenu.getItems().add(calMenu);
+
+            menu = new MenuItem(message("DescriptiveStatistics"), StyleTools.getIconImage("iconStatistic.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DStatisticController.open(tableController);
+            });
+            menu.setDisable(empty);
+            calMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("SimpleLinearRegression"), StyleTools.getIconImage("iconLinearPgression.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DSimpleLinearRegressionController.open(tableController);
+            });
+            menu.setDisable(empty);
+            calMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("FrequencyDistributions"), StyleTools.getIconImage("iconDistribution.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DFrequencyController.open(tableController);
+            });
+            menu.setDisable(empty);
+            calMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ValuePercentage"), StyleTools.getIconImage("iconPercentage.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DPercentageController.open(tableController);
+            });
+            menu.setDisable(empty);
+            calMenu.getItems().add(menu);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            Menu chartMenu = new Menu(message("Charts"), StyleTools.getIconImage("iconGraph.png"));
+            popMenu.getItems().add(chartMenu);
+
+            menu = new MenuItem(message("XYChart"), StyleTools.getIconImage("iconXYChart.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DChartXYController.open(tableController);
+            });
+            menu.setDisable(empty);
+            chartMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("PieChart"), StyleTools.getIconImage("iconPieChart.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DChartPieController.open(tableController);
+            });
+            menu.setDisable(empty);
+            chartMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("BoxWhiskerChart"), StyleTools.getIconImage("iconBoxWhiskerChart.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DChartBoxWhiskerController.open(tableController);
+            });
+            menu.setDisable(empty);
+            chartMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("SelfComparisonBarsChart"), StyleTools.getIconImage("iconBarChartH.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DChartSelfComparisonBarsController.open(tableController);
+            });
+            menu.setDisable(empty);
+            chartMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ComparisonBarsChart"), StyleTools.getIconImage("iconComparisonBarsChart.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DChartComparisonBarsController.open(tableController);
+            });
+            menu.setDisable(empty);
+            chartMenu.getItems().add(menu);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("Export"), StyleTools.getIconImage("iconExport.png"));
             menu.setOnAction((ActionEvent event) -> {
@@ -757,6 +846,12 @@ public class ControlData2D extends BaseController {
             });
             popMenu.getItems().add(menu);
 
+            if (data2D.isDataFile() || data2D.isUserTable() || data2D.isClipboard()) {
+                Menu examplesMenu = new Menu(message("Examples"), StyleTools.getIconImage("iconExamples.png"));
+                examplesMenu.getItems().addAll(examplesMenu());
+                popMenu.getItems().add(examplesMenu);
+            }
+
             popMenu.getItems().add(new SeparatorMenuItem());
             menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
@@ -771,6 +866,167 @@ public class ControlData2D extends BaseController {
             LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    public List<MenuItem> examplesMenu() {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+
+            MenuItem menu;
+            String lang = Languages.isChinese() ? "zh" : "en";
+
+            // https://data.stats.gov.cn/index.htm
+            Menu chinaMenu = new Menu(message("StatisticDataOfChina"), StyleTools.getIconImage("iconChina.png"));
+            items.add(chinaMenu);
+
+            menu = new MenuItem(message("ChinaPopulation"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/ChinaPopulation_" + lang + ".csv",
+                        "data", "ChinaPopulation_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ChinaCensus"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/ChinaCensus_" + lang + ".csv",
+                        "data", "ChinaCensus_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ChinaGDP"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/ChinaGDP_" + lang + ".csv",
+                        "data", "ChinaGDP_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ChinaCPI"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/ChinaCPI_" + lang + ".csv",
+                        "data", "ChinaCPI_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ChinaFoodConsumption"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/ChinaFoods_" + lang + ".csv",
+                        "data", "ChinaFoods_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ChinaGraduates"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/ChinaGraduates_" + lang + ".csv",
+                        "data", "ChinaGraduates_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ChinaMuseums"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/ChinaMuseums_" + lang + ".csv",
+                        "data", "ChinaMuseums_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ChinaHealthPersonnel"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/ChinaHealthPersonnel_" + lang + ".csv",
+                        "data", "ChinaHealthPersonnel_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ChinaMarriage"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/ChinaMarriage_" + lang + ".csv",
+                        "data", "ChinaMarriage_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ChinaSportWorldChampions"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/ChinaSportWorldChampions_" + lang + ".csv",
+                        "data", "ChinaSportWorldChampions_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("CrimesFiledByChinaPolice"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/ChinaCrimesFiledByPolice_" + lang + ".csv",
+                        "data", "ChinaCrimesFiledByPolice_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("CrimesFiledByChinaProcuratorate"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/ChinaCrimesFiledByProcuratorate_" + lang + ".csv",
+                        "data", "ChinaCrimesFiledByProcuratorate_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            chinaMenu.getItems().add(menu);
+
+            chinaMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("ChinaNationalBureauOfStatistics"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction((ActionEvent event) -> {
+                browse("https://data.stats.gov.cn/");
+            });
+            chinaMenu.getItems().add(menu);
+
+            Menu regressionMenu = new Menu(message("Regression"), StyleTools.getIconImage("iconLinearPgression.png"));
+            items.add(regressionMenu);
+
+            // https://www.scribbr.com/statistics/simple-linear-regression/
+            menu = new MenuItem(message("IncomeHappiness"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/IncomeHappiness_" + lang + ".csv",
+                        "data", "IncomeHappiness_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            regressionMenu.getItems().add(menu);
+
+            // https://github.com/krishnaik06/simple-Linear-Regression
+            menu = new MenuItem(message("ExperienceSalary"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/ExperienceSalary_" + lang + ".csv",
+                        "data", "ExperienceSalary_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            regressionMenu.getItems().add(menu);
+
+            // http://archive.ics.uci.edu/ml/datasets/Iris
+            menu = new MenuItem(message("IrisSpecies"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/IrisSpecies_" + lang + ".csv",
+                        "data", "IrisSpecies_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            regressionMenu.getItems().add(menu);
+
+            // https://github.com/tomsharp/SVR/tree/master/data
+            menu = new MenuItem(message("BostonHousingPrices"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/BostonHousingPrices_" + lang + ".csv",
+                        "data", "BostonHousingPrices_" + lang + ".csv", true);
+                loadCSVFile(file);
+            });
+            regressionMenu.getItems().add(menu);
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
         }
     }
 

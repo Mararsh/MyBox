@@ -28,6 +28,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.ListDatasetCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -471,17 +472,17 @@ public class LocationDataEditController extends BaseController {
             } else {
                 latitudeInput.setText("");
             }
-            if (loadedLocationData.getAltitude() != AppValues.InvalidDouble) {
+            if (!DoubleTools.invalidDouble(loadedLocationData.getAltitude())) {
                 altitudeInput.setText(loadedLocationData.getAltitude() + "");
             } else {
                 altitudeInput.setText("");
             }
-            if (loadedLocationData.getPrecision() != AppValues.InvalidDouble) {
+            if (!DoubleTools.invalidDouble(loadedLocationData.getPrecision())) {
                 precisionInput.setText(loadedLocationData.getPrecision() + "");
             } else {
                 precisionInput.setText("");
             }
-            if (loadedLocationData.getSpeed() != AppValues.InvalidDouble) {
+            if (!DoubleTools.invalidDouble(loadedLocationData.getSpeed())) {
                 speedInput.setText(loadedLocationData.getSpeed() + "");
             } else {
                 speedInput.setText("");
@@ -497,7 +498,7 @@ public class LocationDataEditController extends BaseController {
             } else {
                 endTimeInput.setText("");
             }
-            if (loadedLocationData.getDataSize() != AppValues.InvalidDouble) {
+            if (!DoubleTools.invalidDouble(loadedLocationData.getDataSize())) {
                 sizeInput.setText(loadedLocationData.getDataSize() + "");
             } else {
                 sizeInput.setText("");

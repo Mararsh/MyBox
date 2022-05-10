@@ -771,6 +771,9 @@ public class ImageViewerController extends BaseImageController {
                     } else if (saveAsType == SaveAsType.Open) {
                         ControllerTools.openImageViewer(targetFile);
 
+                    } else if (saveAsType == SaveAsType.Edit) {
+                        ControllerTools.openImageManufacture(targetFile);
+
                     }
                 }
             };

@@ -9,6 +9,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import javafx.stage.Window;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.ColorPalettePopupController;
@@ -25,6 +26,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Colors;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -50,7 +52,7 @@ public class PaletteTools {
 
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            MenuItem menu = new MenuItem(message("PopupClose"));
+            MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction((ActionEvent event) -> {
                 popMenu.hide();
@@ -73,7 +75,7 @@ public class PaletteTools {
             MenuItem menu;
             menu = new MenuItem(message("WebCommonColors"));
             menu.setOnAction((ActionEvent event) -> {
-                File file = FxFileTools.getInternalFile("/data/db/ColorsWeb.csv", "data", "ColorsWeb.csv");
+                File file = FxFileTools.getInternalFile("/data/examples/ColorsWeb.csv", "data", "ColorsWeb.csv");
                 importPalette(parent, tableColorPaletteName, tableColorPalette, tableColor,
                         file, message("WebCommonColors"), true);
             });
@@ -81,7 +83,7 @@ public class PaletteTools {
 
             menu = new MenuItem(message("ChineseTraditionalColors"));
             menu.setOnAction((ActionEvent event) -> {
-                File file = FxFileTools.getInternalFile("/data/db/ColorsChinese.csv", "data", "ColorsChinese.csv");
+                File file = FxFileTools.getInternalFile("/data/examples/ColorsChinese.csv", "data", "ColorsChinese.csv");
                 importPalette(parent, tableColorPaletteName, tableColorPalette, tableColor,
                         file, message("ChineseTraditionalColors"), true);
             });
@@ -89,7 +91,7 @@ public class PaletteTools {
 
             menu = new MenuItem(message("JapaneseTraditionalColors"));
             menu.setOnAction((ActionEvent event) -> {
-                File file = FxFileTools.getInternalFile("/data/db/ColorsJapanese.csv", "data", "ColorsJapanese.csv");
+                File file = FxFileTools.getInternalFile("/data/examples/ColorsJapanese.csv", "data", "ColorsJapanese.csv");
                 importPalette(parent, tableColorPaletteName, tableColorPalette, tableColor,
                         file, message("JapaneseTraditionalColors"), true);
             });
@@ -97,7 +99,7 @@ public class PaletteTools {
 
             menu = new MenuItem(message("HexaColors"));
             menu.setOnAction((ActionEvent event) -> {
-                File file = FxFileTools.getInternalFile("/data/db/ColorsColorhexa.csv", "data", "ColorsColorhexa.csv");
+                File file = FxFileTools.getInternalFile("/data/examples/ColorsColorhexa.csv", "data", "ColorsColorhexa.csv");
                 importPalette(parent, tableColorPaletteName, tableColorPalette, tableColor,
                         file, message("HexaColors"), true);
             });
@@ -138,6 +140,9 @@ public class PaletteTools {
                 data.add(new ColorData(Colors.MyBoxLightOrange.getRGB(), message("MyBoxLightOrange")));
                 data.add(new ColorData(Colors.MyBoxDarkGreen.getRGB(), message("MyBoxDarkGreen")));
                 data.add(new ColorData(Colors.MyBoxLightGreen.getRGB(), message("MyBoxLightGreen")));
+                data.add(new ColorData(FxColorTools.color2rgba(Color.BLACK), message("Black")));
+                data.add(new ColorData(FxColorTools.color2rgba(Color.WHITE), message("White")));
+                data.add(new ColorData(0, message("Transparent")));
                 try ( Connection conn = DerbyBase.getConnection()) {
                     tableColor.writeData(conn, data, false);
                     ColorPaletteName palette = tableColorPaletteName.findAndCreate(conn, message("MyBoxColors"));
@@ -151,7 +156,7 @@ public class PaletteTools {
 
             @Override
             protected void whenSucceeded() {
-                afterPaletteImported(parent, message("MyBoxColors"));
+                afterPaletteChanged(parent, message("MyBoxColors"));
             }
         };
         parent.setTask(task);
@@ -187,14 +192,15 @@ public class PaletteTools {
 
             @Override
             protected void whenSucceeded() {
-                afterPaletteImported(parent, paletteName);
+                afterPaletteChanged(parent, paletteName);
             }
         };
         parent.setTask(task);
         parent.start(task);
     }
 
-    public static void afterPaletteImported(BaseController parent, String paletteName) {
+    public static void afterPaletteChanged(BaseController parent, String paletteName) {
+        UserConfig.setString("ColorPalettePopupPalette", paletteName);
         List<Window> windows = new ArrayList<>();
         windows.addAll(Window.getWindows());
         for (Window window : windows) {

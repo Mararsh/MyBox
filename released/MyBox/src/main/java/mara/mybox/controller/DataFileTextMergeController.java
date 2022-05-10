@@ -17,6 +17,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.Fxmls;
@@ -103,7 +104,8 @@ public class DataFileTextMergeController extends FilesMergeController {
             sourceCharset = TextFileTools.charset(srcFile);
         }
         String result;
-        try ( BufferedReader reader = new BufferedReader(new FileReader(srcFile, sourceCharset))) {
+        File validFile = FileTools.removeBOM(srcFile);
+        try ( BufferedReader reader = new BufferedReader(new FileReader(validFile, sourceCharset))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (task == null || task.isCancelled()) {

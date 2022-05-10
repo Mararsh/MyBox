@@ -24,9 +24,9 @@ public class LocateTools {
         stage.setX(screen.getWidth() - stage.getWidth());
     }
 
-    public static void locateUp(Region region, PopupWindow window) {
-        Bounds bounds = region.localToScreen(region.getBoundsInLocal());
-        window.show(region, bounds.getMinX() + 2, bounds.getMinY() - 50);
+    public static void locateUp(Node node, PopupWindow window) {
+        Bounds bounds = node.localToScreen(node.getBoundsInLocal());
+        window.show(node, bounds.getMinX() + 2, bounds.getMinY() - 50);
     }
 
     public static void locateCenter(Stage stage, Node node) {
@@ -43,14 +43,14 @@ public class LocateTools {
         stage.setY(centerY);
     }
 
-    public static void locateCenter(Region region, PopupWindow window) {
-        Bounds bounds = region.localToScreen(region.getBoundsInLocal());
-        window.show(region, bounds.getMinX() + bounds.getWidth() / 2, bounds.getMinY() + bounds.getHeight() / 2);
+    public static void locateCenter(Node node, PopupWindow window) {
+        Bounds bounds = node.localToScreen(node.getBoundsInLocal());
+        window.show(node, bounds.getMinX() + bounds.getWidth() / 2, bounds.getMinY() + bounds.getHeight() / 2);
     }
 
-    public static void locateRightTop(Region region, PopupWindow window) {
-        Bounds bounds = region.localToScreen(region.getBoundsInLocal());
-        window.show(region, bounds.getMaxX() - window.getWidth() - 20, bounds.getMinY() + 50);
+    public static void locateRightTop(Node node, PopupWindow window) {
+        Bounds bounds = node.localToScreen(node.getBoundsInLocal());
+        window.show(node, bounds.getMaxX() - window.getWidth() - 20, bounds.getMinY() + 50);
     }
 
     public static void aboveCenter(Node node, Node refer) {
@@ -92,16 +92,11 @@ public class LocateTools {
         window.show(node, bounds.getMinX() + 2, bounds.getMinY() + bounds.getHeight());
     }
 
-    public static void locateBelow(Region region, PopupWindow window) {
-        Bounds bounds = region.localToScreen(region.getBoundsInLocal());
-        window.show(region, bounds.getMinX() + 2, bounds.getMinY() + bounds.getHeight());
-    }
-
     public static void locateMouse(MouseEvent event, PopupWindow window) {
         window.show((Node) event.getSource(), event.getScreenX(), event.getScreenY());
     }
 
-    public static void moveXCenter(Region pNnode, Node node) {
+    public static void moveXCenter(Node pNnode, Node node) {
         if (node == null || pNnode == null) {
             return;
         }
@@ -125,7 +120,7 @@ public class LocateTools {
         }
     }
 
-    public static void moveYCenter(Region pNnode, Node node) {
+    public static void moveYCenter(Node pNnode, Node node) {
         if (node == null || pNnode == null) {
             return;
         }
@@ -166,7 +161,7 @@ public class LocateTools {
         }
     }
 
-    public static void moveCenter(Region pNnode, Node node) {
+    public static void moveCenter(Node pNnode, Node node) {
         moveXCenter(pNnode, node);
         moveYCenter(pNnode, node);
     }
@@ -174,6 +169,19 @@ public class LocateTools {
     public static void moveCenter(Node node) {
         moveXCenter(node);
         moveYCenter(node);
+    }
+
+    public static void fitSize(Node pNnode, Region region, int margin) {
+        try {
+            if (pNnode == null || region == null) {
+                return;
+            }
+            Bounds bounds = pNnode.getBoundsInLocal();
+            region.setPrefSize(bounds.getWidth() - 2 * margin, bounds.getHeight() - 2 * margin);
+            LocateTools.moveCenter(pNnode, region);
+        } catch (Exception e) {
+            //            MyBoxLog.error(e.toString());
+        }
     }
 
     public static double getScreenX(Node node) {

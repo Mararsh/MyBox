@@ -71,7 +71,7 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <VBox fx:id="timesBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                     <children>
-                                                        <fx:include fx:id="time" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlTimeTree.fxml" VBox.vgrow="ALWAYS" />
+                                                        <fx:include fx:id="times" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlTimesTree.fxml" VBox.vgrow="ALWAYS" />
                                                     </children>
                                                     <padding>
                                                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -217,7 +217,16 @@ License:    Apache License Version 2.0
                                                 <VBox fx:id="conditionBox" spacing="2.0" VBox.vgrow="NEVER">
                                                     <children>
                                                         <FlowPane fx:id="namesPane" hgap="2.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWrapLength="2000.0" vgap="2.0" HBox.hgrow="ALWAYS" />
-                                                        <CheckBox fx:id="descendantsCheck" mnemonicParsing="false" text="%AllDescendants" />
+                                                        <FlowPane fx:id="nodeGroupPane" hgap="2.0" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWrapLength="2000.0" vgap="2.0">
+                                                            <children>
+                                                                <RadioButton fx:id="childrenRadio" mnemonicParsing="false" selected="true" text="%SelfAndChildren">
+                                                                    <toggleGroup>
+                                                                        <ToggleGroup fx:id="nodesGroup" />
+                                                                    </toggleGroup> 
+                                                                </RadioButton>
+                                                                <RadioButton fx:id="descendantsRadio" mnemonicParsing="false" text="%SelfAndDescendants" toggleGroup="$nodesGroup" />
+                                                            </children>
+                                                        </FlowPane>
                                                         <Label fx:id="conditionLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" VBox.vgrow="NEVER" />
                                                     </children>
                                                 </VBox>

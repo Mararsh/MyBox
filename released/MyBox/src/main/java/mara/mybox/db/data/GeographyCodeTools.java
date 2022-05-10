@@ -23,6 +23,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TmpFileTools;
@@ -1194,9 +1195,9 @@ public class GeographyCodeTools {
         }
         try {
             conn.setAutoCommit(false);
-            File file = mara.mybox.fxml.FxFileTools.getInternalFile("/data/db/Geography_Code_global_internal.csv", "data", "Geography_Code_global_internal.csv");
+            File file = mara.mybox.fxml.FxFileTools.getInternalFile("/data/examples/Geography_Code_global_internal.csv", "data", "Geography_Code_global_internal.csv");
             importInternalCSV(conn, loading, file, true);
-            file = mara.mybox.fxml.FxFileTools.getInternalFile("/data/db/Geography_Code_countries_internal.csv", "data", "Geography_Code_countries_internal.csv");
+            file = mara.mybox.fxml.FxFileTools.getInternalFile("/data/examples/Geography_Code_countries_internal.csv", "data", "Geography_Code_countries_internal.csv");
             importInternalCSV(conn, loading, file, true);
             if (!Languages.isChinese()) {
                 try {
@@ -1206,13 +1207,13 @@ public class GeographyCodeTools {
                     MyBoxLog.debug(e.toString());
                 }
             }
-            file = mara.mybox.fxml.FxFileTools.getInternalFile("/data/db/Geography_Code_china_provinces_internal.csv", "data", "Geography_Code_china_provinces_internal.csv");
+            file = mara.mybox.fxml.FxFileTools.getInternalFile("/data/examples/Geography_Code_china_provinces_internal.csv", "data", "Geography_Code_china_provinces_internal.csv");
             importInternalCSV(conn, loading, file, true);
-            file = mara.mybox.fxml.FxFileTools.getInternalFile("/data/db/Geography_Code_china_cities_internal.csv", "data", "Geography_Code_china_cities_internal.csv");
+            file = mara.mybox.fxml.FxFileTools.getInternalFile("/data/examples/Geography_Code_china_cities_internal.csv", "data", "Geography_Code_china_cities_internal.csv");
             importInternalCSV(conn, loading, file, true);
-            file = mara.mybox.fxml.FxFileTools.getInternalFile("/data/db/Geography_Code_china_counties_internal.csv", "data", "Geography_Code_china_counties_internal.csv");
+            file = mara.mybox.fxml.FxFileTools.getInternalFile("/data/examples/Geography_Code_china_counties_internal.csv", "data", "Geography_Code_china_counties_internal.csv");
             importInternalCSV(conn, loading, file, true);
-            file = mara.mybox.fxml.FxFileTools.getInternalFile("/data/db/Geography_Code_special.csv", "data", "Geography_Code_special.csv");
+            file = mara.mybox.fxml.FxFileTools.getInternalFile("/data/examples/Geography_Code_special.csv", "data", "Geography_Code_special.csv");
             importInternalCSV(conn, loading, file, true);
             conn.commit();
         } catch (Exception e) {
@@ -1238,7 +1239,8 @@ public class GeographyCodeTools {
         long insertCount = 0;
         long updateCount = 0;
         long failedCount = 0;
-        try (final CSVParser parser = CSVParser.parse(file, StandardCharsets.UTF_8,
+        File validFile = FileTools.removeBOM(file);
+        try (final CSVParser parser = CSVParser.parse(validFile, StandardCharsets.UTF_8,
                 CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(',').withTrim().withNullString(""))) {
             conn.setAutoCommit(false);
             List<String> names = parser.getHeaderNames();
@@ -1302,7 +1304,9 @@ public class GeographyCodeTools {
 
     public static List<GeographyCode> readInternalCSV(File file) {
         List<GeographyCode> codes = new ArrayList();
-        try (final CSVParser parser = CSVParser.parse(file, StandardCharsets.UTF_8, CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(',').withTrim().withNullString(""))) {
+        File validFile = FileTools.removeBOM(file);
+        try (final CSVParser parser = CSVParser.parse(validFile, StandardCharsets.UTF_8,
+                CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(',').withTrim().withNullString(""))) {
             List<String> names = parser.getHeaderNames();
             for (CSVRecord record : parser) {
                 GeographyCode code = GeographyCodeTools.readIntenalRecord(names, record);

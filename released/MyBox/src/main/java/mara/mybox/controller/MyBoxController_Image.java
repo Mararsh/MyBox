@@ -42,46 +42,6 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
             loadScene(Fxmls.ImagesPlayFxml);
         });
 
-        MenuItem ImageManufacture = new MenuItem(Languages.message("ImageManufacture"));
-        ImageManufacture.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.ImageManufactureFxml);
-        });
-
-        MenuItem ImagesEditor = new MenuItem(Languages.message("ImagesEditor"));
-        ImagesEditor.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.ImagesEditorFxml);
-        });
-
-        MenuItem imageConverterBatch = new MenuItem(Languages.message("ImageConverterBatch"));
-        imageConverterBatch.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.ImageConverterBatchFxml);
-        });
-
-        MenuItem imageStatistic = new MenuItem(Languages.message("ImageStatistic"));
-        imageStatistic.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.ImageStatisticFxml);
-        });
-
-        MenuItem imageOCR = new MenuItem(Languages.message("ImageOCR"));
-        imageOCR.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.ImageOCRFxml);
-        });
-
-        MenuItem imageOCRBatch = new MenuItem(Languages.message("ImageOCRBatch"));
-        imageOCRBatch.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.ImageOCRBatchFxml);
-        });
-
-        MenuItem convolutionKernelManager = new MenuItem(Languages.message("ConvolutionKernelManager"));
-        convolutionKernelManager.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.ConvolutionKernelManagerFxml);
-        });
-
-        MenuItem pixelsCalculator = new MenuItem(Languages.message("PixelsCalculator"));
-        pixelsCalculator.setOnAction((ActionEvent event1) -> {
-            openStage(Fxmls.PixelsCalculatorFxml);
-        });
-
         MenuItem ManageColors = new MenuItem(Languages.message("ManageColors"));
         ManageColors.setOnAction((ActionEvent event1) -> {
             ColorsManageController.oneOpen();
@@ -102,24 +62,13 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
             ImageInSystemClipboardController.oneOpen();
         });
 
-        Menu miscellaneousMenu = new Menu(Languages.message("Miscellaneous"));
-        miscellaneousMenu.getItems().addAll(
-                convolutionKernelManager, pixelsCalculator
-        );
-
-        Menu manufactureBatchMenu = makeImageBatchToolsMenu();
-        Menu partMenu = makeImagePartMenu();
-        Menu mergeMenu = makeImageMergeMenu();
-        Menu csMenu = makeColorSpaceMenu();
-
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
                 imageViewer, imagesBrowser, ImageAnalyse, ImagesPlay, new SeparatorMenuItem(),
-                ImageManufacture, manufactureBatchMenu, ImagesEditor, mergeMenu, partMenu, imageConverterBatch, new SeparatorMenuItem(),
-                imageOCR, imageOCRBatch, new SeparatorMenuItem(),
-                ManageColors, QueryColor, csMenu, new SeparatorMenuItem(),
-                ImagesInMyBoxClipboard, ImagesInSystemClipboard, miscellaneousMenu);
+                imageManufactureMenu(), new SeparatorMenuItem(),
+                ManageColors, QueryColor, colorSpaceMenu(), new SeparatorMenuItem(),
+                ImagesInMyBoxClipboard, ImagesInSystemClipboard, miscellaneousMenu());
 
         popMenu.getItems().add(new SeparatorMenuItem());
         MenuItem closeMenu = new MenuItem(Languages.message("PopupClose"));
@@ -138,11 +87,70 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
 
     }
 
-    private Menu makeImageBatchToolsMenu() {
-        if (popMenu != null) {
-            popMenu.hide();
-        }
+    private Menu imageManufactureMenu() {
+        MenuItem EditImage = new MenuItem(Languages.message("EditImage"));
+        EditImage.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.ImageManufactureFxml);
+        });
 
+        MenuItem ImagesEditor = new MenuItem(Languages.message("ImagesEditor"));
+        ImagesEditor.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.ImagesEditorFxml);
+        });
+
+        MenuItem ImagesSplice = new MenuItem(Languages.message("ImagesSplice"));
+        ImagesSplice.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImagesSpliceFxml);
+        });
+
+        MenuItem imageAlphaAdd = new MenuItem(Languages.message("ImageAlphaAdd"));
+        imageAlphaAdd.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageAlphaAddBatchFxml);
+        });
+
+        MenuItem ImageSplit = new MenuItem(Languages.message("ImageSplit"));
+        ImageSplit.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageSplitFxml);
+        });
+
+        MenuItem ImageSample = new MenuItem(Languages.message("ImageSubsample"));
+        ImageSample.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageSampleFxml);
+        });
+
+        MenuItem imageAlphaExtract = new MenuItem(Languages.message("ImageAlphaExtract"));
+        imageAlphaExtract.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageAlphaExtractBatchFxml);
+        });
+
+        MenuItem imageConverterBatch = new MenuItem(Languages.message("ImageConverterBatch"));
+        imageConverterBatch.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.ImageConverterBatchFxml);
+        });
+
+        MenuItem imageOCR = new MenuItem(Languages.message("ImageOCR"));
+        imageOCR.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.ImageOCRFxml);
+        });
+
+        MenuItem imageOCRBatch = new MenuItem(Languages.message("ImageOCRBatch"));
+        imageOCRBatch.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.ImageOCRBatchFxml);
+        });
+
+        Menu manufactureMenu = new Menu(Languages.message("ImageManufacture"));
+
+        manufactureMenu.getItems().addAll(
+                EditImage, manufactureBatchMenu(), new SeparatorMenuItem(),
+                ImagesEditor, ImagesSplice, imageAlphaAdd, new SeparatorMenuItem(),
+                ImageSplit, ImageSample, imageAlphaExtract, new SeparatorMenuItem(),
+                imageConverterBatch, imageOCR, imageOCRBatch);
+
+        return manufactureMenu;
+
+    }
+
+    private Menu manufactureBatchMenu() {
         MenuItem imageSizeMenu = new MenuItem(Languages.message("Size"));
         imageSizeMenu.setOnAction((ActionEvent event) -> {
             loadScene(Fxmls.ImageManufactureBatchSizeFxml);
@@ -211,57 +219,7 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
 
     }
 
-    private Menu makeImagePartMenu() {
-        if (popMenu != null) {
-            popMenu.hide();
-        }
-
-        MenuItem ImageSplit = new MenuItem(Languages.message("ImageSplit"));
-        ImageSplit.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageSplitFxml);
-        });
-
-        MenuItem ImageSample = new MenuItem(Languages.message("ImageSubsample"));
-        ImageSample.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageSampleFxml);
-        });
-
-        MenuItem imageAlphaExtract = new MenuItem(Languages.message("ImageAlphaExtract"));
-        imageAlphaExtract.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageAlphaExtractBatchFxml);
-        });
-
-        Menu manufactureSubMenu = new Menu(Languages.message("ImagePart"));
-        manufactureSubMenu.getItems().addAll(ImageSplit, ImageSample, imageAlphaExtract);
-        return manufactureSubMenu;
-
-    }
-
-    private Menu makeImageMergeMenu() {
-        if (popMenu != null) {
-            popMenu.hide();
-        }
-
-        MenuItem ImagesSplice = new MenuItem(Languages.message("ImagesSplice"));
-        ImagesSplice.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImagesSpliceFxml);
-        });
-
-        MenuItem imageAlphaAdd = new MenuItem(Languages.message("ImageAlphaAdd"));
-        imageAlphaAdd.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageAlphaAddBatchFxml);
-        });
-
-        Menu manufactureSubMenu = new Menu(Languages.message("MergeImages"));
-        manufactureSubMenu.getItems().addAll(ImagesSplice, imageAlphaAdd);
-        return manufactureSubMenu;
-
-    }
-
-    private Menu makeColorSpaceMenu() {
-        if (popMenu != null) {
-            popMenu.hide();
-        }
+    private Menu colorSpaceMenu() {
         MenuItem IccEditor = new MenuItem(Languages.message("IccProfileEditor"));
         IccEditor.setOnAction((ActionEvent event) -> {
             loadScene(Fxmls.IccProfileEditorFxml);
@@ -310,4 +268,31 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
         return csMenu;
 
     }
+
+    private Menu miscellaneousMenu() {
+
+        MenuItem ImageBase64 = new MenuItem(Languages.message("ImageBase64"));
+        ImageBase64.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.ImageBase64Fxml);
+        });
+
+        MenuItem convolutionKernelManager = new MenuItem(Languages.message("ConvolutionKernelManager"));
+        convolutionKernelManager.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.ConvolutionKernelManagerFxml);
+        });
+
+        MenuItem pixelsCalculator = new MenuItem(Languages.message("PixelsCalculator"));
+        pixelsCalculator.setOnAction((ActionEvent event1) -> {
+            openStage(Fxmls.PixelsCalculatorFxml);
+        });
+
+        Menu miscellaneousMenu = new Menu(Languages.message("Miscellaneous"));
+        miscellaneousMenu.getItems().addAll(
+                ImageBase64, convolutionKernelManager, pixelsCalculator
+        );
+
+        return miscellaneousMenu;
+
+    }
+
 }

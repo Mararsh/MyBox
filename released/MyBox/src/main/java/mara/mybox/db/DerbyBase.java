@@ -23,6 +23,7 @@ import mara.mybox.db.table.TableConvolutionKernel;
 import mara.mybox.db.table.TableData2DCell;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
+import mara.mybox.db.table.TableData2DStyle;
 import mara.mybox.db.table.TableDataset;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableFileBackup;
@@ -75,93 +76,12 @@ public class DerbyBase {
             + AppValues.AppDerbyPassword + ";create=false";
     public static DerbyStatus status;
     public static long lastRetry = 0;
-    public static long BatchSize = 5;
+    public static long BatchSize = 500;
 
     public enum DerbyStatus {
         Embedded, Nerwork, Starting, NotConnected, EmbeddedFailed, NerworkFailed
     }
 
-    protected String Table_Name, Create_Table_Statement;
-    protected List<String> Keys;
-
-    public boolean init() {
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement Statement = conn.createStatement()) {
-            Statement.executeUpdate(Create_Table_Statement);
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e, Create_Table_Statement);
-            return false;
-        }
-    }
-
-    public boolean init(Connection conn) {
-        if (conn == null) {
-            return false;
-        }
-        try ( Statement Statement = conn.createStatement()) {
-            Statement.executeUpdate(Create_Table_Statement);
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e, Create_Table_Statement);
-            return false;
-        }
-    }
-
-    public boolean drop(Connection conn) {
-        if (conn == null) {
-            return false;
-        }
-        String sql = "DROP TABLE " + Table_Name;
-        try ( Statement Statement = conn.createStatement()) {
-            Statement.executeUpdate(sql);
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e, sql);
-            return false;
-        }
-    }
-
-    public boolean drop() {
-        String sql = "DROP TABLE " + Table_Name;
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement Statement = conn.createStatement()) {
-            Statement.executeUpdate(sql);
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e, sql);
-            return false;
-        }
-    }
-
-    public int clear(Connection conn) {
-        if (conn == null) {
-            return -1;
-        }
-        String sql = "DELETE FROM " + Table_Name;
-        try ( Statement Statement = conn.createStatement()) {
-            return Statement.executeUpdate(sql);
-        } catch (Exception e) {
-            MyBoxLog.error(e, sql);
-            return -1;
-        }
-    }
-
-    public int clear() {
-        String sql = "DELETE FROM " + Table_Name;
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement Statement = conn.createStatement()) {
-            return Statement.executeUpdate(sql);
-        } catch (Exception e) {
-            MyBoxLog.error(e, sql);
-            return -1;
-        }
-    }
-
-
-    /*
-        Static methods
-     */
     public static Connection getConnection() {
         try {
             return DriverManager.getConnection(protocol + dbHome() + login);
@@ -595,6 +515,10 @@ public class DerbyBase {
                 new TableTreeNodeTag().createTable(conn);
                 loadingController.info("Tree_Node_Tag");
             }
+            if (!tables.contains("Data2D_Style".toLowerCase())) {
+                new TableData2DStyle().createTable(conn);
+                loadingController.info("Data2D_Style");
+            }
             return true;
         } catch (Exception e) {
             MyBoxLog.console(e);
@@ -725,6 +649,13 @@ public class DerbyBase {
                     MyBoxLog.error(e);
                 }
             }
+            if (!indexes.contains("Data2D_Style_unique_index".toLowerCase())) {
+                try ( Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableData2DStyle.Create_Unique_Index);
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                }
+            }
             return true;
         } catch (Exception e) {
             MyBoxLog.console(e);
@@ -796,7 +727,7 @@ public class DerbyBase {
     public static int size(Connection conn, String sql) {
         int size = 0;
         try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
-            if (results.next()) {
+            if (results != null && results.next()) {
                 size = results.getInt(1);
             }
         } catch (Exception e) {
@@ -804,6 +735,37 @@ public class DerbyBase {
         }
         return size;
 
+    }
+
+    public static boolean isTableEmpty(String tableName) {
+        try ( Connection conn = DerbyBase.getConnection()) {
+            String sql = "SELECT * FROM " + tableName + " FETCH FIRST ROW ONLY";
+            conn.setReadOnly(true);
+            return isEmpty(conn, sql);
+        } catch (Exception e) {
+            MyBoxLog.error(e, tableName);
+            return true;
+        }
+    }
+
+    public static boolean isEmpty(String sql) {
+        try ( Connection conn = DerbyBase.getConnection()) {
+            conn.setReadOnly(true);
+            return isEmpty(conn, sql);
+        } catch (Exception e) {
+            MyBoxLog.error(e, sql);
+            return true;
+        }
+    }
+
+    public static boolean isEmpty(Connection conn, String sql) {
+        boolean isEmpty = true;
+        try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
+            isEmpty = results == null || !results.next();
+        } catch (Exception e) {
+            MyBoxLog.error(e, sql);
+        }
+        return isEmpty;
     }
 
     public static ResultSet query(String sql) {
@@ -930,33 +892,6 @@ public class DerbyBase {
             return null;
         }
         return name.equals(name.toUpperCase()) ? name : "\"" + name + "\"";
-    }
-
-    /*
-        get/set
-     */
-    public String getTable_Name() {
-        return Table_Name;
-    }
-
-    public void setTable_Name(String Table_Name) {
-        this.Table_Name = Table_Name;
-    }
-
-    public String getCreate_Table_Statement() {
-        return Create_Table_Statement;
-    }
-
-    public void setCreate_Table_Statement(String Create_Table_Statement) {
-        this.Create_Table_Statement = Create_Table_Statement;
-    }
-
-    public List<String> getKeys() {
-        return Keys;
-    }
-
-    public void setKeys(List<String> Keys) {
-        this.Keys = Keys;
     }
 
 }

@@ -166,6 +166,13 @@ public abstract class BaseController_Interface extends BaseController_Files {
                     case Open:
                         saveOpenRadio.setSelected(true);
                         break;
+                    case Edit:
+                        if (saveEditRadio != null) {
+                            saveEditRadio.setSelected(true);
+                        } else if (saveLoadRadio != null) {
+                            saveLoadRadio.setSelected(true);
+                        }
+                        break;
                     case None:
                         saveJustRadio.setSelected(true);
                         break;
@@ -181,6 +188,8 @@ public abstract class BaseController_Interface extends BaseController_Files {
                             saveAsType = BaseController.SaveAsType.None;
                         } else if (saveLoadRadio != null && saveLoadRadio.isSelected()) {
                             saveAsType = BaseController.SaveAsType.Load;
+                        } else if (saveEditRadio != null && saveEditRadio.isSelected()) {
+                            saveAsType = BaseController.SaveAsType.Edit;
                         } else {
                             saveAsType = BaseController.SaveAsType.Open;
                         }
@@ -375,7 +384,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
             getMyStage();
 
             myStage.setMinWidth(minSize);
-            myStage.setMinHeight(minSize);
+            myStage.setMinHeight(20);
 
             refreshStyle();
 
@@ -484,12 +493,13 @@ public abstract class BaseController_Interface extends BaseController_Files {
         try {
             isPop = true;
             this.interfaceName = name;
+
             String prefix = interfaceKeysPrefix();
             int mw = UserConfig.getInt(prefix + "StageWidth", Math.min(600, (int) myStage.getWidth()));
             int mh = UserConfig.getInt(prefix + "StageHeight", Math.min(500, (int) myStage.getHeight()));
             int mx = UserConfig.getInt(prefix + "StageX", (int) myStage.getX());
             int my = UserConfig.getInt(prefix + "StageY", (int) myStage.getY());
-            if (mw > minSize && mh > minSize) {
+            if (mw > minSize) {
                 myStage.setWidth(mw);
                 myStage.setHeight(mh);
             }

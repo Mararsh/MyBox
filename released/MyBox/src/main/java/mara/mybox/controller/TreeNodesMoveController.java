@@ -98,7 +98,7 @@ public class TreeNodesMoveController extends TreeNodesController {
             if (object != null && object instanceof TreeNodesMoveController) {
                 try {
                     controller = (TreeNodesMoveController) object;
-                    controller.toFront();
+                    controller.requestMouse();
                     break;
                 } catch (Exception e) {
                 }

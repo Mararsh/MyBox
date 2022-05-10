@@ -1,20 +1,20 @@
 package mara.mybox.fxml.chart;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import javafx.geometry.Bounds;
 import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.chart.Axis;
-import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.ScatterChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import mara.mybox.controller.Data2DChartController;
+import javafx.scene.shape.Line;
+import mara.mybox.controller.BaseData2DChartXYController;
+import mara.mybox.controller.ControlFxChart;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.chart.ChartTools.ChartCoordinate;
-import mara.mybox.fxml.chart.ChartTools.LabelType;
 
 /**
  * Reference:
@@ -27,13 +27,12 @@ import mara.mybox.fxml.chart.ChartTools.LabelType;
  */
 public class LabeledScatterChart<X, Y> extends ScatterChart<X, Y> {
 
-    protected Map<Node, Node> nodeMap = new HashMap<>();
-    protected LabelType labelType;
-    protected ChartTools.LabelLocation labelLocation;
-    protected Data2DChartController chartController;
-    protected ChartCoordinate chartCoordinate;
-    protected int labelFontSize, scale;
-    protected boolean popLabel;
+    protected BaseData2DChartXYController chartController;
+    protected XYChartOptions<X, Y> options;
+    protected boolean written;
+    protected int dataNumber;
+    protected int lineWidth = 2;
+    protected Map<String, String> palette;
 
     public LabeledScatterChart(Axis xAxis, Axis yAxis) {
         super(xAxis, yAxis);
@@ -41,134 +40,129 @@ public class LabeledScatterChart<X, Y> extends ScatterChart<X, Y> {
     }
 
     public final void init() {
-        labelType = LabelType.NameAndValue;
-        chartCoordinate = ChartCoordinate.Cartesian;
-        labelFontSize = 10;
-        scale = 2;
-        popLabel = false;
-        labelLocation = ChartTools.LabelLocation.Above;
         this.setLegendSide(Side.TOP);
         this.setMaxWidth(Double.MAX_VALUE);
         this.setMaxHeight(Double.MAX_VALUE);
         VBox.setVgrow(this, Priority.ALWAYS);
         HBox.setHgrow(this, Priority.ALWAYS);
+        options = new XYChartOptions<>(this);
     }
 
-    public LabeledScatterChart setChartController(Data2DChartController chartController) {
+    public LabeledScatterChart setChartController(BaseData2DChartXYController chartController) {
         this.chartController = chartController;
-        labelType = chartController.getLabelType();
-        labelFontSize = chartController.getLabelFontSize();
-        scale = chartController.getScale();
-        popLabel = chartController.getPopLabelCheck().isSelected();
-        labelLocation = chartController.getLabelLocation();
-        setChartCoordinate(chartController.getChartCoordinate());
+        options = new XYChartOptions<>(chartController);
         return this;
     }
 
-    public LabeledScatterChart setChartCoordinate(ChartCoordinate chartCoordinate) {
-        this.chartCoordinate = chartCoordinate;
-        ChartTools.setChartCoordinate(this, chartCoordinate);
+    public LabeledScatterChart setChartController(BaseData2DChartXYController chartController, ControlFxChart paneController) {
+        this.chartController = chartController;
+        options = new XYChartOptions<>(chartController, paneController);
         return this;
     }
 
     @Override
     protected void seriesAdded(Series<X, Y> series, int seriesIndex) {
         super.seriesAdded(series, seriesIndex);
-        if (labelType == null) {
-            return;
-        }
-        try {
-            setStyle("-fx-font-size: " + labelFontSize + "px;  -fx-text-fill: black;");
-            boolean isXY = getXAxis() instanceof CategoryAxis;
-            for (int s = 0; s < series.getData().size(); s++) {
-                Data<X, Y> item = series.getData().get(s);
-                Node label = ChartTools.makeLabel(item, isXY, labelType, popLabel, chartCoordinate, scale);
-                if (label != null) {
-                    label.setStyle("-fx-font-size: " + labelFontSize + "px;  -fx-text-fill: black;");
-                    nodeMap.put(item.getNode(), label);
-                    getPlotChildren().add(label);
-                }
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
+        writeControls(series, seriesIndex);
+        written = seriesIndex == dataNumber - 1;
+    }
+
+    public void writeControls(Series<X, Y> series, int seriesIndex) {
+        options.makeLabels(series, getPlotChildren());
     }
 
     @Override
     protected void seriesRemoved(final Series<X, Y> series) {
-        if (labelType != null && labelType != LabelType.NotDisplay && labelType != LabelType.Pop) {
-            for (Node bar : nodeMap.keySet()) {
-                Node text = nodeMap.get(bar);
-                this.getPlotChildren().remove(text);
-            }
-            nodeMap.clear();
-        }
         super.seriesRemoved(series);
+        removeControls(series);
+        written = false;
+    }
+
+    public void removeControls(Series<X, Y> series) {
+        options.removeLabels(series, getPlotChildren());
     }
 
     @Override
     protected void layoutPlotChildren() {
         super.layoutPlotChildren();
-        if (labelType == null || labelLocation == null
-                || labelType == LabelType.NotDisplay || labelType == LabelType.Pop) {
-            return;
-        }
-        for (Node node : nodeMap.keySet()) {
-            Node text = nodeMap.get(node);
-            switch (labelLocation) {
-                case Below:
-                    LocateTools.belowCenter(text, node);
-                    break;
-                case Above:
-                    LocateTools.aboveCenter(text, node);
-                    break;
-                case Center:
-                    LocateTools.center(text, node);
-                    break;
-            }
+        if (dataNumber <= 0 || written) {
+            displayControls();
         }
     }
+
+    public void displayControls() {
+        options.displayLabels();
+    }
+
+    public void drawLine(List<XYChart.Data<X, Y>> data, Line line, boolean pointsVisible) {
+        try {
+            if (data == null || line == null) {
+                return;
+            }
+            double startX = Double.MAX_VALUE, startY = Double.MAX_VALUE,
+                    endX = -Double.MAX_VALUE, endY = -Double.MAX_VALUE;
+            for (int i = 0; i < data.size(); i++) {
+                Node node = data.get(i).getNode();
+                Bounds regionBounds = node.getBoundsInParent();
+                double x = regionBounds.getMinX() + regionBounds.getWidth() / 2;
+                double y = regionBounds.getMinY() + regionBounds.getHeight() / 2;
+                if (chartController.isXY()) {
+                    if (x > endX) {
+                        endX = x;
+                        endY = y;
+                    }
+                    if (x < startX) {
+                        startX = x;
+                        startY = y;
+                    }
+                } else {
+                    if (y > endY) {
+                        endX = x;
+                        endY = y;
+                    }
+                    if (y < startY) {
+                        startX = x;
+                        startY = y;
+                    }
+                }
+                node.setVisible(pointsVisible);
+            }
+            if (startX == Double.MAX_VALUE || endX == -Double.MAX_VALUE) {
+                return;
+            }
+            if (!getPlotChildren().contains(line)) {
+                getPlotChildren().add(line);
+            }
+            line.setStartX(startX);
+            line.setStartY(startY);
+            line.setEndX(endX);
+            line.setEndY(endY);
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
 
     /*
-       get/set
+        set/set
      */
-    public Map<Node, Node> getNodeMap() {
-        return nodeMap;
+    public int getDataNumber() {
+        return dataNumber;
     }
 
-    public LabeledScatterChart setNodeMap(Map<Node, Node> nodeMap) {
-        this.nodeMap = nodeMap;
+    public LabeledScatterChart setDataNumber(int dataNumber) {
+        this.dataNumber = dataNumber;
         return this;
     }
 
-    public LabelType getLabelType() {
-        return labelType;
-    }
-
-    public LabeledScatterChart setLabelType(LabelType labelType) {
-        this.labelType = labelType;
+    public LabeledScatterChart setLineWidth(int lineWidth) {
+        this.lineWidth = lineWidth;
         return this;
     }
 
-    public int getTextSize() {
-        return labelFontSize;
-    }
-
-    public LabeledScatterChart setTextSize(int textSize) {
-        this.labelFontSize = textSize;
+    public LabeledScatterChart setPalette(Map<String, String> palette) {
+        this.palette = palette;
         return this;
     }
 
-    public int getScale() {
-        return scale;
-    }
-
-    public LabeledScatterChart setScale(int scale) {
-        this.scale = scale;
-        return this;
-    }
-
-    public Data2DChartController getChartController() {
-        return chartController;
-    }
 }

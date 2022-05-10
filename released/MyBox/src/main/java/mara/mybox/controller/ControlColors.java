@@ -62,6 +62,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableColorCell;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -421,7 +422,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
         items.add(menu);
 
         items.add(new SeparatorMenuItem());
-        menu = new MenuItem(message("PopupClose"));
+        menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
         menu.setStyle("-fx-text-fill: #2e598a;");
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             if (popMenu != null && popMenu.isShowing()) {
@@ -673,7 +674,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
             popMenu.getItems().add(menu);
 
             popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"));
+            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction((ActionEvent event) -> {
                 popMenu.hide();
@@ -1028,7 +1029,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
     public void copyAction() {
         ColorCopyController controller = (ColorCopyController) openStage(Fxmls.ColorCopyFxml);
         controller.setValues(manageController);
-        controller.toFront();
+        controller.requestMouse();
     }
 
     protected void addColor(Color color) {

@@ -4,19 +4,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javafx.scene.Node;
-import javafx.scene.chart.Axis;
 import javafx.scene.chart.Chart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.SquareRootCoordinate;
-import mara.mybox.tools.DoubleTools;
 
 /**
  * @Author Mara
@@ -29,7 +23,7 @@ public class ChartTools {
             = "radial-gradient(center 50% 50%, radius 50%, transparent 0%, transparent 90%, derive(-fx-bubble-fill,0%) 100%)";
 
     public enum LabelType {
-        NotDisplay, NameAndValue, Value, Name, Pop, Point
+        NotDisplay, CategoryAndValue, Value, Category, Pop, Point
     }
 
     public enum LabelLocation {
@@ -43,57 +37,6 @@ public class ChartTools {
     public static Chart style(Chart chart, String cssFile) {
         chart.getStylesheets().add(Chart.class.getResource(cssFile).toExternalForm());
         return chart;
-    }
-
-    public static Node makeLabel(XYChart.Data item, boolean xy,
-            LabelType labelType, boolean pop, ChartCoordinate chartCoordinate, int scale) {
-        if (item == null || item.getNode() == null) {
-            return null;
-        }
-        try {
-            String name, value, extra;
-            if (xy) {
-                name = item.getXValue().toString();
-                value = item.getYValue().toString();
-            } else {
-                name = item.getYValue().toString();
-                value = item.getXValue().toString();
-            }
-            if (item.getExtraValue() != null) {
-                extra = " - " + DoubleTools.format((double) item.getExtraValue(), scale);
-            } else {
-                extra = "";
-            }
-            if (pop || labelType == LabelType.Pop) {
-                NodeStyleTools.setTooltip(item.getNode(), name + " - " + value + extra);
-            }
-            if (labelType == null || labelType == LabelType.NotDisplay) {
-                return null;
-            }
-            String display = null;
-            String labelValue = DoubleTools.format(ChartTools.realValue(chartCoordinate, Double.valueOf(value)), scale);
-            switch (labelType) {
-                case Name:
-                    display = name;
-                    break;
-                case Value:
-                    display = labelValue + extra;
-                    break;
-                case NameAndValue:
-                    display = name + " - " + labelValue + extra;
-                    break;
-            }
-            if (display != null && !display.isBlank()) {
-                Text text = new Text(display);
-                text.setTextAlignment(TextAlignment.CENTER);
-                return text;
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-            return null;
-        }
     }
 
     // This can set more than 8 colors. javafx only supports 8 colors defined in css
@@ -390,17 +333,6 @@ public class ChartTools {
                     }
                 }
             }
-        }
-    }
-
-    public static void setChartCoordinate(XYChart chart, ChartCoordinate chartCoordinate) {
-        Axis axis = chart.getYAxis();
-        if (axis instanceof NumberAxis) {
-            setChartCoordinate((NumberAxis) axis, chartCoordinate);
-        }
-        axis = chart.getXAxis();
-        if (axis instanceof NumberAxis) {
-            setChartCoordinate((NumberAxis) axis, chartCoordinate);
         }
     }
 

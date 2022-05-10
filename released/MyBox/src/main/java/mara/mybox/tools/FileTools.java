@@ -156,35 +156,37 @@ public class FileTools {
     }
 
     public static File removeBOM(File file) {
-        try {
-            String setName = null;
-            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
-                byte[] header = new byte[4];
-                int readLen;
-                if ((readLen = inputStream.read(header, 0, 4)) > 0) {
-                    header = ByteTools.subBytes(header, 0, readLen);
-                    setName = TextTools.checkCharsetByBom(header);
-                    if (setName == null) {
-                        return file;
-                    }
+        String bom = null;
+        try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
+            byte[] header = new byte[4];
+            int readLen;
+            if ((readLen = inputStream.read(header, 0, 4)) > 0) {
+                header = ByteTools.subBytes(header, 0, readLen);
+                bom = TextTools.checkCharsetByBom(header);
+                if (bom == null) {
+                    return file;
                 }
             }
-            File tmpFile = TmpFileTools.getTempFile();
-            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-                     BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
-                int bomSize = TextTools.bomSize(setName);
-                inputStream.skip(bomSize);
-                int readLen;
-                byte[] buf = new byte[bufSize(file, 16)];
-                while ((readLen = inputStream.read(buf)) > 0) {
-                    outputStream.write(buf, 0, readLen);
-                }
-            }
-            return tmpFile;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return null;
         }
+        File tmpFile = TmpFileTools.getTempFile();
+        try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+                 BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
+            int bomSize = TextTools.bomSize(bom);
+            inputStream.skip(bomSize);
+            int readLen;
+            byte[] buf = new byte[bufSize(file, 16)];
+            while ((readLen = inputStream.read(buf)) > 0) {
+                outputStream.write(buf, 0, readLen);
+            }
+            outputStream.flush();
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
+        }
+        return tmpFile;
     }
 
 }

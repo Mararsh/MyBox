@@ -8,7 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.FlowPane;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.UserConfig;
@@ -22,7 +22,7 @@ public class ControlData2DSource extends ControlData2DLoad {
 
     protected ControlData2DEditTable tableController;
     protected List<Integer> checkedRowsIndices, checkedColsIndices;
-    protected boolean idExclude = false;
+    protected boolean idExclude = false, noColumnSelection = false;
     protected ChangeListener<Boolean> tableStatusListener;
 
     @FXML
@@ -30,7 +30,7 @@ public class ControlData2DSource extends ControlData2DLoad {
     @FXML
     protected Label titleLabel;
     @FXML
-    protected HBox buttonsBox;
+    protected FlowPane buttonsPane;
 
     @Override
     public void initControls() {
@@ -67,19 +67,24 @@ public class ControlData2DSource extends ControlData2DLoad {
 
     public void showAllPages(boolean show) {
         if (show) {
-            if (!buttonsBox.getChildren().contains(allPagesCheck)) {
-                buttonsBox.getChildren().add(allPagesCheck);
+            if (!buttonsPane.getChildren().contains(allPagesCheck)) {
+                buttonsPane.getChildren().add(allPagesCheck);
             }
         } else {
-            if (buttonsBox.getChildren().contains(allPagesCheck)) {
+            if (buttonsPane.getChildren().contains(allPagesCheck)) {
                 allPagesCheck.setSelected(false);
-                buttonsBox.getChildren().remove(allPagesCheck);
+                buttonsPane.getChildren().remove(allPagesCheck);
             }
         }
     }
 
     public void idExclude(boolean idExclude) {
         this.idExclude = idExclude;
+    }
+
+    public void noColumnSelection(boolean noColumnSelection) {
+        this.noColumnSelection = noColumnSelection;
+        columnsCheck.setVisible(!noColumnSelection);
     }
 
     public void setParameters(BaseController parent, ControlData2DEditTable tableController) {
@@ -140,6 +145,9 @@ public class ControlData2DSource extends ControlData2DLoad {
                 return;
             }
             super.makeColumns();
+            if (noColumnSelection) {
+                return;
+            }
             for (int i = 2; i < tableView.getColumns().size(); i++) {
                 TableColumn tableColumn = tableView.getColumns().get(i);
                 CheckBox cb = new CheckBox(tableColumn.getText());
@@ -228,6 +236,9 @@ public class ControlData2DSource extends ControlData2DLoad {
     @FXML
     public void selectAllCols() {
         try {
+            if (noColumnSelection) {
+                return;
+            }
             isSettingValues = true;
             for (int i = 2; i < tableView.getColumns().size(); i++) {
                 TableColumn tableColumn = tableView.getColumns().get(i);
@@ -244,6 +255,9 @@ public class ControlData2DSource extends ControlData2DLoad {
     @FXML
     public void selectNoneCols() {
         try {
+            if (noColumnSelection) {
+                return;
+            }
             isSettingValues = true;
             for (int i = 2; i < tableView.getColumns().size(); i++) {
                 TableColumn tableColumn = tableView.getColumns().get(i);
@@ -260,6 +274,9 @@ public class ControlData2DSource extends ControlData2DLoad {
     // If none selected then select all
     public List<Integer> checkedColsIndices() {
         try {
+            if (noColumnSelection) {
+                return null;
+            }
             checkedColsIndices = new ArrayList<>();
             List<Integer> all = new ArrayList<>();
             int idOrder = -1;
@@ -290,6 +307,9 @@ public class ControlData2DSource extends ControlData2DLoad {
     // If none selected then select all
     public List<String> checkedColsNames() {
         try {
+            if (noColumnSelection) {
+                return null;
+            }
             List<String> names = new ArrayList<>();
             List<String> all = new ArrayList<>();
             int idOrder = -1;
@@ -320,6 +340,9 @@ public class ControlData2DSource extends ControlData2DLoad {
     // If none selected then select all
     public List<Data2DColumn> checkedCols() {
         try {
+            if (noColumnSelection) {
+                return null;
+            }
             List<Data2DColumn> cols = new ArrayList<>();
             List<Data2DColumn> all = new ArrayList<>();
             int idOrder = -1;
@@ -398,7 +421,7 @@ public class ControlData2DSource extends ControlData2DLoad {
         checkedRowsIndices = checkedRowsIndices();
         checkedColsIndices = checkedColsIndices();
         return checkedRowsIndices != null && !checkedRowsIndices.isEmpty()
-                && checkedColsIndices != null && !checkedColsIndices.isEmpty();
+                && (noColumnSelection || (checkedColsIndices != null && !checkedColsIndices.isEmpty()));
     }
 
     public boolean isSquare() {
@@ -411,6 +434,9 @@ public class ControlData2DSource extends ControlData2DLoad {
 
     public void selectCols(List<Integer> cols) {
         try {
+            if (noColumnSelection) {
+                return;
+            }
             isSettingValues = true;
             if (cols != null && !cols.isEmpty() && cols.size() != tableView.getColumns().size() - 2) {
                 for (int i = 2; i < tableView.getColumns().size(); i++) {
@@ -436,6 +462,20 @@ public class ControlData2DSource extends ControlData2DLoad {
 
     public void setLabel(String s) {
         titleLabel.setText(s);
+    }
+
+    public boolean notSelectColumn() {
+        if (noColumnSelection) {
+            return true;
+        }
+        for (int i = 2; i < tableView.getColumns().size(); i++) {
+            TableColumn tableColumn = tableView.getColumns().get(i);
+            CheckBox cb = (CheckBox) tableColumn.getGraphic();
+            if (cb.isSelected()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

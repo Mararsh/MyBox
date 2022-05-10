@@ -128,6 +128,15 @@ public class MenuHtmlCodesController extends MenuTextEditController {
             });
             aNodes.add(image);
 
+            Button imageBase64 = new Button(message("ImageBase64"));
+            imageBase64.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    imageBase64();
+                }
+            });
+            aNodes.add(imageBase64);
+
             Button link = new Button(message("Link"));
             link.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -408,6 +417,14 @@ public class MenuHtmlCodesController extends MenuTextEditController {
             s += "</table>\n";
         }
         insertText(s);
+    }
+
+    protected void imageBase64() {
+        File file = FxFileTools.selectFile(this, VisitHistory.FileType.Image);
+        if (file == null) {
+            return;
+        }
+        ImageBase64Controller.convert(this, file, textInput, null, "jpg", true);
     }
 
     @FXML

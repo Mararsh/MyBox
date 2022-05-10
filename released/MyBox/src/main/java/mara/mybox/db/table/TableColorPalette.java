@@ -130,9 +130,11 @@ public class TableColorPalette extends BaseTable<ColorPalette> {
             statement.setInt(2, color);
             statement.setMaxRows(1);
             try ( ResultSet results = statement.executeQuery()) {
-                if (results.next()) {
+                if (results != null && results.next()) {
                     data = readData(results);
                 }
+            } catch (Exception e) {
+                MyBoxLog.error(e);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -163,24 +165,27 @@ public class TableColorPalette extends BaseTable<ColorPalette> {
     }
 
     public ColorPalette findAndCreate(Connection conn, long paletteid, ColorData color, boolean keepOrder) {
-        if (conn == null || color == null) {
+        if (conn == null || color == null || paletteid < 0) {
             return null;
         }
         try {
             int colorValue = color.getColorValue();
+            boolean ac = conn.getAutoCommit();
+            conn.setAutoCommit(true);
             ColorPalette colorPalette = find(conn, paletteid, colorValue);
             if (colorPalette == null) {
-//                ColorData existColor = getTableColor().findAndCreate(conn, colorValue, color.getColorName());
-//                if (existColor == null) {
-//                    return null;
-//                }
+                ColorData existColor = getTableColor().findAndCreate(conn, colorValue, color.getColorName());
+                if (existColor == null) {
+                    return null;
+                }
                 float order = keepOrder ? color.getOrderNumner() : Float.MAX_VALUE;
                 order = order == Float.MAX_VALUE ? max(conn, paletteid) + 1 : order;
                 colorPalette = new ColorPalette()
                         .setData(color).setName(color.getColorName()).setColorValue(colorValue)
                         .setPaletteid(paletteid).setOrderNumber(order);
-                insertData(conn, colorPalette);
+                colorPalette = insertData(conn, colorPalette);
             }
+            conn.setAutoCommit(ac);
             return colorPalette;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -367,10 +372,10 @@ public class TableColorPalette extends BaseTable<ColorPalette> {
             float order = keepOrder ? color.getOrderNumner() : Float.MAX_VALUE;
             order = order == Float.MAX_VALUE ? max(conn, paletteid) + 1 : order;
             if (colorPalette == null) {
-//                ColorData existColor = getTableColor().findAndCreate(conn, colorValue, color.getColorName());
-//                if (existColor == null) {
-//                    return null;
-//                }
+                ColorData existColor = getTableColor().findAndCreate(conn, colorValue, color.getColorName());
+                if (existColor == null) {
+                    return null;
+                }
                 colorPalette = new ColorPalette()
                         .setData(color).setName(color.getColorName()).setColorValue(colorValue)
                         .setPaletteid(paletteid).setOrderNumber(order);

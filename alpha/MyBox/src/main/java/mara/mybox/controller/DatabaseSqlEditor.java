@@ -15,7 +15,6 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
-import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
@@ -46,7 +45,7 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
     @FXML
     protected Button listButton, tableDefinitionButton;
     @FXML
-    protected ControlData2DLoad dataController;
+    protected ControlData2DResults dataController;
     @FXML
     protected CheckBox wrapOutputsCheck;
 
@@ -58,8 +57,6 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
     public void initControls() {
         try {
             super.initControls();
-
-            dataController.setData(Data2D.create(Data2D.Type.CSV));
 
             wrapOutputsCheck.setSelected(UserConfig.getBoolean(category + "OutputsWrap", false));
             wrapOutputsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -183,11 +180,6 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
     @FXML
     protected void popTableDefinition(MouseEvent mouseEvent) {
         PopTools.popTableDefinition(this, valueInput, mouseEvent, internal);
-    }
-
-    @FXML
-    public void editDataAction() {
-        DataFileCSVController.open(dataController.data2D);
     }
 
     public void setInternal(boolean internal) {

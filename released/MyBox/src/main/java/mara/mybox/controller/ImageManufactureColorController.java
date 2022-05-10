@@ -26,6 +26,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.bufferedimage.ImageScope;
@@ -39,10 +40,10 @@ import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.Fxmls;
@@ -84,7 +85,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
     protected Button colorIncreaseButton, colorDecreaseButton, colorFilterButton,
             colorInvertButton, demoButton;
     @FXML
-    protected CheckBox distanceExcludeCheck, squareRootCheck;
+    protected CheckBox distanceExcludeCheck, squareRootCheck, ignoreTransparentCheck;
     @FXML
     protected ImageView distanceTipsView;
     @FXML
@@ -135,6 +136,20 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
                     checkDistance();
+                }
+            });
+
+            ignoreTransparentCheck.setSelected(UserConfig.getBoolean(baseName + "IgnoreTransparent", true));
+            ignoreTransparentCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldv, Boolean newv) {
+                    UserConfig.setBoolean(baseName + "IgnoreTransparent", ignoreTransparentCheck.isSelected());
+                }
+            });
+            originalColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+                @Override
+                public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
+                    ignoreTransparentCheck.setVisible(!originalColorSetController.color().equals(Color.TRANSPARENT));
                 }
             });
 
@@ -454,9 +469,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                                 scope, OperationType.ReplaceColor, ColorActionType.Set);
                         pixelsOperation.setColorPara1(originalColor);
                         pixelsOperation.setColorPara2(newColor);
-                        if (originalColor.getRGB() == 0 || !scopeController.ignoreTransparentCheck.isSelected()) {
-                            pixelsOperation.setSkipTransparent(false);
-                        }
+                        pixelsOperation.setSkipTransparent(originalColor.getRGB() != 0 && ignoreTransparentCheck.isSelected());
 
                     } else {
                         pixelsOperation = PixelsOperationFactory.create(imageView.getImage(),

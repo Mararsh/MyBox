@@ -73,6 +73,9 @@ public class StyleCheckBox {
         if (id.startsWith("scope")) {
             return new StyleData(id, "", message("Scope"), "", "iconTarget.png");
         }
+        if (id.startsWith("nodesList")) {
+            return new StyleData(id, "", message("List"), "", "iconList.png");
+        }
         switch (id) {
             case "tableSubdirCheck":
                 return new StyleData("tableSubdirCheck", "", message("HandleSubDirectories"), "", "iconFolder.png");

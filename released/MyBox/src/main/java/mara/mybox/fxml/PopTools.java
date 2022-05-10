@@ -55,6 +55,7 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
@@ -81,43 +82,38 @@ public class PopTools {
             // Below workaround for Linux because "Desktop.getDesktop().browse()" doesn't work on some Linux implementations
             try {
                 if (Runtime.getRuntime().exec(new String[]{"which", "xdg-open"}).getInputStream().read() > 0) {
-                    Runtime.getRuntime().exec(new String[]{"xdg-open",
-                        uri.toString()});
+                    Runtime.getRuntime().exec(new String[]{"xdg-open", uri.toString()});
                     return;
-                } else {
                 }
             } catch (Exception e) {
+                MyBoxLog.debug(e);
             }
+
         } else if (SystemTools.isMac()) {
             // https://stackoverflow.com/questions/5226212/how-to-open-the-default-webbrowser-using-java/28807079#28807079
             try {
-                Runtime rt = Runtime.getRuntime();
-                rt.exec("open " + uri.toString());
+                Runtime.getRuntime().exec(new String[]{"open", uri.toString()});
                 return;
             } catch (Exception e) {
+                MyBoxLog.debug(e);
             }
         } else if (Desktop.isDesktopSupported()) {
-            Desktop desktop = Desktop.getDesktop();
-            if (desktop.isSupported(Desktop.Action.BROWSE)) {
-                try {
-                    desktop.browse(uri);
-                    // https://stackoverflow.com/questions/23176624/javafx-freeze-on-desktop-openfile-desktop-browseuri?r=SearchResults
-                    // Menus are blocked after system explorer is opened
-                    //                    if (myStage != null) {
-                    //                        new Timer().schedule(new TimerTask() {
-                    //                            @Override
-                    //                            public void run() {
-                    //                                Platform.runLater(() -> {
-                    //                                    myStage.requestFocus();
-                    //                                });
-                    //                            }
-                    //                        }, 1000);
-                    //                    }
-                    return;
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
+            // https://stackoverflow.com/questions/23176624/javafx-freeze-on-desktop-openfile-desktop-browseuri?r=SearchResults
+            // interface are blocked after system explorer is opened. Happened again after javafx 17.0.2
+//            new Thread(() -> {
+//                try {
+//                    Desktop.getDesktop().browse(uri);
+//                } catch (Exception e) {
+//                    MyBoxLog.debug(e);
+//                }
+//            }).start();
+            try {
+                Runtime.getRuntime().exec(new String[]{"explorer.exe", uri.toString()});
+                return;
+            } catch (Exception e) {
+                MyBoxLog.debug(e);
             }
+            return;
         }
         if (!uri.getScheme().equals("file") || new File(uri.getPath()).isFile()) {
             ControllerTools.openTarget(null, uri.toString());
@@ -340,7 +336,7 @@ public class PopTools {
 
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            menu = new MenuItem(message("PopupClose"));
+            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -409,7 +405,7 @@ public class PopTools {
 
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            menu = new MenuItem(message("PopupClose"));
+            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -487,7 +483,7 @@ public class PopTools {
                 popMenu.getItems().add(menu);
             }
             popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"));
+            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override

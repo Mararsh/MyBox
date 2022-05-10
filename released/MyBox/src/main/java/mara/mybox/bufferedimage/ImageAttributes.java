@@ -57,6 +57,7 @@ public class ImageAttributes {
             case "jpg":
             case "jpeg":
                 compressionType = "JPEG";
+                alpha = Alpha.Remove;
                 break;
             case "gif":
                 compressionType = "LZW";
@@ -71,10 +72,12 @@ public class ImageAttributes {
                 break;
             case "bmp":
                 compressionType = "BI_RGB";
+                alpha = Alpha.Remove;
                 break;
         }
         density = 96;
         quality = 100;
+
     }
 
     /*
@@ -84,160 +87,180 @@ public class ImageAttributes {
         return imageFormat;
     }
 
-    public void setImageFormat(String imageFormat) {
+    public ImageAttributes setImageFormat(String imageFormat) {
         this.imageFormat = imageFormat;
+        return this;
     }
 
     public int getDensity() {
         return density;
     }
 
-    public void setDensity(int density) {
+    public ImageAttributes setDensity(int density) {
         this.density = density;
+        return this;
     }
 
     public String getCompressionType() {
         return compressionType;
     }
 
-    public void setCompressionType(String compressionType) {
+    public ImageAttributes setCompressionType(String compressionType) {
         this.compressionType = compressionType;
+        return this;
     }
 
     public int getTargetWidth() {
         return targetWidth;
     }
 
-    public void setTargetWidth(int targetWidth) {
+    public ImageAttributes setTargetWidth(int targetWidth) {
         this.targetWidth = targetWidth;
+        return this;
     }
 
     public int getTargetHeight() {
         return targetHeight;
     }
 
-    public void setTargetHeight(int targetHeight) {
+    public ImageAttributes setTargetHeight(int targetHeight) {
         this.targetHeight = targetHeight;
+        return this;
     }
 
     public ImageType getColorType() {
         return colorType;
     }
 
-    public void setColorType(ImageType colorType) {
+    public ImageAttributes setColorType(ImageType colorType) {
         this.colorType = colorType;
+        return this;
     }
 
     public int getThreshold() {
         return threshold;
     }
 
-    public void setThreshold(int threshold) {
+    public ImageAttributes setThreshold(int threshold) {
         this.threshold = threshold;
+        return this;
     }
 
     public int getQuality() {
         return quality;
     }
 
-    public void setQuality(int quality) {
+    public ImageAttributes setQuality(int quality) {
         this.quality = quality;
+        return this;
     }
 
     public BinaryAlgorithm getBinaryConversion() {
         return binaryConversion;
     }
 
-    public void setBinaryConversion(BinaryAlgorithm binaryConversion) {
+    public ImageAttributes setBinaryConversion(BinaryAlgorithm binaryConversion) {
         this.binaryConversion = binaryConversion;
+        return this;
     }
 
     public int getRatioAdjustion() {
         return ratioAdjustion;
     }
 
-    public void setRatioAdjustion(int ratioAdjustion) {
+    public ImageAttributes setRatioAdjustion(int ratioAdjustion) {
         this.ratioAdjustion = ratioAdjustion;
+        return this;
     }
 
     public boolean isKeepRatio() {
         return keepRatio;
     }
 
-    public void setKeepRatio(boolean keepRatio) {
+    public ImageAttributes setKeepRatio(boolean keepRatio) {
         this.keepRatio = keepRatio;
+        return this;
     }
 
     public int getSourceWidth() {
         return sourceWidth;
     }
 
-    public void setSourceWidth(int sourceWidth) {
+    public ImageAttributes setSourceWidth(int sourceWidth) {
         this.sourceWidth = sourceWidth;
+        return this;
     }
 
     public int getSourceHeight() {
         return sourceHeight;
     }
 
-    public void setSourceHeight(int sourceHeight) {
+    public ImageAttributes setSourceHeight(int sourceHeight) {
         this.sourceHeight = sourceHeight;
+        return this;
     }
 
     public boolean isIsDithering() {
         return isDithering;
     }
 
-    public void setIsDithering(boolean isDithering) {
+    public ImageAttributes setIsDithering(boolean isDithering) {
         this.isDithering = isDithering;
+        return this;
     }
 
     public ICC_Profile getProfile() {
         return profile;
     }
 
-    public void setProfile(ICC_Profile profile) {
+    public ImageAttributes setProfile(ICC_Profile profile) {
         this.profile = profile;
+        return this;
     }
 
     public String getProfileName() {
         return profileName;
     }
 
-    public void setProfileName(String profileName) {
+    public ImageAttributes setProfileName(String profileName) {
         this.profileName = profileName;
+        return this;
     }
 
     public String getColorSpaceName() {
         return colorSpaceName;
     }
 
-    public void setColorSpaceName(String colorSpaceName) {
+    public ImageAttributes setColorSpaceName(String colorSpaceName) {
         this.colorSpaceName = colorSpaceName;
+        return this;
     }
 
     public Alpha getAlpha() {
         return alpha;
     }
 
-    public void setAlpha(Alpha alpha) {
+    public ImageAttributes setAlpha(Alpha alpha) {
         this.alpha = alpha;
+        return this;
     }
 
     public boolean isEmbedProfile() {
         return embedProfile;
     }
 
-    public void setEmbedProfile(boolean embedProfile) {
+    public ImageAttributes setEmbedProfile(boolean embedProfile) {
         this.embedProfile = embedProfile;
+        return this;
     }
 
     public int getWidth() {
         return width;
     }
 
-    public void setWidth(int width) {
+    public ImageAttributes setWidth(int width) {
         this.width = width;
+        return this;
     }
 
 }

@@ -9,17 +9,30 @@ License:    Apache License Version 2.0
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="700.0" spacing="5.0" VBox.vgrow="ALWAYS" 
-      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.TreeNodeCopyController">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="700.0" spacing="5.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.TreeNodeCopyController">
     <children>
         <Label fx:id="sourceLabel" minHeight="-Infinity" text="%NodeCopyed" wrapText="true" />
+      <FlowPane hgap="2.0" vgap="2.0">
+         <children>
+            <RadioButton fx:id="nodeAndDescendantsRadio" mnemonicParsing="false" selected="true" text="%CopyNodeAndDescendants">
+               <toggleGroup>
+                  <ToggleGroup fx:id="copyGroup" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="descendantsRadio" mnemonicParsing="false" text="%CopyDescendants" toggleGroup="$copyGroup" />
+            <RadioButton fx:id="nodeRadio" mnemonicParsing="false" text="%CopyNode" toggleGroup="$copyGroup" />
+         </children>
+      </FlowPane>
         <Separator prefWidth="200.0" />
         <HBox alignment="CENTER_LEFT" layoutX="30.0" layoutY="537.0" spacing="5.0">
             <children>

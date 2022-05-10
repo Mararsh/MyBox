@@ -25,6 +25,7 @@ public class Data2DColumn extends ColumnDefinition {
         initColumnDefinition();
         d2cid = -1;
         d2id = -1;
+        data2DDefinition = null;
     }
 
     public Data2DColumn() {
@@ -35,6 +36,20 @@ public class Data2DColumn extends ColumnDefinition {
         initData2DColumn();
         this.columnName = name;
         this.type = type;
+    }
+
+    public Data2DColumn(String name, String label, ColumnType type) {
+        initData2DColumn();
+        this.columnName = name;
+        this.type = type;
+        this.label = label;
+    }
+
+    public Data2DColumn(String name, ColumnType type, int width) {
+        initData2DColumn();
+        this.columnName = name;
+        this.type = type;
+        this.width = width;
     }
 
     public Data2DColumn(String name, ColumnType type, boolean notNull) {

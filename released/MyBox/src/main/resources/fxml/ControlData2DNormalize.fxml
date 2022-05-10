@@ -18,14 +18,14 @@ License:    Apache License Version 2.0
     <children>
         <FlowPane alignment="CENTER_LEFT" hgap="5.0" minWidth="-Infinity" prefWrapLength="500.0" vgap="5.0">
             <children>
-                <Label text="%Object" />
+                <Label text="%AccordingTo" />
                 <RadioButton fx:id="columnsRadio" mnemonicParsing="false" selected="true" text="%Columns">
                     <toggleGroup>
                         <ToggleGroup fx:id="objectGroup" />
                     </toggleGroup>
                 </RadioButton>
                 <RadioButton fx:id="rowsRadio" mnemonicParsing="false" text="%Rows" toggleGroup="$objectGroup" />
-                <RadioButton fx:id="matrixRadio" mnemonicParsing="false" text="%Matrix" toggleGroup="$objectGroup" />
+                <RadioButton fx:id="allRadio" mnemonicParsing="false" text="%All" toggleGroup="$objectGroup" />
             </children>
         </FlowPane>
         <FlowPane hgap="2.0" prefWrapLength="300.0" vgap="2.0">
@@ -36,8 +36,8 @@ License:    Apache License Version 2.0
                         <ToggleGroup fx:id="algorithmGroup" />
                     </toggleGroup>
                 </RadioButton>
-                <RadioButton fx:id="l1Radio" mnemonicParsing="false" text="L1(Sum)" toggleGroup="$algorithmGroup" />
-                <RadioButton fx:id="l2Radio" mnemonicParsing="false" text="L2(Z-Score)" toggleGroup="$algorithmGroup" />
+                <RadioButton fx:id="sumRadio" mnemonicParsing="false" text="L1(Sum)" toggleGroup="$algorithmGroup" />
+                <RadioButton fx:id="zscoreRadio" mnemonicParsing="false" text="L2(Z-Score)" toggleGroup="$algorithmGroup" />
             </children>
         </FlowPane>
         <FlowPane fx:id="rangePane" hgap="2.0" prefWrapLength="300.0" vgap="2.0">

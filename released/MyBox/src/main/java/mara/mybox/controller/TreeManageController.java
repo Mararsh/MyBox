@@ -20,8 +20,11 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
@@ -70,9 +73,11 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     @FXML
     protected VBox conditionBox, timesBox;
     @FXML
-    protected CheckBox descendantsCheck;
+    protected ToggleGroup nodesGroup;
     @FXML
-    protected FlowPane tagsPane, namesPane;
+    protected RadioButton childrenRadio, descendantsRadio, findNameRadio, findValueRadio;
+    @FXML
+    protected FlowPane tagsPane, namesPane, nodeGroupPane;
     @FXML
     protected Label conditionLabel;
     @FXML
@@ -82,11 +87,15 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     @FXML
     protected TreeTagsController tagsController;
     @FXML
-    protected ControlTimeTree timeController;
+    protected ControlTimesTree timesController;
     @FXML
     protected TextField findInput;
     @FXML
-    protected RadioButton findNameRadio, findValueRadio;
+    protected CheckBox nodesListCheck;
+    @FXML
+    protected SplitPane managePane;
+    @FXML
+    protected VBox nodesListBox;
 
     public TreeManageController() {
         baseTitle = message("InformationInTree");
@@ -111,6 +120,52 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     }
 
     @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            nodesController.setParameters(this, true);
+
+            if (UserConfig.getBoolean(baseName + "AllDescendants", false)) {
+                descendantsRadio.fire();
+            }
+            nodesGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue ov, Toggle oldTab, Toggle newTab) {
+                    UserConfig.setBoolean(baseName + "AllDescendants", descendantsRadio.isSelected());
+                    if (loadedParent != null) {
+                        loadTableData();
+                    }
+                }
+            });
+
+            nodeController.setParameters(this);
+            tagsController.setParameters(this);
+            tagsController.loadTableData();
+
+            initTimes();
+            initFind();
+
+            if (nodesListCheck != null) {
+                nodesListCheck.setSelected(UserConfig.getBoolean(baseName + "NodesList", true));
+                nodesListCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        UserConfig.setBoolean(baseName + "NodesList", nodesListCheck.isSelected());
+                        showNodesList(nodesListCheck.isSelected());
+                    }
+                });
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
     protected void initColumns() {
         try {
             super.initColumns();
@@ -127,35 +182,6 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             }
             timeColumn.setCellValueFactory(new PropertyValueFactory<>("updateTime"));
             timeColumn.setText(timeMsg);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void initControls() {
-        try {
-            super.initControls();
-
-            nodesController.setParameters(this, true);
-
-            descendantsCheck.setSelected(UserConfig.getBoolean(baseName + "IncludeSub", false));
-            descendantsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldTab, Boolean newTab) {
-                    if (loadedParent != null) {
-                        loadTableData();
-                    }
-                }
-            });
-
-            nodeController.setParameters(this);
-            tagsController.setParameters(this);
-            tagsController.loadTableData();
-
-            initTimes();
-            initFind();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -183,6 +209,27 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         return true;
     }
 
+    public void showNodesList(boolean show) {
+        if (isSettingValues || nodesListCheck == null) {
+            return;
+        }
+        isSettingValues = true;
+        nodesListCheck.setSelected(show);
+        if (show) {
+            if (!managePane.getItems().contains(nodesListBox)) {
+                managePane.getItems().add(1, nodesListBox);
+            }
+        } else {
+            if (managePane.getItems().contains(nodesListBox)) {
+                managePane.getItems().remove(nodesListBox);
+            }
+        }
+        isSettingValues = false;
+        if (show) {
+            leftPaneCheck.setSelected(true);
+        }
+    }
+
     /*
         synchronize
      */
@@ -191,7 +238,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             return;
         }
         if (loadedParent != null && parent.getNodeid() == loadedParent.getNodeid()) {
-            loadChildren(parent);
+            loadNodes(parent);
         }
     }
 
@@ -253,7 +300,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         }
         long id = node.getNodeid();
         if (loadedParent != null) {
-            loadChildren(loadedParent);
+            loadNodes(loadedParent);
         }
         if (nodeController.currentNode != null && id == nodeController.currentNode.getNodeid()) {
             nodeController.setParentNode(parent);
@@ -268,7 +315,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             return;
         }
         if (loadedParent != null && parent.getNodeid() == loadedParent.getNodeid()) {
-            loadChildren(parent);
+            loadNodes(parent);
         }
         for (TreeNode node : nodes) {
             if (nodeController.currentNode != null && node.getNodeid() == nodeController.currentNode.getNodeid()) {
@@ -337,7 +384,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             return;
         }
         if (loadedParent != null && nodeController.parentNode.getNodeid() == loadedParent.getNodeid()) {
-            loadChildren(nodeController.parentNode);
+            loadNodes(nodeController.parentNode);
         }
         nodesController.addNewNode(nodesController.find(nodeController.parentNode), nodeController.currentNode);
     }
@@ -365,7 +412,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     public void loadTree(TreeNode selectedNode) {
         if (!AppVariables.isTesting) {
             File file = TreeNode.exampleFile(category);
-            if (file != null && tableTreeNode.size(category) < 1
+            if (file != null && tableTreeNode.categoryEmpty(category)
                     && PopTools.askSure(this, getBaseTitle(), message("ImportExamples"))) {
                 nodesController.importExamples();
                 return;
@@ -387,7 +434,8 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     /*
         table
      */
-    public void loadChildren(TreeNode parentNode) {
+    public void loadNodes(TreeNode parentNode) {
+        showNodesList(true);
         clearQuery();
         loadedParent = parentNode;
         if (loadedParent != null) {
@@ -397,9 +445,22 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         }
     }
 
+    public void loadChildren(TreeNode parentNode) {
+        childrenRadio.fire();
+        loadNodes(parentNode);
+    }
+
+    public void loadDescendants(TreeNode parentNode) {
+        descendantsRadio.fire();
+        loadNodes(parentNode);
+    }
+
     @Override
     public void postLoadedTableData() {
         super.postLoadedTableData();
+        if (loadedParent != null) {
+            tableData.add(0, loadedParent);
+        }
         makeConditionPane();
     }
 
@@ -435,7 +496,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
                             link.setOnAction(new EventHandler<ActionEvent>() {
                                 @Override
                                 public void handle(ActionEvent event) {
-                                    loadChildren(node);
+                                    loadNodes(node);
                                 }
                             });
                             nodes.add(link);
@@ -447,7 +508,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
                     label.setMinHeight(Region.USE_PREF_SIZE);
                     nodes.add(label);
                     namesPane.getChildren().setAll(nodes);
-                    conditionBox.getChildren().setAll(namesPane, descendantsCheck);
+                    conditionBox.getChildren().setAll(namesPane, nodeGroupPane);
                     conditionBox.applyCss();
                 }
             };
@@ -458,8 +519,12 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
 
     @Override
     public long readDataSize(Connection conn) {
-        if (loadedParent != null && descendantsCheck.isSelected()) {
-            return tableTreeNode.withSubSize(conn, loadedParent.getNodeid());
+        if (loadedParent != null) {
+            if (descendantsRadio.isSelected()) {
+                return tableTreeNode.decentantsSize(conn, loadedParent.getNodeid()) + 1;
+            } else {
+                return tableTreeNode.conditionSize(conn, queryConditions) + 1;
+            }
 
         } else if (queryConditions != null) {
             return tableTreeNode.conditionSize(conn, queryConditions);
@@ -472,8 +537,8 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
 
     @Override
     public List<TreeNode> readPageData(Connection conn) {
-        if (loadedParent != null && descendantsCheck.isSelected()) {
-            return tableTreeNode.withSub(conn, loadedParent.getNodeid(), startRowOfCurrentPage, pageSize);
+        if (loadedParent != null && descendantsRadio.isSelected()) {
+            return tableTreeNode.decentants(conn, loadedParent.getNodeid(), startRowOfCurrentPage, pageSize);
 
         } else if (queryConditions != null) {
             return tableTreeNode.queryConditions(conn, queryConditions, orderColumns, startRowOfCurrentPage, pageSize);
@@ -604,12 +669,17 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     @FXML
     @Override
     public void pasteAction() {
-        TreeNode selected = tableView.getSelectionModel().getSelectedItem();
-        if (selected == null) {
+        pasteNode(tableView.getSelectionModel().getSelectedItem());
+    }
+
+    public void pasteNode(TreeNode node) {
+        if (node == null) {
+            popError(message("NoData"));
             return;
         }
-        nodeController.pasteText(selected.getValue());
+        nodeController.pasteText(node.getValue());
     }
+
 
     /*
         node
@@ -652,15 +722,15 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
      */
     public void initTimes() {
         try {
-            timeController.setParent(this, false);
+            timesController.setParent(this, " category='" + category + "' ", "Tree_Node", "update_time");
 
-            timeController.queryNodesButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            timesController.queryNodesButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
                     queryTimes();
                 }
             });
-            timeController.refreshNodesButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            timesController.refreshNodesButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
                     refreshTimes();
@@ -675,45 +745,21 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
 
     @FXML
     protected void refreshTimes() {
-        synchronized (this) {
-            timeController.clearTree();
-            timesBox.setDisable(true);
-            SingletonTask timesTask = new SingletonTask<Void>(this) {
-                private List<Date> times;
-
-                @Override
-                protected boolean handle() {
-                    times = tableTreeNode.times(category);
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    timeController.loadTree("update_time", times, false);
-                }
-
-                @Override
-                protected void finalAction() {
-                    timesBox.setDisable(false);
-                }
-
-            };
-            start(timesTask, false);
-        }
+        timesController.loadTree();
     }
 
     @FXML
     protected void queryTimes() {
-        String c = timeController.check();
+        String c = timesController.check();
         if (c == null) {
             popError(message("MissTime"));
             return;
         }
         clearQuery();
         queryConditions = " category='" + category + "' " + (c.isBlank() ? "" : " AND " + c);
-        queryConditionsString = timeController.getFinalTitle();
+        queryConditionsString = timesController.getFinalTitle();
         loadTableData();
-        showLeftPane();
+        showNodesList(true);
     }
 
     /*
@@ -770,7 +816,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         }
         queryConditions = " category='" + category + "' AND " + queryConditions;
         loadTableData();
-        showLeftPane();
+        showNodesList(true);
     }
 
     @FXML

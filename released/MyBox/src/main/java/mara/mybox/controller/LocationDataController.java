@@ -535,7 +535,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
                         MyBoxLog.debug(e.toString());
                     }
                     String lang = Languages.isChinese() ? "zh" : "en";
-                    file = FxFileTools.getInternalFile("/data/db/Location_Data_ChineseHistoricalCapitals_" + lang + ".csv",
+                    file = FxFileTools.getInternalFile("/data/examples/Location_Data_ChineseHistoricalCapitals_" + lang + ".csv",
                             "data", "Location_Data_ChineseHistoricalCapitals_" + lang + ".csv");
                     return true;
                 }
@@ -612,7 +612,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
                         MyBoxLog.debug(e.toString());
                     }
                     String lang = Languages.isChinese() ? "zh" : "en";
-                    file = FxFileTools.getInternalFile("/data/db/Location_Data_EuropeanGadwalls_" + lang + ".csv",
+                    file = FxFileTools.getInternalFile("/data/examples/Location_Data_EuropeanGadwalls_" + lang + ".csv",
                             "data", "Location_Data_EuropeanGadwalls_" + lang + ".csv");
                     return true;
                 }
@@ -684,7 +684,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
                         MyBoxLog.debug(e.toString());
                     }
                     String lang = Languages.isChinese() ? "zh" : "en";
-                    file = FxFileTools.getInternalFile("/data/db/Location_Data_SpermWhales_" + lang + ".csv",
+                    file = FxFileTools.getInternalFile("/data/examples/Location_Data_SpermWhales_" + lang + ".csv",
                             "data", "Location_Data_SpermWhales_" + lang + ".csv");
                     return true;
                 }

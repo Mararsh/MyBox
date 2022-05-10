@@ -24,7 +24,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-9-4
  * @License Apache License Version 2.0
  */
-public class Data2DSetValuesController extends Data2DHandleController {
+public class Data2DSetValuesController extends BaseData2DHandleController {
 
     protected String value;
 
@@ -37,6 +37,10 @@ public class Data2DSetValuesController extends Data2DHandleController {
     protected TextField valueInput;
     @FXML
     protected FlowPane matrixPane;
+
+    public Data2DSetValuesController() {
+        baseTitle = message("SetValues");
+    }
 
     @Override
     public void initControls() {

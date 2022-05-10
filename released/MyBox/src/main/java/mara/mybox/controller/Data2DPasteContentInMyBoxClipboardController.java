@@ -32,6 +32,10 @@ public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxCli
     @FXML
     protected RadioButton replaceRadio, insertRadio, appendRadio;
 
+    public Data2DPasteContentInMyBoxClipboardController() {
+        baseTitle = message("PasteContentInMyBoxClipboard");
+    }
+
     @Override
     public void setStageStatus() {
         setAsPop(baseName);

@@ -15,6 +15,7 @@ import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableData2DCell;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
+import mara.mybox.db.table.TableData2DStyle;
 import mara.mybox.db.table.TableDataset;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableFileBackup;
@@ -34,6 +35,7 @@ import mara.mybox.db.table.TableVisitHistory;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Languages;
 
@@ -123,6 +125,9 @@ public class BaseDataAdaptor {
         } else if (data instanceof NamedValues) {
             return new TableNamedValues();
 
+        } else if (data instanceof Data2DStyle) {
+            return new TableData2DStyle();
+
         }
         return null;
     }
@@ -209,6 +214,9 @@ public class BaseDataAdaptor {
         } else if (data instanceof NamedValues) {
             return NamedValues.valid((NamedValues) data);
 
+        } else if (data instanceof Data2DStyle) {
+            return Data2DStyle.valid((Data2DStyle) data);
+
         }
 
         return false;
@@ -293,6 +301,9 @@ public class BaseDataAdaptor {
         } else if (data instanceof NamedValues) {
             return NamedValues.getValue((NamedValues) data, name);
 
+        } else if (data instanceof Data2DStyle) {
+            return Data2DStyle.getValue((Data2DStyle) data, name);
+
         }
 
         return null;
@@ -370,6 +381,9 @@ public class BaseDataAdaptor {
 
         } else if (data instanceof NamedValues) {
             return NamedValues.setValue((NamedValues) data, name, value);
+
+        } else if (data instanceof Data2DStyle) {
+            return Data2DStyle.setValue((Data2DStyle) data, name, value);
 
         }
         return false;
@@ -457,7 +471,7 @@ public class BaseDataAdaptor {
                     if (column.getMinValue() != null && dvalue < (double) column.getMinValue()) {
                         return null;
                     }
-                    return dvalue != AppValues.InvalidDouble ? dvalue + "" : null;
+                    return DoubleTools.invalidDouble(dvalue) ? null : (dvalue + "");
                 case Float:
                     float fvalue = (float) value;
                     if (column.getMaxValue() != null && fvalue > (float) column.getMaxValue()) {
@@ -466,7 +480,7 @@ public class BaseDataAdaptor {
                     if (column.getMinValue() != null && fvalue < (float) column.getMinValue()) {
                         return null;
                     }
-                    return fvalue != AppValues.InvalidDouble ? fvalue + "" : null;
+                    return DoubleTools.invalidDouble(fvalue) ? null : (fvalue + "");
                 case Long:
                 case Era:
                     long lvalue = (long) value;

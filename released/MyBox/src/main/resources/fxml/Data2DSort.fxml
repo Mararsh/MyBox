@@ -11,6 +11,10 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.FlowPane?>
@@ -24,31 +28,60 @@ License:    Apache License Version 2.0
                 <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%Sort" textAlignment="CENTER" VBox.vgrow="NEVER" />
             </children>
         </HBox>
-      <fx:include fx:id="source" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DSource.fxml" VBox.vgrow="ALWAYS" />
-          <HBox fx:id="namesBox" spacing="2.0">
-              <children>
-                  <CheckBox fx:id="rowNumberCheck" mnemonicParsing="false" text="%RowNumber" />
-                  <CheckBox fx:id="colNameCheck" mnemonicParsing="false" text="%ColumnName" />
-              </children>
-          </HBox>
-          <Label fx:id="memoryNoticeLabel" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" text="%DataSortComments" wrapText="true" />
-        <VBox fx:id="operationBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-            <children>
-                <Label minHeight="-Infinity" minWidth="-Infinity" text="%DataSortLabel" />
-                <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
-                    <children>
-                        <Label minWidth="-Infinity" text="%Column" />
-                        <ComboBox fx:id="colSelector" prefWidth="200.0" />
-                        <CheckBox fx:id="descendCheck" mnemonicParsing="false" text="%Descending" />
-                    </children>
-                </FlowPane>
-            </children>
-        </VBox>
-        <VBox fx:id="targetBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-            <children>
-                <fx:include fx:id="target" source="ControlData2DTarget.fxml" />
-            </children>
-        </VBox>
+      <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+         <tabs>
+            <Tab text="%Data">
+               <content>
+                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                     <children>
+                        <fx:include fx:id="source" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DSource.fxml" VBox.vgrow="ALWAYS" />
+                     </children>
+                  </VBox>
+               </content>
+            </Tab>
+            <Tab text="%Options">
+               <content>
+                  <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                     <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
+                           <children>
+                                  <Label fx:id="memoryNoticeLabel" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" text="%AllRowsLoadComments" wrapText="true" />
+                                <VBox fx:id="operationBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                    <children>
+                                        <Label minHeight="-Infinity" minWidth="-Infinity" text="%DataSortLabel" />
+                                        <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+                                            <children>
+                                                <Label minWidth="-Infinity" text="%Column" />
+                                                <ComboBox fx:id="colSelector" prefWidth="200.0" />
+                                                <CheckBox fx:id="descendCheck" mnemonicParsing="false" text="%Descending" />
+                                            </children>
+                                        </FlowPane>
+                                        <HBox fx:id="namesBox" spacing="2.0">
+                                            <children>
+                                                <CheckBox fx:id="rowNumberCheck" mnemonicParsing="false" text="%RowNumber" />
+                                                <CheckBox fx:id="colNameCheck" mnemonicParsing="false" text="%ColumnName" />
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                                <VBox fx:id="targetBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                    <children>
+                                        <fx:include fx:id="target" source="ControlData2DTarget.fxml" />
+                                    </children>
+                                </VBox>
+                              <Separator prefWidth="200.0" />
+                              <Label minHeight="-Infinity" text="%DataSortComments" wrapText="true" />
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
+         </tabs>
+      </TabPane>
         <HBox alignment="CENTER_LEFT" spacing="5.0">
             <children>
                 <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />

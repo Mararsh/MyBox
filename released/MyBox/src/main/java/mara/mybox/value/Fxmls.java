@@ -127,7 +127,6 @@ public class Fxmls {
     public static final String ImageManufactureBatchShadowFxml = "/fxml/ImageManufactureBatchShadow.fxml";
     public static final String ImageManufactureBatchTransformFxml = "/fxml/ImageManufactureBatchTransform.fxml";
     public static final String ImageManufactureBatchMarginsFxml = "/fxml/ImageManufactureBatchMargins.fxml";
-    public static final String ImageStatisticFxml = "/fxml/ImageStatistic.fxml";
 
     public static final String ImageConverterBatchFxml = "/fxml/ImageConverterBatch.fxml";
     public static final String ImagesSpliceFxml = "/fxml/ImagesSplice.fxml";
@@ -146,6 +145,7 @@ public class Fxmls {
     public static final String ColorInputFxml = "/fxml/ColorInput.fxml";
     public static final String ColorCopyFxml = "/fxml/ColorCopy.fxml";
     public static final String ColorQueryFxml = "/fxml/ColorQuery.fxml";
+    public static final String ColorPaletteInputFxml = "/fxml/ColorPaletteInput.fxml";
 
     public static final String IccProfileEditorFxml = "/fxml/IccProfileEditor.fxml";
     public static final String ChromaticityDiagramFxml = "/fxml/ChromaticityDiagram.fxml";
@@ -161,6 +161,7 @@ public class Fxmls {
 
     public static final String PixelsCalculatorFxml = "/fxml/PixelsCalculator.fxml";
     public static final String ConvolutionKernelManagerFxml = "/fxml/ConvolutionKernelManager.fxml";
+    public static final String ImageBase64Fxml = "/fxml/ImageBase64.fxml";
 
     public static final String ImagePopFxml = "/fxml/ImagePop.fxml";
     public static final String ImageScopePopFxml = "/fxml/ImageScopePop.fxml";
@@ -175,9 +176,12 @@ public class Fxmls {
     public static final String Data2DManageQueryFxml = "/fxml/Data2DManageQuery.fxml";
     public static final String DataInSystemClipboardFxml = "/fxml/DataInSystemClipboard.fxml";
     public static final String DataInMyBoxClipboardFxml = "/fxml/DataInMyBoxClipboard.fxml";
+    public static final String DataManufactureFxml = "/fxml/DataManufacture.fxml";
+    public static final String DataManufactureSaveFxml = "/fxml/DataManufactureSave.fxml";
 
     public static final String TableAddRowsFxml = "/fxml/TableAddRows.fxml";
     public static final String Data2DSetValuesFxml = "/fxml/Data2DSetValues.fxml";
+    public static final String Data2DSetStylesFxml = "/fxml/Data2DSetStyles.fxml";
     public static final String Data2DCopyFxml = "/fxml/Data2DCopy.fxml";
     public static final String Data2DLoadContentInSystemClipboardFxml = "/fxml/Data2DLoadContentInSystemClipboard.fxml";
     public static final String Data2DPasteContentInSystemClipboardFxml = "/fxml/Data2DPasteContentInSystemClipboard.fxml";
@@ -188,11 +192,19 @@ public class Fxmls {
     public static final String Data2DPercentageFxml = "/fxml/Data2DPercentage.fxml";
     public static final String Data2DSortFxml = "/fxml/Data2DSort.fxml";
     public static final String Data2DNormalizeFxml = "/fxml/Data2DNormalize.fxml";
-    public static final String Data2DChartFxml = "/fxml/Data2DChart.fxml";
+    public static final String Data2DFrequencyFxml = "/fxml/Data2DFrequency.fxml";
+    public static final String Data2DChartPieFxml = "/fxml/Data2DChartPie.fxml";
+    public static final String Data2DChartXYFxml = "/fxml/Data2DChartXY.fxml";
+    public static final String Data2DChartBoxWhiskerFxml = "/fxml/Data2DChartBoxWhisker.fxml";
+    public static final String Data2DChartSelfComparisonBarsFxml = "/fxml/Data2DChartSelfComparisonBars.fxml";
+    public static final String Data2DChartComparisonBarsFxml = "/fxml/Data2DChartComparisonBars.fxml";
     public static final String Data2DConvertToDatabaseFxml = "/fxml/Data2DConvertToDatabase.fxml";
     public static final String Data2DColumnCreateFxml = "/fxml/Data2DColumnCreate.fxml";
     public static final String Data2DTableCreateFxml = "/fxml/Data2DTableCreate.fxml";
     public static final String DataTableQueryFxml = "/fxml/DataTableQuery.fxml";
+    public static final String Data2DSimpleLinearRegressionFxml = "/fxml/Data2DSimpleLinearRegression.fxml";
+
+    public static final String JShellFxml = "/fxml/JShell.fxml";
 
     public static final String DataFileCSVFxml = "/fxml/DataFileCSV.fxml";
     public static final String DataFileCSVConvertFxml = "/fxml/DataFileCSVConvert.fxml";
@@ -342,7 +354,6 @@ public class Fxmls {
     public static final String AutoTestingExecutionFxml = "/fxml/AutoTestingExecution.fxml";
     public static final String RunCommandFxml = "/fxml/RunCommand.fxml";
     public static final String RunSystemCommandFxml = "/fxml/RunSystemCommand.fxml";
-    public static final String JShellFxml = "/fxml/JShell.fxml";
 
     /*
         common

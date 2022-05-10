@@ -37,6 +37,7 @@ public class Data2DConvertToDataBaseController extends Data2DTableCreateControll
     protected Label dataLabel, infoLabel;
 
     public Data2DConvertToDataBaseController() {
+        baseTitle = message("ConvertToDatabaseTable");
         TipsLabelKey = message("SqlIdentifierComments");
     }
 
@@ -71,7 +72,8 @@ public class Data2DConvertToDataBaseController extends Data2DTableCreateControll
 
     public boolean checkSource() {
         try {
-            getMyStage().setTitle(tableController.getTitle());
+            getMyStage().setTitle(baseTitle
+                    + (tableController.data2D == null ? "" : " - " + tableController.data2D.displayName()));
             infoLabel.setText("");
 
             selectedColumnsIndices = sourceController.checkedColsIndices();

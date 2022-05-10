@@ -66,7 +66,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     @FXML
     protected FlowPane buttonsPane;
     @FXML
-    protected Button renameColumnsButton, colorButton;
+    protected Button renameColumnsButton, randomColorsButton;
 
     public ControlData2DColumns() {
     }
@@ -76,7 +76,6 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
         try {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(renameColumnsButton, new Tooltip(message("RenameAllColumns")));
-            NodeStyleTools.setTooltip(colorButton, new Tooltip(message("RandomColors")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -511,7 +510,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
         renameColumnsButton.setDisable(data2D == null || data2D.isTable() || tableData.isEmpty());
         addRowsButton.setDisable(data2D == null || data2D.isInternalTable());
         deleteButton.setDisable(data2D == null || data2D.isInternalTable() || tableData.isEmpty());
-        colorButton.setDisable(tableData.isEmpty());
+        randomColorsButton.setDisable(tableData.isEmpty());
     }
 
     public void status(Status newStatus) {
@@ -693,15 +692,30 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
         }
         Data2DColumn column = tableData.get(index);
         column.setWidth(width);
-        MyBoxLog.console(width);
         isSettingValues = true;
         tableData.set(index, column);
         isSettingValues = false;
-        MyBoxLog.console(status);
         if (status == null || status == Status.Loaded) {
             status(Status.Applied);
         }
+    }
 
+    public void setNames(List<String> names) {
+        try {
+            if (names == null || names.size() != tableData.size()) {
+                return;
+            }
+            isSettingValues = true;
+            for (int i = 0; i < tableData.size(); i++) {
+                tableData.get(i).setColumnName(names.get(i));
+            }
+            tableView.refresh();
+            isSettingValues = false;
+            status = Status.Modified;
+            okAction();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @FXML

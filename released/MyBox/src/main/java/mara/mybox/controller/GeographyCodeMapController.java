@@ -14,7 +14,7 @@ import mara.mybox.db.data.BaseDataAdaptor;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.value.AppValues;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.Languages;
 
 /**
@@ -208,7 +208,7 @@ public class GeographyCodeMapController extends BaseMapController {
                 label += "</BR>";
             }
             label += geographyCode.getLongitude() + "," + geographyCode.getLatitude();
-            if (geographyCode.getAltitude() != AppValues.InvalidDouble) {
+            if (!DoubleTools.invalidDouble(geographyCode.getAltitude())) {
                 label += "," + geographyCode.getAltitude();
             }
         }

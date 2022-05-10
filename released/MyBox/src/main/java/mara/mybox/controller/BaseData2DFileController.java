@@ -56,6 +56,7 @@ public abstract class BaseData2DFileController extends BaseData2DController {
             initBackupsTab();
             initSaveAsTab();
 
+            dataController.backupController = backupController;
             dataController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
@@ -184,7 +185,7 @@ public abstract class BaseData2DFileController extends BaseData2DController {
         }
         TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
         controller.sourceFileChanged(dataController.data2D.getFile());
-        controller.toFront();
+        controller.requestMouse();
     }
 
 }

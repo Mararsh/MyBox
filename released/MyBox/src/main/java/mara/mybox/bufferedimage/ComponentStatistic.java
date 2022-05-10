@@ -1,6 +1,6 @@
 package mara.mybox.bufferedimage;
 
-import mara.mybox.data.IntStatistic;
+import mara.mybox.calculation.IntStatistic;
 import mara.mybox.bufferedimage.ColorComponentTools.ColorComponent;
 
 /**

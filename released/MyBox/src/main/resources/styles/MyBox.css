@@ -144,15 +144,14 @@
 }
 
 .row-number {
-    -fx-background-color: -fx-table-cell-border-color, #f7f7f7;
-    -fx-background-insets: 0, 0 0 1 0;
-    -fx-padding: 0.0em;
     -fx-text-fill: grey;
 }
 
-.row-number:odd {
-    -fx-background-color: -fx-table-cell-border-color, #f5f5f5;
-    -fx-background-insets: 0, 0 0 1 0;
+.row-number:cell-selection > .virtual-flow > .clipped-container > .sheet > .tree-table-row-cell:filled > .tree-table-cell:hover:selected {
+    -fx-background: -fx-accent;
+    -fx-background-color: -fx-selection-bar;
+    -fx-text-fill: -fx-selection-bar-text;
+    -fx-background-insets: 0 0 1 0;
 }
 
 
@@ -188,22 +187,6 @@
 .halfBig {
 }
 
-
-/*  http://fxexperience.com/2011/12/styling-fx-buttons-with-css/  */
-/*.main-button, .main-button:pressed, .main-button:hover, .main-button:focused {
-    -fx-padding: 8 15 15 15;
-    -fx-background-insets: 0,0 0 5 0, 0 0 6 0, 0 0 7 0;
-    -fx-background-radius: 9;
-    -fx-background-color:
-        linear-gradient(from 0% 93% to 0% 100%, #660e0e 0%, #6b0d0d 100%),
-        #771c1c,
-        #d23d3d,
-        radial-gradient(center 50% 50%, radius 100%, #d23d3d, #771c1c);
-    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.75) , 4,0,0,1 );
-    -fx-font-weight: bold;
-    -fx-font-size: 1.0em;
-    -fx-text-fill: white;
-}*/
 
 
 

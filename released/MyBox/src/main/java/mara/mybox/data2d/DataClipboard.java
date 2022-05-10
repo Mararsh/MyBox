@@ -18,15 +18,15 @@ import mara.mybox.value.AppPaths;
  * @License Apache License Version 2.0
  */
 public class DataClipboard extends DataFileCSV {
-    
+
     public DataClipboard() {
         type = Type.MyBoxClipboard;
     }
-    
+
     public int type() {
         return type(Type.MyBoxClipboard);
     }
-    
+
     @Override
     public boolean checkForSave() {
         if (dataName == null || dataName.isBlank()) {
@@ -34,11 +34,11 @@ public class DataClipboard extends DataFileCSV {
         }
         return true;
     }
-    
+
     public static File newFile() {
         return new File(AppPaths.getDataClipboardPath() + File.separator + DateTools.nowFileString() + ".csv");
     }
-    
+
     public static DataClipboard create(SingletonTask task, List<Data2DColumn> cols, List<List<String>> data) {
         if (data == null || data.isEmpty()) {
             return null;
@@ -61,7 +61,7 @@ public class DataClipboard extends DataFileCSV {
             return null;
         }
     }
-    
+
     public static DataClipboard create(SingletonTask task, List<Data2DColumn> cols, File dFile,
             int rowsNumber, int colsNumber) {
         if (dFile == null || rowsNumber <= 0) {
@@ -81,7 +81,7 @@ public class DataClipboard extends DataFileCSV {
             } else {
                 d.setDataName(dFile.getName());
             }
-            if (Data2D.save(d, cols)) {
+            if (Data2D.saveColumns(d, cols)) {
                 DataInMyBoxClipboardController.update();
                 return d;
             } else {
@@ -95,7 +95,7 @@ public class DataClipboard extends DataFileCSV {
             return null;
         }
     }
-    
+
     public static DataClipboard create(SingletonTask task, List<Data2DColumn> cols, Data2D data) {
         if (data == null || data.getFile() == null) {
             return null;
@@ -105,7 +105,7 @@ public class DataClipboard extends DataFileCSV {
             DataClipboard d = new DataClipboard();
             d.cloneAll(data);
             d.setType(Type.MyBoxClipboard).setFile(dFile).setDataName(data.getFile().getName());
-            if (Data2D.save(d, cols)) {
+            if (Data2D.saveColumns(d, cols)) {
                 DataInMyBoxClipboardController.update();
                 return d;
             } else {
@@ -116,5 +116,5 @@ public class DataClipboard extends DataFileCSV {
             return null;
         }
     }
-    
+
 }

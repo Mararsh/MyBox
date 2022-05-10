@@ -51,7 +51,7 @@ public class MarkdownPopController extends TextPopController {
     public void editAction() {
         MarkdownEditorController controller = (MarkdownEditorController) WindowTools.openStage(Fxmls.MarkdownEditorFxml);
         controller.loadContents(textArea.getText());
-        controller.toFront();
+        controller.requestMouse();
     }
 
     @FXML

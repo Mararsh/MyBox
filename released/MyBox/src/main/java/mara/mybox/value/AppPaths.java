@@ -134,4 +134,8 @@ public class AppPaths {
         return getPath("generated");
     }
 
+    public static String getIconsPath() {
+        return getPath("icons");
+    }
+
 }

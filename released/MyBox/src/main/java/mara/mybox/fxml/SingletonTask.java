@@ -2,6 +2,8 @@ package mara.mybox.fxml;
 
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.LoadingController;
+import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -31,7 +33,12 @@ public class SingletonTask<Void> extends BaseTask<Void> {
         }
         if (controller != null) {
             if (error != null) {
-                controller.popError(error);
+                if (error.equals(message("Failed"))) {
+                    controller.popError(error);
+                } else {
+                    controller.alertError(error);
+                    MyBoxLog.debug(error);
+                }
             } else {
                 controller.popFailed();
             }

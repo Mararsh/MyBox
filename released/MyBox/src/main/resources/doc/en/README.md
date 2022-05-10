@@ -5,17 +5,19 @@ This is desktop application based on JavaFx to provide simple and easy functions
 
 
 ## What's New        
-2022-4-3 v6.5.4         
+2022-5-10 v6.5.5         
 
-* Information in tree. Manage nodes of tree. Edit nodes. Export/Import with tags. Output tree view. Examples. 
-Extend as: Notes, Web favoraite addresses,  JShell codes, Javascript codes, SQL codes.                
-* Improve. Execute multiple statements in JShell. Manage and execute queries for data tables. 
-"When left click link or image" of web page has more options. Pop histories for input controls.                      
-* Solved. Options of "Word" and "html" do not work. Error popped when save new html in editor. 
-Nothing returned when query time in tree. Wrong may happen when delimited identify is defined in data table.  
-"Auto save" not work in File Editor.       
+* Edit data. Set cells' styles. Set first row as column names. Transpose can apply to all pages and the first column can be set as column names.
+No rows limitation for results of database query. Examples of data.                               
+* Calculate data. More values of descriptive statisitc. Statistic/percentage/normalization can be against to columns/rows/all.            
+Count frequency. Simple linear regression.                 
+* Data charts. Category axis can be either strings or numbers. Display data in chart. Comparison bars chart. Self-comparison bars chart. Box-whisker chart.           
+* Information in tree. Option to show sequence numbers. Options to copy children or descendents.  Options when left-click node.                                
+* Others. Create/paste base64 of image. Input/select color in palette pane.                                   
+* Solved. Auto-backup of data file does not work. Columns are not applied when statistic all pages. 
+BOM is not removed as required when save as text file. Fail to clear all colors.                                 
 
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.4)             
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.5)             
                    
 
 ## Download and Execution
@@ -24,7 +26,7 @@ You can find them by clicking `releases` tab in main page of this project.
 
 
 ### Source Codes
-[MyBox-6.5.4-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.4/MyBox-6.5.4-src.zip)   40M(approximation)        
+[MyBox-6.5.5-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.5/MyBox-6.5.5-src.zip)   40M(approximation)        
 
 About structure, editing, and building of source codes, please refer to [Developement Guide](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-DevGuide-2.1-en.pdf) and
 [Packing Steps](https://mararsh.github.io/MyBox/pack_steps_en.html)        
@@ -35,29 +37,27 @@ Self-contain packages include all files and need not java env nor installation.
 
 | Platform | Link | Size(approximation)  | Launcher |        
 | --- | --- | ---  | ---  |
-| win10 x64 | [MyBox-6.5.4-win-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.4/MyBox-6.5.4-win10-x64.zip)  | 219MB | MyBox.exe |
-| CentOS 7 x64 | [MyBox-6.5.4-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.4/MyBox-6.5.4-CentOS7-x64.tar.gz)  | 252MB  | bin/MyBox  |
-| mac | [MyBox-6.5.4-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.4/MyBox-6.5.4-mac.dmg)  | 232MB  |  MyBox-6.5.4.app   |        
+| win10 x64 | [MyBox-6.5.5-win-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.5/MyBox-6.5.5-win10-x64.zip)  | 219MB | MyBox.exe |
+| CentOS 7 x64 | [MyBox-6.5.5-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.5/MyBox-6.5.5-CentOS7-x64.tar.gz)  | 252MB  | bin/MyBox  |
+| mac | [MyBox-6.5.5-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.5/MyBox-6.5.5-mac.dmg)  | 232MB  |  MyBox-6.5.5.app   |        
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.        
 
 ### Jar
 When JRE or JDK([Oracle jdk](https://www.oracle.com/technetwork/java/javase/downloads/index.html) or [open jdk](http://jdk.java.net/)) is installed, jar can run:        
-In my Mac env(OS X 10.11.6/Darwin 15.6.0), openJDK 17 fails to start, so MyBox on mac is based on openJDK 16.         
-
-
+   
 | Platform | Link | Size(approximation)  | Requirements |        
 | --- | --- | ---  | ---  |
-| win | [MyBox-6.5.4-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.4/MyBox-6.5.4-win-jar.zip)  | 156MB | Java 17 or higher |
-| linux | [MyBox-6.5.4-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.4/MyBox-6.5.4-linux-jar.zip)  | 186MB  | Java 17 or higher |
-| mac | [MyBox-6.5.4-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.4/MyBox-6.5.4-mac-jar.zip)  |  159MB  | Java 16 |        
+| win | [MyBox-6.5.5-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.5/MyBox-6.5.5-win-jar.zip)  | 156MB | Java 18 or higher |
+| linux | [MyBox-6.5.5-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.5/MyBox-6.5.5-linux-jar.zip)  | 186MB  | Java 18 or higher |
+| mac | [MyBox-6.5.5-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.5/MyBox-6.5.5-mac-jar.zip)  |  159MB  | Java 18 or higher |        
 
 
 Run following command to launch this program with Jar package:        
-<PRE><CODE>     java   -jar   MyBox-6.5.4.jar</CODE></PRE>        
+<PRE><CODE>     java   -jar   MyBox-6.5.5.jar</CODE></PRE>        
 
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:        
-<PRE><CODE>     java   -jar   MyBox-6.5.4.jar   /tmp/a1.jpg</CODE></PRE>        
+<PRE><CODE>     java   -jar   MyBox-6.5.5.jar   /tmp/a1.jpg</CODE></PRE>        
 
 ### Other addresses to download
 Download from cloud storage: [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)               
@@ -68,7 +68,7 @@ Download from sourceforge: [https://sourceforge.net/projects/mara-mybox/files/](
 
 ## Migration
 1. Each version has itself's configuration file. New version can copy parameters from existed versions.             
-2. Data handled in each vertion are under "Data Directory" referred by it. Multiple versions can refer to same data directory.
+2. Data handled in each version are under "Data Directory" referred by it. Multiple versions can refer to same data directory.
 3. MyBox is backward compatibility: Later version can work on data of previous versions.
 While forward compatibility is not supported: Wrong may happen when old version handles data of new version.
 
@@ -78,9 +78,9 @@ Configuration file is under "User Home":
 
 | Platform | Path of MyBox Configuration File |        
 | --- | --- |
-| win | `C:\users\UserName\mybox\MyBox_v6.5.4.ini`  |
-| linux | `/home/UserName/mybox/MyBox_v6.5.4.ini` |
-| mac | `/Users/UserName/mybox/MyBox_v6.5.4.ini` |        
+| win | `C:\users\UserName\mybox\MyBox_v6.5.5.ini`  |
+| linux | `/home/UserName/mybox/MyBox_v6.5.5.ini` |
+| mac | `/Users/UserName/mybox/MyBox_v6.5.5.ini` |        
 
 Add parameter "config=\"FilePath\"" when run jar to change configuration file temporarily.        
 Function "Settings" can be used to change configuration values.        
@@ -100,7 +100,7 @@ Function "Settings" can be used to change configuration values.
 # Documents        
 | Name | Version | Time | Link |        
 | --- | --- | --- |  --- |
-| Development Logs | 6.5.4 | 2022-4-3 | [html](#devLog) |
+| Development Logs | 6.5.5 | 2022-5-10 | [html](#devLog) |
 | Shortcuts | 6.4.7 | 2021-8-17 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
 | Packing Steps | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps_en.html) |
 | Development Guide | 2.1 | 2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) |
@@ -170,11 +170,12 @@ MyBox is based on following open sources:
 | Book | Materials | https://book.douban.com/subject/10465940/ |
 | PaginatedPdfTable | PDF | https://github.com/eduardohl/Paginated-PDFBox-Table-Sample |
 | jsoup | DOM | https://jsoup.org/ |        
-| WeiBo | Materials | https://weibo.com/2328516855/LhFIHy26O#repost |
+| WeiBo | Materials | https://weibo.com/2328516855/LhFIHy26O |
 | ZhiHu | Materials | https://www.zhihu.com/question/41580677/answer/1300242801 |             
+| commons-math | Calculation | https://commons.apache.org/proper/commons-math/index.html |
 
 # Current Version        
-Current version is 6.5.4. Its features are mentioned below in summary:          
+Current version is 6.5.5. Its features are mentioned below in summary:          
 
 *  [Cross Platforms](#Cross-platform)         
 *  [Internationalized](#Internationalized)         
@@ -211,8 +212,11 @@ Current version is 6.5.4. Its features are mentioned below in summary:
     -  [Others](#imageOthers)         
     -  [Big Image](#bigImage)         
 *  [Data Tools](#dataTools)         
-    -  [Manage Data](#manageData)
     -  [Edit Data](#editData)     
+    -  [Trim Data](#trimData)
+    -  [Calculate Data](#calculateData)
+    -  [Data Charts](#dataCharts)
+    -  [Manage Data](#manageData)
     -  [Data File](#dataFiles)         
     -  [Data Clipboard](#dataClipboard)   
     -  [Data in System Clipboard](#dataInSystemClipboard)
@@ -257,7 +261,7 @@ Current version is 6.5.4. Its features are mentioned below in summary:
 
 ## Cross Platforms <a id="Cross-platform"></a>        
 
-MyBox is implemented in pure Java and only based on open sources, and it can run on platforms which support Java 17.        
+MyBox is implemented in pure Java and only based on open sources, and it can run on platforms which support Java 18.        
 Versions before v5.3 are based on Java 8.        
 
 ## Internationalized <a id="Internationalized"></a>        
@@ -298,6 +302,7 @@ Add/Delete/Edit children, rename, move, copy, export, display tree view, unfold,
 3. Edit node:
 	-  Name should not include string " > "(Blank before and after ">").
 	-  Each node can have multiple tags.
+	-  Option to show sequcency numbers.
 4. Export:       
 	-  Formats: Text(for import), single html, html frameset, xml.
 	-  Options to export time, or tags.       
@@ -792,6 +797,7 @@ Load/Refresh/Delete image in System Clipboard:
    Adobe YCCK/CMYK jpg file can be decoded.
 2. Pixels calculator
 3. Convolution Kernels Manager
+4. Convert image to base64.
 
 ### Big Image <a id="bigImage"></a>
 1. Evaulate the required memory for whole image, and judge whether load all data in memory.
@@ -802,29 +808,6 @@ Load/Refresh/Delete image in System Clipboard:
 6. Some operations, like splitting and subsampling, can be handled by reading part of image data and writing-while-reading, so they are suitable for big images. Sampled image is displayed while original image is handled.
 
 ## Data Tools <a id="dataTools"></a>
-
-### Manage Data<a id="manageData" />          
-This tool manages following objects:            
-
-1. Data Files
-	- Record is created/updated when csv/excel/texts data file is opened by its editor.
-	- Data are saved in data file.
-	- Deleting record of data file will not delete data file itself.
-2. Data Clipboards
-	- Record is created when data is copied into MyBox Clipboad.
-	- Data are saved in file under MyBox internal path.
-	- Deleting record of data clipboards will delete its internal file.
-3. Matrices
-	- Records are maintained by Matrices Manager.
-	- Data are saved in MyBox database.
-	- Deleting record of matrix will delete data of this matrix.           
-4. Data Tables
-	- Records are maintained by Data Tables Manager.
-	- Data are saved in MyBox database tables.
-	- Deleting record of data table will delete data of this data table.           
-    
-![Snap-manageData](https://mararsh.github.io/MyBox/snap-dataManage-en.jpg)        
-
 
 ### Edit Data<a id="editData" />
 1. Following objects can be edited in consistent way: data files(csv/excel/texts), data clipboard, matrices, and database tables.     
@@ -853,34 +836,324 @@ This tool manages following objects:
       - Changes in "Columns" tab, including modify/add/delete/sort, affect all rows in file. 
       - Changes of attributes and columns are saved in database. 
 8. Click button "Recover" to discard all modifications and load data from file and database.
-9. Handle data:    
-	- Object: Selected rows or all data rows, and selected columns.           
-	- Operation: Set values, Copy, Paste, Sort, Statistic, Percentage, Normalize, Transpose, Export.              
-	- Target: New csv/excel/texts data file, matrix, System Clipboard, MyBox Clipboard, or insert/append/replace in defined location in the table.                  
-10. Data Charts:        
-	- "Category Column" defines data names.
-	- "Value Column" defines data values which should be numbers:
-	- Except for Pie Chart, multiple columns can be selected as number series in charts. 
- 		- Different value series are shown in different colors or shapes. 
- 		- When data can not be parsed as numbers, they are counted as zero. 
- 		- Invalid data are ignored.
-	- Bar/Area Chart represents data size with bars' heights.
-	- Line Chart represents data trend with lines connecting points.
-	- Pie Chart represents data percentages with a circle divided into segments.               
-	   Value column should be non-negative.
-	- Bubble Chart represents data size with circles of different radius：
- 		- "Category Column" and "Value Column" define coordinates of data.
- 		- "Size Column" defines data size.
- 		- All columns should be numbers. Size columns should be non-negative.
-	- Scatter Chart represents data distribution with symbols.
-11. Convert data as database table:
-	- Selected rows or all data rows, and selected columns.           
-	- Generate auto-increment column as primary key, or select columns as primat keys.
-	- Option about whether import data.
-12. Text format and html are displayed synchronously:
+9. Text format and html are displayed synchronously:
+10. Set values:
+	- Data: Select rows in table or select all data rows(all pages), and select columns.
+	- Set selected data' values as foloowing: 0, 1, blank, random, random of non-negative, or inputted value.
+	- When selected data are sqaure, whose rows number equals to columns number, they can be set as following: 
+gaussian distribution, identify matrix, upper triangular matrix, lower triangular matrix.
+11. Set styles:
+	- Data: Select rows in table or select all data rows(all pages), and select columns.
+	- Following can be set to selected data: font color, background color, font size, whether bold, or inputted css styles.
+	- Styles can be cleared to selected data.
+12. Copy:
+	- Data: Select rows in table or select all data rows(all pages), and select columns.
+	- When rows in table selected, target can be following: new csv/excel/text file, matrix, system clipboard, MyBox clipboard,
+or defined location in table to insert/append/replace.                             
+	- When all data rows/pages selected, target can be following: new csv/excel/text file, matrix, system clipboard, MyBox clipboard.
+13. Paste contents in system clipboard:      
+	- Data: 
+ 		- Read and parse contents in system clipboard.
+ 		- Delimiter can be chosen from special characters or inputted regular expression.
+ 		- First row can be set as column names.
+	- Select location to paste: the target row and column.
+	- Select operation: replace, insert, or append.
+14. Paste contents in MyBox clipboard:      
+	- Data: 
+ 		- Select data item in MyBox clipboard.
+ 		- Select rows and columns to copy.
+	- Select location to paste: the target row and column.
+	- Select operation: replace, insert, or append.
+15. Export:      
+	- Data: Select rows in table or select all data rows(all pages), and select columns.
+	- Target file formats include csv, text, excel, xml, json, html, pdf. Options can be set.
+	- Exported data can splitted in multiples files as maximum line. 
+16. Convert as database table:
+	- Data: Select rows in table or select all data rows(all pages), and select columns.
+	- Create auto-increment column as primary key, or select columns as primary keys.
+	- Option to import data.
+17. Load contents in system clipboard:      
+	- Read and parse contents in system clipboard.
+	- Delimiter can be chosen from special characters or inputted regular expression.
+	- First row can be set as column names.
+18. Examples:
+	- Statistic data of China
+	- Data of regression           
 
 ![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataChart-en.jpg)         
 
+### Trim Data<a id="trimData" />       
+#### Sorting     
+1. Data: Select rows in table or select all data rows(all pages), and select columns.
+2. Calcuate:
+	- Select the column to sort and whether descending.
+	- Data type of column affects sorting results.
+3. When rows in table selected, target can be following: new csv/excel/text file, matrix, system clipboard, MyBox clipboard,
+or defined location in table to insert/append/replace.                             
+4. When all data rows/pages selected, target can be following: new csv/excel/text file, matrix, system clipboard, MyBox clipboard.
+5. When all of following are satisifed, sorting need concern memory limitation:   
+	- Handle all data rows(all pages)
+	- Data is not database table.
+
+#### Transpose     
+1. Data: Select rows in table or select all data rows(all pages), and select columns.
+2. Calcuate: Options to set first column as column names.
+3. Target can be following: new csv/excel/text file, matrix, system clipboard, MyBox clipboard,
+or defined location in table to insert/append/replace.                              
+4. When handle all data rows(all pages), transpose need concern memory limitation.
+
+#### Normalization   
+1. Data: Select rows in table or select all data rows(all pages), and select columns.
+2. Calcuate: 
+	- Accroding to: Columns/rows/all.
+	- Algorithms: MinMax(Range can be set), sum(L1), ZScore(L2).
+3. When rows in table selected, target can be following: new csv/excel/text file, matrix, system clipboard, MyBox clipboard,
+or defined location in table to insert/append/replace.                             
+4. When all data rows/pages selected, target can be following: new csv/excel/text file, matrix, system clipboard, MyBox clipboard.
+      
+![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataNormalize.jpg)         
+
+### Calculate Data<a id="calculateData" />        
+
+#### Descriptive Statistic       
+1. Data: Select rows in table or select all data rows(all pages), and select columns.
+2. Calcuate: 
+	- Following values can be generated:                              
+          count, sum, mean, geometric mean, sum of squares,            
+          population variance, sample variance, population standard deviation, sample standard deviation, skewness,                                  
+          minimum(Q0), lower quartile(Q1), median(Q2), upper quartile(Q3), maximum(Q4),                
+          upper extreme outlier line(E4), upper mild outlier line(E3), lower mild outlier line(E2), lower extreme outlier line(E1), mode                            
+	- Accroding to: Columns/rows/all.
+	- Set decimal scale.
+3. Target can be following: new csv/excel/text file, matrix, system clipboard, MyBox clipboard,
+or defined location in table to insert/append/replace. 
+4. When all of following are satisifed, statistic need concern memory limitation:   
+	- Handle all data rows(all pages)
+	- Calculate one of following: median, upper mild outlier line, lower mild outlier line, extreme outlier lines, mode. 
+	- One of following:  
+ 		- According to all.
+ 		- According to columsn, and data is not database table.             
+   
+![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataStatistic.jpg)            
+
+#### Simple Linear Regression             
+This tool is based on Apache Commons Math.                  
+The regression does not store data, so calculation itself has not memory limitation when handle lots of rows.              
+       
+1. Data: Select rows in table or select all data rows(all pages).
+2. Calcuate: 
+	- Select one column as independent variable.
+	- Select another column as dependent variable.
+ 	- Option whether includes intercept.
+ 	- Set decimal scale.
+3. Model:
+	- Display values status of regression steps in table, including number of observations, slope, intercept,               
+           coefficient of determination(R-Square), correlation coefficient(R), mean of squared error(MSE) ,                      
+           sum of squared errors(SSE), total sum of squares(SSTO), sum of squares about regression(SSM/SSR), etc.      
+	- Display fitted liear model.
+	- Display data status of last regression step.
+	- Input value fo independent variable, and generate predicted value.          
+4. Fitted chart：
+	- When handle all data rows(all pages), option to display all values in chart.               
+           When display all values in chart, need concern memory limitation when load lots of data.                 
+           Or else only values in current page will be displayed in chart while all pages involve regression,  and no memory limitation.                            
+	- Set parameters of plot, X axis and Y axis.      
+	- Options to display fitted points, fitted line, or model description in chart.
+	- Options to display data labels.
+	- Set random colors to fitted points/line.
+	- Fitted chart can be popped.
+	- Html including fitted chart and its data can be created.
+	- Display fitted chart's data in table.
+5. Residual Chart:
+	- X axis can be set as: predicted value, independent varaible, or actual value.
+	- Option whether standardize residuals.                  
+  	   When standardize residuals, upper line and lower line of Sigma2(95%) will be displayed.
+	- Set random color to points and lines.
+	- Display residual chart's data in table.
+
+![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataSimpleRegression.jpg)            
+
+
+#### Frequency Distributions             
+1. Data: Select rows in table or select all data rows(all pages).
+2. Calcuate: 
+	- Select one column to count frequency.
+	- Option whether case-insensitive
+ 	- Set decimal scale.
+3. When rows in table selected, target can be following: new csv/excel/text file, matrix, system clipboard, MyBox clipboard,
+or defined location in table to insert/append/replace.                             
+4. When all data rows/pages selected, target can be following: new csv/excel/text file, matrix, system clipboard, MyBox clipboard.
+5. When all of following are satisifed,  counting need concern memory limitation:   
+	- Handle all data rows(all pages)
+	- Data is not database table.
+
+#### Values Percentage             
+1. Data: Select rows in table or select all data rows(all pages), and select columns. 
+2. Calcuate: 
+	- Accroding to: Columns/rows/all.
+	- Select how to treat negative values: zero or absoluate value.
+	- Set decimal scale.
+3. When rows in table selected, target can be following: new csv/excel/text file, matrix, system clipboard, MyBox clipboard,
+or defined location in table to insert/append/replace.                             
+4. When all data rows/pages selected, target can be following: new csv/excel/text file, matrix, system clipboard, MyBox clipboard.
+   
+### Data Charts<a id="dataCharts" />       
+#### XY Chart             
+1. Data: Select rows in table or select all data rows(all pages), and select columns. 
+2. Calcuate: 
+	- When data can not be parsed to number, it is counted as zero.
+	- Ignore invalid data.
+	- When display all data rows(all pages), need concern memory limitation.
+3. Axis:
+	- Select one column as "Category Axis", to define data names.
+	- Multiple columns can be selected as data in direction of "Number Axis". 
+          Different value series are shown in different colors or shapes. 
+	- By default, "Category Axis" is the horizontal axis and "Number Axis" is the vertical axis.                                     
+          Axis can be set as transposed in plot pane: "Category Axis" becomes the vertical axis while "Number Axis" becomes the horizontal axis.
+4. Parameters:
+	- Plot: title, font size, legend side, decimal scale, whether display zero/grid lines, line width, etc.
+	- Category axis: label, font, location, tick, values as strings or numbers, coordinate, etc.
+	- Number axis: label, font, location, tick, coordinate.
+5. Bar Chart:
+       - Represents data size with bars' heights.
+       - "Category" column is always counted as strings.
+6. Line Chart:
+       - Represents data trend with lines connecting points.
+       - "Category" column can be counted as strings or numbers.
+7. Bubble Chart:
+       - Represents data size with circles of different radius：
+       - "Category Column" and "Value Column" define coordinates of data.
+       - Select several columns as "Size Columns" to defines data size.
+       - All columns should be numbers. Size columns should be non-negative.
+8. Scatter Chart:
+       - Represents data distribution with symbols.
+       - "Category" column can be counted as strings or numbers.
+9. Area Chart:
+       - Represents data size with area size.
+       - "Category" column is always counted as strings.
+10. Display data of XY chart in table.      
+     
+![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataChartXY.jpg)            
+
+#### Pie Chart             
+1. Data: Select rows in table or select all data rows(all pages), and select columns. 
+2. Calcuate:
+	- Select one column as "Category Axis", to define data names.
+	- Select another column as "Number Axis". 
+	- Data numbers are represented as percentages with a circle divided into segments.
+	- Value column should be non-negative.。
+	- When display all data rows(all pages), need concern memory limitation.
+3. Display data of pie chart in table.        
+
+![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataChartPie.jpg)            
+
+#### Box-and-whisker Chart             
+1. Box-and-whisker chart represents data distribution:               
+	- Sort data according to column/row/all in ascending order.
+	- Following items can show aggregation and discreteness of data:               
+                  Minimum           Q0 =  in 0%(start) of the data list               
+                  Lower quartile    Q1 =  in 25% of the data list               
+                  Median              Q2 =  in 50%(middle) of the data list               
+                  Upper quartile    Q3 =  in 75% of the data list               
+                  Maximum           Q4 =  in 100%(end) of the data list               
+	- Following values can be used to mark ourliers of data:               
+                  Lower extreme outlier line        E1 =  Q1 - 3 * ( Q3 - Q1 )               
+                  Lower mild outlier line              E2 =  Q1 - 1.5 * ( Q3 - Q1 )               
+                  Upper mild outlier line             E3 =  Q3 + 1.5 * ( Q3 - Q1 )               
+                  Upper extreme outlier line        E4 =  Q3 + 3 * ( Q3 - Q1 )               
+	- Following values can be referred for discreteness:               
+                  Mean = avarage of the data list               
+2. Calcuate:
+	- Based on line chart.
+	- According to: columns, rows(select category column), or all.
+3. Set or select:             
+	- Box width.
+	- Whether display outliers lines or mean.
+	- Whether display connection lines of values, and whether dotted lines.
+	- Random colors.
+4. Display data of pie chart in table.        
+
+![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataChartBox.jpg)            
+   
+#### Self Comparison Bars Chart   
+1. Self comparison bars show difference between data and reference values.               
+    Bars are calculated by following rulers:             
+	- If value is zero, no bar
+	- When compare as absoluate values:               
+                  maximum_value = maximum_absolute_value_of_column/row/all               
+                  precentage = absolute_value / maximum_value               
+                  width = maximum_width * precentage               
+                  color = If value is larger than zero, color_of_column. If value is less than zero, inverted_color_of_column                
+	- When compare as range of minimum and maximum:               
+                  maximum_value = maximum_value_of_column/row/all               
+                  minimum_value = minimum_value_of_column/row/all               
+                  precentage = （value - minimum_value） / （maximum_value - minimum_value）               
+                  width = maximum_width * precentage               
+                  color = color_of_column                
+2. Data: Select rows in table or select all data rows(all pages), and select columns. 
+3. Calcuate: 
+	- Select one column as category column(unnecessary)
+	- Compare: columns/rows/all.
+	- According to: absoluate values, or range of minimum and maximum.
+	- When display all data rows(all pages), need concern memory limitation.
+4. Set or select:
+	- Maximum width
+	- Whether display row numbers, values, percentages, categories, calculated values.
+5. Edit data in chart.
+6. Edit html of chart.      		-     
+
+![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataChartSelfComparison.jpg)            
+    
+#### Comparison Bars Chart          
+1. Comparison bars show difference between two series of data.                 
+    Bars are calculated by following rulers:               
+	- If value is zero, no bar               
+	- When compare as absoluate values:               
+                  maximum_value = maximum_absolute_value_of_value_columns               
+                  precentage = absolute_value / maximum_value               
+                  width = maximum_width * precentage               
+                  color = If value is larger than zero, color_of_column. If value is less than zero, inverted_color_of_column                
+	- When compare as range of minimum and maximum:               
+                  maximum_value = maximum_value_of_value_columns               
+                  minimum_value = minimum_value_of_value_columns               
+                  precentage = （value - minimum_value） / （maximum_value - minimum_value）               
+                  width = maximum_width * precentage               
+                  color = color_of_column                                        
+2. Data: Select rows in table or select all data rows(all pages), and select columns. 
+3. Calcuate: 
+	- Select one column as category column(unnecessary)
+	- Select tow value columns 
+	- According to: absoluate values, or range of minimum and maximum.
+	- When display all data rows(all pages), need concern memory limitation.
+4. Set or select:
+	- Maximum width
+	- Whether display row numbers, values, percentages, categories, calculated values.
+5. Edit data in chart.
+6. Edit html of chart.    	-     
+
+![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataChartComparison.jpg)            
+ 
+### Manage Data<a id="manageData" />          
+This tool manages following objects:            
+
+1. Data Files
+	- Record is created/updated when csv/excel/texts data file is opened by its editor.
+	- Data are saved in data file.
+	- Deleting record of data file will not delete data file itself.
+2. Data Clipboards
+	- Record is created when data is copied into MyBox Clipboad.
+	- Data are saved in file under MyBox internal path.
+	- Deleting record of data clipboards will delete its internal file.
+3. Matrices
+	- Records are maintained by Matrices Manager.
+	- Data are saved in MyBox database.
+	- Deleting record of matrix will delete data of this matrix.           
+4. Data Tables
+	- Records are maintained by Data Tables Manager.
+	- Data are saved in MyBox database tables.
+	- Deleting record of data table will delete data of this data table.           
+    
+![Snap-manageData](https://mararsh.github.io/MyBox/snap-dataManage-en.jpg)        
 
 ### Data File<a id="dataFiles" />
 1. Edit data file:
@@ -1640,15 +1913,28 @@ Decoding does reverse conversion.
 5. About
 
 # Development Logs <a id="devLog"></a>           
+2022-5-10 v6.5.5         
+
+* Edit data. Set cells' styles. Set first row as column names. Transpose can apply to all pages and the first column can be set as column names.
+No rows limitation for results of database query. Examples of data.                               
+* Calculate data. More values of descriptive statisitc. Statistic/percentage/normalization can be against to columns/rows/all.            
+Count frequency. Simple linear regression.                 
+* Data charts. Category axis can be either strings or numbers. Display data in chart. Comparison bars chart. Self-comparison bars chart. Box-whisker chart.           
+* Information in tree. Option to show sequence numbers. Options to copy children or descendents.  Options when left-click node.                                
+* Others. Create/paste base64 of image. Input/select color in palette pane.                                   
+* Solved. Auto-backup of data file does not work. Columns are not applied when statistic all pages. 
+BOM is not removed as required when save as text file. Fail to clear all colors.                                 
+
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.5)             
+
 2022-4-3 v6.5.4         
 
 * Information in tree. Manage nodes of tree. Edit nodes. Export/Import with tags. Output tree view. Examples. 
 Extend as: Notes, Web favoraite addresses,  JShell codes, Javascript codes, SQL codes.                
 * Improve. Execute multiple statements in JShell. Manage and execute queries for data tables. 
 "When left click link or image" of web page has more options. Pop histories for input controls.                      
-* Solved. Options of "Word" and "html" do not work. Error popped when save new html in editor. 
-Nothing returned when query time in tree. Wrong may happen when delimited identify is defined in data table.  
-"Auto save" not work in File Editor.       
+* Solved. Options of "Word" and "html" for Image OCR in batch do not work. Error popped when save new html in editor. 
+Nothing returned when query time in tree. Wrong may happen when delimited identify is defined in data table. "Auto save" not work in File Editor.       
 
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.4)             
                    

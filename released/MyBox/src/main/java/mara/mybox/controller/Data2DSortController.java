@@ -26,7 +26,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-12-25
  * @License Apache License Version 2.0
  */
-public class Data2DSortController extends Data2DHandleController {
+public class Data2DSortController extends BaseData2DHandleController {
 
     protected int orderCol;
     protected List<Integer> colsIndices;
@@ -40,6 +40,10 @@ public class Data2DSortController extends Data2DHandleController {
     protected CheckBox descendCheck;
     @FXML
     protected Label memoryNoticeLabel;
+
+    public Data2DSortController() {
+        baseTitle = message("Sort");
+    }
 
     @Override
     public void setParameters(ControlData2DEditTable tableController) {
@@ -90,15 +94,7 @@ public class Data2DSortController extends Data2DHandleController {
     public boolean checkOptions() {
         boolean ok = super.checkOptions();
         targetController.setNotInTable(sourceController.allPages());
-        if (!data2D.isTable() && sourceController.allPages()) {
-            if (!thisPane.getChildren().contains(memoryNoticeLabel)) {
-                thisPane.getChildren().add(3, memoryNoticeLabel);
-            }
-        } else {
-            if (thisPane.getChildren().contains(memoryNoticeLabel)) {
-                thisPane.getChildren().remove(memoryNoticeLabel);
-            }
-        }
+        memoryNoticeLabel.setVisible(!data2D.isTable() && sourceController.allPages());
         orderCol = data2D.colOrder(colSelector.getSelectionModel().getSelectedItem());
         colsIndices = sourceController.checkedColsIndices();
         if (colsIndices == null || colsIndices.isEmpty() || orderCol < 0) {
@@ -117,13 +113,13 @@ public class Data2DSortController extends Data2DHandleController {
                 colsIndices.add(orderCol);
                 colsNames.add(orderName);
             }
-            handledColumns = new ArrayList<>();
+            outputColumns = new ArrayList<>();
             for (int col : colsIndices) {
-                handledColumns.add(data2D.column(col));
+                outputColumns.add(data2D.column(col));
             }
             if (showRowNumber()) {
                 colsNames.add(0, message("SourceRowNumber"));
-                handledColumns.add(0, new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
+                outputColumns.add(0, new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
             }
             return colsIndices;
         } catch (Exception e) {
@@ -138,11 +134,11 @@ public class Data2DSortController extends Data2DHandleController {
     @Override
     public boolean handleRows() {
         try {
-            handledData = sourceController.selectedData(
+            outputData = sourceController.selectedData(
                     sourceController.checkedRowsIndices(), adjustedCols(), showRowNumber());
-            sort(handledData);
+            sort(outputData);
             if (showRowNumber()) {
-                handledData.add(0, colsNames);
+                outputData.add(0, colsNames);
             }
             return true;
         } catch (Exception e) {
@@ -169,7 +165,7 @@ public class Data2DSortController extends Data2DHandleController {
                     return desc ? -c : c;
                 }
             });
-            handledData = data;
+            outputData = data;
             return true;
         } catch (Exception e) {
             if (task != null) {

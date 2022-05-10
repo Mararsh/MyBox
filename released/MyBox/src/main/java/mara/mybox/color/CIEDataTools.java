@@ -14,9 +14,8 @@ import static mara.mybox.color.ColorBase.arrayDouble;
 import static mara.mybox.color.ColorBase.clipRGB;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.FxFileTools;
-import static mara.mybox.value.Languages.message;
+import mara.mybox.tools.FileTools;
 import mara.mybox.value.Languages;
 
 /**
@@ -135,7 +134,8 @@ public class CIEDataTools {
     public static List<CIEData> read(File file) {
         try {
             List<CIEData> data = new ArrayList<>();
-            try (final BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            File validFile = FileTools.removeBOM(file);
+            try (final BufferedReader reader = new BufferedReader(new FileReader(validFile))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     CIEData d = readLine(line);
