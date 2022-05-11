@@ -880,7 +880,7 @@ or defined location in table to insert/append/replace.
 	- Statistic data of China
 	- Data of regression           
 
-![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataChart-en.jpg)         
+![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataEdit-en.jpg)         
 
 ### Trim Data<a id="trimData" />       
 #### Sorting     
@@ -934,7 +934,7 @@ or defined location in table to insert/append/replace.
  		- According to all.
  		- According to columsn, and data is not database table.             
    
-![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataStatistic-en.jpg)            
+![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataStatistic-en.jpg)             
 
 #### Simple Linear Regression             
 This tool is based on Apache Commons Math.                  
