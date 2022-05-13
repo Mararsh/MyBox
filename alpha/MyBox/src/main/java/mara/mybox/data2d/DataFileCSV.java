@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Random;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextTools;
@@ -48,13 +49,7 @@ public class DataFileCSV extends DataFileText {
         if (delimiter == null || delimiter.isEmpty()) {
             delimiter = ",";
         }
-        CSVFormat csvFormat = CSVFormat.DEFAULT
-                .withIgnoreEmptyLines().withTrim().withNullString("")
-                .withDelimiter(delimiter.charAt(0));
-        if (hasHeader) {
-            csvFormat = csvFormat.withFirstRecordAsHeader();
-        }
-        return csvFormat;
+        return CsvTools.csvFormat(delimiter.charAt(0), hasHeader);
     }
 
     @Override
@@ -196,14 +191,8 @@ public class DataFileCSV extends DataFileText {
                 return null;
             }
         }
-        CSVFormat csvFormat = CSVFormat.DEFAULT
-                .withIgnoreEmptyLines().withTrim().withNullString("")
-                .withDelimiter(',');
-        if (cols != null && !cols.isEmpty()) {
-            csvFormat = csvFormat.withFirstRecordAsHeader();
-        }
         File tmpFile = TmpFileTools.csvFile();
-        try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, Charset.forName("UTF-8")), csvFormat)) {
+        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(tmpFile)) {
             if (cols != null && !cols.isEmpty()) {
                 csvPrinter.printRecord(cols);
             }
@@ -320,9 +309,7 @@ public class DataFileCSV extends DataFileText {
             LinkedHashMap<File, Boolean> files = new LinkedHashMap<>();
             String[][] data;
             int count = 1;
-            CSVFormat csvFormat = CSVFormat.DEFAULT
-                    .withDelimiter(',')
-                    .withIgnoreEmptyLines().withTrim().withNullString("");
+            CSVFormat csvFormat = CsvTools.csvFormat();
             for (StringTable stringTable : tables) {
                 List<List<String>> tableData = stringTable.getData();
                 if (tableData == null || tableData.isEmpty()) {

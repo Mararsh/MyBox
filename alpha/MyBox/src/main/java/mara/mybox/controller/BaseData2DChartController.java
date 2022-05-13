@@ -194,6 +194,10 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         return null;
     }
 
+    public String categoryName() {
+        return categoryColumnSelector.getSelectionModel().getSelectedItem();
+    }
+
     @FXML
     @Override
     public void okAction() {
@@ -271,10 +275,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-    }
-
-    public void setChartStyle() {
-        makePalette();
     }
 
     public void redrawChart() {

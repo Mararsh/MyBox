@@ -13,6 +13,7 @@ import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Languages;
@@ -86,20 +87,11 @@ public class DataFileCSVMergeController extends FilesMergeController {
             }
             sourceCharset = csvSourceController.charset;
             sourceWithName = csvSourceController.withNamesCheck.isSelected();
-            sourceFormat = CSVFormat.DEFAULT.withDelimiter(csvSourceController.delimiter)
-                    .withIgnoreEmptyLines().withTrim().withNullString("");
-            if (sourceWithName) {
-                sourceFormat = sourceFormat.withFirstRecordAsHeader();
-            }
+            sourceFormat = CsvTools.csvFormat(csvSourceController.delimiter, sourceWithName);
 
             targetCharset = csvTargetController.charset;
             targetWithName = csvTargetController.withNamesCheck.isSelected();
-            targetFormat = CSVFormat.DEFAULT
-                    .withDelimiter(csvTargetController.delimiter)
-                    .withIgnoreEmptyLines().withTrim().withNullString("");
-            if (targetWithName) {
-                targetFormat = targetFormat.withFirstRecordAsHeader();
-            }
+            targetFormat = CsvTools.csvFormat(csvTargetController.delimiter, targetWithName);
 
             csvPrinter = new CSVPrinter(new FileWriter(targetFile, targetCharset), targetFormat);
 

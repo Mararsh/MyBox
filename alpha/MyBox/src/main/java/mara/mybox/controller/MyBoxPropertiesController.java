@@ -53,7 +53,7 @@ public class MyBoxPropertiesController extends HtmlTableController {
 
             int mb = 1024 * 1024;
             OperatingSystemMXBean osmxb = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
-            addData(message("PhysicalMemory"), osmxb.getTotalPhysicalMemorySize() / mb + "MB");
+            addData(message("PhysicalMemory"), osmxb.getTotalMemorySize() / mb + "MB");
             Runtime r = Runtime.getRuntime();
             addData(message("JvmXmx"), r.maxMemory() / mb + "MB");
 

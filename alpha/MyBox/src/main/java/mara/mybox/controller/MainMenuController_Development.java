@@ -111,8 +111,8 @@ public abstract class MainMenuController_Development extends MainMenuController_
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            long physicalFree = osmxb.getFreePhysicalMemorySize() / mb;
-                            long physicalTotal = osmxb.getTotalPhysicalMemorySize() / mb;
+                            long physicalFree = osmxb.getFreeMemorySize() / mb;
+                            long physicalTotal = osmxb.getTotalMemorySize() / mb;
                             long physicalUse = physicalTotal - physicalFree;
                             String sysInfo = System.getProperty("os.name")
                                     + " " + Languages.message("PhysicalMemory") + ":" + physicalTotal + "MB"
@@ -209,7 +209,7 @@ public abstract class MainMenuController_Development extends MainMenuController_
                         @Override
                         public void run() {
 
-                            float load = (float) osmxb.getSystemCpuLoad();
+                            float load = (float) osmxb.getCpuLoad();
                             long s = (long) (osmxb.getSystemLoadAverage() / 1000000000);
                             String sysInfo = System.getProperty("os.name")
                                     + " " + Languages.message("SystemLoadAverage") + ":" + s + "s"

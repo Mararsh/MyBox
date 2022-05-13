@@ -45,15 +45,14 @@ public class SimpleRegressionChart<X, Y> extends LabeledScatterChart<X, Y> {
             getPlotChildren().removeAll(regressionLine, text);
 
             if (palette == null) {
-                palette = chartController.getPalette();
+                palette = xyOptions.getPalette();
             }
-
             regressionLine.setStyle("-fx-stroke-width:" + lineWidth
                     + "px; -fx-stroke:" + palette.get(seriesList.get(1).getName()));
             drawLine(seriesList.get(1).getData(), regressionLine, displayFittedPoints);
             regressionLine.setVisible(displayFittedLine);
 
-            text.setStyle("-fx-font-size:" + chartController.getLabelFontSize() + "px; -fx-text-fill: black;");
+            text.setStyle("-fx-font-size:" + xyOptions.getLabelFontSize() + "px; -fx-text-fill: black;");
             text.setText(model);
             getPlotChildren().add(text);
             if (regressionLine.getStartY() > 60) {

@@ -798,8 +798,8 @@ public class WeiboSnapRunController extends BaseController {
 //            int availableProcessors = r.availableProcessors();
 
         OperatingSystemMXBean osmxb = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
-        long physicalFree = osmxb.getFreePhysicalMemorySize() / mb;
-        long physicalTotal = osmxb.getTotalPhysicalMemorySize() / mb;
+        long physicalFree = osmxb.getFreeMemorySize() / mb;
+        long physicalTotal = osmxb.getTotalMemorySize() / mb;
         long physicalUse = physicalTotal - physicalFree;
 
         String memInfo = "MyBox"

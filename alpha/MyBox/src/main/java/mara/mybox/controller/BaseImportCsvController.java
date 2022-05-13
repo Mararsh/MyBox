@@ -18,11 +18,11 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Languages;
-import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
@@ -213,8 +213,7 @@ public abstract class BaseImportCsvController<D> extends BaseBatchFileController
 //        }
         long importCount = 0, insertCount = 0, updateCount = 0, skipCount = 0, failedCount = 0;
         File validFile = FileTools.removeBOM(file);
-        try ( CSVParser parser = CSVParser.parse(validFile, TextFileTools.charset(file),
-                CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(',').withTrim().withNullString(""))) {
+        try ( CSVParser parser = CSVParser.parse(validFile, TextFileTools.charset(file), CsvTools.csvFormat())) {
             List<String> names = parser.getHeaderNames();
             if ((!validHeader(names))) {
                 updateLogs(Languages.message("InvalidFormat"), true);

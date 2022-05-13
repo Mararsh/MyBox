@@ -10,7 +10,6 @@ import java.util.Random;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
@@ -26,6 +25,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.chart.ChartOptions.ChartType;
 import mara.mybox.fxml.chart.ChartTools;
 import mara.mybox.fxml.chart.ResidualChart;
 import mara.mybox.fxml.chart.SimpleRegressionChart;
@@ -40,7 +40,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-4-21
  * @License Apache License Version 2.0
  */
-public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYController {
+public class Data2DSimpleLinearRegressionController extends BaseData2DChartController {
 
     protected SimpleRegressionChart regressionChart​;
     protected SimpleLinearRegression simpleRegression;
@@ -63,7 +63,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
     @FXML
     protected ControlWebView modelViewController;
     @FXML
-    protected ControlFxChart residualController;
+    protected ControlData2DChartXY fittingController, residualController;
     @FXML
     protected ControlData2DHtml residualDataController;
     @FXML
@@ -179,14 +179,14 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
 
     public void initResidualPane() {
         try {
-            residualController.initType("Point");
-
-            residualController.redrawNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    writeResidualChart();
-                }
-            });
+//            residualController.initType("Point");
+//
+//            residualController.redrawNotify.addListener(new ChangeListener<Boolean>() {
+//                @Override
+//                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+//                    writeResidualChart();
+//                }
+//            });
 
             residualXGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -209,38 +209,17 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
         }
     }
 
-    @Override
-    public void checkChartType() {
-        try {
-            setSourceLabel("");
-            checkAutoTitle();
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void lineWidthChanged() {
-        setChartStyle();
-    }
-
-    @Override
-    public boolean isCategoryNumbers() {
-        return true;
-    }
-
-    @FXML
-    @Override
-    public void defaultCategoryLabel() {
-        categoryLabel.setText(message("IndependentVariable") + ": " + categoryName());
-    }
-
-    @FXML
-    @Override
-    public void defaultValueLabel() {
-        numberLabel.setText(message("DependentVariable") + ": " + valueName());
-    }
-
+//    @FXML
+//    @Override
+//    public void defaultCategoryLabel() {
+//        categoryLabel.setText(message("IndependentVariable") + ": " + categoryName());
+//    }
+//
+//    @FXML
+//    @Override
+//    public void defaultValueLabel() {
+//        numberLabel.setText(message("DependentVariable") + ": " + valueName());
+//    }
     @Override
     public void noticeMemory() {
         if (isSettingValues) {
@@ -256,23 +235,43 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
 
     @Override
     public boolean initData() {
-        dataColsIndices = new ArrayList<>();
-        int categoryCol = data2D.colOrder(selectedCategory);
-        if (categoryCol < 0) {
-            popError(message("SelectToHandle"));
+        try {
+            dataColsIndices = new ArrayList<>();
+            int categoryCol = data2D.colOrder(selectedCategory);
+            if (categoryCol < 0) {
+                popError(message("SelectToHandle"));
+                return false;
+            }
+            dataColsIndices.add(categoryCol);
+            int valueCol = data2D.colOrder(selectedValue);
+            if (valueCol < 0) {
+                popError(message("SelectToHandle"));
+                return false;
+            }
+            dataColsIndices.add(valueCol);
+            simpleRegression = null;
+            regressionFile = null;
+            regressionData = null;
+
+            fittingController.data2D = data2D;
+            fittingController.initChart(ChartType.SimpleRegressionChart, "SimpleRegressionChart");
+            regressionChart​ = fittingController.chartOptions.getSimpleRegressionChart();
+            regressionChart.setDisplayText(textCheck.isSelected())
+                    .setDisplayFittedPoints(fittedPointsCheck.isSelected())
+                    .setDisplayFittedLine(fittedLineCheck.isSelected());
+
+            residualController.data2D = data2D;
+            residualController.initChart(ChartType.ResidualChart, "ResidualChart");
+            residualChart = residualController.chartOptions.getResidualChart();
+            residualChart.setDataNumber(residualColumns.size() - 2)
+                    .setTitle(selectedCategory + " - " + selectedValue + "_" + message("Residual"));
+            residualChart.getXAxis().setLabel(residualColumns.get(1).getColumnName());
+            residualChart.getYAxis().setLabel(message("Residual"));
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
             return false;
         }
-        dataColsIndices.add(categoryCol);
-        int valueCol = data2D.colOrder(selectedValue);
-        if (valueCol < 0) {
-            popError(message("SelectToHandle"));
-            return false;
-        }
-        dataColsIndices.add(valueCol);
-        simpleRegression = null;
-        regressionFile = null;
-        regressionData = null;
-        return true;
     }
 
     @Override
@@ -391,78 +390,30 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
     }
 
     @Override
-    public void clearChart() {
-        super.clearChart();
-        regressionChart = null;
-        residualChart = null;
+    public void outputData() {
+        writeModelView();
+        writeRegressionData();
+        drawChart();
     }
 
     @Override
-    public void makeChart() {
+    public void drawChart() {
         try {
-            makeAxis();
 
-            regressionChart = new SimpleRegressionChart(xAxis, yAxis)
-                    .setDisplayText(textCheck.isSelected())
-                    .setDisplayFittedPoints(fittedPointsCheck.isSelected())
-                    .setDisplayFittedLine(fittedLineCheck.isSelected());
-            xyChart = regressionChart;
-            regressionChart.setChartController(this);
-            makeXYChart();
-            makeFinalChart();
+            if (outputData == null || outputData.isEmpty()) {
+                popError(message("NoData"));
+                return;
+            }
+            fittingController.writeChart(outputColumns, outputData, true);
 
-            makeResidualChart();
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
+            residualController.writeChart(residualColumns, residualData, null, true);
+            ChartTools.setScatterChart​Colors(residualChart, palette, residualController.chartOptions.getLegendSide() != null);
 
-    public void makeResidualChart() {
-        try {
-            NumberAxis residualAxisX = new NumberAxis();
-            initCategoryAxis(residualAxisX);
-            residualAxisX.setLabel(residualColumns.get(1).getColumnName());
-
-            NumberAxis residualAxisY = new NumberAxis();
-            initValueAxis(residualAxisY);
-            residualAxisY.setLabel(message("Residual"));
-
-            residualChart = new ResidualChart(residualAxisX, residualAxisY);
-            residualChart.setChartController(this, residualController)
-                    .setDataNumber(residualColumns.size() - 2);
-            initXYChart(residualChart);
-            styleChart(residualChart);
-            residualChart.setTitle(selectedCategory + " - " + selectedValue + "_" + message("Residual"));
-
-            residualController.setChart(residualChart, residualColumns, residualData);
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
-    @Override
-    public void writeChartData() {
-        try {
-            writeXYChart(outputColumns, outputData, true);
-
-            writeResidualChart();
-
-            writeModelView();
-
-            writeRegressionData();
+            makePalette();
+            setChartStyle();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
-    public void writeResidualChart() {
-        try {
-            writeXYChart(residualChart, residualColumns, residualData, null, true);
-            ChartTools.setScatterChart​Colors(residualChart, palette, legendSide != null);
-
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
+            MyBoxLog.error(e);
         }
     }
 
@@ -535,12 +486,6 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
         }
     }
 
-    @Override
-    public void displayChartData() {
-        chartDataController.loadData(outputColumns, outputData);
-        residualDataController.loadData(residualColumns, residualData);
-    }
-
     public String model() {
         return message("IndependentVariable") + ": " + selectedCategory + "\n"
                 + message("DependentVariable") + ": " + selectedValue + "\n"
@@ -551,7 +496,6 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
                 + message("PearsonsR") + ": " + r;
     }
 
-    @Override
     public void setChartStyle() {
         randomColorsFitting();
         randomColorResidual();
@@ -610,8 +554,8 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
                     .setDisplayText(textCheck.isSelected())
                     .setDisplayFittedPoints(fittedPointsCheck.isSelected())
                     .setDisplayFittedLine(fittedLineCheck.isSelected());
-            regressionChart.setLineWidth(lineWidth).setPalette(palette);
-            ChartTools.setScatterChart​Colors(regressionChart, palette, legendSide != null);
+            regressionChart.setLineWidth(residualController.chartOptions.getLineWidth()).setPalette(palette);
+            ChartTools.setScatterChart​Colors(regressionChart, palette, residualController.chartOptions.getLegendSide() != null);
             regressionChart.displayControls();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -626,8 +570,8 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
             }
             makeResidualPalette();
             residualChart.setInfo(message("InsideSigma2") + ": " + residualInside + "/" + residualData.size())
-                    .setLineWidth(lineWidth).setPalette(residualPalette);
-            ChartTools.setScatterChart​Colors(residualChart, residualPalette, legendSide != null);
+                    .setLineWidth(residualController.chartOptions.getLineWidth()).setPalette(residualPalette);
+            ChartTools.setScatterChart​Colors(residualChart, residualPalette, residualController.chartOptions.getLegendSide() != null);
             residualChart.displayControls();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -637,8 +581,6 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartXYCon
     public void redrawResidualChart() {
         try {
             makeResidualData();
-            makeResidualChart();
-            writeResidualChart();
             randomColorResidual();
             residualDataController.loadData(residualColumns, residualData);
         } catch (Exception e) {

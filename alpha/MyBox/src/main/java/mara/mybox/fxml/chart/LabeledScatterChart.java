@@ -12,8 +12,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
-import mara.mybox.controller.BaseData2DChartXYController;
-import mara.mybox.controller.ControlFxChart;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -27,8 +25,8 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class LabeledScatterChart<X, Y> extends ScatterChart<X, Y> {
 
-    protected BaseData2DChartXYController chartController;
-    protected XYChartOptions<X, Y> options;
+    protected XYChartOptions xyOptions;
+
     protected boolean written;
     protected int dataNumber;
     protected int lineWidth = 2;
@@ -45,18 +43,10 @@ public class LabeledScatterChart<X, Y> extends ScatterChart<X, Y> {
         this.setMaxHeight(Double.MAX_VALUE);
         VBox.setVgrow(this, Priority.ALWAYS);
         HBox.setHgrow(this, Priority.ALWAYS);
-        options = new XYChartOptions<>(this);
     }
 
-    public LabeledScatterChart setChartController(BaseData2DChartXYController chartController) {
-        this.chartController = chartController;
-        options = new XYChartOptions<>(chartController);
-        return this;
-    }
-
-    public LabeledScatterChart setChartController(BaseData2DChartXYController chartController, ControlFxChart paneController) {
-        this.chartController = chartController;
-        options = new XYChartOptions<>(chartController, paneController);
+    public LabeledScatterChart setOptions(XYChartOptions xyOptions) {
+        this.xyOptions = xyOptions;
         return this;
     }
 
@@ -68,7 +58,7 @@ public class LabeledScatterChart<X, Y> extends ScatterChart<X, Y> {
     }
 
     public void writeControls(Series<X, Y> series, int seriesIndex) {
-        options.makeLabels(series, getPlotChildren());
+        xyOptions.makeLabels(series, getPlotChildren());
     }
 
     @Override
@@ -79,7 +69,7 @@ public class LabeledScatterChart<X, Y> extends ScatterChart<X, Y> {
     }
 
     public void removeControls(Series<X, Y> series) {
-        options.removeLabels(series, getPlotChildren());
+        xyOptions.removeLabels(series, getPlotChildren());
     }
 
     @Override
@@ -91,7 +81,7 @@ public class LabeledScatterChart<X, Y> extends ScatterChart<X, Y> {
     }
 
     public void displayControls() {
-        options.displayLabels();
+        xyOptions.displayLabels();
     }
 
     public void drawLine(List<XYChart.Data<X, Y>> data, Line line, boolean pointsVisible) {
@@ -106,7 +96,7 @@ public class LabeledScatterChart<X, Y> extends ScatterChart<X, Y> {
                 Bounds regionBounds = node.getBoundsInParent();
                 double x = regionBounds.getMinX() + regionBounds.getWidth() / 2;
                 double y = regionBounds.getMinY() + regionBounds.getHeight() / 2;
-                if (chartController.isXY()) {
+                if (xyOptions.isXY) {
                     if (x > endX) {
                         endX = x;
                         endY = y;

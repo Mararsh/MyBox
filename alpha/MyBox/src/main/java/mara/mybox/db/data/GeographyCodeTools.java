@@ -22,6 +22,7 @@ import static mara.mybox.data.CoordinateSystem.Value.GCJ_02;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlReadTools;
@@ -30,7 +31,6 @@ import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
-import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.w3c.dom.Document;
@@ -1240,8 +1240,7 @@ public class GeographyCodeTools {
         long updateCount = 0;
         long failedCount = 0;
         File validFile = FileTools.removeBOM(file);
-        try (final CSVParser parser = CSVParser.parse(validFile, StandardCharsets.UTF_8,
-                CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(',').withTrim().withNullString(""))) {
+        try (final CSVParser parser = CSVParser.parse(validFile, StandardCharsets.UTF_8, CsvTools.csvFormat())) {
             conn.setAutoCommit(false);
             List<String> names = parser.getHeaderNames();
             if (loading != null) {
@@ -1305,8 +1304,7 @@ public class GeographyCodeTools {
     public static List<GeographyCode> readInternalCSV(File file) {
         List<GeographyCode> codes = new ArrayList();
         File validFile = FileTools.removeBOM(file);
-        try (final CSVParser parser = CSVParser.parse(validFile, StandardCharsets.UTF_8,
-                CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(',').withTrim().withNullString(""))) {
+        try (final CSVParser parser = CSVParser.parse(validFile, StandardCharsets.UTF_8, CsvTools.csvFormat())) {
             List<String> names = parser.getHeaderNames();
             for (CSVRecord record : parser) {
                 GeographyCode code = GeographyCodeTools.readIntenalRecord(names, record);

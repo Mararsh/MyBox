@@ -1,25 +1,24 @@
 package mara.mybox.data2d;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
-import mara.mybox.calculation.SimpleLinearRegression;
-import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.calculation.DescriptiveStatistic;
 import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.calculation.Normalization;
+import mara.mybox.calculation.SimpleLinearRegression;
+import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.data2d.scan.Data2DReader;
 import mara.mybox.data2d.scan.Data2DReader.Operation;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
-import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.math3.stat.Frequency;
 
@@ -105,11 +104,8 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             return null;
         }
         File csvFile = tmpCSV("statistic");
-        CSVFormat targetFormat = CSVFormat.DEFAULT
-                .withIgnoreEmptyLines().withTrim().withNullString("")
-                .withDelimiter(',');
         Data2DReader reader = null;
-        try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
+        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             csvPrinter.printRecord(names);
             reader = Data2DReader.create(this)
                     .setCsvPrinter(csvPrinter).setCols(cols).setStatisticSelection(selections)
@@ -162,12 +158,9 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             return null;
         }
         File csvFile = tmpCSV("copy");
-        CSVFormat targetFormat = CSVFormat.DEFAULT
-                .withIgnoreEmptyLines().withTrim().withNullString("")
-                .withDelimiter(',');
         long tcolsNumber = 0;
         Data2DReader reader;
-        try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
+        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             List<String> names = new ArrayList<>();
             if (includeRowNumber) {
                 names.add(message("RowNumber"));
@@ -216,10 +209,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         }
         double[] colsSum = reader.getColValues();
         File csvFile = tmpCSV("percentage");
-        CSVFormat targetFormat = CSVFormat.DEFAULT
-                .withIgnoreEmptyLines().withTrim().withNullString("")
-                .withDelimiter(',');
-        try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
+        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             csvPrinter.printRecord(names);
             List<String> row = new ArrayList<>();
             row.add(message("Column") + "-" + message("Summation"));
@@ -265,10 +255,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             return null;
         }
         File csvFile = tmpCSV("percentage");
-        CSVFormat targetFormat = CSVFormat.DEFAULT
-                .withIgnoreEmptyLines().withTrim().withNullString("")
-                .withDelimiter(',');
-        try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
+        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             csvPrinter.printRecord(names);
             List<String> row = new ArrayList<>();
             row.add(message("All") + "-" + message("Summation"));
@@ -314,11 +301,8 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             return null;
         }
         File csvFile = tmpCSV("percentage");
-        CSVFormat targetFormat = CSVFormat.DEFAULT
-                .withIgnoreEmptyLines().withTrim().withNullString("")
-                .withDelimiter(',');
         Data2DReader reader = null;
-        try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
+        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             csvPrinter.printRecord(names);
             reader = Data2DReader.create(this)
                     .setCsvPrinter(csvPrinter).setCols(cols)
@@ -348,11 +332,8 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             return null;
         }
         File csvFile = tmpCSV("frequency");
-        CSVFormat targetFormat = CSVFormat.DEFAULT
-                .withIgnoreEmptyLines().withTrim().withNullString("")
-                .withDelimiter(',');
         Data2DReader reader;
-        try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
+        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             List<String> row = new ArrayList<>();
             row.add(colName);
             row.add(colName + "_" + message("Count"));
@@ -405,11 +386,8 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             sData[c].vTmp = (to - from) / (d == 0 ? AppValues.TinyDouble : d);
         }
         File csvFile = tmpCSV("normalizeMinMax");
-        CSVFormat targetFormat = CSVFormat.DEFAULT
-                .withIgnoreEmptyLines().withTrim().withNullString("")
-                .withDelimiter(',');
         int tcolsNumber = 0;
-        try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
+        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             List<String> names = new ArrayList<>();
             if (rowNumber) {
                 names.add(message("RowNumber"));
@@ -473,11 +451,8 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             }
         }
         File csvFile = tmpCSV("normalizeSum");
-        CSVFormat targetFormat = CSVFormat.DEFAULT
-                .withIgnoreEmptyLines().withTrim().withNullString("")
-                .withDelimiter(',');
         int tcolsNumber = 0;
-        try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
+        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             List<String> names = new ArrayList<>();
             if (rowNumber) {
                 names.add(message("RowNumber"));
@@ -542,10 +517,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             return null;
         }
         File csvFile = tmpCSV("normalizeZscore");
-        CSVFormat targetFormat = CSVFormat.DEFAULT
-                .withIgnoreEmptyLines().withTrim().withNullString("")
-                .withDelimiter(',');
-        try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
+        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             List<String> names = new ArrayList<>();
             if (rowNumber) {
                 names.add(message("RowNumber"));
@@ -601,11 +573,8 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         double d = sData.maximum - sData.minimum;
         sData.vTmp = (to - from) / (d == 0 ? AppValues.TinyDouble : d);
         File csvFile = tmpCSV("normalizeMinMax");
-        CSVFormat targetFormat = CSVFormat.DEFAULT
-                .withIgnoreEmptyLines().withTrim().withNullString("")
-                .withDelimiter(',');
         int tcolsNumber = 0;
-        try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
+        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             List<String> names = new ArrayList<>();
             if (rowNumber) {
                 names.add(message("RowNumber"));
@@ -663,11 +632,8 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             k = 1d / sData.sum;
         }
         File csvFile = tmpCSV("normalizeSum");
-        CSVFormat targetFormat = CSVFormat.DEFAULT
-                .withIgnoreEmptyLines().withTrim().withNullString("")
-                .withDelimiter(',');
         int tcolsNumber = 0;
-        try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
+        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             List<String> names = new ArrayList<>();
             if (rowNumber) {
                 names.add(message("RowNumber"));
@@ -728,10 +694,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             return null;
         }
         File csvFile = tmpCSV("normalizeZscore");
-        CSVFormat targetFormat = CSVFormat.DEFAULT
-                .withIgnoreEmptyLines().withTrim().withNullString("")
-                .withDelimiter(',');
-        try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
+        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             List<String> names = new ArrayList<>();
             if (rowNumber) {
                 names.add(message("RowNumber"));
@@ -775,12 +738,9 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             return null;
         }
         File csvFile = tmpCSV("normalizeSum");
-        CSVFormat targetFormat = CSVFormat.DEFAULT
-                .withIgnoreEmptyLines().withTrim().withNullString("")
-                .withDelimiter(',');
         int tcolsNumber = 0;
         Data2DReader reader = null;
-        try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
+        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             List<String> names = new ArrayList<>();
             if (rowNumber) {
                 names.add(message("RowNumber"));
@@ -834,12 +794,9 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             return null;
         }
         File csvFile = tmpCSV("simpleLinearRegression");
-        CSVFormat targetFormat = CSVFormat.DEFAULT
-                .withIgnoreEmptyLines().withTrim().withNullString("")
-                .withDelimiter(',');
         int tcolsNumber = 0;
         Data2DReader reader = null;
-        try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
+        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             List<String> names = new ArrayList<>();
             List<Data2DColumn> resultColumns = simpleRegression.getColumns();
             for (Data2DColumn c : resultColumns) {

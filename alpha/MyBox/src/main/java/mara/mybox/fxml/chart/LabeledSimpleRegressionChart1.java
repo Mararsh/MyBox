@@ -1,7 +1,6 @@
 package mara.mybox.fxml.chart;
 
 import java.util.List;
-import java.util.Map;
 import javafx.geometry.Bounds;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.XYChart;
@@ -18,7 +17,7 @@ public class LabeledSimpleRegressionChart1<X, Y> extends LabeledScatterChart<X, 
 
     protected Line regressionLine, upperConfidenceLine, lowerConfidenceLine;
     protected Text text;
-    protected boolean written, displayText,
+    protected boolean displayText,
             displayFittedPoints, displayConfidenceLowerPoints, displayConfidenceUpperPoints,
             displayFittedLine, displayConfidenceLowerLine, displayConfidenceUpperLine;
     protected String model;
@@ -146,8 +145,6 @@ public class LabeledSimpleRegressionChart1<X, Y> extends LabeledScatterChart<X, 
 
             getPlotChildren().removeAll(regressionLine, upperConfidenceLine, lowerConfidenceLine, text);
 
-            Map<String, String> palette = chartController.getPalette();
-
             regressionLine.setStyle("-fx-stroke-width:2px; -fx-stroke:" + palette.get(seriesList.get(1).getName()));
             drawLine(seriesList.get(1).getData(), regressionLine, displayFittedPoints);
             regressionLine.setVisible(displayFittedLine);
@@ -162,7 +159,7 @@ public class LabeledSimpleRegressionChart1<X, Y> extends LabeledScatterChart<X, 
             drawLine(seriesList.get(3).getData(), upperConfidenceLine, displayConfidenceUpperPoints);
             upperConfidenceLine.setVisible(displayConfidenceUpperLine);
 
-            text.setStyle("-fx-font-size:" + chartController.getLabelFontSize() + "px; -fx-text-fill: black;");
+            text.setStyle("-fx-font-size:" + xyOptions.getLabelFontSize() + "px; -fx-text-fill: black;");
             text.setText(model);
             getPlotChildren().add(text);
             if (regressionLine.getStartY() > 60) {
@@ -179,6 +176,7 @@ public class LabeledSimpleRegressionChart1<X, Y> extends LabeledScatterChart<X, 
         }
     }
 
+    @Override
     public void drawLine(List<XYChart.Data<X, Y>> data, Line line, boolean pointsVisible) {
         try {
             if (data == null || line == null) {
@@ -190,7 +188,7 @@ public class LabeledSimpleRegressionChart1<X, Y> extends LabeledScatterChart<X, 
                 Bounds regionBounds = data.get(i).getNode().getBoundsInParent();
                 double x = regionBounds.getMinX() + regionBounds.getWidth() / 2;
                 double y = regionBounds.getMinY() + regionBounds.getHeight() / 2;
-                if (chartController.isXY()) {
+                if (xyOptions.isXY) {
                     if (x > endX) {
                         endX = x;
                         endY = y;

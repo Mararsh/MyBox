@@ -1,7 +1,6 @@
 package mara.mybox.data2d;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -23,12 +22,12 @@ import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TmpFileTools;
 import static mara.mybox.value.Languages.message;
-import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
@@ -437,12 +436,9 @@ public class DataTable extends Data2D {
             sql = "SELECT " + sql + " FROM " + sheet + " ORDER BY " + orderName
                     + (desc ? " DESC" : "");
             File csvFile = tmpCSV("sort");
-            CSVFormat targetFormat = CSVFormat.DEFAULT
-                    .withIgnoreEmptyLines().withTrim().withNullString("")
-                    .withDelimiter(',');
             long count = 0;
             int colsSize;
-            try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat);
+            try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile);
                      Connection conn = DerbyBase.getConnection();
                      PreparedStatement statement = conn.prepareStatement(sql);
                      ResultSet results = statement.executeQuery()) {
@@ -601,11 +597,8 @@ public class DataTable extends Data2D {
             return null;
         }
         File csvFile = tmpCSV("frequency");
-        CSVFormat targetFormat = CSVFormat.DEFAULT
-                .withIgnoreEmptyLines().withTrim().withNullString("")
-                .withDelimiter(',');
         int total = 0, dNumber = 0;
-        try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat);
+        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile);
                  Connection conn = DerbyBase.getConnection()) {
             List<String> row = new ArrayList<>();
             row.add(colName);
@@ -791,13 +784,10 @@ public class DataTable extends Data2D {
                 return null;
             }
             File csvFile = TmpFileTools.csvFile();
-            CSVFormat targetFormat = CSVFormat.DEFAULT
-                    .withIgnoreEmptyLines().withTrim().withNullString("")
-                    .withDelimiter(',');
             long count = 0;
             int colsSize;
             List<Data2DColumn> db2Columns = new ArrayList<>();
-            try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), targetFormat)) {
+            try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
                 List<String> names = new ArrayList<>();
                 if (showRowNumber) {
                     names.add(message("SourceRowNumber"));

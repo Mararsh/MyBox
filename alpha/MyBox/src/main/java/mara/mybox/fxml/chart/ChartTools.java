@@ -19,24 +19,53 @@ import mara.mybox.fxml.SquareRootCoordinate;
  */
 public class ChartTools {
 
-    public static final String DefaultBubbleStyle
-            = "radial-gradient(center 50% 50%, radius 50%, transparent 0%, transparent 90%, derive(-fx-bubble-fill,0%) 100%)";
-
-    public enum LabelType {
-        NotDisplay, CategoryAndValue, Value, Category, Pop, Point
-    }
-
-    public enum LabelLocation {
-        Above, Below, Center
-    }
-
-    public enum ChartCoordinate {
-        Cartesian, LogarithmicE, Logarithmic10, SquareRoot
-    }
-
     public static Chart style(Chart chart, String cssFile) {
         chart.getStylesheets().add(Chart.class.getResource(cssFile).toExternalForm());
         return chart;
+    }
+
+    public static void setChartCoordinate(NumberAxis numberAxis, XYChartOptions.ChartCoordinate chartCoordinate) {
+        switch (chartCoordinate) {
+            case LogarithmicE:
+                numberAxis.setTickLabelFormatter(new LogarithmicECoordinate());
+                break;
+            case Logarithmic10:
+                numberAxis.setTickLabelFormatter(new Logarithmic10Coordinate());
+                break;
+            case SquareRoot:
+                numberAxis.setTickLabelFormatter(new SquareRootCoordinate());
+                break;
+        }
+    }
+
+    public static double realValue(XYChartOptions.ChartCoordinate chartCoordinate, double coordinateValue) {
+        if (chartCoordinate == null) {
+            return coordinateValue;
+        }
+        switch (chartCoordinate) {
+            case LogarithmicE:
+                return Math.pow(Math.E, coordinateValue);
+            case Logarithmic10:
+                return Math.pow(10, coordinateValue);
+            case SquareRoot:
+                return coordinateValue * coordinateValue;
+        }
+        return coordinateValue;
+    }
+
+    public static double coordinateValue(XYChartOptions.ChartCoordinate chartCoordinate, double value) {
+        if (chartCoordinate == null || value <= 0) {
+            return value;
+        }
+        switch (chartCoordinate) {
+            case LogarithmicE:
+                return Math.log(value);
+            case Logarithmic10:
+                return Math.log10(value);
+            case SquareRoot:
+                return Math.sqrt(value);
+        }
+        return value;
     }
 
     // This can set more than 8 colors. javafx only supports 8 colors defined in css
@@ -334,50 +363,6 @@ public class ChartTools {
                 }
             }
         }
-    }
-
-    public static void setChartCoordinate(NumberAxis numberAxis, ChartCoordinate chartCoordinate) {
-        switch (chartCoordinate) {
-            case LogarithmicE:
-                numberAxis.setTickLabelFormatter(new LogarithmicECoordinate());
-                break;
-            case Logarithmic10:
-                numberAxis.setTickLabelFormatter(new Logarithmic10Coordinate());
-                break;
-            case SquareRoot:
-                numberAxis.setTickLabelFormatter(new SquareRootCoordinate());
-                break;
-        }
-    }
-
-    public static double realValue(ChartCoordinate chartCoordinate, double coordinateValue) {
-        if (chartCoordinate == null) {
-            return coordinateValue;
-        }
-        switch (chartCoordinate) {
-            case LogarithmicE:
-                return Math.pow(Math.E, coordinateValue);
-            case Logarithmic10:
-                return Math.pow(10, coordinateValue);
-            case SquareRoot:
-                return coordinateValue * coordinateValue;
-        }
-        return coordinateValue;
-    }
-
-    public static double coordinateValue(ChartCoordinate chartCoordinate, double value) {
-        if (chartCoordinate == null || value <= 0) {
-            return value;
-        }
-        switch (chartCoordinate) {
-            case LogarithmicE:
-                return Math.log(value);
-            case Logarithmic10:
-                return Math.log10(value);
-            case SquareRoot:
-                return Math.sqrt(value);
-        }
-        return value;
     }
 
 }

@@ -203,6 +203,7 @@ public class Fxmls {
     public static final String Data2DTableCreateFxml = "/fxml/Data2DTableCreate.fxml";
     public static final String DataTableQueryFxml = "/fxml/DataTableQuery.fxml";
     public static final String Data2DSimpleLinearRegressionFxml = "/fxml/Data2DSimpleLinearRegression.fxml";
+    public static final String Data2DChartFxOptionsFxml = "/fxml/Data2DChartFxOptions.fxml";
 
     public static final String JShellFxml = "/fxml/JShell.fxml";
 

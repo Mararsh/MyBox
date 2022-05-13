@@ -15,7 +15,7 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2022-4-27
  * @License Apache License Version 2.0
  */
-public class LabeledBoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
+public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
 
     protected Rectangle[] boxs;
     protected Line[] vLines, minLines, maxLines, medianLines, meanLines,
@@ -24,7 +24,7 @@ public class LabeledBoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
     protected boolean handleOutliers, handleMean, written;
     protected Map<String, String> palette;
 
-    public LabeledBoxWhiskerChart(Axis xAxis, Axis yAxis) {
+    public BoxWhiskerChart(Axis xAxis, Axis yAxis) {
         super(xAxis, yAxis);
         init();
     }
@@ -171,7 +171,7 @@ public class LabeledBoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
                 return;
             }
             clearMain();
-            if (!chartController.displayLabel()) {
+            if (!xyOptions.displayLabel()) {
                 return;
             }
             dataSize = seriesList.get(startIndex + 0).getData().size();
@@ -222,7 +222,7 @@ public class LabeledBoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
                 return;
             }
             clearMean();
-            if (!chartController.displayLabel()) {
+            if (!xyOptions.displayLabel()) {
                 return;
             }
             dataSize = seriesList.get(0).getData().size();
@@ -249,7 +249,7 @@ public class LabeledBoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
                 return;
             }
             clearOutliers();
-            if (!chartController.displayLabel()) {
+            if (!xyOptions.displayLabel()) {
                 return;
             }
             dataSize = seriesList.get(startIndex + 5).getData().size();
@@ -300,7 +300,7 @@ public class LabeledBoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
             if (seriesList == null || seriesList.size() < 5 + startIndex) {
                 return;
             }
-            if (!chartController.displayLabel()) {
+            if (!xyOptions.displayLabel()) {
                 return;
             }
             if (boxWidth <= 0) {
@@ -319,7 +319,7 @@ public class LabeledBoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
                 Bounds regionBounds1 = data1.get(i).getNode().getBoundsInParent();
                 Bounds regionBounds0 = data0.get(i).getNode().getBoundsInParent();
 
-                if (options.isXY) {
+                if (xyOptions.isXY) {
                     double y4 = regionBounds4.getMinY() + regionBounds4.getHeight() / 2;
                     double y3 = regionBounds3.getMinY() + regionBounds3.getHeight() / 2;
                     double y2 = regionBounds2.getMinY() + regionBounds2.getHeight() / 2;
@@ -422,7 +422,7 @@ public class LabeledBoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
             if (seriesList == null || seriesList.size() < 1) {
                 return;
             }
-            if (!chartController.displayLabel()) {
+            if (!xyOptions.displayLabel()) {
                 return;
             }
             if (boxWidth <= 0) {
@@ -433,7 +433,7 @@ public class LabeledBoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
             for (int i = 0; i < dataSize; i++) {
                 Bounds regionBoundsMean = data0.get(i).getNode().getBoundsInParent();
 
-                if (options.isXY) {
+                if (xyOptions.isXY) {
                     double yMean = regionBoundsMean.getMinY() + regionBoundsMean.getHeight() / 2;
                     double x = regionBoundsMean.getMinX() + regionBoundsMean.getWidth() / 2;
                     double leftX = x - boxWidth / 2;
@@ -471,7 +471,7 @@ public class LabeledBoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
             if (seriesList == null || seriesList.size() < 9 + startIndex) {
                 return;
             }
-            if (!chartController.displayLabel()) {
+            if (!xyOptions.displayLabel()) {
                 return;
             }
             if (boxWidth <= 0) {
@@ -492,7 +492,7 @@ public class LabeledBoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
                 Bounds regionBounds7 = data7.get(i).getNode().getBoundsInParent();
                 Bounds regionBounds8 = data8.get(i).getNode().getBoundsInParent();
 
-                if (options.isXY) {
+                if (xyOptions.isXY) {
                     double y0 = regionBounds0.getMinY() + regionBounds0.getHeight() / 2;
                     double y4 = regionBounds4.getMinY() + regionBounds4.getHeight() / 2;
                     double y5 = regionBounds5.getMinY() + regionBounds5.getHeight() / 2;
@@ -605,7 +605,7 @@ public class LabeledBoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
         return boxWidth;
     }
 
-    public LabeledBoxWhiskerChart<X, Y> setBoxWidth(int boxWidth) {
+    public BoxWhiskerChart<X, Y> setBoxWidth(int boxWidth) {
         this.boxWidth = boxWidth;
         return this;
     }
@@ -614,7 +614,7 @@ public class LabeledBoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
         return handleOutliers;
     }
 
-    public LabeledBoxWhiskerChart<X, Y> setHandleOutliers(boolean handleOutliers) {
+    public BoxWhiskerChart<X, Y> setHandleOutliers(boolean handleOutliers) {
         this.handleOutliers = handleOutliers;
         return this;
     }
@@ -623,7 +623,7 @@ public class LabeledBoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
         return handleMean;
     }
 
-    public LabeledBoxWhiskerChart<X, Y> setHandleMean(boolean handleMean) {
+    public BoxWhiskerChart<X, Y> setHandleMean(boolean handleMean) {
         this.handleMean = handleMean;
         return this;
     }
@@ -632,7 +632,7 @@ public class LabeledBoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
         return palette;
     }
 
-    public LabeledBoxWhiskerChart<X, Y> setPalette(Map<String, String> palette) {
+    public BoxWhiskerChart<X, Y> setPalette(Map<String, String> palette) {
         this.palette = palette;
         return this;
     }

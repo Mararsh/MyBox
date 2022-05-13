@@ -10,9 +10,9 @@ import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeLevel;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.db.table.TableGeographyCode;
+import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.Languages;
-import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
@@ -46,8 +46,7 @@ public class GeographyCodeImportGeonamesFileController extends BaseImportCsvCont
     public long importFile(File file) {
         long importCount = 0, insertCount = 0, updateCount = 0, skipCount = 0, failedCount = 0;
         File validFile = FileTools.removeBOM(file);
-        try ( CSVParser parser = CSVParser.parse(validFile, StandardCharsets.UTF_8,
-                CSVFormat.DEFAULT.withDelimiter('\t').withTrim().withNullString(""))) {
+        try ( CSVParser parser = CSVParser.parse(validFile, StandardCharsets.UTF_8, CsvTools.csvFormat('\t'))) {
             GeographyCode code, countryCode = null, provinceCode = null, cityCode = null, countyCode = null;
             String lastCountry = null, lastProvince = null, lastCity = null, lastCounty = null;
             String sql;

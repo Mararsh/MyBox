@@ -116,6 +116,7 @@ public class ControlData2D extends BaseController {
                 saveButton = parent.saveButton;
                 recoverButton = parent.recoverButton;
                 baseTitle = parent.baseTitle;
+                baseName = parent.baseName;
             }
             this.type = type;
             editController.setParameters(this);

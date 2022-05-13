@@ -1,0 +1,301 @@
+package mara.mybox.fxml.chart;
+
+import java.util.HashMap;
+import java.util.Map;
+import javafx.geometry.Side;
+import javafx.scene.Node;
+import javafx.scene.chart.Chart;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.value.UserConfig;
+
+/**
+ * @Author Mara
+ * @CreateDate 2022-5-11
+ * @License Apache License Version 2.0
+ */
+public class ChartOptions<X, Y> {
+
+    protected String chartName;
+    protected ChartType chartType;
+    protected Chart chart;
+
+    protected LabelType labelType;
+    protected String chartTitle;
+    protected int scale, labelFontSize, titleFontSize, tickFontSize;
+    protected boolean popLabel, displayLabelName, plotAnimated;
+    protected Side titleSide, legendSide;
+
+    protected Map<Node, Node> nodeLabels = new HashMap<>();
+    protected Map<String, String> palette;
+
+    public static enum ChartType {
+        Bar, StackedBar, Line, Bubble, Scatter, Area, StackedArea, Pie,
+        BoxWhiskerChart, SimpleRegressionChart, ResidualChart
+    }
+
+    public static enum LabelType {
+        NotDisplay, CategoryAndValue, Value, Category, Pop, Point
+    }
+
+    public ChartOptions() {
+    }
+
+    public ChartOptions(String chartName) {
+        this.chartName = chartName;
+    }
+
+    public final void initChartOptions() {
+        try {
+            if (chartName == null) {
+                return;
+            }
+
+            popLabel = UserConfig.getBoolean(chartName + "PopLabel", true);
+            displayLabelName = UserConfig.getBoolean(chartName + "DisplayLabelName", false);
+
+            scale = UserConfig.getInt(chartName + "Scale", 2);
+            labelFontSize = UserConfig.getInt(chartName + "LabelFontSize", 10);
+            titleFontSize = UserConfig.getInt(chartName + "TitleFontSize", 12);
+            tickFontSize = UserConfig.getInt(chartName + "TickFontSize", 10);
+
+            labelType = LabelType.Point;
+            String saved = UserConfig.getString(chartName + "LabelType", "Point");
+            if (saved != null) {
+                for (LabelType type : LabelType.values()) {
+                    if (type.name().equals(saved)) {
+                        labelType = type;
+                        break;
+                    }
+                }
+            }
+
+            titleSide = Side.TOP;
+            saved = UserConfig.getString(chartName + "TitleSide", "TOP");
+            if (saved != null) {
+                for (Side value : Side.values()) {
+                    if (value.name().equals(saved)) {
+                        titleSide = value;
+                        break;
+                    }
+                }
+            }
+
+            legendSide = Side.TOP;
+            saved = UserConfig.getString(chartName + "LegendSide", "TOP");
+            if (saved != null) {
+                for (Side value : Side.values()) {
+                    if (value.name().equals(saved)) {
+                        legendSide = value;
+                        break;
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public Chart drawChart() {
+        return chart;
+    }
+
+    public void styleChart() {
+        try {
+            if (chart == null) {
+                return;
+            }
+            chart.setStyle("-fx-font-size: " + titleFontSize
+                    + "px; -fx-tick-label-font-size: " + tickFontSize + "px; ");
+            chart.setTitle(chartTitle);
+            chart.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+            VBox.setVgrow(chart, Priority.ALWAYS);
+            HBox.setHgrow(chart, Priority.ALWAYS);
+            chart.setAnimated(plotAnimated);
+            chart.setTitleSide(titleSide);
+            chart.setLegendSide(legendSide);
+            AnchorPane.setTopAnchor(chart, 2d);
+            AnchorPane.setBottomAnchor​(chart, 2d);
+            AnchorPane.setLeftAnchor(chart, 2d);
+            AnchorPane.setRightAnchor​(chart, 2d);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    public boolean displayLabel() {
+        return labelType != null && labelType != LabelType.NotDisplay;
+    }
+
+    public boolean popLabel() {
+        return popLabel || labelType == LabelType.Pop;
+    }
+
+    public boolean labelVisible() {
+        return labelType == LabelType.Category
+                || labelType == LabelType.Value
+                || labelType == LabelType.CategoryAndValue;
+    }
+
+    public boolean showLegend() {
+        return legendSide != null;
+    }
+
+    /*
+        get/set
+     */
+    public String getChartName() {
+        return chartName;
+    }
+
+    public void setChartName(String chartName) {
+        this.chartName = chartName;
+    }
+
+    public ChartType getChartType() {
+        return chartType;
+    }
+
+    public void setChartType(ChartType chartType) {
+        this.chartType = chartType;
+    }
+
+    public Chart getChart() {
+        return chart;
+    }
+
+    public void setChart(Chart chart) {
+        this.chart = chart;
+    }
+
+    public LabelType getLabelType() {
+        labelType = labelType == null ? LabelType.Point : labelType;
+        return labelType;
+    }
+
+    public void setLabelType(LabelType labelType) {
+        this.labelType = labelType;
+        UserConfig.setString(chartName + "LabelType", getLabelType().name());
+    }
+
+    public String getChartTitle() {
+        return chartTitle;
+    }
+
+    public void setChartTitle(String chartTitle) {
+        this.chartTitle = chartTitle;
+        if (chart != null) {
+            chart.setTitle(chartTitle);
+        }
+    }
+
+    public boolean isPlotAnimated() {
+        return plotAnimated;
+    }
+
+    public void setPlotAnimated(boolean plotAnimated) {
+        this.plotAnimated = plotAnimated;
+        UserConfig.setBoolean(chartName + "PlotAnimated", plotAnimated);
+        if (chart != null) {
+            chart.setAnimated(plotAnimated);
+        }
+    }
+
+    public int getTitleFontSize() {
+        titleFontSize = titleFontSize <= 0 ? 12 : titleFontSize;
+        return titleFontSize;
+    }
+
+    public void setTitleFontSize(int titleFontSize) {
+        this.titleFontSize = titleFontSize;
+        UserConfig.setInt(chartName + "TitleFontSize", getTitleFontSize());
+    }
+
+    public int getTickFontSize() {
+        tickFontSize = tickFontSize <= 0 ? 10 : tickFontSize;
+        return tickFontSize;
+    }
+
+    public void setTickFontSize(int tickFontSize) {
+        this.tickFontSize = tickFontSize;
+        UserConfig.setInt(chartName + "TickFontSize", getTickFontSize());
+    }
+
+    public Side getTitleSide() {
+        titleSide = titleSide == null ? Side.TOP : titleSide;
+        return titleSide;
+    }
+
+    public void setTitleSide(Side titleSide) {
+        this.titleSide = titleSide;
+        UserConfig.setString(chartName + "TitleSide", getTitleSide().name());
+        if (chart != null) {
+            chart.setTitleSide(this.titleSide);
+        }
+    }
+
+    public Side getLegendSide() {
+        legendSide = legendSide == null ? Side.TOP : legendSide;
+        return legendSide;
+    }
+
+    public void setLegendSide(Side legendSide) {
+        this.legendSide = legendSide;
+        UserConfig.setString(chartName + "LegendSide", getLegendSide().name());
+        if (chart != null) {
+            if (this.legendSide == null) {
+                chart.setLegendVisible(false);
+            } else {
+                chart.setLegendVisible(true);
+                chart.setLegendSide(this.legendSide);
+            }
+        }
+    }
+
+    public boolean isPopLabel() {
+        return popLabel;
+    }
+
+    public void setPopLabel(boolean popLabel) {
+        this.popLabel = popLabel;
+    }
+
+    public boolean isDisplayLabelName() {
+        return displayLabelName;
+    }
+
+    public void setDisplayLabelName(boolean displayLabelName) {
+        this.displayLabelName = displayLabelName;
+    }
+
+    public int getScale() {
+        return scale;
+    }
+
+    public void setScale(int scale) {
+        this.scale = scale;
+    }
+
+    public Map<String, String> getPalette() {
+        return palette;
+    }
+
+    public void setPalette(Map<String, String> palette) {
+        this.palette = palette;
+    }
+
+    public int getLabelFontSize() {
+        labelFontSize = labelFontSize <= 0 ? 10 : labelFontSize;
+        return labelFontSize;
+    }
+
+    public void setLabelFontSize(int labelFontSize) {
+        this.labelFontSize = labelFontSize;
+        UserConfig.setInt(chartName + "LabelFontSize", getLabelFontSize());
+    }
+
+}

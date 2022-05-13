@@ -45,9 +45,6 @@ public class ResidualChart<X, Y> extends LabeledScatterChart<X, Y> {
             if (dataNumber < 3) {
                 return;
             }
-            if (palette == null) {
-                palette = chartController.getPalette();
-            }
             String prefix = "-fx-stroke-dash-array: " + lineWidth * 2 + "; -fx-stroke-width:" + lineWidth + "px; -fx-stroke:";
             upperLine.setStyle(prefix + palette.get(seriesList.get(1).getName()));
             drawLine(seriesList.get(1).getData(), upperLine, false);
@@ -55,7 +52,7 @@ public class ResidualChart<X, Y> extends LabeledScatterChart<X, Y> {
             lowerLine.setStyle(prefix + palette.get(seriesList.get(2).getName()));
             drawLine(seriesList.get(2).getData(), lowerLine, false);
 
-            text.setStyle("-fx-font-size:" + chartController.getLabelFontSize() + "px; -fx-text-fill: black;");
+            text.setStyle("-fx-font-size:" + xyOptions.getLabelFontSize() + "px; -fx-text-fill: black;");
             text.setText(info);
             getPlotChildren().add(text);
             text.setLayoutX(10);
