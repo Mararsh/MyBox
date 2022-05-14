@@ -47,7 +47,7 @@ public class LabeledAreaChart<X, Y> extends AreaChart<X, Y> {
 
     @Override
     protected void seriesRemoved(final Series<X, Y> series) {
-        xyOptions.removeLabels(series, getPlotChildren());
+        xyOptions.removeLabels(getPlotChildren());
         super.seriesRemoved(series);
     }
 

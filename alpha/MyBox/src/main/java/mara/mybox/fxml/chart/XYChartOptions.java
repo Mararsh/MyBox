@@ -1,5 +1,6 @@
 package mara.mybox.fxml.chart;
 
+import java.util.List;
 import javafx.collections.ObservableList;
 import javafx.geometry.Side;
 import javafx.scene.Node;
@@ -9,6 +10,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -39,7 +41,6 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
     protected NumberAxis categoryNumberAxis, valueAxis;
     protected Axis xAxis, yAxis, categoryAxis;
 
-    protected String categoryLabel, valueLabel;
     protected ChartCoordinate categoryCoordinate, numberCoordinate, sizeCoordinate,
             xCoordinate, yCoordinate;
     protected int lineWidth, categoryFontSize, categoryMargin, categoryTickRotation,
@@ -50,6 +51,7 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
     protected LabelLocation labelLocation;
     protected Side categorySide, numberSide;
     protected double barGap, categoryGap;
+    protected String bubbleStyle;
 
     public static enum LabelLocation {
         Above, Below, Center
@@ -62,65 +64,21 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
     public static final String DefaultBubbleStyle
             = "radial-gradient(center 50% 50%, radius 50%, transparent 0%, transparent 90%, derive(-fx-bubble-fill,0%) 100%)";
 
-    public XYChartOptions(ChartType chartType, String chartName) {
+    public XYChartOptions() {
+    }
+
+    public XYChartOptions init(ChartType chartType, String chartName) {
+        clearChart();
         this.chartType = chartType;
         this.chartName = chartName;
-        makeChart();
+        initXYChartOptions();
+        return this;
     }
 
-    public final XYChart makeChart() {
-        try {
-            if (chartType == null || chartName == null) {
-                return null;
-            }
-            initXYChartOptions();
-            initAxis();
-            switch (chartType) {
-                case Bar:
-                    makeBarChart();
-                    break;
-                case StackedBar:
-                    makeStackedBarChart();
-                    break;
-                case Line:
-                    makeLineChart();
-                    break;
-                case Scatter:
-                    makeScatterChart​();
-                    break;
-                case Area:
-                    makeAreaChart();
-                    break;
-                case StackedArea:
-                    makeStackedAreaChart();
-                    break;
-                case Bubble:
-                    makeBubbleChart();
-                    break;
-                case BoxWhiskerChart:
-                    makeBoxWhiskerChart();
-                    break;
-                case SimpleRegressionChart:
-                    makeSimpleRegressionChart();
-                    break;
-                case ResidualChart:
-                    makeResidualChart();
-                    break;
-                default:
-                    break;
-            }
-            initXYChart();
-            styleChart();
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-        return xyChart;
-    }
-
-    public final void initXYChartOptions() {
+    public XYChartOptions initXYChartOptions() {
         try {
             if (chartName == null) {
-                return;
+                return this;
             }
             initChartOptions();
 
@@ -128,15 +86,18 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
             switch (chartType) {
                 case Bubble:
                     categoryIsNumbers = true;
+                    labelLocation = LabelLocation.Center;
                     break;
                 case Bar:
                 case StackedBar:
                 case Area:
                 case StackedArea:
                     categoryIsNumbers = false;
+                    labelLocation = LabelLocation.Above;
                     break;
                 default:
                     categoryIsNumbers = UserConfig.getBoolean(chartName + "CategoryIsNumbers", false);
+                    labelLocation = LabelLocation.Below;
                     break;
             }
             displayCategoryMark = UserConfig.getBoolean(chartName + "DisplayCategoryMark", true);
@@ -144,6 +105,13 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
             displayNumberMark = UserConfig.getBoolean(chartName + "DisplayNumberMark", true);
             displayNumberTick = UserConfig.getBoolean(chartName + "DisplayNumberTick", true);
             plotAnimated = UserConfig.getBoolean(chartName + "PlotAnimated", false);
+
+            altRowsFill = UserConfig.getBoolean(chartName + "AltRowsFill", false);
+            altColumnsFill = UserConfig.getBoolean(chartName + "AltColumnsFill", false);
+            displayVlines = UserConfig.getBoolean(chartName + "DisplayVlines", true);
+            displayHlines = UserConfig.getBoolean(chartName + "DisplayHlines", true);
+            displayVZero = UserConfig.getBoolean(chartName + "DisplayVZero", true);
+            displayHZero = UserConfig.getBoolean(chartName + "DisplayHZero", true);
 
             categoryFontSize = UserConfig.getInt(chartName + "CategoryFontSize", 10);
             categoryMargin = UserConfig.getInt(chartName + "CategoryMargin", 2);
@@ -154,8 +122,9 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
             barGap = UserConfig.getDouble(chartName + "BarGap", 2d);
             categoryGap = UserConfig.getDouble(chartName + "CategoryGap", 20d);
 
-            labelLocation = LabelLocation.Center;
-            String saved = UserConfig.getString(chartName + "LabelLocation", "Center");
+            bubbleStyle = UserConfig.getString(chartName + "BubbleStyle", DefaultBubbleStyle);
+
+            String saved = UserConfig.getString(chartName + "LabelLocation", labelLocation.name());
             if (saved != null) {
                 for (LabelLocation type : LabelLocation.values()) {
                     if (type.name().equals(saved)) {
@@ -164,6 +133,7 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
                     }
                 }
             }
+            MyBoxLog.console(saved + "  " + labelLocation);
 
             categorySide = Side.BOTTOM;
             saved = UserConfig.getString(chartName + "CategorySide", "BOTTOM");
@@ -223,6 +193,81 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+        return this;
+    }
+
+    /*
+        make chart
+     */
+    public final XYChart makeChart() {
+        try {
+            clearChart();
+            if (chartType == null || chartName == null) {
+                return null;
+            }
+            initAxis();
+            switch (chartType) {
+                case Bar:
+                    makeBarChart();
+                    break;
+                case StackedBar:
+                    makeStackedBarChart();
+                    break;
+                case Line:
+                    makeLineChart();
+                    break;
+                case Scatter:
+                    makeScatterChart​();
+                    break;
+                case Area:
+                    makeAreaChart();
+                    break;
+                case StackedArea:
+                    makeStackedAreaChart();
+                    break;
+                case Bubble:
+                    makeBubbleChart();
+                    break;
+                case BoxWhiskerChart:
+                    makeBoxWhiskerChart();
+                    break;
+                case SimpleRegressionChart:
+                    makeSimpleRegressionChart();
+                    break;
+                case ResidualChart:
+                    makeResidualChart();
+                    break;
+                default:
+                    break;
+            }
+            initXYChart();
+            styleChart();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+        return xyChart;
+    }
+
+    @Override
+    public void clearChart() {
+        xyChart = null;
+        lineChart = null;
+        barChart = null;
+        stackedBarChart = null;
+        areaChart = null;
+        stackedAreaChart = null;
+        bubbleChart = null;
+        scatterChart​ = null;
+        boxWhiskerChart = null;
+        simpleRegressionChart = null;
+        residualChart = null;
+
+        categoryStringAxis = null;
+        categoryNumberAxis = null;
+        valueAxis = null;
+        xAxis = null;
+        yAxis = null;
+        categoryAxis = null;
     }
 
     public void initAxis() {
@@ -241,22 +286,24 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
 //                    categoryStringAxis.setEndMargin(20);
 //                }
             }
-            categoryAxis.setLabel(categoryLabel);
+            categoryAxis.setLabel(getCategoryLabel());
             categoryAxis.setSide(categorySide);
             categoryAxis.setTickLabelsVisible(displayCategoryTick);
             categoryAxis.setTickMarkVisible(displayCategoryMark);
             categoryAxis.setTickLabelRotation(categoryTickRotation);
             categoryAxis.setAnimated(false);
-            categoryAxis.setStyle("-fx-font-size: " + categoryFontSize + "px;");
+            categoryAxis.setStyle("-fx-font-size: " + categoryFontSize
+                    + "px; -fx-tick-label-font-size: " + tickFontSize + "px; ");
 
             valueAxis = new NumberAxis();
-            valueAxis.setLabel(valueLabel);
+            valueAxis.setLabel(getValueLabel());
             valueAxis.setSide(numberSide);
             valueAxis.setTickLabelsVisible(displayNumberTick);
             valueAxis.setTickMarkVisible(displayNumberMark);
             valueAxis.setTickLabelRotation(numberTickRotation);
             ChartTools.setChartCoordinate(valueAxis, numberCoordinate);
-            valueAxis.setStyle("-fx-font-size: " + numberFontSize + "px;");
+            valueAxis.setStyle("-fx-font-size: " + numberFontSize
+                    + "px; -fx-tick-label-font-size: " + tickFontSize + "px; ");
 
             if (isXY) {
                 xAxis = categoryAxis;
@@ -412,12 +459,159 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
         }
     }
 
+    /*
+        write data
+     */
+    public void writeXYChart(List<Data2DColumn> columns, List<List<String>> data) {
+        writeXYChart(columns, data, null, true);
+    }
+
+    /*
+        The first column is row number
+        The second columns is "Category"
+        Left columns are "Value"
+     */
+    public void writeXYChart(List<Data2DColumn> columns, List<List<String>> data,
+            List<Integer> colIndics, boolean rowNumber) {
+        try {
+            if (columns == null || data == null) {
+                return;
+            }
+            if (chartType == ChartType.Bubble) {
+                writeBubbleChart(columns, data, colIndics, rowNumber);
+                return;
+            }
+            xyChart.getData().clear();
+            XYChart.Data xyData;
+            int index = 0, startIndex = rowNumber ? 1 : 0;
+            for (int col = 1 + startIndex; col < columns.size(); col++) {
+                if (colIndics != null && !colIndics.contains(col)) {
+                    continue;
+                }
+                Data2DColumn column = columns.get(col);
+                String colName = column.getColumnName();
+                XYChart.Series series = new XYChart.Series();
+                series.setName(colName);
+
+                double categoryValue, categoryCoordinateValue, numberValue, numberCoordinateValue;
+                for (List<String> rowData : data) {
+                    String category = rowData.get(startIndex);
+                    categoryValue = doubleValue(category);
+                    categoryCoordinateValue = ChartTools.coordinateValue(categoryCoordinate, categoryValue);
+                    numberValue = doubleValue(rowData.get(col));
+                    numberCoordinateValue = ChartTools.coordinateValue(numberCoordinate, numberValue);
+                    if (isXY) {
+                        if (xyChart.getXAxis() instanceof NumberAxis) {
+                            xyData = new XYChart.Data(categoryCoordinateValue, numberCoordinateValue);
+                        } else {
+                            xyData = new XYChart.Data(category, numberCoordinateValue);
+                        }
+                    } else {
+                        if (xyChart.getYAxis() instanceof NumberAxis) {
+                            xyData = new XYChart.Data(numberCoordinateValue, categoryCoordinateValue);
+                        } else {
+                            xyData = new XYChart.Data(numberCoordinateValue, category);
+                        }
+                    }
+                    series.getData().add(xyData);
+                }
+
+                xyChart.getData().add(index++, series);
+            }
+
+            setChartStyle();
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    /*
+        The first column is row number
+        The second columns is "Category"
+        The third columns is "Value"
+        Left columns are "Size"
+     */
+    public void writeBubbleChart(List<Data2DColumn> columns, List<List<String>> data,
+            List<Integer> colIndics, boolean rowNumber) {
+        try {
+            if (columns == null || data == null) {
+                return;
+            }
+            xyChart.getData().clear();
+            XYChart.Data xyData;
+            int index = 0, startIndex = rowNumber ? 1 : 0;
+            for (int col = 2 + startIndex; col < columns.size(); col++) {
+                if (colIndics != null && !colIndics.contains(col)) {
+                    continue;
+                }
+                Data2DColumn column = columns.get(col);
+                String colName = column.getColumnName();
+                XYChart.Series series = new XYChart.Series();
+                series.setName(colName);
+
+                double categoryValue, categoryCoordinateValue, numberValue, numberCoordinateValue,
+                        sizeValue, sizeCoordinateValue;
+                for (List<String> rowData : data) {
+                    categoryValue = doubleValue(rowData.get(startIndex));
+                    categoryCoordinateValue = ChartTools.coordinateValue(categoryCoordinate, categoryValue);
+                    numberValue = doubleValue(rowData.get(startIndex + 1));
+                    numberCoordinateValue = ChartTools.coordinateValue(numberCoordinate, numberValue);
+                    sizeValue = doubleValue(rowData.get(col));
+                    if (sizeValue <= 0) {
+                        continue;
+                    }
+                    sizeCoordinateValue = ChartTools.coordinateValue(sizeCoordinate, sizeValue);
+                    if (isXY) {
+                        xyData = new XYChart.Data(categoryCoordinateValue, numberCoordinateValue);
+                    } else {
+                        xyData = new XYChart.Data(numberCoordinateValue, categoryCoordinateValue);
+                    }
+                    xyData.setExtraValue(sizeCoordinateValue);
+                    series.getData().add(xyData);
+                }
+
+                xyChart.getData().add(index++, series);
+            }
+
+            setChartStyle();
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    /*
+        style
+     */
+    public void setChartStyle() {
+        if (chart == null) {
+            return;
+        }
+        if (barChart != null) {
+            ChartTools.setBarChartColors(barChart, palette, legendSide != null);
+        } else if (stackedBarChart != null) {
+            ChartTools.setBarChartColors(stackedBarChart, palette, legendSide != null);
+        } else if (lineChart != null) {
+            ChartTools.setLineChartColors(lineChart, lineWidth, palette, legendSide != null);
+        } else if (areaChart != null) {
+            ChartTools.setAreaChartColors(areaChart, lineWidth, palette, legendSide != null);
+        } else if (stackedAreaChart != null) {
+            ChartTools.setAreaChartColors(stackedAreaChart, lineWidth, palette, legendSide != null);
+        } else if (scatterChart != null) {
+            ChartTools.setScatterChart​Colors(scatterChart, palette, legendSide != null);
+        } else if (bubbleChart != null) {
+            ChartTools.setBubbleChart​Colors(bubbleChart, bubbleStyle, palette, legendSide != null);
+        }
+    }
+
+    /*
+        labels
+     */
     protected void makeLabels(XYChart.Series<X, Y> series, ObservableList<Node> nodes) {
         if (labelType == null || xyChart == null) {
             return;
         }
         try {
-            xyChart.setStyle("-fx-font-size: " + labelFontSize + "px;  -fx-text-fill: black;");
             for (int s = 0; s < series.getData().size(); s++) {
                 XYChart.Data<X, Y> item = series.getData().get(s);
                 Node label = makeLabel(series.getName(), item);
@@ -525,7 +719,7 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
         }
     }
 
-    protected void removeLabels(XYChart.Series<X, Y> series, ObservableList<Node> nodes) {
+    protected void removeLabels(ObservableList<Node> nodes) {
         if (labelType == null || labelType == LabelType.NotDisplay || labelType == LabelType.Pop) {
             return;
         }
@@ -539,22 +733,6 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
     /*
         get/set
      */
-    public String getCategoryLabel() {
-        return categoryLabel;
-    }
-
-    public void setCategoryLabel(String categoryLabel) {
-        this.categoryLabel = categoryLabel;
-    }
-
-    public String getValueLabel() {
-        return valueLabel;
-    }
-
-    public void setValueLabel(String valueLabel) {
-        this.valueLabel = valueLabel;
-    }
-
     public ChartCoordinate getCategoryCoordinate() {
         categoryCoordinate = categoryCoordinate == null ? ChartCoordinate.Cartesian : categoryCoordinate;
         return categoryCoordinate;
@@ -611,6 +789,15 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
         UserConfig.setInt(chartName + "LineWidth", getLineWidth());
     }
 
+    @Override
+    public XYChartOptions setCategoryLabel(String categoryLabel) {
+        this.categoryLabel = categoryLabel;
+        if (categoryAxis != null) {
+            categoryAxis.setLabel(categoryLabel);
+        }
+        return this;
+    }
+
     public int getCategoryFontSize() {
         categoryFontSize = categoryFontSize < 0 ? 10 : categoryFontSize;
         return categoryFontSize;
@@ -651,6 +838,15 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
         }
     }
 
+    @Override
+    public XYChartOptions setValueLabel(String valueLabel) {
+        this.valueLabel = valueLabel;
+        if (valueAxis != null) {
+            valueAxis.setLabel(valueLabel);
+        }
+        return this;
+    }
+
     public int getNumberFontSize() {
         numberFontSize = numberFontSize < 0 ? 10 : numberFontSize;
         return numberFontSize;
@@ -674,6 +870,19 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
         UserConfig.setInt(chartName + "NumberTickRotation", getNumberTickRotation());
         if (valueAxis != null) {
             valueAxis.setTickLabelRotation(this.numberTickRotation);
+        }
+    }
+
+    @Override
+    public void setTickFontSize(int tickFontSize) {
+        super.setTickFontSize(tickFontSize);
+        if (categoryAxis != null) {
+            categoryAxis.setStyle("-fx-font-size: " + categoryFontSize
+                    + "px; -fx-tick-label-font-size: " + this.tickFontSize + "px; ");
+        }
+        if (valueAxis != null) {
+            valueAxis.setStyle("-fx-font-size: " + numberFontSize
+                    + "px; -fx-tick-label-font-size: " + this.tickFontSize + "px; ");
         }
     }
 
@@ -726,7 +935,7 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
         this.displayNumberMark = displayNumberMark;
         UserConfig.setBoolean(chartName + "DisplayNumberMark", displayNumberTick);
         if (valueAxis != null) {
-            valueAxis.setTickMarkVisible(displayNumberTick);
+            valueAxis.setTickMarkVisible(displayNumberMark);
         }
     }
 
@@ -748,6 +957,10 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
 
     public void setAltRowsFill(boolean altRowsFill) {
         this.altRowsFill = altRowsFill;
+        UserConfig.setBoolean(chartName + "AltRowsFill", altRowsFill);
+        if (xyChart != null) {
+            xyChart.setAlternativeRowFillVisible(altRowsFill);
+        }
     }
 
     public boolean isAltColumnsFill() {
@@ -756,6 +969,10 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
 
     public void setAltColumnsFill(boolean altColumnsFill) {
         this.altColumnsFill = altColumnsFill;
+        UserConfig.setBoolean(chartName + "AltColumnsFill", altColumnsFill);
+        if (xyChart != null) {
+            xyChart.setAlternativeColumnFillVisible(altColumnsFill);
+        }
     }
 
     public boolean isDisplayVlines() {
@@ -764,6 +981,10 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
 
     public void setDisplayVlines(boolean displayVlines) {
         this.displayVlines = displayVlines;
+        UserConfig.setBoolean(chartName + "DisplayVlines", displayVlines);
+        if (xyChart != null) {
+            xyChart.setVerticalGridLinesVisible(displayVlines);
+        }
     }
 
     public boolean isDisplayHlines() {
@@ -772,6 +993,10 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
 
     public void setDisplayHlines(boolean displayHlines) {
         this.displayHlines = displayHlines;
+        UserConfig.setBoolean(chartName + "DisplayHlines", displayHlines);
+        if (xyChart != null) {
+            xyChart.setHorizontalGridLinesVisible(displayHlines);
+        }
     }
 
     public boolean isDisplayVZero() {
@@ -780,6 +1005,10 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
 
     public void setDisplayVZero(boolean displayVZero) {
         this.displayVZero = displayVZero;
+        UserConfig.setBoolean(chartName + "DisplayVZero", displayVZero);
+        if (xyChart != null) {
+            xyChart.setVerticalZeroLineVisible(displayVZero);
+        }
     }
 
     public boolean isDisplayHZero() {
@@ -788,9 +1017,14 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
 
     public void setDisplayHZero(boolean displayHZero) {
         this.displayHZero = displayHZero;
+        UserConfig.setBoolean(chartName + "DisplayHZero", displayHZero);
+        if (xyChart != null) {
+            xyChart.setHorizontalZeroLineVisible(displayHZero);
+        }
     }
 
     public LabelLocation getLabelLocation() {
+        MyBoxLog.console(labelLocation);
         labelLocation = labelLocation == null ? LabelLocation.Center : labelLocation;
         return labelLocation;
     }
@@ -806,6 +1040,7 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
     }
 
     public void setCategorySide(Side categorySide) {
+        MyBoxLog.debug(categorySide + "  " + (categoryAxis != null));
         this.categorySide = categorySide;
         UserConfig.setString(chartName + "CategorySide", getCategorySide().name());
         if (categoryAxis != null) {
@@ -980,6 +1215,19 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
 
     public void setResidualChart(ResidualChart residualChart) {
         this.residualChart = residualChart;
+    }
+
+    public String getBubbleStyle() {
+        bubbleStyle = bubbleStyle == null || bubbleStyle.isBlank() ? DefaultBubbleStyle : bubbleStyle;
+        return bubbleStyle;
+    }
+
+    public void setBubbleStyle(String bubbleStyle) {
+        this.bubbleStyle = bubbleStyle;
+        UserConfig.setString(chartName + "BubbleStyle", bubbleStyle);
+        if (bubbleChart != null) {
+            ChartTools.setBubbleChart​Colors(bubbleChart, getBubbleStyle(), palette, legendSide != null);
+        }
     }
 
 }

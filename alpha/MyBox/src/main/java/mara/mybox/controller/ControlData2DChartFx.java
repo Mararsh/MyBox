@@ -15,7 +15,6 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import mara.mybox.fxml.chart.ChartOptions;
 import mara.mybox.fxml.chart.ChartOptions.ChartType;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -31,7 +30,6 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlData2DChartFx extends BaseController {
 
-    protected ChartOptions options;
     protected Chart chart;
     protected List<List<String>> data;
     protected List<Data2DColumn> columns;
@@ -55,10 +53,9 @@ public class ControlData2DChartFx extends BaseController {
         }
     }
 
-    public void setChart(Chart chart, ChartOptions options) {
+    public void setChart(Chart chart) {
         try {
             this.chart = chart;
-            this.options = options;
             chartPane.getChildren().clear();
             chartPane.getChildren().add(chart);
 
@@ -67,13 +64,12 @@ public class ControlData2DChartFx extends BaseController {
         }
     }
 
-    public void drawChart() {
+    public void redraw() {
         try {
             if (data == null || data.isEmpty()) {
                 popError(message("NoData"));
                 return;
             }
-            chartPane.getChildren().clear();
 
         } catch (Exception e) {
             MyBoxLog.error(e);

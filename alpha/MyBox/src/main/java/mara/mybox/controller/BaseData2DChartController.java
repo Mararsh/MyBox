@@ -255,7 +255,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         }
     }
 
-    public void makePalette() {
+    public Map<String, String> makePalette() {
         try {
             Random random = new Random();
             if (palette == null) {
@@ -275,6 +275,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+        return palette;
     }
 
     public void redrawChart() {

@@ -46,7 +46,7 @@ public class LabeledLineChart<X, Y> extends LineChart<X, Y> {
 
     @Override
     protected void seriesRemoved(final Series<X, Y> series) {
-        xyOptions.removeLabels(series, getPlotChildren());
+        xyOptions.removeLabels(getPlotChildren());
         super.seriesRemoved(series);
     }
 

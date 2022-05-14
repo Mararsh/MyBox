@@ -3,11 +3,11 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
-import javafx.scene.chart.PieChart;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.chart.PieChartOption;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -18,7 +18,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class Data2DChartPieController extends BaseData2DChartController {
 
-    protected PieChart pieChart;
+    protected PieChartOption pieOptions;
     protected List<String> paletteList;
 
     @FXML
@@ -33,6 +33,8 @@ public class Data2DChartPieController extends BaseData2DChartController {
     public void initControls() {
         try {
             super.initControls();
+
+            pieOptions = chartController.pieOptions;
 
             sourceController.noColumnSelection(true);
 
@@ -62,9 +64,7 @@ public class Data2DChartPieController extends BaseData2DChartController {
             dataColsIndices.add(valueCol);
             outputColumns.add(data2D.column(valueCol));
 
-            chartController.data2D = data2D;
             chartController.initChart(baseName + "Pie");
-            pieChart = chartController.pieChart;
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -79,7 +79,7 @@ public class Data2DChartPieController extends BaseData2DChartController {
                 popError(message("NoData"));
                 return;
             }
-            chartController.writeChart(outputColumns, outputData);
+            pieOptions.writeChart(outputColumns, outputData);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

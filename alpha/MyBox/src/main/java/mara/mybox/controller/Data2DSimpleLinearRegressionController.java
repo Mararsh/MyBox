@@ -29,6 +29,7 @@ import mara.mybox.fxml.chart.ChartOptions.ChartType;
 import mara.mybox.fxml.chart.ChartTools;
 import mara.mybox.fxml.chart.ResidualChart;
 import mara.mybox.fxml.chart.SimpleRegressionChart;
+import mara.mybox.fxml.chart.XYChartOptions;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
@@ -42,6 +43,7 @@ import mara.mybox.value.UserConfig;
  */
 public class Data2DSimpleLinearRegressionController extends BaseData2DChartController {
 
+    protected XYChartOptions fittingOptions, residualOptions;
     protected SimpleRegressionChart regressionChart​;
     protected SimpleLinearRegression simpleRegression;
     protected double alpha, intercept, slope, rSquare, r;
@@ -81,6 +83,9 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
     public void initControls() {
         try {
             super.initControls();
+
+            fittingOptions = fittingController.xyOptions;
+            residualOptions = residualController.xyOptions;
 
             sourceController.noColumnSelection(true);
 
@@ -253,16 +258,24 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
             regressionFile = null;
             regressionData = null;
 
-            fittingController.data2D = data2D;
-            fittingController.initChart(ChartType.SimpleRegressionChart, "SimpleRegressionChart");
-            regressionChart​ = fittingController.chartOptions.getSimpleRegressionChart();
+            fittingOptions.setChartType(ChartType.SimpleRegressionChart)
+                    .setChartName("SimpleRegressionChart")
+                    .setCategoryLabel(selectedCategory)
+                    .setValueLabel(selectedValue)
+                    .setPalette(makePalette())
+                    .initChartOptions();
+            regressionChart​ = fittingOptions.getSimpleRegressionChart();
             regressionChart.setDisplayText(textCheck.isSelected())
                     .setDisplayFittedPoints(fittedPointsCheck.isSelected())
                     .setDisplayFittedLine(fittedLineCheck.isSelected());
 
-            residualController.data2D = data2D;
-            residualController.initChart(ChartType.ResidualChart, "ResidualChart");
-            residualChart = residualController.chartOptions.getResidualChart();
+            residualOptions.setChartType(ChartType.ResidualChart)
+                    .setChartName("ResidualChart")
+                    .setCategoryLabel(selectedCategory)
+                    .setValueLabel(selectedValue)
+                    .setPalette(makePalette())
+                    .initChartOptions();
+            residualChart = residualOptions.getResidualChart();
             residualChart.setDataNumber(residualColumns.size() - 2)
                     .setTitle(selectedCategory + " - " + selectedValue + "_" + message("Residual"));
             residualChart.getXAxis().setLabel(residualColumns.get(1).getColumnName());
@@ -404,10 +417,10 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
                 popError(message("NoData"));
                 return;
             }
-            fittingController.writeChart(outputColumns, outputData, true);
+            fittingController.writeXYChart(outputColumns, outputData);
 
-            residualController.writeChart(residualColumns, residualData, null, true);
-            ChartTools.setScatterChart​Colors(residualChart, palette, residualController.chartOptions.getLegendSide() != null);
+            residualController.writeXYChart(residualColumns, residualData);
+            ChartTools.setScatterChart​Colors(residualChart, palette, residualController.xyOptions.getLegendSide() != null);
 
             makePalette();
             setChartStyle();
@@ -502,7 +515,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
     }
 
     @Override
-    public void makePalette() {
+    public Map<String, String> makePalette() {
         try {
             Random random = new Random();
             if (palette == null) {
@@ -523,6 +536,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+        return palette;
     }
 
     public void makeResidualPalette() {
@@ -554,8 +568,8 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
                     .setDisplayText(textCheck.isSelected())
                     .setDisplayFittedPoints(fittedPointsCheck.isSelected())
                     .setDisplayFittedLine(fittedLineCheck.isSelected());
-            regressionChart.setLineWidth(residualController.chartOptions.getLineWidth()).setPalette(palette);
-            ChartTools.setScatterChart​Colors(regressionChart, palette, residualController.chartOptions.getLegendSide() != null);
+            regressionChart.setLineWidth(residualController.xyOptions.getLineWidth()).setPalette(palette);
+            ChartTools.setScatterChart​Colors(regressionChart, palette, residualController.xyOptions.getLegendSide() != null);
             regressionChart.displayControls();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -570,8 +584,8 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
             }
             makeResidualPalette();
             residualChart.setInfo(message("InsideSigma2") + ": " + residualInside + "/" + residualData.size())
-                    .setLineWidth(residualController.chartOptions.getLineWidth()).setPalette(residualPalette);
-            ChartTools.setScatterChart​Colors(residualChart, residualPalette, residualController.chartOptions.getLegendSide() != null);
+                    .setLineWidth(residualController.xyOptions.getLineWidth()).setPalette(residualPalette);
+            ChartTools.setScatterChart​Colors(residualChart, residualPalette, residualController.xyOptions.getLegendSide() != null);
             residualChart.displayControls();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

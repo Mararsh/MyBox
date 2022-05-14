@@ -43,7 +43,7 @@ public class Data2DChartFxOptionsController extends BaseController {
     @FXML
     protected RadioButton pointRadio, valueRadio, categoryValueRadio, categoryRadio, noRadio;
     @FXML
-    protected ComboBox<String> titleFontSizeSelector, labelFontSizeSelector;
+    protected ComboBox<String> scaleSelector, titleFontSizeSelector, labelFontSizeSelector;
     @FXML
     protected TextField titleInput;
 
@@ -55,6 +55,7 @@ public class Data2DChartFxOptionsController extends BaseController {
      */
     public void initDataTab() {
         try {
+            NodeTools.setRadioSelected(labelGroup, message(options.getLabelType().name()));
             labelGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
@@ -67,7 +68,7 @@ public class Data2DChartFxOptionsController extends BaseController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     options.setPopLabel(popLabelCheck.isSelected());
-                    chartController.drawChart();
+                    chartController.redraw();
                 }
             });
 
@@ -76,7 +77,53 @@ public class Data2DChartFxOptionsController extends BaseController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     options.setDisplayLabelName(nameCheck.isSelected());
-                    chartController.drawChart();
+                    chartController.redraw();
+                }
+            });
+
+            int labelFontSize = options.getLabelFontSize();
+            labelFontSizeSelector.getItems().addAll(Arrays.asList(
+                    "12", "14", "10", "8", "15", "16", "18", "9", "6", "4", "20", "24"
+            ));
+            labelFontSizeSelector.getSelectionModel().select(labelFontSize + "");
+            labelFontSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        int v = Integer.parseInt(newValue);
+                        if (v > 0) {
+                            options.setLabelFontSize(v);
+                            labelFontSizeSelector.getEditor().setStyle(null);
+                            chartController.redraw();
+                        } else {
+                            labelFontSizeSelector.getEditor().setStyle(UserConfig.badStyle());
+                        }
+                    } catch (Exception e) {
+                        labelFontSizeSelector.getEditor().setStyle(UserConfig.badStyle());
+                    }
+                }
+            });
+
+            int scale = options.getScale();
+            scaleSelector.getItems().addAll(
+                    Arrays.asList("2", "1", "0", "3", "4", "5", "6", "7", "8", "10", "12", "15")
+            );
+            scaleSelector.getSelectionModel().select(scale + "");
+            scaleSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        int v = Integer.parseInt(newValue);
+                        if (v > 0) {
+                            options.setScale(v);
+                            scaleSelector.getEditor().setStyle(null);
+                            chartController.redraw();
+                        } else {
+                            scaleSelector.getEditor().setStyle(UserConfig.badStyle());
+                        }
+                    } catch (Exception e) {
+                        scaleSelector.getEditor().setStyle(UserConfig.badStyle());
+                    }
                 }
             });
 
@@ -104,39 +151,9 @@ public class Data2DChartFxOptionsController extends BaseController {
                 labelType = LabelType.NotDisplay;
 
             }
-
             options.setLabelType(labelType);
 
-            chartController.drawChart();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    public void initLabelType(String defaultLabel) {
-        try {
-            String type = options.getLabelType().name();
-            isSettingValues = true;
-            switch (type) {
-                case "CategoryAndValue":
-                    categoryValueRadio.fire();
-                    break;
-                case "Value":
-                    valueRadio.fire();
-                    break;
-                case "Category":
-                    categoryRadio.fire();
-                    break;
-                case "Point":
-                    pointRadio.fire();
-                    break;
-                case "NotDisplay":
-                    noRadio.fire();
-                    break;
-            }
-            isSettingValues = false;
-            checkLabelType();
+            chartController.redraw();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -148,7 +165,7 @@ public class Data2DChartFxOptionsController extends BaseController {
      */
     public void initPlotTab() {
         try {
-            titleLabel.setText(chartController.baseTitle);
+            titleInput.setText(options.getChartTitle());
 
             int titleFontSize = options.getTitleFontSize();
             titleFontSizeSelector.getItems().addAll(Arrays.asList(
@@ -163,7 +180,6 @@ public class Data2DChartFxOptionsController extends BaseController {
                         if (v > 0) {
                             options.setTitleFontSize(v);
                             titleFontSizeSelector.getEditor().setStyle(null);
-                            chartController.drawChart();
                         } else {
                             titleFontSizeSelector.getEditor().setStyle(UserConfig.badStyle());
                         }
@@ -232,13 +248,12 @@ public class Data2DChartFxOptionsController extends BaseController {
 
     @FXML
     public void defaultTitle() {
-//        titleInput.setText(chartController.titleName());
+        titleInput.setText(options.getDefaultChartTitle());
     }
 
     @FXML
     public void goTitle() {
-        chart.setTitle(titleInput.getText());
-//        chartController.chartTitle = titleInput.getText();
+        options.setChartTitle(titleInput.getText());
     }
 
 }

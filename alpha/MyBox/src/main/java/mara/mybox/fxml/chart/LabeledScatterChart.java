@@ -69,7 +69,7 @@ public class LabeledScatterChart<X, Y> extends ScatterChart<X, Y> {
     }
 
     public void removeControls(Series<X, Y> series) {
-        xyOptions.removeLabels(series, getPlotChildren());
+        xyOptions.removeLabels(getPlotChildren());
     }
 
     @Override

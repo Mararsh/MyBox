@@ -27,6 +27,7 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.chart.BoxWhiskerChart;
 import mara.mybox.fxml.chart.ChartOptions.ChartType;
 import mara.mybox.fxml.chart.ChartTools;
+import mara.mybox.fxml.chart.XYChartOptions;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -39,6 +40,7 @@ import mara.mybox.value.UserConfig;
  */
 public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
 
+    protected XYChartOptions xyOptions;
     protected int categorysCol, boxWidth;
     protected BoxWhiskerChart boxWhiskerChart;
     protected DescriptiveStatistic calculation;
@@ -87,6 +89,8 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
     public void initControls() {
         try {
             super.initControls();
+
+            xyOptions = chartController.xyOptions;
 
             initBoxOptions();
 
@@ -375,8 +379,12 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
             if (!calculation.prepare()) {
                 return false;
             }
-            chartController.data2D = data2D;
-            chartController.initChart(ChartType.BoxWhiskerChart, "BoxWhiskerChart");
+            xyOptions.setChartType(ChartType.BoxWhiskerChart)
+                    .setChartName("BoxWhiskerChart")
+                    .setCategoryLabel(selectedCategory)
+                    .setValueLabel(selectedValue)
+                    .setPalette(makePalette())
+                    .initChartOptions();
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -463,7 +471,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
                     }
                 }
             }
-            chartController.writeChart(outputColumns, outputData, displayCols, false);
+            chartController.writeXYChart(outputColumns, outputData, displayCols, false);
 
             makePalette();
             setChartStyle();
@@ -519,8 +527,8 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
             boxWhiskerChart.applyCss();
             boxWhiskerChart.layout();
 
-            ChartTools.setLineChartColors(boxWhiskerChart, chartController.chartOptions.getLineWidth(), palette,
-                    chartController.chartOptions.getLegendSide() != null);
+            ChartTools.setLineChartColors(boxWhiskerChart, chartController.xyOptions.getLineWidth(), palette,
+                    chartController.xyOptions.getLegendSide() != null);
 
             for (XYChart.Series series : seriesList) {
                 if (meanCheck.isSelected()) {
@@ -556,7 +564,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
     }
 
     @Override
-    public void makePalette() {
+    public Map<String, String> makePalette() {
         try {
             Random random = new Random();
             if (palette == null) {
@@ -574,6 +582,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+        return palette;
     }
 
     @FXML

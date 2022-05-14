@@ -5,11 +5,13 @@ import java.util.Map;
 import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.chart.Chart;
+import javafx.scene.chart.ScatterChart;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -24,7 +26,8 @@ public class ChartOptions<X, Y> {
     protected Chart chart;
 
     protected LabelType labelType;
-    protected String chartTitle;
+    protected String defaultChartTitle, defaultCategoryLabel, defaultValueLabel,
+            chartTitle, categoryLabel, valueLabel;
     protected int scale, labelFontSize, titleFontSize, tickFontSize;
     protected boolean popLabel, displayLabelName, plotAnimated;
     protected Side titleSide, legendSide;
@@ -48,8 +51,13 @@ public class ChartOptions<X, Y> {
         this.chartName = chartName;
     }
 
+    public void clearChart() {
+        chart = null;
+    }
+
     public final void initChartOptions() {
         try {
+            clearChart();
             if (chartName == null) {
                 return;
             }
@@ -63,7 +71,8 @@ public class ChartOptions<X, Y> {
             tickFontSize = UserConfig.getInt(chartName + "TickFontSize", 10);
 
             labelType = LabelType.Point;
-            String saved = UserConfig.getString(chartName + "LabelType", "Point");
+            String saved = UserConfig.getString(chartName + "LabelType",
+                    chart instanceof ScatterChart || chart instanceof BoxWhiskerChart ? "Point" : "NotDisplay");
             if (saved != null) {
                 for (LabelType type : LabelType.values()) {
                     if (type.name().equals(saved)) {
@@ -111,7 +120,7 @@ public class ChartOptions<X, Y> {
             }
             chart.setStyle("-fx-font-size: " + titleFontSize
                     + "px; -fx-tick-label-font-size: " + tickFontSize + "px; ");
-            chart.setTitle(chartTitle);
+            chart.setTitle(getChartTitle());
             chart.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
             VBox.setVgrow(chart, Priority.ALWAYS);
             HBox.setHgrow(chart, Priority.ALWAYS);
@@ -145,6 +154,27 @@ public class ChartOptions<X, Y> {
         return legendSide != null;
     }
 
+    public double doubleValue(String v) {
+        try {
+            if (v == null || v.isBlank()) {
+                return 0;
+            }
+            double d = Double.parseDouble(v.replaceAll(",", ""));
+            return DoubleTools.scale(d, scale);
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    protected void setLabelsStyle() {
+        if (nodeLabels == null) {
+            return;
+        }
+        for (Node node : nodeLabels.values()) {
+            node.setStyle("-fx-font-size: " + labelFontSize + "px;  -fx-text-fill: black;");;
+        }
+    }
+
     /*
         get/set
      */
@@ -152,16 +182,18 @@ public class ChartOptions<X, Y> {
         return chartName;
     }
 
-    public void setChartName(String chartName) {
+    public ChartOptions setChartName(String chartName) {
         this.chartName = chartName;
+        return this;
     }
 
     public ChartType getChartType() {
         return chartType;
     }
 
-    public void setChartType(ChartType chartType) {
+    public ChartOptions setChartType(ChartType chartType) {
         this.chartType = chartType;
+        return this;
     }
 
     public Chart getChart() {
@@ -183,14 +215,16 @@ public class ChartOptions<X, Y> {
     }
 
     public String getChartTitle() {
+        chartTitle = chartTitle == null ? defaultChartTitle : chartTitle;
         return chartTitle;
     }
 
-    public void setChartTitle(String chartTitle) {
+    public ChartOptions setChartTitle(String chartTitle) {
         this.chartTitle = chartTitle;
         if (chart != null) {
-            chart.setTitle(chartTitle);
+            chart.setTitle(this.chartTitle);
         }
+        return this;
     }
 
     public boolean isPlotAnimated() {
@@ -213,6 +247,10 @@ public class ChartOptions<X, Y> {
     public void setTitleFontSize(int titleFontSize) {
         this.titleFontSize = titleFontSize;
         UserConfig.setInt(chartName + "TitleFontSize", getTitleFontSize());
+        if (chart != null) {
+            chart.setStyle("-fx-font-size: " + this.titleFontSize
+                    + "px; -fx-tick-label-font-size: " + tickFontSize + "px; ");
+        }
     }
 
     public int getTickFontSize() {
@@ -223,6 +261,10 @@ public class ChartOptions<X, Y> {
     public void setTickFontSize(int tickFontSize) {
         this.tickFontSize = tickFontSize;
         UserConfig.setInt(chartName + "TickFontSize", getTickFontSize());
+        if (chart != null) {
+            chart.setStyle("-fx-font-size: " + titleFontSize
+                    + "px; -fx-tick-label-font-size: " + this.tickFontSize + "px; ");
+        }
     }
 
     public Side getTitleSide() {
@@ -270,22 +312,26 @@ public class ChartOptions<X, Y> {
 
     public void setDisplayLabelName(boolean displayLabelName) {
         this.displayLabelName = displayLabelName;
+        UserConfig.setBoolean(chartName + "DisplayLabelName", displayLabelName);
     }
 
     public int getScale() {
+        scale = scale < 0 ? 2 : scale;
         return scale;
     }
 
     public void setScale(int scale) {
         this.scale = scale;
+        UserConfig.setInt(chartName + "Scale", getScale());
     }
 
     public Map<String, String> getPalette() {
         return palette;
     }
 
-    public void setPalette(Map<String, String> palette) {
+    public ChartOptions setPalette(Map<String, String> palette) {
         this.palette = palette;
+        return this;
     }
 
     public int getLabelFontSize() {
@@ -296,6 +342,54 @@ public class ChartOptions<X, Y> {
     public void setLabelFontSize(int labelFontSize) {
         this.labelFontSize = labelFontSize;
         UserConfig.setInt(chartName + "LabelFontSize", getLabelFontSize());
+        setLabelsStyle();
+    }
+
+    public String getCategoryLabel() {
+        categoryLabel = categoryLabel == null ? defaultCategoryLabel : categoryLabel;
+        return categoryLabel;
+    }
+
+    public ChartOptions setCategoryLabel(String categoryLabel) {
+        this.categoryLabel = categoryLabel;
+        return this;
+    }
+
+    public String getValueLabel() {
+        valueLabel = valueLabel == null ? defaultValueLabel : valueLabel;
+        return valueLabel;
+    }
+
+    public ChartOptions setValueLabel(String valueLabel) {
+        this.valueLabel = valueLabel;
+        return this;
+    }
+
+    public String getDefaultChartTitle() {
+        return defaultChartTitle;
+    }
+
+    public ChartOptions setDefaultChartTitle(String defaultChartTitle) {
+        this.defaultChartTitle = defaultChartTitle;
+        return this;
+    }
+
+    public String getDefaultCategoryLabel() {
+        return defaultCategoryLabel;
+    }
+
+    public ChartOptions setDefaultCategoryLabel(String defaultCategoryLabel) {
+        this.defaultCategoryLabel = defaultCategoryLabel;
+        return this;
+    }
+
+    public String getDefaultValueLabel() {
+        return defaultValueLabel;
+    }
+
+    public ChartOptions setDefaultValueLabel(String defaultValueLabel) {
+        this.defaultValueLabel = defaultValueLabel;
+        return this;
     }
 
 }

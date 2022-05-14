@@ -22,7 +22,6 @@ import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.fxml.chart.BoxWhiskerChart;
 import mara.mybox.fxml.chart.XYChartOptions;
 import mara.mybox.fxml.chart.XYChartOptions.ChartCoordinate;
 import mara.mybox.fxml.chart.XYChartOptions.LabelLocation;
@@ -40,6 +39,7 @@ public class Data2DChartXYOptionsController extends Data2DChartFxOptionsControll
     protected ControlData2DChartXY xyChartController;
     protected XYChartOptions xyOptions;
     protected XYChart xyChart;
+    protected String chartName;
 
     @FXML
     protected Tab categoryTab, valueTab;
@@ -57,7 +57,7 @@ public class Data2DChartXYOptionsController extends Data2DChartFxOptionsControll
             categoryTickCheck, categoryMarkCheck, numberMarkCheck, numberTickCheck;
     @FXML
     protected RadioButton cartesianRadio, logarithmicERadio, logarithmic10Radio, squareRootRadio,
-            categoryStringRadio, categoryNumberRadio, categoryLabelTopRadio,
+            categoryStringRadio, categoryNumberRadio, labelLocaionAboveRadio,
             categoryCartesianRadio, categorySquareRootRadio, categoryLogarithmicERadio, categoryLogarithmic10Radio,
             sizeCartesianRadio, sizeSquareRootRadio, sizeLogarithmicERadio, sizeLogarithmic10Radio;
     @FXML
@@ -65,28 +65,29 @@ public class Data2DChartXYOptionsController extends Data2DChartFxOptionsControll
             categoryFontSizeSelector, categoryTickRotationSelector, categoryMarginSelector, barGapSelector, categoryGapSelector,
             numberFontSizeSelector, numberTickRotationSelector;
     @FXML
-    protected TextField categoryLabel, numberLabel, bubbleStyleInput;
+    protected TextField categoryInput, valueInput, bubbleStyleInput;
 
     public Data2DChartXYOptionsController() {
     }
 
-    public void setParameters(ControlData2DChartXY xyChartController, XYChartOptions xyOptions) {
+    public void setParameters(ControlData2DChartXY xyChartController) {
         try {
             this.xyChartController = xyChartController;
-            this.xyOptions = xyOptions;
+            this.xyOptions = xyChartController.xyOptions;
 
             chartController = xyChartController;
             options = xyOptions;
             chart = xyOptions.getChart();
             xyChart = xyOptions.getXyChart();
+            chartName = xyOptions.getChartName();
+            titleLabel.setText(chartName);
 
+            isSettingValues = true;
             initDataTab();
             initPlotTab();
             initCategoryTab();
             initNumberTab();
-
             if (chart instanceof BubbleChart) {
-                categoryNumberRadio.fire();
                 categoryStringRadio.setDisable(true);
             } else {
                 plotBox.getChildren().removeAll(bubbleBox);
@@ -96,17 +97,12 @@ public class Data2DChartXYOptionsController extends Data2DChartFxOptionsControll
                 }
             }
 
-            if (chart instanceof ScatterChart || chart instanceof BoxWhiskerChart) {
-                initLabelType("Point");
-            } else {
-                initLabelType("NotDisplay");
-            }
-
             if (chart instanceof BarChart) {
-                categoryLabelTopRadio.fire();
+                labelLocaionAboveRadio.fire();
             } else {
                 categoryBox.getChildren().removeAll(barGapBox);
             }
+            isSettingValues = false;
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -135,7 +131,7 @@ public class Data2DChartXYOptionsController extends Data2DChartFxOptionsControll
                         if (v > 0) {
                             xyOptions.setLabelFontSize(v);
                             labelFontSizeSelector.getEditor().setStyle(null);
-                            chartController.drawChart();
+                            chartController.redraw();
                         } else {
                             labelFontSizeSelector.getEditor().setStyle(UserConfig.badStyle());
                         }
@@ -145,7 +141,8 @@ public class Data2DChartXYOptionsController extends Data2DChartFxOptionsControll
                 }
             });
 
-            NodeTools.setRadioSelected(labelLocaionGroup, xyOptions.getLabelLocation().name());
+            MyBoxLog.console(xyOptions.getLabelLocation().name());
+            NodeTools.setRadioSelected(labelLocaionGroup, message(xyOptions.getLabelLocation().name()));
             labelLocaionGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
@@ -160,7 +157,7 @@ public class Data2DChartXYOptionsController extends Data2DChartFxOptionsControll
                         labelLocation = LabelLocation.Below;
                     }
                     xyOptions.setLabelLocation(labelLocation);
-                    chartController.drawChart();
+                    chartController.redraw();
                 }
             });
 
@@ -189,7 +186,7 @@ public class Data2DChartXYOptionsController extends Data2DChartFxOptionsControll
                             if (v >= 0) {
                                 xyOptions.setLineWidth(v);
                                 lineWdithSelector.getEditor().setStyle(null);
-                                chartController.drawChart();
+                                chartController.redraw();
                             } else {
                                 lineWdithSelector.getEditor().setStyle(UserConfig.badStyle());
                             }
@@ -211,7 +208,6 @@ public class Data2DChartXYOptionsController extends Data2DChartFxOptionsControll
                         if (v > 0) {
                             options.setTickFontSize(v);
                             tickFontSizeSelector.getEditor().setStyle(null);
-                            chartController.drawChart();
                         } else {
                             tickFontSizeSelector.getEditor().setStyle(UserConfig.badStyle());
                         }
@@ -221,14 +217,14 @@ public class Data2DChartXYOptionsController extends Data2DChartFxOptionsControll
                 }
             });
 
-            xyReverseCheck.setSelected(xyOptions.isIsXY());
+            xyReverseCheck.setSelected(!xyOptions.isIsXY());
             xyReverseCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
                 if (isSettingValues) {
                     return;
                 }
                 checkXYReverse();
-                xyOptions.setIsXY(xyReverseCheck.isSelected());
-                chartController.drawChart();
+                xyOptions.setIsXY(!xyReverseCheck.isSelected());
+                chartController.redraw();
             });
             checkXYReverse();
 
@@ -237,65 +233,47 @@ public class Data2DChartXYOptionsController extends Data2DChartFxOptionsControll
                 if (isSettingValues) {
                     return;
                 }
-                UserConfig.setBoolean(baseName + "DisplayHlines", hlinesCheck.isSelected());
-                if (xyChart != null) {
-                    xyChart.setHorizontalGridLinesVisible(hlinesCheck.isSelected());
-                }
+                xyOptions.setDisplayHlines(hlinesCheck.isSelected());
             });
 
-            vlinesCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayVlines", false));
+            vlinesCheck.setSelected(xyOptions.isDisplayVlines());
             vlinesCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
                 if (isSettingValues) {
                     return;
                 }
-                UserConfig.setBoolean(baseName + "DisplayVlines", vlinesCheck.isSelected());
-                if (xyChart != null) {
-                    xyChart.setVerticalGridLinesVisible(vlinesCheck.isSelected());
-                }
+                xyOptions.setDisplayVlines(vlinesCheck.isSelected());
             });
 
-            hZeroCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayHZero", true));
+            hZeroCheck.setSelected(xyOptions.isDisplayHZero());
             hZeroCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
                 if (isSettingValues) {
                     return;
                 }
-                UserConfig.setBoolean(baseName + "DisplayHZero", hZeroCheck.isSelected());
-                if (xyChart != null) {
-                    xyChart.setHorizontalZeroLineVisible(hZeroCheck.isSelected());
-                }
+                xyOptions.setDisplayHZero(hZeroCheck.isSelected());
             });
 
-            vZeroCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayVZero", true));
+            vZeroCheck.setSelected(xyOptions.isDisplayVZero());
             vZeroCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
                 if (isSettingValues) {
                     return;
                 }
-                UserConfig.setBoolean(baseName + "DisplayVZero", vZeroCheck.isSelected());
-                if (xyChart != null) {
-                    xyChart.setVerticalZeroLineVisible(vZeroCheck.isSelected());
-                }
+                xyOptions.setDisplayVZero(vZeroCheck.isSelected());
             });
 
-            altColumnsFillCheck.setSelected(UserConfig.getBoolean(baseName + "AltColumnsFill", false));
+            altColumnsFillCheck.setSelected(xyOptions.isAltColumnsFill());
             altColumnsFillCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
                 if (isSettingValues) {
                     return;
                 }
-                UserConfig.setBoolean(baseName + "AltColumnsFill", altColumnsFillCheck.isSelected());
-                if (xyChart != null) {
-                    xyChart.setAlternativeColumnFillVisible(altColumnsFillCheck.isSelected());
-                }
+                xyOptions.setAltColumnsFill(altColumnsFillCheck.isSelected());
             });
 
-            altRowsFillCheck.setSelected(UserConfig.getBoolean(baseName + "AltRowsFill", true));
+            altRowsFillCheck.setSelected(xyOptions.isAltRowsFill());
             altRowsFillCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
                 if (isSettingValues) {
                     return;
                 }
-                UserConfig.setBoolean(baseName + "AltRowsFill", altRowsFillCheck.isSelected());
-                if (xyChart != null) {
-                    xyChart.setAlternativeRowFillVisible(altRowsFillCheck.isSelected());
-                }
+                xyOptions.setAltRowsFill(altRowsFillCheck.isSelected());
             });
 
             NodeTools.setRadioSelected(sizeCoordinateGroup, xyOptions.getSizeCoordinate().name());
@@ -313,7 +291,7 @@ public class Data2DChartXYOptionsController extends Data2DChartFxOptionsControll
                             sizeCoordinate = ChartCoordinate.SquareRoot;
                         }
                         xyOptions.setSizeCoordinate(sizeCoordinate);
-                        chartController.drawChart();
+                        chartController.redraw();
                     });
 
         } catch (Exception e) {
@@ -335,11 +313,23 @@ public class Data2DChartXYOptionsController extends Data2DChartFxOptionsControll
         }
     }
 
+    @FXML
+    public void defaultBubbleStyle() {
+        bubbleStyleInput.setText(XYChartOptions.DefaultBubbleStyle);
+    }
+
+    @FXML
+    public void applyBubbleStyle() {
+        xyOptions.setBubbleStyle(bubbleStyleInput.getText());
+    }
+
     /*
         category
      */
     public void initCategoryTab() {
         try {
+            categoryInput.setText(xyOptions.getCategoryLabel());
+
             categoryTickCheck.setSelected(xyOptions.isDisplayCategoryTick());
             categoryTickCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
                 if (isSettingValues) {
@@ -379,12 +369,8 @@ public class Data2DChartXYOptionsController extends Data2DChartFxOptionsControll
             categoryFontSizeSelector.getSelectionModel().selectedItemProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
                         try {
-                            int v = Integer.parseInt(newValue);
-                            if (v > 0) {
-                                xyOptions.setCategoryFontSize(v);
-                            } else {
-                                categoryFontSizeSelector.getEditor().setStyle(UserConfig.badStyle());
-                            }
+                            xyOptions.setCategoryFontSize(Integer.parseInt(newValue));
+                            categoryFontSizeSelector.getEditor().setStyle(null);
                         } catch (Exception e) {
                             categoryFontSizeSelector.getEditor().setStyle(UserConfig.badStyle());
                         }
@@ -437,7 +423,7 @@ public class Data2DChartXYOptionsController extends Data2DChartFxOptionsControll
                         return;
                     }
                     xyOptions.setCategoryIsNumbers(categoryNumberRadio.isSelected());
-                    chartController.drawChart();
+                    chartController.redraw();
                 }
             });
 
@@ -456,7 +442,7 @@ public class Data2DChartXYOptionsController extends Data2DChartFxOptionsControll
                             categoryCoordinate = ChartCoordinate.SquareRoot;
                         }
                         xyOptions.setCategoryCoordinate(categoryCoordinate);
-                        chartController.drawChart();
+                        chartController.redraw();
                     });
 
             double barGap = xyOptions.getBarGap();
@@ -471,7 +457,7 @@ public class Data2DChartXYOptionsController extends Data2DChartFxOptionsControll
                             if (d >= 0) {
                                 xyOptions.setBarGap(d);
                                 barGapSelector.getEditor().setStyle(null);
-                                chartController.drawChart();
+                                chartController.redraw();
                             } else {
                                 barGapSelector.getEditor().setStyle(UserConfig.badStyle());
                             }
@@ -492,7 +478,7 @@ public class Data2DChartXYOptionsController extends Data2DChartFxOptionsControll
                             if (d >= 0) {
                                 xyOptions.setCategoryGap(d);
                                 categoryGapSelector.getEditor().setStyle(null);
-                                chartController.drawChart();
+                                chartController.redraw();
                             } else {
                                 categoryGapSelector.getEditor().setStyle(UserConfig.badStyle());
                             }
@@ -508,13 +494,12 @@ public class Data2DChartXYOptionsController extends Data2DChartFxOptionsControll
 
     @FXML
     public void defaultCategoryLabel() {
-//        categoryLabel.setText(message("Category") + ": " + chartController.categoryName());
+        categoryInput.setText(xyOptions.getDefaultCategoryLabel());
     }
 
     @FXML
     public void goCategoryLabel() {
-//        categoryAxis.setLabel(categoryLabel.getText());
-//        chartController.categoryTitle = categoryLabel.getText();
+        xyOptions.setCategoryLabel(categoryInput.getText());
     }
 
     /*
@@ -522,6 +507,8 @@ public class Data2DChartXYOptionsController extends Data2DChartFxOptionsControll
      */
     public void initNumberTab() {
         try {
+            valueInput.setText(xyOptions.getValueLabel());
+
             numberTickCheck.setSelected(xyOptions.isDisplayNumberTick());
             numberTickCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
                 if (isSettingValues) {
@@ -610,7 +597,7 @@ public class Data2DChartXYOptionsController extends Data2DChartFxOptionsControll
                             numberCoordinate = ChartCoordinate.SquareRoot;
                         }
                         xyOptions.setNumberCoordinate(numberCoordinate);
-                        chartController.drawChart();
+                        chartController.redraw();
                     });
 
         } catch (Exception e) {
@@ -620,38 +607,25 @@ public class Data2DChartXYOptionsController extends Data2DChartFxOptionsControll
 
     @FXML
     public void defaultValueLabel() {
-//        String v = chartController.valuesNames();
-//        if (v != null) {
-//            numberLabel.setText(message("Values") + ": " + v);
-//        } else {
-//            numberLabel.setText(message("Value") + ": " + chartController.valueName());
-//        }
+        valueInput.setText(xyOptions.getDefaultValueLabel());
     }
 
     @FXML
     public void goValueLabel() {
-//        valueAxis.setLabel(numberLabel.getText());
-//        chartController.valueTitle = numberLabel.getText();
-    }
-
-    /*
-        get/set
-     */
-    public XYChart getXyChart() {
-        return xyChart;
+        xyOptions.setValueLabel(valueInput.getText());
     }
 
     /*
         static methods
      */
-    public static Data2DChartXYOptionsController open(ControlData2DChartFx chartController) {
+    public static Data2DChartXYOptionsController open(ControlData2DChartXY chartController) {
         try {
             if (chartController == null) {
                 return null;
             }
             Data2DChartXYOptionsController controller = (Data2DChartXYOptionsController) WindowTools.openChildStage(
-                    chartController.getMyWindow(), Fxmls.Data2DChartFxOptionsFxml, false);
-//            controller.setParameters(chartController);
+                    chartController.getMyWindow(), Fxmls.Data2DChartXYOptionsFxml, false);
+            controller.setParameters(chartController);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
