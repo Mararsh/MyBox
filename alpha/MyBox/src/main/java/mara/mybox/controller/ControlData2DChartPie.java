@@ -4,46 +4,60 @@ import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.chart.PieChartOption;
+import mara.mybox.fxml.chart.PieChartOptions;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
  * @CreateDate 2022-5-7
  * @License Apache License Version 2.0
  */
-public class ControlData2DChartPie extends ControlData2DChartFx {
+public class ControlData2DChartPie extends BaseData2DChartFx {
 
-    protected PieChartOption pieOptions;
+    protected PieChartOptions pieOptions;
     protected String categoryName, valueName;
+    protected Data2DChartPieOptionsController optionsController;
 
     public ControlData2DChartPie() {
     }
 
     @Override
-    public void initControls() {
+    public void initValues() {
         try {
-            super.initControls();
+            super.initValues();
+            pieOptions = new PieChartOptions();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    public void initChart(String chartName) {
+    @Override
+    public void redraw() {
         try {
-            if (chartName == null) {
+            if (data == null || data.isEmpty()) {
+                popError(message("NoData"));
                 return;
             }
-            pieOptions = new PieChartOption(chartName);
-            setChart(pieOptions.makeChart());
+            writeChart(columns, data);
 
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+            MyBoxLog.error(e);
         }
     }
 
-    public void writeXYChart(List<Data2DColumn> columns, List<List<String>> data) {
+    public void writeChart(List<Data2DColumn> columns, List<List<String>> data) {
+        this.columns = columns;
+        this.data = data;
+        pieOptions.makeChart();
+        setChart(pieOptions.getPieChart());
         pieOptions.writeChart(columns, data);
+        if (optionsController != null && optionsController.isShowing()
+                && !pieOptions.getChartName().equals(optionsController.chartName)) {
+            optionsController.close();
+            optionsController = Data2DChartPieOptionsController.open(this);
+        }
+
     }
 
     @FXML

@@ -133,7 +133,6 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
                     }
                 }
             }
-            MyBoxLog.console(saved + "  " + labelLocation);
 
             categorySide = Side.BOTTOM;
             saved = UserConfig.getString(chartName + "CategorySide", "BOTTOM");
@@ -250,6 +249,8 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
 
     @Override
     public void clearChart() {
+        super.clearChart();
+
         xyChart = null;
         lineChart = null;
         barChart = null;
@@ -286,7 +287,7 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
 //                    categoryStringAxis.setEndMargin(20);
 //                }
             }
-            categoryAxis.setLabel(getCategoryLabel());
+            categoryAxis.setLabel((displayLabelName ? message("Category") + ": " : "") + getCategoryLabel());
             categoryAxis.setSide(categorySide);
             categoryAxis.setTickLabelsVisible(displayCategoryTick);
             categoryAxis.setTickMarkVisible(displayCategoryMark);
@@ -296,7 +297,7 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
                     + "px; -fx-tick-label-font-size: " + tickFontSize + "px; ");
 
             valueAxis = new NumberAxis();
-            valueAxis.setLabel(getValueLabel());
+            valueAxis.setLabel((displayLabelName ? message("Value") + ": " : "") + getValueLabel());
             valueAxis.setSide(numberSide);
             valueAxis.setTickLabelsVisible(displayNumberTick);
             valueAxis.setTickMarkVisible(displayNumberMark);
@@ -496,9 +497,9 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
                 double categoryValue, categoryCoordinateValue, numberValue, numberCoordinateValue;
                 for (List<String> rowData : data) {
                     String category = rowData.get(startIndex);
-                    categoryValue = doubleValue(category);
+                    categoryValue = scaleValue(category);
                     categoryCoordinateValue = ChartTools.coordinateValue(categoryCoordinate, categoryValue);
-                    numberValue = doubleValue(rowData.get(col));
+                    numberValue = scaleValue(rowData.get(col));
                     numberCoordinateValue = ChartTools.coordinateValue(numberCoordinate, numberValue);
                     if (isXY) {
                         if (xyChart.getXAxis() instanceof NumberAxis) {
@@ -552,11 +553,11 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
                 double categoryValue, categoryCoordinateValue, numberValue, numberCoordinateValue,
                         sizeValue, sizeCoordinateValue;
                 for (List<String> rowData : data) {
-                    categoryValue = doubleValue(rowData.get(startIndex));
+                    categoryValue = scaleValue(rowData.get(startIndex));
                     categoryCoordinateValue = ChartTools.coordinateValue(categoryCoordinate, categoryValue);
-                    numberValue = doubleValue(rowData.get(startIndex + 1));
+                    numberValue = scaleValue(rowData.get(startIndex + 1));
                     numberCoordinateValue = ChartTools.coordinateValue(numberCoordinate, numberValue);
-                    sizeValue = doubleValue(rowData.get(col));
+                    sizeValue = scaleValue(rowData.get(col));
                     if (sizeValue <= 0) {
                         continue;
                     }
@@ -793,7 +794,7 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
     public XYChartOptions setCategoryLabel(String categoryLabel) {
         this.categoryLabel = categoryLabel;
         if (categoryAxis != null) {
-            categoryAxis.setLabel(categoryLabel);
+            categoryAxis.setLabel((displayLabelName ? message("Category") + ": " : "") + categoryLabel);
         }
         return this;
     }
@@ -842,7 +843,7 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
     public XYChartOptions setValueLabel(String valueLabel) {
         this.valueLabel = valueLabel;
         if (valueAxis != null) {
-            valueAxis.setLabel(valueLabel);
+            valueAxis.setLabel((displayLabelName ? message("Value") + ": " : "") + valueLabel);
         }
         return this;
     }
@@ -1024,7 +1025,6 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
     }
 
     public LabelLocation getLabelLocation() {
-        MyBoxLog.console(labelLocation);
         labelLocation = labelLocation == null ? LabelLocation.Center : labelLocation;
         return labelLocation;
     }
@@ -1040,7 +1040,6 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
     }
 
     public void setCategorySide(Side categorySide) {
-        MyBoxLog.debug(categorySide + "  " + (categoryAxis != null));
         this.categorySide = categorySide;
         UserConfig.setString(chartName + "CategorySide", getCategorySide().name());
         if (categoryAxis != null) {

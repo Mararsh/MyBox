@@ -27,7 +27,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-2-21
  * @License Apache License Version 2.0
  */
-public class BaseData2DController extends BaseController {
+public abstract class BaseData2DController extends BaseController {
 
     protected Data2D.Type type;
 

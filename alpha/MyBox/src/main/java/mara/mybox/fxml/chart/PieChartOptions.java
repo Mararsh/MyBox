@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Random;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.chart.PieChart;
 import mara.mybox.db.data.Data2DColumn;
@@ -20,15 +21,21 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-5-13
  * @License Apache License Version 2.0
  */
-public class PieChartOption extends ChartOptions {
+public class PieChartOptions extends ChartOptions {
 
     protected PieChart pieChart;
 
     protected boolean clockwise;
 
-    public PieChartOption(String chartName) {
-        super(chartName);
+    public PieChartOptions() {
+        chartType = ChartType.Pie;
+    }
+
+    public PieChartOptions init(String chartName) {
+        clearChart();
+        this.chartName = chartName;
         initPieOptions();
+        return this;
     }
 
     public final void initPieOptions() {
@@ -36,16 +43,26 @@ public class PieChartOption extends ChartOptions {
             if (chartName == null) {
                 return;
             }
-
+            initChartOptions();
             clockwise = UserConfig.getBoolean(chartName + "Clockwise", false);
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
+    @Override
+    public void clearChart() {
+        super.clearChart();
+        pieChart = null;
+    }
+
     public PieChart makeChart() {
         try {
+            clearChart();
+            chartType = ChartType.Pie;
+            if (chartName == null) {
+                return null;
+            }
             initPieChart();
             styleChart();
         } catch (Exception e) {
@@ -56,7 +73,7 @@ public class PieChartOption extends ChartOptions {
 
     public void initPieChart() {
         try {
-
+            pieChart = new PieChart();
             chart = pieChart;
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -68,9 +85,12 @@ public class PieChartOption extends ChartOptions {
             Random random = new Random();
             ObservableList<PieChart.Data> pieData = FXCollections.observableArrayList();
             pieChart.setData(pieData);
+            if (legendSide == null) {
+                pieChart.setLegendSide(Side.TOP);
+            }
             double total = 0;
             for (List<String> rowData : data) {
-                double d = doubleValue(rowData.get(2));
+                double d = scaleValue(rowData.get(2));
                 if (d > 0) {
                     total += d;
                 }
@@ -90,14 +110,14 @@ public class PieChartOption extends ChartOptions {
                 String value = DoubleTools.format(d, scale);
                 switch (labelType) {
                     case Category:
-                        label = (displayLabelName ? categoryLabel + ": " : "") + name;
+                        label = (displayLabelName ? getCategoryLabel() + ": " : "") + name;
                         break;
                     case Value:
-                        label = (displayLabelName ? valueLabel + ": " : "") + value + "=" + percent + "%";
+                        label = (displayLabelName ? getValueLabel() + ": " : "") + value + "=" + percent + "%";
                         break;
                     case CategoryAndValue:
-                        label = (displayLabelName ? categoryLabel + ": " : "") + name + "\n"
-                                + (displayLabelName ? valueLabel + ": " : "") + value + "=" + percent + "%";
+                        label = (displayLabelName ? getCategoryLabel() + ": " : "") + name + "\n"
+                                + (displayLabelName ? getValueLabel() + ": " : "") + value + "=" + percent + "%";
                         break;
                     case NotDisplay:
                     case Point:
@@ -110,13 +130,15 @@ public class PieChartOption extends ChartOptions {
                 pieData.add(item);
                 if (popLabel()) {
                     NodeStyleTools.setTooltip(item.getNode(),
-                            categoryLabel + ": " + name + "\n"
-                            + valueLabel + ": " + value + "=" + percent + "%");
+                            getCategoryLabel() + ": " + name + "\n"
+                            + getValueLabel() + ": " + value + "=" + percent + "%");
                 }
                 paletteList.add(FxColorTools.randomRGB(random));
             }
 
+            pieChart.setLegendVisible(legendSide == null);
             pieChart.setLabelsVisible(labelVisible());
+            pieChart.setClockwise(clockwise);
             ChartTools.setPieColors(pieChart, paletteList, showLegend());
 
         } catch (Exception e) {
@@ -149,6 +171,10 @@ public class PieChartOption extends ChartOptions {
 
     public void setClockwise(boolean clockwise) {
         this.clockwise = clockwise;
+        UserConfig.setBoolean(chartName + "Clockwise", clockwise);
+        if (pieChart != null) {
+            pieChart.setClockwise(clockwise);
+        }
     }
 
 }

@@ -222,6 +222,11 @@ public class Data2DSetStylesController extends BaseData2DHandleController {
         start(task);
     }
 
+    @FXML
+    public void cssGuide() {
+        WebBrowserController.oneOpen("https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html", true);
+    }
+
     /*
         static
      */

@@ -28,11 +28,11 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-5-7
  * @License Apache License Version 2.0
  */
-public class ControlData2DChartFx extends BaseController {
+public abstract class BaseData2DChartFx extends BaseController {
 
     protected Chart chart;
-    protected List<List<String>> data;
-    protected List<Data2DColumn> columns;
+    protected List<List<String>> data, checkedData;
+    protected List<Data2DColumn> columns, checkedColumns;
     protected ChartType chartType;
 
     @FXML
@@ -40,8 +40,10 @@ public class ControlData2DChartFx extends BaseController {
     @FXML
     protected AnchorPane chartPane;
 
-    public ControlData2DChartFx() {
+    public BaseData2DChartFx() {
     }
+
+    public abstract void redraw();
 
     @Override
     public void initControls() {
@@ -61,18 +63,6 @@ public class ControlData2DChartFx extends BaseController {
 
         } catch (Exception e) {
             MyBoxLog.debug(e);
-        }
-    }
-
-    public void redraw() {
-        try {
-            if (data == null || data.isEmpty()) {
-                popError(message("NoData"));
-                return;
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
         }
     }
 
@@ -138,14 +128,15 @@ public class ControlData2DChartFx extends BaseController {
             s.append("<div align=\"center\"><img src=\"").append(imageFile.toURI().toString()).append("\"  style=\"max-width:95%;\"></div>\n");
             s.append("<hr>\n");
 
+            checkData();
             List<String> names = new ArrayList<>();
-            if (columns != null) {
-                for (Data2DColumn c : columns) {
+            if (checkedColumns != null) {
+                for (Data2DColumn c : checkedColumns) {
                     names.add(c.getColumnName());
                 }
             }
             StringTable table = new StringTable(names);
-            for (List<String> row : data) {
+            for (List<String> row : checkedData) {
                 table.add(row);
             }
 
@@ -165,7 +156,44 @@ public class ControlData2DChartFx extends BaseController {
             popError(message("NoData"));
             return;
         }
-        DataManufactureController.open(columns, data);
+        checkData();
+        DataManufactureController.open(checkedColumns, checkedData);
+    }
+
+    public void checkData() {
+        checkedData = data;
+        checkedColumns = columns;
+        if (columns == null || columns.isEmpty()) {
+            return;
+        }
+        List<Integer> indice = new ArrayList<>();
+        List<String> names = new ArrayList<>();
+        for (int i = 0; i < columns.size(); i++) {
+            String name = columns.get(i).getColumnName();
+            if (!names.contains(name)) {
+                names.add(name);
+                indice.add(i);
+            }
+        }
+        if (indice.size() == columns.size()) {
+            return;
+        }
+        checkedData = new ArrayList<>();
+        checkedColumns = new ArrayList<>();
+        for (int i = 0; i < columns.size(); i++) {
+            if (indice.contains(i)) {
+                checkedColumns.add(columns.get(i));
+            }
+        }
+        for (List<String> row : data) {
+            List<String> checkedRow = new ArrayList<>();
+            for (int i = 0; i < columns.size(); i++) {
+                if (indice.contains(i)) {
+                    checkedRow.add(row.get(i));
+                }
+            }
+            checkedData.add(checkedRow);
+        }
     }
 
     @Override

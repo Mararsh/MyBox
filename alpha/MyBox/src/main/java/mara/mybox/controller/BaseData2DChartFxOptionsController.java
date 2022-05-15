@@ -5,7 +5,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Side;
-import javafx.scene.chart.Chart;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -26,28 +25,28 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-5-11
  * @License Apache License Version 2.0
  */
-public class Data2DChartFxOptionsController extends BaseController {
+public abstract class BaseData2DChartFxOptionsController extends BaseController {
 
-    protected ControlData2DChartFx chartController;
+    protected BaseData2DChartFx chartController;
     protected ChartOptions options;
-    protected Chart chart;
+    protected String chartName;
 
     @FXML
     protected Tab dataTab, plotTab;
     @FXML
     protected Label titleLabel;
     @FXML
-    protected ToggleGroup labelGroup, titleSideGroup, legendGroup;
+    protected ToggleGroup labelGroup, legendGroup;
     @FXML
     protected CheckBox popLabelCheck, nameCheck, animatedCheck;
     @FXML
     protected RadioButton pointRadio, valueRadio, categoryValueRadio, categoryRadio, noRadio;
     @FXML
-    protected ComboBox<String> scaleSelector, titleFontSizeSelector, labelFontSizeSelector;
+    protected ComboBox<String> scaleSelector, titleFontSizeSelector;
     @FXML
     protected TextField titleInput;
 
-    public Data2DChartFxOptionsController() {
+    public BaseData2DChartFxOptionsController() {
     }
 
     /*
@@ -81,29 +80,6 @@ public class Data2DChartFxOptionsController extends BaseController {
                 }
             });
 
-            int labelFontSize = options.getLabelFontSize();
-            labelFontSizeSelector.getItems().addAll(Arrays.asList(
-                    "12", "14", "10", "8", "15", "16", "18", "9", "6", "4", "20", "24"
-            ));
-            labelFontSizeSelector.getSelectionModel().select(labelFontSize + "");
-            labelFontSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        int v = Integer.parseInt(newValue);
-                        if (v > 0) {
-                            options.setLabelFontSize(v);
-                            labelFontSizeSelector.getEditor().setStyle(null);
-                            chartController.redraw();
-                        } else {
-                            labelFontSizeSelector.getEditor().setStyle(UserConfig.badStyle());
-                        }
-                    } catch (Exception e) {
-                        labelFontSizeSelector.getEditor().setStyle(UserConfig.badStyle());
-                    }
-                }
-            });
-
             int scale = options.getScale();
             scaleSelector.getItems().addAll(
                     Arrays.asList("2", "1", "0", "3", "4", "5", "6", "7", "8", "10", "12", "15")
@@ -114,7 +90,7 @@ public class Data2DChartFxOptionsController extends BaseController {
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
                         int v = Integer.parseInt(newValue);
-                        if (v > 0) {
+                        if (v >= 0) {
                             options.setScale(v);
                             scaleSelector.getEditor().setStyle(null);
                             chartController.redraw();
@@ -185,27 +161,6 @@ public class Data2DChartFxOptionsController extends BaseController {
                         }
                     } catch (Exception e) {
                         titleFontSizeSelector.getEditor().setStyle(UserConfig.badStyle());
-                    }
-                }
-            });
-
-            NodeTools.setRadioSelected(titleSideGroup, options.getTitleSide().name());
-            titleSideGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    if (isSettingValues || newValue == null) {
-                        return;
-                    }
-                    String value = ((RadioButton) newValue).getText();
-                    options.setTitleSide(Side.LEFT);
-                    if (message("Top").equals(value)) {
-                        options.setTitleSide(Side.TOP);
-                    } else if (message("Bottom").equals(value)) {
-                        options.setTitleSide(Side.BOTTOM);
-                    } else if (message("Left").equals(value)) {
-                        options.setTitleSide(Side.LEFT);
-                    } else if (message("Right").equals(value)) {
-                        options.setTitleSide(Side.RIGHT);
                     }
                 }
             });

@@ -10,6 +10,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
@@ -65,7 +66,7 @@ License:    Apache License Version 2.0
                                                         <ToggleGroup fx:id="labelLocaionGroup" />
                                                     </toggleGroup>
                                                 </RadioButton>
-                                                <RadioButton fx:id="labelLocaionAboveRadio" mnemonicParsing="false" text="%Above" toggleGroup="$labelLocaionGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%Above" toggleGroup="$labelLocaionGroup" />
                                                 <RadioButton mnemonicParsing="false" text="%Center" toggleGroup="$labelLocaionGroup" />
                                             </children>
                                         </FlowPane>
@@ -123,7 +124,7 @@ License:    Apache License Version 2.0
                                         </HBox>
                                         <FlowPane hgap="5.0" vgap="5.0">
                                             <children>
-                                    <Label maxWidth="1.7976931348623157E308" text="%Location" />
+                                                <Label maxWidth="1.7976931348623157E308" text="%Location" />
                                                 <RadioButton mnemonicParsing="false" selected="true" text="%Top">
                                                     <toggleGroup>
                                                         <ToggleGroup fx:id="titleSideGroup" />
@@ -141,13 +142,13 @@ License:    Apache License Version 2.0
                                                 <Label text="px" />
                                             </children>
                                         </HBox>
-                                          <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                              <children>
-                                                  <Label minWidth="-Infinity" text="%TickFontSize" />
-                                                  <ComboBox fx:id="tickFontSizeSelector" editable="true" prefWidth="100.0" />
-                                                  <Label text="px" />
-                                              </children>
-                                          </HBox>
+                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                            <children>
+                                                <Label minWidth="-Infinity" text="%TickFontSize" />
+                                                <ComboBox fx:id="tickFontSizeSelector" editable="true" prefWidth="100.0" />
+                                                <Label text="px" />
+                                            </children>
+                                        </HBox>
                                         <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
                                             <children>
                                                 <Label maxWidth="1.7976931348623157E308" text="%Legend" />
@@ -180,12 +181,6 @@ License:    Apache License Version 2.0
                                                     <children>
                                                         <CheckBox fx:id="hZeroCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%DisplayHorizontalZeroLine" wrapText="true" />
                                                         <CheckBox fx:id="vZeroCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%DisplayVerticalZeroLine" wrapText="true" />
-                                                    </children>
-                                                </FlowPane>
-                                                <FlowPane hgap="5.0" layoutX="10.0" layoutY="37.0" vgap="5.0">
-                                                    <children>
-                                                        <CheckBox fx:id="altColumnsFillCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%AlternativeColumnFillColors" wrapText="true" />
-                                                        <CheckBox fx:id="altRowsFillCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%AlternativeRowsFillColors" wrapText="true" />
                                                     </children>
                                                 </FlowPane>
                                                 <HBox fx:id="lineWidthBox" alignment="CENTER_LEFT" spacing="5.0">
@@ -236,6 +231,7 @@ License:    Apache License Version 2.0
                                                         <RadioButton fx:id="sizeLogarithmic10Radio" mnemonicParsing="false" text="%Logarithmic10Coordinate" toggleGroup="$sizeCoordinateGroup" />
                                                     </children>
                                                 </FlowPane>
+                                                <Hyperlink maxWidth="1.7976931348623157E308" minHeight="-Infinity" onAction="#cssGuide" text="%JavafxCssGuide" wrapText="true" />
                                             </children>
                                         </VBox>
                                     </children>
@@ -303,13 +299,6 @@ License:    Apache License Version 2.0
                                             <children>
                                                 <Label text="%TickLabelRotation" />
                                                 <ComboBox fx:id="categoryTickRotationSelector" editable="true" prefWidth="100.0" />
-                                            </children>
-                                        </HBox>
-                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                            <children>
-                                                <Label minWidth="-Infinity" text="%Margin" />
-                                                <ComboBox fx:id="categoryMarginSelector" editable="true" prefWidth="100.0" />
-                                                <Label text="px" />
                                             </children>
                                         </HBox>
                                         <HBox fx:id="barGapBox" alignment="CENTER_LEFT" spacing="5.0">

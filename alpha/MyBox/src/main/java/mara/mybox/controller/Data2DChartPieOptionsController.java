@@ -2,11 +2,10 @@ package mara.mybox.controller;
 
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.chart.PieChart;
 import javafx.scene.control.CheckBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.fxml.chart.PieChartOption;
+import mara.mybox.fxml.chart.PieChartOptions;
 import mara.mybox.value.Fxmls;
 
 /**
@@ -14,11 +13,10 @@ import mara.mybox.value.Fxmls;
  * @CreateDate 2022-5-11
  * @License Apache License Version 2.0
  */
-public class Data2DChartPieOptionsController extends Data2DChartFxOptionsController {
+public class Data2DChartPieOptionsController extends BaseData2DChartFxOptionsController {
 
     protected ControlData2DChartPie pieChartController;
-    protected PieChartOption fxPieChart;
-    protected PieChart pieChart;
+    protected PieChartOptions pieOptions;
 
     @FXML
     protected CheckBox clockwiseCheck;
@@ -29,10 +27,17 @@ public class Data2DChartPieOptionsController extends Data2DChartFxOptionsControl
     public void setParameters(ControlData2DChartPie pieChartController) {
         try {
             this.pieChartController = pieChartController;
+            this.pieOptions = pieChartController.pieOptions;
 
+            chartController = pieChartController;
+            options = pieOptions;
+            chartName = options.getChartName();
+            titleLabel.setText(chartName);
+
+            isSettingValues = true;
             initDataTab();
             initPlotTab();
-
+            isSettingValues = false;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -47,15 +52,12 @@ public class Data2DChartPieOptionsController extends Data2DChartFxOptionsControl
         try {
             super.initPlotTab();
 
-            clockwiseCheck.setSelected(fxPieChart.isClockwise());
+            clockwiseCheck.setSelected(pieOptions.isClockwise());
             clockwiseCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
                 if (isSettingValues) {
                     return;
                 }
-                fxPieChart.setClockwise(clockwiseCheck.isSelected());
-                if (pieChart != null) {
-                    pieChart.setClockwise(clockwiseCheck.isSelected());
-                }
+                pieOptions.setClockwise(clockwiseCheck.isSelected());
             });
 
         } catch (Exception e) {
@@ -66,14 +68,14 @@ public class Data2DChartPieOptionsController extends Data2DChartFxOptionsControl
     /*
         static methods
      */
-    public static Data2DChartPieOptionsController open(ControlData2DChartFx chartController) {
+    public static Data2DChartPieOptionsController open(ControlData2DChartPie chartController) {
         try {
             if (chartController == null) {
                 return null;
             }
             Data2DChartPieOptionsController controller = (Data2DChartPieOptionsController) WindowTools.openChildStage(
                     chartController.getMyWindow(), Fxmls.Data2DChartPieOptionsFxml, false);
-//            controller.setParameters(chartController);
+            controller.setParameters(chartController);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

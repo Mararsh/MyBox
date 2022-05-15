@@ -12,7 +12,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-5-7
  * @License Apache License Version 2.0
  */
-public class ControlData2DChartXY extends ControlData2DChartFx {
+public class ControlData2DChartXY extends BaseData2DChartFx {
 
     protected XYChartOptions xyOptions;
     protected List<Integer> colIndics;

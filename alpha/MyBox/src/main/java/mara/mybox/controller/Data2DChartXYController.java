@@ -30,7 +30,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
     protected ToggleGroup chartGroup;
     @FXML
     protected RadioButton barChartRadio, stackedBarChartRadio, lineChartRadio, scatterChartRadio,
-            bubbleChartRadio, areaChartRadio, stackedAreaChartRadio, labelLocaionAboveRadio;
+            bubbleChartRadio, areaChartRadio, stackedAreaChartRadio;
     @FXML
     protected VBox columnsBox;
     @FXML
@@ -140,8 +140,8 @@ public class Data2DChartXYController extends BaseData2DChartController {
             }
             xyOptions.init(chartType, chartName)
                     .setDefaultChartTitle(title)
-                    .setDefaultCategoryLabel(message("Category") + ": " + selectedCategory)
-                    .setDefaultValueLabel(message("Value") + ": " + selectedValue)
+                    .setDefaultCategoryLabel(selectedCategory)
+                    .setDefaultValueLabel(selectedValue)
                     .setPalette(makePalette());
             return true;
         } catch (Exception e) {

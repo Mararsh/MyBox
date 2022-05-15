@@ -105,6 +105,32 @@ public class ChartTools {
         }
     }
 
+    public static void setPieLegend(PieChart pie, List<String> palette, boolean showLegend) {
+        if (pie == null || palette == null || pie.getData() == null || pie.getData().size() > palette.size()) {
+            return;
+        }
+        pie.setLegendVisible(showLegend);
+        if (showLegend) {
+            Set<Node> legendItems = pie.lookupAll("Label.chart-legend-item");
+            if (legendItems.isEmpty()) {
+                return;
+            }
+            for (Node legendItem : legendItems) {
+                Label legendLabel = (Label) legendItem;
+                Node legend = legendLabel.getGraphic();
+                if (legend != null) {
+                    for (int i = 0; i < pie.getData().size(); i++) {
+                        String name = pie.getData().get(i).getName();
+                        if (name.equals(legendLabel.getText())) {
+                            legend.setStyle("-fx-background-color: " + palette.get(i));
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public static void setBarChartColors(XYChart chart, boolean showLegend) {
         List<String> palette = FxColorTools.randomRGB(chart.getData().size());
         setBarChartColors(chart, palette, showLegend);

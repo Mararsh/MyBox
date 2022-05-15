@@ -70,7 +70,7 @@ public class ChartOptions<X, Y> {
             titleFontSize = UserConfig.getInt(chartName + "TitleFontSize", 12);
             tickFontSize = UserConfig.getInt(chartName + "TickFontSize", 10);
 
-            labelType = LabelType.Point;
+            labelType = chart instanceof ScatterChart || chart instanceof BoxWhiskerChart ? LabelType.Point : LabelType.NotDisplay;
             String saved = UserConfig.getString(chartName + "LabelType",
                     chart instanceof ScatterChart || chart instanceof BoxWhiskerChart ? "Point" : "NotDisplay");
             if (saved != null) {
@@ -96,10 +96,14 @@ public class ChartOptions<X, Y> {
             legendSide = Side.TOP;
             saved = UserConfig.getString(chartName + "LegendSide", "TOP");
             if (saved != null) {
-                for (Side value : Side.values()) {
-                    if (value.name().equals(saved)) {
-                        legendSide = value;
-                        break;
+                if ("NotDisplay".equals(saved)) {
+                    legendSide = null;
+                } else {
+                    for (Side value : Side.values()) {
+                        if (value.name().equals(saved)) {
+                            legendSide = value;
+                            break;
+                        }
                     }
                 }
             }
@@ -159,8 +163,18 @@ public class ChartOptions<X, Y> {
             if (v == null || v.isBlank()) {
                 return 0;
             }
-            double d = Double.parseDouble(v.replaceAll(",", ""));
-            return DoubleTools.scale(d, scale);
+            return Double.parseDouble(v.replaceAll(",", ""));
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    public double scaleValue(String v) {
+        try {
+            if (v == null || v.isBlank()) {
+                return 0;
+            }
+            return DoubleTools.scale(doubleValue(v), scale);
         } catch (Exception e) {
             return 0;
         }
@@ -281,19 +295,18 @@ public class ChartOptions<X, Y> {
     }
 
     public Side getLegendSide() {
-        legendSide = legendSide == null ? Side.TOP : legendSide;
         return legendSide;
     }
 
     public void setLegendSide(Side legendSide) {
         this.legendSide = legendSide;
-        UserConfig.setString(chartName + "LegendSide", getLegendSide().name());
+        UserConfig.setString(chartName + "LegendSide", legendSide == null ? "NotDisplay" : getLegendSide().name());
         if (chart != null) {
-            if (this.legendSide == null) {
+            if (legendSide == null) {
                 chart.setLegendVisible(false);
             } else {
                 chart.setLegendVisible(true);
-                chart.setLegendSide(this.legendSide);
+                chart.setLegendSide(legendSide);
             }
         }
     }
