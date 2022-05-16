@@ -72,10 +72,10 @@ public class ChartTools {
     // This should be called after data have been assigned to pie
     public static void setPieColors(PieChart pie, boolean showLegend) {
         List<String> palette = FxColorTools.randomRGB(pie.getData().size());
-        setPieColors(pie, palette, showLegend);
+        setPieColors(pie, palette, showLegend, 10);
     }
 
-    public static void setPieColors(PieChart pie, List<String> palette, boolean showLegend) {
+    public static void setPieColors(PieChart pie, List<String> palette, boolean showLegend, int fontSize) {
         if (pie == null || palette == null || pie.getData() == null || pie.getData().size() > palette.size()) {
             return;
         }
@@ -83,26 +83,11 @@ public class ChartTools {
             PieChart.Data data = pie.getData().get(i);
             data.getNode().setStyle("-fx-pie-color: " + palette.get(i) + ";");
         }
-        pie.setLegendVisible(showLegend);
-        if (showLegend) {
-            Set<Node> legendItems = pie.lookupAll("Label.chart-legend-item");
-            if (legendItems.isEmpty()) {
-                return;
-            }
-            for (Node legendItem : legendItems) {
-                Label legendLabel = (Label) legendItem;
-                Node legend = legendLabel.getGraphic();
-                if (legend != null) {
-                    for (int i = 0; i < pie.getData().size(); i++) {
-                        String name = pie.getData().get(i).getName();
-                        if (name.equals(legendLabel.getText())) {
-                            legend.setStyle("-fx-background-color: " + palette.get(i));
-                            break;
-                        }
-                    }
-                }
-            }
+        Set<Node> labelItems = pie.lookupAll("chart-pie-label");
+        for (Node labelItem : labelItems) {
+            labelItem.setStyle("-fx-font-size: " + fontSize + "fx;");
         }
+        setPieLegend(pie, palette, showLegend);
     }
 
     public static void setPieLegend(PieChart pie, List<String> palette, boolean showLegend) {
@@ -186,7 +171,8 @@ public class ChartTools {
         setLegend(chart, palette, showLegend);
     }
 
-    public static void setLineChartColors(XYChart chart, int lineWidth, Map<String, String> palette, boolean showLegend) {
+    public static void setLineChartColors(XYChart chart, int lineWidth, Map<String, String> palette,
+            boolean showLegend, boolean dotted) {
         if (chart == null || palette == null) {
             return;
         }
@@ -209,7 +195,8 @@ public class ChartTools {
             }
             Node node = seriesNode.lookup(".chart-series-line");
             if (node != null) {
-                node.setStyle("-fx-stroke: " + color + "; -fx-stroke-width: " + lineWidth + "px;");
+                node.setStyle("-fx-stroke: " + color + "; -fx-stroke-width: " + lineWidth + "px;"
+                        + (dotted ? " -fx-stroke-dash-array: " + lineWidth * 2 + ";" : ""));
             }
             for (int i = 0; i < series.getData().size(); i++) {
                 XYChart.Data item = (XYChart.Data) series.getData().get(i);

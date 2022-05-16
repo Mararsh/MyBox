@@ -168,7 +168,7 @@ public abstract class BaseData2DChartFxOptionsController extends BaseController 
             if (options.getLegendSide() == null) {
                 NodeTools.setRadioSelected(legendGroup, message("NotDisplay"));
             } else {
-                NodeTools.setRadioSelected(legendGroup, options.getLegendSide().name());
+                NodeTools.setRadioSelected(legendGroup, message(options.getLegendSide().name()));
             }
             legendGroup.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) -> {
                 if (isSettingValues || newValue == null) {

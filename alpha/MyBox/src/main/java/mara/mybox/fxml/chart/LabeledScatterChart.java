@@ -1,7 +1,6 @@
 package mara.mybox.fxml.chart;
 
 import java.util.List;
-import java.util.Map;
 import javafx.geometry.Bounds;
 import javafx.geometry.Side;
 import javafx.scene.Node;
@@ -25,12 +24,10 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class LabeledScatterChart<X, Y> extends ScatterChart<X, Y> {
 
-    protected XYChartOptions xyOptions;
+    protected XYChartMaker chartMaker;
 
     protected boolean written;
     protected int dataNumber;
-    protected int lineWidth = 2;
-    protected Map<String, String> palette;
 
     public LabeledScatterChart(Axis xAxis, Axis yAxis) {
         super(xAxis, yAxis);
@@ -45,8 +42,8 @@ public class LabeledScatterChart<X, Y> extends ScatterChart<X, Y> {
         HBox.setHgrow(this, Priority.ALWAYS);
     }
 
-    public LabeledScatterChart setOptions(XYChartOptions xyOptions) {
-        this.xyOptions = xyOptions;
+    public LabeledScatterChart setMaker(XYChartMaker<X, Y> chartMaker) {
+        this.chartMaker = chartMaker;
         return this;
     }
 
@@ -58,7 +55,7 @@ public class LabeledScatterChart<X, Y> extends ScatterChart<X, Y> {
     }
 
     public void writeControls(Series<X, Y> series, int seriesIndex) {
-        xyOptions.makeLabels(series, getPlotChildren());
+        chartMaker.makeLabels(series, getPlotChildren());
     }
 
     @Override
@@ -69,7 +66,7 @@ public class LabeledScatterChart<X, Y> extends ScatterChart<X, Y> {
     }
 
     public void removeControls(Series<X, Y> series) {
-        xyOptions.removeLabels(getPlotChildren());
+        chartMaker.removeLabels(getPlotChildren());
     }
 
     @Override
@@ -81,7 +78,7 @@ public class LabeledScatterChart<X, Y> extends ScatterChart<X, Y> {
     }
 
     public void displayControls() {
-        xyOptions.displayLabels();
+        chartMaker.displayLabels();
     }
 
     public void drawLine(List<XYChart.Data<X, Y>> data, Line line, boolean pointsVisible) {
@@ -96,7 +93,7 @@ public class LabeledScatterChart<X, Y> extends ScatterChart<X, Y> {
                 Bounds regionBounds = node.getBoundsInParent();
                 double x = regionBounds.getMinX() + regionBounds.getWidth() / 2;
                 double y = regionBounds.getMinY() + regionBounds.getHeight() / 2;
-                if (xyOptions.isXY) {
+                if (chartMaker.isXY) {
                     if (x > endX) {
                         endX = x;
                         endY = y;
@@ -142,16 +139,6 @@ public class LabeledScatterChart<X, Y> extends ScatterChart<X, Y> {
 
     public LabeledScatterChart setDataNumber(int dataNumber) {
         this.dataNumber = dataNumber;
-        return this;
-    }
-
-    public LabeledScatterChart setLineWidth(int lineWidth) {
-        this.lineWidth = lineWidth;
-        return this;
-    }
-
-    public LabeledScatterChart setPalette(Map<String, String> palette) {
-        this.palette = palette;
         return this;
     }
 

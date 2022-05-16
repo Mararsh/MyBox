@@ -6,7 +6,7 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.fxml.chart.PieChartOptions;
+import mara.mybox.fxml.chart.PieChartMaker;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -17,7 +17,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class Data2DChartPieController extends BaseData2DChartController {
 
-    protected PieChartOptions pieOptions;
+    protected PieChartMaker pieMaker;
 
     @FXML
     protected ControlData2DChartPie chartController;
@@ -32,7 +32,7 @@ public class Data2DChartPieController extends BaseData2DChartController {
         try {
             super.initControls();
 
-            pieOptions = chartController.pieOptions;
+            pieMaker = chartController.pieMaker;
 
             sourceController.noColumnSelection(true);
 
@@ -62,7 +62,7 @@ public class Data2DChartPieController extends BaseData2DChartController {
             dataColsIndices.add(valueCol);
             outputColumns.add(data2D.column(valueCol));
 
-            pieOptions.init(message("PieChart"))
+            pieMaker.init(message("PieChart"))
                     .setDefaultChartTitle(selectedCategory + " - " + selectedValue)
                     .setDefaultCategoryLabel(selectedCategory)
                     .setDefaultValueLabel(selectedValue);

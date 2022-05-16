@@ -809,7 +809,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 palette.add(colorsController.locationColor(report.getLocationFullName()));
             }
 
-            ChartTools.setPieColors(pie, palette, legendSide != null);
+            ChartTools.setPieColors(pie, palette, legendSide != null, 10);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -978,7 +978,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 }
             }
 
-            ChartTools.setLineChartColors(lineChart, 4, palette, legendSide != null);
+            ChartTools.setLineChartColors(lineChart, 4, palette, legendSide != null, false);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }

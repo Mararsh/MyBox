@@ -159,7 +159,7 @@ public class LabeledSimpleRegressionChart1<X, Y> extends LabeledScatterChart<X, 
             drawLine(seriesList.get(3).getData(), upperConfidenceLine, displayConfidenceUpperPoints);
             upperConfidenceLine.setVisible(displayConfidenceUpperLine);
 
-            text.setStyle("-fx-font-size:" + xyOptions.getLabelFontSize() + "px; -fx-text-fill: black;");
+            text.setStyle("-fx-font-size:" + chartMaker.getLabelFontSize() + "px; -fx-text-fill: black;");
             text.setText(model);
             getPlotChildren().add(text);
             if (regressionLine.getStartY() > 60) {
@@ -188,7 +188,7 @@ public class LabeledSimpleRegressionChart1<X, Y> extends LabeledScatterChart<X, 
                 Bounds regionBounds = data.get(i).getNode().getBoundsInParent();
                 double x = regionBounds.getMinX() + regionBounds.getWidth() / 2;
                 double y = regionBounds.getMinY() + regionBounds.getHeight() / 2;
-                if (xyOptions.isXY) {
+                if (chartMaker.isXY) {
                     if (x > endX) {
                         endX = x;
                         endY = y;

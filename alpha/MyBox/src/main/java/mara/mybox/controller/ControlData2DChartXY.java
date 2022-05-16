@@ -2,9 +2,10 @@ package mara.mybox.controller;
 
 import java.util.List;
 import javafx.fxml.FXML;
+import javafx.scene.chart.Axis;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.chart.XYChartOptions;
+import mara.mybox.fxml.chart.XYChartMaker;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -14,7 +15,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlData2DChartXY extends BaseData2DChartFx {
 
-    protected XYChartOptions xyOptions;
+    protected XYChartMaker<Axis, Axis> chartMaker;
     protected List<Integer> colIndics;
     protected boolean rowNumber;
     protected Data2DChartXYOptionsController optionsController;
@@ -26,7 +27,7 @@ public class ControlData2DChartXY extends BaseData2DChartFx {
     public void initValues() {
         try {
             super.initValues();
-            xyOptions = new XYChartOptions();
+            chartMaker = new XYChartMaker();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -40,11 +41,16 @@ public class ControlData2DChartXY extends BaseData2DChartFx {
                 popError(message("NoData"));
                 return;
             }
+            makeXYChart();
             writeXYChart(columns, data, colIndics, rowNumber);
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    public void makeXYChart() {
+        chartMaker.makeChart();
+        setChart(chartMaker.getXyChart());
     }
 
     public void writeXYChart(List<Data2DColumn> columns, List<List<String>> data) {
@@ -57,11 +63,9 @@ public class ControlData2DChartXY extends BaseData2DChartFx {
         this.data = data;
         this.colIndics = colIndics;
         this.rowNumber = rowNumber;
-        xyOptions.makeChart();
-        setChart(xyOptions.getXyChart());
-        xyOptions.writeXYChart(columns, data, colIndics, rowNumber);
+        chartMaker.writeXYChart(columns, data, colIndics, rowNumber);
         if (optionsController != null && optionsController.isShowing()
-                && !xyOptions.getChartName().equals(optionsController.chartName)) {
+                && !chartMaker.getChartName().equals(optionsController.chartName)) {
             optionsController.close();
             optionsController = Data2DChartXYOptionsController.open(this);
         }

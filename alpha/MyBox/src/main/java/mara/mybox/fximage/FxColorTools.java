@@ -140,7 +140,7 @@ public class FxColorTools {
 
     public static String randomRGB() {
         Random random = new Random();
-        return randomRGBA(random);
+        return randomRGB(random);
     }
 
     public static String randomRGB(Random random) {

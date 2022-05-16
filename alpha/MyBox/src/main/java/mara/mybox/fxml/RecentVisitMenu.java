@@ -14,7 +14,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -70,7 +70,7 @@ public abstract class RecentVisitMenu {
             popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
 
-            MenuItem menu = new MenuItem(Languages.message("Select..."));
+            MenuItem menu = new MenuItem(message("Select..."));
             menu.setOnAction((ActionEvent event1) -> {
                 handleSelect();
             });
@@ -87,11 +87,11 @@ public abstract class RecentVisitMenu {
                 }
                 if (!files.isEmpty()) {
                     popMenu.getItems().add(new SeparatorMenuItem());
-                    menu = new MenuItem(Languages.message("RecentAccessedFiles"));
+                    menu = new MenuItem(message("RecentAccessedFiles"));
                     menu.setStyle("-fx-text-fill: #2e598a;");
                     popMenu.getItems().add(menu);
                     for (String fname : files) {
-                        menu = new MenuItem(limitMenuName(fname));
+                        menu = new MenuItem(PopTools.limitMenuName(fname));
                         menu.setOnAction((ActionEvent event1) -> {
                             handleFile(fname);
                         });
@@ -102,11 +102,11 @@ public abstract class RecentVisitMenu {
 
             if (examples != null && !examples.isEmpty()) {
                 popMenu.getItems().add(new SeparatorMenuItem());
-                menu = new MenuItem(Languages.message("Examples"));
+                menu = new MenuItem(message("Examples"));
                 menu.setStyle("-fx-text-fill: #2e598a;");
                 popMenu.getItems().add(menu);
                 for (String example : examples) {
-                    menu = new MenuItem(limitMenuName(example));
+                    menu = new MenuItem(PopTools.limitMenuName(example));
                     menu.setOnAction((ActionEvent event1) -> {
                         handleFile(example);
                     });
@@ -116,11 +116,11 @@ public abstract class RecentVisitMenu {
             List<String> paths = paths();
             if (paths != null && !paths.isEmpty()) {
                 popMenu.getItems().add(new SeparatorMenuItem());
-                menu = new MenuItem(Languages.message("RecentAccessedDirectories"));
+                menu = new MenuItem(message("RecentAccessedDirectories"));
                 menu.setStyle("-fx-text-fill: #2e598a;");
                 popMenu.getItems().add(menu);
                 for (String path : paths) {
-                    menu = new MenuItem(limitMenuName(path));
+                    menu = new MenuItem(PopTools.limitMenuName(path));
                     menu.setOnAction((ActionEvent event1) -> {
                         handlePath(path);
                     });
@@ -133,7 +133,7 @@ public abstract class RecentVisitMenu {
             }
             controller.setPopMenu(popMenu);
             popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(Languages.message("PopupClose"));
+            menu = new MenuItem(message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction((ActionEvent event1) -> {
                 controller.getPopMenu().hide();
@@ -145,16 +145,6 @@ public abstract class RecentVisitMenu {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-    }
-
-    // https://github.com/Mararsh/MyBox/issues/1266
-    // Error popped when menu name includes "_". Not sure whether this is a bug of javafx
-    public String limitMenuName(String name) {
-        if (name == null) {
-            return null;
-        }
-        name = name.replaceAll("_", " ");
-        return name.length() > 80 ? "..." + name.substring(name.length() - 80) : name;
     }
 
     public abstract void handleSelect();

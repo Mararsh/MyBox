@@ -379,7 +379,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         boolean isRoot = targetItem == null || isRoot(targetItem.getValue());
 
         List<MenuItem> items = new ArrayList<>();
-        MenuItem menu = new MenuItem(chainName(targetItem));
+        MenuItem menu = new MenuItem(PopTools.limitMenuName(chainName(targetItem)));
         menu.setStyle("-fx-text-fill: #2e598a;");
         items.add(menu);
         items.add(new SeparatorMenuItem());

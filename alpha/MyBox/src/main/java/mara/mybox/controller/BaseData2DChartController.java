@@ -105,7 +105,8 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
             refreshControls();
 
-            afterInit();
+            okAction();
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -113,7 +114,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
     @Override
     public void afterInit() {
-        okAction();
     }
 
     public void refreshControls() {
@@ -176,18 +176,23 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     }
 
     public boolean initData() {
-        dataColsIndices = new ArrayList<>();
-        checkedColsIndices = sourceController.checkedColsIndices();
-        if (checkedColsIndices == null || checkedColsIndices.isEmpty()) {
-            popError(message("SelectToHandle"));
+        try {
+            dataColsIndices = new ArrayList<>();
+            checkedColsIndices = sourceController.checkedColsIndices();
+            if (checkedColsIndices == null || checkedColsIndices.isEmpty()) {
+                popError(message("SelectToHandle"));
+                return false;
+            }
+            dataColsIndices.addAll(checkedColsIndices);
+
+            outputColumns = new ArrayList<>();
+            outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
+            outputColumns.addAll(sourceController.checkedCols());
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
             return false;
         }
-        dataColsIndices.addAll(checkedColsIndices);
-
-        outputColumns = new ArrayList<>();
-        outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
-        outputColumns.addAll(sourceController.checkedCols());
-        return true;
     }
 
     public String chartTitle() {

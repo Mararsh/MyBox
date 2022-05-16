@@ -18,7 +18,7 @@ import javafx.scene.layout.VBox;
  */
 public class LabeledAreaChart<X, Y> extends AreaChart<X, Y> {
 
-    protected XYChartOptions xyOptions;
+    protected XYChartMaker<X, Y> chartMaker;
 
     public LabeledAreaChart(Axis xAxis, Axis yAxis) {
         super(xAxis, yAxis);
@@ -33,28 +33,28 @@ public class LabeledAreaChart<X, Y> extends AreaChart<X, Y> {
         HBox.setHgrow(this, Priority.ALWAYS);
     }
 
-    public LabeledAreaChart setOptions(XYChartOptions xyOptions) {
-        this.xyOptions = xyOptions;
-        setCreateSymbols(xyOptions.displayLabel());
+    public LabeledAreaChart setMaker(XYChartMaker<X, Y> chartMaker) {
+        this.chartMaker = chartMaker;
+        setCreateSymbols(chartMaker.displayLabel());
         return this;
     }
 
     @Override
     protected void seriesAdded(Series<X, Y> series, int seriesIndex) {
         super.seriesAdded(series, seriesIndex);
-        xyOptions.makeLabels(series, getPlotChildren());
+        chartMaker.makeLabels(series, getPlotChildren());
     }
 
     @Override
     protected void seriesRemoved(final Series<X, Y> series) {
-        xyOptions.removeLabels(getPlotChildren());
+        chartMaker.removeLabels(getPlotChildren());
         super.seriesRemoved(series);
     }
 
     @Override
     protected void layoutPlotChildren() {
         super.layoutPlotChildren();
-        xyOptions.displayLabels();
+        chartMaker.displayLabels();
     }
 
 }

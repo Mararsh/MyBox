@@ -18,7 +18,7 @@ import mara.mybox.fxml.chart.ChartOptions.LabelType;
  */
 public class LabeledBarChart<X, Y> extends BarChart<X, Y> {
 
-    protected XYChartOptions xyOptions;
+    protected XYChartMaker chartMaker;
 
     public LabeledBarChart(Axis xAxis, Axis yAxis) {
         super(xAxis, yAxis);
@@ -33,36 +33,36 @@ public class LabeledBarChart<X, Y> extends BarChart<X, Y> {
         HBox.setHgrow(this, Priority.ALWAYS);
     }
 
-    public LabeledBarChart setOptions(XYChartOptions xyOptions) {
-        this.xyOptions = xyOptions;
+    public LabeledBarChart   setMaker(XYChartMaker<X,Y> chartMaker) {
+        this.chartMaker = chartMaker;
         return this;
     }
 
     @Override
     protected void seriesAdded(Series<X, Y> series, int seriesIndex) {
         super.seriesAdded(series, seriesIndex);
-        xyOptions.makeLabels(series, getPlotChildren());
+        chartMaker.makeLabels(series, getPlotChildren());
     }
 
     @Override
     protected void seriesRemoved(final Series<X, Y> series) {
-        xyOptions.removeLabels(getPlotChildren());
+        chartMaker.removeLabels(getPlotChildren());
         super.seriesRemoved(series);
     }
 
     @Override
     protected void layoutPlotChildren() {
         super.layoutPlotChildren();
-        xyOptions.displayLabels();
+        chartMaker.displayLabels();
     }
 
     public LabeledBarChart<X, Y> setLabelType(LabelType labelType) {
-        xyOptions.setLabelType(labelType);
+        chartMaker.setLabelType(labelType);
         return this;
     }
 
     public LabeledBarChart<X, Y> setLabelFontSize(int labelFontSize) {
-        xyOptions.setLabelFontSize(labelFontSize);
+        chartMaker.setLabelFontSize(labelFontSize);
         return this;
     }
 

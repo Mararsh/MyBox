@@ -71,6 +71,19 @@ import mara.mybox.value.UserConfig;
  */
 public class PopTools {
 
+    // https://github.com/Mararsh/MyBox/issues/1266
+    // Error popped when menu name includes "_". Not sure whether this is a bug of javafx
+    public static String limitMenuName(String name) {
+        if (name == null) {
+            return null;
+        }
+        name = name.replaceAll("_", " ");
+        return name.length() > 80 ? "..." + name.substring(name.length() - 80) : name;
+    }
+
+    /*
+        pop
+     */
     public static void browseURI(BaseController controller, URI uri) {
         if (uri == null) {
             return;

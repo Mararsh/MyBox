@@ -14,8 +14,6 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -23,8 +21,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" spacing="5.0" VBox.vgrow="ALWAYS" 
-      xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DChartBoxWhiskerController">
+<VBox fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" spacing="5.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DChartBoxWhiskerController">
     <children>
         <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
             <items>
@@ -114,94 +111,74 @@ License:    Apache License Version 2.0
                                         </Button>
                                     </children>
                                 </HBox>
-                                <TabPane fx:id="chartTabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
-                                    <tabs>
-                                        <Tab fx:id="chartTab" text="%Chart">
-                                            <content>
-                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                                    <children>
-                                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                            <children>
-                                                                <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
-                                                                    <children>
-                                                                        <Label minWidth="-Infinity" text="%BoxWidth" />
-                                                                        <ComboBox fx:id="boxWdithSelector" editable="true" prefWidth="100.0" />
-                                                                        <Label text="px" />
-                                                                        <CheckBox fx:id="outliersCheck" mnemonicParsing="false" selected="true" text="%OutlierLines">
-                                                                            <FlowPane.margin>
-                                                                                <Insets left="10.0" />
-                                                                            </FlowPane.margin>
-                                                                        </CheckBox>
-                                                                        <CheckBox fx:id="meanCheck" layoutX="273.0" layoutY="16.0" mnemonicParsing="false" selected="true" text="%Mean" />
-                                                                        <Button fx:id="randomColorsButton" mnemonicParsing="false" onAction="#randomColors">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/Red/iconRandom.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                    </children>
-                                                                </FlowPane>
-                                                            </children>
-                                                        </HBox>
-                                                        <FlowPane hgap="2.0" vgap="2.0">
-                                                            <children>
-                                                                <Label text="%Line2" />
-                                                                <CheckBox fx:id="q0Check" mnemonicParsing="false" selected="true" text="Q0" />
-                                                                <CheckBox fx:id="q1Check" layoutX="27.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="Q1" />
-                                                                <CheckBox fx:id="q2Check" layoutX="70.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="Q2" />
-                                                                <CheckBox fx:id="q3Check" layoutX="114.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="Q3" />
-                                                                <CheckBox fx:id="q4Check" layoutX="158.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="Q4" />
-                                                                <CheckBox fx:id="e1Check" layoutX="147.0" layoutY="16.0" mnemonicParsing="false" selected="true" text="E1" />
-                                                                <CheckBox fx:id="e2Check" layoutX="106.0" layoutY="16.0" mnemonicParsing="false" selected="true" text="E2" />
-                                                                <CheckBox fx:id="e3Check" layoutX="65.0" layoutY="16.0" mnemonicParsing="false" selected="true" text="E3" />
-                                                                <CheckBox fx:id="e4Check" layoutX="24.0" layoutY="16.0" mnemonicParsing="false" selected="true" text="E4" />
-                                                                <CheckBox fx:id="meanLineCheck" layoutX="351.0" layoutY="16.0" mnemonicParsing="false" selected="true" text="%Mean" />
-                                                                <Button fx:id="selectAllButton" mnemonicParsing="false" onAction="#selectAllAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconSelectAll.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                                <Button fx:id="selectNoneButton" mnemonicParsing="false" onAction="#selectNoneAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconSelectNone.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                                <CheckBox fx:id="dottedCheck" mnemonicParsing="false" selected="true" text="%Dotted" />
-                                                            </children>
-                                                        </FlowPane>
-                                                        <fx:include fx:id="chart" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DChartXY.fxml" VBox.vgrow="ALWAYS" />
-                                                    </children>
-                                                    <padding>
-                                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                                    </padding>
-                                                </VBox>
-                                            </content>
-                                        </Tab>
-                                        <Tab fx:id="charDataTab" text="%ChartData">
-                                            <content>
-                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                                    <padding>
-                                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                                    </padding>
-                                                    <children>
-                                                        <fx:include fx:id="chartData" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DHtml.fxml" VBox.vgrow="ALWAYS" />
-                                                    </children>
-                                                </VBox>
-                                            </content>
-                                        </Tab>
-                                    </tabs>
-                                </TabPane>
+                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS">
+                                        <children>
+                                            <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                <children>
+                                                    <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
+                                                        <children>
+                                                            <Label minWidth="-Infinity" text="%BoxWidth" />
+                                                            <ComboBox fx:id="boxWdithSelector" editable="true" prefWidth="100.0" />
+                                                            <Label text="px" />
+                                                            <CheckBox fx:id="outliersCheck" mnemonicParsing="false" selected="true" text="%OutlierLines">
+                                                                <FlowPane.margin>
+                                                                    <Insets left="10.0" />
+                                                                </FlowPane.margin>
+                                                            </CheckBox>
+                                                            <CheckBox fx:id="meanCheck" layoutX="273.0" layoutY="16.0" mnemonicParsing="false" selected="true" text="%Mean" />
+                                                            <Button fx:id="randomColorsButton" mnemonicParsing="false" onAction="#randomColors">
+                                                                <graphic>
+                                                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                        <image>
+                                                                            <Image url="@../buttons/Red/iconRandom.png" />
+                                                                        </image>
+                                                                    </ImageView>
+                                                                </graphic>
+                                                            </Button>
+                                                        </children>
+                                                    </FlowPane>
+                                                </children>
+                                            </HBox>
+                                            <FlowPane hgap="2.0" vgap="2.0">
+                                                <children>
+                                                    <Label text="%Line2" />
+                                                    <CheckBox fx:id="q0Check" mnemonicParsing="false" selected="true" text="Q0" />
+                                                    <CheckBox fx:id="q1Check" layoutX="27.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="Q1" />
+                                                    <CheckBox fx:id="q2Check" layoutX="70.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="Q2" />
+                                                    <CheckBox fx:id="q3Check" layoutX="114.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="Q3" />
+                                                    <CheckBox fx:id="q4Check" layoutX="158.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="Q4" />
+                                                    <CheckBox fx:id="e1Check" layoutX="147.0" layoutY="16.0" mnemonicParsing="false" selected="true" text="E1" />
+                                                    <CheckBox fx:id="e2Check" layoutX="106.0" layoutY="16.0" mnemonicParsing="false" selected="true" text="E2" />
+                                                    <CheckBox fx:id="e3Check" layoutX="65.0" layoutY="16.0" mnemonicParsing="false" selected="true" text="E3" />
+                                                    <CheckBox fx:id="e4Check" layoutX="24.0" layoutY="16.0" mnemonicParsing="false" selected="true" text="E4" />
+                                                    <CheckBox fx:id="meanLineCheck" layoutX="351.0" layoutY="16.0" mnemonicParsing="false" selected="true" text="%Mean" />
+                                                    <Button fx:id="selectAllButton" mnemonicParsing="false" onAction="#selectAllAction">
+                                                        <graphic>
+                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                <image>
+                                                                    <Image url="@../buttons/Red/iconSelectAll.png" />
+                                                                </image>
+                                                            </ImageView>
+                                                        </graphic>
+                                                    </Button>
+                                                    <Button fx:id="selectNoneButton" mnemonicParsing="false" onAction="#selectNoneAction">
+                                                        <graphic>
+                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                <image>
+                                                                    <Image url="@../buttons/Red/iconSelectNone.png" />
+                                                                </image>
+                                                            </ImageView>
+                                                        </graphic>
+                                                    </Button>
+                                                    <CheckBox fx:id="dottedCheck" mnemonicParsing="false" selected="true" text="%Dotted" />
+                                                </children>
+                                            </FlowPane>
+                                            <fx:include fx:id="chart" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DChartXY.fxml" VBox.vgrow="ALWAYS" />
+                                        </children>
+                                        <padding>
+                                            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                        </padding>
+                                    </VBox>
                             </children>
                         </VBox>
                     </content>

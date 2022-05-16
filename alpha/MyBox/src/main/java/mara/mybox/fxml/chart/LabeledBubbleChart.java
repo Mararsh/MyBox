@@ -18,7 +18,7 @@ import javafx.scene.layout.VBox;
  */
 public class LabeledBubbleChart<X, Y> extends BubbleChart<X, Y> {
 
-    protected XYChartOptions xyOptions;
+    protected XYChartMaker chartMaker;
 
     public LabeledBubbleChart(Axis xAxis, Axis yAxis) {
         super(xAxis, yAxis);
@@ -33,27 +33,27 @@ public class LabeledBubbleChart<X, Y> extends BubbleChart<X, Y> {
         HBox.setHgrow(this, Priority.ALWAYS);
     }
 
-    public LabeledBubbleChart setOptions(XYChartOptions xyOptions) {
-        this.xyOptions = xyOptions;
+    public LabeledBubbleChart   setMaker(XYChartMaker<X,Y> chartMaker) {
+        this.chartMaker = chartMaker;
         return this;
     }
 
     @Override
     protected void seriesAdded(Series<X, Y> series, int seriesIndex) {
         super.seriesAdded(series, seriesIndex);
-        xyOptions.makeLabels(series, getPlotChildren());
+        chartMaker.makeLabels(series, getPlotChildren());
     }
 
     @Override
     protected void seriesRemoved(final Series<X, Y> series) {
-        xyOptions.removeLabels(getPlotChildren());
+        chartMaker.removeLabels(getPlotChildren());
         super.seriesRemoved(series);
     }
 
     @Override
     protected void layoutPlotChildren() {
         super.layoutPlotChildren();
-        xyOptions.displayLabels();
+        chartMaker.displayLabels();
     }
 
 }

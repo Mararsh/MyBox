@@ -27,7 +27,7 @@ public class Data2DChartPieOptionsController extends BaseData2DChartFxOptionsCon
     public void setParameters(ControlData2DChartPie pieChartController) {
         try {
             this.pieChartController = pieChartController;
-            this.pieOptions = pieChartController.pieOptions;
+            this.pieOptions = pieChartController.pieMaker;
 
             chartController = pieChartController;
             options = pieOptions;

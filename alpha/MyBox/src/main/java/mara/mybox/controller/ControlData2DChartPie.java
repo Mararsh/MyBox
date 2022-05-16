@@ -4,7 +4,7 @@ import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.chart.PieChartOptions;
+import mara.mybox.fxml.chart.PieChartMaker;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -14,7 +14,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlData2DChartPie extends BaseData2DChartFx {
 
-    protected PieChartOptions pieOptions;
+    protected PieChartMaker pieMaker;
     protected String categoryName, valueName;
     protected Data2DChartPieOptionsController optionsController;
 
@@ -25,7 +25,7 @@ public class ControlData2DChartPie extends BaseData2DChartFx {
     public void initValues() {
         try {
             super.initValues();
-            pieOptions = new PieChartOptions();
+            pieMaker = new PieChartMaker();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -49,11 +49,11 @@ public class ControlData2DChartPie extends BaseData2DChartFx {
     public void writeChart(List<Data2DColumn> columns, List<List<String>> data) {
         this.columns = columns;
         this.data = data;
-        pieOptions.makeChart();
-        setChart(pieOptions.getPieChart());
-        pieOptions.writeChart(columns, data);
+        pieMaker.makeChart();
+        setChart(pieMaker.getPieChart());
+        pieMaker.writeChart(columns, data);
         if (optionsController != null && optionsController.isShowing()
-                && !pieOptions.getChartName().equals(optionsController.chartName)) {
+                && !pieMaker.getChartName().equals(optionsController.chartName)) {
             optionsController.close();
             optionsController = Data2DChartPieOptionsController.open(this);
         }

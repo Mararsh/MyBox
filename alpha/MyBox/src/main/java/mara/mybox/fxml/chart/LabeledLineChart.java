@@ -18,7 +18,7 @@ import javafx.scene.layout.VBox;
  */
 public class LabeledLineChart<X, Y> extends LineChart<X, Y> {
 
-    protected XYChartOptions xyOptions;
+    protected XYChartMaker chartMaker;
 
     public LabeledLineChart(Axis xAxis, Axis yAxis) {
         super(xAxis, yAxis);
@@ -33,27 +33,27 @@ public class LabeledLineChart<X, Y> extends LineChart<X, Y> {
         HBox.setHgrow(this, Priority.ALWAYS);
     }
 
-    public LabeledLineChart setOptions(XYChartOptions xyOptions) {
-        this.xyOptions = xyOptions;
+    public LabeledLineChart   setMaker(XYChartMaker<X,Y> chartMaker) {
+        this.chartMaker = chartMaker;
         return this;
     }
 
     @Override
     protected void seriesAdded(Series<X, Y> series, int seriesIndex) {
         super.seriesAdded(series, seriesIndex);
-        xyOptions.makeLabels(series, getPlotChildren());
+        chartMaker.makeLabels(series, getPlotChildren());
     }
 
     @Override
     protected void seriesRemoved(final Series<X, Y> series) {
-        xyOptions.removeLabels(getPlotChildren());
+        chartMaker.removeLabels(getPlotChildren());
         super.seriesRemoved(series);
     }
 
     @Override
     protected void layoutPlotChildren() {
         super.layoutPlotChildren();
-        xyOptions.displayLabels();
+        chartMaker.displayLabels();
     }
 
 }

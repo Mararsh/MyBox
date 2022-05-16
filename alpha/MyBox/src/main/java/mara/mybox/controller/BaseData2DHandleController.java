@@ -118,7 +118,7 @@ public abstract class BaseData2DHandleController extends BaseChildController {
     public void setParameters(ControlData2DEditTable tableController) {
         try {
             this.tableController = tableController;
-            this.baseName = tableController.baseName;
+//            this.baseName = tableController.baseName;
 
             sourceController.setParameters(this, tableController);
 

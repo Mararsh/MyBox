@@ -13,7 +13,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.chart.ChartOptions.ChartType;
-import mara.mybox.fxml.chart.XYChartOptions;
+import mara.mybox.fxml.chart.XYChartMaker;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -24,7 +24,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class Data2DChartXYController extends BaseData2DChartController {
 
-    protected XYChartOptions xyOptions;
+    protected XYChartMaker chartMaker;
 
     @FXML
     protected ToggleGroup chartGroup;
@@ -48,7 +48,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
         try {
             super.initControls();
 
-            xyOptions = chartController.xyOptions;
+            chartMaker = chartController.chartMaker;
 
             checkChartType();
             chartGroup.selectedToggleProperty().addListener(
@@ -138,7 +138,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
             } else {
                 return false;
             }
-            xyOptions.init(chartType, chartName)
+            chartMaker.init(chartType, chartName)
                     .setDefaultChartTitle(title)
                     .setDefaultCategoryLabel(selectedCategory)
                     .setDefaultValueLabel(selectedValue)

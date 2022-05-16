@@ -2,6 +2,9 @@ package mara.mybox.fxml.chart;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.XYChart;
@@ -21,57 +24,11 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
     protected Line[] vLines, minLines, maxLines, medianLines, meanLines,
             uMidOutlierLines, uExOutlierLines, lMidOutlierLines, lExOutlierLines;
     protected int boxWidth, dataSize;
-    protected boolean handleOutliers, handleMean, written;
-    protected Map<String, String> palette;
+    protected boolean handleOutliers, handleMean;
 
     public BoxWhiskerChart(Axis xAxis, Axis yAxis) {
         super(xAxis, yAxis);
         init();
-    }
-
-    @Override
-    protected void seriesAdded(Series<X, Y> series, int seriesIndex) {
-        super.seriesAdded(series, seriesIndex);
-        written = false;
-        int seriesSize = seriesSize();
-        if (handleMean && seriesIndex == 0) {
-            writeMean();
-        }
-        if (seriesIndex == 4 + (handleMean ? 1 : 0)) {
-            writeMain();
-        }
-        if (handleOutliers && (seriesIndex == seriesSize - 1)) {
-            writeOutliers();
-        }
-        written = seriesIndex == seriesSize - 1;
-    }
-
-    @Override
-    protected void seriesRemoved(final Series<X, Y> series) {
-        super.seriesRemoved(series);
-        clearMean();
-        clearMain();
-        clearOutliers();
-        written = false;
-    }
-
-    @Override
-    protected void layoutPlotChildren() {
-        super.layoutPlotChildren();
-        if (!written) {
-            return;
-        }
-        if (handleMean) {
-            displayMean();
-        } else {
-            clearMean();
-        }
-        displayMain();
-        if (handleOutliers) {
-            displayOutliers();
-        } else {
-            clearOutliers();
-        }
     }
 
     public int seriesSize() {
@@ -85,7 +42,7 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
         return seriesSize;
     }
 
-    public void clearMain() {
+    private void clearMain() {
         try {
             if (boxs != null) {
                 for (Rectangle rect : boxs) {
@@ -121,7 +78,7 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
         }
     }
 
-    public void clearMean() {
+    private void clearMean() {
         try {
             if (meanLines != null) {
                 for (Line line : meanLines) {
@@ -133,7 +90,7 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
         }
     }
 
-    public void clearOutliers() {
+    private void clearOutliers() {
         try {
             if (uMidOutlierLines != null) {
                 for (Line line : uMidOutlierLines) {
@@ -163,15 +120,15 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
         }
     }
 
-    public synchronized void writeMain() {
+    private void makeMain() {
         try {
+            clearMain();
+            if (!chartMaker.displayLabel()) {
+                return;
+            }
             List<XYChart.Series<X, Y>> seriesList = this.getData();
             int startIndex = handleMean ? 1 : 0;
             if (seriesList == null || seriesList.size() < 5 + startIndex) {
-                return;
-            }
-            clearMain();
-            if (!xyOptions.displayLabel()) {
                 return;
             }
             dataSize = seriesList.get(startIndex + 0).getData().size();
@@ -183,10 +140,23 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
             if (boxWidth <= 0) {
                 boxWidth = 40;
             }
+            List<XYChart.Data<X, Y>> data0 = seriesList.get(startIndex + 0).getData();
+            List<XYChart.Data<X, Y>> data1 = seriesList.get(startIndex + 1).getData();
+            List<XYChart.Data<X, Y>> data2 = seriesList.get(startIndex + 2).getData();
+            List<XYChart.Data<X, Y>> data3 = seriesList.get(startIndex + 3).getData();
+            List<XYChart.Data<X, Y>> data4 = seriesList.get(startIndex + 4).getData();
+
+            Map<String, String> palette = chartMaker.getPalette();
             String color0 = palette.get(seriesList.get(startIndex + 0).getName());
             String color2 = palette.get(seriesList.get(startIndex + 2).getName());
             String color4 = palette.get(seriesList.get(startIndex + 4).getName());
             for (int i = 0; i < dataSize; i++) {
+                Bounds regionBounds4 = data4.get(i).getNode().getBoundsInParent();
+                Bounds regionBounds3 = data3.get(i).getNode().getBoundsInParent();
+                Bounds regionBounds2 = data2.get(i).getNode().getBoundsInParent();
+                Bounds regionBounds1 = data1.get(i).getNode().getBoundsInParent();
+                Bounds regionBounds0 = data0.get(i).getNode().getBoundsInParent();
+
                 boxs[i] = new Rectangle();
                 getPlotChildren().add(boxs[i]);
                 boxs[i].setWidth(boxWidth);
@@ -209,20 +179,91 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
                 getPlotChildren().add(minLines[i]);
                 minLines[i].setStyle("-fx-stroke-width:2px;-fx-stroke:" + color0);
 
+                if (chartMaker.isXY) {
+                    double y4 = regionBounds4.getMinY() + regionBounds4.getHeight() / 2;
+                    double y3 = regionBounds3.getMinY() + regionBounds3.getHeight() / 2;
+                    double y2 = regionBounds2.getMinY() + regionBounds2.getHeight() / 2;
+                    double y1 = regionBounds1.getMinY() + regionBounds1.getHeight() / 2;
+                    double y0 = regionBounds0.getMinY() + regionBounds0.getHeight() / 2;
+                    double x = regionBounds3.getMinX() + regionBounds3.getWidth() / 2;
+                    double leftX = x - boxWidth / 2;
+                    double rightX = x + boxWidth / 2;
+
+                    boxs[i].setLayoutX(leftX);
+                    boxs[i].setLayoutY(y3);
+                    boxs[i].setWidth(boxWidth);
+                    boxs[i].setHeight(y1 - y3);
+
+                    vLines[i].setStartX(x);
+                    vLines[i].setStartY(y4);
+                    vLines[i].setEndX(x);
+                    vLines[i].setEndY(y0);
+
+                    maxLines[i].setStartX(leftX);
+                    maxLines[i].setStartY(y4);
+                    maxLines[i].setEndX(rightX);
+                    maxLines[i].setEndY(y4);
+
+                    medianLines[i].setStartX(leftX);
+                    medianLines[i].setStartY(y2);
+                    medianLines[i].setEndX(rightX);
+                    medianLines[i].setEndY(y2);
+
+                    minLines[i].setStartX(leftX);
+                    minLines[i].setStartY(y0);
+                    minLines[i].setEndX(rightX);
+                    minLines[i].setEndY(y0);
+
+                } else {
+                    double x4 = regionBounds4.getMinX() + regionBounds4.getWidth() / 2;
+                    double x3 = regionBounds3.getMinX() + regionBounds3.getWidth() / 2;
+                    double x2 = regionBounds2.getMinX() + regionBounds2.getWidth() / 2;
+                    double x1 = regionBounds1.getMinX() + regionBounds1.getWidth() / 2;
+                    double x0 = regionBounds0.getMinX() + regionBounds0.getWidth() / 2;
+                    double y = regionBounds3.getMinY() + regionBounds3.getHeight() / 2;
+                    double topY = y - boxWidth / 2;
+                    double bottomY = y + boxWidth / 2;
+
+                    boxs[i].setLayoutX(x1);
+                    boxs[i].setLayoutY(topY);
+                    boxs[i].setHeight(boxWidth);
+                    boxs[i].setWidth(x3 - x1);
+
+                    vLines[i].setStartX(x0);
+                    vLines[i].setStartY(y);
+                    vLines[i].setEndX(x4);
+                    vLines[i].setEndY(y);
+
+                    maxLines[i].setStartX(x4);
+                    maxLines[i].setStartY(topY);
+                    maxLines[i].setEndX(x4);
+                    maxLines[i].setEndY(bottomY);
+
+                    medianLines[i].setStartX(x2);
+                    medianLines[i].setStartY(topY);
+                    medianLines[i].setEndX(x2);
+                    medianLines[i].setEndY(bottomY);
+
+                    minLines[i].setStartX(x0);
+                    minLines[i].setStartY(topY);
+                    minLines[i].setEndX(x0);
+                    minLines[i].setEndY(bottomY);
+                }
+
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
 
-    public synchronized void writeMean() {
+    private void makeMean() {
         try {
-            List<XYChart.Series<X, Y>> seriesList = this.getData();
-            if (seriesList == null || seriesList.size() < 1) {
+            clearMean();
+            if (!chartMaker.displayLabel()) {
                 return;
             }
-            clearMean();
-            if (!xyOptions.displayLabel()) {
+            List<XYChart.Series<X, Y>> seriesList = this.getData();
+            if (seriesList == null || seriesList.size() < 1) {
                 return;
             }
             dataSize = seriesList.get(0).getData().size();
@@ -230,26 +271,50 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
             if (boxWidth <= 0) {
                 boxWidth = 40;
             }
+            Map<String, String> palette = chartMaker.getPalette();
             String colorMean = palette.get(seriesList.get(0).getName());
+            List<XYChart.Data<X, Y>> data0 = seriesList.get(0).getData();
             for (int i = 0; i < dataSize; i++) {
+                Bounds regionBoundsMean = data0.get(i).getNode().getBoundsInParent();
                 meanLines[i] = new Line();
                 getPlotChildren().add(meanLines[i]);
                 meanLines[i].setStyle("-fx-stroke-width:2px;-fx-stroke:" + colorMean);
+
+                if (chartMaker.isXY) {
+                    double yMean = regionBoundsMean.getMinY() + regionBoundsMean.getHeight() / 2;
+                    double x = regionBoundsMean.getMinX() + regionBoundsMean.getWidth() / 2;
+                    double leftX = x - boxWidth / 2;
+                    double rightX = x + boxWidth / 2;
+                    meanLines[i].setStartX(leftX);
+                    meanLines[i].setStartY(yMean);
+                    meanLines[i].setEndX(rightX);
+                    meanLines[i].setEndY(yMean);
+
+                } else {
+                    double xMean = regionBoundsMean.getMinX() + regionBoundsMean.getWidth() / 2;
+                    double y = regionBoundsMean.getMinY() + regionBoundsMean.getHeight() / 2;
+                    double topY = y - boxWidth / 2;
+                    double bottomY = y + boxWidth / 2;
+                    meanLines[i].setStartX(xMean);
+                    meanLines[i].setStartY(topY);
+                    meanLines[i].setEndX(xMean);
+                    meanLines[i].setEndY(bottomY);
+                }
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
 
-    public synchronized void writeOutliers() {
+    private void makeOutliers() {
         try {
+            clearOutliers();
+            if (!chartMaker.displayLabel()) {
+                return;
+            }
             List<XYChart.Series<X, Y>> seriesList = this.getData();
             int startIndex = handleMean ? 1 : 0;
             if (seriesList == null || seriesList.size() < 9 + startIndex) {
-                return;
-            }
-            clearOutliers();
-            if (!xyOptions.displayLabel()) {
                 return;
             }
             dataSize = seriesList.get(startIndex + 5).getData().size();
@@ -260,12 +325,26 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
             if (boxWidth <= 0) {
                 boxWidth = 40;
             }
+            List<XYChart.Data<X, Y>> data0 = seriesList.get(startIndex + 0).getData();
+            List<XYChart.Data<X, Y>> data4 = seriesList.get(startIndex + 4).getData();
+            List<XYChart.Data<X, Y>> data5 = seriesList.get(startIndex + 5).getData();
+            List<XYChart.Data<X, Y>> data6 = seriesList.get(startIndex + 6).getData();
+            List<XYChart.Data<X, Y>> data7 = seriesList.get(startIndex + 7).getData();
+            List<XYChart.Data<X, Y>> data8 = seriesList.get(startIndex + 8).getData();
+            Map<String, String> palette = chartMaker.getPalette();
             String color5 = palette.get(seriesList.get(startIndex + 5).getName());
             String color6 = palette.get(seriesList.get(startIndex + 6).getName());
             String color7 = palette.get(seriesList.get(startIndex + 7).getName());
             String color8 = palette.get(seriesList.get(startIndex + 8).getName());
             String stylePrefix = "-fx-stroke-dash-array: 2;-fx-stroke-width:1px;-fx-stroke:";
             for (int i = 0; i < dataSize; i++) {
+                Bounds regionBounds0 = data0.get(i).getNode().getBoundsInParent();
+                Bounds regionBounds4 = data4.get(i).getNode().getBoundsInParent();
+                Bounds regionBounds5 = data5.get(i).getNode().getBoundsInParent();
+                Bounds regionBounds6 = data6.get(i).getNode().getBoundsInParent();
+                Bounds regionBounds7 = data7.get(i).getNode().getBoundsInParent();
+                Bounds regionBounds8 = data8.get(i).getNode().getBoundsInParent();
+
                 uExOutlierLines[i] = new Line();
                 getPlotChildren().add(uExOutlierLines[i]);
                 uExOutlierLines[i].setStyle(stylePrefix + color5);
@@ -282,217 +361,11 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
                 getPlotChildren().add(lExOutlierLines[i]);
                 lExOutlierLines[i].setStyle(stylePrefix + color8);
 
-                if (vLines[i] == null) {
-                    vLines[i] = new Line();
-                    getPlotChildren().add(vLines[i]);
-                    vLines[i].setStyle("-fx-stroke-dash-array: 4;-fx-stroke-width:1px; -fx-stroke:black;");
-                }
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-    }
+                vLines[i] = new Line();
+                getPlotChildren().add(vLines[i]);
+                vLines[i].setStyle("-fx-stroke-dash-array: 4;-fx-stroke-width:1px; -fx-stroke:black;");
 
-    public void displayMain() {
-        try {
-            List<XYChart.Series<X, Y>> seriesList = this.getData();
-            int startIndex = handleMean ? 1 : 0;
-            if (seriesList == null || seriesList.size() < 5 + startIndex) {
-                return;
-            }
-            if (!xyOptions.displayLabel()) {
-                return;
-            }
-            if (boxWidth <= 0) {
-                boxWidth = 40;
-            }
-            List<XYChart.Data<X, Y>> data0 = seriesList.get(startIndex + 0).getData();
-            List<XYChart.Data<X, Y>> data1 = seriesList.get(startIndex + 1).getData();
-            List<XYChart.Data<X, Y>> data2 = seriesList.get(startIndex + 2).getData();
-            List<XYChart.Data<X, Y>> data3 = seriesList.get(startIndex + 3).getData();
-            List<XYChart.Data<X, Y>> data4 = seriesList.get(startIndex + 4).getData();
-            dataSize = data0.size();
-            for (int i = 0; i < dataSize; i++) {
-                Bounds regionBounds4 = data4.get(i).getNode().getBoundsInParent();
-                Bounds regionBounds3 = data3.get(i).getNode().getBoundsInParent();
-                Bounds regionBounds2 = data2.get(i).getNode().getBoundsInParent();
-                Bounds regionBounds1 = data1.get(i).getNode().getBoundsInParent();
-                Bounds regionBounds0 = data0.get(i).getNode().getBoundsInParent();
-
-                if (xyOptions.isXY) {
-                    double y4 = regionBounds4.getMinY() + regionBounds4.getHeight() / 2;
-                    double y3 = regionBounds3.getMinY() + regionBounds3.getHeight() / 2;
-                    double y2 = regionBounds2.getMinY() + regionBounds2.getHeight() / 2;
-                    double y1 = regionBounds1.getMinY() + regionBounds1.getHeight() / 2;
-                    double y0 = regionBounds0.getMinY() + regionBounds0.getHeight() / 2;
-                    double x = regionBounds3.getMinX() + regionBounds3.getWidth() / 2;
-                    double leftX = x - boxWidth / 2;
-                    double rightX = x + boxWidth / 2;
-
-                    if (boxs[i] != null) {
-                        boxs[i].setLayoutX(leftX);
-                        boxs[i].setLayoutY(y3);
-                        boxs[i].setWidth(boxWidth);
-                        boxs[i].setHeight(y1 - y3);
-                    }
-
-                    if (vLines[i] != null) {
-                        vLines[i].setStartX(x);
-                        vLines[i].setStartY(y4);
-                        vLines[i].setEndX(x);
-                        vLines[i].setEndY(y0);
-                    }
-
-                    if (maxLines[i] != null) {
-                        maxLines[i].setStartX(leftX);
-                        maxLines[i].setStartY(y4);
-                        maxLines[i].setEndX(rightX);
-                        maxLines[i].setEndY(y4);
-                    }
-
-                    if (medianLines[i] != null) {
-                        medianLines[i].setStartX(leftX);
-                        medianLines[i].setStartY(y2);
-                        medianLines[i].setEndX(rightX);
-                        medianLines[i].setEndY(y2);
-                    }
-
-                    if (minLines[i] != null) {
-                        minLines[i].setStartX(leftX);
-                        minLines[i].setStartY(y0);
-                        minLines[i].setEndX(rightX);
-                        minLines[i].setEndY(y0);
-                    }
-
-                } else {
-                    double x4 = regionBounds4.getMinX() + regionBounds4.getWidth() / 2;
-                    double x3 = regionBounds3.getMinX() + regionBounds3.getWidth() / 2;
-                    double x2 = regionBounds2.getMinX() + regionBounds2.getWidth() / 2;
-                    double x1 = regionBounds1.getMinX() + regionBounds1.getWidth() / 2;
-                    double x0 = regionBounds0.getMinX() + regionBounds0.getWidth() / 2;
-                    double y = regionBounds3.getMinY() + regionBounds3.getHeight() / 2;
-                    double topY = y - boxWidth / 2;
-                    double bottomY = y + boxWidth / 2;
-
-                    if (boxs[i] != null) {
-                        boxs[i].setLayoutX(x1);
-                        boxs[i].setLayoutY(topY);
-                        boxs[i].setHeight(boxWidth);
-                        boxs[i].setWidth(x3 - x1);
-                    }
-
-                    if (vLines[i] != null) {
-                        vLines[i].setStartX(x0);
-                        vLines[i].setStartY(y);
-                        vLines[i].setEndX(x4);
-                        vLines[i].setEndY(y);
-                    }
-
-                    if (maxLines[i] != null) {
-                        maxLines[i].setStartX(x4);
-                        maxLines[i].setStartY(topY);
-                        maxLines[i].setEndX(x4);
-                        maxLines[i].setEndY(bottomY);
-                    }
-
-                    if (medianLines[i] != null) {
-                        medianLines[i].setStartX(x2);
-                        medianLines[i].setStartY(topY);
-                        medianLines[i].setEndX(x2);
-                        medianLines[i].setEndY(bottomY);
-                    }
-
-                    if (minLines[i] != null) {
-                        minLines[i].setStartX(x0);
-                        minLines[i].setStartY(topY);
-                        minLines[i].setEndX(x0);
-                        minLines[i].setEndY(bottomY);
-                    }
-                }
-
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-    }
-
-    public void displayMean() {
-        try {
-            List<XYChart.Series<X, Y>> seriesList = this.getData();
-            if (seriesList == null || seriesList.size() < 1) {
-                return;
-            }
-            if (!xyOptions.displayLabel()) {
-                return;
-            }
-            if (boxWidth <= 0) {
-                boxWidth = 40;
-            }
-            List<XYChart.Data<X, Y>> data0 = seriesList.get(0).getData();
-            dataSize = data0.size();
-            for (int i = 0; i < dataSize; i++) {
-                Bounds regionBoundsMean = data0.get(i).getNode().getBoundsInParent();
-
-                if (xyOptions.isXY) {
-                    double yMean = regionBoundsMean.getMinY() + regionBoundsMean.getHeight() / 2;
-                    double x = regionBoundsMean.getMinX() + regionBoundsMean.getWidth() / 2;
-                    double leftX = x - boxWidth / 2;
-                    double rightX = x + boxWidth / 2;
-                    if (meanLines[i] != null) {
-                        meanLines[i].setStartX(leftX);
-                        meanLines[i].setStartY(yMean);
-                        meanLines[i].setEndX(rightX);
-                        meanLines[i].setEndY(yMean);
-                    }
-
-                } else {
-                    double xMean = regionBoundsMean.getMinX() + regionBoundsMean.getWidth() / 2;
-                    double y = regionBoundsMean.getMinY() + regionBoundsMean.getHeight() / 2;
-                    double topY = y - boxWidth / 2;
-                    double bottomY = y + boxWidth / 2;
-                    if (meanLines[i] != null) {
-                        meanLines[i].setStartX(xMean);
-                        meanLines[i].setStartY(topY);
-                        meanLines[i].setEndX(xMean);
-                        meanLines[i].setEndY(bottomY);
-                    }
-                }
-
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-    }
-
-    public void displayOutliers() {
-        try {
-            List<XYChart.Series<X, Y>> seriesList = this.getData();
-            int startIndex = handleMean ? 1 : 0;
-            if (seriesList == null || seriesList.size() < 9 + startIndex) {
-                return;
-            }
-            if (!xyOptions.displayLabel()) {
-                return;
-            }
-            if (boxWidth <= 0) {
-                boxWidth = 40;
-            }
-            List<XYChart.Data<X, Y>> data0 = seriesList.get(startIndex + 0).getData();
-            List<XYChart.Data<X, Y>> data4 = seriesList.get(startIndex + 4).getData();
-            List<XYChart.Data<X, Y>> data5 = seriesList.get(startIndex + 5).getData();
-            List<XYChart.Data<X, Y>> data6 = seriesList.get(startIndex + 6).getData();
-            List<XYChart.Data<X, Y>> data7 = seriesList.get(startIndex + 7).getData();
-            List<XYChart.Data<X, Y>> data8 = seriesList.get(startIndex + 8).getData();
-            dataSize = data0.size();
-            for (int i = 0; i < dataSize; i++) {
-                Bounds regionBounds0 = data0.get(i).getNode().getBoundsInParent();
-                Bounds regionBounds4 = data4.get(i).getNode().getBoundsInParent();
-                Bounds regionBounds5 = data5.get(i).getNode().getBoundsInParent();
-                Bounds regionBounds6 = data6.get(i).getNode().getBoundsInParent();
-                Bounds regionBounds7 = data7.get(i).getNode().getBoundsInParent();
-                Bounds regionBounds8 = data8.get(i).getNode().getBoundsInParent();
-
-                if (xyOptions.isXY) {
+                if (chartMaker.isXY) {
                     double y0 = regionBounds0.getMinY() + regionBounds0.getHeight() / 2;
                     double y4 = regionBounds4.getMinY() + regionBounds4.getHeight() / 2;
                     double y5 = regionBounds5.getMinY() + regionBounds5.getHeight() / 2;
@@ -503,36 +376,30 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
                     double leftX = x - boxWidth / 2;
                     double rightX = x + boxWidth / 2;
 
-                    if (uExOutlierLines[i] != null) {
-                        uExOutlierLines[i].setStartX(leftX);
-                        uExOutlierLines[i].setStartY(y5);
-                        uExOutlierLines[i].setEndX(rightX);
-                        uExOutlierLines[i].setEndY(y5);
-                    }
-                    if (uMidOutlierLines[i] != null) {
-                        uMidOutlierLines[i].setStartX(leftX);
-                        uMidOutlierLines[i].setStartY(y6);
-                        uMidOutlierLines[i].setEndX(rightX);
-                        uMidOutlierLines[i].setEndY(y6);
-                    }
-                    if (lMidOutlierLines[i] != null) {
-                        lMidOutlierLines[i].setStartX(leftX);
-                        lMidOutlierLines[i].setStartY(y7);
-                        lMidOutlierLines[i].setEndX(rightX);
-                        lMidOutlierLines[i].setEndY(y7);
-                    }
-                    if (lExOutlierLines[i] != null) {
-                        lExOutlierLines[i].setStartX(leftX);
-                        lExOutlierLines[i].setStartY(y8);
-                        lExOutlierLines[i].setEndX(rightX);
-                        lExOutlierLines[i].setEndY(y8);
-                    }
-                    if (vLines[i] != null) {
-                        lExOutlierLines[i].setStartX(x);
-                        lExOutlierLines[i].setStartY(Math.min(y5, y4));
-                        lExOutlierLines[i].setEndX(x);
-                        lExOutlierLines[i].setEndY(Math.max(y8, y0));
-                    }
+                    uExOutlierLines[i].setStartX(leftX);
+                    uExOutlierLines[i].setStartY(y5);
+                    uExOutlierLines[i].setEndX(rightX);
+                    uExOutlierLines[i].setEndY(y5);
+
+                    uMidOutlierLines[i].setStartX(leftX);
+                    uMidOutlierLines[i].setStartY(y6);
+                    uMidOutlierLines[i].setEndX(rightX);
+                    uMidOutlierLines[i].setEndY(y6);
+
+                    lMidOutlierLines[i].setStartX(leftX);
+                    lMidOutlierLines[i].setStartY(y7);
+                    lMidOutlierLines[i].setEndX(rightX);
+                    lMidOutlierLines[i].setEndY(y7);
+
+                    lExOutlierLines[i].setStartX(leftX);
+                    lExOutlierLines[i].setStartY(y8);
+                    lExOutlierLines[i].setEndX(rightX);
+                    lExOutlierLines[i].setEndY(y8);
+
+                    lExOutlierLines[i].setStartX(x);
+                    lExOutlierLines[i].setStartY(Math.min(y5, y4));
+                    lExOutlierLines[i].setEndX(x);
+                    lExOutlierLines[i].setEndY(Math.max(y8, y0));
 
                 } else {
                     double x0 = regionBounds0.getMinX() + regionBounds0.getWidth() / 2;
@@ -545,37 +412,30 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
                     double topY = y - boxWidth / 2;
                     double bottomY = y + boxWidth / 2;
 
-                    if (vLines[i] != null) {
-                        lExOutlierLines[i].setStartX(Math.min(x5, x4));
-                        lExOutlierLines[i].setStartY(y);
-                        lExOutlierLines[i].setEndX(Math.max(x8, x0));
-                        lExOutlierLines[i].setEndY(y);
-                    }
+                    lExOutlierLines[i].setStartX(Math.min(x5, x4));
+                    lExOutlierLines[i].setStartY(y);
+                    lExOutlierLines[i].setEndX(Math.max(x8, x0));
+                    lExOutlierLines[i].setEndY(y);
 
-                    if (uExOutlierLines[i] != null) {
-                        uExOutlierLines[i].setStartX(x5);
-                        uExOutlierLines[i].setStartY(topY);
-                        uExOutlierLines[i].setEndX(x5);
-                        uExOutlierLines[i].setEndY(bottomY);
-                    }
-                    if (uMidOutlierLines[i] != null) {
-                        uMidOutlierLines[i].setStartX(x6);
-                        uMidOutlierLines[i].setStartY(topY);
-                        uMidOutlierLines[i].setEndX(x6);
-                        uMidOutlierLines[i].setEndY(bottomY);
-                    }
-                    if (lMidOutlierLines[i] != null) {
-                        lMidOutlierLines[i].setStartX(x7);
-                        lMidOutlierLines[i].setStartY(topY);
-                        lMidOutlierLines[i].setEndX(x7);
-                        lMidOutlierLines[i].setEndY(bottomY);
-                    }
-                    if (lExOutlierLines[i] != null) {
-                        lExOutlierLines[i].setStartX(x8);
-                        lExOutlierLines[i].setStartY(topY);
-                        lExOutlierLines[i].setEndX(x8);
-                        lExOutlierLines[i].setEndY(bottomY);
-                    }
+                    uExOutlierLines[i].setStartX(x5);
+                    uExOutlierLines[i].setStartY(topY);
+                    uExOutlierLines[i].setEndX(x5);
+                    uExOutlierLines[i].setEndY(bottomY);
+
+                    uMidOutlierLines[i].setStartX(x6);
+                    uMidOutlierLines[i].setStartY(topY);
+                    uMidOutlierLines[i].setEndX(x6);
+                    uMidOutlierLines[i].setEndY(bottomY);
+
+                    lMidOutlierLines[i].setStartX(x7);
+                    lMidOutlierLines[i].setStartY(topY);
+                    lMidOutlierLines[i].setEndX(x7);
+                    lMidOutlierLines[i].setEndY(bottomY);
+
+                    lExOutlierLines[i].setStartX(x8);
+                    lExOutlierLines[i].setStartY(topY);
+                    lExOutlierLines[i].setEndX(x8);
+                    lExOutlierLines[i].setEndY(bottomY);
 
                 }
 
@@ -585,17 +445,29 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
         }
     }
 
-    public void refreshBox() {
+    private synchronized void makeBoxWhisker() {
+        makeMain();
         if (handleMean) {
-            writeMean();
-            displayMean();
+            makeMean();
         }
-        writeMain();
-        displayMain();
         if (handleOutliers) {
-            writeOutliers();
-            displayOutliers();
-        }
+            makeOutliers();
+        };
+    }
+
+    public synchronized void displayBoxWhisker() {
+        Timer t = new Timer();
+        t.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    if (getData() != null && seriesSize() == getData().size()) {
+                        t.cancel();
+                        makeBoxWhisker();
+                    }
+                });
+            }
+        }, 100, 100);
     }
 
     /*
@@ -625,15 +497,6 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
 
     public BoxWhiskerChart<X, Y> setHandleMean(boolean handleMean) {
         this.handleMean = handleMean;
-        return this;
-    }
-
-    public Map<String, String> getPalette() {
-        return palette;
-    }
-
-    public BoxWhiskerChart<X, Y> setPalette(Map<String, String> palette) {
-        this.palette = palette;
         return this;
     }
 

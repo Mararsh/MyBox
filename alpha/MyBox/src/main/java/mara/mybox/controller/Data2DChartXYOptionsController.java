@@ -23,6 +23,7 @@ import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.chart.XYChartMaker;
 import mara.mybox.fxml.chart.XYChartOptions;
 import mara.mybox.fxml.chart.XYChartOptions.ChartCoordinate;
 import mara.mybox.fxml.chart.XYChartOptions.LabelLocation;
@@ -38,7 +39,7 @@ import mara.mybox.value.UserConfig;
 public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsController {
 
     protected ControlData2DChartXY xyChartController;
-    protected XYChartOptions xyOptions;
+    protected XYChartMaker chartMaker;
 
     @FXML
     protected Tab categoryTab, valueTab;
@@ -71,10 +72,10 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
     public void setParameters(ControlData2DChartXY xyChartController) {
         try {
             this.xyChartController = xyChartController;
-            this.xyOptions = xyChartController.xyOptions;
+            this.chartMaker = xyChartController.chartMaker;
 
             chartController = xyChartController;
-            options = xyOptions;
+            options = chartMaker;
             chartName = options.getChartName();
             titleLabel.setText(chartName);
 
@@ -83,7 +84,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
             initPlotTab();
             initCategoryTab();
             initNumberTab();
-            Chart chart = xyOptions.getChart();
+            Chart chart = chartMaker.getChart();
             if (chart instanceof BubbleChart) {
                 categoryStringRadio.setDisable(true);
                 categoryNumberRadio.fire();
@@ -122,7 +123,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
         try {
             super.initDataTab();
 
-            int labelFontSize = xyOptions.getLabelFontSize();
+            int labelFontSize = chartMaker.getLabelFontSize();
             labelFontSizeSelector.getItems().addAll(Arrays.asList(
                     "12", "14", "10", "8", "15", "16", "18", "9", "6", "4", "20", "24"
             ));
@@ -133,7 +134,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
                     try {
                         int v = Integer.parseInt(newValue);
                         if (v > 0) {
-                            xyOptions.setLabelFontSize(v);
+                            chartMaker.setLabelFontSize(v);
                             labelFontSizeSelector.getEditor().setStyle(null);
                             chartController.redraw();
                         } else {
@@ -145,7 +146,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
                 }
             });
 
-            NodeTools.setRadioSelected(labelLocaionGroup, message(xyOptions.getLabelLocation().name()));
+            NodeTools.setRadioSelected(labelLocaionGroup, message(chartMaker.getLabelLocation().name()));
             labelLocaionGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
@@ -159,7 +160,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
                     } else if (message("Below").equals(value)) {
                         labelLocation = LabelLocation.Below;
                     }
-                    xyOptions.setLabelLocation(labelLocation);
+                    chartMaker.setLabelLocation(labelLocation);
                     chartController.redraw();
                 }
             });
@@ -177,7 +178,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
         try {
             super.initPlotTab();
 
-            NodeTools.setRadioSelected(titleSideGroup, options.getTitleSide().name());
+            NodeTools.setRadioSelected(titleSideGroup, message(options.getTitleSide().name()));
             titleSideGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
@@ -198,7 +199,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
                 }
             });
 
-            int lineWidth = xyOptions.getLineWidth();
+            int lineWidth = chartMaker.getLineWidth();
             lineWdithSelector.getItems().addAll(Arrays.asList(
                     "4", "1", "2", "3", "5", "6", "7", "8", "9", "10"
             ));
@@ -208,7 +209,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
                         try {
                             int v = Integer.parseInt(newValue);
                             if (v >= 0) {
-                                xyOptions.setLineWidth(v);
+                                chartMaker.setLineWidth(v);
                                 lineWdithSelector.getEditor().setStyle(null);
                                 chartController.redraw();
                             } else {
@@ -241,50 +242,50 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
                 }
             });
 
-            xyReverseCheck.setSelected(!xyOptions.isIsXY());
+            xyReverseCheck.setSelected(!chartMaker.isIsXY());
             xyReverseCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
                 if (isSettingValues) {
                     return;
                 }
                 checkXYReverse();
-                xyOptions.setIsXY(!xyReverseCheck.isSelected());
+                chartMaker.setIsXY(!xyReverseCheck.isSelected());
                 chartController.redraw();
             });
             checkXYReverse();
 
-            hlinesCheck.setSelected(xyOptions.isDisplayHlines());
+            hlinesCheck.setSelected(chartMaker.isDisplayHlines());
             hlinesCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
                 if (isSettingValues) {
                     return;
                 }
-                xyOptions.setDisplayHlines(hlinesCheck.isSelected());
+                chartMaker.setDisplayHlines(hlinesCheck.isSelected());
             });
 
-            vlinesCheck.setSelected(xyOptions.isDisplayVlines());
+            vlinesCheck.setSelected(chartMaker.isDisplayVlines());
             vlinesCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
                 if (isSettingValues) {
                     return;
                 }
-                xyOptions.setDisplayVlines(vlinesCheck.isSelected());
+                chartMaker.setDisplayVlines(vlinesCheck.isSelected());
             });
 
-            hZeroCheck.setSelected(xyOptions.isDisplayHZero());
+            hZeroCheck.setSelected(chartMaker.isDisplayHZero());
             hZeroCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
                 if (isSettingValues) {
                     return;
                 }
-                xyOptions.setDisplayHZero(hZeroCheck.isSelected());
+                chartMaker.setDisplayHZero(hZeroCheck.isSelected());
             });
 
-            vZeroCheck.setSelected(xyOptions.isDisplayVZero());
+            vZeroCheck.setSelected(chartMaker.isDisplayVZero());
             vZeroCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
                 if (isSettingValues) {
                     return;
                 }
-                xyOptions.setDisplayVZero(vZeroCheck.isSelected());
+                chartMaker.setDisplayVZero(vZeroCheck.isSelected());
             });
 
-            NodeTools.setRadioSelected(sizeCoordinateGroup, xyOptions.getSizeCoordinate().name());
+            NodeTools.setRadioSelected(sizeCoordinateGroup, message(chartMaker.getSizeCoordinate().name()));
             sizeCoordinateGroup.selectedToggleProperty().addListener(
                     (ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) -> {
                         if (isSettingValues || newValue == null) {
@@ -298,7 +299,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
                         } else if (sizeSquareRootRadio.isSelected()) {
                             sizeCoordinate = ChartCoordinate.SquareRoot;
                         }
-                        xyOptions.setSizeCoordinate(sizeCoordinate);
+                        chartMaker.setSizeCoordinate(sizeCoordinate);
                         chartController.redraw();
                     });
 
@@ -328,7 +329,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
 
     @FXML
     public void applyBubbleStyle() {
-        xyOptions.setBubbleStyle(bubbleStyleInput.getText());
+        chartMaker.setBubbleStyle(bubbleStyleInput.getText());
     }
 
     @FXML
@@ -341,25 +342,25 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
      */
     public void initCategoryTab() {
         try {
-            categoryInput.setText(xyOptions.getCategoryLabel());
+            categoryInput.setText(chartMaker.getCategoryLabel());
 
-            categoryTickCheck.setSelected(xyOptions.isDisplayCategoryTick());
+            categoryTickCheck.setSelected(chartMaker.isDisplayCategoryTick());
             categoryTickCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
                 if (isSettingValues) {
                     return;
                 }
-                xyOptions.setDisplayCategoryTick(categoryTickCheck.isSelected());
+                chartMaker.setDisplayCategoryTick(categoryTickCheck.isSelected());
             });
 
-            categoryMarkCheck.setSelected(xyOptions.isDisplayCategoryMark());
+            categoryMarkCheck.setSelected(chartMaker.isDisplayCategoryMark());
             categoryMarkCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
                 if (isSettingValues) {
                     return;
                 }
-                xyOptions.setDisplayCategoryMark(categoryMarkCheck.isSelected());
+                chartMaker.setDisplayCategoryMark(categoryMarkCheck.isSelected());
             });
 
-            int categoryTickRotation = xyOptions.getCategoryTickRotation();
+            int categoryTickRotation = chartMaker.getCategoryTickRotation();
             categoryTickRotationSelector.getItems().addAll(Arrays.asList(
                     "90", "45", "0", "30", "15", "60", "135", "120", "105", "150"
             ));
@@ -367,14 +368,14 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
             categoryTickRotationSelector.getSelectionModel().selectedItemProperty().addListener(
                     (ObservableValue<? extends String> v, String ov, String nv) -> {
                         try {
-                            xyOptions.setCategoryTickRotation(Integer.valueOf(nv));
+                            chartMaker.setCategoryTickRotation(Integer.valueOf(nv));
                             categoryTickRotationSelector.getEditor().setStyle(null);
                         } catch (Exception e) {
                             categoryTickRotationSelector.getEditor().setStyle(UserConfig.badStyle());
                         }
                     });
 
-            int categoryFontSize = xyOptions.getCategoryFontSize();
+            int categoryFontSize = chartMaker.getCategoryFontSize();
             categoryFontSizeSelector.getItems().addAll(Arrays.asList(
                     "12", "14", "10", "8", "15", "16", "18", "9", "6", "4", "20", "24"
             ));
@@ -382,14 +383,14 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
             categoryFontSizeSelector.getSelectionModel().selectedItemProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
                         try {
-                            xyOptions.setCategoryFontSize(Integer.parseInt(newValue));
+                            chartMaker.setCategoryFontSize(Integer.parseInt(newValue));
                             categoryFontSizeSelector.getEditor().setStyle(null);
                         } catch (Exception e) {
                             categoryFontSizeSelector.getEditor().setStyle(UserConfig.badStyle());
                         }
                     });
 
-            NodeTools.setRadioSelected(categorySideGroup, xyOptions.getCategorySide().name());
+            NodeTools.setRadioSelected(categorySideGroup, message(chartMaker.getCategorySide().name()));
             categorySideGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
@@ -405,11 +406,11 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
                     } else if (message("Right").equals(value)) {
                         categorySide = Side.RIGHT;
                     }
-                    xyOptions.setCategorySide(categorySide);
+                    chartMaker.setCategorySide(categorySide);
                 }
             });
 
-            if (xyOptions.isCategoryIsNumbers()) {
+            if (chartMaker.isCategoryIsNumbers()) {
                 categoryNumberRadio.fire();
             } else {
                 categoryStringRadio.fire();
@@ -420,12 +421,12 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
                     if (isSettingValues) {
                         return;
                     }
-                    xyOptions.setCategoryIsNumbers(categoryNumberRadio.isSelected());
+                    chartMaker.setCategoryIsNumbers(categoryNumberRadio.isSelected());
                     chartController.redraw();
                 }
             });
 
-            NodeTools.setRadioSelected(categoryCoordinateGroup, xyOptions.getCategoryCoordinate().name());
+            NodeTools.setRadioSelected(categoryCoordinateGroup, message(chartMaker.getCategoryCoordinate().name()));
             categoryCoordinateGroup.selectedToggleProperty().addListener(
                     (ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) -> {
                         if (isSettingValues || newValue == null) {
@@ -439,11 +440,11 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
                         } else if (categorySquareRootRadio.isSelected()) {
                             categoryCoordinate = ChartCoordinate.SquareRoot;
                         }
-                        xyOptions.setCategoryCoordinate(categoryCoordinate);
+                        chartMaker.setCategoryCoordinate(categoryCoordinate);
                         chartController.redraw();
                     });
 
-            double barGap = xyOptions.getBarGap();
+            double barGap = chartMaker.getBarGap();
             barGapSelector.getItems().addAll(Arrays.asList(
                     "1", "0", "0.5", "2", "4", "1.5", "5", "8", "10", "20", "30", "40", "50"
             ));
@@ -453,7 +454,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
                         try {
                             double d = Double.valueOf(nv);
                             if (d >= 0) {
-                                xyOptions.setBarGap(d);
+                                chartMaker.setBarGap(d);
                                 barGapSelector.getEditor().setStyle(null);
                                 chartController.redraw();
                             } else {
@@ -464,7 +465,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
                         }
                     });
 
-            double categoryGap = xyOptions.getCategoryGap();
+            double categoryGap = chartMaker.getCategoryGap();
             categoryGapSelector.getItems().addAll(Arrays.asList(
                     "20", "10", "30", "5", "8", "1", "0", "0.5", "2", "4", "1.5", "40", "50"
             ));
@@ -474,7 +475,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
                         try {
                             double d = Double.valueOf(nv);
                             if (d >= 0) {
-                                xyOptions.setCategoryGap(d);
+                                chartMaker.setCategoryGap(d);
                                 categoryGapSelector.getEditor().setStyle(null);
                                 chartController.redraw();
                             } else {
@@ -485,7 +486,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
                         }
                     });
 
-            bubbleStyleInput.setText(xyOptions.getBubbleStyle());
+            bubbleStyleInput.setText(chartMaker.getBubbleStyle());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -494,12 +495,12 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
 
     @FXML
     public void defaultCategoryLabel() {
-        categoryInput.setText(xyOptions.getDefaultCategoryLabel());
+        categoryInput.setText(chartMaker.getDefaultCategoryLabel());
     }
 
     @FXML
     public void goCategoryLabel() {
-        xyOptions.setCategoryLabel(categoryInput.getText());
+        chartMaker.setCategoryLabel(categoryInput.getText());
     }
 
     /*
@@ -507,25 +508,25 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
      */
     public void initNumberTab() {
         try {
-            valueInput.setText(xyOptions.getValueLabel());
+            valueInput.setText(chartMaker.getValueLabel());
 
-            numberTickCheck.setSelected(xyOptions.isDisplayNumberTick());
+            numberTickCheck.setSelected(chartMaker.isDisplayNumberTick());
             numberTickCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
                 if (isSettingValues) {
                     return;
                 }
-                xyOptions.setDisplayNumberTick(numberTickCheck.isSelected());
+                chartMaker.setDisplayNumberTick(numberTickCheck.isSelected());
             });
 
-            numberMarkCheck.setSelected(xyOptions.isDisplayNumberMark());
+            numberMarkCheck.setSelected(chartMaker.isDisplayNumberMark());
             numberMarkCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
                 if (isSettingValues) {
                     return;
                 }
-                xyOptions.setDisplayNumberMark(numberMarkCheck.isSelected());
+                chartMaker.setDisplayNumberMark(numberMarkCheck.isSelected());
             });
 
-            int numberTickRotation = xyOptions.getNumberTickRotation();
+            int numberTickRotation = chartMaker.getNumberTickRotation();
             numberTickRotationSelector.getItems().addAll(Arrays.asList(
                     "0", "90", "45", "30", "15", "60", "135", "120", "105", "150"
             ));
@@ -533,14 +534,14 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
             numberTickRotationSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> v, String ov, String nv) -> {
                 try {
                     int d = Integer.valueOf(nv);
-                    xyOptions.setNumberTickRotation(Integer.valueOf(nv));
+                    chartMaker.setNumberTickRotation(Integer.valueOf(nv));
                     numberTickRotationSelector.getEditor().setStyle(null);
                 } catch (Exception e) {
                     numberTickRotationSelector.getEditor().setStyle(UserConfig.badStyle());
                 }
             });
 
-            int numberFontSize = xyOptions.getNumberFontSize();
+            int numberFontSize = chartMaker.getNumberFontSize();
             if (numberFontSize < 0) {
                 numberFontSize = 12;
             }
@@ -552,7 +553,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
                 try {
                     int v = Integer.parseInt(newValue);
                     if (v > 0) {
-                        xyOptions.setNumberFontSize(v);
+                        chartMaker.setNumberFontSize(v);
                         numberFontSizeSelector.getEditor().setStyle(null);
                     } else {
                         numberFontSizeSelector.getEditor().setStyle(UserConfig.badStyle());
@@ -562,7 +563,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
                 }
             });
 
-            NodeTools.setRadioSelected(numberSideGroup, xyOptions.getNumberSide().name());
+            NodeTools.setRadioSelected(numberSideGroup, message(chartMaker.getNumberSide().name()));
             numberSideGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
@@ -578,11 +579,11 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
                     } else if (message("Right").equals(value)) {
                         numberSide = Side.RIGHT;
                     }
-                    xyOptions.setNumberSide(numberSide);
+                    chartMaker.setNumberSide(numberSide);
                 }
             });
 
-            NodeTools.setRadioSelected(numberCoordinateGroup, xyOptions.getNumberCoordinate().name());
+            NodeTools.setRadioSelected(numberCoordinateGroup, message(chartMaker.getNumberCoordinate().name()));
             numberCoordinateGroup.selectedToggleProperty().addListener(
                     (ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) -> {
                         if (isSettingValues || newValue == null) {
@@ -596,7 +597,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
                         } else if (squareRootRadio.isSelected()) {
                             numberCoordinate = ChartCoordinate.SquareRoot;
                         }
-                        xyOptions.setNumberCoordinate(numberCoordinate);
+                        chartMaker.setNumberCoordinate(numberCoordinate);
                         chartController.redraw();
                     });
 
@@ -607,12 +608,12 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
 
     @FXML
     public void defaultValueLabel() {
-        valueInput.setText(xyOptions.getDefaultValueLabel());
+        valueInput.setText(chartMaker.getDefaultValueLabel());
     }
 
     @FXML
     public void goValueLabel() {
-        xyOptions.setValueLabel(valueInput.getText());
+        chartMaker.setValueLabel(valueInput.getText());
     }
 
     /*

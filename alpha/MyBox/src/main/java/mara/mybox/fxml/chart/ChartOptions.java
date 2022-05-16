@@ -70,20 +70,24 @@ public class ChartOptions<X, Y> {
             titleFontSize = UserConfig.getInt(chartName + "TitleFontSize", 12);
             tickFontSize = UserConfig.getInt(chartName + "TickFontSize", 10);
 
-            labelType = chart instanceof ScatterChart || chart instanceof BoxWhiskerChart ? LabelType.Point : LabelType.NotDisplay;
-            String saved = UserConfig.getString(chartName + "LabelType",
-                    chart instanceof ScatterChart || chart instanceof BoxWhiskerChart ? "Point" : "NotDisplay");
-            if (saved != null) {
-                for (LabelType type : LabelType.values()) {
-                    if (type.name().equals(saved)) {
-                        labelType = type;
-                        break;
+            if (chart instanceof ScatterChart || chart instanceof BoxWhiskerChart) {
+                labelType = LabelType.Point;
+            } else {
+                labelType = LabelType.NotDisplay;
+                String saved = UserConfig.getString(chartName + "LabelType",
+                        chart instanceof ScatterChart || chart instanceof BoxWhiskerChart ? "Point" : "NotDisplay");
+                if (saved != null) {
+                    for (LabelType type : LabelType.values()) {
+                        if (type.name().equals(saved)) {
+                            labelType = type;
+                            break;
+                        }
                     }
                 }
             }
 
             titleSide = Side.TOP;
-            saved = UserConfig.getString(chartName + "TitleSide", "TOP");
+            String saved = UserConfig.getString(chartName + "TitleSide", "TOP");
             if (saved != null) {
                 for (Side value : Side.values()) {
                     if (value.name().equals(saved)) {

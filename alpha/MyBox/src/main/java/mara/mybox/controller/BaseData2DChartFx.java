@@ -15,6 +15,7 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.chart.ChartOptions.ChartType;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -108,46 +109,70 @@ public abstract class BaseData2DChartFx extends BaseController {
 
     @FXML
     public void htmlAction() {
-        try {
-            if (data == null || data.isEmpty()) {
-                popError(message("NoData"));
-                return;
-            }
-            Image image = snapChart();
-            File imageFile = new File(AppPaths.getGeneratedPath() + File.separator + DateTools.nowFileString() + ".jpg");
-            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-            ImageFileWriters.writeImageFile(bufferedImage, "jpg", imageFile.getAbsolutePath());
+        if (data == null || data.isEmpty()) {
+            popError(message("NoData"));
+            return;
+        }
+        SingletonTask htmlTask = new SingletonTask<Void>(this) {
 
-            StringBuilder s = new StringBuilder();
-            String title = chart.getTitle();
-            if (title != null) {
-                s.append("<h1  class=\"center\">").append(title).append("</h1>\n");
-                s.append("<hr>\n");
-            }
-            s.append("<h2  class=\"center\">").append(message("Image")).append("</h2>\n");
-            s.append("<div align=\"center\"><img src=\"").append(imageFile.toURI().toString()).append("\"  style=\"max-width:95%;\"></div>\n");
-            s.append("<hr>\n");
+            private String html;
 
-            checkData();
-            List<String> names = new ArrayList<>();
-            if (checkedColumns != null) {
-                for (Data2DColumn c : checkedColumns) {
-                    names.add(c.getColumnName());
+            @Override
+            protected boolean handle() {
+                try {
+
+                    Image image = snapChart();
+                    File imageFile = new File(AppPaths.getGeneratedPath() + File.separator + DateTools.nowFileString() + ".jpg");
+                    BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+                    ImageFileWriters.writeImageFile(bufferedImage, "jpg", imageFile.getAbsolutePath());
+
+                    StringBuilder s = new StringBuilder();
+                    String title = chart.getTitle();
+                    if (title != null) {
+                        s.append("<h1  class=\"center\">").append(title).append("</h1>\n");
+                        s.append("<hr>\n");
+                    }
+                    s.append("<h2  class=\"center\">").append(message("Image")).append("</h2>\n");
+                    s.append("<div align=\"center\"><img src=\"").append(imageFile.toURI().toString()).append("\"  style=\"max-width:95%;\"></div>\n");
+                    s.append("<hr>\n");
+
+                    checkData();
+                    List<String> names = new ArrayList<>();
+                    if (checkedColumns != null) {
+                        for (Data2DColumn c : checkedColumns) {
+                            names.add(c.getColumnName());
+                        }
+                    }
+                    StringTable table = new StringTable(names);
+                    for (List<String> row : checkedData) {
+                        table.add(row);
+                    }
+
+                    s.append(table.div());
+
+                    html = HtmlWriteTools.html("", HtmlStyles.styleValue("Default"), s.toString());
+
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
                 }
             }
-            StringTable table = new StringTable(names);
-            for (List<String> row : checkedData) {
-                table.add(row);
+
+            @Override
+            protected void whenSucceeded() {
+                HtmlEditorController.load(html);
             }
 
-            s.append(table.div());
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                checkedColumns = null;
+                checkedData = null;
+            }
 
-            String html = HtmlWriteTools.html("", HtmlStyles.styleValue("Default"), s.toString());
-            HtmlEditorController.load(html);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+        };
+        start(htmlTask, false);
     }
 
     @FXML
@@ -156,8 +181,26 @@ public abstract class BaseData2DChartFx extends BaseController {
             popError(message("NoData"));
             return;
         }
-        checkData();
-        DataManufactureController.open(checkedColumns, checkedData);
+        SingletonTask dataTask = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try {
+                    checkData();
+                    return checkedData != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                DataManufactureController.open(checkedColumns, checkedData);
+            }
+
+        };
+        start(dataTask, false);
     }
 
     public void checkData() {
