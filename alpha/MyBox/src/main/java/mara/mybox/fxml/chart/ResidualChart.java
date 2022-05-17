@@ -1,6 +1,9 @@
 package mara.mybox.fxml.chart;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.application.Platform;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.shape.Line;
@@ -24,25 +27,32 @@ public class ResidualChart<X, Y> extends LabeledScatterChart<X, Y> {
         upperLine = new Line();
         lowerLine = new Line();
         text = new Text();
-        dataNumber = 1;
     }
 
-    @Override
-    public void removeControls(Series<X, Y> series) {
-        super.removeControls(series);
-        getPlotChildren().removeAll(upperLine, lowerLine, text);
-    }
-
-    @Override
-    public void displayControls() {
-        super.displayControls();
-        try {
-            List<XYChart.Series<X, Y>> seriesList = this.getData();
-            if (seriesList == null || seriesList.size() < dataNumber) {
-                return;
-            }
+    public synchronized void displayControls(int dataSize) {
+        if (dataSize < 3) {
             getPlotChildren().removeAll(upperLine, lowerLine, text);
-            if (dataNumber < 3) {
+            return;
+        }
+        Timer t = new Timer();
+        t.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    if (getData() != null && dataSize == getData().size()) {
+                        t.cancel();
+                        makeControls();
+                    }
+                });
+            }
+        }, 100, 100);
+    }
+
+    public void makeControls() {
+        try {
+            getPlotChildren().removeAll(upperLine, lowerLine, text);
+            List<XYChart.Series<X, Y>> seriesList = this.getData();
+            if (seriesList == null || seriesList.size() < 3) {
                 return;
             }
             String prefix = "-fx-stroke-dash-array: " + chartMaker.getLineWidth() * 2

@@ -260,6 +260,10 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         }
     }
 
+    public void drawChart(BaseData2DChartFx chartController) {
+        drawChart();
+    }
+
     public Map<String, String> makePalette() {
         try {
             Random random = new Random();

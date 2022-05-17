@@ -48,6 +48,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
         try {
             super.initControls();
 
+            chartController.dataController = this;
             chartMaker = chartController.chartMaker;
 
             checkChartType();

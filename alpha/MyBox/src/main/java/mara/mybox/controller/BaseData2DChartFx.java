@@ -31,6 +31,7 @@ import static mara.mybox.value.Languages.message;
  */
 public abstract class BaseData2DChartFx extends BaseController {
 
+    protected BaseData2DChartController dataController;
     protected Chart chart;
     protected List<List<String>> data, checkedData;
     protected List<Data2DColumn> columns, checkedColumns;
@@ -43,8 +44,6 @@ public abstract class BaseData2DChartFx extends BaseController {
 
     public BaseData2DChartFx() {
     }
-
-    public abstract void redraw();
 
     @Override
     public void initControls() {
@@ -65,6 +64,10 @@ public abstract class BaseData2DChartFx extends BaseController {
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
+    }
+
+    public void redraw() {
+        dataController.drawChart(this);
     }
 
     @FXML
@@ -113,6 +116,7 @@ public abstract class BaseData2DChartFx extends BaseController {
             popError(message("NoData"));
             return;
         }
+        Image image = snapChart();
         SingletonTask htmlTask = new SingletonTask<Void>(this) {
 
             private String html;
@@ -120,8 +124,6 @@ public abstract class BaseData2DChartFx extends BaseController {
             @Override
             protected boolean handle() {
                 try {
-
-                    Image image = snapChart();
                     File imageFile = new File(AppPaths.getGeneratedPath() + File.separator + DateTools.nowFileString() + ".jpg");
                     BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
                     ImageFileWriters.writeImageFile(bufferedImage, "jpg", imageFile.getAbsolutePath());

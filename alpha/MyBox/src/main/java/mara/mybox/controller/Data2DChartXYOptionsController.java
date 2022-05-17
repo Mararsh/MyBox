@@ -23,6 +23,8 @@ import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.chart.ResidualChart;
+import mara.mybox.fxml.chart.SimpleRegressionChart;
 import mara.mybox.fxml.chart.XYChartMaker;
 import mara.mybox.fxml.chart.XYChartOptions;
 import mara.mybox.fxml.chart.XYChartOptions.ChartCoordinate;
@@ -85,7 +87,9 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
             initCategoryTab();
             initNumberTab();
             Chart chart = chartMaker.getChart();
-            if (chart instanceof BubbleChart) {
+            if (chart instanceof BubbleChart
+                    || chart instanceof SimpleRegressionChart
+                    || chart instanceof ResidualChart) {
                 categoryStringRadio.setDisable(true);
                 categoryNumberRadio.fire();
             } else {

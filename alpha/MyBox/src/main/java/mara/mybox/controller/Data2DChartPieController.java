@@ -32,6 +32,7 @@ public class Data2DChartPieController extends BaseData2DChartController {
         try {
             super.initControls();
 
+            chartController.dataController = this;
             pieMaker = chartController.pieMaker;
 
             sourceController.noColumnSelection(true);

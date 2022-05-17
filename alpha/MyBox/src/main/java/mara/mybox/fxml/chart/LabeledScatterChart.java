@@ -26,9 +26,6 @@ public class LabeledScatterChart<X, Y> extends ScatterChart<X, Y> {
 
     protected XYChartMaker chartMaker;
 
-    protected boolean written;
-    protected int dataNumber;
-
     public LabeledScatterChart(Axis xAxis, Axis yAxis) {
         super(xAxis, yAxis);
         init();
@@ -50,34 +47,18 @@ public class LabeledScatterChart<X, Y> extends ScatterChart<X, Y> {
     @Override
     protected void seriesAdded(Series<X, Y> series, int seriesIndex) {
         super.seriesAdded(series, seriesIndex);
-        writeControls(series, seriesIndex);
-        written = seriesIndex == dataNumber - 1;
-    }
-
-    public void writeControls(Series<X, Y> series, int seriesIndex) {
         chartMaker.makeLabels(series, getPlotChildren());
     }
 
     @Override
     protected void seriesRemoved(final Series<X, Y> series) {
-        super.seriesRemoved(series);
-        removeControls(series);
-        written = false;
-    }
-
-    public void removeControls(Series<X, Y> series) {
         chartMaker.removeLabels(getPlotChildren());
+        super.seriesRemoved(series);
     }
 
     @Override
     protected void layoutPlotChildren() {
         super.layoutPlotChildren();
-        if (dataNumber <= 0 || written) {
-            displayControls();
-        }
-    }
-
-    public void displayControls() {
         chartMaker.displayLabels();
     }
 
@@ -127,19 +108,6 @@ public class LabeledScatterChart<X, Y> extends ScatterChart<X, Y> {
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
-    }
-
-
-    /*
-        set/set
-     */
-    public int getDataNumber() {
-        return dataNumber;
-    }
-
-    public LabeledScatterChart setDataNumber(int dataNumber) {
-        this.dataNumber = dataNumber;
-        return this;
     }
 
 }

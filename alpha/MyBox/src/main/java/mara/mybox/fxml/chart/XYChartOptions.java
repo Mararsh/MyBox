@@ -35,11 +35,11 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
     protected ChartCoordinate categoryCoordinate, numberCoordinate, sizeCoordinate,
             xCoordinate, yCoordinate;
     protected int lineWidth, categoryFontSize, categoryMargin, categoryTickRotation,
-            numberFontSize, numberTickRotation, boxWidth;
+            numberFontSize, numberTickRotation;
     protected boolean isXY, categoryIsNumbers,
             displayCategoryMark, displayCategoryTick, displayNumberMark, displayNumberTick,
             altRowsFill, altColumnsFill, displayVlines, displayHlines, displayVZero, displayHZero,
-            handleOutliers, handleMean, dotted;
+            dotted;
     protected LabelLocation labelLocation;
     protected Side categorySide, numberSide;
     protected double barGap, categoryGap;
@@ -72,6 +72,11 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
                     categoryIsNumbers = true;
                     labelLocation = LabelLocation.Center;
                     break;
+                case SimpleRegressionChart:
+                case ResidualChart:
+                    categoryIsNumbers = true;
+                    labelLocation = LabelLocation.Above;
+                    break;
                 case Bar:
                 case StackedBar:
                 case Area:
@@ -96,8 +101,6 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
             displayHlines = UserConfig.getBoolean(chartName + "DisplayHlines", true);
             displayVZero = UserConfig.getBoolean(chartName + "DisplayVZero", true);
             displayHZero = UserConfig.getBoolean(chartName + "DisplayHZero", true);
-            handleOutliers = UserConfig.getBoolean(chartName + "HandleOutliers", false);
-            handleMean = UserConfig.getBoolean(chartName + "HandleMean", false);
             dotted = UserConfig.getBoolean(chartName + "Dotted", false);
 
             categoryFontSize = UserConfig.getInt(chartName + "CategoryFontSize", 10);
@@ -108,7 +111,6 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
             lineWidth = UserConfig.getInt(chartName + "LineWidth", 2);
             barGap = UserConfig.getDouble(chartName + "BarGap", 2d);
             categoryGap = UserConfig.getDouble(chartName + "CategoryGap", 20d);
-            boxWidth = UserConfig.getInt(chartName + "BoxWidth", 40);
 
             bubbleStyle = UserConfig.getString(chartName + "BubbleStyle", DefaultBubbleStyle);
 
@@ -600,37 +602,6 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
         if (bubbleChart != null) {
             ChartTools.setBubbleChart​Colors(bubbleChart, getBubbleStyle(), palette, legendSide != null);
         }
-    }
-
-    public int getBoxWidth() {
-        boxWidth = boxWidth < 0 ? 40 : boxWidth;
-        return boxWidth;
-    }
-
-    public XYChartOptions<X, Y> setBoxWidth(int boxWidth) {
-        this.boxWidth = boxWidth;
-        UserConfig.setInt(chartName + "BoxWidth", getBoxWidth());
-        return this;
-    }
-
-    public boolean isHandleOutliers() {
-        return handleOutliers;
-    }
-
-    public XYChartOptions<X, Y> setHandleOutliers(boolean handleOutliers) {
-        this.handleOutliers = handleOutliers;
-        UserConfig.setBoolean(chartName + "HandleOutliers", handleOutliers);
-        return this;
-    }
-
-    public boolean isHandleMean() {
-        return handleMean;
-    }
-
-    public XYChartOptions<X, Y> setHandleMean(boolean handleMean) {
-        this.handleMean = handleMean;
-        UserConfig.setBoolean(chartName + "HandleMean", handleMean);
-        return this;
     }
 
     public boolean isDotted() {

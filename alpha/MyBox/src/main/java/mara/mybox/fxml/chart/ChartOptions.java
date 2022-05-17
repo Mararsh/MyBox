@@ -5,7 +5,6 @@ import java.util.Map;
 import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.chart.Chart;
-import javafx.scene.chart.ScatterChart;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -70,12 +69,14 @@ public class ChartOptions<X, Y> {
             titleFontSize = UserConfig.getInt(chartName + "TitleFontSize", 12);
             tickFontSize = UserConfig.getInt(chartName + "TickFontSize", 10);
 
-            if (chart instanceof ScatterChart || chart instanceof BoxWhiskerChart) {
+            if (chartType == ChartType.BoxWhiskerChart
+                    || chartType == ChartType.Scatter
+                    || chartType == ChartType.SimpleRegressionChart
+                    || chartType == ChartType.ResidualChart) {
                 labelType = LabelType.Point;
             } else {
                 labelType = LabelType.NotDisplay;
-                String saved = UserConfig.getString(chartName + "LabelType",
-                        chart instanceof ScatterChart || chart instanceof BoxWhiskerChart ? "Point" : "NotDisplay");
+                String saved = UserConfig.getString(chartName + "LabelType", "NotDisplay");
                 if (saved != null) {
                     for (LabelType type : LabelType.values()) {
                         if (type.name().equals(saved)) {

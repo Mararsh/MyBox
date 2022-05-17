@@ -6,7 +6,6 @@ import javafx.scene.chart.Axis;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.chart.XYChartMaker;
-import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -34,25 +33,6 @@ public class ControlData2DChartXY extends BaseData2DChartFx {
         }
     }
 
-    @Override
-    public void redraw() {
-        try {
-            if (data == null || data.isEmpty()) {
-                popError(message("NoData"));
-                return;
-            }
-            makeXYChart();
-            writeXYChart(columns, data, colIndics, rowNumber);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void makeXYChart() {
-        chartMaker.makeChart();
-        setChart(chartMaker.getXyChart());
-    }
-
     public void writeXYChart(List<Data2DColumn> columns, List<List<String>> data) {
         writeXYChart(columns, data, null, true);
     }
@@ -63,6 +43,8 @@ public class ControlData2DChartXY extends BaseData2DChartFx {
         this.data = data;
         this.colIndics = colIndics;
         this.rowNumber = rowNumber;
+        chartMaker.makeChart();
+        setChart(chartMaker.getXyChart());
         chartMaker.writeXYChart(columns, data, colIndics, rowNumber);
         if (optionsController != null && optionsController.isShowing()
                 && !chartMaker.getChartName().equals(optionsController.chartName)) {

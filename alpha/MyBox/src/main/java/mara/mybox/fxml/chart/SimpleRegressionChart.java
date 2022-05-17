@@ -1,6 +1,9 @@
 package mara.mybox.fxml.chart;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.application.Platform;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.shape.Line;
@@ -24,24 +27,30 @@ public class SimpleRegressionChart<X, Y> extends LabeledScatterChart<X, Y> {
         init();
         regressionLine = new Line();
         text = new Text();
-        dataNumber = 2;
     }
 
-    @Override
-    public void removeControls(Series<X, Y> series) {
-        super.removeControls(series);
-        getPlotChildren().removeAll(regressionLine, text);
+    public synchronized void displayControls() {
+        Timer t = new Timer();
+        t.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    if (getData() != null && 2 == getData().size()) {
+                        t.cancel();
+                        makeControls();
+                    }
+                });
+            }
+        }, 100, 100);
     }
 
-    @Override
-    public void displayControls() {
-        super.displayControls();
+    public void makeControls() {
         try {
+            getPlotChildren().removeAll(regressionLine, text);
             List<XYChart.Series<X, Y>> seriesList = this.getData();
-            if (seriesList == null || seriesList.size() < dataNumber) {
+            if (seriesList == null) {
                 return;
             }
-
             getPlotChildren().removeAll(regressionLine, text);
             regressionLine.setStyle("-fx-stroke-width:" + chartMaker.getLineWidth()
                     + "px; -fx-stroke:" + chartMaker.getPalette().get(seriesList.get(1).getName()));
@@ -69,7 +78,7 @@ public class SimpleRegressionChart<X, Y> extends LabeledScatterChart<X, Y> {
         try {
             displayFittedPoints = display;
             List<XYChart.Series<X, Y>> seriesList = this.getData();
-            if (seriesList == null || seriesList.size() < dataNumber) {
+            if (seriesList == null) {
                 return;
             }
             List<XYChart.Data<X, Y>> data1 = seriesList.get(1).getData();

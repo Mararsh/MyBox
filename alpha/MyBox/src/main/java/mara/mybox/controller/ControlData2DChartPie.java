@@ -5,7 +5,6 @@ import javafx.fxml.FXML;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.chart.PieChartMaker;
-import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -29,20 +28,6 @@ public class ControlData2DChartPie extends BaseData2DChartFx {
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void redraw() {
-        try {
-            if (data == null || data.isEmpty()) {
-                popError(message("NoData"));
-                return;
-            }
-            writeChart(columns, data);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
         }
     }
 

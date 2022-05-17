@@ -259,10 +259,7 @@ public class XYChartMaker<X, Y> extends XYChartOptions<X, Y> {
 
     public boolean makeBoxWhiskerChart() {
         try {
-            boxWhiskerChart = new BoxWhiskerChart(xAxis, yAxis)
-                    .setBoxWidth(boxWidth)
-                    .setHandleMean(handleMean)
-                    .setHandleOutliers(handleOutliers);
+            boxWhiskerChart = new BoxWhiskerChart(xAxis, yAxis);
             boxWhiskerChart.setMaker(this);
             xyChart = boxWhiskerChart;
             return true;

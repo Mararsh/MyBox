@@ -12,6 +12,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -452,7 +453,7 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
         }
         if (handleOutliers) {
             makeOutliers();
-        };
+        }
     }
 
     public synchronized void displayBoxWhisker() {
@@ -474,11 +475,13 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
         get/set
      */
     public int getBoxWidth() {
+        boxWidth = boxWidth < 0 ? 40 : boxWidth;
         return boxWidth;
     }
 
     public BoxWhiskerChart<X, Y> setBoxWidth(int boxWidth) {
         this.boxWidth = boxWidth;
+        UserConfig.setInt("BoxWhiskerChartBoxWidth", getBoxWidth());
         return this;
     }
 
@@ -488,6 +491,7 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
 
     public BoxWhiskerChart<X, Y> setHandleOutliers(boolean handleOutliers) {
         this.handleOutliers = handleOutliers;
+        UserConfig.setBoolean("BoxWhiskerChartHandleOutliers", handleOutliers);
         return this;
     }
 
@@ -497,6 +501,7 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
 
     public BoxWhiskerChart<X, Y> setHandleMean(boolean handleMean) {
         this.handleMean = handleMean;
+        UserConfig.setBoolean("BoxWhiskerChartHandleMean", handleMean);
         return this;
     }
 
