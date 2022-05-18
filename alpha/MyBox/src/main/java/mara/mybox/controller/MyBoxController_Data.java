@@ -179,9 +179,14 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
             loadScene(Fxmls.JShellFxml);
         });
 
+        MenuItem jexl = new MenuItem(message("JEXL"));
+        jexl.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.JexlFxml);
+        });
+
         Menu calculation = new Menu(message("Calculation"));
         calculation.getItems().addAll(
-                jshell
+                jshell, jexl
         );
 
         MenuItem barcodeCreator = new MenuItem(message("BarcodeCreator"));

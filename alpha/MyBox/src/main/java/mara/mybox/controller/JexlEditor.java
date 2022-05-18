@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,13 +10,9 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
-import jdk.jshell.JShell;
-import jdk.jshell.SnippetEvent;
-import jdk.jshell.SourceCodeAnalysis;
-import mara.mybox.data.JShellSnippet;
-import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
@@ -28,23 +23,31 @@ import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlWriteTools;
 import static mara.mybox.value.Languages.message;
+import org.apache.commons.jexl3.JexlBuilder;
+import org.apache.commons.jexl3.JexlContext;
+import org.apache.commons.jexl3.JexlEngine;
+import org.apache.commons.jexl3.JexlScript;
+import org.apache.commons.jexl3.MapContext;
 
 /**
  * @Author Mara
- * @CreateDate 2022-3-11
+ * @CreateDate 2022-5-17
  * @License Apache License Version 2.0
  */
-public class JShellEditor extends TreeNodeEditor {
+public class JexlEditor extends TreeNodeEditor {
 
-    protected JShellController jShellController;
-    protected JShellSnippets snippetsController;
+    protected JexlController jexlController;
     protected String outputs = "";
-    protected JShell jShell;
+    protected JexlEngine jexlEngine;
+    protected JexlContext jexlContext;
+    protected JexlScript jexlScript;
 
     @FXML
     protected Button clearCodesButton;
+    @FXML
+    protected TextArea parsedArea;
 
-    public JShellEditor() {
+    public JexlEditor() {
         defaultExt = "java";
     }
 
@@ -52,21 +55,24 @@ public class JShellEditor extends TreeNodeEditor {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-
             NodeStyleTools.setTooltip(clearCodesButton, new Tooltip(message("Clear") + "\nCTRL+g"));
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    protected void setParameters(JShellController jShellController) {
-        this.jShellController = jShellController;
-        snippetsController = jShellController.snippetsController;
-        resetJShell();
+    protected void setParameters(JexlController jexlController) {
+        try {
+            this.jexlController = jexlController;
+            jexlEngine = new JexlBuilder().cache(512).strict(true).silent(false).create();
+            resetContext();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @FXML
-    public synchronized void resetJShell() {
+    public synchronized void resetContext() {
         if (task != null) {
             task.cancel();
         }
@@ -74,7 +80,7 @@ public class JShellEditor extends TreeNodeEditor {
             @Override
             protected boolean handle() {
                 try {
-                    jShell = JShell.create();
+                    jexlContext = new MapContext();
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
@@ -96,13 +102,31 @@ public class JShellEditor extends TreeNodeEditor {
 
     @FXML
     @Override
+    public void goAction() {
+        try {
+            String inputs = valueInput.getText();
+            if (inputs == null || inputs.isBlank()) {
+                popError(message("NoInput"));
+                return;
+            }
+            jexlScript = jexlEngine.createScript(inputs);
+            String parsed = jexlScript.getParsedText();
+            parsedArea.setText(parsed);
+            TableStringValues.add("JexlHistories", parsed);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    @Override
     public void startAction() {
         if (startButton.getUserData() != null) {
             cancelAction();
             return;
         }
-        String codes = valueInput.getText();
-        if (codes == null || codes.isBlank()) {
+        String script = parsedArea.getText();
+        if (script == null || script.isBlank()) {
             popError(message("NoInput"));
             return;
         }
@@ -112,11 +136,10 @@ public class JShellEditor extends TreeNodeEditor {
         StyleTools.setNameIcon(startButton, message("Stop"), "iconStop.png");
         startButton.applyCss();
         startButton.setUserData("started");
-        jShellController.rightPaneCheck.setSelected(true);
         task = new SingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
-                return runCodes(codes);
+                return runScript(script);
             }
 
             @Override
@@ -128,64 +151,18 @@ public class JShellEditor extends TreeNodeEditor {
         start(task);
     }
 
-    protected boolean runCodes(String codes) {
-        try ( Connection conn = DerbyBase.getConnection()) {
-            String leftCodes = codes;
-            while (leftCodes != null && !leftCodes.isBlank()) {
-                SourceCodeAnalysis.CompletionInfo info = jShell.sourceCodeAnalysis().analyzeCompletion(leftCodes);
-                if (!runSnippet(conn, info.source())) {
-                    return false;
-                }
-                leftCodes = info.remaining();
-            }
-            return true;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            return false;
-        }
-    }
-
-    protected boolean runSnippet(Connection conn, String source) {
+    protected boolean runScript(String script) {
         try {
-            if (source == null || source.isBlank()) {
+            if (script == null || script.isBlank()) {
                 return false;
             }
-            String snippet = source.trim();
-            TableStringValues.add(conn, "JShellHistories", snippet);
-            List<SnippetEvent> events = jShell.eval(snippet);
+            Object results = jexlScript.execute(jexlContext);
             String snippetOutputs = DateTools.nowString()
                     + "<div class=\"valueText\" >"
-                    + HtmlWriteTools.stringToHtml(snippet)
+                    + HtmlWriteTools.stringToHtml(parsedArea.getText())
                     + "</div>";
-            String results = "";
-            for (int i = 0; i < events.size(); i++) {
-                if (task == null || task.isCancelled()) {
-                    output(message("Canceled"));
-                    return true;
-                }
-                SnippetEvent e = events.get(i);
-                JShellSnippet jShellSnippet = new JShellSnippet(jShell, e.snippet());
-                if (i > 0) {
-                    results += "\n";
-                }
-                results += "id: " + jShellSnippet.getId() + "\n";
-                if (jShellSnippet.getStatus() != null) {
-                    results += message("Status") + ": " + jShellSnippet.getStatus() + "\n";
-                }
-                if (jShellSnippet.getType() != null) {
-                    results += message("Type") + ": " + jShellSnippet.getType() + "\n";
-                }
-                if (jShellSnippet.getName() != null) {
-                    results += message("Name") + ": " + jShellSnippet.getName() + "\n";
-                }
-                if (jShellSnippet.getValue() != null) {
-                    results += message("Value") + ": " + jShellSnippet.getValue() + "\n";
-                }
-            }
             snippetOutputs += "<div class=\"valueBox\">"
-                    + HtmlWriteTools.stringToHtml(results) + "</div>";
+                    + HtmlWriteTools.stringToHtml(results.toString()) + "</div>";
             output(snippetOutputs);
 
         } catch (Exception e) {
@@ -199,10 +176,6 @@ public class JShellEditor extends TreeNodeEditor {
         if (task != null) {
             task.cancel();
         }
-        if (jShell != null) {
-            jShell.stop();
-        }
-        jShellController.snippetsController.refreshSnippets();
         StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
         startButton.applyCss();
         startButton.setUserData(null);
@@ -212,16 +185,16 @@ public class JShellEditor extends TreeNodeEditor {
         Platform.runLater(() -> {
             outputs += msg + "<br><br>";
             String html = HtmlWriteTools.html(null, HtmlStyles.DefaultStyle, "<body>" + outputs + "</body>");
-            jShellController.webViewController.loadContents(html);
+            jexlController.webViewController.loadContents(html);
         });
 
     }
 
-    // https://stackoverflow.com/questions/53867043/what-are-the-limits-to-jshell?r=SearchResults
+    // https://commons.apache.org/proper/commons-jexl/reference/syntax.html
     @FXML
     protected void popSyntaxMenu(MouseEvent mouseEvent) {
         try {
-            MenuController controller = MenuController.open(jShellController, valueInput,
+            MenuController controller = MenuController.open(jexlController, valueInput,
                     mouseEvent.getScreenX(), mouseEvent.getScreenY() + 20);
             controller.setTitleLabel(message("Syntax"));
 
@@ -289,11 +262,11 @@ public class JShellEditor extends TreeNodeEditor {
             });
             controller.addNode(jlink);
 
-            Hyperlink blink = new Hyperlink("Full list of Math functions");
+            Hyperlink blink = new Hyperlink("JEXL Reference");
             blink.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    openLink("https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Math.html");
+                    openLink("https://commons.apache.org/proper/commons-jexl/reference/index.html");
                 }
             });
             controller.addNode(blink);
@@ -305,14 +278,15 @@ public class JShellEditor extends TreeNodeEditor {
 
     @FXML
     protected void popHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, valueInput, mouseEvent, "JShellHistories");
+        PopTools.popStringValues(this, valueInput, mouseEvent, "JexlHistories");
     }
 
     @Override
     public void cleanPane() {
         try {
             cancelAction();
-            jShell = null;
+            jexlContext = null;
+            jexlEngine = null;
         } catch (Exception e) {
         }
         super.cleanPane();

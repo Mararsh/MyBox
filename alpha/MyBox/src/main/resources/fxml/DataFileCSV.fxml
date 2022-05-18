@@ -91,7 +91,7 @@ License:    Apache License Version 2.0
                                     <VBox minHeight="-Infinity" spacing="2.0">
                                        <children>
                                           <fx:include fx:id="csvWrite" source="ControlCsvWrite.fxml" />
-                                          <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../../../../../tmp/MyBox-6.4.9-src/MyBox/src/main/resources/styles/MyBox.css">
+                                          <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                              <children>
                                                 <RadioButton fx:id="saveLoadRadio" mnemonicParsing="false" selected="true" text="%LoadAfterSaveAs">
                                                    <toggleGroup>
@@ -106,7 +106,7 @@ License:    Apache License Version 2.0
                                              <graphic>
                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                    <image>
-                                                      <Image url="@../../../../../tmp/MyBox-6.4.9-src/MyBox/src/main/resources/buttons/iconSaveAs.png" />
+                                                      <Image url="@../buttons/iconSaveAs.png" />
                                                    </image>
                                                 </ImageView>
                                              </graphic>

@@ -25,6 +25,7 @@ public class TreeNode extends BaseData {
     public static final String SQL = "SQL";
     public static final String JavaScript = "JavaScript";
     public static final String InformationInTree = "InformationInTree";
+    public static final String JEXL = "JEXLCode";
 
     protected long nodeid, parentid;
     protected String category, title, value, more, serialNumber;

@@ -207,6 +207,7 @@ public class Fxmls {
     public static final String Data2DChartPieOptionsFxml = "/fxml/Data2DChartPieOptions.fxml";
 
     public static final String JShellFxml = "/fxml/JShell.fxml";
+    public static final String JexlFxml = "/fxml/Jexl.fxml";
 
     public static final String DataFileCSVFxml = "/fxml/DataFileCSV.fxml";
     public static final String DataFileCSVConvertFxml = "/fxml/DataFileCSVConvert.fxml";

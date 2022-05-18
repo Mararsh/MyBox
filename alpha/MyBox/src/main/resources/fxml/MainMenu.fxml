@@ -240,6 +240,7 @@ License:    Apache License Version 2.0
                                 <Menu mnemonicParsing="false" text="%Calculation">
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#JShell" text="%JShell" />
+                                        <MenuItem mnemonicParsing="false" onAction="#JEXL" text="%JEXL" />
                                     </items>
                                 </Menu>   
                                 <SeparatorMenuItem mnemonicParsing="false" />

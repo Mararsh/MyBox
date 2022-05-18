@@ -72,7 +72,7 @@ License:    Apache License Version 2.0
                                             <graphic>
                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                     <image>
-                                                        <Image url="@../../../../../tmp/MyBox-6.4.9-src/MyBox/src/main/resources/buttons/iconSaveAs.png" />
+                                                        <Image url="@../buttons/iconSaveAs.png" />
                                                     </image>
                                                 </ImageView>
                                             </graphic>
