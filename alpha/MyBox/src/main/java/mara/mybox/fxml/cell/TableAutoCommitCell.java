@@ -90,6 +90,20 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
         return row == null ? -1 : row.getIndex();
     }
 
+    public S row() {
+        try {
+            int index = rowIndex();
+            if (index < 0) {
+                return null;
+            } else {
+                return getTableView().getItems().get(index);
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return null;
+        }
+    }
+
     @Override
     public void startEdit() {
         super.startEdit();
@@ -211,6 +225,7 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
             MyBoxLog.debug(e);
         }
     }
+
 
     /*
         static 

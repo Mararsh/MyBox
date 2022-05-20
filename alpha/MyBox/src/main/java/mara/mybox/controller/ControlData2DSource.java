@@ -5,6 +5,7 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -26,7 +27,9 @@ public class ControlData2DSource extends ControlData2DLoad {
     protected ChangeListener<Boolean> tableStatusListener;
 
     @FXML
-    protected CheckBox columnsCheck, allPagesCheck;
+    protected CheckBox allPagesCheck;
+    @FXML
+    protected Button noColumnButton, allColumnButton;
     @FXML
     protected Label titleLabel;
     @FXML
@@ -43,20 +46,6 @@ public class ControlData2DSource extends ControlData2DLoad {
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "AllPages", allPagesCheck.isSelected());
                     notifySelected();
-                }
-            });
-
-            columnsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    if (columnsCheck.isSelected()) {
-                        selectAllCols();
-                    } else {
-                        selectNoneCols();
-                    }
                 }
             });
 
@@ -84,7 +73,16 @@ public class ControlData2DSource extends ControlData2DLoad {
 
     public void noColumnSelection(boolean noColumnSelection) {
         this.noColumnSelection = noColumnSelection;
-        columnsCheck.setVisible(!noColumnSelection);
+        if (noColumnSelection) {
+            if (buttonsPane.getChildren().contains(noColumnButton)) {
+                buttonsPane.getChildren().removeAll(noColumnButton, allColumnButton);
+            }
+        } else {
+            if (!buttonsPane.getChildren().contains(noColumnButton)) {
+                buttonsPane.getChildren().add(0, noColumnButton);
+                buttonsPane.getChildren().add(1, allColumnButton);
+            }
+        }
     }
 
     public void setParameters(BaseController parent, ControlData2DEditTable tableController) {
@@ -105,6 +103,8 @@ public class ControlData2DSource extends ControlData2DLoad {
                 }
             };
             tableController.statusNotify.addListener(tableStatusListener);
+
+            tableView.requestFocus();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -234,7 +234,7 @@ public class ControlData2DSource extends ControlData2DLoad {
     }
 
     @FXML
-    public void selectAllCols() {
+    public void allColumns() {
         try {
             if (noColumnSelection) {
                 return;
@@ -253,7 +253,7 @@ public class ControlData2DSource extends ControlData2DLoad {
     }
 
     @FXML
-    public void selectNoneCols() {
+    public void noColumn() {
         try {
             if (noColumnSelection) {
                 return;
@@ -446,7 +446,7 @@ public class ControlData2DSource extends ControlData2DLoad {
                     cb.setSelected(col >= 0 && cols.contains(col));
                 }
             } else {
-                selectNoneCols();
+                noColumn();
             }
             isSettingValues = false;
             notifySelected();

@@ -405,53 +405,38 @@ License:    Apache License Version 2.0
                               <content>
                                   <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                       <children>
-                                          <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
-                                              <tabs>
-                                                  <Tab text="%Results">
-                                                      <content>
-                                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                                              <children>
-                                                                  <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
-                                                                      <children>
-                                                                          <Button fx:id="clearResultsButton" mnemonicParsing="false" onAction="#clearResults">
-                                                                              <graphic>
-                                                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                      <image>
-                                                                                          <Image url="@../buttons/Red/iconClear.png" />
-                                                                                      </image>
-                                                                                  </ImageView>
-                                                                              </graphic>
-                                                                          </Button>
-                                                                          <Button fx:id="editResultsButton" mnemonicParsing="false" onAction="#editResults">
-                                                                              <graphic>
-                                                                                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                                      <image>
-                                                                                          <Image url="@../buttons/Red/iconEdit.png" />
-                                                                                      </image>
-                                                                                  </ImageView>
-                                                                              </graphic>
-                                                                          </Button>
-                                                                          <Button fx:id="styleButton" mnemonicParsing="false" onMouseEntered="#popHtmlStyle">
-                                                                              <graphic>
-                                                                                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                                      <image>
-                                                                                          <Image url="@../buttons/Red/iconStyle.png" />
-                                                                                      </image>
-                                                                                  </ImageView>
-                                                                              </graphic>
-                                                                          </Button>
-                                                                      </children>
-                                                                  </HBox>
-                                                                  <fx:include fx:id="webView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlWebView.fxml" VBox.vgrow="ALWAYS" />
-                                                              </children>
-                                                              <padding>
-                                                                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                                              </padding>
-                                                          </VBox>
-                                                      </content>
-                                                  </Tab>
-                                              </tabs>
-                                          </TabPane>
+                                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <Button fx:id="clearResultsButton" mnemonicParsing="false" onAction="#clearResults">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconClear.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                        <Button fx:id="editResultsButton" mnemonicParsing="false" onAction="#editResults">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconEdit.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                        <Button fx:id="styleButton" mnemonicParsing="false" onMouseEntered="#popHtmlStyle">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconStyle.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                    </children>
+                                                </HBox>
+                                                <fx:include fx:id="webView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlWebView.fxml" VBox.vgrow="ALWAYS" />
                                       </children>
                                       <padding>
                                           <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

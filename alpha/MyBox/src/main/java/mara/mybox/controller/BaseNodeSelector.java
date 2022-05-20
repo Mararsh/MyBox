@@ -347,6 +347,9 @@ public abstract class BaseNodeSelector<P> extends BaseController {
     }
 
     public void popFunctionsMenu(MouseEvent event, TreeItem<P> node) {
+        if (getMyWindow() == null) {
+            return;
+        }
         List<MenuItem> items = makeNodeMenu(node);
         items.add(new SeparatorMenuItem());
 

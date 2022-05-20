@@ -33,7 +33,8 @@ License:    Apache License Version 2.0
       </HBox>
       <FlowPane fx:id="buttonsPane" alignment="CENTER_RIGHT" hgap="2.0" vgap="2.0">
          <children>
-            <CheckBox fx:id="columnsCheck" minHeight="-Infinity" mnemonicParsing="false" text="%AllColumns" wrapText="true" />
+            <Button fx:id="noColumnButton" layoutX="169.0" layoutY="10.0" mnemonicParsing="false" onAction="#noColumn" text="%NoColumn" />
+            <Button fx:id="allColumnButton" mnemonicParsing="false" onAction="#allColumns" text="%AllColumns" />
             <CheckBox fx:id="allPagesCheck" minHeight="-Infinity" mnemonicParsing="false" text="%AllDataRows" wrapText="true" />
          </children>
       </FlowPane>
