@@ -529,6 +529,18 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             });
             items.add(menu);
 
+            menu = new MenuItem(message("Unfold"), StyleTools.getIconImage("iconPLus.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                unfoldNodes();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Fold"), StyleTools.getIconImage("iconMinus.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                foldNodes();
+            });
+            items.add(menu);
+
             items.add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("Export"), StyleTools.getIconImage("iconExport.png"));
@@ -556,19 +568,20 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             items.add(menu);
 
             items.add(new SeparatorMenuItem());
+        } else {
+
+            menu = new MenuItem(message("Unfold"), StyleTools.getIconImage("iconPLus.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                unfoldNodes();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Fold"), StyleTools.getIconImage("iconMinus.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                foldNodes();
+            });
+            items.add(menu);
         }
-
-        menu = new MenuItem(message("Unfold"), StyleTools.getIconImage("iconPLus.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            unfoldNodes();
-        });
-        items.add(menu);
-
-        menu = new MenuItem(message("Fold"), StyleTools.getIconImage("iconMinus.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            foldNodes();
-        });
-        items.add(menu);
 
         return items;
     }
@@ -1129,10 +1142,6 @@ public abstract class BaseNodeSelector<P> extends BaseController {
     @Override
     public void cleanPane() {
         try {
-//            selectedNotify = null;
-//            changedNotify = null;
-//            selectedItem = null;
-//            changedItem = null;
             ignoreNode = null;
 
         } catch (Exception e) {

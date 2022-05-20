@@ -70,6 +70,16 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         return reader.getRows();
     }
 
+    public List<List<String>> allRows(boolean rowNumber) {
+        Data2DReader reader = Data2DReader.create(this)
+                .setIncludeRowNumber(rowNumber)
+                .setReaderTask(task).start(Data2DReader.Operation.ReadRows);
+        if (reader == null) {
+            return null;
+        }
+        return reader.getRows();
+    }
+
     public DoubleStatistic[] statisticByColumns(List<Integer> cols, DescriptiveStatistic selections) {
         if (cols == null || cols.isEmpty()) {
             return null;

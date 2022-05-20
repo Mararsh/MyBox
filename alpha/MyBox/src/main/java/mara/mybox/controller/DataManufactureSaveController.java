@@ -4,8 +4,10 @@ import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
+import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -68,37 +70,69 @@ public class DataManufactureSaveController extends BaseChildController {
     @FXML
     @Override
     public void okAction() {
-        try {
-            String target = "csv";
-            BaseData2DController c = null;
-            List<Data2DColumn> cols = tableController.data2D.getColumns();
-            List<List<String>> data = tableController.data2D.tableRowsWithoutNumber();
-            if (csvRadio.isSelected()) {
-                c = DataFileCSVController.open(cols, data);
-            } else if (excelRadio.isSelected()) {
-                c = DataFileExcelController.open(cols, data);
-                target = "excel";
-            } else if (textsRadio.isSelected()) {
-                c = DataFileTextController.open(cols, data);
-                target = "texts";
-            } else if (matrixRadio.isSelected()) {
-                c = MatricesManageController.open(cols, data);
-                target = "matrix";
-            } else if (tableRadio.isSelected()) {
-                c = DataTablesController.open(cols, data);
-                target = "table";
-            } else if (myBoxClipboardRadio.isSelected()) {
-                tableController.copyToMyBoxClipboard2(cols, data);
-                target = "myBoxClipboard";
+        task = new SingletonTask<Void>(this) {
+
+            private List<Data2DColumn> cols;
+            private List<List<String>> data;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    cols = tableController.data2D.getColumns();
+                    if (tableController.data2D.isMutiplePages()) {
+                        tableController.data2D.setTask(task);
+                        DataFileCSV targetData = ((DataFileCSV) (tableController.data2D)).savePageAs();
+                        tableController.data2D.setTask(null);
+                        targetData.setTask(task);
+                        data = targetData.allRows(false);
+                        targetData.setTask(null);
+                    } else {
+                        data = tableController.data2D.tableRowsWithoutNumber();
+                    }
+                    return data != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+
             }
-            UserConfig.setString(baseName + "DataTarget", target);
-            closeStage();
-            if (c != null) {
-                c.saveAction();
+
+            @Override
+            protected void whenSucceeded() {
+                closeStage();
+                String target = "csv";
+                BaseData2DController controller = null;
+                if (csvRadio.isSelected()) {
+                    controller = DataFileCSVController.open(cols, data);
+                } else if (excelRadio.isSelected()) {
+                    controller = DataFileExcelController.open(cols, data);
+                    target = "excel";
+                } else if (textsRadio.isSelected()) {
+                    controller = DataFileTextController.open(cols, data);
+                    target = "texts";
+                } else if (matrixRadio.isSelected()) {
+                    controller = MatricesManageController.open(cols, data);
+                    target = "matrix";
+                } else if (tableRadio.isSelected()) {
+                    controller = DataTablesController.open(cols, data);
+                    target = "table";
+                } else if (myBoxClipboardRadio.isSelected()) {
+                    tableController.copyToMyBoxClipboard2(cols, data);
+                    target = "myBoxClipboard";
+                }
+                UserConfig.setString(baseName + "DataTarget", target);
+                if (controller != null) {
+                    controller.saveAction();
+                }
             }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+
+            @Override
+            protected void finalAction() {
+                tableController.data2D.setTask(null);
+                task = null;
+            }
+        };
+        start(task);
     }
 
     /*

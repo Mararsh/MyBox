@@ -488,9 +488,7 @@ public class ControlData2D extends BaseController {
                     data2D.setTask(task);
                     data2D.savePageData(targetData);
                     data2D.setTask(task);
-                    MyBoxLog.debug(targetData.getFile() + "  " + targetData.getCharset());
                     Data2D.saveAttributes(data2D, targetData);
-                    MyBoxLog.debug(targetData.getFile() + "  " + targetData.getCharset());
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
@@ -504,12 +502,9 @@ public class ControlData2D extends BaseController {
                 if (targetData.getFile() != null) {
                     recordFileWritten(targetData.getFile());
                 }
-                MyBoxLog.debug(targetData.getFile() + "  " + targetData.getCharset());
                 if (saveAsType == SaveAsType.Load) {
                     data2D.cloneAll(targetData);
-                    MyBoxLog.debug(data2D.getFile() + "  " + data2D.getCharset());
                     resetStatus();
-                    MyBoxLog.debug(data2D.getFile() + "  " + data2D.getCharset());
                     readDefinition();
                 } else if (saveAsType == SaveAsType.Open) {
                     Data2DDefinition.open(targetData);
@@ -768,8 +763,6 @@ public class ControlData2D extends BaseController {
             });
             menu.setDisable(empty);
             calMenu.getItems().add(menu);
-
-            popMenu.getItems().add(new SeparatorMenuItem());
 
             Menu chartMenu = new Menu(message("Charts"), StyleTools.getIconImage("iconGraph.png"));
             popMenu.getItems().add(chartMenu);

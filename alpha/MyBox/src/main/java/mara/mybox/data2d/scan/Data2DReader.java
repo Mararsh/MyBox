@@ -5,11 +5,11 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import mara.mybox.calculation.SimpleLinearRegression;
-import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.calculation.DescriptiveStatistic;
 import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.calculation.Normalization;
+import mara.mybox.calculation.SimpleLinearRegression;
+import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.data2d.DataFileCSV;
@@ -66,7 +66,7 @@ public abstract class Data2DReader {
 
     public static enum Operation {
         ReadDefinition, ReadTotal, ReadColumnNames, ReadPage,
-        ReadCols, Export, WriteTable, Copy,
+        ReadCols, ReadRows, Export, WriteTable, Copy,
         StatisticColumns, StatisticRows, StatisticAll,
         PercentageColumns, PercentageRows, PercentageAll,
         NormalizeMinMaxColumns, NormalizeSumColumns, NormalizeZscoreColumns,
@@ -385,6 +385,9 @@ public abstract class Data2DReader {
                 case ReadCols:
                     handleReadCols();
                     break;
+                case ReadRows:
+                    handleReadRows();
+                    break;
                 case Export:
                     handleExport();
                     break;
@@ -477,6 +480,18 @@ public abstract class Data2DReader {
             if (row.isEmpty()) {
                 return;
             }
+            if (includeRowNumber) {
+                row.add(0, (rowIndex + 1) + "");
+            }
+            rows.add(row);
+        } catch (Exception e) {
+        }
+    }
+
+    public void handleReadRows() {
+        try {
+            List<String> row = new ArrayList<>();
+            row.addAll(record);
             if (includeRowNumber) {
                 row.add(0, (rowIndex + 1) + "");
             }

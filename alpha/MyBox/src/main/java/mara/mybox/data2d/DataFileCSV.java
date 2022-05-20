@@ -298,6 +298,22 @@ public class DataFileCSV extends DataFileText {
         }
     }
 
+    public DataFileCSV savePageAs() {
+        try {
+            DataFileCSV targetData = new DataFileCSV();
+            File csvFile = tmpCSV("SaveAs");
+            targetData.initFile(csvFile)
+                    .setCharset(Charset.forName("UTF-8"))
+                    .setDelimiter(",")
+                    .setHasHeader(true);
+            savePageData(targetData);
+            return targetData;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     /*
         static
      */
