@@ -20,9 +20,11 @@ import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.DataClipboard;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileExcel;
 import mara.mybox.data2d.DataFileText;
+import mara.mybox.data2d.DataMatrix;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
@@ -351,6 +353,13 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         if (csvFile == null || !csvFile.exists()) {
             return;
         }
+        loadCSVData(new DataFileCSV(csvFile));
+    }
+
+    public void loadCSVData(DataFileCSV csvData) {
+        if (csvData == null || csvData.getFile() == null || !csvData.getFile().exists()) {
+            return;
+        }
         task = new SingletonTask<Void>(this) {
             private Data2D fileData;
 
@@ -358,9 +367,11 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             protected boolean handle() {
                 try {
                     if (data2D.getType() == Data2D.Type.Texts) {
-                        fileData = new DataFileText(csvFile);
+                        fileData = new DataFileText();
+                        fileData.setFile(csvData.getFile())
+                                .setDelimiter(csvData.getDelimiter())
+                                .setCharset(csvData.getCharset());
                     } else {
-                        DataFileCSV csvData = new DataFileCSV(csvFile);
                         switch (data2D.getType()) {
                             case CSV:
                                 fileData = csvData;
@@ -373,6 +384,16 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                             case DatabaseTable: {
                                 DataTable dataTable = DataTable.toTable(task, csvData, true);
                                 fileData = dataTable;
+                                break;
+                            }
+                            case MyBoxClipboard: {
+                                DataClipboard clip = DataClipboard.toClip(task, csvData);
+                                fileData = clip;
+                                break;
+                            }
+                            case Matrix: {
+                                DataMatrix matrix = DataMatrix.toMatrix(task, csvData);
+                                fileData = matrix;
                                 break;
                             }
                         }

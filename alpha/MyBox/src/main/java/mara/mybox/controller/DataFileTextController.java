@@ -6,6 +6,7 @@ import java.util.List;
 import javafx.fxml.FXML;
 import javafx.stage.Window;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileText;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
@@ -133,6 +134,13 @@ public class DataFileTextController extends BaseData2DFileController {
     public static DataFileTextController open(Data2DDefinition def) {
         DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
         controller.loadDef(def);
+        controller.requestMouse();
+        return controller;
+    }
+
+    public static DataFileTextController loadData(DataFileCSV csvData) {
+        DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
+        controller.loadCSVData(csvData);
         controller.requestMouse();
         return controller;
     }

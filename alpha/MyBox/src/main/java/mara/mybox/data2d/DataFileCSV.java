@@ -16,6 +16,7 @@ import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
+import mara.mybox.value.AppPaths;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -300,12 +301,9 @@ public class DataFileCSV extends DataFileText {
 
     public DataFileCSV savePageAs() {
         try {
-            DataFileCSV targetData = new DataFileCSV();
-            File csvFile = tmpCSV("SaveAs");
-            targetData.initFile(csvFile)
-                    .setCharset(Charset.forName("UTF-8"))
-                    .setDelimiter(",")
-                    .setHasHeader(true);
+            DataFileCSV targetData = (DataFileCSV) this.cloneAll();
+            File csvFile = TmpFileTools.getPathTempFile(AppPaths.getGeneratedPath(), ".csv");
+            targetData.setFile(csvFile);
             savePageData(targetData);
             return targetData;
         } catch (Exception e) {

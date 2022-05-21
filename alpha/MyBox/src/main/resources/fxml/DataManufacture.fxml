@@ -32,7 +32,7 @@ License:    Apache License Version 2.0
                         <Image url="@../buttons/Red/iconTips.png" />
                      </image>
                   </ImageView>
-                              <Label fx:id="nameLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                              <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                   <Button fx:id="examplesButton" mnemonicParsing="false" onMouseEntered="#popExamplesMenu">
                      <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">

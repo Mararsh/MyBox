@@ -186,4 +186,11 @@ public class DataFileCSVController extends BaseData2DFileController {
         return controller;
     }
 
+    public static DataFileCSVController loadData(DataFileCSV csvData) {
+        DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
+        controller.loadCSVData(csvData);
+        controller.requestMouse();
+        return controller;
+    }
+
 }

@@ -11,6 +11,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileExcel;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
@@ -339,6 +340,13 @@ public class DataFileExcelController extends BaseData2DFileController {
     public static DataFileExcelController open(Data2DDefinition def) {
         DataFileExcelController controller = (DataFileExcelController) WindowTools.openStage(Fxmls.DataFileExcelFxml);
         controller.loadDef(def);
+        controller.requestMouse();
+        return controller;
+    }
+
+    public static DataFileExcelController loadData(DataFileCSV csvData) {
+        DataFileExcelController controller = (DataFileExcelController) WindowTools.openStage(Fxmls.DataFileExcelFxml);
+        controller.loadCSVData(csvData);
         controller.requestMouse();
         return controller;
     }

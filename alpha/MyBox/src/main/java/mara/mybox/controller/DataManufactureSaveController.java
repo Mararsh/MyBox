@@ -70,26 +70,72 @@ public class DataManufactureSaveController extends BaseChildController {
     @FXML
     @Override
     public void okAction() {
+        String target = "csv";
+        if (excelRadio.isSelected()) {
+            target = "excel";
+        } else if (textsRadio.isSelected()) {
+            target = "texts";
+        } else if (matrixRadio.isSelected()) {
+            target = "matrix";
+        } else if (tableRadio.isSelected()) {
+            target = "table";
+        } else if (myBoxClipboardRadio.isSelected()) {
+            target = "myBoxClipboard";
+        }
+        UserConfig.setString(baseName + "DataTarget", target);
+        if (tableController.data2D.isMutiplePages()) {
+            saveFile();
+        } else {
+            saveRows();
+        }
+    }
+
+    public void saveRows() {
+        try {
+            List<Data2DColumn> cols = tableController.data2D.getColumns();
+            List<List<String>> data = tableController.data2D.tableRowsWithoutNumber();
+            BaseData2DController controller = null;
+            if (csvRadio.isSelected()) {
+                controller = DataFileCSVController.open(cols, data);
+            } else if (excelRadio.isSelected()) {
+                controller = DataFileExcelController.open(cols, data);
+            } else if (textsRadio.isSelected()) {
+                controller = DataFileTextController.open(cols, data);
+            } else if (matrixRadio.isSelected()) {
+                controller = MatricesManageController.open(cols, data);
+            } else if (tableRadio.isSelected()) {
+                controller = DataTablesController.open(cols, data);
+            } else if (myBoxClipboardRadio.isSelected()) {
+                tableController.copyToMyBoxClipboard2(cols, data);
+            }
+            if (controller != null) {
+                controller.saveAction();
+                closeStage();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void saveFile() {
+        if (task != null) {
+            task.cancel();
+        }
         task = new SingletonTask<Void>(this) {
 
-            private List<Data2DColumn> cols;
-            private List<List<String>> data;
+            private DataFileCSV csvFile;
 
             @Override
             protected boolean handle() {
                 try {
-                    cols = tableController.data2D.getColumns();
-                    if (tableController.data2D.isMutiplePages()) {
+                    if (tableController.data2D.isTableChanged()) {
                         tableController.data2D.setTask(task);
-                        DataFileCSV targetData = ((DataFileCSV) (tableController.data2D)).savePageAs();
+                        csvFile = ((DataFileCSV) (tableController.data2D)).savePageAs();
                         tableController.data2D.setTask(null);
-                        targetData.setTask(task);
-                        data = targetData.allRows(false);
-                        targetData.setTask(null);
                     } else {
-                        data = tableController.data2D.tableRowsWithoutNumber();
+                        csvFile = (DataFileCSV) tableController.data2D;
                     }
-                    return data != null;
+                    return csvFile != null;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -100,29 +146,21 @@ public class DataManufactureSaveController extends BaseChildController {
             @Override
             protected void whenSucceeded() {
                 closeStage();
-                String target = "csv";
-                BaseData2DController controller = null;
                 if (csvRadio.isSelected()) {
-                    controller = DataFileCSVController.open(cols, data);
+                    DataFileCSVController.loadData(csvFile);
                 } else if (excelRadio.isSelected()) {
-                    controller = DataFileExcelController.open(cols, data);
-                    target = "excel";
+                    DataFileExcelController.loadData(csvFile);
                 } else if (textsRadio.isSelected()) {
-                    controller = DataFileTextController.open(cols, data);
-                    target = "texts";
+                    DataFileTextController.loadData(csvFile);
                 } else if (matrixRadio.isSelected()) {
-                    controller = MatricesManageController.open(cols, data);
-                    target = "matrix";
+                    MatricesManageController.loadData(csvFile);
                 } else if (tableRadio.isSelected()) {
-                    controller = DataTablesController.open(cols, data);
-                    target = "table";
+                    DataTablesController.loadData(csvFile);
                 } else if (myBoxClipboardRadio.isSelected()) {
-                    tableController.copyToMyBoxClipboard2(cols, data);
-                    target = "myBoxClipboard";
+                    DataInMyBoxClipboardController.loadData(csvFile);
                 }
-                UserConfig.setString(baseName + "DataTarget", target);
-                if (controller != null) {
-                    controller.saveAction();
+                if (csvFile.isTableChanged()) {
+                    tableController.loadDef(csvFile);
                 }
             }
 

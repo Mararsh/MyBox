@@ -294,7 +294,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
                     Data2DDefinition data = readData(results);
                     try {
                         File file = data.getFile();
-                        if (file == null || !file.exists()) {
+                        if (file == null || !file.exists() || !file.isFile()) {
                             invalid.add(data);
                         }
                     } catch (Exception e) {

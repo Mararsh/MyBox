@@ -668,8 +668,9 @@ public class DataTable extends Data2D {
     public boolean createTable(SingletonTask task, Connection conn, Data2D sourceData, String name) {
         try {
             tableData2D.reset();
-            tableData2D.setTableName(name);
-            String idname = name.replace("\"", "") + "_id";
+            String tableName = DerbyBase.fixedIdentifier(name);
+            tableData2D.setTableName(tableName);
+            String idname = tableName.replace("\"", "") + "_id";
             Data2DColumn idcolumn = new Data2DColumn(idname, ColumnDefinition.ColumnType.Long);
             idcolumn.setAuto(true).setIsPrimaryKey(true).setNotNull(true).setEditable(false);
             columns = new ArrayList<>();
@@ -690,11 +691,12 @@ public class DataTable extends Data2D {
                 return false;
             }
             conn.commit();
-            return recordTable(conn, name, columns);
+            return recordTable(conn, tableName, columns);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
             }
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -709,15 +711,16 @@ public class DataTable extends Data2D {
         }
         DataTable dataTable = new DataTable();
         try ( Connection conn = DerbyBase.getConnection()) {
-            if (csvData.getColumns() == null || csvData.getColumns().isEmpty()) {
-                csvData.readColumns(conn);
-            }
             List<Data2DColumn> columns = csvData.getColumns();
+            if (columns == null || columns.isEmpty()) {
+                csvData.readColumns(conn);
+                columns = csvData.getColumns();
+            }
             if (columns == null || columns.isEmpty()) {
                 return null;
             }
             TableData2D tableData2D = dataTable.getTableData2D();
-            String tableName = FileNameTools.prefix(csvFile.getName());
+            String tableName = DerbyBase.fixedIdentifier(FileNameTools.prefix(csvFile.getName()));
             if (tableData2D.exist(conn, tableName)) {
                 if (!dropExisted) {
                     return null;

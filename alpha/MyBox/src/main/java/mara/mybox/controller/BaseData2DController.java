@@ -14,6 +14,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
@@ -113,9 +114,16 @@ public abstract class BaseData2DController extends BaseController {
             }
 
             if (listController != null) {
+                loadController.loadedNotify.addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
+                        listController.refreshAction();
+                        checkButtons();
+                    }
+                });
+
                 rightPaneControl = listController.rightPaneControl;
                 initRightPaneControl();
-
             }
 
         } catch (Exception e) {
@@ -137,6 +145,14 @@ public abstract class BaseData2DController extends BaseController {
             return;
         }
         loadController.loadDef(def);
+        checkButtons();
+    }
+
+    public void loadCSVData(DataFileCSV csvData) {
+        if (csvData == null || loadController == null || !checkBeforeNextAction()) {
+            return;
+        }
+        loadController.loadCSVData(csvData);
         checkButtons();
     }
 

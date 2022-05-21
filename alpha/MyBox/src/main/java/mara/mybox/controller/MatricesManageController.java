@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.stage.Window;
+import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.fxml.WindowTools;
@@ -20,6 +21,7 @@ public class MatricesManageController extends BaseData2DController {
         baseTitle = Languages.message("MatricesManage");
         type = Data2DDefinition.Type.Matrix;
     }
+
 
     /*
         static
@@ -54,6 +56,12 @@ public class MatricesManageController extends BaseData2DController {
     public static MatricesManageController open(List<Data2DColumn> cols, List<List<String>> data) {
         MatricesManageController controller = oneOpen();
         controller.dataController.loadTmpData(cols, data);
+        return controller;
+    }
+
+    public static MatricesManageController loadData(DataFileCSV csvData) {
+        MatricesManageController controller = oneOpen();
+        controller.loadCSVData(csvData);
         return controller;
     }
 
