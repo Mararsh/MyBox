@@ -34,6 +34,11 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
             loadScene(Fxmls.Data2DManageFxml);
         });
 
+        MenuItem SpliceData = new MenuItem(message("SpliceData"));
+        SpliceData.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.Data2DSpliceFxml);
+        });
+
         MenuItem DataInSystemClipboard = new MenuItem(message("DataInSystemClipboard"));
         DataInSystemClipboard.setOnAction((ActionEvent event1) -> {
             DataInMyBoxClipboardController.oneOpen();
@@ -224,7 +229,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
-                DataManufacture, ManageData, new SeparatorMenuItem(),
+                DataManufacture, ManageData, SpliceData, new SeparatorMenuItem(),
                 DataFile, matrix, database, DataInSystemClipboard, DataInMyBoxClipboard, new SeparatorMenuItem(),
                 calculation, new SeparatorMenuItem(),
                 Location, new SeparatorMenuItem(),

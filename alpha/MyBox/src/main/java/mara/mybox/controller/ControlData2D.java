@@ -47,6 +47,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlData2D extends BaseController {
 
+    protected BaseData2DController topController;
     protected Data2D.Type type;
     protected Data2D data2D;
     protected TableData2DDefinition tableData2DDefinition;
@@ -103,6 +104,14 @@ public class ControlData2D extends BaseController {
             StyleTools.setIconTooltips(functionsButton, "iconFunction.png", "");
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
+        }
+    }
+
+    public void setParameters(BaseData2DController topController) {
+        try {
+            this.topController = topController;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -263,6 +272,9 @@ public class ControlData2D extends BaseController {
     public void notifySaved() {
         notifyStatus();
         savedNotify.set(!savedNotify.get());
+        if (topController != null) {
+            topController.refreshAction();
+        }
     }
 
     public synchronized void checkStatus() {

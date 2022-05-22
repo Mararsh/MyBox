@@ -62,7 +62,7 @@ License:    Apache License Version 2.0
                                                     </graphic>
                                                 </Button>
                                             </children>
-                                        </HBox>
+                                        </HBox> 
                                         <fx:include fx:id="load" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DLoad.fxml" VBox.vgrow="ALWAYS" />
                                     </children>
                                 </VBox>

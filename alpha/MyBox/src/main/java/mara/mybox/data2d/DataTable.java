@@ -18,6 +18,7 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.Data2DRow;
+import mara.mybox.db.table.BaseTable;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
@@ -99,7 +100,7 @@ public class DataTable extends Data2D {
 
     public boolean recordTable(Connection conn, String tableName, List<Data2DColumn> dataColumns) {
         try {
-            sheet = tableName;
+            sheet = BaseTable.savedName(tableName);
             dataName = tableName;
             colsNumber = dataColumns.size();
             tableData2DDefinition.insertData(conn, this);
@@ -679,6 +680,8 @@ public class DataTable extends Data2D {
             for (Data2DColumn sourceColumn : sourceData.getColumns()) {
                 Data2DColumn dataColumn = new Data2DColumn();
                 dataColumn.cloneFrom(sourceColumn);
+                dataColumn.setD2id(-1);
+                dataColumn.setD2cid(-1);
                 String columeName = DerbyBase.fixedIdentifier(sourceColumn.getColumnName());
                 if (columeName.equalsIgnoreCase(idname)) {
                     columeName += "m";
@@ -691,6 +694,7 @@ public class DataTable extends Data2D {
                 return false;
             }
             conn.commit();
+            rowsNumber = sourceData.getRowsNumber();
             return recordTable(conn, tableName, columns);
         } catch (Exception e) {
             if (task != null) {
@@ -725,8 +729,8 @@ public class DataTable extends Data2D {
                 if (!dropExisted) {
                     return null;
                 }
-                tableData2D.setTableName(tableName);
-                tableData2D.dropTable(conn);
+                dataTable.getTableData2DDefinition().deleteUserTable(conn, tableName);
+                conn.commit();
             }
             if (!dataTable.createTable(task, conn, csvData, tableName)) {
                 return null;

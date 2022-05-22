@@ -408,6 +408,9 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             @Override
             protected void whenSucceeded() {
                 loadDef(fileData);
+                if (dataController != null && dataController.topController != null) {
+                    dataController.topController.refreshAction();
+                }
             }
         };
         start(task);

@@ -67,6 +67,9 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
     public static final String Query_Table
             = "SELECT * FROM Data2D_Definition WHERE data_type=? AND sheet=? ORDER BY modify_time DESC";
 
+    public static final String Query_UserTable
+            = "SELECT * FROM Data2D_Definition WHERE data_type=5 AND sheet=? ORDER BY modify_time DESC";
+
     public static final String Query_Type
             = "SELECT * FROM Data2D_Definition WHERE data_type=? ORDER BY modify_time DESC";
 
@@ -82,8 +85,8 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
     public static final String Delete_InvalidSheet
             = "DELETE FROM Data2D_Definition WHERE data_type=2 AND sheet IS NULL";
 
-    public static final String Delete_TypeFileSheet
-            = "DELETE FROM Data2D_Definition WHERE data_type=? AND file=? AND delimiter=?";
+    public static final String Delete_UserTable
+            = "DELETE FROM Data2D_Definition WHERE data_type=5 AND sheet=?";
 
     /*
         local methods
@@ -205,7 +208,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         }
         try ( PreparedStatement statement = conn.prepareStatement(Query_Table)) {
             statement.setShort(1, Data2DDefinition.type(type));
-            statement.setString(2, referredName);
+            statement.setString(2, DerbyBase.stringValue(BaseTable.savedName(referredName)));
             return query(conn, statement);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -213,17 +216,33 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         }
     }
 
-    public int deleteFileSheet(Connection conn, Type type, File file, String sheet) {
-        if (conn == null || file == null) {
+    public Data2DDefinition queryUserTable(Connection conn, String referredName) {
+        if (conn == null || referredName == null) {
+            return null;
+        }
+        try ( PreparedStatement statement = conn.prepareStatement(Query_UserTable)) {
+            statement.setString(1, DerbyBase.stringValue(BaseTable.savedName(referredName)));
+            return query(conn, statement);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public int deleteUserTable(Connection conn, String referredName) {
+        if (conn == null || referredName == null) {
             return -1;
         }
-        if (sheet == null || sheet.isBlank()) {
-            return deleteFile(conn, type, file);
+        try ( PreparedStatement statement = conn.prepareStatement("DROP TABLE " + referredName)) {
+            if (statement.executeUpdate() < 0) {
+                return -2;
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return -3;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(Delete_TypeFileSheet)) {
-            statement.setShort(1, Data2DDefinition.type(type));
-            statement.setString(2, DerbyBase.stringValue(file.getAbsolutePath()));
-            statement.setString(3, DerbyBase.stringValue(sheet));
+        try ( PreparedStatement statement = conn.prepareStatement(Delete_UserTable)) {
+            statement.setString(1, DerbyBase.stringValue(BaseTable.savedName(referredName)));
             return statement.executeUpdate();
         } catch (Exception e) {
             MyBoxLog.error(e);

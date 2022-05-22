@@ -178,6 +178,7 @@ public class Fxmls {
     public static final String DataInMyBoxClipboardFxml = "/fxml/DataInMyBoxClipboard.fxml";
     public static final String DataManufactureFxml = "/fxml/DataManufacture.fxml";
     public static final String DataManufactureSaveFxml = "/fxml/DataManufactureSave.fxml";
+    public static final String Data2DSpliceFxml = "/fxml/Data2DSplice.fxml";
 
     public static final String TableAddRowsFxml = "/fxml/TableAddRows.fxml";
     public static final String Data2DSetValuesFxml = "/fxml/Data2DSetValues.fxml";

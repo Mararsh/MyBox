@@ -23,6 +23,11 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
     }
 
     @FXML
+    protected void SpliceData(ActionEvent event) {
+        loadScene(Fxmls.Data2DSpliceFxml);
+    }
+
+    @FXML
     protected void openMatricesManage(ActionEvent event) {
         MatricesManageController c = (MatricesManageController) loadScene(Fxmls.MatricesManageFxml);
         c.createAction();

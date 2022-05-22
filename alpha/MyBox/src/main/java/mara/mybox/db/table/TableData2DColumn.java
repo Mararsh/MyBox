@@ -221,7 +221,7 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
             conn.setAutoCommit(false);
             List<Data2DColumn> existed = read(conn, d2id);
             conn.setAutoCommit(true);
-            if (existed != null) {
+            if (existed != null && !existed.isEmpty()) {
                 for (Data2DColumn ecolumn : existed) {
                     boolean keep = false;
                     for (Data2DColumn icolumn : columns) {

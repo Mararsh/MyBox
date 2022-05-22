@@ -93,12 +93,16 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
     public void setParameters(BaseData2DController data2DController) {
         try {
             this.data2DController = data2DController;
-            tableData2DDefinition = data2DController.loadController.tableData2DDefinition;
+            tableData2DDefinition = data2DController.tableData2DDefinition;
             tableDefinition = tableData2DDefinition;
             tableName = tableDefinition.getTableName();
             idColumn = tableDefinition.getIdColumn();
 
-            if (data2DController instanceof Data2DManageController) {
+            if (data2DController instanceof Data2DSpliceController) {
+                buttonsPane.getChildren().removeAll(renameDataButton);
+                queryConditions = " data_type = " + Data2D.type(Data2DDefinition.Type.InternalTable);
+
+            } else if (data2DController instanceof Data2DManageController) {
                 queryConditions = " data_type != " + Data2D.type(Data2DDefinition.Type.InternalTable);
 
             } else if (data2DController instanceof MyBoxTablesController) {
@@ -194,22 +198,25 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
     @FXML
     @Override
     public void editAction() {
-        if (data2DController.loadController.data2D == null) {
+        if (data2DController.data2D == null) {
             return;
         }
-        Data2DDefinition.open(data2DController.loadController.data2D);
+        Data2DDefinition.open(data2DController.data2D);
     }
 
     @Override
     protected List<MenuItem> makeTableContextMenu() {
         try {
             List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
 
-            MenuItem menu = new MenuItem(message("Load"), StyleTools.getIconImage("iconData.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                load();
-            });
-            items.add(menu);
+            if (!(data2DController instanceof Data2DSpliceController)) {
+                menu = new MenuItem(message("Load"), StyleTools.getIconImage("iconData.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    load();
+                });
+                items.add(menu);
+            }
 
             if (buttonsPane.getChildren().contains(renameDataButton)) {
                 menu = new MenuItem(message("Rename"), StyleTools.getIconImage("iconRename.png"));
@@ -287,8 +294,8 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
                         } catch (Exception e) {
                             MyBoxLog.debug(e, item.getSheet());
                         }
-                        if (data2DController.loadController.data2D != null
-                                && item.getD2did() == data2DController.loadController.data2D.getD2did()) {
+                        if (data2DController.data2D != null
+                                && item.getD2did() == data2DController.data2D.getD2did()) {
                             Platform.runLater(new Runnable() {
                                 @Override
                                 public void run() {
@@ -331,8 +338,8 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
                 List<String> names = new ArrayList<>();
                 while (results.next()) {
                     names.add(results.getString("sheet"));
-                    isCurrent = data2DController.loadController.data2D != null
-                            && results.getLong("d2did") == data2DController.loadController.data2D.getD2did();
+                    isCurrent = data2DController.data2D != null
+                            && results.getLong("d2did") == data2DController.data2D.getD2did();
                 }
                 for (String name : names) {
                     try {
@@ -385,7 +392,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
 
     @FXML
     public void renameAction() {
-        if (data2DController == null) {
+        if (data2DController.loadController == null) {
             return;
         }
         int index = tableView.getSelectionModel().getSelectedIndex();

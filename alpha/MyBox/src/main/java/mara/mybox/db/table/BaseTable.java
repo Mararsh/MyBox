@@ -518,6 +518,7 @@ public abstract class BaseTable<D> {
         String sql = null;
         try {
             sql = "DROP TABLE " + tableName;
+            MyBoxLog.console(sql);
             conn.createStatement().executeUpdate(sql);
             return true;
         } catch (Exception e) {
