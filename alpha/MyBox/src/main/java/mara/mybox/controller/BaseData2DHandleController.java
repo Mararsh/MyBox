@@ -14,7 +14,6 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Operations.ObjectType;
-import mara.mybox.data2d.DataFile;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
@@ -247,24 +246,23 @@ public abstract class BaseData2DHandleController extends BaseChildController {
         }
         task = new SingletonTask<Void>(this) {
 
-            private DataFile handledFile;
+            private DataFileCSV csvFile;
 
             @Override
             protected boolean handle() {
                 data2D.setTask(task);
-                DataFileCSV handledCSV = generatedFile();
-                if (handledCSV == null) {
+                csvFile = generatedFile();
+                if (csvFile == null) {
                     return false;
                 }
-                handledCSV.setColumns(outputColumns);
-                handledFile = handledCSV.convert(myController, handledCSV, targetController.target);
-                return handledFile != null;
+                csvFile.setColumns(outputColumns);
+                return csvFile != null;
             }
 
             @Override
             protected void whenSucceeded() {
                 popDone();
-                handledFile.output(myController, handledFile, targetController.target);
+                DataFileCSV.open(myController, csvFile, targetController.target);
             }
 
             @Override

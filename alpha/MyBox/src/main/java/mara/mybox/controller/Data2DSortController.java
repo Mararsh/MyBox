@@ -1,7 +1,5 @@
 package mara.mybox.controller;
 
-import java.io.File;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -182,17 +180,11 @@ public class Data2DSortController extends BaseData2DHandleController {
             return ((DataTable) data2D).sort(colsIndices, orderName, descendCheck.isSelected(), showRowNumber());
         } else {
             try {
-                List<List<String>> rows = data2D.allRows(adjustedCols(), showRowNumber());
-                if (!sort(rows)) {
+                List<List<String>> data = data2D.allRows(adjustedCols(), showRowNumber());
+                if (!sort(data)) {
                     return null;
                 }
-                DataFileCSV dataFileCSV = new DataFileCSV();
-                File file = dataFileCSV.tmpFile(colsNames, rows);
-
-                dataFileCSV.setFile(file).setCharset(Charset.forName("UTF-8"))
-                        .setDelimiter(",").setHasHeader(true)
-                        .setColsNumber(colsNames.size()).setRowsNumber(rows.size());
-                return dataFileCSV;
+                return DataFileCSV.save(task, outputColumns, data);
             } catch (Exception e) {
                 if (task != null) {
                     task.setError(e.toString());

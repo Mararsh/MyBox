@@ -29,6 +29,7 @@ import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
@@ -371,13 +372,18 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                         fileData.setFile(csvData.getFile())
                                 .setDelimiter(csvData.getDelimiter())
                                 .setCharset(csvData.getCharset());
+                        recordFileWritten(fileData.getFile(), VisitHistory.FileType.Text);
                     } else {
                         switch (data2D.getType()) {
                             case CSV:
                                 fileData = csvData;
+                                recordFileWritten(fileData.getFile(), VisitHistory.FileType.CSV);
                                 break;
                             case Excel: {
                                 DataFileExcel excelData = DataFileExcel.toExcel(task, csvData);
+                                if (excelData != null) {
+                                    recordFileWritten(excelData.getFile(), VisitHistory.FileType.Excel);
+                                }
                                 fileData = excelData;
                                 break;
                             }
@@ -408,8 +414,8 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             @Override
             protected void whenSucceeded() {
                 loadDef(fileData);
-                if (dataController != null && dataController.topController != null) {
-                    dataController.topController.refreshAction();
+                if (dataController != null && dataController.manageController != null) {
+                    dataController.manageController.refreshAction();
                 }
             }
         };

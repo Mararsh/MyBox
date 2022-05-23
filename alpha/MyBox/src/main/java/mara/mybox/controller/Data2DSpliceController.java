@@ -2,11 +2,19 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.stage.Window;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -19,7 +27,15 @@ import static mara.mybox.value.Languages.message;
 public class Data2DSpliceController extends BaseData2DController {
 
     @FXML
-    protected ControlData2DLoad dataAController, dataBController;
+    protected ControlData2DSource dataAController, dataBController;
+    @FXML
+    protected RadioButton horizontalRadio, aRadio, bRadio, longerRadio, shorterRadio;
+    @FXML
+    protected ControlData2DTarget targetController;
+    @FXML
+    protected Label numberLabel;
+    @FXML
+    protected ToggleGroup directionGroup;
 
     public Data2DSpliceController() {
         baseTitle = message("SpliceData");
@@ -47,10 +63,96 @@ public class Data2DSpliceController extends BaseData2DController {
         try {
             super.initControls();
 
+            directionGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    if (horizontalRadio.isSelected()) {
+                        numberLabel.setText(message("RowsNumber"));
+                    } else {
+                        numberLabel.setText(message("ColumnsNumber"));
+                    }
+                }
+            });
+
+            targetController.setParameters(this, null);
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
+
+    @FXML
+    @Override
+    public void okAction() {
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+
+            private DataFileCSV csvA, csvB;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    dataAController.data2D.setTask(this);
+                    if (dataAController.allPages()) {
+                        csvA = dataAController.data2D.copy(dataAController.checkedColsIndices, false, true);
+                    } else {
+                        csvA = DataFileCSV.save(task, dataAController.checkedCols(), dataAController.selectedData(false));
+                    }
+                    dataAController.data2D.setTask(null);
+                    if (csvA == null) {
+                        return false;
+                    }
+
+                    dataBController.data2D.setTask(this);
+                    if (dataBController.allPages()) {
+                        csvB = dataBController.data2D.copy(dataBController.checkedColsIndices, false, true);
+                    } else {
+                        csvB = DataFileCSV.save(task, dataBController.checkedCols(), dataBController.selectedData(false));
+                    }
+                    dataBController.data2D.setTask(null);
+                    if (csvB == null) {
+                        return false;
+                    }
+                    if (horizontalRadio.isSelected()) {
+
+                    }
+                    return csvB != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                popDone();
+
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                dataAController.data2D.setTask(null);
+                dataBController.data2D.setTask(null);
+                task = null;
+            }
+
+        };
+        start(task);
+    }
+
+//    protected DataFileCSV spliceVertically(DataFileCSV csvA, DataFileCSV csvB) {
+//        try {
+//            if (csvA == null || csvB == null);
+//
+//            targetController.setParameters(this, null);
+//
+//        } catch (Exception e) {
+//            MyBoxLog.error(e.toString());
+//        }
+//    }
 
     /*
         static

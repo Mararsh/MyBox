@@ -72,15 +72,15 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                              <Button fx:id="listButton" mnemonicParsing="false" onMouseEntered="#popColumnNames">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconList.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
+                                        <Button fx:id="listButton" mnemonicParsing="false" onMouseEntered="#popColumnNames">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconList.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
                                         <Button fx:id="tableDefinitionButton" layoutX="883.0" layoutY="10.0" mnemonicParsing="false" onAction="#tableDefinition">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -172,7 +172,7 @@ License:    Apache License Version 2.0
                                         <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308" prefWidth="-1.0">
                                             <graphic>
                                                 <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
-                                            </graphic>
+                                            </graphic> 
                                         </TableColumn>
                                         <TableColumn fx:id="colorColumn" prefWidth="75.0" text="%Color" />
                                         <TableColumn fx:id="tagColumn" prefWidth="200.0" text="%Tag" />
@@ -194,7 +194,7 @@ License:    Apache License Version 2.0
         </HBox>
         <VBox fx:id="targetBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
             <children>
-                <fx:include fx:id="target" source="ControlData2DTarget.fxml" />
+                <fx:include fx:id="target" source="ControlData2DTargetExternal.fxml" />
             </children>
         </VBox>
     </children>

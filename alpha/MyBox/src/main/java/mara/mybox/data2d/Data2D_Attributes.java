@@ -140,8 +140,9 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         return columns;
     }
 
-    public void setColumns(List<Data2DColumn> columns) {
+    public Data2D_Attributes setColumns(List<Data2DColumn> columns) {
         this.columns = columns;
+        return this;
     }
 
     public long getDataSize() {

@@ -9,11 +9,22 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Random;
+import mara.mybox.controller.BaseController;
+import mara.mybox.controller.DataFileCSVController;
+import mara.mybox.controller.DataFileExcelController;
+import mara.mybox.controller.DataFileTextController;
+import mara.mybox.controller.DataInMyBoxClipboardController;
+import mara.mybox.controller.DataTablesController;
+import mara.mybox.controller.MatricesManageController;
 import mara.mybox.data.StringTable;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppPaths;
@@ -361,6 +372,62 @@ public class DataFileCSV extends DataFileText {
             return null;
         }
 
+    }
+
+    public static DataFileCSV save(SingletonTask task, List<Data2DColumn> cols, List<List<String>> data) {
+        try {
+            if (cols == null || cols.isEmpty()) {
+                if (data == null || data.isEmpty()) {
+                    return null;
+                }
+            }
+            List<String> names = null;
+            if (cols != null) {
+                names = new ArrayList<>();
+                for (Data2DColumn c : cols) {
+                    names.add(c.getColumnName());
+                }
+            }
+            DataFileCSV dataFileCSV = new DataFileCSV();
+            dataFileCSV.setTask(task);
+            File file = dataFileCSV.tmpFile(names, data);
+            dataFileCSV.setTask(null);
+            dataFileCSV.setColumns(cols)
+                    .setFile(file)
+                    .setCharset(Charset.forName("UTF-8"))
+                    .setDelimiter(",")
+                    .setHasHeader(cols != null)
+                    .setColsNumber(cols == null ? data.get(0).size() : cols.size())
+                    .setRowsNumber(data.size());
+            return dataFileCSV;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static void open(BaseController controller, DataFileCSV csvFile, String target) {
+        if (csvFile == null || target == null) {
+            return;
+        }
+        if ("csv".equals(target)) {
+            DataFileCSVController.loadData(csvFile);
+        } else if ("excel".equals(target)) {
+            DataFileExcelController.loadData(csvFile);
+        } else if ("texts".equals(target)) {
+            DataFileTextController.loadData(csvFile);
+        } else if ("matrix".equals(target)) {
+            MatricesManageController.loadData(csvFile);
+        } else if ("systemClipboard".equals(target)) {
+            TextClipboardTools.copyToSystemClipboard(controller, TextFileTools.readTexts(csvFile.getFile()));
+        } else if ("myBoxClipboard".equals(target)) {
+            DataInMyBoxClipboardController.loadData(csvFile);
+        } else if ("table".equals(target)) {
+            DataTablesController.loadData(csvFile);
+        }
     }
 
 }

@@ -374,7 +374,7 @@ public class JexlEditor extends TreeNodeEditor {
                     Object results;
                     int psize = parameters.size();
                     if (psize > 0) {
-                        String[] ps = new String[psize];
+                        Object[] ps = new Object[psize];
                         for (int i = 0; i < psize; i++) {
                             KeyValue kv = parameters.get(i);
                             ps[i] = kv.getValue();

@@ -24,7 +24,7 @@ License:    Apache License Version 2.0
             <children>
                 <FlowPane fx:id="buttonsPane" hgap="2.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
                     <children>
-                        <Button fx:id="openButton" mnemonicParsing="false" onMouseEntered="#popOpen">
+                        <Button fx:id="openButton" mnemonicParsing="false" onAction="#popOpen" onMouseEntered="#popOpen">
                             <graphic>
                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -98,11 +98,6 @@ License:    Apache License Version 2.0
                   </Button>
                     </children>
                 </FlowPane>
-                <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../buttons/Red/iconDoubleRight.png" />
-                    </image>
-                </ImageView>
             </children>
         </HBox>
         <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">

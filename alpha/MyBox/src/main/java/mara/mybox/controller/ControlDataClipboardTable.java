@@ -35,9 +35,9 @@ public class ControlDataClipboardTable extends ControlData2DList {
     @Override
     protected void afterDeletion() {
         refreshAction();
-        File file = data2DController.loadController.data2D.getFile();
+        File file = manageController.loadController.data2D.getFile();
         if (file != null && !file.exists()) {
-            data2DController.dataController.loadNull();
+            manageController.dataController.loadNull();
         }
     }
 
@@ -45,7 +45,7 @@ public class ControlDataClipboardTable extends ControlData2DList {
     protected void afterClear() {
         super.afterClear();
         FileDeleteTools.clearDir(new File(AppPaths.getDataClipboardPath()));
-        data2DController.dataController.loadNull();
+        manageController.dataController.loadNull();
     }
 
     @FXML

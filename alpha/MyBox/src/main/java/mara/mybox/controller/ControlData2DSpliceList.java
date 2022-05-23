@@ -27,10 +27,11 @@ public class ControlData2DSpliceList extends ControlData2DList {
     public ControlData2DSpliceList() {
     }
 
-    public void setParameters(Data2DSpliceController spliceController) {
+    @Override
+    public void setParameters(BaseData2DController manageController) {
         try {
-            super.setParameters(spliceController);
-            this.spliceController = spliceController;
+            this.spliceController = (Data2DSpliceController) manageController;
+            super.setParameters(manageController);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -44,6 +45,20 @@ public class ControlData2DSpliceList extends ControlData2DList {
     @Override
     public void itemDoubleClicked() {
         editAction();
+    }
+
+    @FXML
+    @Override
+    public void editAction() {
+        try {
+            Data2DDefinition selected = tableView.getSelectionModel().getSelectedItem();
+            if (selected == null) {
+                return;
+            }
+            Data2DDefinition.open(selected);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @Override
@@ -119,7 +134,7 @@ public class ControlData2DSpliceList extends ControlData2DList {
     @Override
     public void cleanPane() {
         try {
-            data2DController = null;
+            manageController = null;
         } catch (Exception e) {
         }
         super.cleanPane();
