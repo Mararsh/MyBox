@@ -148,12 +148,14 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
 
             if (nodesListCheck != null) {
                 nodesListCheck.setSelected(UserConfig.getBoolean(baseName + "NodesList", true));
+                showNodesList(nodesListCheck.isSelected());
                 nodesListCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                         if (isSettingValues) {
                             return;
                         }
+                        MyBoxLog.debug(baseName + " " + UserConfig.getBoolean(baseName + "NodesList", true));
                         UserConfig.setBoolean(baseName + "NodesList", nodesListCheck.isSelected());
                         showNodesList(nodesListCheck.isSelected());
                     }
@@ -210,6 +212,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     }
 
     public void showNodesList(boolean show) {
+        MyBoxLog.debug(baseName + " " + show);
         if (isSettingValues || nodesListCheck == null) {
             return;
         }

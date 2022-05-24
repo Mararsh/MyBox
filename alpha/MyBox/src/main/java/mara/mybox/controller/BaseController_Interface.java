@@ -953,6 +953,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         });
                 checkRightPane();
             }
+
             if (leftPaneCheck != null) {
                 leftPaneCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayLeftPane", true));
                 checkLeftPane();

@@ -255,6 +255,7 @@ public class JexlEditor extends TreeNodeEditor {
                 return;
             }
             try {
+                jexlContext.set("Math", Math.class);
                 jexlScript = jexlEngine.createScript(inputs);
             } catch (Exception e) {
                 popError(e.toString());
@@ -269,16 +270,25 @@ public class JexlEditor extends TreeNodeEditor {
             Object v;
             if (varSet != null && !varSet.isEmpty()) {
                 for (List<String> s : varSet) {
+                    String var = "";
                     for (String p : s) {
-                        if (jexlContext.has(p)) {
-                            v = jexlContext.get(p);
+                        if (var.isBlank()) {
+                            var = p;
                         } else {
-                            v = null;
-                            setContext(p, v);
-                            newVar = true;
+                            var += "." + p;
                         }
-                        variables.add(new KeyValue(p, v == null ? null : v.toString()));
                     }
+                    if (var.isBlank() || var.equals("Math") || var.startsWith("Math.")) {
+                        continue;
+                    }
+                    if (jexlContext.has(var)) {
+                        v = jexlContext.get(var);
+                    } else {
+                        v = null;
+                        setContext(var, v);
+                        newVar = true;
+                    }
+                    variables.add(new KeyValue(var, v == null ? null : v.toString()));
                 }
             }
             String[] ps = jexlScript.getParameters();
@@ -364,6 +374,7 @@ public class JexlEditor extends TreeNodeEditor {
         StyleTools.setNameIcon(startButton, message("Stop"), "iconStop.png");
         startButton.applyCss();
         startButton.setUserData("started");
+        jexlController.rightPaneCheck.setSelected(true);
         task = new SingletonTask<Void>(this) {
 
             private String outputs;
@@ -371,6 +382,7 @@ public class JexlEditor extends TreeNodeEditor {
             @Override
             protected boolean handle() {
                 try {
+
                     Object results;
                     int psize = parameters.size();
                     if (psize > 0) {
@@ -459,26 +471,48 @@ public class JexlEditor extends TreeNodeEditor {
             controller.addFlowPane(topButtons);
 
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
-                    ";", " , ", "( )", " = ", " { } ", "[ ]", "\"", " + ", " - ", " * ", " / ",
-                    " == ", " != ", " >= ", " > ", " <= ", " < "
+                    " new('java.math.BigDecimal', 9) ", " new('java.lang.Double', 10d) ",
+                    " new('java.lang.Long', 10) ", " new('java.lang.Integer', 10) ",
+                    " new('java.lang.String', 'Hello') ", "  new('java.util.Date') "
             ));
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
+                    " Math.PI ", " Math.E ", " Math.abs(-1) ", " Math.exp(2) ",
+                    " true ", " false ", " null ", " empty(x) ", " size(x) ",
+                    " 3 =~ [1,'2',3, 'hello'] ", " 2 !~ {1,'2',3, 'hello'} ",
+                    " 'hello'.startsWith('hell') ", " 'hello'.endsWith('ll') ",
+                    " not 'hello'.startsWith('hell') "
+            ));
+            PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
+                    ";", " , ", "( )", " = ", " { } ", "[ ]", "\"", " : ", " .. ", " !", " not ",
+                    " + ", " - ", " * ", " / ", " == ", " != ", " >= ", " > ", " <= ", " < "
+            ));
+            PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
+                    "var array = [ 'A', 'B', 'C', 'D' ];\n"
+                    + "return size(array);",
+                    "var list = [ 'A', 'B', 'C', 'D' ];\n"
+                    + "return list.size();",
+                    "var set = { 'A', 'B', 'C', 'D' };\n"
+                    + "return set.toString();",
+                    "var map = { 'A': 1,'B': 2,'C': 3,'D': 4 };\n"
+                    + "return map.toString();"
+            ));
+            PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
+                    "var d = new('java.lang.Double', 0d);\n"
+                    + "return 'min_double=' + d.MIN_VALUE \n"
+                    + "           + '\\nmax_double=' + d.MAX_VALUE;",
                     "var circleArea = function(r) \n"
-                    + "{ 3.1415 * r * r };\n"
+                    + "{ Math.PI * r * r };\n"
                     + "return circleArea (2.6);",
-                    "3.1415 * r * r;",
-                    "var d = 1.0d;\n"
-                    + "for(var i: [1,2,3,4] ) {\n"
-                    + "    d += i / 2.0d - 1;\n"
-                    + "}\n"
-                    + "return d;\n",
-                    "var a = 5;\n"
-                    + "if (b < 3) {\n"
-                    + "    a += b;\n"
-                    + "} else {\n"
-                    + "    a -= b;\n"
-                    + "}\n"
-                    + "return a;\n",
+                    "var array = [ 'A', 'B', 'C', 'D' ];\n"
+                    + "var arrayString = '';\n"
+                    + "for(var i : 1 .. size (array)) {\n"
+                    + "  if (empty (arrayString)) {\n"
+                    + "    arrayString = array[i-1];\n"
+                    + "  } else {\n"
+                    + "    arrayString += ' , ' + array[i-1];\n"
+                    + "  }\n"
+                    + "};\n"
+                    + "return arrayString;",
                     "var s = \"hello \";\n"
                     + "while (s.length() < len) {\n"
                     + "   s += \"a\";\n"
@@ -486,14 +520,23 @@ public class JexlEditor extends TreeNodeEditor {
                     + "return s;\n"
             ));
 
-            Hyperlink blink = new Hyperlink("JEXL Reference");
-            blink.setOnAction(new EventHandler<ActionEvent>() {
+            Hyperlink elink = new Hyperlink("JEXL Reference");
+            elink.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
                     openLink("https://commons.apache.org/proper/commons-jexl/reference/index.html");
                 }
             });
-            controller.addNode(blink);
+            controller.addNode(elink);
+
+            Hyperlink jlink = new Hyperlink("Java Development Kit (JDK) APIs");
+            jlink.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    openLink("https://docs.oracle.com/en/java/javase/17/docs/api/index.html");
+                }
+            });
+            controller.addNode(jlink);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

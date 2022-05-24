@@ -251,11 +251,13 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                 protected void whenSucceeded() {
                     treeView.setRoot(rootItem);
                     rootItem.setExpanded(true);
-                    TreeItem<P> selecItem = find(selectNode);
-                    if (selecItem != null) {
-                        select(selecItem);
-                    } else {
-                        select(rootItem);
+                    if (selectNode != null) {
+                        TreeItem<P> selecItem = find(selectNode);
+                        if (selecItem != null) {
+                            select(selecItem);
+                        } else {
+                            select(rootItem);
+                        }
                     }
                 }
             };
