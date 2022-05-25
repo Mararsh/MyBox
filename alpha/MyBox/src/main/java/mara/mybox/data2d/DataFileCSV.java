@@ -326,6 +326,21 @@ public class DataFileCSV extends DataFileText {
     /*
         static
      */
+    public static DataFileCSV tmpCSV() {
+        try {
+            File csvFile = TmpFileTools.getPathTempFile(AppPaths.getGeneratedPath(), ".csv");
+            DataFileCSV dataFileCSV = new DataFileCSV();
+            dataFileCSV.setFile(csvFile)
+                    .setCharset(Charset.forName("UTF-8"))
+                    .setDelimiter(",")
+                    .setHasHeader(true);
+            return dataFileCSV;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public static LinkedHashMap<File, Boolean> save(File path, String filePrefix, List<StringTable> tables) {
         if (tables == null || tables.isEmpty()) {
             return null;
@@ -381,24 +396,27 @@ public class DataFileCSV extends DataFileText {
                     return null;
                 }
             }
+            List<Data2DColumn> targetColumns = new ArrayList<>();
             List<String> names = null;
             if (cols != null) {
                 names = new ArrayList<>();
                 for (Data2DColumn c : cols) {
                     names.add(c.getColumnName());
+                    targetColumns.add(c.cloneAll().setD2cid(-1).setD2id(-1));
                 }
             }
             DataFileCSV dataFileCSV = new DataFileCSV();
             dataFileCSV.setTask(task);
             File file = dataFileCSV.tmpFile(names, data);
-            dataFileCSV.setTask(null);
-            dataFileCSV.setColumns(cols)
+            dataFileCSV.setColumns(targetColumns)
                     .setFile(file)
                     .setCharset(Charset.forName("UTF-8"))
                     .setDelimiter(",")
-                    .setHasHeader(cols != null)
-                    .setColsNumber(cols == null ? data.get(0).size() : cols.size())
+                    .setHasHeader(!targetColumns.isEmpty())
+                    .setColsNumber(targetColumns.size())
                     .setRowsNumber(data.size());
+            dataFileCSV.saveAttributes();
+            dataFileCSV.setTask(null);
             return dataFileCSV;
         } catch (Exception e) {
             if (task != null) {

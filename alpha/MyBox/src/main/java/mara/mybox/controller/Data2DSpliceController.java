@@ -1,6 +1,8 @@
 package mara.mybox.controller;
 
+import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -12,12 +14,16 @@ import javafx.scene.control.ToggleGroup;
 import javafx.stage.Window;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.CSVRecord;
 
 /**
  * @Author Mara
@@ -84,16 +90,25 @@ public class Data2DSpliceController extends BaseData2DController {
     @FXML
     @Override
     public void okAction() {
+        if (dataAController.data2D == null || !dataAController.data2D.hasData()) {
+            popError(message("NoData") + ": " + message("DataA"));
+            return;
+        }
+        if (dataBController.data2D == null || !dataBController.data2D.hasData()) {
+            popError(message("NoData") + ": " + message("DataB"));
+            return;
+        }
         if (task != null) {
             task.cancel();
         }
         task = new SingletonTask<Void>(this) {
 
-            private DataFileCSV csvA, csvB;
+            private DataFileCSV targetCSV;
 
             @Override
             protected boolean handle() {
                 try {
+                    DataFileCSV csvA, csvB;
                     dataAController.data2D.setTask(this);
                     if (dataAController.allPages()) {
                         csvA = dataAController.data2D.copy(dataAController.checkedColsIndices, false, true);
@@ -102,6 +117,7 @@ public class Data2DSpliceController extends BaseData2DController {
                     }
                     dataAController.data2D.setTask(null);
                     if (csvA == null) {
+                        error = message("InvalidData") + ": " + message("DataA");
                         return false;
                     }
 
@@ -113,12 +129,16 @@ public class Data2DSpliceController extends BaseData2DController {
                     }
                     dataBController.data2D.setTask(null);
                     if (csvB == null) {
+                        error = message("InvalidData") + ": " + message("DataB");
                         return false;
                     }
-                    if (horizontalRadio.isSelected()) {
 
+                    if (horizontalRadio.isSelected()) {
+                        targetCSV = spliceHorizontally(csvA, csvB);
+                    } else {
+                        targetCSV = spliceVertically(csvA, csvB);
                     }
-                    return csvB != null;
+                    return targetCSV != null;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -127,8 +147,7 @@ public class Data2DSpliceController extends BaseData2DController {
 
             @Override
             protected void whenSucceeded() {
-                popDone();
-
+                DataFileCSV.open(myController, targetCSV, targetController.target);
             }
 
             @Override
@@ -143,16 +162,201 @@ public class Data2DSpliceController extends BaseData2DController {
         start(task);
     }
 
-//    protected DataFileCSV spliceVertically(DataFileCSV csvA, DataFileCSV csvB) {
-//        try {
-//            if (csvA == null || csvB == null);
-//
-//            targetController.setParameters(this, null);
-//
-//        } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
-//        }
-//    }
+    protected DataFileCSV spliceVertically(DataFileCSV csvA, DataFileCSV csvB) {
+        List<Data2DColumn> columns = null;
+        try {
+            List<Data2DColumn> columnsA = csvA.getColumns();
+            List<Data2DColumn> columnsB = csvB.getColumns();
+            if (aRadio.isSelected()) {
+                columns = columnsA;
+            } else if (bRadio.isSelected()) {
+                columns = columnsB;
+            } else if (longerRadio.isSelected()) {
+                if (columnsA.size() >= columnsB.size()) {
+                    columns = columnsA;
+                } else {
+                    columns = columnsB;
+                }
+            } else if (shorterRadio.isSelected()) {
+                if (columnsA.size() <= columnsB.size()) {
+                    columns = columnsA;
+                } else {
+                    columns = columnsB;
+                }
+            }
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e.toString());
+        }
+        if (columns == null || columns.isEmpty()) {
+            return null;
+        }
+        DataFileCSV targetCSV = DataFileCSV.tmpCSV();
+        int rowCount = 0;
+        try ( CSVPrinter csvPrinter = new CSVPrinter(
+                new FileWriter(targetCSV.getFile(), targetCSV.getCharset()), targetCSV.cvsFormat())) {
+            List<String> row = new ArrayList<>();
+            for (Data2DColumn c : columns) {
+                row.add(c.getColumnName());
+            }
+            csvPrinter.printRecord(row);
+            int colLen = columns.size();
+            try ( CSVParser parser = CSVParser.parse(csvA.getFile(), csvA.getCharset(), csvA.cvsFormat())) {
+                for (CSVRecord record : parser) {
+                    if (task == null || task.isCancelled()) {
+                        return null;
+                    }
+                    row.clear();
+                    int dLen = Math.min(record.size(), colLen);
+                    for (int i = 0; i < dLen; i++) {
+                        row.add(record.get(i));
+                    }
+                    for (int i = dLen; i < colLen; i++) {
+                        row.add(null);
+                    }
+                    csvPrinter.printRecord(row);
+                    rowCount++;
+                }
+            } catch (Exception e) {
+                if (task != null) {
+                    task.setError(e.toString());
+                }
+                MyBoxLog.error(e.toString());
+            }
+            try ( CSVParser parser = CSVParser.parse(csvB.getFile(), csvB.getCharset(), csvB.cvsFormat())) {
+                for (CSVRecord record : parser) {
+                    if (task == null || task.isCancelled()) {
+                        return null;
+                    }
+                    row.clear();
+                    int dLen = Math.min(record.size(), colLen);
+                    for (int i = 0; i < dLen; i++) {
+                        row.add(record.get(i));
+                    }
+                    for (int i = dLen; i < colLen; i++) {
+                        row.add(null);
+                    }
+                    csvPrinter.printRecord(row);
+                    rowCount++;
+                }
+            } catch (Exception e) {
+                if (task != null) {
+                    task.setError(e.toString());
+                }
+                MyBoxLog.error(e.toString());
+            }
+
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e.toString());
+        }
+        targetCSV.setColumns(columns).setColsNumber(columns.size()).setRowsNumber(rowCount);
+        targetCSV.saveAttributes();
+        return targetCSV;
+    }
+
+    protected DataFileCSV spliceHorizontally(DataFileCSV csvA, DataFileCSV csvB) {
+        long size = 0;
+        List<Data2DColumn> columns = new ArrayList<>();
+        List<Data2DColumn> columnsA = csvA.getColumns();
+        List<Data2DColumn> columnsB = csvB.getColumns();
+        try {
+            long sizeA = csvA.getRowsNumber();
+            long sizeB = csvB.getRowsNumber();
+            if (aRadio.isSelected()) {
+                size = sizeA;
+            } else if (bRadio.isSelected()) {
+                size = sizeB;
+            } else if (longerRadio.isSelected()) {
+                if (sizeA >= sizeB) {
+                    size = sizeA;
+                } else {
+                    size = sizeB;
+                }
+            } else if (shorterRadio.isSelected()) {
+                if (sizeA <= sizeB) {
+                    size = sizeA;
+                } else {
+                    size = sizeB;
+                }
+            }
+            columns.addAll(columnsA);
+            columns.addAll(columnsB);
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e.toString());
+        }
+        int colLen = columns.size(), colLenA = columnsA.size(), colLenB = columnsB.size();
+        if (size <= 0 || colLen == 0) {
+            return null;
+        }
+        DataFileCSV targetCSV = DataFileCSV.tmpCSV();
+        int rowCount = 0;
+        try ( CSVPrinter csvPrinter = new CSVPrinter(
+                new FileWriter(targetCSV.getFile(), targetCSV.getCharset()), targetCSV.cvsFormat());
+                 CSVParser parserA = CSVParser.parse(csvA.getFile(), csvA.getCharset(), csvA.cvsFormat());
+                 CSVParser parserB = CSVParser.parse(csvB.getFile(), csvB.getCharset(), csvB.cvsFormat())) {
+            List<String> row = new ArrayList<>();
+            for (Data2DColumn c : columns) {
+                row.add(c.getColumnName());
+            }
+            csvPrinter.printRecord(row);
+
+            Iterator<CSVRecord> iteratorA = parserA.iterator();
+            Iterator<CSVRecord> iteratorB = parserB.iterator();
+            while (rowCount < size && task != null && !task.isCancelled()) {
+                row.clear();
+                if (iteratorA.hasNext()) {
+                    try {
+                        CSVRecord record = iteratorA.next();
+                        if (record != null) {
+                            int dLen = Math.min(record.size(), colLenA);
+                            for (int i = 0; i < dLen; i++) {
+                                row.add(record.get(i));
+                            }
+                        }
+                    } catch (Exception e) {  // skip  bad lines
+//                            MyBoxLog.debug(e);
+                    }
+                }
+                for (int i = row.size(); i < colLenA; i++) {
+                    row.add(null);
+                }
+                if (iteratorB.hasNext()) {
+                    try {
+                        CSVRecord record = iteratorB.next();
+                        if (record != null) {
+                            int dLen = Math.min(record.size(), colLenB);
+                            for (int i = 0; i < dLen; i++) {
+                                row.add(record.get(i));
+                            }
+                        }
+                    } catch (Exception e) {  // skip  bad lines
+//                            MyBoxLog.debug(e);
+                    }
+                }
+                for (int i = row.size(); i < colLen; i++) {
+                    row.add(null);
+                }
+                csvPrinter.printRecord(row);
+                rowCount++;
+            }
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e.toString());
+        }
+        targetCSV.setColumns(columns).setColsNumber(columns.size()).setRowsNumber(rowCount);
+        targetCSV.saveAttributes();
+        return targetCSV;
+    }
 
     /*
         static

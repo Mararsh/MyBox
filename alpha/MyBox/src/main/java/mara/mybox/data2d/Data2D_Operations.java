@@ -12,6 +12,7 @@ import mara.mybox.calculation.SimpleLinearRegression;
 import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.data2d.scan.Data2DReader;
 import mara.mybox.data2d.scan.Data2DReader.Operation;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
@@ -168,23 +169,23 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             return null;
         }
         File csvFile = tmpCSV("copy");
-        long tcolsNumber = 0;
         Data2DReader reader;
+        List<Data2DColumn> targetColumns = new ArrayList<>();
         try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             List<String> names = new ArrayList<>();
             if (includeRowNumber) {
                 names.add(message("RowNumber"));
+                targetColumns.add(new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
             }
             for (int i = 0; i < columns.size(); i++) {
                 if (cols.contains(i)) {
                     names.add(columns.get(i).getColumnName());
+                    targetColumns.add(columns.get(i).cloneAll().setD2cid(-1).setD2id(-1));
                 }
             }
             if (includeColName) {
                 csvPrinter.printRecord(names);
             }
-            tcolsNumber = names.size();
-
             reader = Data2DReader.create(this)
                     .setCsvPrinter(csvPrinter).setCols(cols).setIncludeRowNumber(includeRowNumber)
                     .setReaderTask(task).start(Data2DReader.Operation.Copy);
@@ -198,9 +199,12 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         }
         if (reader != null && csvFile != null && csvFile.exists()) {
             DataFileCSV targetData = new DataFileCSV();
-            targetData.setFile(csvFile).setCharset(Charset.forName("UTF-8"))
+            targetData.setColumns(targetColumns)
+                    .setFile(csvFile).setCharset(Charset.forName("UTF-8"))
                     .setDelimiter(",").setHasHeader(includeColName)
-                    .setColsNumber(tcolsNumber).setRowsNumber(reader.getRowIndex());
+                    .setColsNumber(targetColumns.size())
+                    .setRowsNumber(reader.getRowIndex());
+            targetData.saveAttributes();
             return targetData;
         } else {
             return null;

@@ -404,6 +404,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                             }
                         }
                     }
+                    Data2D.saveAttributes(csvData, fileData);
                     return fileData != null;
                 } catch (Exception e) {
                     error = e.toString();
@@ -760,6 +761,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
 
                     @Override
                     protected boolean handle() {
+                        data2D.countSize();
                         return data2D.saveAttributes();
                     }
 

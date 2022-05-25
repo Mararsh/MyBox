@@ -31,8 +31,8 @@ public class ControlData2DTarget extends BaseController {
     @FXML
     protected ToggleGroup targetGroup;
     @FXML
-    protected RadioButton csvRadio, excelRadio, textsRadio, matrixRadio, systemClipboardRadio, myBoxClipboardRadio,
-            tableRadio, replaceRadio, insertRadio, appendRadio;
+    protected RadioButton csvRadio, excelRadio, textsRadio, matrixRadio, databaseRadio,
+            systemClipboardRadio, myBoxClipboardRadio, replaceRadio, insertRadio, appendRadio;
     @FXML
     protected ComboBox<String> rowSelector, colSelector;
     @FXML
@@ -91,7 +91,7 @@ public class ControlData2DTarget extends BaseController {
                 target = "systemClipboard";
             } else if (myBoxClipboardRadio.isSelected()) {
                 target = "myBoxClipboard";
-            } else if (tableRadio.isSelected()) {
+            } else if (databaseRadio.isSelected()) {
                 target = "table";
             } else if (tableBox != null) {
                 if (replaceRadio.isSelected()) {
@@ -178,7 +178,7 @@ public class ControlData2DTarget extends BaseController {
                     myBoxClipboardRadio.fire();
                     break;
                 case "table":
-                    tableRadio.fire();
+                    databaseRadio.fire();
                     break;
                 case "append":
                     if (notInTable && tableBox != null) {

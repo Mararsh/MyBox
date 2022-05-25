@@ -245,7 +245,6 @@ public abstract class Data2D_Edit extends Data2D_Data {
     }
 
     public boolean saveAttributes() {
-        countSize();
         try ( Connection conn = DerbyBase.getConnection()) {
             return saveColumns(conn, (Data2D) this, columns)
                     && savePageStyles(conn);
@@ -362,7 +361,6 @@ public abstract class Data2D_Edit extends Data2D_Data {
 
     public static boolean saveAttributes(Data2D source, Data2D target) {
         try ( Connection conn = DerbyBase.getConnection()) {
-            source.countSize();
             target.cloneAttributes(source);
             if (!saveColumns(conn, target, source.getColumns())) {
                 return false;

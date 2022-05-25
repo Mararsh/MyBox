@@ -11,7 +11,6 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.tools.DoubleTools;
-import mara.mybox.tools.FileNameTools;
 import static mara.mybox.tools.TmpFileTools.getPathTempFile;
 import mara.mybox.value.AppPaths;
 import static mara.mybox.value.Languages.message;
@@ -109,43 +108,6 @@ public abstract class Data2D_Data extends Data2D_Attributes {
             return 0;
         }
     }
-
-    public String displayName() {
-        String name = titleName();
-        name = message(type.name()) + (d2did >= 0 ? " - " + d2did : "") + (name != null ? " - " + name : "");
-        return name;
-    }
-
-    public String titleName() {
-        String name;
-        if (isDataFile() && file != null) {
-            name = file.getAbsolutePath();
-            if (isExcel()) {
-                name += " - " + sheet;
-            }
-        } else if (this.isTable()) {
-            name = sheet;
-        } else {
-            name = dataName;
-        }
-        if (name == null && d2did < 0) {
-            name = message("NewData");
-        }
-        return name;
-    }
-
-    public String shortName() {
-        if (file != null) {
-            return FileNameTools.prefix(file.getName());
-        } else if (sheet != null) {
-            return sheet;
-        } else if (dataName != null) {
-            return dataName;
-        } else {
-            return "";
-        }
-    }
-
 
     /*
         table data

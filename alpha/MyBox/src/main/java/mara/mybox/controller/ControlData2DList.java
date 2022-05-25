@@ -409,7 +409,8 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
 
     @FXML
     public void popOpen(MouseEvent mouseEvent) {
-        if (!(manageController instanceof Data2DManageController)) {
+        if (!(manageController instanceof Data2DManageController)
+                && !(manageController instanceof Data2DSpliceController)) {
             return;
         }
         try {

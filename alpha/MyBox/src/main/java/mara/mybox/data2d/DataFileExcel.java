@@ -610,6 +610,7 @@ public class DataFileExcel extends DataFile {
             targetData.setFile(excelFile).setSheet(targetSheetName)
                     .setHasHeader(targetHasHeader)
                     .setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
+            Data2D.saveAttributes(csvData, targetData);
             return targetData;
         } else {
             return null;

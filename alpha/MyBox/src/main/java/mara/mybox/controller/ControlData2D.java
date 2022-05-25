@@ -458,6 +458,8 @@ public class ControlData2D extends BaseController {
                     }
                     data2D.setTask(task);
                     data2D.savePageData(targetData);
+                    data2D.setTask(task);
+                    data2D.countSize();
                     Data2D.saveAttributes(data2D, targetData);
                     data2D.cloneAll(targetData);
                     return true;
@@ -498,6 +500,7 @@ public class ControlData2D extends BaseController {
                     data2D.setTask(task);
                     data2D.savePageData(targetData);
                     data2D.setTask(task);
+                    data2D.countSize();
                     Data2D.saveAttributes(data2D, targetData);
                     return true;
                 } catch (Exception e) {

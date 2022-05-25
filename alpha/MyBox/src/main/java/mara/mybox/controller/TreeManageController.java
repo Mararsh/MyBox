@@ -212,7 +212,6 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     }
 
     public void showNodesList(boolean show) {
-        MyBoxLog.debug(baseName + " " + show);
         if (isSettingValues || nodesListCheck == null) {
             return;
         }

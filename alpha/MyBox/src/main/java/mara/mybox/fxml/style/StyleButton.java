@@ -198,10 +198,6 @@ public class StyleButton {
             switch (id) {
                 case "copyButton":
                     return new StyleData(id, message("Copy"), "CTRL+c / ALT+c ", "iconCopy.png");
-                case "copyAsAButton":
-                    return new StyleData("copyAsAButton", message("CopyAsMatrixA"), "", "iconCopyA.png");
-                case "copyAsBButton":
-                    return new StyleData("copyAsAButton", message("CopyAsMatrixB"), "", "iconCopyB.png");
                 case "copyEnglishButton":
                     return new StyleData(id, message("CopyEnglish"), "CTRL+e / ALT+e ", "iconCopy.png");
                 default:
@@ -291,9 +287,9 @@ public class StyleButton {
             } else if (id.startsWith("dataset")) {
                 return new StyleData(id, message("DataSet"), "", "iconDataset.png");
             } else if (id.startsWith("dataA")) {
-                return new StyleData(id, message("SetAsDataA"), "", "iconDataA.png");
+                return new StyleData(id, message("SetAsDataA"), "", "iconA.png");
             } else if (id.startsWith("dataB")) {
-                return new StyleData(id, message("SetAsDataB"), "", "iconDataB.png");
+                return new StyleData(id, message("SetAsDataB"), "", "iconB.png");
             } else {
                 return new StyleData(id, message("Data"), "", "iconData.png");
             }

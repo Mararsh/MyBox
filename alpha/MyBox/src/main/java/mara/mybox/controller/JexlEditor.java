@@ -15,6 +15,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableCell;
@@ -469,6 +470,7 @@ public class JexlEditor extends TreeNodeEditor {
             });
             topButtons.add(clearInputButton);
             controller.addFlowPane(topButtons);
+            controller.addNode(new Separator());
 
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
                     " new('java.math.BigDecimal', 9) ", " new('java.lang.Double', 10d) ",
@@ -483,8 +485,11 @@ public class JexlEditor extends TreeNodeEditor {
                     " not 'hello'.startsWith('hell') "
             ));
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
-                    ";", " , ", "( )", " = ", " { } ", "[ ]", "\"", " : ", " .. ", " !", " not ",
-                    " + ", " - ", " * ", " / ", " == ", " != ", " >= ", " > ", " <= ", " < "
+                    " = ", " + ", " - ", " * ", " / ", ";", " , ",
+                    "( )", " { } ", "[ ]", "\"\"", "''", " : ", " .. ",
+                    " == ", " != ", " >= ", " > ", " <= ", " < ",
+                    " && ", " and ", " || ", " or ", " !", " not ",
+                    " =~ ", " !~ "
             ));
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
                     "var array = [ 'A', 'B', 'C', 'D' ];\n"

@@ -79,7 +79,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </RadioButton>
-            <RadioButton fx:id="tableRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
+            <RadioButton fx:id="databaseRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
                <graphic>
                   <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                      <image>
