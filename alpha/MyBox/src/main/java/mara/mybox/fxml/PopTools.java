@@ -172,12 +172,16 @@ public class PopTools {
     }
 
     public static String askValue(String title, String header, String name, String initValue) {
+        return askValue(title, header, name, initValue, 400);
+    }
+
+    public static String askValue(String title, String header, String name, String initValue, int minWidth) {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle(title);
         dialog.setHeaderText(header);
         dialog.setContentText(name);
         dialog.getEditor().setText(initValue);
-        dialog.getEditor().setPrefWidth(initValue == null ? 200 : Math.min(600, initValue.length() * AppVariables.sceneFontSize));
+        dialog.getEditor().setPrefWidth(initValue == null ? minWidth : Math.min(minWidth, initValue.length() * AppVariables.sceneFontSize));
         Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
         stage.setAlwaysOnTop(true);
         stage.toFront();
@@ -689,7 +693,7 @@ public class PopTools {
             List<String> values = TableStringValues.max(name, max);
             List<Node> buttons = new ArrayList<>();
             for (String value : values) {
-                Button button = new Button(value);
+                Button button = new Button(value.length() > 200 ? value.substring(0, 200) + " ..." : value);
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
@@ -809,6 +813,11 @@ public class PopTools {
     }
 
     public static void popStringValues(BaseController parent, TextInputControl input, MouseEvent mouseEvent, List<String> values) {
+        popStringValues(parent, input, mouseEvent, values, true);
+    }
+
+    public static void popStringValues(BaseController parent, TextInputControl input, MouseEvent mouseEvent,
+            List<String> values, boolean replace) {
         try {
             if (parent == null || input == null || values == null) {
                 return;
@@ -843,7 +852,7 @@ public class PopTools {
             controller.addFlowPane(topButtons);
             controller.addNode(new Separator());
 
-            addButtonsPane(controller, input, values);
+            addButtonsPane(controller, input, values, replace);
 
             Hyperlink link = new Hyperlink("Derby Reference Manual");
             link.setOnAction(new EventHandler<ActionEvent>() {
@@ -860,17 +869,26 @@ public class PopTools {
     }
 
     public static void addButtonsPane(MenuController controller, TextInputControl input, List<String> values) {
+        addButtonsPane(controller, input, values, true);
+    }
+
+    public static void addButtonsPane(MenuController controller, TextInputControl input,
+            List<String> values, boolean replace) {
         try {
             List<Node> buttons = new ArrayList<>();
             for (String value : values) {
                 if (value == null) {
                     continue;
                 }
-                Button button = new Button(value);
+                Button button = new Button(value.length() > 200 ? value.substring(0, 200) + " ..." : value);
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        input.replaceText(input.getSelection(), value);
+                        if (replace) {
+                            input.replaceText(input.getSelection(), value);
+                        } else {
+                            input.setText(value);
+                        }
                         controller.getThisPane().requestFocus();
                         input.requestFocus();
                     }

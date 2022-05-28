@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -679,6 +680,13 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                     });
 
                 }
+
+                tableColumn.setComparator(new Comparator<String>() {
+                    @Override
+                    public int compare(String v1, String v2) {
+                        return dataColumn.compare(v1, v2);
+                    }
+                });
 
                 if (dataController != null) {
                     tableColumn.widthProperty().addListener(new ChangeListener<Number>() {

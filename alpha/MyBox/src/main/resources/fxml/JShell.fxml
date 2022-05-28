@@ -407,7 +407,7 @@ License:    Apache License Version 2.0
                                       <children>
                                           <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                                               <tabs>
-                                                  <Tab text="%Results">
+                                                  <Tab fx:id="resultsTab" text="%Results">
                                                       <content>
                                                           <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                               <children>
@@ -450,7 +450,7 @@ License:    Apache License Version 2.0
                                                           </VBox>
                                                       </content>
                                                   </Tab>
-                                                  <Tab text="Snippets">
+                                                  <Tab fx:id="snippetsTab" text="Snippets">
                                                       <content>
                                                           <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                                               <children>
@@ -462,6 +462,18 @@ License:    Apache License Version 2.0
                                                           </VBox>
                                                       </content>
                                                   </Tab>
+                                    <Tab fx:id="pathsTab" text="%ClassPaths">
+                                       <content>
+                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                             <children>
+                                                <fx:include fx:id="paths" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="JShellPaths.fxml" VBox.vgrow="ALWAYS" />
+                                             </children>
+                                             <padding>
+                                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                             </padding>
+                                          </VBox>
+                                       </content>
+                                    </Tab>
                                               </tabs>
                                           </TabPane>
                                       </children>

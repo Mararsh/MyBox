@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.JShellPaths">
+    <children>
+      <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" spacing="2.0">
+         <children>
+            <Button fx:id="jarButton" mnemonicParsing="false" onAction="#selectJar" onMouseEntered="#popJarFiles">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconJar.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="selectFilePathButton" mnemonicParsing="false" onAction="#selectPath" onMouseEntered="#popJarPath">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconOpen.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="exampleButton" mnemonicParsing="false" onMouseEntered="#popExamplesMenu">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconExamples.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="historyButton" mnemonicParsing="false" onMouseEntered="#popHistories">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconHistory.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </HBox>
+        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
+            <children>
+            <TextField fx:id="pathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                <Button fx:id="addPathButton" layoutX="48.0" layoutY="10.0" mnemonicParsing="false" onAction="#addPath">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconAdd.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </children>
+        </HBox>
+      <TextArea fx:id="pathsArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+    </children>
+</VBox>

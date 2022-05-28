@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,7 +16,6 @@ import jdk.jshell.JShell;
 import jdk.jshell.SnippetEvent;
 import jdk.jshell.SourceCodeAnalysis;
 import mara.mybox.data.JShellSnippet;
-import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
@@ -37,9 +35,9 @@ import static mara.mybox.value.Languages.message;
 public class JShellEditor extends TreeNodeEditor {
 
     protected JShellController jShellController;
-    protected JShellSnippets snippetsController;
     protected String outputs = "";
     protected JShell jShell;
+    protected SingletonTask resetTask;
 
     @FXML
     protected Button clearCodesButton;
@@ -61,16 +59,22 @@ public class JShellEditor extends TreeNodeEditor {
 
     protected void setParameters(JShellController jShellController) {
         this.jShellController = jShellController;
-        snippetsController = jShellController.snippetsController;
         resetJShell();
+    }
+
+    public String expValue(String exp) {
+        try {
+            return new JShellSnippet(jShell, jShell.eval(exp).get(0).snippet()).getValue();
+        } catch (Exception e) {
+            MyBoxLog.error(e, exp);
+            return null;
+        }
     }
 
     @FXML
     public synchronized void resetJShell() {
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonTask<Void>(this) {
+        reset();
+        resetTask = new SingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
                 try {
@@ -83,11 +87,13 @@ public class JShellEditor extends TreeNodeEditor {
             }
 
             @Override
-            protected void finalAction() {
-                cancelAction();
+            protected void whenSucceeded() {
+                jShellController.pathsController.resetPaths();
+                jShellController.snippetsController.refreshSnippets();
             }
+
         };
-        start(task);
+        start(resetTask, true);
     }
 
     @Override
@@ -97,17 +103,14 @@ public class JShellEditor extends TreeNodeEditor {
     @FXML
     @Override
     public void startAction() {
-        if (startButton.getUserData() != null) {
-            cancelAction();
-            return;
-        }
         String codes = valueInput.getText();
         if (codes == null || codes.isBlank()) {
             popError(message("NoInput"));
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (startButton.getUserData() != null) {
+            cancelAction();
+            return;
         }
         StyleTools.setNameIcon(startButton, message("Stop"), "iconStop.png");
         startButton.applyCss();
@@ -116,7 +119,7 @@ public class JShellEditor extends TreeNodeEditor {
         task = new SingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
-                return runCodes(codes);
+                return handleCodes(codes);
             }
 
             @Override
@@ -128,12 +131,20 @@ public class JShellEditor extends TreeNodeEditor {
         start(task);
     }
 
+    protected boolean handleCodes(String codes) {
+        TableStringValues.add("JShellHistories", codes.trim());
+        return runCodes(codes);
+    }
+
     protected boolean runCodes(String codes) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try {
+            if (codes == null || codes.isBlank()) {
+                return false;
+            }
             String leftCodes = codes;
             while (leftCodes != null && !leftCodes.isBlank()) {
                 SourceCodeAnalysis.CompletionInfo info = jShell.sourceCodeAnalysis().analyzeCompletion(leftCodes);
-                if (!runSnippet(conn, info.source())) {
+                if (!runSnippet(info.source())) {
                     return false;
                 }
                 leftCodes = info.remaining();
@@ -147,17 +158,20 @@ public class JShellEditor extends TreeNodeEditor {
         }
     }
 
-    protected boolean runSnippet(Connection conn, String source) {
+    protected boolean runSnippet(String source) {
+        return runSnippet(source, source);
+    }
+
+    protected boolean runSnippet(String orignalSource, String source) {
         try {
             if (source == null || source.isBlank()) {
                 return false;
             }
             String snippet = source.trim();
-            TableStringValues.add(conn, "JShellHistories", snippet);
             List<SnippetEvent> events = jShell.eval(snippet);
             String snippetOutputs = DateTools.nowString()
                     + "<div class=\"valueText\" >"
-                    + HtmlWriteTools.stringToHtml(snippet)
+                    + HtmlWriteTools.stringToHtml(orignalSource == null ? snippet : orignalSource)
                     + "</div>";
             String results = "";
             for (int i = 0; i < events.size(); i++) {
@@ -198,6 +212,13 @@ public class JShellEditor extends TreeNodeEditor {
     public void cancelAction() {
         if (task != null) {
             task.cancel();
+        }
+        reset();
+    }
+
+    public void reset() {
+        if (resetTask != null) {
+            resetTask.cancel();
         }
         if (jShell != null) {
             jShell.stop();
@@ -312,6 +333,7 @@ public class JShellEditor extends TreeNodeEditor {
     public void cleanPane() {
         try {
             cancelAction();
+            resetTask = null;
             jShell = null;
         } catch (Exception e) {
         }

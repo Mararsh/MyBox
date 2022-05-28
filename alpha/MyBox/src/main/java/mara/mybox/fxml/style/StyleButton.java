@@ -288,7 +288,7 @@ public class StyleButton {
                 return new StyleData(id, message("DataSet"), "", "iconDataset.png");
             } else if (id.startsWith("dataA")) {
                 return new StyleData(id, message("SetAsDataA"), "", "iconA.png");
-            } else if (id.startsWith("dataB")) {
+            } else if (id.startsWith("dataBB")) {
                 return new StyleData(id, message("SetAsDataB"), "", "iconB.png");
             } else {
                 return new StyleData(id, message("Data"), "", "iconData.png");
@@ -622,6 +622,9 @@ public class StyleButton {
         }
         if (id.startsWith("straightLine")) {
             return new StyleData(id, message("StraightLine"), "", "iconStraightLine.png");
+        }
+        if (id.startsWith("jar")) {
+            return new StyleData(id, message("JarFile"), "", "iconJar.png");
         }
         return null;
     }

@@ -318,6 +318,12 @@ public class FileFilters {
         }
     };
 
+    public static List<FileChooser.ExtensionFilter> JarExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("jar", "*.jar"));
+        }
+    };
+
     public static List<FileChooser.ExtensionFilter> ImagesListExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
             add(new FileChooser.ExtensionFilter("*", "*.png", "*.jpg", "*.jpeg", "*.bmp",

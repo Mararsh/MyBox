@@ -31,6 +31,7 @@ License:    Apache License Version 2.0
                      <children>
                         <HBox alignment="CENTER_LEFT" layoutX="12.0" layoutY="214.0" maxWidth="1.7976931348623157E308" spacing="2.0">
                            <children>
+                              <Label maxWidth="1.7976931348623157E308" text="%JexlScript" wrapText="true" HBox.hgrow="ALWAYS" />
                               <CheckBox fx:id="wrapCheck" mnemonicParsing="false">
                                  <graphic>
                                     <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -40,12 +41,11 @@ License:    Apache License Version 2.0
                                     </ImageView>
                                  </graphic>
                               </CheckBox>
-                              <Label maxWidth="1.7976931348623157E308" wrapText="true" HBox.hgrow="ALWAYS" />
-                              <Button fx:id="goButton" layoutX="492.0" layoutY="10.0" mnemonicParsing="false" onAction="#goAction">
+                              <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction">
                                  <graphic>
-                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@../buttons/Red/iconGo.png" />
+                                          <Image url="@../buttons/Red/iconStart.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>
@@ -59,7 +59,7 @@ License:    Apache License Version 2.0
                                     </ImageView>
                                  </graphic>
                               </Button>
-                              <Button fx:id="historyButton" mnemonicParsing="false" onMouseEntered="#popHistories">
+                              <Button fx:id="historyScriptButton" mnemonicParsing="false" onMouseEntered="#popScriptHistories">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -68,7 +68,7 @@ License:    Apache License Version 2.0
                                     </ImageView>
                                  </graphic>
                               </Button>
-                              <Button fx:id="examplePopSyntaxButton" mnemonicParsing="false" onMouseEntered="#popSyntaxMenu">
+                              <Button fx:id="exampleScriptButton" mnemonicParsing="false" onMouseEntered="#popScriptExamples">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -91,87 +91,48 @@ License:    Apache License Version 2.0
                         <TextArea fx:id="valueInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
                            <children>
-                              <Label fx:id="varLabel" maxWidth="1.7976931348623157E308" wrapText="true" HBox.hgrow="ALWAYS" />
-                              <Button fx:id="startButton" layoutX="492.0" layoutY="10.0" mnemonicParsing="false" onAction="#startAction">
+                              <Label maxWidth="1.7976931348623157E308" text="%JexlContext" wrapText="true" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="clearContextButton" mnemonicParsing="false" onAction="#clearContext">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@../buttons/Red/iconStart.png" />
+                                          <Image url="@../buttons/Red/iconClear.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="historyContextButton" mnemonicParsing="false" onMouseEntered="#popContextHistories">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconHistory.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="exampleContextButton" mnemonicParsing="false" onMouseEntered="#popContextExamples">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconExamples.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="addContextButton" mnemonicParsing="false" onAction="#addContext">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconAdd.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>
                               </Button>
                            </children>
                         </HBox>
-                        <TabPane fx:id="varsPane" maxWidth="1.7976931348623157E308" prefHeight="300.0" tabClosingPolicy="UNAVAILABLE">
-                          <tabs>
-                            <Tab fx:id="varTab" text="%ScriptVariables">
-                                 <content>
-                                    <TableView fx:id="varsView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                      <columns>
-                                        <TableColumn fx:id="keyColumn" prefWidth="150.0" text="%Variable" />
-                                        <TableColumn fx:id="valueColumn" prefWidth="150.0" text="%Value" />
-                                      </columns>
-                                    </TableView>
-                                 </content>
-                              </Tab>
-                            <Tab fx:id="paraTab" text="%Parameters">
-                                 <content>
-                                    <TableView fx:id="paraView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                       <columns>
-                                          <TableColumn fx:id="paraKeyColumn" prefWidth="150.0" text="%Parameter" />
-                                          <TableColumn fx:id="paraValueColumn" prefWidth="150.0" text="%Value" />
-                                       </columns>
-                                    </TableView>
-                                 </content></Tab>
-                              <Tab fx:id="contextTab" text="%ContextVariables">
-                                 <content>
-                                    <VBox>
-                                       <children>
-                                          <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                             <children>
-                                                <Label fx:id="varLabel1" maxWidth="1.7976931348623157E308" wrapText="true" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="clearContextButton" mnemonicParsing="false" onAction="#clearContext">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/Red/iconClear.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </Button>
-                                                <Button fx:id="deleteContextButton" layoutX="454.0" layoutY="10.0" mnemonicParsing="false" onAction="#deleteContext">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/Red/iconDelete.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </Button>
-                                                <Button fx:id="addContextButton" mnemonicParsing="false" onAction="#addContext">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/Red/iconAdd.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </Button>
-                                             </children>
-                                          </HBox>
-                                          <TableView fx:id="contextView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                             <columns>
-                                                <TableColumn fx:id="contextKeyColumn" prefWidth="150.0" text="%Variable" />
-                                                <TableColumn fx:id="contextValueColumn" prefWidth="150.0" text="%Value" />
-                                             </columns>
-                                          </TableView>
-                                       </children>
-                                    </VBox>
-                                 </content>
-                              </Tab>
-                          </tabs>
-                        </TabPane>
+                        <TextArea fx:id="contextArea" prefHeight="200.0" prefWidth="200.0" />
+                        <Label maxWidth="1.7976931348623157E308" text="%JexlParamters" wrapText="true" />
+                        <TextField fx:id="parametersInput" />
                      </children>
                      <padding>
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
