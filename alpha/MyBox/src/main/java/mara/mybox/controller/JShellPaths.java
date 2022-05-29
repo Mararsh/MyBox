@@ -56,7 +56,14 @@ public class JShellPaths extends BaseController {
 
     protected void resetPaths() {
         try {
+            pathsArea.clear();
             String paths = jShellController.editorController.expValue("System.getProperty(\"java.class.path\")");
+            if (paths == null) {
+                return;
+            }
+            if (paths.startsWith("\"") && paths.endsWith("\"")) {
+                paths = paths.substring(1, paths.length() - 1);
+            }
             pathsArea.setText(paths.replace(";", ";\n"));
         } catch (Exception e) {
             MyBoxLog.error(e);

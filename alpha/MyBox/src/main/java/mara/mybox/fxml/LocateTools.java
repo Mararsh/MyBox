@@ -1,5 +1,6 @@
 package mara.mybox.fxml;
 
+import java.awt.Point;
 import java.awt.Robot;
 import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
@@ -11,6 +12,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.PopupWindow;
 import javafx.stage.Stage;
+import mara.mybox.tools.SystemTools;
 
 /**
  * @Author Mara
@@ -94,6 +96,11 @@ public class LocateTools {
 
     public static void locateMouse(MouseEvent event, PopupWindow window) {
         window.show((Node) event.getSource(), event.getScreenX(), event.getScreenY());
+    }
+
+    public static void locateMouse(Node owner, PopupWindow window) {
+        Point point = SystemTools.getMousePoint();
+        window.show(owner, point.getX(), point.getY());
     }
 
     public static void moveXCenter(Node pNnode, Node node) {

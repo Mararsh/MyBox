@@ -94,6 +94,7 @@ public class StyleButton {
         if (id.startsWith("clear")) {
             switch (id) {
                 case "clearButton":
+                case "clearCodesButton":
                     return new StyleData(id, message("Clear"), "CTRL+g", "iconClear.png");
                 default:
                     return new StyleData(id, message("Clear"), "", "iconClear.png");
@@ -276,7 +277,9 @@ public class StyleButton {
         if (id.startsWith("input")) {
             return new StyleData(id, message("Input"), "", "iconRename.png");
         }
-
+        if (id.startsWith("suggestion")) {
+            return new StyleData(id, message("CodeCompletionSuggestions"), "CTRL+1 / ALT+1", "iconInput.png");
+        }
         if (id.startsWith("data")) {
             if (id.startsWith("database")) {
                 return new StyleData(id, "", message("DatabaseTable"), "", "iconDatabase.png");

@@ -33,6 +33,10 @@ public class JexlEditor extends JShellEditor {
     @FXML
     protected TextField parametersInput;
 
+    public JexlEditor() {
+        defaultExt = "txt";
+    }
+
     @FXML
     @Override
     public synchronized void resetJShell() {
@@ -115,6 +119,7 @@ public class JexlEditor extends JShellEditor {
                 execute = "jexlScript.execute(jexlContext);";
             }
             runCodes(execute);
+
             return true;
         } catch (Exception e) {
             if (task != null) {

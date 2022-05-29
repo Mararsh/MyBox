@@ -404,6 +404,9 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                 break;
                             }
                         }
+                        if (fileData == null) {
+                            return false;
+                        }
                     }
                     Data2D.saveAttributes(csvData, fileData);
                     return fileData != null;

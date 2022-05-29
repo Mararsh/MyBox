@@ -146,7 +146,7 @@ public class DataClipboard extends DataFileCSV {
         }
         File dFile = newFile();
         if (FileCopyTools.copyFile(csvFile, dFile, true, true)) {
-            return create(task, cols, dFile, csvData.getDataSize(), cols.size());
+            return create(task, cols, dFile, csvData.getRowsNumber(), cols.size());
         } else {
             MyBoxLog.error("Failed");
             return null;

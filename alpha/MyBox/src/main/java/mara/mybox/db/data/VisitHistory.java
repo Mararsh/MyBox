@@ -59,6 +59,7 @@ public class VisitHistory extends BaseData {
         public static int WordS = 29;
         public static int ImagesList = 30;
         public static int Jar = 31;
+        public static int DataFile = 32;
 
         public static int None = 100;
     }

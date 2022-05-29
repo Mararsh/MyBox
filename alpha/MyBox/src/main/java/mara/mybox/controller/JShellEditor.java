@@ -9,8 +9,10 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseEvent;
 import jdk.jshell.JShell;
 import jdk.jshell.SnippetEvent;
@@ -18,10 +20,10 @@ import jdk.jshell.SourceCodeAnalysis;
 import mara.mybox.data.JShellSnippet;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.HtmlStyles;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlWriteTools;
@@ -33,35 +35,24 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class JShellEditor extends TreeNodeEditor {
-
+    
     protected JShellController jShellController;
     protected String outputs = "";
     protected JShell jShell;
     protected SingletonTask resetTask;
-
+    
     @FXML
-    protected Button clearCodesButton;
-
+    protected Button clearCodesButton, suggestionsButton;
+    
     public JShellEditor() {
         defaultExt = "java";
     }
-
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-
-            NodeStyleTools.setTooltip(clearCodesButton, new Tooltip(message("Clear") + "\nCTRL+g"));
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
+    
     protected void setParameters(JShellController jShellController) {
         this.jShellController = jShellController;
         resetJShell();
     }
-
+    
     public String expValue(String exp) {
         try {
             return new JShellSnippet(jShell, jShell.eval(exp).get(0).snippet()).getValue();
@@ -70,7 +61,7 @@ public class JShellEditor extends TreeNodeEditor {
             return null;
         }
     }
-
+    
     @FXML
     public synchronized void resetJShell() {
         reset();
@@ -85,21 +76,21 @@ public class JShellEditor extends TreeNodeEditor {
                     return false;
                 }
             }
-
+            
             @Override
             protected void whenSucceeded() {
                 jShellController.pathsController.resetPaths();
                 jShellController.snippetsController.refreshSnippets();
             }
-
+            
         };
         start(resetTask, true);
     }
-
+    
     @Override
     protected void showEditorPane() {
     }
-
+    
     @FXML
     @Override
     public void startAction() {
@@ -121,7 +112,7 @@ public class JShellEditor extends TreeNodeEditor {
             protected boolean handle() {
                 return handleCodes(codes);
             }
-
+            
             @Override
             protected void finalAction() {
                 cancelAction();
@@ -130,12 +121,12 @@ public class JShellEditor extends TreeNodeEditor {
         };
         start(task);
     }
-
+    
     protected boolean handleCodes(String codes) {
         TableStringValues.add("JShellHistories", codes.trim());
         return runCodes(codes);
     }
-
+    
     protected boolean runCodes(String codes) {
         try {
             if (codes == null || codes.isBlank()) {
@@ -157,11 +148,11 @@ public class JShellEditor extends TreeNodeEditor {
             return false;
         }
     }
-
+    
     protected boolean runSnippet(String source) {
         return runSnippet(source, source);
     }
-
+    
     protected boolean runSnippet(String orignalSource, String source) {
         try {
             if (source == null || source.isBlank()) {
@@ -201,13 +192,13 @@ public class JShellEditor extends TreeNodeEditor {
             snippetOutputs += "<div class=\"valueBox\">"
                     + HtmlWriteTools.stringToHtml(results) + "</div>";
             output(snippetOutputs);
-
+            
         } catch (Exception e) {
             output(e.toString());
         }
         return true;
     }
-
+    
     @Override
     public void cancelAction() {
         if (task != null) {
@@ -215,7 +206,7 @@ public class JShellEditor extends TreeNodeEditor {
         }
         reset();
     }
-
+    
     public void reset() {
         if (resetTask != null) {
             resetTask.cancel();
@@ -228,14 +219,14 @@ public class JShellEditor extends TreeNodeEditor {
         startButton.applyCss();
         startButton.setUserData(null);
     }
-
+    
     protected void output(String msg) {
         Platform.runLater(() -> {
             outputs += msg + "<br><br>";
             String html = HtmlWriteTools.html(null, HtmlStyles.DefaultStyle, "<body>" + outputs + "</body>");
             jShellController.webViewController.loadContents(html);
         });
-
+        
     }
 
     // https://stackoverflow.com/questions/53867043/what-are-the-limits-to-jshell?r=SearchResults
@@ -245,7 +236,7 @@ public class JShellEditor extends TreeNodeEditor {
             MenuController controller = MenuController.open(jShellController, valueInput,
                     mouseEvent.getScreenX(), mouseEvent.getScreenY() + 20);
             controller.setTitleLabel(message("Syntax"));
-
+            
             List<Node> topButtons = new ArrayList<>();
             Button newLineButton = new Button(message("Newline"));
             newLineButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -265,7 +256,7 @@ public class JShellEditor extends TreeNodeEditor {
             });
             topButtons.add(clearInputButton);
             controller.addFlowPane(topButtons);
-
+            
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
                     "int maxInt = Integer.MAX_VALUE, minInt = Integer.MIN_VALUE;",
                     "double maxDouble = Double.MAX_VALUE, minDouble = Double.MIN_VALUE;",
@@ -291,7 +282,7 @@ public class JShellEditor extends TreeNodeEditor {
                     + "    if ( d > 3 ) break;\n"
                     + "}"
             ));
-
+            
             Hyperlink alink = new Hyperlink("Learning the Java Language");
             alink.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -300,7 +291,7 @@ public class JShellEditor extends TreeNodeEditor {
                 }
             });
             controller.addNode(alink);
-
+            
             Hyperlink jlink = new Hyperlink("Java Development Kit (JDK) APIs");
             jlink.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -309,7 +300,7 @@ public class JShellEditor extends TreeNodeEditor {
                 }
             });
             controller.addNode(jlink);
-
+            
             Hyperlink blink = new Hyperlink("Full list of Math functions");
             blink.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -318,17 +309,66 @@ public class JShellEditor extends TreeNodeEditor {
                 }
             });
             controller.addNode(blink);
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-
+    
     @FXML
     protected void popHistories(MouseEvent mouseEvent) {
         PopTools.popStringValues(this, valueInput, mouseEvent, "JShellHistories");
     }
-
+    
+    @FXML
+    public void popSuggesions() {
+        try {
+            List<SourceCodeAnalysis.Suggestion> suggestions = jShell.sourceCodeAnalysis().completionSuggestions(
+                    valueInput.getText(), valueInput.getCaretPosition(), new int[1]);
+            if (suggestions == null || suggestions.isEmpty()) {
+                return;
+            }
+            
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+            popMenu.setAutoFix(true);
+            
+            MenuItem menu;
+            
+            for (SourceCodeAnalysis.Suggestion suggestion : suggestions) {
+                String c = suggestion.continuation();
+                menu = new MenuItem(c);
+                menu.setOnAction((ActionEvent event) -> {
+                    valueInput.replaceText(valueInput.getSelection(), c);
+                });
+                popMenu.getItems().add(menu);
+            }
+            
+            popMenu.getItems().add(new SeparatorMenuItem());
+            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    popMenu.hide();
+                }
+            });
+            popMenu.getItems().add(menu);
+            
+            LocateTools.locateMouse(valueInput, popMenu);
+        } catch (Exception e) {
+        }
+    }
+    
+    @Override
+    public boolean controlAlt1() {
+        popSuggesions();
+        return true;
+    }
+    
     @Override
     public void cleanPane() {
         try {
@@ -339,5 +379,5 @@ public class JShellEditor extends TreeNodeEditor {
         }
         super.cleanPane();
     }
-
+    
 }

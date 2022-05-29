@@ -326,6 +326,24 @@ public class Data2DDefinition extends BaseData {
         return types[type];
     }
 
+    public static Type type(File file) {
+        if (file == null) {
+            return null;
+        }
+        String suffix = FileNameTools.suffix(file.getAbsolutePath());
+        if (suffix == null) {
+            return null;
+        }
+        switch (suffix) {
+            case "xlsx":
+            case "xls":
+                return Type.Excel;
+            case "csv":
+                return Type.CSV;
+        }
+        return Type.Texts;
+    }
+
     public static BaseController open(Data2DDefinition def) {
         if (def == null) {
             return Data2DManageController.open(def);
