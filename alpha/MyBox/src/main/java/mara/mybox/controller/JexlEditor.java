@@ -10,7 +10,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Separator;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import jdk.jshell.JShell;
@@ -28,8 +27,6 @@ import static mara.mybox.value.Languages.message;
  */
 public class JexlEditor extends JShellEditor {
 
-    @FXML
-    protected TextArea contextArea;
     @FXML
     protected TextField parametersInput;
 
@@ -64,8 +61,7 @@ public class JexlEditor extends JShellEditor {
                         jShell.eval(snippet);
                         leftCodes = info.remaining();
                     }
-                    paths = expValue("System.getProperty(\"java.class.path\")")
-                            + System.getProperty("java.class.path");
+                    paths = expValue("System.getProperty(\"java.class.path\")");
                     if (paths.startsWith("\"") && paths.endsWith("\"")) {
                         paths = paths.substring(1, paths.length() - 1);
                     }
@@ -99,9 +95,11 @@ public class JexlEditor extends JShellEditor {
             }
             TableStringValues.add("JexlScriptHistories", script.trim());
             String jexlContext = "jexlContext.clear();";
-            String contexts = contextArea.getText();
+            runSnippet(jexlContext, jexlContext);
+            String contexts = moreInput.getText();
             if (contexts != null && !contexts.isBlank()) {
-                jexlContext += "\n" + contexts.trim();
+                jexlContext = contexts.trim();
+                TableStringValues.add("JexlContextHistories", jexlContext);
             }
             runCodes(jexlContext);
 
@@ -171,14 +169,14 @@ public class JexlEditor extends JShellEditor {
             ));
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
                     " = ", " + ", " - ", " * ", " / ", ";", " , ",
-                    "( )", " { } ", "[ ]", "\"\"", "''", " : ", " .. ",
+                    "( )", " { } ", "[ ]", "\"\"", "''", " : ", " .. "
+            ));
+            PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
                     " == ", " != ", " >= ", " > ", " <= ", " < ",
                     " && ", " and ", " || ", " or ", " !", " not ",
                     " =~ ", " !~ "
             ));
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
-                    "var array = [ 'A', 'B', 'C', 'D' ];\n"
-                    + "return size(array);",
                     "var list = [ 'A', 'B', 'C', 'D' ];\n"
                     + "return list.size();",
                     "var set = { 'A', 'B', 'C', 'D' };\n"
@@ -186,73 +184,157 @@ public class JexlEditor extends JShellEditor {
                     "var map = { 'A': 1,'B': 2,'C': 3,'D': 4 };\n"
                     + "return map.toString();"
             ), false);
-            PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
-                    "var d = new('java.lang.Double', 0d);\n"
-                    + "return 'min_double=' + d.MIN_VALUE   +  '   max_double=' + d.MAX_VALUE;",
-                    "var array = [ 'A', 'B', 'C', 'D' ];\n"
-                    + "var arrayString = '';\n"
-                    + "for(var i : 1 .. size (array)) {\n"
-                    + "  if (empty (arrayString)) {\n"
-                    + "    arrayString = array[i-1];\n"
-                    + "  } else {\n"
-                    + "    arrayString += ' , ' + array[i-1];\n"
-                    + "  }\n"
-                    + "};\n"
-                    + "return arrayString;"
-            ), false);
 
             List<Node> buttons = new ArrayList<>();
-            Button ebutton = new Button("Math.E + Math.exp(x)");
-            ebutton.setOnAction(new EventHandler<ActionEvent>() {
+            Button includeButton = new Button("StringTools.include('abc1233hello','3{2}',caseInsensitive)");
+            includeButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    valueInput.setText(ebutton.getText());
+                    valueInput.setText(includeButton.getText());
                     controller.getThisPane().requestFocus();
                     valueInput.requestFocus();
 
-                    if (!contextArea.getText().contains("jexlContext.set(\"Math\", Math.class);")) {
-                        contextArea.appendText("jexlContext.set(\"Math\", Math.class);\n");
+                    if (moreInput.getText() == null
+                            || !moreInput.getText().contains("jexlContext.set(\"StringTools\", mara.mybox.tools.StringTools.class);")) {
+                        moreInput.appendText("jexlContext.set(\"StringTools\", mara.mybox.tools.StringTools.class);\n");
                     }
-                    if (!contextArea.getText().contains("jexlContext.set(\"x\",")) {
-                        contextArea.appendText("jexlContext.set(\"x\", 9);\n");
+                    if (moreInput.getText() == null
+                            || !moreInput.getText().contains("jexlContext.set(\"caseInsensitive\",")) {
+                        moreInput.appendText("jexlContext.set(\"caseInsensitive\", true);\n");
                     }
                 }
             });
-            buttons.add(ebutton);
-            Button cbutton = new Button("var circleArea = function(r) \n"
+            buttons.add(includeButton);
+
+            Button matchButton = new Button("StringTools.match('abc1233hello','\\\\S*3{2,}\\\\S*',caseInsensitive);");
+            matchButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    valueInput.setText(matchButton.getText());
+                    controller.getThisPane().requestFocus();
+                    valueInput.requestFocus();
+
+                    if (moreInput.getText() == null
+                            || !moreInput.getText().contains("jexlContext.set(\"StringTools\", mara.mybox.tools.StringTools.class);")) {
+                        moreInput.appendText("jexlContext.set(\"StringTools\", mara.mybox.tools.StringTools.class);\n");
+                    }
+                    if (moreInput.getText() == null
+                            || !moreInput.getText().contains("jexlContext.set(\"caseInsensitive\",")) {
+                        moreInput.appendText("jexlContext.set(\"caseInsensitive\", true);\n");
+                    }
+                }
+            });
+            buttons.add(matchButton);
+
+            Button scaleButton = new Button("DoubleTools.scale(52362.18903, 2)");
+            scaleButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    valueInput.setText(scaleButton.getText());
+                    controller.getThisPane().requestFocus();
+                    valueInput.requestFocus();
+
+                    if (moreInput.getText() == null
+                            || !moreInput.getText().contains("jexlContext.set(\"DoubleTools\", mara.mybox.tools.DoubleTools.class);")) {
+                        moreInput.appendText("jexlContext.set(\"DoubleTools\", mara.mybox.tools.DoubleTools.class);\n");
+                    }
+                }
+            });
+            buttons.add(scaleButton);
+
+            Button formatButton = new Button("DoubleTools.format(52362.18903, 2)");
+            formatButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    valueInput.setText(formatButton.getText());
+                    controller.getThisPane().requestFocus();
+                    valueInput.requestFocus();
+
+                    if (moreInput.getText() == null
+                            || !moreInput.getText().contains("jexlContext.set(\"DoubleTools\", mara.mybox.tools.DoubleTools.class);")) {
+                        moreInput.appendText("jexlContext.set(\"DoubleTools\", mara.mybox.tools.DoubleTools.class);\n");
+                    }
+                }
+            });
+            buttons.add(formatButton);
+
+            Button percentageButton = new Button("DoubleTools.percentage(647, 2916, 2)");
+            percentageButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    valueInput.setText(percentageButton.getText());
+                    controller.getThisPane().requestFocus();
+                    valueInput.requestFocus();
+
+                    if (moreInput.getText() == null
+                            || !moreInput.getText().contains("jexlContext.set(\"DoubleTools\", mara.mybox.tools.DoubleTools.class);")) {
+                        moreInput.appendText("jexlContext.set(\"DoubleTools\", mara.mybox.tools.DoubleTools.class);\n");
+                    }
+                }
+            });
+            buttons.add(percentageButton);
+
+            controller.addFlowPane(buttons);
+
+            buttons = new ArrayList<>();
+            Button mathButton = new Button("Math.E + Math.exp(x)");
+            mathButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    valueInput.setText(mathButton.getText());
+                    controller.getThisPane().requestFocus();
+                    valueInput.requestFocus();
+
+                    if (moreInput.getText() == null
+                            || !moreInput.getText().contains("jexlContext.set(\"Math\", Math.class);")) {
+                        moreInput.appendText("jexlContext.set(\"Math\", Math.class);\n");
+                    }
+                    if (moreInput.getText() == null
+                            || !moreInput.getText().contains("jexlContext.set(\"x\",")) {
+                        moreInput.appendText("jexlContext.set(\"x\", 9);\n");
+                    }
+                }
+            });
+            buttons.add(mathButton);
+
+            Button funButton = new Button("var circleArea = function(r) \n"
                     + "{ Math.PI * r * r };\n"
                     + "return circleArea (2.6);");
-            cbutton.setOnAction(new EventHandler<ActionEvent>() {
+            funButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    valueInput.setText(cbutton.getText());
+                    valueInput.setText(funButton.getText());
                     controller.getThisPane().requestFocus();
                     valueInput.requestFocus();
 
-                    if (!contextArea.getText().contains("jexlContext.set(\"Math\", Math.class);")) {
-                        contextArea.appendText("jexlContext.set(\"Math\", Math.class);\n");
+                    if (moreInput.getText() == null
+                            || !moreInput.getText().contains("jexlContext.set(\"Math\", Math.class);")) {
+                        moreInput.appendText("jexlContext.set(\"Math\", Math.class);\n");
                     }
                 }
             });
-            buttons.add(cbutton);
-            Button sbutton = new Button("var s = 'hello ';\n"
+            buttons.add(funButton);
+
+            Button whileButton = new Button("var s = 'hello ';\n"
                     + "while (s.length() < len) {\n"
                     + "   s += 'a';\n"
                     + "}\n"
                     + "return s;\n");
-            sbutton.setOnAction(new EventHandler<ActionEvent>() {
+            whileButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    valueInput.setText(sbutton.getText());
+                    valueInput.setText(whileButton.getText());
                     controller.getThisPane().requestFocus();
                     valueInput.requestFocus();
 
-                    if (!contextArea.getText().contains("jexlContext.set(\"len\",")) {
-                        contextArea.appendText("jexlContext.set(\"len\", 8);\n");
+                    if (moreInput.getText() == null
+                            || !moreInput.getText().contains("jexlContext.set(\"len\",")) {
+                        moreInput.appendText("jexlContext.set(\"len\", 8);\n");
                     }
                 }
             });
-            buttons.add(sbutton);
+            buttons.add(whileButton);
+
             controller.addFlowPane(buttons);
 
             Hyperlink elink = new Hyperlink("JEXL Reference");
@@ -285,12 +367,12 @@ public class JexlEditor extends JShellEditor {
 
     @FXML
     public void addContext() {
-        contextArea.appendText("jexlContext.set(\"name\", value);\n");
+        moreInput.appendText("jexlContext.set(\"name\", value);\n");
     }
 
     @FXML
     public void clearContext() {
-        contextArea.clear();
+        moreInput.clear();
     }
 
     @FXML
@@ -321,11 +403,15 @@ public class JexlEditor extends JShellEditor {
             controller.addFlowPane(topButtons);
             controller.addNode(new Separator());
 
-            PopTools.addButtonsPane(controller, contextArea, Arrays.asList(
+            PopTools.addButtonsPane(controller, moreInput, Arrays.asList(
                     "jexlContext.set(\"Math\", Math.class);\n",
                     "jexlContext.set(\"BigDecimal\", new java.math.BigDecimal(10));\n",
                     "jexlContext.set(\"df\", \"#,###\");\n"
                     + "jexlContext.set(\"DecimalFormat\", new java.text.DecimalFormat(df));\n",
+                    "jexlContext.set(\"StringTools\", mara.mybox.tools.StringTools.class);\n",
+                    "jexlContext.set(\"DoubleTools\", mara.mybox.tools.DoubleTools.class);\n",
+                    "jexlContext.set(\"DateTools\", mara.mybox.tools.DateTools.class);\n",
+                    "jexlContext.set(\"x\", 5);\n",
                     "jexlContext.set(\"x\", 5);\n",
                     "jexlContext.set(\"s\", \"hello\");\n"
             ));
@@ -355,7 +441,7 @@ public class JexlEditor extends JShellEditor {
 
     @FXML
     protected void popContextHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, contextArea, mouseEvent, "JexlContextHistories", true);
+        PopTools.popStringValues(this, moreInput, mouseEvent, "JexlContextHistories", true);
     }
 
 }

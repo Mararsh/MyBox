@@ -14,7 +14,8 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="500.0" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FindReplacePopController">
+<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="500.0" spacing="5.0" 
+      xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FindReplacePopController">
     <children>
         <HBox fx:id="topBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
             <children>
@@ -66,7 +67,7 @@ License:    Apache License Version 2.0
                 </Button>
             </children>
         </HBox>
-        <fx:include fx:id="findReplace" source="ControlfindReplace.fxml" />
+        <fx:include fx:id="replace" source="ControlFindReplace.fxml" />
         <HBox fx:id="bottomBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
             <children>
                 <Label fx:id="label" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />

@@ -233,6 +233,9 @@ public class TreeNodeImportController extends BaseBatchFileController {
             Map<String, TreeNode> parents = new HashMap<>();
             parents.put(rootNode.getTitle(), rootNode);
             parents.put(message(rootNode.getTitle()), rootNode);
+            boolean isWebFavorite = TreeNode.WebFavorite.equals(category);
+            int morePrefixLen = TreeNode.MorePrefix.length();
+            MyBoxLog.console(morePrefixLen);
             while ((line = reader.readLine()) != null && !line.isBlank()) {
                 parentid = getParent(conn, parents, line);
                 if (parentid < -1) {
@@ -273,19 +276,26 @@ public class TreeNodeImportController extends BaseBatchFileController {
                             value += "\n" + line;
                         }
                     }
-                    if (value != null && !value.isBlank() && TreeNode.WebFavorite.equals(category)) {
-                        String[] lines = value.split("\n");
-                        if (lines.length > 1) {
-                            value = lines[0];
-                            more = lines[0];
-                        }
-                        if (more == null || more.isBlank()) {
-                            try {
-                                File iconFile = IconTools.readIcon(value, iconCheck.isSelected());
-                                if (iconFile != null && iconFile.exists()) {
-                                    more = iconFile.getAbsolutePath();
+
+                    if (value != null && !value.isBlank()) {
+                        int pos = value.indexOf(TreeNode.MorePrefix);
+                        if (pos >= 0) {
+                            more = value.substring(pos + morePrefixLen);
+                            value = value.substring(0, pos);
+                        } else if (isWebFavorite) {
+                            String[] lines = value.split("\n");
+                            if (lines.length > 1) {
+                                value = lines[0];
+                                more = lines[0];
+                            }
+                            if (more == null || more.isBlank()) {
+                                try {
+                                    File iconFile = IconTools.readIcon(value, iconCheck.isSelected());
+                                    if (iconFile != null && iconFile.exists()) {
+                                        more = iconFile.getAbsolutePath();
+                                    }
+                                } catch (Exception e) {
                                 }
-                            } catch (Exception e) {
                             }
                         }
                     }

@@ -530,35 +530,34 @@ public class PopTools {
                 }
             });
             controller.addNode(clearButton);
-            List<String> values = Arrays.asList("^      "
-                    + message("StartLocation"), "$      "
-                    + message("EndLocation"), "*      "
-                    + message("ZeroOrNTimes"), "+      "
-                    + message("OneOrNTimes"), "?      "
-                    + message("ZeroOrOneTimes"), "{n}      "
-                    + message("NTimes"), "{n,}      "
-                    + message("N+Times"), "{n,m}      "
-                    + message("NMTimes"), "|      "
-                    + message("Or"), "[abc]      "
-                    + message("MatchOneCharacters"), "[A-Z]      "
-                    + message("A-Z"), "\\x20      "
-                    + message("Blank"), "\\s      "
-                    + message("NonprintableCharacter"), "\\S      "
-                    + message("PrintableCharacter"), "\\n      "
-                    + message("LineBreak"), "\\r      "
-                    + message("CarriageReturn"), "\\t      "
-                    + message("Tab"), "[0-9]{n}      "
-                    + message("NNumber"), "[A-Z]{n}      "
-                    + message("NUppercase"), "[a-z]{n}      "
-                    + message("NLowercase"), "[\\u4e00-\\u9fa5]      "
-                    + message("Chinese"), "[^\\x00-\\xff]      "
-                    + message("DoubleByteCharacter"), "[A-Za-z0-9]+      "
-                    + message("EnglishAndNumber"), "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*      "
-                    + message("Email"), "(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\\d{8}      "
-                    + message("PhoneNumber"), "[a-zA-z]+://[^\\s]*       "
-                    + message("URL"), "^(\\s*)\\n       "
-                    + message("BlankLine"), "\\d+\\.\\d+\\.\\d+\\.\\d+      "
-                    + message("IP"));
+            List<String> values = Arrays.asList("^      " + message("StartLocation"),
+                    "$      " + message("EndLocation"),
+                    "*      " + message("ZeroOrNTimes"),
+                    "+      " + message("OneOrNTimes"),
+                    "?      " + message("ZeroOrOneTimes"),
+                    "{n}      " + message("NTimes"),
+                    "{n,}      " + message("N+Times"),
+                    "{n,m}      " + message("NMTimes"),
+                    "|      " + message("Or"),
+                    "[abc]      " + message("MatchOneCharacters"),
+                    "[A-Z]      " + message("A-Z"),
+                    "\\x20      " + message("Blank"),
+                    "\\s      " + message("NonprintableCharacter"),
+                    "\\S      " + message("PrintableCharacter"),
+                    "\\n      " + message("LineBreak"),
+                    "\\r      " + message("CarriageReturn"),
+                    "\\t      " + message("Tab"),
+                    "[0-9]{n}      " + message("NNumber"),
+                    "[A-Z]{n}      " + message("NUppercase"),
+                    "[a-z]{n}      " + message("NLowercase"),
+                    "[\\u4e00-\\u9fa5]      " + message("Chinese"),
+                    "[^\\x00-\\xff]      " + message("DoubleByteCharacter"),
+                    "[A-Za-z0-9]+      " + message("EnglishAndNumber"),
+                    "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*      " + message("Email"),
+                    "(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\\d{8}      " + message("PhoneNumber"),
+                    "[a-zA-z]+://[^\\s]*       " + message("URL"),
+                    "^(\\s*)\\n       " + message("BlankLine"),
+                    "\\d+\\.\\d+\\.\\d+\\.\\d+      " + message("IP"));
             List<Node> nodes = new ArrayList<>();
             for (String value : values) {
                 String[] vv = value.split("      ");

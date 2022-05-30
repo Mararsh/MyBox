@@ -139,7 +139,7 @@ License:    Apache License Version 2.0
                               </Button>
                            </children>
                         </HBox>
-                        <TextArea fx:id="contextArea" prefHeight="200.0" prefWidth="200.0" />
+                        <TextArea fx:id="moreInput" prefHeight="200.0" prefWidth="200.0" />
                         <Label maxWidth="1.7976931348623157E308" text="%JexlParamters" wrapText="true" />
                         <TextField fx:id="parametersInput" />
                      </children>
