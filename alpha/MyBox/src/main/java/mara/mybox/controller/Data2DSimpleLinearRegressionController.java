@@ -145,7 +145,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
                 noticeMemory();
             });
 
-            displayAllCheck.visibleProperty().bind(sourceController.allPagesCheck.selectedProperty());
+            displayAllCheck.visibleProperty().bind(sourceController.allPagesRadio.selectedProperty());
 
             fittedPointsCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayFittedPoints", false));
             fittedPointsCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {

@@ -180,7 +180,7 @@ public class TreeNodeEditor extends TreeTagsController {
         isSettingValues = true;
         currentNode = node;
         if (node != null) {
-            treeController.setTitle(treeController.baseTitle + ": " + node.getNodeid() + " - " + node.getTitle());
+            parentController.setTitle(parentController.baseTitle + ": " + node.getNodeid() + " - " + node.getTitle());
             idInput.setText(node.getNodeid() + "");
             nameInput.setText(node.getTitle());
             if (valueInput != null) {
@@ -192,7 +192,7 @@ public class TreeNodeEditor extends TreeTagsController {
             timeInput.setText(DateTools.datetimeToString(node.getUpdateTime()));
             selectButton.setVisible(node.getNodeid() < 0 || node.getParentid() < 0);
         } else {
-            treeController.setTitle(treeController.baseTitle);
+            parentController.setTitle(parentController.baseTitle);
             idInput.setText(message("NewData"));
             nameInput.setText("");
             if (valueInput != null) {

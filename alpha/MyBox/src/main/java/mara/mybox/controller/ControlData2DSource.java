@@ -5,13 +5,18 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.JShellTools;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -27,61 +32,47 @@ public class ControlData2DSource extends ControlData2DLoad {
     protected ChangeListener<Boolean> tableStatusListener;
 
     @FXML
-    protected CheckBox allPagesCheck;
+    protected ToggleGroup rowsGroup;
     @FXML
-    protected Button noColumnButton, allColumnButton;
+    protected RadioButton selectedRadio, allPagesRadio, currentPageRadio;
     @FXML
     protected Label titleLabel;
     @FXML
-    protected FlowPane buttonsPane;
+    protected FlowPane rowsPane, columnsPane;
+    @FXML
+    protected VBox dataBox;
+    @FXML
+    protected ControlJexl jexlController;
 
     @Override
     public void initControls() {
         try {
             super.initControls();
 
-            allPagesCheck.setSelected(UserConfig.getBoolean(baseName + "AllPages", false));
-            allPagesCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            String rowsType = UserConfig.getString(baseName + "RowsSelection", "CurrentPage");
+            if (rowsType == null) {
+                currentPageRadio.fire();
+            } else if ("AllPages".equals(rowsType)) {
+                allPagesRadio.fire();
+            } else if ("Selected".equals(rowsType)) {
+                selectedRadio.fire();
+            }
+            rowsGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "AllPages", allPagesCheck.isSelected());
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    if (allPagesRadio.isSelected()) {
+                        UserConfig.setString(baseName + "RowsSelection", "AllPages");
+                    } else if (selectedRadio.isSelected()) {
+                        UserConfig.setString(baseName + "RowsSelection", "Selected");
+                    } else {
+                        UserConfig.setString(baseName + "RowsSelection", "CurrentPage");
+                    }
                     notifySelected();
                 }
             });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-        }
-    }
-
-    public void showAllPages(boolean show) {
-        if (show) {
-            if (!buttonsPane.getChildren().contains(allPagesCheck)) {
-                buttonsPane.getChildren().add(allPagesCheck);
-            }
-        } else {
-            if (buttonsPane.getChildren().contains(allPagesCheck)) {
-                allPagesCheck.setSelected(false);
-                buttonsPane.getChildren().remove(allPagesCheck);
-            }
-        }
-    }
-
-    public void idExclude(boolean idExclude) {
-        this.idExclude = idExclude;
-    }
-
-    public void noColumnSelection(boolean noColumnSelection) {
-        this.noColumnSelection = noColumnSelection;
-        if (noColumnSelection) {
-            if (buttonsPane.getChildren().contains(noColumnButton)) {
-                buttonsPane.getChildren().removeAll(noColumnButton, allColumnButton);
-            }
-        } else {
-            if (!buttonsPane.getChildren().contains(noColumnButton)) {
-                buttonsPane.getChildren().add(0, noColumnButton);
-                buttonsPane.getChildren().add(1, allColumnButton);
-            }
         }
     }
 
@@ -92,8 +83,6 @@ public class ControlData2DSource extends ControlData2DLoad {
             }
             this.parentController = parent;
             this.tableController = tableController;
-            data2D = tableController.data2D;
-
             updateData();
 
             tableStatusListener = new ChangeListener<Boolean>() {
@@ -104,10 +93,29 @@ public class ControlData2DSource extends ControlData2DLoad {
             };
             tableController.statusNotify.addListener(tableStatusListener);
 
+            jexlController.setParamters(this);
+
             tableView.requestFocus();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void idExclude(boolean idExclude) {
+        this.idExclude = idExclude;
+    }
+
+    public void noColumnSelection(boolean noColumnSelection) {
+        this.noColumnSelection = noColumnSelection;
+        if (noColumnSelection) {
+            if (dataBox.getChildren().contains(columnsPane)) {
+                dataBox.getChildren().remove(columnsPane);
+            }
+        } else {
+            if (!dataBox.getChildren().contains(columnsPane)) {
+                dataBox.getChildren().add(2, columnsPane);
+            }
         }
     }
 
@@ -119,23 +127,48 @@ public class ControlData2DSource extends ControlData2DLoad {
         makeColumns();
         isSettingValues = true;
         tableData.setAll(tableController.tableData);
+        currentPage = tableController.currentPage;
+        startRowOfCurrentPage = tableController.startRowOfCurrentPage;
+        pageSize = tableController.pageSize;
+        pagesNumber = tableController.pagesNumber;
+        dataSize = tableController.dataSize;
+        dataSizeLoaded = true;
         isSettingValues = false;
+        setPagination();
         notifyLoaded();
         checkChanged();
     }
 
     public void checkChanged() {
-        if (!data2D.isMutiplePages() || data2D.isTableChanged()) {
-            allPagesCheck.setSelected(false);
-            allPagesCheck.setDisable(true);
+        if (data2D.isMutiplePages()) {
+            allPagesRadio.setDisable(false);
+            showPaginationPane(true);
         } else {
-            allPagesCheck.setDisable(false);
+            if (allPagesRadio.isSelected()) {
+                currentPageRadio.fire();
+            }
+            allPagesRadio.setDisable(true);
+            showPaginationPane(false);
+        }
+    }
+
+    @Override
+    protected void showPaginationPane(boolean show) {
+        paginationPane.setVisible(show);
+        if (show) {
+            if (!dataBox.getChildren().contains(paginationPane)) {
+                dataBox.getChildren().add(paginationPane);
+            }
+        } else {
+            if (dataBox.getChildren().contains(paginationPane)) {
+                dataBox.getChildren().remove(paginationPane);
+            }
         }
     }
 
     public boolean allPages() {
         checkChanged();
-        return allPagesCheck.isSelected();
+        return allPagesRadio.isSelected();
     }
 
     @Override
@@ -234,7 +267,7 @@ public class ControlData2DSource extends ControlData2DLoad {
     }
 
     @FXML
-    public void allColumns() {
+    public void selectAllColumns() {
         try {
             if (noColumnSelection) {
                 return;
@@ -253,7 +286,7 @@ public class ControlData2DSource extends ControlData2DLoad {
     }
 
     @FXML
-    public void noColumn() {
+    public void selectNoneColumn() {
         try {
             if (noColumnSelection) {
                 return;
@@ -446,7 +479,7 @@ public class ControlData2DSource extends ControlData2DLoad {
                     cb.setSelected(col >= 0 && cols.contains(col));
                 }
             } else {
-                noColumn();
+                selectNoneColumn();
             }
             isSettingValues = false;
             notifySelected();
@@ -476,6 +509,33 @@ public class ControlData2DSource extends ControlData2DLoad {
             }
         }
         return true;
+    }
+
+    public boolean initFilter() {
+        return jexlController.pickInputs();
+    }
+
+    public boolean satisfyFilter(List<Data2DColumn> columns, List<String> values, long rowIndex) {
+        try {
+            if (columns == null || columns.isEmpty() || values == null || columns.size() != values.size()) {
+                return false;
+            }
+            String jexlContext = "jexlContext.set(\"" + message("RowNumber2") + "\", " + rowIndex + ");\n";
+            for (int i = 0; i < columns.size(); i++) {
+                Data2DColumn column = columns.get(i);
+                String value = values.get(i);
+                if (column.valueQuoted()) {
+                    value = "'" + value + "'";
+                }
+                jexlContext += "jexlContext.set(\"" + column.getColumnName() + "\", " + value + ");\n";
+            }
+            JShellTools.runScript(jexlController.jShell, jexlContext);
+            String result = jexlController.runScript();
+            return result != null && result.equalsIgnoreCase("true");
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
     }
 
     @Override

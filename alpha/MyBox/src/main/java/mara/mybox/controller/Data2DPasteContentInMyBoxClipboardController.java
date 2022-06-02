@@ -44,7 +44,6 @@ public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxCli
     public void setParameters(ControlData2DLoad target) {
         try {
             sourceController = (ControlData2DSource) loadController;
-            sourceController.showAllPages(false);
 
             this.parentController = target;
             targetTableController = target;

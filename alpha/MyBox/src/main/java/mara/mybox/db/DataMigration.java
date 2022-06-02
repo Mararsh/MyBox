@@ -1337,6 +1337,7 @@ public class DataMigration {
                             "Tree_Examples_en.txt", "Tree_Examples_zh.txt",
                             "JavaScript_Examples_en.txt", "JavaScript_Examples_zh.txt",
                             "JShell_Examples_en.txt", "JShell_Examples_zh.txt",
+                            "JEXL_Examples_en.txt", "JEXL_Examples_zh.txt",
                             "WebFavorites_Examples_en.txt", "WebFavorites_Examples_zh.txt"
                     );
                     for (String name : names) {

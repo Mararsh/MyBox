@@ -18,20 +18,20 @@ License:    Apache License Version 2.0
     <children>
       <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" spacing="2.0">
          <children>
-            <Button fx:id="jarButton" mnemonicParsing="false" onAction="#selectJar" onMouseEntered="#popJarFiles">
-               <graphic>
-                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconJar.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
             <Button fx:id="selectFilePathButton" mnemonicParsing="false" onAction="#selectPath" onMouseEntered="#popJarPath">
                <graphic>
                   <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../buttons/Red/iconOpen.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="jarButton" mnemonicParsing="false" onAction="#selectJar" onMouseEntered="#popJarFiles">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconJar.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -45,6 +45,10 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </Button>
+         </children>
+      </HBox>
+        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
+            <children>
             <Button fx:id="historyButton" mnemonicParsing="false" onMouseEntered="#popHistories">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -54,10 +58,6 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </Button>
-         </children>
-      </HBox>
-        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
-            <children>
             <TextField fx:id="pathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                 <Button fx:id="addPathButton" layoutX="48.0" layoutY="10.0" mnemonicParsing="false" onAction="#addPath">
                     <graphic>

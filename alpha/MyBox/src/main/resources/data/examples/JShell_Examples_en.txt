@@ -1,4 +1,38 @@
 ##MyBox#
+Examples > Object
+string
+String exampleString = "hello";
+exampleString += " world";
+"Contains e:"+ exampleString.contains("e") + "   length:" + exampleString.length();
+
+##MyBox#
+Examples > Object
+time
+import java.util.Date;
+Date exampleDate = new Date();
+"current time:" + exampleDate.toString() + "     value:" + exampleDate.getTime();
+
+##MyBox#
+Examples > Object
+array
+import java.util.Arrays;
+double[] exampleArray =  new double[5];
+for (int i=0; i<exampleArray.length; i++ ) {
+    exampleArray[i] = i * 2;
+}
+exampleArray[2];
+
+##MyBox#
+Examples > Object
+list
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+List<String> exampleList = new ArrayList<>();
+exampleList.addAll(Arrays.asList("a", "b", "c", "d", "e"));
+exampleList.toString();
+
+##MyBox#
 Examples > Expressions > Numeric operations
 e
 Math.E
@@ -264,6 +298,50 @@ isEmpty()
 .isEmpty()
 
 ##MyBox#
+Examples > Expressions > Boolean operations
+list include
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+List<String> exampleListC = new ArrayList<>();
+exampleListC.addAll(Arrays.asList("a", "b", "c", "d", "e"));
+String exampleStringC = "c";
+exampleListC.contains(exampleStringC);
+
+##MyBox#
+Examples > Expressions > Boolean operations
+string match
+// MyBox library paths should have been added in JShell environment
+import mara.mybox.tools.StringTools;
+String exampleStringM = "abc1233hello";
+String exampleRegexM = "\\S*3{2,}\\S*";  
+boolean exampleCaseInsensitiveM = true;
+StringTools.match(exampleStringM,exampleRegexM,exampleCaseInsensitiveM);
+
+
+##MyBox#
+Examples > Expressions > Boolean operations
+string include
+// MyBox library paths should have been added in JShell environment
+import mara.mybox.tools.StringTools;
+String exampleStringI = "abc1233hello";
+String exampleRegexI = "3{2}";
+boolean exampleCaseInsensitiveI = true;
+StringTools.include(exampleStringI,exampleRegexI,exampleCaseInsensitiveI);
+
+##MyBox#
+Examples > Expressions > Boolean operations
+and/or/not
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+List<String> exampleListB = new ArrayList<>();
+exampleListB.addAll(Arrays.asList("a", "b", "c", "d", "e"));
+String exampleStringB = "c";
+exampleListB.contains(exampleStringB) && 
+(exampleListB.size() >= 8 || exampleStringB.length() != 1 || !exampleStringB.startsWith("h"));
+
+##MyBox#
 Examples > Methods
 Area of circle
 double circleAreaByDiameter(double diameter) {        
@@ -298,7 +376,7 @@ String formatDouble(double data, int scale) {
     try {        
         String format = "#,###";        
         if (scale > 0) {        
-            format = "." + "#".repeat(scale);        
+            format += "." + "#".repeat(scale);        
         }        
         DecimalFormat df = new DecimalFormat(format);        
         return df.format(scale(data, scale));        
@@ -333,3 +411,51 @@ String datetimeToString(Date theDate, String format, TimeZone theZone) {
 }
 
 datetimeToString(new Date(), DatetimeFormat, TimeZone.getDefault());
+
+##MyBox#
+Examples > Methods
+string match
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+boolean match(String string, String find, boolean isRegex,
+            boolean dotAll, boolean multiline, boolean caseInsensitive) {
+        if (string == null || find == null || find.isEmpty()) {
+            return false;
+        }
+        try {
+            int mode = (isRegex ? 0x00 : Pattern.LITERAL)
+                    | (caseInsensitive ? Pattern.CASE_INSENSITIVE : 0x00)
+                    | (dotAll ? Pattern.DOTALL : 0x00)
+                    | (multiline ? Pattern.MULTILINE : 0x00);
+            Pattern pattern = Pattern.compile(find, mode);
+            Matcher matcher = pattern.matcher(string);
+            return matcher.matches();
+        } catch (Exception e) {
+            return false;
+        }
+}
+
+match("Hello1233World", "\\S*3{2,}\\S*", true, true, true, true);
+
+##MyBox#
+Examples > Methods
+string include
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+boolean include(String string, String find, boolean caseInsensitive) {
+        if (string == null || find == null || find.isEmpty()) {
+            return false;
+        }
+        try {
+            int mode = (caseInsensitive ? Pattern.CASE_INSENSITIVE : 0x00) | Pattern.MULTILINE;
+            Pattern pattern = Pattern.compile(find, mode);
+            Matcher matcher = pattern.matcher(string);
+            return matcher.find();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+include("Hello1233World", "3{2}", true);
