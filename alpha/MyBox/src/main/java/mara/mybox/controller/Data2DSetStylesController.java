@@ -174,12 +174,12 @@ public class Data2DSetStylesController extends BaseData2DHandleController {
     public void handleRowsTask() {
         try {
             tableController.isSettingValues = true;
-            for (int row : sourceController.checkedRowsIndices) {
-                for (int col : sourceController.checkedColsIndices) {
+            for (int row : selectController.checkedRowsIndices) {
+                for (int col : selectController.checkedColsIndices) {
                     data2D.setStyle(row, col, style);
                 }
                 tableController.tableData.set(row, tableController.tableData.get(row));
-                sourceController.tableData.set(row, sourceController.tableData.get(row));
+                selectController.tableData.set(row, selectController.tableData.get(row));
             }
             tableController.isSettingValues = false;
             tableController.tableChanged(true);
@@ -198,7 +198,7 @@ public class Data2DSetStylesController extends BaseData2DHandleController {
             protected boolean handle() {
                 try {
                     data2D.setTask(task);
-                    return data2D.saveStyles(sourceController.checkedColsNames(), style);
+                    return data2D.saveStyles(selectController.checkedColsNames(), style);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;

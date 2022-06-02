@@ -34,268 +34,208 @@ exampleList.toString();
 
 ##MyBox#
 示例 > 表达式 > 数值计算
-e
+欧拉数
 Math.E
 
 ##MyBox#
 示例 > 表达式 > 数值计算
-pi
+圆周率
 Math.PI
 
 ##MyBox#
 示例 > 表达式 > 数值计算
-abs()
-Math.abs( )
+绝对值
+Math.abs(-5.611)
 
 ##MyBox#
 示例 > 表达式 > 数值计算
-exp()
-Math.exp( )
+欧拉冥
+Math.exp(2)
 
 ##MyBox#
 示例 > 表达式 > 数值计算
-sqrt()
-Math.sqrt( )
+平方根
+Math.sqrt(9)
 
 ##MyBox#
 示例 > 表达式 > 数值计算
-cbrt()
-Math.cbrt( )
+三次方根
+Math.cbrt(27)
 
 ##MyBox#
 示例 > 表达式 > 数值计算
-pow()
-Math.pow( )
+幂
+Math.pow(2,5)
 
 ##MyBox#
 示例 > 表达式 > 数值计算
-cos()
-Math.cos( )
+余弦
+Math.cos(0)
 
 ##MyBox#
 示例 > 表达式 > 数值计算
-sin()
-Math.sin( )
+正弦
+Math.sin(9)
 
 ##MyBox#
 示例 > 表达式 > 数值计算
-tan()
-Math.tan( )
+正切
+Math.tan(5)
 
 ##MyBox#
 示例 > 表达式 > 数值计算
-atan()
-Math.atan( )
+反正切
+Math.atan(-7.3)
 
 ##MyBox#
 示例 > 表达式 > 数值计算
-cosh()
-Math.cosh( )
+反余弦
+Math.acos(0.5)
 
 ##MyBox#
 示例 > 表达式 > 数值计算
-acos()
-Math.acos( )
+反正弦
+Math.asin(0.3)
 
 ##MyBox#
 示例 > 表达式 > 数值计算
-sinh()
-Math.sinh( )
-
-##MyBox#
-示例 > 表达式 > 数值计算
-asin()
-Math.asin( )
-
-##MyBox#
-示例 > 表达式 > 数值计算
-tanh()
-Math.tanh( )
-
-##MyBox#
-示例 > 表达式 > 数值计算
-atan2()
-Math.atan2( )
-
-##MyBox#
-示例 > 表达式 > 数值计算
-log()
-Math.log( )
+自然对数（底为e）
+Math.log(6)
 
 ##MyBox#
 示例 > 表达式 > 数值计算
 log10()
-Math.log10( )
+Math.log10(6)
 
 ##MyBox#
 示例 > 表达式 > 数值计算
-log1p()
-Math.log1p( )
+log2()
+Math.log2(6)
 
 ##MyBox#
 示例 > 表达式 > 数值计算
-ceil()
-Math.ceil( )
+上舍入
+Math.ceil(4.13)
 
 ##MyBox#
 示例 > 表达式 > 数值计算
-floor()
-MMath.floor( )
+下舍入
+Math.floor(4.67)
 
 ##MyBox#
 示例 > 表达式 > 数值计算
-round()
-Math.round( )
+四舍五入
+Math.round(4.83)
 
 ##MyBox#
 示例 > 表达式 > 数值计算
-rint()
-Math.rint( )
+随机数
+Math.random()
 
 ##MyBox#
 示例 > 表达式 > 数值计算
-scalb()
-Math.scalb( )
+大值
+Math.max(1,-3)
 
 ##MyBox#
 示例 > 表达式 > 数值计算
-signum()
-Math.signum( )
-
-##MyBox#
-示例 > 表达式 > 数值计算
-random()
-Math.random( )
-
-##MyBox#
-示例 > 表达式 > 数值计算
-max()
-Math.max( , )
-
-##MyBox#
-示例 > 表达式 > 数值计算
-min()
-Math.min( , )
-
-##MyBox#
-示例 > 表达式 > 数值计算
-toDegrees()
-Math.toDegrees( )
-
-##MyBox#
-示例 > 表达式 > 数值计算
-toRadians()
-Math.toRadians( )
+小值
+Math.min(1,-3)
 
 ##MyBox#
 示例 > 表达式 > 字符串处理
-equalsIgnoreCase()
-.equalsIgnoreCase()
+忽略大小写的等于
+"Hello".equalsIgnoreCase("hello")
 
 ##MyBox#
 示例 > 表达式 > 字符串处理
-equals()
-.equals()
+等于
+"Hello".equals("hello")
 
 ##MyBox#
 示例 > 表达式 > 字符串处理
-startsWith()
-.startsWith()
+替换首个
+"Hello World! World is yourself.".replace("World", "Feeling");
+   
+##MyBox#
+示例 > 表达式 > 字符串处理
+替换所有
+"Hello World! World is yourself.".replaceAll("World", "Feeling");
 
 ##MyBox#
 示例 > 表达式 > 字符串处理
-endsWith()
-.endsWith()
+开始于
+"Hello".startsWith("h")
 
 ##MyBox#
 示例 > 表达式 > 字符串处理
-split()
-.split()
+结尾于
+"Hello".endsWith("o")
 
 ##MyBox#
 示例 > 表达式 > 字符串处理
-substring()
-.substring()
+子串
+"Hello".substring(2, 5)
 
 ##MyBox#
 示例 > 表达式 > 字符串处理
-charAt()
-.charAt()
+字符
+"hello".charAt(2)
 
 ##MyBox#
 示例 > 表达式 > 字符串处理
-concat()
-.concat()
+连接
+"hello".concat(" world")
 
 ##MyBox#
 示例 > 表达式 > 字符串处理
-contains()
-.contains()
+分割
+"1,2,3,4".split(",")
 
 ##MyBox#
 示例 > 表达式 > 字符串处理
-indexOf()
-.indexOf()
+位置
+"hello".indexOf("e")
 
 ##MyBox#
 示例 > 表达式 > 字符串处理
-lastIndexOf()
-.lastIndexOf()
+最后位置
+"hello".lastIndexOf("l")
 
 ##MyBox#
 示例 > 表达式 > 字符串处理
-length()
-.length()
+长度
+"hello".length()
 
 ##MyBox#
 示例 > 表达式 > 字符串处理
-replace()
-.replace(,)
+小写
+"Hello".toLowerCase()
 
 ##MyBox#
 示例 > 表达式 > 字符串处理
-replaceAll()
-.replaceAll(,)
+大写
+"Hello".toUpperCase()
 
 ##MyBox#
 示例 > 表达式 > 字符串处理
-replaceFirst()
-.replaceFirst()
+包含
+"Hello".contains("el")
 
 ##MyBox#
 示例 > 表达式 > 字符串处理
-substring()
-.substring()
+删除首尾空白字符
+" Hello  ".trim()
 
 ##MyBox#
 示例 > 表达式 > 字符串处理
-toLowerCase()
-.toLowerCase()
+为空白字符串
+"  ".isBlank()
 
 ##MyBox#
 示例 > 表达式 > 字符串处理
-toUpperCase()
-.toUpperCase()
-
-##MyBox#
-示例 > 表达式 > 字符串处理
-trim()
-.trim()
-
-##MyBox#
-示例 > 表达式 > 字符串处理
-strip()
-.strip()
-
-##MyBox#
-示例 > 表达式 > 字符串处理
-isBlank()
-.isBlank()
-
-##MyBox#
-示例 > 表达式 > 字符串处理
-isEmpty()
-.isEmpty()
+为空
+"".isEmpty()
 
 ##MyBox#
 示例 > 表达式 > 布尔运算
@@ -318,7 +258,6 @@ String exampleRegexM = "\\S*3{2,}\\S*";
 boolean exampleCaseInsensitiveM = true;
 StringTools.match(exampleStringM,exampleRegexM,exampleCaseInsensitiveM);
 
-
 ##MyBox#
 示例 > 表达式 > 布尔运算
 字符串包含
@@ -340,7 +279,6 @@ exampleListB.addAll(Arrays.asList("a", "b", "c", "d", "e"));
 String exampleStringB = "c";
 exampleListB.contains(exampleStringB) && 
 (exampleListB.size() >= 8 || exampleStringB.length() != 1 || !exampleStringB.startsWith("h"));
-
 
 ##MyBox#
 示例 > 方法

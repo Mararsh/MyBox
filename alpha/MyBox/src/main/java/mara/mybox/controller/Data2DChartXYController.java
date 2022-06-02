@@ -104,14 +104,14 @@ public class Data2DChartXYController extends BaseData2DChartController {
                 dataColsIndices.add(valueCol);
                 outputColumns.add(data2D.column(valueCol));
             }
-            checkedColsIndices = sourceController.checkedColsIndices();
+            checkedColsIndices = selectController.checkedColsIndices();
             if (checkedColsIndices == null || checkedColsIndices.isEmpty()) {
                 popError(message("SelectToHandle"));
                 return false;
             }
             dataColsIndices.addAll(checkedColsIndices);
-            outputColumns.addAll(sourceController.checkedCols());
-            title += " - " + sourceController.checkedColsNames();
+            outputColumns.addAll(selectController.checkedCols());
+            title += " - " + selectController.checkedColsNames();
 
             ChartType chartType;
             String chartName;

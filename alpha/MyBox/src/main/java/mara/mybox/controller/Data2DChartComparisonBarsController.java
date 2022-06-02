@@ -40,7 +40,7 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
         try {
             super.initControls();
 
-            sourceController.noColumnSelection(true);
+            selectController.noColumnSelection(true);
 
             valueColumn2Selector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override

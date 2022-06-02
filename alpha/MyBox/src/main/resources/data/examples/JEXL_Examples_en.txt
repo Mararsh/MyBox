@@ -30,146 +30,104 @@ MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
 
 ##MyBox#
 Examples > Math
-abs()
-Math.abs( )
+absoluate
+Math.abs(-5.611)
 MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
 
 ##MyBox#
 Examples > Math
-exp()
-Math.exp( )
+power of e
+Math.exp(2)
 MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
 
 ##MyBox#
 Examples > Math
-sqrt()
-Math.sqrt( )
+square root
+Math.sqrt(9)
 MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
 
 ##MyBox#
 Examples > Math
-cbrt()
-Math.cbrt( )
+cubic root
+Math.cbrt(27)
 MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
 
 ##MyBox#
 Examples > Math
-pow()
-Math.pow( )
+power
+Math.pow(2,5)
 MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
 
 ##MyBox#
 Examples > Math
-cos()
-Math.cos( )
+cosine
+Math.cos(0)
 MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
 
 ##MyBox#
 Examples > Math
-sin()
-Math.sin( )
+sine
+Math.sin(9)
 MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
 
 ##MyBox#
 Examples > Math
-tan()
-Math.tan( )
+tangent
+Math.tan(5)
 MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
 
 ##MyBox#
 Examples > Math
-atan()
-Math.atan( )
+arc tangent
+Math.atan(-7.3)
 MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
 
 ##MyBox#
 Examples > Math
-cosh()
-Math.cosh( )
+arc cosine
+Math.acos(0.5)
 MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
 
 ##MyBox#
 Examples > Math
-acos()
-Math.acos( )
+arc sine
+Math.asin(0.3)
 MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
 
 ##MyBox#
 Examples > Math
-sinh()
-Math.sinh( )
+natural logarithm
+Math.log(6)
 MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
 
 ##MyBox#
 Examples > Math
-asin()
-Math.asin( )
+log10
+Math.log10(6)
 MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
 
 ##MyBox#
 Examples > Math
-tanh()
-Math.tanh( )
+log2
+Math.log2(6)
 MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
 
 ##MyBox#
 Examples > Math
-atan2()
-Math.atan2( )
+round up
+Math.ceil(4.13)
 MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
 
 ##MyBox#
 Examples > Math
-log()
-Math.log( )
+round down
+Math.floor(4.67)
 MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
 
 ##MyBox#
 Examples > Math
-log10()
-Math.log10( )
-MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
-
-##MyBox#
-Examples > Math
-log1p()
-Math.log1p( )
-MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
-
-##MyBox#
-Examples > Math
-ceil()
-Math.ceil( )
-MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
-
-##MyBox#
-Examples > Math
-floor()
-MMath.floor( )
-MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
-
-##MyBox#
-Examples > Math
-round()
-Math.round( )
-MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
-
-##MyBox#
-Examples > Math
-rint()
-Math.rint( )
-MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
-
-##MyBox#
-Examples > Math
-scalb()
-Math.scalb( )
-MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
-
-##MyBox#
-Examples > Math
-signum()
-Math.signum( )
+round
+Math.round(4.83)
 MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
 
 ##MyBox#
@@ -180,26 +138,14 @@ MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
 
 ##MyBox#
 Examples > Math
-max()
-Math.max( , )
+maximum
+Math.max(1,-3)
 MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
 
 ##MyBox#
 Examples > Math
-min()
-Math.min( , )
-MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
-
-##MyBox#
-Examples > Math
-toDegrees()
-Math.toDegrees( )
-MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
-
-##MyBox#
-Examples > Math
-toRadians()
-Math.toRadians( )
+minimum
+Math.min(1,-3)
 MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
 
 ##MyBox#
@@ -241,7 +187,6 @@ var a = 5;
 var b = 2;
 'hello'.startsWith('hell') and ( a < 9 or b >= 6  ) and not ( a == b );
 
-
 ##MyBox#
 Examples > Numeric operations
 decimal scale
@@ -249,7 +194,6 @@ var d = 52362.18903;
 var scale = 2;
 DoubleTools.scale(d, scale);
 MyBoxTreeNodeMore:jexlContext.set("DoubleTools", mara.mybox.tools.DoubleTools.class);
-
 
 ##MyBox#
 Examples > Numeric operations

@@ -91,10 +91,10 @@ public class Data2DSortController extends BaseData2DHandleController {
     @Override
     public boolean checkOptions() {
         boolean ok = super.checkOptions();
-        targetController.setNotInTable(sourceController.allPages());
-        memoryNoticeLabel.setVisible(!data2D.isTable() && sourceController.allPages());
+        targetController.setNotInTable(selectController.allPages());
+        memoryNoticeLabel.setVisible(!data2D.isTable() && selectController.allPages());
         orderCol = data2D.colOrder(colSelector.getSelectionModel().getSelectedItem());
-        colsIndices = sourceController.checkedColsIndices();
+        colsIndices = selectController.checkedColsIndices();
         if (colsIndices == null || colsIndices.isEmpty() || orderCol < 0) {
             infoLabel.setText(message("SelectToHandle"));
             okButton.setDisable(true);
@@ -106,7 +106,7 @@ public class Data2DSortController extends BaseData2DHandleController {
 
     public List<Integer> adjustedCols() {
         try {
-            colsNames = sourceController.checkedColsNames();
+            colsNames = selectController.checkedColsNames();
             if (!colsIndices.contains(orderCol)) {
                 colsIndices.add(orderCol);
                 colsNames.add(orderName);
@@ -132,8 +132,8 @@ public class Data2DSortController extends BaseData2DHandleController {
     @Override
     public boolean handleRows() {
         try {
-            outputData = sourceController.selectedData(
-                    sourceController.checkedRowsIndices(), adjustedCols(), showRowNumber());
+            outputData = selectController.selectedData(
+                    selectController.checkedRowsIndices(), adjustedCols(), showRowNumber());
             sort(outputData);
             if (showRowNumber()) {
                 outputData.add(0, colsNames);

@@ -1,11 +1,13 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Tab;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -16,12 +18,14 @@ import static mara.mybox.value.Languages.message;
  */
 public class JavaScriptController extends TreeManageController {
 
-    protected ControlWebView sourceWebView;
+    protected ControlWebView htmlWebView;
 
+    @FXML
+    protected Tab htmlTab;
     @FXML
     protected JavaScriptEditor editorController;
     @FXML
-    protected ControlWebView outputController;
+    protected ControlWebView outputController, htmlController;
 
     public JavaScriptController() {
         baseTitle = "JavaScript";
@@ -39,13 +43,17 @@ public class JavaScriptController extends TreeManageController {
             editorController.setParameters(this);
             outputController.setParent(this, ControlWebView.ScrollType.Bottom);
 
+            htmlWebView = htmlController;
+            htmlController.setParent(this, ControlWebView.ScrollType.Bottom);
+            htmlController.loadContents(HtmlWriteTools.emptyHmtl(message("AppTitle")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
 
     public void setParameters(ControlWebView sourceWebView) {
-        this.sourceWebView = sourceWebView;
+        htmlWebView = sourceWebView;
+        tabPane.getTabs().remove(htmlTab);
     }
 
     @Override

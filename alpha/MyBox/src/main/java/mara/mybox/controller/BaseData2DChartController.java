@@ -170,7 +170,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         if (isSettingValues) {
             return;
         }
-        if (sourceController.allPages()) {
+        if (selectController.allPages()) {
             infoLabel.setText(message("AllRowsLoadComments"));
         }
     }
@@ -178,7 +178,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     public boolean initData() {
         try {
             dataColsIndices = new ArrayList<>();
-            checkedColsIndices = sourceController.checkedColsIndices();
+            checkedColsIndices = selectController.checkedColsIndices();
             if (checkedColsIndices == null || checkedColsIndices.isEmpty()) {
                 popError(message("SelectToHandle"));
                 return false;
@@ -187,7 +187,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
             outputColumns = new ArrayList<>();
             outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
-            outputColumns.addAll(sourceController.checkedCols());
+            outputColumns.addAll(selectController.checkedCols());
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -237,10 +237,10 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     }
 
     public void readData() {
-        if (sourceController.allPages()) {
+        if (selectController.allPages()) {
             outputData = data2D.allRows(dataColsIndices, true);
         } else {
-            outputData = sourceController.selectedData(sourceController.checkedRowsIndices(), dataColsIndices, true);
+            outputData = selectController.selectedData(selectController.checkedRowsIndices(), dataColsIndices, true);
         }
     }
 

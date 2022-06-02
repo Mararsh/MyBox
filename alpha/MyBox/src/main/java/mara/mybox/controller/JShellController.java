@@ -5,6 +5,8 @@ import javafx.scene.input.MouseEvent;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.WindowTools;
+import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -39,7 +41,6 @@ public class JShellController extends TreeManageController {
 
             webViewController.setParent(this, ControlWebView.ScrollType.Bottom);
             snippetsController.setParameters(this);
-            pathsController.setParameters(this);
             editorController.setParameters(this);
 
         } catch (Exception e) {
@@ -70,6 +71,21 @@ public class JShellController extends TreeManageController {
     public void clearResults() {
         editorController.outputs = "";
         webViewController.loadContents("");
+    }
+
+    public void edit(String script) {
+        editNode(null);
+        editorController.valueInput.setText(script);
+    }
+
+    /*
+        static methods
+     */
+    public static JShellController open(String script) {
+        JShellController controller = (JShellController) WindowTools.openStage(Fxmls.JShellFxml);
+        controller.edit(script);
+        controller.requestMouse();
+        return controller;
     }
 
 }

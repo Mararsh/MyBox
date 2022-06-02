@@ -73,7 +73,7 @@ public class Data2DPercentageController extends BaseData2DHandleController {
 
     @Override
     public boolean checkOptions() {
-        targetController.setNotInTable(sourceController.allPages());
+        targetController.setNotInTable(selectController.allPages());
         return super.checkOptions();
     }
 
@@ -84,7 +84,7 @@ public class Data2DPercentageController extends BaseData2DHandleController {
             if (!checkOptions() || !prepare()) {
                 return;
             }
-            if (sourceController.allPages()) {
+            if (selectController.allPages()) {
                 handleAllTask();
             } else {
                 handleRowsTask();
@@ -115,7 +115,7 @@ public class Data2DPercentageController extends BaseData2DHandleController {
 
     public boolean prepareByColumns(String suffix) {
         try {
-            List<Data2DColumn> cols = sourceController.checkedCols();
+            List<Data2DColumn> cols = selectController.checkedCols();
             if (cols == null || cols.isEmpty()) {
                 return false;
             }
@@ -149,7 +149,7 @@ public class Data2DPercentageController extends BaseData2DHandleController {
 
     public boolean prepareByRows() {
         try {
-            List<Data2DColumn> cols = sourceController.checkedCols();
+            List<Data2DColumn> cols = selectController.checkedCols();
             if (cols == null || cols.isEmpty()) {
                 return false;
             }
@@ -193,7 +193,7 @@ public class Data2DPercentageController extends BaseData2DHandleController {
     @Override
     public boolean handleRows() {
         try {
-            if (sourceController.checkedRowsIndices == null || sourceController.checkedRowsIndices.isEmpty()) {
+            if (selectController.checkedRowsIndices == null || selectController.checkedRowsIndices.isEmpty()) {
                 if (task != null) {
                     task.setError(message("SelectToHandle"));
                 }
@@ -218,10 +218,10 @@ public class Data2DPercentageController extends BaseData2DHandleController {
 
     public boolean dataByColumns() {
         try {
-            List<Integer> colIndices = sourceController.checkedColsIndices;
+            List<Integer> colIndices = selectController.checkedColsIndices;
             int colsLen = colIndices.size();
             double[] sum = new double[colsLen];
-            for (int r : sourceController.checkedRowsIndices) {
+            for (int r : selectController.checkedRowsIndices) {
                 List<String> tableRow = tableController.tableData.get(r);
                 for (int c = 0; c < colsLen; c++) {
                     double d = data2D.doubleValue(tableRow.get(colIndices.get(c) + 1));
@@ -244,7 +244,7 @@ public class Data2DPercentageController extends BaseData2DHandleController {
                 }
             }
             outputData.add(row);
-            for (int r : sourceController.checkedRowsIndices) {
+            for (int r : selectController.checkedRowsIndices) {
                 List<String> tableRow = tableController.tableData.get(r);
                 row = new ArrayList<>();
                 row.add(message("Row") + (r + 1));
@@ -280,9 +280,9 @@ public class Data2DPercentageController extends BaseData2DHandleController {
 
     public boolean dataByRows() {
         try {
-            List<Integer> colIndices = sourceController.checkedColsIndices;
+            List<Integer> colIndices = selectController.checkedColsIndices;
             outputData = new ArrayList<>();
-            for (int r : sourceController.checkedRowsIndices) {
+            for (int r : selectController.checkedRowsIndices) {
                 double sum = 0d;
                 List<String> row = new ArrayList<>();
                 row.add(message("Row") + (r + 1));
@@ -330,9 +330,9 @@ public class Data2DPercentageController extends BaseData2DHandleController {
 
     public boolean dataByAll() {
         try {
-            List<Integer> colIndices = sourceController.checkedColsIndices;
+            List<Integer> colIndices = selectController.checkedColsIndices;
             double sum = 0d;
-            for (int r : sourceController.checkedRowsIndices) {
+            for (int r : selectController.checkedRowsIndices) {
                 List<String> tableRow = tableController.tableData.get(r);
                 for (int c : colIndices) {
                     double d = data2D.doubleValue(tableRow.get(c + 1));
@@ -359,7 +359,7 @@ public class Data2DPercentageController extends BaseData2DHandleController {
                 }
             }
             outputData.add(row);
-            for (int r : sourceController.checkedRowsIndices) {
+            for (int r : selectController.checkedRowsIndices) {
                 List<String> tableRow = tableController.tableData.get(r);
                 row = new ArrayList<>();
                 row.add(message("Row") + (r + 1) + "");
@@ -397,13 +397,13 @@ public class Data2DPercentageController extends BaseData2DHandleController {
     public DataFileCSV generatedFile() {
         switch (objectType) {
             case Rows:
-                return data2D.percentageRows(handledNames, sourceController.checkedColsIndices,
+                return data2D.percentageRows(handledNames, selectController.checkedColsIndices,
                         valuesCheck.isSelected(), !zeroRadio.isSelected(), scale);
             case All:
-                return data2D.percentageAll(handledNames, sourceController.checkedColsIndices,
+                return data2D.percentageAll(handledNames, selectController.checkedColsIndices,
                         valuesCheck.isSelected(), !zeroRadio.isSelected(), scale);
             default:
-                return data2D.percentageColumns(handledNames, sourceController.checkedColsIndices,
+                return data2D.percentageColumns(handledNames, selectController.checkedColsIndices,
                         valuesCheck.isSelected(), !zeroRadio.isSelected(), scale);
         }
     }

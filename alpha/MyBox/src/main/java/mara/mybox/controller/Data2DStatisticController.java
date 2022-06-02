@@ -403,8 +403,8 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 break;
         }
         calculation.setHandleController(this).setData2D(data2D)
-                .setColsIndices(sourceController.checkedColsIndices())
-                .setColsNames(sourceController.checkedColsNames())
+                .setColsIndices(selectController.checkedColsIndices())
+                .setColsNames(selectController.checkedColsNames())
                 .setCategoryName(categorysCol >= 0 ? selectedCategory : null);
         checkMemoryLabel();
         return ok;
@@ -414,7 +414,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
         if (isSettingValues) {
             return;
         }
-        if (sourceController.allPages() && objectType != ObjectType.Rows
+        if (selectController.allPages() && objectType != ObjectType.Rows
                 && (medianCheck.isSelected() || upperQuartileCheck.isSelected()
                 || lowerQuartileCheck.isSelected() || modeCheck.isSelected()
                 || UpperExtremeOutlierLineCheck.isSelected() || UpperMildOutlierLineCheck.isSelected()
@@ -493,7 +493,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
             if (!checkOptions() || !calculation.prepare()) {
                 return;
             }
-            if (sourceController.allPages()) {
+            if (selectController.allPages()) {
                 switch (objectType) {
                     case Rows:
                         handleAllTask();
@@ -515,12 +515,12 @@ public class Data2DStatisticController extends BaseData2DHandleController {
 
     @Override
     public boolean handleRows() {
-        List<Integer> colsIndices = sourceController.checkedColsIndices();
+        List<Integer> colsIndices = selectController.checkedColsIndices();
         if (rowsRadio.isSelected() && categorysCol >= 0) {
             colsIndices.add(0, categorysCol);
         }
-        if (!calculation.statisticData(sourceController.selectedData(
-                sourceController.checkedRowsIndices(), colsIndices, rowsRadio.isSelected() && categorysCol < 0))) {
+        if (!calculation.statisticData(selectController.selectedData(
+                selectController.checkedRowsIndices(), colsIndices, rowsRadio.isSelected() && categorysCol < 0))) {
             return false;
         }
         outputColumns = calculation.getOutputColumns();
@@ -540,7 +540,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                         if (data2D instanceof DataTable) {
                             return calculation.statisticAllByColumnsInDataTable();
                         } else {
-                            return calculation.statisticData(data2D.allRows(sourceController.checkedColsIndices(), false));
+                            return calculation.statisticData(data2D.allRows(selectController.checkedColsIndices(), false));
                         }
                     } else {
                         return calculation.statisticAllByColumnsWithoutStored();
@@ -586,9 +586,9 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                     data2D.setTask(task);
                     calculation.setTask(task);
                     if (calculation.needStored()) {
-                        return calculation.statisticData(data2D.allRows(sourceController.checkedColsIndices(), false));
+                        return calculation.statisticData(data2D.allRows(selectController.checkedColsIndices(), false));
                     } else {
-                        DoubleStatistic statisticData = data2D.statisticByAll(sourceController.checkedColsIndices, calculation);
+                        DoubleStatistic statisticData = data2D.statisticByAll(selectController.checkedColsIndices, calculation);
                         if (statisticData == null) {
                             return false;
                         }
@@ -629,7 +629,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
 
     @Override
     public DataFileCSV generatedFile() {
-        List<Integer> colsIndices = sourceController.checkedColsIndices();
+        List<Integer> colsIndices = selectController.checkedColsIndices();
         if (rowsRadio.isSelected() && categorysCol >= 0) {
             colsIndices.add(0, categorysCol);
         }

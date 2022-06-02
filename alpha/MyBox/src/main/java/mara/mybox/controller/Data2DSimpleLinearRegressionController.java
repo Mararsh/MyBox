@@ -86,7 +86,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
             residualMaker = residualController.chartMaker;
             residualMaker.init(ChartType.ResidualChart, message("ResidualChart"));
 
-            sourceController.noColumnSelection(true);
+            selectController.noColumnSelection(true);
 
             modelViewController.setParent(this);
 
@@ -145,7 +145,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
                 noticeMemory();
             });
 
-            displayAllCheck.visibleProperty().bind(sourceController.allPagesRadio.selectedProperty());
+            displayAllCheck.visibleProperty().bind(selectController.allPagesRadio.selectedProperty());
 
             fittedPointsCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayFittedPoints", false));
             fittedPointsCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
@@ -207,7 +207,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
         if (isSettingValues) {
             return;
         }
-        if (sourceController.allPages() && displayAllCheck.isSelected()) {
+        if (selectController.allPages() && displayAllCheck.isSelected()) {
             infoLabel.setText(message("AllRowsLoadComments"));
         } else {
             infoLabel.setText("");
@@ -247,16 +247,16 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
         try {
             simpleRegression = new SimpleLinearRegression(interceptCheck.isSelected(),
                     selectedCategory, selectedValue, scale);
-            if (sourceController.allPages()) {
+            if (selectController.allPages()) {
                 if (displayAllCheck.isSelected()) {
                     outputData = data2D.allRows(dataColsIndices, true);
                     regress(outputData);
                 } else {
                     regressionFile = data2D.simpleLinearRegression(dataColsIndices, simpleRegression);
-                    outputData = sourceController.selectedData(sourceController.checkedRowsIndices(), dataColsIndices, true);
+                    outputData = selectController.selectedData(selectController.checkedRowsIndices(), dataColsIndices, true);
                 }
             } else {
-                outputData = sourceController.selectedData(sourceController.checkedRowsIndices(), dataColsIndices, true);
+                outputData = selectController.selectedData(selectController.checkedRowsIndices(), dataColsIndices, true);
                 regress(outputData);
             }
 

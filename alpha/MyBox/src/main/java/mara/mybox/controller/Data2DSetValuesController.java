@@ -98,7 +98,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
     @Override
     public void setParameters(ControlData2DEditTable tableController) {
         try {
-            sourceController.idExclude(true);
+            selectController.idExclude(true);
             super.setParameters(tableController);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -142,7 +142,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
     @Override
     public boolean checkOptions() {
         boolean ok = super.checkOptions();
-        if (sourceController.allPages()) {
+        if (selectController.allPages()) {
             matrixPane.setDisable(true);
             if (gaussianDistributionRadio.isSelected() || identifyRadio.isSelected()
                     || upperTriangleRadio.isSelected() || lowerTriangleRadio.isSelected()) {
@@ -150,8 +150,8 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                 return false;
             }
         } else {
-            boolean isSquare = sourceController.isSquare();
-            boolean canGD = isSquare && sourceController.checkedColsIndices.size() % 2 != 0;
+            boolean isSquare = selectController.isSquare();
+            boolean canGD = isSquare && selectController.checkedColsIndices.size() % 2 != 0;
             gaussianDistributionRadio.setDisable(!canGD);
             identifyRadio.setDisable(!isSquare);
             upperTriangleRadio.setDisable(!isSquare);
@@ -188,7 +188,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             protected boolean handle() {
                 try {
                     data2D.setTask(task);
-                    return data2D.setValue(sourceController.checkedColsIndices, value);
+                    return data2D.setValue(selectController.checkedColsIndices, value);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -243,9 +243,9 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
     public boolean setValue() {
         try {
             Random random = new Random();
-            for (int row : sourceController.checkedRowsIndices) {
+            for (int row : selectController.checkedRowsIndices) {
                 List<String> values = tableController.tableData.get(row);
-                for (int col : sourceController.checkedColsIndices) {
+                for (int col : selectController.checkedColsIndices) {
                     String v = value;
                     if (randomRadio.isSelected()) {
                         v = tableController.data2D.random(random, col, false);
@@ -266,13 +266,13 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
 
     public boolean gaussianDistribution() {
         try {
-            float[][] m = ConvolutionKernel.makeGaussMatrix((int) sourceController.checkedRowsIndices.size() / 2);
+            float[][] m = ConvolutionKernel.makeGaussMatrix((int) selectController.checkedRowsIndices.size() / 2);
             int scale = tableController.data2D.getScale();
             int rowIndex = 0, colIndex;
-            for (int row : sourceController.checkedRowsIndices) {
+            for (int row : selectController.checkedRowsIndices) {
                 List<String> tableRow = tableController.tableData.get(row);
                 colIndex = 0;
-                for (int col : sourceController.checkedColsIndices) {
+                for (int col : selectController.checkedColsIndices) {
                     try {
                         tableRow.set(col + 1, DoubleTools.format(m[rowIndex][colIndex], scale));
                     } catch (Exception e) {
@@ -293,10 +293,10 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
     public boolean identifyMatrix() {
         try {
             int rowIndex = 0, colIndex;
-            for (int row : sourceController.checkedRowsIndices) {
+            for (int row : selectController.checkedRowsIndices) {
                 List<String> values = tableController.tableData.get(row);
                 colIndex = 0;
-                for (int col : sourceController.checkedColsIndices) {
+                for (int col : selectController.checkedColsIndices) {
                     if (rowIndex == colIndex) {
                         values.set(col + 1, "1");
                     } else {
@@ -318,10 +318,10 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
     public boolean upperTriangleMatrix() {
         try {
             int rowIndex = 0, colIndex;
-            for (int row : sourceController.checkedRowsIndices) {
+            for (int row : selectController.checkedRowsIndices) {
                 List<String> values = tableController.tableData.get(row);
                 colIndex = 0;
-                for (int col : sourceController.checkedColsIndices) {
+                for (int col : selectController.checkedColsIndices) {
                     if (rowIndex <= colIndex) {
                         values.set(col + 1, "1");
                     } else {
@@ -343,10 +343,10 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
     public boolean lowerTriangleMatrix() {
         try {
             int rowIndex = 0, colIndex;
-            for (int row : sourceController.checkedRowsIndices) {
+            for (int row : selectController.checkedRowsIndices) {
                 List<String> values = tableController.tableData.get(row);
                 colIndex = 0;
-                for (int col : sourceController.checkedColsIndices) {
+                for (int col : selectController.checkedColsIndices) {
                     if (rowIndex >= colIndex) {
                         values.set(col + 1, "1");
                     } else {

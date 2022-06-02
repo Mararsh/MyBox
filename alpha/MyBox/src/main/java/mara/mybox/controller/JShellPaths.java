@@ -35,7 +35,7 @@ import mara.mybox.value.UserConfig;
  */
 public class JShellPaths extends BaseController {
 
-    protected JShellController jShellController;
+    protected JShell jShell;
 
     @FXML
     protected TextArea pathsArea;
@@ -47,18 +47,11 @@ public class JShellPaths extends BaseController {
         setFileType(VisitHistory.FileType.Jar);
     }
 
-    protected void setParameters(JShellController jShellController) {
-        this.jShellController = jShellController;
-    }
-
-    public JShell jShell() {
-        return jShellController.editorController.jShell;
-    }
-
-    protected void resetPaths() {
+    protected void resetPaths(JShell jShell) {
         try {
+            this.jShell = jShell;
             pathsArea.clear();
-            String paths = JShellTools.classPath(jShell());
+            String paths = JShellTools.classPath(jShell);
             if (paths == null) {
                 return;
             }
@@ -75,7 +68,7 @@ public class JShellPaths extends BaseController {
             return;
         }
         path = path.trim();
-        jShell().addToClasspath(path);
+        jShell.addToClasspath(path);
         String text = pathsArea.getText();
         if (!text.isBlank() && !text.endsWith(";\n")) {
             path = ";" + path;

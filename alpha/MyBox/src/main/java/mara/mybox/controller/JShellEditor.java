@@ -55,7 +55,11 @@ public class JShellEditor extends TreeNodeEditor {
             @Override
             protected boolean handle() {
                 try {
-                    jShell = JShell.create();
+                    if (jShell == null) {
+                        jShell = JShell.create();
+                    } else {
+
+                    }
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
@@ -65,7 +69,7 @@ public class JShellEditor extends TreeNodeEditor {
 
             @Override
             protected void whenSucceeded() {
-                jShellController.pathsController.resetPaths();
+                jShellController.pathsController.resetPaths(jShell);
                 jShellController.snippetsController.refreshSnippets();
             }
 
@@ -227,8 +231,10 @@ public class JShellEditor extends TreeNodeEditor {
                     "String[] sArray = new String[3]; "
             ));
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
-                    ";", " , ", "( )", " = ", " { } ", "[ ]", "\"", " + ", " - ", " * ", " / ",
-                    " == ", " != ", " >= ", " > ", " <= ", " < "
+                    ";", " , ", "( )", " = ", " { } ", "[ ]", "\"", " + ", " - ", " * ", " / "
+            ));
+            PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
+                    " == ", " != ", " >= ", " > ", " <= ", " < ", " && ", " || ", " ! "
             ));
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
                     "if (3 > 2) {\n"

@@ -27,23 +27,19 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-9-4
  * @License Apache License Version 2.0
  */
-public abstract class BaseData2DHandleController extends BaseChildController {
+public abstract class BaseData2DHandleController extends ControlData2DSource {
 
-    protected ControlData2DEditTable tableController;
-    protected Data2D data2D;
     protected List<List<String>> outputData;
     protected List<Data2DColumn> outputColumns;
     protected int scale, defaultScale = 2;
     protected ObjectType objectType;
 
     @FXML
-    protected ControlData2DSource sourceController;
-    @FXML
     protected ControlData2DTarget targetController;
     @FXML
     protected CheckBox rowNumberCheck, colNameCheck;
     @FXML
-    protected Label dataLabel, infoLabel, dataSelectionLabel;
+    protected Label infoLabel, dataSelectionLabel;
     @FXML
     protected ComboBox<String> scaleSelector;
     @FXML
@@ -119,7 +115,7 @@ public abstract class BaseData2DHandleController extends BaseChildController {
             this.tableController = tableController;
 //            this.baseName = tableController.baseName;
 
-            sourceController.setParameters(this, tableController);
+            selectController.setParameters(this, tableController);
 
             if (targetController != null) {
                 targetController.setParameters(this, tableController);
@@ -144,13 +140,13 @@ public abstract class BaseData2DHandleController extends BaseChildController {
                 });
             }
 
-            sourceController.loadedNotify.addListener(new ChangeListener<Boolean>() {
+            selectController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     checkOptions();
                 }
             });
-            sourceController.selectedNotify.addListener(new ChangeListener<Boolean>() {
+            selectController.selectedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     checkOptions();
@@ -185,7 +181,7 @@ public abstract class BaseData2DHandleController extends BaseChildController {
     }
 
     public void setSourceLabel(String message) {
-        sourceController.setLabel(message);
+        selectController.setLabel(message);
     }
 
     public boolean checkOptions() {
@@ -201,7 +197,7 @@ public abstract class BaseData2DHandleController extends BaseChildController {
         if (infoLabel != null) {
             infoLabel.setText("");
         }
-        if (!sourceController.checkSelections()) {
+        if (!selectController.checkSelections()) {
             if (infoLabel != null) {
                 infoLabel.setText(message("SelectToHandle"));
             }
@@ -226,11 +222,11 @@ public abstract class BaseData2DHandleController extends BaseChildController {
             if (!checkOptions()) {
                 return;
             }
-            outputColumns = sourceController.checkedCols();
+            outputColumns = selectController.checkedCols();
             if (showRowNumber()) {
                 outputColumns.add(0, new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
             }
-            if (sourceController.allPages()) {
+            if (selectController.allPages()) {
                 handleAllTask();
             } else {
                 handleRowsTask();
@@ -327,12 +323,12 @@ public abstract class BaseData2DHandleController extends BaseChildController {
 
     public boolean handleRows() {
         try {
-            outputData = sourceController.selectedData(showRowNumber());
+            outputData = selectController.selectedData(showRowNumber());
             if (outputData == null) {
                 return false;
             }
             if (showColNames()) {
-                List<String> names = sourceController.checkedColsNames();
+                List<String> names = selectController.checkedColsNames();
                 if (showRowNumber()) {
                     names.add(0, message("SourceRowNumber"));
                 }
@@ -428,6 +424,24 @@ public abstract class BaseData2DHandleController extends BaseChildController {
         return true;
     }
 
+    @FXML
+    @Override
+    public void cancelAction() {
+        close();
+    }
+
+    @Override
+    public boolean keyESC() {
+        close();
+        return false;
+    }
+
+    @Override
+    public boolean keyF6() {
+        close();
+        return false;
+    }
+
     @Override
     public void cleanPane() {
         try {
@@ -455,8 +469,8 @@ public abstract class BaseData2DHandleController extends BaseChildController {
         return outputColumns;
     }
 
-    public ControlData2DSource getSourceController() {
-        return sourceController;
+    public ControlData2DSelect getSelectController() {
+        return selectController;
     }
 
     public ControlData2DTarget getTargetController() {

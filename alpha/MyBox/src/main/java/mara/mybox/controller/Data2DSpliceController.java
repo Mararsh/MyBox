@@ -110,10 +110,11 @@ public class Data2DSpliceController extends BaseData2DController {
                 try {
                     DataFileCSV csvA, csvB;
                     dataAController.data2D.setTask(this);
-                    if (dataAController.allPages()) {
-                        csvA = dataAController.data2D.copy(dataAController.checkedColsIndices, false, true);
+                    if (dataAController.selectController.allPages()) {
+                        csvA = dataAController.data2D.copy(dataAController.selectController.checkedColsIndices, false, true);
                     } else {
-                        csvA = DataFileCSV.save(task, dataAController.checkedCols(), dataAController.selectedData(false));
+                        csvA = DataFileCSV.save(task, dataAController.selectController.checkedCols(),
+                                dataAController.selectController.selectedData(false));
                     }
                     dataAController.data2D.setTask(null);
                     if (csvA == null) {
@@ -122,10 +123,11 @@ public class Data2DSpliceController extends BaseData2DController {
                     }
 
                     dataBController.data2D.setTask(this);
-                    if (dataBController.allPages()) {
-                        csvB = dataBController.data2D.copy(dataBController.checkedColsIndices, false, true);
+                    if (dataBController.selectController.allPages()) {
+                        csvB = dataBController.data2D.copy(dataBController.selectController.checkedColsIndices, false, true);
                     } else {
-                        csvB = DataFileCSV.save(task, dataBController.checkedCols(), dataBController.selectedData(false));
+                        csvB = DataFileCSV.save(task, dataBController.selectController.checkedCols(),
+                                dataBController.selectController.selectedData(false));
                     }
                     dataBController.data2D.setTask(null);
                     if (csvB == null) {

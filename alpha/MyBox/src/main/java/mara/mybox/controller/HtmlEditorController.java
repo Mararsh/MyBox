@@ -440,7 +440,7 @@ public class HtmlEditorController extends WebAddressController {
             }
             addressChanged = false;
             addressInput.setText("");
-            loadContents(HtmlWriteTools.emptyHmtl());
+            loadContents(HtmlWriteTools.emptyHmtl(null));
 //            loadRichEditor("", false);
 //            loadHtmlCodes("", false);
 //            loadMarkdown("", false);

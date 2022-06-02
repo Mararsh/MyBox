@@ -52,7 +52,7 @@ public class Data2DTransposeController extends BaseData2DHandleController {
             return true;
         }
         boolean ok = super.checkOptions();
-        if (sourceController.allPages()) {
+        if (selectController.allPages()) {
             infoLabel.setText(message("AllRowsLoadComments"));
         }
         return ok;
@@ -68,7 +68,7 @@ public class Data2DTransposeController extends BaseData2DHandleController {
             @Override
             protected boolean handle() {
                 data2D.setTask(task);
-                outputData = data2D.allRows(sourceController.checkedColsIndices, showRowNumber());
+                outputData = data2D.allRows(selectController.checkedColsIndices, showRowNumber());
                 return transpose();
             }
 
@@ -95,7 +95,7 @@ public class Data2DTransposeController extends BaseData2DHandleController {
     @Override
     public boolean handleRows() {
         try {
-            outputData = sourceController.selectedData(showRowNumber());
+            outputData = selectController.selectedData(showRowNumber());
             if (outputData == null) {
                 return false;
             }
@@ -117,7 +117,7 @@ public class Data2DTransposeController extends BaseData2DHandleController {
             }
 
             if (showColNames()) {
-                List<String> names = sourceController.checkedColsNames();
+                List<String> names = selectController.checkedColsNames();
                 if (showRowNumber()) {
                     names.add(0, message("SourceRowNumber"));
                 }

@@ -14,7 +14,7 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class JShellTools {
-
+    
     public static String runSnippet(JShell jShell, String orignalSource, String source) {
         try {
             if (source == null || source.isBlank()) {
@@ -48,11 +48,11 @@ public class JShellTools {
             return e.toString();
         }
     }
-
+    
     public static String runSnippet(JShell jShell, String source) {
         return runSnippet(jShell, source, source);
     }
-
+    
     public static boolean runScript(JShell jShell, String script) {
         try {
             if (script == null || script.isBlank()) {
@@ -71,7 +71,7 @@ public class JShellTools {
             return false;
         }
     }
-
+    
     public static String expValue(JShell jShell, String exp) {
         try {
             return new JShellSnippet(jShell, jShell.eval(exp).get(0).snippet()).getValue();
@@ -80,7 +80,7 @@ public class JShellTools {
             return null;
         }
     }
-
+    
     public static String classPath(JShell jShell) {
         try {
             String paths = expValue(jShell, "System.getProperty(\"java.class.path\")");
@@ -93,7 +93,18 @@ public class JShellTools {
             return null;
         }
     }
-
+    
+    public static JShell initWithClassPath() {
+        try {
+            JShell jShell = JShell.create();
+            jShell.addToClasspath(System.getProperty("java.class.path"));
+            return jShell;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+    
     public static JShell initJEXL() {
         try {
             JShell jShell = JShell.create();
@@ -113,4 +124,13 @@ public class JShellTools {
         }
     }
 
+//    public static void clearSnippets(JShell jShell) {
+//        try {
+//            jShell.snippets().dropWhile(predicate)
+//            return new JShellSnippet(jShell, jShell.eval(exp).get(0).snippet()).getValue();
+//        } catch (Exception e) {
+//            MyBoxLog.error(e, exp);
+//            return null;
+//        }
+//    }
 }

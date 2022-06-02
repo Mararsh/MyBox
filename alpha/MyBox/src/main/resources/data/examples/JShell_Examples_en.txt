@@ -44,258 +44,198 @@ Math.PI
 
 ##MyBox#
 Examples > Expressions > Numeric operations
-abs()
-Math.abs( )
+absoluate
+Math.abs(-5.611)
 
 ##MyBox#
 Examples > Expressions > Numeric operations
-exp()
-Math.exp( )
+power of e
+Math.exp(2)
 
 ##MyBox#
 Examples > Expressions > Numeric operations
-sqrt()
-Math.sqrt( )
+square root
+Math.sqrt(9)
 
 ##MyBox#
 Examples > Expressions > Numeric operations
-cbrt()
-Math.cbrt( )
+cubic root
+Math.cbrt(27)
 
 ##MyBox#
 Examples > Expressions > Numeric operations
-pow()
-Math.pow( )
+power
+Math.pow(2,5)
 
 ##MyBox#
 Examples > Expressions > Numeric operations
-cos()
-Math.cos( )
+cosine
+Math.cos(0)
 
 ##MyBox#
 Examples > Expressions > Numeric operations
-sin()
-Math.sin( )
+sine
+Math.sin(9)
 
 ##MyBox#
 Examples > Expressions > Numeric operations
-tan()
-Math.tan( )
+tangent
+Math.tan(5)
 
 ##MyBox#
 Examples > Expressions > Numeric operations
-atan()
-Math.atan( )
+arc tangent
+Math.atan(-7.3)
 
 ##MyBox#
 Examples > Expressions > Numeric operations
-cosh()
-Math.cosh( )
+arc cosine
+Math.acos(0.5)
 
 ##MyBox#
 Examples > Expressions > Numeric operations
-acos()
-Math.acos( )
+arc sine
+Math.asin(0.3)
 
 ##MyBox#
 Examples > Expressions > Numeric operations
-sinh()
-Math.sinh( )
+natural logarithm
+Math.log(6)
 
 ##MyBox#
 Examples > Expressions > Numeric operations
-asin()
-Math.asin( )
+log10
+Math.log10(6)
 
 ##MyBox#
 Examples > Expressions > Numeric operations
-tanh()
-Math.tanh( )
+log2
+Math.log2(6)
 
 ##MyBox#
 Examples > Expressions > Numeric operations
-atan2()
-Math.atan2( )
+round up
+Math.ceil(4.13)
 
 ##MyBox#
 Examples > Expressions > Numeric operations
-log()
-Math.log( )
+round down
+Math.floor(4.67)
 
 ##MyBox#
 Examples > Expressions > Numeric operations
-log10()
-Math.log10( )
+round
+Math.round(4.83)
 
 ##MyBox#
 Examples > Expressions > Numeric operations
-log1p()
-Math.log1p( )
+random
+Math.random()
 
 ##MyBox#
 Examples > Expressions > Numeric operations
-ceil()
-Math.ceil( )
+maximum
+Math.max(1,-3)
 
 ##MyBox#
 Examples > Expressions > Numeric operations
-floor()
-MMath.floor( )
-
-##MyBox#
-Examples > Expressions > Numeric operations
-round()
-Math.round( )
-
-##MyBox#
-Examples > Expressions > Numeric operations
-rint()
-Math.rint( )
-
-##MyBox#
-Examples > Expressions > Numeric operations
-scalb()
-Math.scalb( )
-
-##MyBox#
-Examples > Expressions > Numeric operations
-signum()
-Math.signum( )
-
-##MyBox#
-Examples > Expressions > Numeric operations
-random()
-Math.random( )
-
-##MyBox#
-Examples > Expressions > Numeric operations
-max()
-Math.max( , )
-
-##MyBox#
-Examples > Expressions > Numeric operations
-min()
-Math.min( , )
-
-##MyBox#
-Examples > Expressions > Numeric operations
-toDegrees()
-Math.toDegrees( )
-
-##MyBox#
-Examples > Expressions > Numeric operations
-toRadians()
-Math.toRadians( )
+minimum
+Math.min(1,-3)
 
 ##MyBox#
 Examples > Expressions > Strings operations
-equalsIgnoreCase()
-.equalsIgnoreCase()
+equals while ignore case
+"Hello".equalsIgnoreCase("hello")
 
 ##MyBox#
 Examples > Expressions > Strings operations
-equals()
-.equals()
+equals
+"Hello".equals("hello")
 
 ##MyBox#
 Examples > Expressions > Strings operations
-startsWith()
-.startsWith()
+replace first
+"Hello World! World is yourself.".replace("World", "Feeling");
+   
+##MyBox#
+Examples > Expressions > Strings operations
+replace all
+"Hello World! World is yourself.".replace(/World/g, "Feeling");
 
 ##MyBox#
 Examples > Expressions > Strings operations
-endsWith()
-.endsWith()
+starts with
+"Hello".startsWith("h")
 
 ##MyBox#
 Examples > Expressions > Strings operations
-split()
-.split()
+end with
+"Hello".endsWith("o")
 
 ##MyBox#
 Examples > Expressions > Strings operations
-substring()
-.substring()
+subString
+"Hello".substring(2, 5)
 
 ##MyBox#
 Examples > Expressions > Strings operations
-charAt()
-.charAt()
+char at
+"hello".charAt(2)
 
 ##MyBox#
 Examples > Expressions > Strings operations
-concat()
-.concat()
+concat
+"hello".concat(" world")
 
 ##MyBox#
 Examples > Expressions > Strings operations
-contains()
-.contains()
+split
+"1,2,3,4".split(",")
 
 ##MyBox#
 Examples > Expressions > Strings operations
-indexOf()
-.indexOf()
+indexOf
+"hello".indexOf("e")
 
 ##MyBox#
 Examples > Expressions > Strings operations
-lastIndexOf()
-.lastIndexOf()
+lastIndexOf
+"hello".lastIndexOf("l")
 
 ##MyBox#
 Examples > Expressions > Strings operations
-length()
-.length()
+length
+"hello".length()
 
 ##MyBox#
 Examples > Expressions > Strings operations
-replace()
-.replace(,)
+toLowerCase
+"Hello".toLowerCase()
 
 ##MyBox#
 Examples > Expressions > Strings operations
-replaceAll()
-.replaceAll(,)
+toUpperCase
+"Hello".toUpperCase()
 
 ##MyBox#
 Examples > Expressions > Strings operations
-replaceFirst()
-.replaceFirst()
+contains
+"Hello".contains("el")
 
 ##MyBox#
 Examples > Expressions > Strings operations
-substring()
-.substring()
+trim
+" Hello  ".trim()
 
 ##MyBox#
 Examples > Expressions > Strings operations
-toLowerCase()
-.toLowerCase()
+isBlank
+"  ".isBlank()
 
 ##MyBox#
 Examples > Expressions > Strings operations
-toUpperCase()
-.toUpperCase()
-
-##MyBox#
-Examples > Expressions > Strings operations
-trim()
-.trim()
-
-##MyBox#
-Examples > Expressions > Strings operations
-strip()
-.strip()
-
-##MyBox#
-Examples > Expressions > Strings operations
-isBlank()
-.isBlank()
-
-##MyBox#
-Examples > Expressions > Strings operations
-isEmpty()
-.isEmpty()
+isEmpty
+"".isEmpty()
 
 ##MyBox#
 Examples > Expressions > Boolean operations
@@ -317,7 +257,6 @@ String exampleStringM = "abc1233hello";
 String exampleRegexM = "\\S*3{2,}\\S*";  
 boolean exampleCaseInsensitiveM = true;
 StringTools.match(exampleStringM,exampleRegexM,exampleCaseInsensitiveM);
-
 
 ##MyBox#
 Examples > Expressions > Boolean operations
