@@ -103,9 +103,9 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
     }
 
     @Override
-    public void refreshControls() {
+    public void makeOptions() {
         try {
-            super.refreshControls();
+            super.makeOptions();
 
             isSettingValues = true;
             selectedCategory = categoryColumnSelector.getSelectionModel().getSelectedItem();
@@ -361,8 +361,8 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
                 break;
         }
         calculation.setHandleController(this).setData2D(data2D)
-                .setColsIndices(selectController.checkedColsIndices())
-                .setColsNames(selectController.checkedColsNames())
+                .setColsIndices(checkedColsIndices)
+                .setColsNames(checkedColsNames)
                 .setCategoryName(categorysCol >= 0 ? selectedCategory : null);
 
         return ok;
@@ -387,11 +387,10 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
     @Override
     public void readData() {
         try {
-            if (selectController.allPages()) {
+            if (isAllPages()) {
                 outputData = data2D.allRows(dataColsIndices, rowsRadio.isSelected() && categorysCol < 0);
             } else {
-                outputData = selectController.selectedData(selectController.checkedRowsIndices(),
-                        dataColsIndices, rowsRadio.isSelected() && categorysCol < 0);
+                outputData = selectedData(dataColsIndices, rowsRadio.isSelected() && categorysCol < 0);
             }
             if (outputData == null) {
                 return;

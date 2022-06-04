@@ -14,18 +14,18 @@ import static mara.mybox.value.Languages.message;
 public class Data2DCopyController extends BaseData2DHandleController {
 
     public Data2DCopyController() {
-        baseTitle = message("Copy");
+        baseTitle = message("CopyFilterQuery");
     }
 
     @Override
     public boolean checkOptions() {
-        targetController.setNotInTable(selectController.allPages());
+        targetController.setNotInTable(isAllPages());
         return super.checkOptions();
     }
 
     @Override
     public DataFileCSV generatedFile() {
-        return data2D.copy(selectController.checkedColsIndices, rowNumberCheck.isSelected(), colNameCheck.isSelected());
+        return data2D.copy(checkedColsIndices, rowNumberCheck.isSelected(), colNameCheck.isSelected());
     }
 
     /*

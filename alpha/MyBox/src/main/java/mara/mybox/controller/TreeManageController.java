@@ -155,7 +155,6 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
                         if (isSettingValues) {
                             return;
                         }
-                        MyBoxLog.debug(baseName + " " + UserConfig.getBoolean(baseName + "NodesList", true));
                         UserConfig.setBoolean(baseName + "NodesList", nodesListCheck.isSelected());
                         showNodesList(nodesListCheck.isSelected());
                     }

@@ -103,8 +103,9 @@ public class Data2DExportController extends BaseTaskController {
             getMyStage().setTitle(editController.getTitle());
             infoLabel.setText("");
 
-            selectedColumnsIndices = sourceController.selectController.checkedColsIndices();
-            selectedColumns = sourceController.selectController.checkedCols();
+            sourceController.checkSelections();
+            selectedColumnsIndices = sourceController.checkedColsIndices;
+            selectedColumns = sourceController.checkedColumns;
             if (selectedColumnsIndices == null || selectedColumnsIndices.isEmpty()
                     || selectedColumns == null || selectedColumns.isEmpty()) {
                 infoLabel.setText(message("SelectToHandle"));
@@ -112,8 +113,8 @@ public class Data2DExportController extends BaseTaskController {
                 return false;
             }
 
-            if (!sourceController.selectController.allPages()) {
-                selectedRowsIndices = sourceController.selectController.checkedRowsIndices();
+            if (!sourceController.isAllPages()) {
+                selectedRowsIndices = sourceController.checkedRowsIndices;
                 if (selectedRowsIndices == null || selectedRowsIndices.isEmpty()) {
                     infoLabel.setText(message("SelectToHandle"));
                     startButton.setDisable(true);
@@ -178,8 +179,8 @@ public class Data2DExportController extends BaseTaskController {
         try {
             convertController.setExport(targetPath, selectedColumns, filePrefix, targetPathController.isSkip());
 
-            if (!sourceController.selectController.allPages() || !editController.data2D.isMutiplePages()) {
-                selectedRowsIndices = sourceController.selectController.checkedRowsIndices();
+            if (!sourceController.isAllPages() || !editController.data2D.isMutiplePages()) {
+                selectedRowsIndices = sourceController.checkedRowsIndices;
                 for (Integer row : selectedRowsIndices) {
                     List<String> dataRow = editController.tableData.get(row);
                     List<String> exportRow = new ArrayList<>();

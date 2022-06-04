@@ -132,17 +132,6 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
     }
 
     @Override
-    public void setParameters(ControlData2DEditTable editController) {
-        try {
-            super.setParameters(editController);
-            okAction();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
     public void objectChanged() {
         super.objectChanged();
         okAction();
@@ -276,6 +265,7 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
     }
 
     @FXML
+    @Override
     public void dataAction() {
         if (outputData == null || outputData.isEmpty()) {
             popError(message("NoData"));
@@ -285,6 +275,7 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
     }
 
     @FXML
+    @Override
     public void editAction() {
         webViewController.editAction();
     }

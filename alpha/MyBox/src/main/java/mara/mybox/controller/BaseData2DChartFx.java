@@ -42,19 +42,6 @@ public abstract class BaseData2DChartFx extends BaseController {
     @FXML
     protected AnchorPane chartPane;
 
-    public BaseData2DChartFx() {
-    }
-
-    @Override
-    public void initControls() {
-        try {
-            super.initControls();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
     public void setChart(Chart chart) {
         try {
             this.chart = chart;

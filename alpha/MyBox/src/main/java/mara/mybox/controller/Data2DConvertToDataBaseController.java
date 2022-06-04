@@ -49,7 +49,7 @@ public class Data2DConvertToDataBaseController extends Data2DTableCreateControll
             attributesController.nameInput.setText(tableController.data2D.shortName());
 
             sourceController.setParameters(this, tableController);
-            sourceController.selectController.setLabel(message("SelectRowsColumnsToHanlde"));
+            sourceController.setLabel(message("SelectRowsColumnsToHanlde"));
 
             sourceController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -76,7 +76,7 @@ public class Data2DConvertToDataBaseController extends Data2DTableCreateControll
                     + (tableController.data2D == null ? "" : " - " + tableController.data2D.displayName()));
             infoLabel.setText("");
 
-            selectedColumnsIndices = sourceController.selectController.checkedColsIndices();
+            selectedColumnsIndices = sourceController.checkedColsIndices;
             if (selectedColumnsIndices == null || selectedColumnsIndices.isEmpty()) {
                 infoLabel.setText(message("SelectToHandle") + ": " + message("Columns"));
                 tabPane.getSelectionModel().select(dataTab);
@@ -84,8 +84,8 @@ public class Data2DConvertToDataBaseController extends Data2DTableCreateControll
             }
             attributesController.setColumns(selectedColumnsIndices);
 
-            if (!sourceController.selectController.allPages()) {
-                selectedRowsIndices = sourceController.selectController.checkedRowsIndices();
+            if (!sourceController.isAllPages()) {
+                selectedRowsIndices = sourceController.checkedRowsIndices;
                 if (selectedRowsIndices == null || selectedRowsIndices.isEmpty()) {
                     infoLabel.setText(message("SelectToHandle") + ": " + message("Rows"));
                     tabPane.getSelectionModel().select(dataTab);
@@ -134,7 +134,7 @@ public class Data2DConvertToDataBaseController extends Data2DTableCreateControll
                 return false;
             }
             if (importCheck.isSelected()) {
-                if (sourceController.selectController.allPages() && tableController.data2D.isMutiplePages()) {
+                if (sourceController.isAllPages() && tableController.data2D.isMutiplePages()) {
                     attributesController.importAllData(conn);
                 } else {
                     attributesController.importData(conn, selectedRowsIndices);

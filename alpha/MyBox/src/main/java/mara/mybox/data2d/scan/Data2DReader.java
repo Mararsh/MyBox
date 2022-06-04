@@ -5,11 +5,15 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import javafx.application.Platform;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import mara.mybox.calculation.DescriptiveStatistic;
 import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.calculation.Normalization;
 import mara.mybox.calculation.SimpleLinearRegression;
 import mara.mybox.controller.ControlDataConvert;
+import mara.mybox.data.FindReplaceString;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.data2d.DataFileCSV;
@@ -42,11 +46,11 @@ public abstract class Data2DReader {
     protected File readerFile;
     protected Operation operation;
     protected long rowIndex, rowsStart, rowsEnd, count;
-    protected int columnsNumber, colsLen, scale = -1, scanPass, col;
+    protected int columnsNumber, colsLen, scale = -1, scanPass, colIndex;
     protected List<String> record, names;
     protected List<List<String>> rows = new ArrayList<>();
     protected List<Integer> cols;
-    protected boolean includeRowNumber, includeColName, withValues, failed, sumAbs;
+    protected boolean includeRowNumber, includeColName, withValues, failed, sumAbs, filterPassed;
     protected double from, to, tValue;
     protected double[] colValues;
     protected ControlDataConvert convertController;
@@ -61,6 +65,8 @@ public abstract class Data2DReader {
     protected Frequency frequency;
     protected SimpleLinearRegression simpleRegression;
     protected CSVPrinter csvPrinter;
+    protected WebEngine webEngine;
+    protected FindReplaceString findReplace;
     protected boolean readerHasHeader, readerStopped, needCheckTask;
     protected SingletonTask readerTask;
 
@@ -379,8 +385,60 @@ public abstract class Data2DReader {
         rows.add(row);
     }
 
+    public String replaceAll(String string, String find, String replace) {
+        if (findReplace == null) {
+            findReplace = FindReplaceString.create().setOperation(FindReplaceString.Operation.ReplaceAll)
+                    .setIsRegex(false).setCaseInsensitive(false).setMultiline(false);
+        }
+        findReplace.setInputString(string).setFindString(find).setReplaceString(replace).setAnchor(0).run();
+        return findReplace.getOutputString();
+    }
+
+    public boolean filterRecord() {
+        try {
+            String script = data2D.getFilterScript();
+            if (script == null || script.isBlank()) {
+                filterPassed = true;
+                return true;
+            }
+            filterPassed = false;
+            List<String> cnames = data2D.columnNames();
+            for (int i = 0; i < Math.min(cnames.size(), record.size()); i++) {
+                script = replaceAll(script, "#{" + cnames.get(i) + "}", record.get(i) + "");
+            }
+            script = replaceAll(script, "#{" + message("DataRowNumber") + "}", (rowIndex + 1) + "");
+            final String finalScript = script;
+            Platform.runLater(() -> {
+                synchronized (finalScript) {
+                    try {
+                        if (webEngine == null) {
+                            webEngine = new WebView().getEngine();
+                        }
+                        Object o = webEngine.executeScript(finalScript);
+                        filterPassed = o.toString().equals("true");
+                    } catch (Exception e) {
+                    }
+                    if (data2D.isFilterReversed()) {
+                        filterPassed = !filterPassed;
+                    }
+                    finalScript.notifyAll();
+                }
+            });
+            synchronized (finalScript) {
+                finalScript.wait();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            filterPassed = false;
+        }
+        return filterPassed;
+    }
+
     public void handleRecord() {
         try {
+            if (!filterRecord()) {
+                return;
+            }
             switch (operation) {
                 case ReadCols:
                     handleReadCols();
@@ -858,7 +916,7 @@ public abstract class Data2DReader {
 
     public void handleFrequency() {
         try {
-            frequency.addValue(record.get(col));
+            frequency.addValue(record.get(colIndex));
         } catch (Exception e) {
         }
     }
@@ -1263,12 +1321,12 @@ public abstract class Data2DReader {
         this.count = count;
     }
 
-    public int getCol() {
-        return col;
+    public int getColIndex() {
+        return colIndex;
     }
 
     public Data2DReader setCol(int col) {
-        this.col = col;
+        this.colIndex = col;
         return this;
     }
 

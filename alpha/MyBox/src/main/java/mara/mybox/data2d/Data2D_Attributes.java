@@ -29,9 +29,9 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
     protected long currentPage, startRowOfCurrentPage, endRowOfCurrentPage;   // 0-based, excluded end
     protected Map<String, String> styles;
     protected ControlData2DLoad loadController;
-    protected boolean tableChanged;
+    protected boolean tableChanged, filterReversed;
     protected SingletonTask task, backgroundTask;
-    protected String error;
+    protected String error, filterScript;
 
     public Data2D_Attributes() {
         tableData2DDefinition = new TableData2DDefinition();
@@ -235,6 +235,22 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
 
     public void setStyles(Map<String, String> styles) {
         this.styles = styles;
+    }
+
+    public String getFilterScript() {
+        return filterScript;
+    }
+
+    public void setFilterScript(String filterScript) {
+        this.filterScript = filterScript;
+    }
+
+    public boolean isFilterReversed() {
+        return filterReversed;
+    }
+
+    public void setFilterReversed(boolean filterReversed) {
+        this.filterReversed = filterReversed;
     }
 
     public SingletonTask getTask() {

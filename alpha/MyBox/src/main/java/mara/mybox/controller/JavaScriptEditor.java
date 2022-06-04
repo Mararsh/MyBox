@@ -140,10 +140,6 @@ public class JavaScriptEditor extends TreeNodeEditor {
                     "var array = [ 'A', 'B', 'C', 'D' ];\narray[3]",
                     "var object = { name1:'value1', name2:'value2', name3:'value3'}; \nobject.name2"
             ));
-            PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
-                    "var array = [ 'A', 'B', 'C', 'D' ];\narray[3]",
-                    "var object = { name1:'value1', name2:'value2', name3:'value3'}; \nobject.name2"
-            ));
 
             Hyperlink jlink = new Hyperlink("Learn JavaScript ");
             jlink.setOnAction(new EventHandler<ActionEvent>() {

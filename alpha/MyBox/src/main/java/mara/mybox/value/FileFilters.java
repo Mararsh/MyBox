@@ -270,6 +270,7 @@ public class FileFilters {
 
     public static List<FileChooser.ExtensionFilter> DataFileExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
+            add(new FileChooser.ExtensionFilter("*", "*.csv", "*.xlsx", "*.xls", "*.txt"));
             add(new FileChooser.ExtensionFilter("csv", "*.csv"));
             add(new FileChooser.ExtensionFilter("excel", "*.xlsx", "*.xls"));
             addAll(TextExtensionFilter);

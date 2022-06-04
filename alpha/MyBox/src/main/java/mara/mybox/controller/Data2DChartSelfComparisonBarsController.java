@@ -40,7 +40,6 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
                 return null;
             }
             normalization = null;
-            checkedColsIndices = selectController.checkedColsIndices();
             int rowsNumber = outputData.size();
             int colsNumber = checkedColsIndices.size();
             double[][] data = new double[rowsNumber][colsNumber];

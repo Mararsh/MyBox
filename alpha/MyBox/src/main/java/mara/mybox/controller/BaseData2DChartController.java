@@ -25,9 +25,7 @@ import static mara.mybox.value.Languages.message;
  */
 public abstract class BaseData2DChartController extends BaseData2DHandleController {
 
-    protected ChangeListener<Boolean> tableStatusListener, tableLoadListener;
     protected String selectedCategory, selectedValue;
-    protected List<Integer> checkedColsIndices;
     protected List<Integer> dataColsIndices;
     protected Map<String, String> palette;
 
@@ -83,40 +81,17 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     }
 
     @Override
-    public void setParameters(ControlData2DEditTable tableController) {
+    public void refreshControls() {
         try {
-            super.setParameters(tableController);
-
-            tableStatusListener = new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    refreshControls();
-                }
-            };
-            tableController.statusNotify.addListener(tableStatusListener);
-
-            tableLoadListener = new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    okAction();
-                }
-            };
-            tableController.loadedNotify.addListener(tableLoadListener);
-
-            refreshControls();
-
+            super.refreshControls();
+            makeOptions();
             okAction();
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    @Override
-    public void afterInit() {
-    }
-
-    public void refreshControls() {
+    public void makeOptions() {
         try {
             List<String> names = tableController.data2D.columnNames();
             if (names == null || names.isEmpty()) {
@@ -142,7 +117,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                 }
             }
             isSettingValues = false;
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -170,7 +144,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         if (isSettingValues) {
             return;
         }
-        if (selectController.allPages()) {
+        if (isAllPages()) {
             infoLabel.setText(message("AllRowsLoadComments"));
         }
     }
@@ -178,7 +152,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     public boolean initData() {
         try {
             dataColsIndices = new ArrayList<>();
-            checkedColsIndices = selectController.checkedColsIndices();
             if (checkedColsIndices == null || checkedColsIndices.isEmpty()) {
                 popError(message("SelectToHandle"));
                 return false;
@@ -187,7 +160,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
             outputColumns = new ArrayList<>();
             outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
-            outputColumns.addAll(selectController.checkedCols());
+            outputColumns.addAll(checkedColumns);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -219,7 +192,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                 try {
                     data2D.setTask(task);
                     readData();
-                    return outputData != null && !outputData.isEmpty();
+                    return true;
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                     error = e.toString();
@@ -229,6 +202,10 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
             @Override
             protected void whenSucceeded() {
+                if (outputData == null || outputData.isEmpty()) {
+                    popError(message("NoData"));
+                    return;
+                }
                 outputData();
             }
 
@@ -237,10 +214,10 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     }
 
     public void readData() {
-        if (selectController.allPages()) {
+        if (isAllPages()) {
             outputData = data2D.allRows(dataColsIndices, true);
         } else {
-            outputData = selectController.selectedData(selectController.checkedRowsIndices(), dataColsIndices, true);
+            outputData = selectedData(dataColsIndices, true);
         }
     }
 
@@ -292,6 +269,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     }
 
     @FXML
+    @Override
     public void refreshAction() {
         okAction();
     }
@@ -315,17 +293,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         }
     }
 
-    @Override
-    public void cleanPane() {
-        try {
-            tableController.statusNotify.removeListener(tableStatusListener);
-            tableController.loadedNotify.removeListener(tableLoadListener);
-            tableStatusListener = null;
-            tableLoadListener = null;
-        } catch (Exception e) {
-        }
-        super.cleanPane();
-    }
 
     /*
         get/set

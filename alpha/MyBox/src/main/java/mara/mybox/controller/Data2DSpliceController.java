@@ -98,6 +98,10 @@ public class Data2DSpliceController extends BaseData2DController {
             popError(message("NoData") + ": " + message("DataB"));
             return;
         }
+        if (!dataAController.checkSelections() || !dataBController.checkSelections()) {
+            popError(message("SelectToHanle"));
+            return;
+        }
         if (task != null) {
             task.cancel();
         }
@@ -110,11 +114,11 @@ public class Data2DSpliceController extends BaseData2DController {
                 try {
                     DataFileCSV csvA, csvB;
                     dataAController.data2D.setTask(this);
-                    if (dataAController.selectController.allPages()) {
-                        csvA = dataAController.data2D.copy(dataAController.selectController.checkedColsIndices, false, true);
+                    if (dataAController.isAllPages()) {
+                        csvA = dataAController.data2D.copy(dataAController.checkedColsIndices, false, true);
                     } else {
-                        csvA = DataFileCSV.save(task, dataAController.selectController.checkedCols(),
-                                dataAController.selectController.selectedData(false));
+                        csvA = DataFileCSV.save(task, dataAController.checkedColumns,
+                                dataAController.selectedData(false));
                     }
                     dataAController.data2D.setTask(null);
                     if (csvA == null) {
@@ -123,11 +127,11 @@ public class Data2DSpliceController extends BaseData2DController {
                     }
 
                     dataBController.data2D.setTask(this);
-                    if (dataBController.selectController.allPages()) {
-                        csvB = dataBController.data2D.copy(dataBController.selectController.checkedColsIndices, false, true);
+                    if (dataBController.isAllPages()) {
+                        csvB = dataBController.data2D.copy(dataBController.checkedColsIndices, false, true);
                     } else {
-                        csvB = DataFileCSV.save(task, dataBController.selectController.checkedCols(),
-                                dataBController.selectController.selectedData(false));
+                        csvB = DataFileCSV.save(task, dataBController.checkedColumns,
+                                dataBController.selectedData(false));
                     }
                     dataBController.data2D.setTask(null);
                     if (csvB == null) {

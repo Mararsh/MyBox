@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import java.io.File;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.layout.VBox;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory.FileType;
@@ -16,8 +15,6 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class ControlData2DSpliceSource extends ControlData2DSource {
 
-    @FXML
-    protected VBox dataBox;
     @FXML
     protected Button editDataButton;
 
@@ -44,6 +41,18 @@ public class ControlData2DSpliceSource extends ControlData2DSource {
         dataBox.setDisable(invalid);
         editDataButton.setDisable(invalid);
         return !invalid;
+    }
+
+    @Override
+    public void refreshControls() {
+        try {
+            super.refreshControls();
+            if (data2D != null) {
+                setLabel(data2D.displayName());
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @FXML

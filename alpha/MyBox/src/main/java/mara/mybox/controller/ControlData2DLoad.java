@@ -55,10 +55,11 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     protected char copyDelimiter = ',';
     protected boolean readOnly, notUpdateTitle;
     protected SimpleBooleanProperty statusNotify;
-    protected Label dataLabel;
 
     @FXML
     protected TableColumn<List<String>, Integer> dataRowColumn;
+    @FXML
+    protected Label dataLabel;
 
     public ControlData2DLoad() {
         statusNotify = new SimpleBooleanProperty(false);
@@ -948,9 +949,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         myStage = getMyStage();
         if (data2D != null) {
             String name = data2D.displayName();
-            if (dataLabel != null) {
-                dataLabel.setText(name);
-            }
             if (myStage != null && !notUpdateTitle) {
                 String title = getRootBaseTitle() + " : " + name;
                 if (data2D.isTableChanged()) {
@@ -959,14 +957,17 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 myStage.setTitle(title);
             }
         } else {
-            if (dataLabel != null) {
-                dataLabel.setText("");
-            }
             if (myStage != null && !notUpdateTitle) {
                 myStage.setTitle(baseTitle);
             }
         }
         validateData();
+    }
+
+    public void setLabel(String s) {
+        if (dataLabel != null) {
+            dataLabel.setText(s);
+        }
     }
 
     @Override

@@ -114,7 +114,7 @@ public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxCli
                 popError(message("InvalidParameters"));
                 return;
             }
-            List<List<String>> data = sourceController.selectController.selectedData(false);
+            List<List<String>> data = sourceController.selectedData(false);
             if (data == null || data.isEmpty()) {
                 popError(message("SelectToHandle"));
                 return;

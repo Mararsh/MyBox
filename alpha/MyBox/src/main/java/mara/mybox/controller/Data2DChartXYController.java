@@ -69,11 +69,11 @@ public class Data2DChartXYController extends BaseData2DChartController {
 
             if (bubbleChartRadio.isSelected()) {
                 columnsBox.getChildren().addAll(categoryColumnsPane, valueColumnPane);
-                setSourceLabel(message("BubbleChartLabel"));
+                setLabel(message("BubbleChartLabel"));
 
             } else {
                 columnsBox.getChildren().addAll(categoryColumnsPane);
-                setSourceLabel(message("XYChartLabel"));
+                setLabel(message("XYChartLabel"));
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -104,14 +104,13 @@ public class Data2DChartXYController extends BaseData2DChartController {
                 dataColsIndices.add(valueCol);
                 outputColumns.add(data2D.column(valueCol));
             }
-            checkedColsIndices = selectController.checkedColsIndices();
             if (checkedColsIndices == null || checkedColsIndices.isEmpty()) {
                 popError(message("SelectToHandle"));
                 return false;
             }
             dataColsIndices.addAll(checkedColsIndices);
-            outputColumns.addAll(selectController.checkedCols());
-            title += " - " + selectController.checkedColsNames();
+            outputColumns.addAll(checkedColumns);
+            title += " - " + checkedColsNames;
 
             ChartType chartType;
             String chartName;

@@ -86,6 +86,12 @@ public class JavaScriptController extends TreeManageController {
         outputController.loadContents("");
     }
 
+    public void edit(String script) {
+        editNode(null);
+        editorController.valueInput.setText(script);
+    }
+
+
     /*
         static
      */
@@ -94,6 +100,19 @@ public class JavaScriptController extends TreeManageController {
             JavaScriptController controller = (JavaScriptController) WindowTools.openChildStage(
                     controlWebView.getMyWindow(), Fxmls.JavaScriptFxml, false);
             controller.setParameters(controlWebView);
+            controller.requestMouse();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static JavaScriptController open(String script) {
+        try {
+            JavaScriptController controller = (JavaScriptController) WindowTools.openStage(Fxmls.JavaScriptFxml);
+            controller.edit(script);
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

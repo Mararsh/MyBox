@@ -35,7 +35,7 @@ public class Data2DChartPieController extends BaseData2DChartController {
             chartController.dataController = this;
             pieMaker = chartController.pieMaker;
 
-            selectController.noColumnSelection(true);
+            noColumnSelection(true);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

@@ -11,9 +11,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
-import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.calculation.DescriptiveStatistic;
 import mara.mybox.calculation.DescriptiveStatistic.StatisticObject;
+import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.data2d.Data2D_Operations.ObjectType;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
@@ -35,7 +35,6 @@ public class Data2DStatisticController extends BaseData2DHandleController {
     protected DescriptiveStatistic calculation;
     protected int categorysCol;
     protected String selectedCategory;
-    protected ChangeListener<Boolean> tableStatusListener;
 
     @FXML
     protected CheckBox countCheck, summationCheck, meanCheck, geometricMeanCheck, sumOfSquaresCheck,
@@ -300,27 +299,10 @@ public class Data2DStatisticController extends BaseData2DHandleController {
     }
 
     @Override
-    public void setParameters(ControlData2DEditTable tableController) {
-        try {
-            super.setParameters(tableController);
-
-            tableStatusListener = new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    refreshControls();
-                }
-            };
-            tableController.statusNotify.addListener(tableStatusListener);
-
-            refreshControls();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
     public void refreshControls() {
         try {
+            super.refreshControls();
+
             List<String> names = tableController.data2D.columnNames();
             if (names == null || names.isEmpty()) {
                 return;
@@ -403,8 +385,8 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 break;
         }
         calculation.setHandleController(this).setData2D(data2D)
-                .setColsIndices(selectController.checkedColsIndices())
-                .setColsNames(selectController.checkedColsNames())
+                .setColsIndices(checkedColsIndices)
+                .setColsNames(checkedColsNames)
                 .setCategoryName(categorysCol >= 0 ? selectedCategory : null);
         checkMemoryLabel();
         return ok;
@@ -414,7 +396,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
         if (isSettingValues) {
             return;
         }
-        if (selectController.allPages() && objectType != ObjectType.Rows
+        if (isAllPages() && objectType != ObjectType.Rows
                 && (medianCheck.isSelected() || upperQuartileCheck.isSelected()
                 || lowerQuartileCheck.isSelected() || modeCheck.isSelected()
                 || UpperExtremeOutlierLineCheck.isSelected() || UpperMildOutlierLineCheck.isSelected()
@@ -493,7 +475,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
             if (!checkOptions() || !calculation.prepare()) {
                 return;
             }
-            if (selectController.allPages()) {
+            if (isAllPages()) {
                 switch (objectType) {
                     case Rows:
                         handleAllTask();
@@ -515,12 +497,11 @@ public class Data2DStatisticController extends BaseData2DHandleController {
 
     @Override
     public boolean handleRows() {
-        List<Integer> colsIndices = selectController.checkedColsIndices();
+        List<Integer> colsIndices = checkedColsIndices;
         if (rowsRadio.isSelected() && categorysCol >= 0) {
             colsIndices.add(0, categorysCol);
         }
-        if (!calculation.statisticData(selectController.selectedData(
-                selectController.checkedRowsIndices(), colsIndices, rowsRadio.isSelected() && categorysCol < 0))) {
+        if (!calculation.statisticData(selectedData(colsIndices, rowsRadio.isSelected() && categorysCol < 0))) {
             return false;
         }
         outputColumns = calculation.getOutputColumns();
@@ -540,7 +521,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                         if (data2D instanceof DataTable) {
                             return calculation.statisticAllByColumnsInDataTable();
                         } else {
-                            return calculation.statisticData(data2D.allRows(selectController.checkedColsIndices(), false));
+                            return calculation.statisticData(data2D.allRows(checkedColsIndices, false));
                         }
                     } else {
                         return calculation.statisticAllByColumnsWithoutStored();
@@ -586,9 +567,9 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                     data2D.setTask(task);
                     calculation.setTask(task);
                     if (calculation.needStored()) {
-                        return calculation.statisticData(data2D.allRows(selectController.checkedColsIndices(), false));
+                        return calculation.statisticData(data2D.allRows(checkedColsIndices, false));
                     } else {
-                        DoubleStatistic statisticData = data2D.statisticByAll(selectController.checkedColsIndices, calculation);
+                        DoubleStatistic statisticData = data2D.statisticByAll(checkedColsIndices, calculation);
                         if (statisticData == null) {
                             return false;
                         }
@@ -629,21 +610,11 @@ public class Data2DStatisticController extends BaseData2DHandleController {
 
     @Override
     public DataFileCSV generatedFile() {
-        List<Integer> colsIndices = selectController.checkedColsIndices();
+        List<Integer> colsIndices = checkedColsIndices;
         if (rowsRadio.isSelected() && categorysCol >= 0) {
             colsIndices.add(0, categorysCol);
         }
         return data2D.statisticByRows(calculation.getOutputNames(), colsIndices, calculation);
-    }
-
-    @Override
-    public void cleanPane() {
-        try {
-            tableController.statusNotify.removeListener(tableStatusListener);
-            tableStatusListener = null;
-        } catch (Exception e) {
-        }
-        super.cleanPane();
     }
 
     /*

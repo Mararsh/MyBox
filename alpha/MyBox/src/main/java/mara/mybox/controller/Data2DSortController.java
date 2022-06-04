@@ -30,7 +30,6 @@ public class Data2DSortController extends BaseData2DHandleController {
     protected List<Integer> colsIndices;
     protected List<String> colsNames;
     protected String orderName;
-    protected ChangeListener<Boolean> tableStatusListener;
 
     @FXML
     protected ComboBox<String> colSelector;
@@ -55,22 +54,16 @@ public class Data2DSortController extends BaseData2DHandleController {
                 }
             });
 
-            tableStatusListener = new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    refreshControls();
-                }
-            };
-            tableController.statusNotify.addListener(tableStatusListener);
-
-            refreshControls();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
+    @Override
     public void refreshControls() {
         try {
+            super.refreshControls();
+
             List<String> names = tableController.data2D.columnNames();
             if (names == null || names.isEmpty()) {
                 colSelector.getItems().clear();
@@ -91,10 +84,10 @@ public class Data2DSortController extends BaseData2DHandleController {
     @Override
     public boolean checkOptions() {
         boolean ok = super.checkOptions();
-        targetController.setNotInTable(selectController.allPages());
-        memoryNoticeLabel.setVisible(!data2D.isTable() && selectController.allPages());
+        targetController.setNotInTable(isAllPages());
+        memoryNoticeLabel.setVisible(!data2D.isTable() && isAllPages());
         orderCol = data2D.colOrder(colSelector.getSelectionModel().getSelectedItem());
-        colsIndices = selectController.checkedColsIndices();
+        colsIndices = checkedColsIndices;
         if (colsIndices == null || colsIndices.isEmpty() || orderCol < 0) {
             infoLabel.setText(message("SelectToHandle"));
             okButton.setDisable(true);
@@ -106,7 +99,7 @@ public class Data2DSortController extends BaseData2DHandleController {
 
     public List<Integer> adjustedCols() {
         try {
-            colsNames = selectController.checkedColsNames();
+            colsNames = checkedColsNames;
             if (!colsIndices.contains(orderCol)) {
                 colsIndices.add(orderCol);
                 colsNames.add(orderName);
@@ -132,8 +125,7 @@ public class Data2DSortController extends BaseData2DHandleController {
     @Override
     public boolean handleRows() {
         try {
-            outputData = selectController.selectedData(
-                    selectController.checkedRowsIndices(), adjustedCols(), showRowNumber());
+            outputData = selectedData(adjustedCols(), showRowNumber());
             sort(outputData);
             if (showRowNumber()) {
                 outputData.add(0, colsNames);
@@ -193,16 +185,6 @@ public class Data2DSortController extends BaseData2DHandleController {
                 return null;
             }
         }
-    }
-
-    @Override
-    public void cleanPane() {
-        try {
-            tableController.statusNotify.removeListener(tableStatusListener);
-            tableStatusListener = null;
-        } catch (Exception e) {
-        }
-        super.cleanPane();
     }
 
     /*
