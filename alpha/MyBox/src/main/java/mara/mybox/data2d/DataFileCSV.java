@@ -227,7 +227,7 @@ public class DataFileCSV extends DataFileText {
     }
 
     @Override
-    public boolean setValue(List<Integer> cols, String value) {
+    public boolean setValue(List<Integer> cols, String value, boolean errorContinue) {
         if (file == null || !file.exists() || file.length() == 0 || cols == null || cols.isEmpty()) {
             return false;
         }
@@ -266,6 +266,14 @@ public class DataFileCSV extends DataFileText {
                             continue;
                         }
                         filterAndCalculate(record.toList(), ++rowIndex, expression);
+                        if (expression != null && error != null) {
+                            if (errorContinue) {
+                                continue;
+                            } else {
+                                task.setError(error);
+                                return false;
+                            }
+                        }
                         List<String> row = new ArrayList<>();
                         for (int i = 0; i < columns.size(); i++) {
                             if (filterPassed && cols.contains(i)) {

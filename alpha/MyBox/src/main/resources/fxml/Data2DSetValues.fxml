@@ -221,7 +221,12 @@ License:    Apache License Version 2.0
                                           <TextField fx:id="valueInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                  </children>
                               </HBox>
-                              <RadioButton fx:id="expressionRadio" mnemonicParsing="false" text="%RowExpression" toggleGroup="$valueGroup" />
+                              <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                 <children>
+                                    <RadioButton fx:id="expressionRadio" mnemonicParsing="false" text="%RowExpression" toggleGroup="$valueGroup" />
+                                    <CheckBox fx:id="errorContinueCheck" mnemonicParsing="false" selected="true" text="%ContinueWhenError" />
+                                 </children>
+                              </HBox>
                               <fx:include fx:id="expression" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DRowExpression.fxml" VBox.vgrow="ALWAYS" />
                            </children>
                         </VBox>

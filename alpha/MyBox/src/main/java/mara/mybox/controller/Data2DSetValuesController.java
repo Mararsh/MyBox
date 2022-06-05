@@ -5,6 +5,7 @@ import java.util.Random;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
@@ -40,6 +41,8 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
     protected FlowPane matrixPane;
     @FXML
     protected ControlData2DRowExpression expressionController;
+    @FXML
+    protected CheckBox errorContinueCheck;
 
     public Data2DSetValuesController() {
         baseTitle = message("SetValues");
@@ -225,13 +228,20 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
 
     @Override
     public void handleAllTask() {
+        if (!tableController.checkBeforeNextAction()) {
+            return;
+        }
         task = new SingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
                 try {
+                    if (!data2D.isTmpData() && tableController.dataController.backupController != null
+                            && tableController.dataController.backupController.isBack()) {
+                        tableController.dataController.backupController.addBackup(task, data2D.getFile());
+                    }
                     data2D.setTask(task);
-                    return data2D.setValue(checkedColsIndices, value);
+                    return data2D.setValue(checkedColsIndices, value, errorContinueCheck.isSelected());
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -273,10 +283,10 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             }
             if (ok) {
                 tableController.tableView.refresh();
+                popDone();
             }
             tableController.isSettingValues = false;
             tableController.tableChanged(true);
-            popDone();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             popError(message(e.toString()));
@@ -292,8 +302,15 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                 if (blankRadio.isSelected()) {
                     v = "";
                 } else if (expressionRadio.isSelected()) {
-                    if (!expressionController.calculate(row)) {
-                        continue;
+                    if (!data2D.calculateExpression(expressionController.scriptInput.getText(), row)) {
+                        if (errorContinueCheck.isSelected()) {
+                            continue;
+                        } else {
+                            if (data2D.getError() != null) {
+                                popError(data2D.getError());
+                            }
+                            return false;
+                        }
                     }
                     v = data2D.getExpressionResult();
                 }

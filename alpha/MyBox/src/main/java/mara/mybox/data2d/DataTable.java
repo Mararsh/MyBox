@@ -340,7 +340,7 @@ public class DataTable extends Data2D {
     }
 
     @Override
-    public boolean setValue(List<Integer> cols, String value) {
+    public boolean setValue(List<Integer> cols, String value, boolean errorContinue) {
         if (cols == null || cols.isEmpty()) {
             return false;
         }
@@ -397,7 +397,7 @@ public class DataTable extends Data2D {
                 Random random = new Random();
                 conn.setAutoCommit(false);
                 rowIndex = 0;
-                while (results.next()) {
+                while (results.next() && task != null && !task.isCancelled()) {
                     Data2DRow row = tableData2D.readData(results);
                     List<String> rowValues = new ArrayList<>();
                     for (int c = 0; c < columns.size(); c++) {
@@ -406,10 +406,21 @@ public class DataTable extends Data2D {
                         rowValues.add(column.toString(v));
                     }
                     filterAndCalculate(rowValues, ++rowIndex, expression);
+                    if (!filterPassed) {
+                        continue;
+                    }
+                    if (error != null) {
+                        if (errorContinue) {
+                            continue;
+                        } else {
+                            task.setError(error);
+                            return false;
+                        }
+                    }
                     for (int c = 0; c < columns.size(); c++) {
                         Data2DColumn column = columns.get(c);
                         String name = column.getColumnName();
-                        if (filterPassed && cols.contains(c)) {
+                        if (cols.contains(c)) {
                             String v;
                             if (isBlank) {
                                 v = "";
@@ -435,7 +446,7 @@ public class DataTable extends Data2D {
                 if (task != null) {
                     task.setError(e.toString());
                 }
-                MyBoxLog.error(e);
+                MyBoxLog.debug(e);
                 return false;
             }
         }
@@ -480,7 +491,7 @@ public class DataTable extends Data2D {
                 csvPrinter.printRecord(names);
                 colsSize = names.size();
                 List<String> fileRow = new ArrayList<>();
-                while (results.next()) {
+                while (results.next() && task != null && !task.isCancelled()) {
                     Data2DRow dataRow = tableData2D.readData(results);
                     List<String> rowValues = new ArrayList<>();
                     for (int c = 0; c < columns.size(); c++) {
@@ -532,7 +543,7 @@ public class DataTable extends Data2D {
                  PreparedStatement statement = conn.prepareStatement(query);
                  ResultSet results = statement.executeQuery()) {
             if (results != null) {
-                targetData = save(results, showRowNumber);
+                targetData = save(task, results, showRowNumber);
             }
         } catch (Exception e) {
             if (task != null) {
@@ -669,7 +680,7 @@ public class DataTable extends Data2D {
                     + " GROUP BY " + colName + " ORDER BY mybox99_count DESC";
             try ( PreparedStatement statement = conn.prepareStatement(sql);
                      ResultSet results = statement.executeQuery()) {
-                while (results.next()) {
+                while (results.next() && task != null && !task.isCancelled()) {
                     row.clear();
                     Object c = results.getObject(colName);
                     row.add(c != null ? c.toString() : null);
@@ -823,7 +834,7 @@ public class DataTable extends Data2D {
         return dataTable;
     }
 
-    public static DataFileCSV save(ResultSet results, boolean showRowNumber) {
+    public static DataFileCSV save(SingletonTask task, ResultSet results, boolean showRowNumber) {
         try {
             if (results == null) {
                 return null;
@@ -850,7 +861,7 @@ public class DataTable extends Data2D {
                 csvPrinter.printRecord(names);
                 colsSize = names.size();
                 List<String> fileRow = new ArrayList<>();
-                while (results.next()) {
+                while (results.next() && task != null && !task.isCancelled()) {
                     count++;
                     if (showRowNumber) {
                         fileRow.add(count + "");
@@ -876,6 +887,9 @@ public class DataTable extends Data2D {
             targetData.setColumns(db2Columns);
             return targetData;
         } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
             MyBoxLog.error(e.toString());
             return null;
         }

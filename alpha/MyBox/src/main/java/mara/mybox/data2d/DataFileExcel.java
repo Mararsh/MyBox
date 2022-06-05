@@ -461,7 +461,7 @@ public class DataFileExcel extends DataFile {
     }
 
     @Override
-    public boolean setValue(List<Integer> cols, String value) {
+    public boolean setValue(List<Integer> cols, String value, boolean errorContinue) {
         if (file == null || !file.exists() || file.length() == 0
                 || cols == null || cols.isEmpty()) {
             return false;
@@ -527,6 +527,14 @@ public class DataFileExcel extends DataFile {
                         values.add(MicrosoftDocumentTools.cellString(sourceRow.getCell(c)));
                     }
                     filterAndCalculate(values, ++rowIndex, expression);
+                    if (expression != null && error != null) {
+                        if (errorContinue) {
+                            continue;
+                        } else {
+                            task.setError(error);
+                            return false;
+                        }
+                    }
                     for (int c = sourceRow.getFirstCellNum(); c < sourceRow.getLastCellNum(); c++) {
                         String v;
                         if (filterPassed && cols.contains(c)) {

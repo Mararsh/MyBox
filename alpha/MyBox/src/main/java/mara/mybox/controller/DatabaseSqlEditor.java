@@ -126,7 +126,7 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
                                     outputArea.appendText(DateTools.nowString() + "  " + message("UpdatedCount") + ": " + count);
                                 } else {
                                     ResultSet results = statement.getResultSet();
-                                    data = DataTable.save(results, false);
+                                    data = DataTable.save(task, results, false);
                                 }
                             }
                             conn.commit();

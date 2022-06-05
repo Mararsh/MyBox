@@ -36,7 +36,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
 
     public abstract boolean savePageData(Data2D targetData);
 
-    public abstract boolean setValue(List<Integer> cols, String value);
+    public abstract boolean setValue(List<Integer> cols, String value, boolean errorContinue);
 
     public abstract long clearData();
 

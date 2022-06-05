@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.data.ColumnDefinition;
@@ -37,6 +38,8 @@ public class Data2DSortController extends BaseData2DHandleController {
     protected CheckBox descendCheck;
     @FXML
     protected Label memoryNoticeLabel;
+    @FXML
+    protected Tab optionsTab;
 
     public Data2DSortController() {
         baseTitle = message("Sort");
@@ -51,6 +54,15 @@ public class Data2DSortController extends BaseData2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     checkOptions();
+                }
+            });
+
+            optionsTab.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    if (newValue) {
+                        checkMemoryLabel();
+                    }
                 }
             });
 
@@ -76,16 +88,24 @@ public class Data2DSortController extends BaseData2DHandleController {
             } else {
                 colSelector.getSelectionModel().select(0);
             }
+            checkMemoryLabel();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    public void checkMemoryLabel() {
+        if (isSettingValues) {
+            return;
+        }
+        memoryNoticeLabel.setVisible(isAllPages() && (hasRowFilter() || !data2D.isTable()));
     }
 
     @Override
     public boolean checkOptions() {
         boolean ok = super.checkOptions();
         targetController.setNotInTable(isAllPages());
-        memoryNoticeLabel.setVisible(!data2D.isTable() && isAllPages());
+        checkMemoryLabel();
         orderCol = data2D.colOrder(colSelector.getSelectionModel().getSelectedItem());
         colsIndices = checkedColsIndices;
         if (colsIndices == null || colsIndices.isEmpty() || orderCol < 0) {

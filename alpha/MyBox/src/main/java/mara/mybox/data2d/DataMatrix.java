@@ -189,7 +189,7 @@ public class DataMatrix extends Data2D {
     }
 
     @Override
-    public boolean setValue(List<Integer> cols, String value) {
+    public boolean setValue(List<Integer> cols, String value, boolean errorContinue) {
         return false;
     }
 

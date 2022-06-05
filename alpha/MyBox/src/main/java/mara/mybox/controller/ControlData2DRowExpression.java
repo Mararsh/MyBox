@@ -182,8 +182,4 @@ public class ControlData2DRowExpression extends TreeNodesController {
         PopTools.popStringValues(this, scriptInput, mouseEvent, hisName, true);
     }
 
-    public boolean calculate(int tableRowNumber) {
-        return sourceController.data2D.calculateExpression(scriptInput.getText(), tableRowNumber);
-    }
-
 }

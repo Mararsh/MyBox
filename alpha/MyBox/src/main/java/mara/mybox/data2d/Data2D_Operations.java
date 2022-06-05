@@ -878,7 +878,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             }
             return filledScript;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            error = e.toString();
             return null;
         }
     }
@@ -893,7 +893,8 @@ public abstract class Data2D_Operations extends Data2D_Edit {
 
     public boolean calculateExpression(String script) {
         try {
-            expressionResult = "";
+            error = null;
+            expressionResult = null;
             if (script == null || script.isBlank()) {
                 return true;
             }
@@ -906,8 +907,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            expressionResult = e.toString();
+            error = e.toString();
             return false;
         }
     }
@@ -924,39 +924,12 @@ public abstract class Data2D_Operations extends Data2D_Edit {
     }
 
     public boolean filter(List<String> data, long dataRowIndex) {
-        try {
-            filterPassed = false;
-            if (data == null) {
-                return false;
-            }
-            if (rowFilter == null || rowFilter.isBlank()) {
-                filterPassed = true;
-                return true;
-            }
-            Platform.runLater(() -> {
-                synchronized (lock) {
-                    try {
-                        List<String> values = new ArrayList<>();
-                        values.add(dataRowIndex + "");
-                        values.addAll(data);
-                        filterPassed = filter(values);
-                    } catch (Exception e) {
-                        MyBoxLog.error(e);
-                    }
-                    lock.notify();
-                }
-            });
-            synchronized (lock) {
-                lock.wait();
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-        return filterPassed;
+        return filterAndCalculate(data, dataRowIndex, null);
     }
 
     public boolean filterAndCalculate(List<String> data, long dataRowIndex, final String script) {
         try {
+            error = null;
             filterPassed = false;
             if (data == null) {
                 return false;
@@ -978,7 +951,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
                             calculateExpression(script, values);
                         }
                     } catch (Exception e) {
-                        MyBoxLog.error(e);
+                        error = e.toString();
                     }
                     lock.notify();
                 }
@@ -987,7 +960,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
                 lock.wait();
             }
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            error = e.toString();
         }
         return filterPassed;
     }
