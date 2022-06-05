@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
@@ -50,6 +51,8 @@ public class Data2DStatisticController extends BaseData2DHandleController {
     protected FlowPane categoryColumnsPane;
     @FXML
     protected ComboBox<String> categoryColumnSelector;
+    @FXML
+    protected Tab optionsTab;
 
     public Data2DStatisticController() {
         baseTitle = message("DescriptiveStatistics");
@@ -293,6 +296,15 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                         }
                     });
 
+            optionsTab.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    if (newValue) {
+                        checkMemoryLabel();
+                    }
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -342,7 +354,6 @@ public class Data2DStatisticController extends BaseData2DHandleController {
     @Override
     public boolean checkOptions() {
         boolean ok = super.checkOptions();
-        objectChanged();
 
         categorysCol = -1;
         if (rowsRadio.isSelected()) {
@@ -401,7 +412,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 || lowerQuartileCheck.isSelected() || modeCheck.isSelected()
                 || UpperExtremeOutlierLineCheck.isSelected() || UpperMildOutlierLineCheck.isSelected()
                 || LowerExtremeOutlierLineCheck.isSelected() || LowerMildOutlierLineCheck.isSelected())
-                && (!data2D.isTable() || allRadio.isSelected())) {
+                && (hasRowFilter() || !data2D.isTable() || allRadio.isSelected())) {
             if (!operationBox.getChildren().contains(memoryNoticeLabel)) {
                 operationBox.getChildren().add(memoryNoticeLabel);
             }
@@ -518,7 +529,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                     data2D.setTask(task);
                     calculation.setTask(task);
                     if (calculation.needStored()) {
-                        if (data2D instanceof DataTable) {
+                        if ((data2D instanceof DataTable) && !hasRowFilter()) {
                             return calculation.statisticAllByColumnsInDataTable();
                         } else {
                             return calculation.statisticData(data2D.allRows(checkedColsIndices, false));

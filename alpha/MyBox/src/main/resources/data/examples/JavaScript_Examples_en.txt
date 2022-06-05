@@ -140,6 +140,11 @@ Math.min(1,2,-3)
 
 ##MyBox#
 Examples > Expressions > Strings operations
+compare
+'Hello' == 'hello' || 'a' < 'A' || 'a' != 'A'
+
+##MyBox#
+Examples > Expressions > Strings operations
 replace first
 "Hello World! World is yourself.".replace("World", "Feeling");
    
@@ -247,6 +252,11 @@ Examples > Expressions > Boolean operations
 array include
 var arrayA =  ['A', 'B', 'C', 'D'];
 arrayA.includes('C');
+
+##MyBox#
+Examples > Expressions > Boolean operations
+is number
+Math.abs(2a) >= 0
 
 ##MyBox#
 Examples > Expressions > Boolean operations

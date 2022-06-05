@@ -244,31 +244,49 @@ public class DataFileCSV extends DataFileText {
                     } catch (Exception e) {  // skip  bad lines
                     }
                 }
-                boolean isRandom = "MyBox##random".equals(value);
-                boolean isRandomNn = "MyBox##randomNn".equals(value);
-                Random random = new Random();
+                boolean isRandom = false, isRandomNn = false, isBlank = false;
+                String expression = null;
+                if (value != null) {
+                    if ("MyBox##blank".equals(value)) {
+                        isBlank = true;
+                    } else if ("MyBox##random".equals(value)) {
+                        isRandom = true;
+                    } else if ("MyBox##randomNn".equals(value)) {
+                        isRandomNn = true;
+                    } else if (value.startsWith("MyBox##Expression##")) {
+                        expression = value.substring("MyBox##Expression##".length());
+                    }
+                }
+                final Random random = new Random();
+                rowIndex = 0;
                 while (iterator.hasNext() && task != null && !task.isCancelled()) {
                     try {
                         CSVRecord record = iterator.next();
-                        if (record != null) {
-                            List<String> row = new ArrayList<>();
-                            for (int i = 0; i < columns.size(); i++) {
-                                if (cols.contains(i)) {
-                                    if (isRandom) {
-                                        row.add(random(random, i, false));
-                                    } else if (isRandomNn) {
-                                        row.add(random(random, i, true));
-                                    } else {
-                                        row.add(value);
-                                    }
-                                } else if (i < record.size()) {
-                                    row.add(record.get(i));
-                                } else {
-                                    row.add(null);
-                                }
-                            }
-                            csvPrinter.printRecord(row);
+                        if (record == null) {
+                            continue;
                         }
+                        filterAndCalculate(record.toList(), ++rowIndex, expression);
+                        List<String> row = new ArrayList<>();
+                        for (int i = 0; i < columns.size(); i++) {
+                            if (filterPassed && cols.contains(i)) {
+                                if (isBlank) {
+                                    row.add("");
+                                } else if (isRandom) {
+                                    row.add(random(random, i, false));
+                                } else if (isRandomNn) {
+                                    row.add(random(random, i, true));
+                                } else if (expression != null) {
+                                    row.add(expressionResult);
+                                } else {
+                                    row.add(value);
+                                }
+                            } else if (i < record.size()) {
+                                row.add(record.get(i));
+                            } else {
+                                row.add(null);
+                            }
+                        }
+                        csvPrinter.printRecord(row);
                     } catch (Exception e) {  // skip  bad lines
                     }
                 }

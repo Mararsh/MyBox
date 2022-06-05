@@ -3,7 +3,9 @@ package mara.mybox.data2d;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javafx.scene.web.WebEngine;
 import mara.mybox.controller.ControlData2DLoad;
+import mara.mybox.data.FindReplaceString;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.table.TableData2DColumn;
@@ -29,9 +31,13 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
     protected long currentPage, startRowOfCurrentPage, endRowOfCurrentPage;   // 0-based, excluded end
     protected Map<String, String> styles;
     protected ControlData2DLoad loadController;
-    protected boolean tableChanged, filterReversed;
+    protected boolean tableChanged, filterReversed, filterPassed;
     protected SingletonTask task, backgroundTask;
-    protected String error, filterScript;
+    protected String error, rowFilter;
+    protected final Object lock = new Object();
+    public WebEngine webEngine;
+    public FindReplaceString findReplace;
+    public String expressionResult;
 
     public Data2D_Attributes() {
         tableData2DDefinition = new TableData2DDefinition();
@@ -54,6 +60,10 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         options = null;
         styles.clear();
         error = null;
+        rowFilter = null;
+        webEngine = null;
+        findReplace = null;
+        expressionResult = null;
     }
 
     public void resetData() {
@@ -79,6 +89,8 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
             backgroundTask = d.backgroundTask;
             error = d.error;
             options = d.options;
+            webEngine = d.webEngine;
+            findReplace = d.findReplace;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -104,6 +116,8 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
             startRowOfCurrentPage = d.startRowOfCurrentPage;
             endRowOfCurrentPage = d.endRowOfCurrentPage;
             tableChanged = d.tableChanged;
+            rowFilter = d.rowFilter;
+            expressionResult = d.expressionResult;
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -237,12 +251,12 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         this.styles = styles;
     }
 
-    public String getFilterScript() {
-        return filterScript;
+    public String getRowFilter() {
+        return rowFilter;
     }
 
-    public void setFilterScript(String filterScript) {
-        this.filterScript = filterScript;
+    public void setRowFilter(String rowFilter) {
+        this.rowFilter = rowFilter;
     }
 
     public boolean isFilterReversed() {
@@ -251,6 +265,30 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
 
     public void setFilterReversed(boolean filterReversed) {
         this.filterReversed = filterReversed;
+    }
+
+    public WebEngine getWebEngine() {
+        return webEngine;
+    }
+
+    public void setWebEngine(WebEngine webEngine) {
+        this.webEngine = webEngine;
+    }
+
+    public FindReplaceString getFindReplace() {
+        return findReplace;
+    }
+
+    public void setFindReplace(FindReplaceString findReplace) {
+        this.findReplace = findReplace;
+    }
+
+    public String getExpressionResult() {
+        return expressionResult;
+    }
+
+    public void setExpressionResult(String expressionResult) {
+        this.expressionResult = expressionResult;
     }
 
     public SingletonTask getTask() {

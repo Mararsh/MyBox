@@ -480,6 +480,43 @@ public class DescriptiveStatistic {
         if (statistic == null) {
             return false;
         }
+        statisticByColumnsWriteWithoutStored(statistic);
+        if (medianRow != null) {
+            medianRow.add(DoubleTools.format(statistic.getMedian(), scale));
+        }
+        if (modeRow != null) {
+            try {
+                modeRow.add(DoubleTools.format((double) statistic.getMode(), scale));
+            } catch (Exception e) {
+                modeRow.add(statistic.getMode().toString());
+            }
+        }
+        if (lowerQuartileRow != null) {
+            lowerQuartileRow.add(DoubleTools.format(statistic.getLowerQuartile(), scale));
+        }
+
+        if (upperQuartileRow != null) {
+            upperQuartileRow.add(DoubleTools.format(statistic.getUpperQuartile(), scale));
+        }
+        if (upperExtremeOutlierLineRow != null) {
+            upperExtremeOutlierLineRow.add(DoubleTools.format(statistic.getUpperExtremeOutlierLine(), scale));
+        }
+        if (upperMildOutlierLineRow != null) {
+            upperMildOutlierLineRow.add(DoubleTools.format(statistic.getUpperMildOutlierLine(), scale));
+        }
+        if (lowerMildOutlierLineRow != null) {
+            lowerMildOutlierLineRow.add(DoubleTools.format(statistic.getLowerMildOutlierLine(), scale));
+        }
+        if (lowerExtremeOutlierLineRow != null) {
+            lowerExtremeOutlierLineRow.add(DoubleTools.format(statistic.getLowerExtremeOutlierLine(), scale));
+        }
+        return true;
+    }
+
+    public boolean statisticByColumnsWriteWithoutStored(DoubleStatistic statistic) {
+        if (statistic == null) {
+            return false;
+        }
         if (countRow != null) {
             countRow.add(StringTools.format(statistic.getCount()));
         }
@@ -513,36 +550,8 @@ public class DescriptiveStatistic {
         if (minimumRow != null) {
             minimumRow.add(DoubleTools.format(statistic.getMinimum(), scale));
         }
-        if (lowerQuartileRow != null) {
-            lowerQuartileRow.add(DoubleTools.format(statistic.getLowerQuartile(), scale));
-        }
-        if (medianRow != null) {
-            medianRow.add(DoubleTools.format(statistic.getMedian(), scale));
-        }
         if (maximumRow != null) {
             maximumRow.add(DoubleTools.format(statistic.getMaximum(), scale));
-        }
-        if (upperQuartileRow != null) {
-            upperQuartileRow.add(DoubleTools.format(statistic.getUpperQuartile(), scale));
-        }
-        if (upperExtremeOutlierLineRow != null) {
-            upperExtremeOutlierLineRow.add(DoubleTools.format(statistic.getUpperExtremeOutlierLine(), scale));
-        }
-        if (upperMildOutlierLineRow != null) {
-            upperMildOutlierLineRow.add(DoubleTools.format(statistic.getUpperMildOutlierLine(), scale));
-        }
-        if (lowerMildOutlierLineRow != null) {
-            lowerMildOutlierLineRow.add(DoubleTools.format(statistic.getLowerMildOutlierLine(), scale));
-        }
-        if (lowerExtremeOutlierLineRow != null) {
-            lowerExtremeOutlierLineRow.add(DoubleTools.format(statistic.getLowerExtremeOutlierLine(), scale));
-        }
-        if (modeRow != null) {
-            try {
-                modeRow.add(DoubleTools.format((double) statistic.getMode(), scale));
-            } catch (Exception e) {
-                modeRow.add(statistic.getMode().toString());
-            }
         }
         return true;
     }
@@ -613,7 +622,7 @@ public class DescriptiveStatistic {
             return false;
         }
         for (DoubleStatistic statistic : statisticData) {
-            statisticByColumnsWrite(statistic);
+            statisticByColumnsWriteWithoutStored(statistic);
         }
         return true;
     }

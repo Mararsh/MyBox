@@ -2,7 +2,7 @@ package mara.mybox.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
-import mara.mybox.dev.MyBoxLog;
+import mara.mybox.db.table.TableStringValues;
 
 /**
  * @Author Mara
@@ -16,27 +16,16 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
 
     public ControlData2DRowFilter() {
         TipsLabelKey = "RowFilterTips";
+        hisName = "RowFilterHistories";
     }
 
-    @Override
     public void checkScript() {
-        super.checkScript();
-        sourceController.data2D.setFilterReversed(!trueRadio.isSelected());
-    }
-
-    public boolean filter(int tableRowNumber) {
-        try {
-            String script = scriptInput.getText();
-            if (script == null || script.isBlank()) {
-                return true;
-            }
-            calculate(tableRowNumber);
-            boolean v = "true".equals(scriptResult);
-            return trueRadio.isSelected() ? v : !v;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return false;
+        String script = scriptInput.getText();
+        if (script != null && !script.isBlank()) {
+            TableStringValues.add(hisName, script.trim());
         }
+        sourceController.data2D.setRowFilter(script);
+        sourceController.data2D.setFilterReversed(!trueRadio.isSelected());
     }
 
 }

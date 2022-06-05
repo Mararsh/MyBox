@@ -156,10 +156,10 @@ public class ControlData2DSource extends ControlData2DLoad {
 
     public void refreshControls() {
         try {
-            setPagination();
             if (data2D.isMutiplePages()) {
                 allPagesRadio.setDisable(false);
                 showPaginationPane(true);
+                setPagination();
             } else {
                 if (allPagesRadio.isSelected()) {
                     currentPageRadio.fire();
@@ -239,9 +239,9 @@ public class ControlData2DSource extends ControlData2DLoad {
         status
      */
     public boolean checkSelections() {
+        filterController.checkScript();
         checkedRows();
         checkColumns();
-        filterController.checkScript();
         return (allPagesRadio.isSelected() || (checkedRowsIndices != null && !checkedRowsIndices.isEmpty()))
                 && (noColumnSelection || (checkedColsIndices != null && !checkedColsIndices.isEmpty()));
     }
@@ -268,6 +268,11 @@ public class ControlData2DSource extends ControlData2DLoad {
         return checkedRowsIndices != null && checkedColsIndices != null
                 && !checkedRowsIndices.isEmpty()
                 && checkedRowsIndices.size() == checkedColsIndices.size();
+    }
+
+    public boolean hasRowFilter() {
+        String script = filterController.scriptInput.getText();
+        return script != null && !script.isBlank();
     }
 
     /*
@@ -381,14 +386,14 @@ public class ControlData2DSource extends ControlData2DLoad {
             List<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
             if (currentPageRadio.isSelected() || selected == null || selected.isEmpty()) {
                 for (int i = 0; i < tableData.size(); i++) {
-                    if (!filterController.filter(i)) {
+                    if (!data2D.filter(tableData.get(i))) {
                         continue;
                     }
                     checkedRowsIndices.add(i);
                 }
             } else {
                 for (int i : selected) {
-                    if (!filterController.filter(i)) {
+                    if (!data2D.filter(tableData.get(i))) {
                         continue;
                     }
                     checkedRowsIndices.add(i);

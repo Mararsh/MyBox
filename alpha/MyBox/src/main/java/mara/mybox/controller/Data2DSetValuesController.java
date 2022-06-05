@@ -11,6 +11,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import mara.mybox.db.data.ConvolutionKernel;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
@@ -54,6 +55,9 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
     public void initValueRadios() {
         try {
             value = UserConfig.getString(baseName + "Value", "0");
+            if (value == null) {
+                value = "0";
+            }
             switch (value) {
                 case "0":
                     zeroRadio.fire();
@@ -61,7 +65,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                 case "1":
                     oneRadio.fire();
                     break;
-                case "blank":
+                case "MyBox##blank":
                     blankRadio.fire();
                     break;
                 case "MyBox##random":
@@ -82,12 +86,14 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                 case "MyBox##lowerTriangle":
                     lowerTriangleRadio.fire();
                     break;
-                case "MyBox##Expression":
-                    expressionRadio.fire();
-                    break;
                 default:
-                    valueInput.setText(value);
-                    setRadio.fire();
+                    if (value.startsWith("MyBox##Expression")) {
+                        valueInput.setText(value.substring("MyBox##Expression".length()));
+                        expressionRadio.fire();
+                    } else {
+                        valueInput.setText(value);
+                        setRadio.fire();
+                    }
             }
             valueGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -106,6 +112,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             if (isSettingValues) {
                 return;
             }
+            value = null;
             valueInput.setStyle(null);
             if (setRadio.isSelected()) {
                 value = valueInput.getText();
@@ -114,7 +121,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             } else if (oneRadio.isSelected()) {
                 value = "1";
             } else if (blankRadio.isSelected()) {
-                value = " ";
+                value = "MyBox##blank";
             } else if (randomRadio.isSelected()) {
                 value = "MyBox##random";
             } else if (randomNnRadio.isSelected()) {
@@ -128,9 +135,11 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             } else if (lowerTriangleRadio.isSelected()) {
                 value = "MyBox##lowerTriangle";
             } else if (expressionRadio.isSelected()) {
-                value = "MyBox##Expression";
+                value = "MyBox##Expression##" + expressionController.scriptInput.getText();
             }
-            UserConfig.setString(baseName + "Value", value);
+            if (value != null && !value.isBlank()) {
+                UserConfig.setString(baseName + "Value", value);
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -144,6 +153,24 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
 
             expressionController.setParamters(this);
 
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
+    public void refreshControls() {
+        try {
+            if (data2D.isMutiplePages()) {
+                allPagesRadio.setDisable(false);
+            } else {
+                if (allPagesRadio.isSelected()) {
+                    currentPageRadio.fire();
+                }
+                allPagesRadio.setDisable(true);
+            }
+            showPaginationPane(false);
+            checkOptions();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -186,6 +213,12 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             okButton.setDisable(true);
             return false;
         } else {
+            if (expressionRadio.isSelected()) {
+                String expression = expressionController.scriptInput.getText();
+                if (expression != null && !expression.isBlank()) {
+                    TableStringValues.add("RowExpressionHistories", expression.trim());
+                }
+            }
             return ok;
         }
     }
@@ -197,8 +230,8 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             @Override
             protected boolean handle() {
                 try {
-                    tableController.data2D.setTask(task);
-                    return tableController.data2D.setValue(checkedColsIndices, value);
+                    data2D.setTask(task);
+                    return data2D.setValue(checkedColsIndices, value);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -256,11 +289,13 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             for (int row : checkedRowsIndices) {
                 List<String> values = tableController.tableData.get(row);
                 String v = value;
-                if (expressionRadio.isSelected()) {
+                if (blankRadio.isSelected()) {
+                    v = "";
+                } else if (expressionRadio.isSelected()) {
                     if (!expressionController.calculate(row)) {
                         continue;
                     }
-                    v = expressionController.scriptResult;
+                    v = data2D.getExpressionResult();
                 }
                 for (int col : checkedColsIndices) {
                     if (randomRadio.isSelected()) {

@@ -501,22 +501,43 @@ public class DataFileExcel extends DataFile {
                     while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
                     }
                 }
-                boolean isRandom = "MyBox##random".equals(value);
-                boolean isRandomNn = "MyBox##randomNn".equals(value);
+                boolean isRandom = false, isRandomNn = false, isBlank = false;
+                String expression = null;
+                if (value != null) {
+                    if ("MyBox##blank".equals(value)) {
+                        isBlank = true;
+                    } else if ("MyBox##random".equals(value)) {
+                        isRandom = true;
+                    } else if ("MyBox##randomNn".equals(value)) {
+                        isRandomNn = true;
+                    } else if (value.startsWith("MyBox##Expression##")) {
+                        expression = value.substring("MyBox##Expression##".length());
+                    }
+                }
                 Random random = new Random();
+                rowIndex = 0;
                 while (iterator.hasNext() && task != null && !task.isCancelled()) {
                     Row sourceRow = iterator.next();
                     if (sourceRow == null) {
                         continue;
                     }
                     Row targetRow = targetSheet.createRow(targetRowIndex++);
+                    List<String> values = new ArrayList<>();
+                    for (int c = sourceRow.getFirstCellNum(); c < sourceRow.getLastCellNum(); c++) {
+                        values.add(MicrosoftDocumentTools.cellString(sourceRow.getCell(c)));
+                    }
+                    filterAndCalculate(values, ++rowIndex, expression);
                     for (int c = sourceRow.getFirstCellNum(); c < sourceRow.getLastCellNum(); c++) {
                         String v;
-                        if (cols.contains(c)) {
-                            if (isRandom) {
+                        if (filterPassed && cols.contains(c)) {
+                            if (isBlank) {
+                                v = "";
+                            } else if (isRandom) {
                                 v = random(random, c, false);
                             } else if (isRandomNn) {
                                 v = random(random, c, true);
+                            } else if (expression != null) {
+                                v = expressionResult;
                             } else {
                                 v = value;
                             }

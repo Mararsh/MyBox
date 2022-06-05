@@ -140,6 +140,11 @@ Math.min(1,2,-3)
 
 ##MyBox#
 示例 > 表达式 > 字符串处理
+比较
+'Hello' == 'hello' || 'a' < 'A' || 'a' != 'A'
+
+##MyBox#
+示例 > 表达式 > 字符串处理
 替换首个
 "Hello World! World is yourself.".replace("World", "Feeling");
    
@@ -247,6 +252,11 @@ var 规则表达式a = /\S*3{2,}\S*/ig;
 数组包含
 var 数组a =  ['A', 'B', 'C', 'D'];
 数组a.includes('C');
+
+##MyBox#
+示例 > 表达式 > 布尔运算
+是否为数值
+Math.abs(2a) >= 0
 
 ##MyBox#
 示例 > 表达式 > 布尔运算

@@ -344,9 +344,21 @@ public class DataTable extends Data2D {
         if (cols == null || cols.isEmpty()) {
             return false;
         }
-        boolean isRandom = "MyBox##random".equals(value);
-        boolean isRandomNn = "MyBox##randomNn".equals(value);
-        if (!isRandom && !isRandomNn) {
+        boolean isRandom = false, isRandomNn = false, isBlank = false;
+        String expression = null;
+        if (value != null) {
+            if ("MyBox##blank".equals(value)) {
+                isBlank = true;
+            } else if ("MyBox##random".equals(value)) {
+                isRandom = true;
+            } else if ("MyBox##randomNn".equals(value)) {
+                isRandomNn = true;
+            } else if (value.startsWith("MyBox##Expression##")) {
+                expression = value.substring("MyBox##Expression##".length());
+            }
+        }
+        if (!isRandom && !isRandomNn && expression == null
+                && (rowFilter == null || rowFilter.isBlank())) {
             try ( Connection conn = DerbyBase.getConnection();
                      Statement update = conn.createStatement()) {
                 String sql = null;
@@ -384,22 +396,37 @@ public class DataTable extends Data2D {
 
                 Random random = new Random();
                 conn.setAutoCommit(false);
-                int count = 0;
+                rowIndex = 0;
                 while (results.next()) {
                     Data2DRow row = tableData2D.readData(results);
-                    for (int col : cols) {
-                        Data2DColumn column = columns.get(col);
+                    List<String> rowValues = new ArrayList<>();
+                    for (int c = 0; c < columns.size(); c++) {
+                        Data2DColumn column = columns.get(c);
+                        Object v = row.getColumnValue(columns.get(c).getColumnName());
+                        rowValues.add(column.toString(v));
+                    }
+                    filterAndCalculate(rowValues, ++rowIndex, expression);
+                    for (int c = 0; c < columns.size(); c++) {
+                        Data2DColumn column = columns.get(c);
                         String name = column.getColumnName();
-                        String v = value;
-                        if (isRandom) {
-                            v = random(random, col, false);
-                        } else if (isRandomNn) {
-                            v = random(random, col, true);
+                        if (filterPassed && cols.contains(c)) {
+                            String v;
+                            if (isBlank) {
+                                v = "";
+                            } else if (isRandom) {
+                                v = random(random, c, false);
+                            } else if (isRandomNn) {
+                                v = random(random, c, true);
+                            } else if (expression != null) {
+                                v = expressionResult;
+                            } else {
+                                v = value;
+                            }
+                            row.setColumnValue(name, column.fromString(v));
                         }
-                        row.setColumnValue(name, column.fromString(v));
                     }
                     tableData2D.updateData(conn, row);
-                    if (++count % DerbyBase.BatchSize == 0) {
+                    if (rowIndex % DerbyBase.BatchSize == 0) {
                         conn.commit();
                     }
                 }
@@ -437,7 +464,7 @@ public class DataTable extends Data2D {
             sql = "SELECT " + sql + " FROM " + sheet + " ORDER BY " + orderName
                     + (desc ? " DESC" : "");
             File csvFile = tmpCSV("sort");
-            long count = 0;
+            rowIndex = 0;
             int colsSize;
             try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile);
                      Connection conn = DerbyBase.getConnection();
@@ -454,15 +481,23 @@ public class DataTable extends Data2D {
                 colsSize = names.size();
                 List<String> fileRow = new ArrayList<>();
                 while (results.next()) {
-                    count++;
                     Data2DRow dataRow = tableData2D.readData(results);
+                    List<String> rowValues = new ArrayList<>();
+                    for (int c = 0; c < columns.size(); c++) {
+                        Data2DColumn column = columns.get(c);
+                        Object v = dataRow.getColumnValue(columns.get(c).getColumnName());
+                        rowValues.add(column.toString(v));
+                    }
+                    filter(rowValues, ++rowIndex);
+                    if (!filterPassed) {
+                        continue;
+                    }
                     if (showRowNumber) {
-                        fileRow.add(count + "");
+                        fileRow.add(rowIndex + "");
                     }
                     for (int col : cols) {
                         Data2DColumn column = columns.get(col);
-                        Object v = dataRow.getColumnValue(column.getColumnName());
-                        fileRow.add(column.toString(v));
+                        fileRow.add(column.toString(rowValues.get(col)));
                     }
                     csvPrinter.printRecord(fileRow);
                     fileRow.clear();
@@ -477,7 +512,7 @@ public class DataTable extends Data2D {
             DataFileCSV targetData = new DataFileCSV();
             targetData.setFile(csvFile).setCharset(Charset.forName("UTF-8"))
                     .setDelimiter(",").setHasHeader(true)
-                    .setColsNumber(colsSize).setRowsNumber(count);
+                    .setColsNumber(colsSize).setRowsNumber(rowIndex);
             return targetData;
         } catch (Exception e) {
             if (task != null) {
@@ -596,6 +631,9 @@ public class DataTable extends Data2D {
     public DataFileCSV frequency(Frequency frequency, String colName, int col, int scale) {
         if (frequency == null || colName == null || col < 0) {
             return null;
+        }
+        if (rowFilter != null && !rowFilter.isBlank()) {
+            return super.frequency(frequency, colName, col, scale);
         }
         File csvFile = tmpCSV("frequency");
         int total = 0, dNumber = 0;

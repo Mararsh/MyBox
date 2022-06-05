@@ -322,21 +322,38 @@ public class DataFileText extends DataFile {
                 TextFileTools.writeLine(writer, names, delimiter);
             }
             String line;
-            boolean isRandom = "MyBox##random".equals(value);
-            boolean isRandomNn = "MyBox##randomNn".equals(value);
+            boolean isRandom = false, isRandomNn = false, isBlank = false;
+            String expression = null;
+            if (value != null) {
+                if ("MyBox##blank".equals(value)) {
+                    isBlank = true;
+                } else if ("MyBox##random".equals(value)) {
+                    isRandom = true;
+                } else if ("MyBox##randomNn".equals(value)) {
+                    isRandomNn = true;
+                } else if (value.startsWith("MyBox##Expression##")) {
+                    expression = value.substring("MyBox##Expression##".length());
+                }
+            }
             Random random = new Random();
+            rowIndex = 0;
             while ((line = reader.readLine()) != null && task != null && !task.isCancelled()) {
                 List<String> record = parseFileLine(line);
                 if (record == null || record.isEmpty()) {
                     continue;
                 }
+                filterAndCalculate(record, ++rowIndex, expression);
                 List<String> row = new ArrayList<>();
                 for (int i = 0; i < columns.size(); i++) {
-                    if (cols.contains(i)) {
-                        if (isRandom) {
+                    if (filterPassed && cols.contains(i)) {
+                        if (isBlank) {
+                            row.add("");
+                        } else if (isRandom) {
                             row.add(random(random, i, false));
                         } else if (isRandomNn) {
                             row.add(random(random, i, true));
+                        } else if (expression != null) {
+                            row.add(expressionResult);
                         } else {
                             row.add(value);
                         }

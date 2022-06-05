@@ -131,7 +131,7 @@ License:    Apache License Version 2.0
                                                 <ToggleGroup fx:id="takeGroup" />
                                             </toggleGroup>
                                         </RadioButton>
-                                        <RadioButton mnemonicParsing="false" text="false" toggleGroup="$takeGroup" />
+                                        <RadioButton mnemonicParsing="false" text="%Others" toggleGroup="$takeGroup" />
                                     </children>
                                 </FlowPane>
                                 <TextArea fx:id="scriptInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />

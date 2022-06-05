@@ -12,12 +12,7 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
-import mara.mybox.data.FindReplaceString;
-import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.TreeNode;
-import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
@@ -32,9 +27,7 @@ import static mara.mybox.value.Languages.message;
 public class ControlData2DRowExpression extends TreeNodesController {
 
     protected ControlData2DSource sourceController;
-    protected WebEngine webEngine;
-    protected String scriptResult;
-    protected FindReplaceString findReplace;
+    protected String hisName;
 
     @FXML
     protected TextArea scriptInput;
@@ -43,13 +36,13 @@ public class ControlData2DRowExpression extends TreeNodesController {
         baseTitle = "JavaScript";
         category = TreeNode.JavaScript;
         TipsLabelKey = "RowExpressionTips";
+        hisName = "RowExpressionHistories";
     }
 
     public void setParamters(ControlData2DSource sourceController) {
         this.sourceController = sourceController;
         tableTreeNode = new TableTreeNode();
         tableTreeNodeTag = new TableTreeNodeTag();
-        webEngine = new WebView().getEngine();
         loadTree(null);
     }
 
@@ -136,9 +129,12 @@ public class ControlData2DRowExpression extends TreeNodesController {
                 ));
                 PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
                         "#{" + message("DataRowNumber") + "} % 2 == 0",
+                        "#{" + message("DataRowNumber") + "} % 2 == 1",
                         "#{" + message("DataRowNumber") + "} >= 9 && #{" + message("DataRowNumber") + "} <= 24",
+                        "#{" + message("TableRowNumber") + "} % 2 == 0",
+                        "#{" + message("TableRowNumber") + "} % 2 == 1",
                         "#{" + col1 + "} == 0",
-                        "#{" + col1 + "} >= 5",
+                        "Math.abs(#{" + col1 + "}) >= 0",
                         "#{" + col1 + "} < 0 || #{" + col1 + "} > 100 ",
                         "#{" + col1 + "} != 6"
                 ));
@@ -183,73 +179,11 @@ public class ControlData2DRowExpression extends TreeNodesController {
 
     @FXML
     protected void popScriptHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, scriptInput, mouseEvent, "JavaScriptHistories", true);
-    }
-
-    public void checkScript() {
-        String script = scriptInput.getText();
-        if (script != null && !script.isBlank()) {
-            TableStringValues.add("JavaScriptHistories", script.trim());
-        }
-        sourceController.data2D.setFilterScript(script);
-        sourceController.data2D.setFilterReversed(false);
-    }
-
-    public String replaceAll(String string, String find, String replace) {
-        if (findReplace == null) {
-            findReplace = FindReplaceString.create().setOperation(FindReplaceString.Operation.ReplaceAll)
-                    .setIsRegex(false).setCaseInsensitive(false).setMultiline(false);
-        }
-        findReplace.setInputString(string).setFindString(find).setReplaceString(replace).setAnchor(0).run();
-        return findReplace.getOutputString();
-    }
-
-    public String makeScript(int tableRowNumber) {
-        try {
-            String script = scriptInput.getText();
-            if (script == null || script.isBlank()) {
-                return script;
-            }
-            int size = sourceController.tableData.size();
-            List<Data2DColumn> columns = sourceController.data2D.getColumns();
-            if (size == 0 || tableRowNumber < 0 || tableRowNumber >= size
-                    || columns == null || columns.isEmpty()) {
-                return null;
-            }
-            List<String> tableRow = sourceController.tableData.get(tableRowNumber);
-            List<String> names = sourceController.data2D.columnNames();
-            for (int i = 0; i < names.size(); i++) {
-                script = replaceAll(script, "#{" + names.get(i) + "}", tableRow.get(i + 1));
-            }
-            script = replaceAll(script, "#{" + message("DataRowNumber") + "}", tableRow.get(0) + "");
-            script = replaceAll(script, "#{" + message("TableRowNumber") + "}", (tableRowNumber + 1) + "");
-            return script;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
+        PopTools.popStringValues(this, scriptInput, mouseEvent, hisName, true);
     }
 
     public boolean calculate(int tableRowNumber) {
-        return calculate(makeScript(tableRowNumber));
-    }
-
-    public boolean calculate(String script) {
-        try {
-            scriptResult = "";
-            if (script == null || script.isBlank()) {
-                return true;
-            }
-            Object o = webEngine.executeScript(script);
-            if (o != null) {
-                scriptResult = o.toString();
-            }
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            scriptResult = e.toString();
-            return false;
-        }
+        return sourceController.data2D.calculateExpression(scriptInput.getText(), tableRowNumber);
     }
 
 }
