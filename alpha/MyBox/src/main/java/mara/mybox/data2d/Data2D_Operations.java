@@ -844,19 +844,6 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         }
     }
 
-    public String rowExpression(String script, int tableRowNumber) {
-        try {
-            return rowExpression(script, tableData().get(tableRowNumber), tableRowNumber);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
-    }
-
-    public String rowExpression(String script, List<String> row) {
-        return rowExpression(script, row, -1);
-    }
-
     public String rowExpression(String script, List<String> row, int tableRowNumber) {
         try {
             if (script == null || script.isBlank()
@@ -873,9 +860,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
                 filledScript = findReplace.replaceStringAll(filledScript, "#{" + columns.get(i).getColumnName() + "}", row.get(i + 1));
             }
             filledScript = findReplace.replaceStringAll(filledScript, "#{" + message("DataRowNumber") + "}", row.get(0) + "");
-            if (tableRowNumber >= 0) {
-                filledScript = findReplace.replaceStringAll(filledScript, "#{" + message("TableRowNumber") + "}", (tableRowNumber + 1) + "");
-            }
+            filledScript = findReplace.replaceStringAll(filledScript, "#{" + message("TableRowNumber") + "}", (tableRowNumber + 1) + "");
             return filledScript;
         } catch (Exception e) {
             error = e.toString();
@@ -883,12 +868,8 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         }
     }
 
-    public boolean calculateExpression(String script, int tableRowNumber) {
-        return calculateExpression(rowExpression(script, tableRowNumber));
-    }
-
-    public boolean calculateExpression(String script, List<String> row) {
-        return calculateExpression(rowExpression(script, row));
+    public boolean calculateExpression(String script, List<String> row, int tableRowNumber) {
+        return calculateExpression(rowExpression(script, row, tableRowNumber));
     }
 
     public boolean calculateExpression(String script) {
@@ -912,19 +893,16 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         }
     }
 
-    public boolean filter(List<String> row) {
+    public boolean filter(List<String> row, int tableRowIndex) {
         if (rowFilter == null || rowFilter.isBlank()) {
             return true;
         }
-        filterPassed = calculateExpression(rowFilter, row) && "true".equals(expressionResult);
+        filterPassed = calculateExpression(rowFilter, row, tableRowIndex)
+                && "true".equals(expressionResult);
         if (filterReversed) {
             filterPassed = !filterPassed;
         }
         return filterPassed;
-    }
-
-    public boolean filter(List<String> data, long dataRowIndex) {
-        return filterAndCalculate(data, dataRowIndex, null);
     }
 
     public boolean filterAndCalculate(List<String> data, long dataRowIndex, final String script) {
@@ -946,9 +924,9 @@ public abstract class Data2D_Operations extends Data2D_Edit {
                         List<String> values = new ArrayList<>();
                         values.add(dataRowIndex + "");
                         values.addAll(data);
-                        filterPassed = filter(values);
+                        filterPassed = filter(values, -1);
                         if (filterPassed && script != null) {
-                            calculateExpression(script, values);
+                            calculateExpression(script, values, -1);
                         }
                     } catch (Exception e) {
                         error = e.toString();
@@ -963,6 +941,58 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             error = e.toString();
         }
         return filterPassed;
+    }
+
+    public boolean filterInTask(List<String> data, long dataRowIndex) {
+        try {
+            error = null;
+            filterPassed = false;
+            if (data == null) {
+                return false;
+            }
+            if (rowFilter == null || rowFilter.isBlank()) {
+                filterPassed = true;
+                return true;
+            }
+            Platform.runLater(() -> {
+                synchronized (lock) {
+                    try {
+                        List<String> values = new ArrayList<>();
+                        values.add(dataRowIndex + "");
+                        values.addAll(data);
+                        filterPassed = filter(values, -1);
+                    } catch (Exception e) {
+                        error = e.toString();
+                    }
+                    lock.notify();
+                }
+            });
+            synchronized (lock) {
+                lock.wait();
+            }
+        } catch (Exception e) {
+            error = e.toString();
+        }
+        return filterPassed;
+    }
+
+    public boolean validateExpression(String script) {
+        try {
+            error = null;
+            expressionResult = null;
+            if (script == null || script.isBlank()) {
+                return true;
+            }
+            List<String> row = new ArrayList<>();
+            row.add("1");
+            for (int i = 0; i < columns.size(); i++) {
+                row.add("0");
+            }
+            return calculateExpression(rowExpression(script, row, 1));
+        } catch (Exception e) {
+            error = e.toString();
+            return false;
+        }
     }
 
 }

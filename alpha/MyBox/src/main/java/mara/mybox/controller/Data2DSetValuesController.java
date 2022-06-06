@@ -12,7 +12,6 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import mara.mybox.db.data.ConvolutionKernel;
-import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
@@ -217,11 +216,9 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             return false;
         } else {
             if (expressionRadio.isSelected()) {
-                String expression = expressionController.scriptInput.getText();
-                if (expression != null && !expression.isBlank()) {
-                    TableStringValues.add("RowExpressionHistories", expression.trim());
-                }
+                ok = expressionController.checkExpression();
             }
+            okButton.setDisable(!ok);
             return ok;
         }
     }
@@ -302,7 +299,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                 if (blankRadio.isSelected()) {
                     v = "";
                 } else if (expressionRadio.isSelected()) {
-                    if (!data2D.calculateExpression(expressionController.scriptInput.getText(), row)) {
+                    if (!data2D.calculateExpression(expressionController.scriptInput.getText(), values, row)) {
                         if (errorContinueCheck.isSelected()) {
                             continue;
                         } else {

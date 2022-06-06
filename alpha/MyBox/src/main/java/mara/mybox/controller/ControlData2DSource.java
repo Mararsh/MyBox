@@ -239,11 +239,24 @@ public class ControlData2DSource extends ControlData2DLoad {
         status
      */
     public boolean checkSelections() {
-        filterController.checkScript();
+        if (data2D == null) {
+            return false;
+        }
+        if (!checkRowFilter()) {
+            return false;
+        }
         checkedRows();
         checkColumns();
         return (allPagesRadio.isSelected() || (checkedRowsIndices != null && !checkedRowsIndices.isEmpty()))
                 && (noColumnSelection || (checkedColsIndices != null && !checkedColsIndices.isEmpty()));
+    }
+
+    public boolean checkRowFilter() {
+        if (data2D == null) {
+            return false;
+        }
+        data2D.setError(null);
+        return filterController.checkExpression();
     }
 
     public boolean isAllPages() {
@@ -386,14 +399,14 @@ public class ControlData2DSource extends ControlData2DLoad {
             List<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
             if (currentPageRadio.isSelected() || selected == null || selected.isEmpty()) {
                 for (int i = 0; i < tableData.size(); i++) {
-                    if (!data2D.filter(tableData.get(i))) {
+                    if (!data2D.filter(tableData.get(i), i)) {
                         continue;
                     }
                     checkedRowsIndices.add(i);
                 }
             } else {
                 for (int i : selected) {
-                    if (!data2D.filter(tableData.get(i))) {
+                    if (!data2D.filter(tableData.get(i), i)) {
                         continue;
                     }
                     checkedRowsIndices.add(i);

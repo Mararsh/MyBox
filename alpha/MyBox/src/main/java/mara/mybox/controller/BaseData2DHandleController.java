@@ -10,6 +10,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Tab;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.data2d.Data2D;
@@ -149,6 +150,19 @@ public abstract class BaseData2DHandleController extends ControlData2DSource {
                     checkOptions();
                 }
             });
+            tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+                @Override
+                public void changed(ObservableValue ov, Tab oldValue, Tab newValue) {
+                    checkOptions();
+                }
+            });
+
+            filterController.scriptInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    checkOptions();
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -192,11 +206,18 @@ public abstract class BaseData2DHandleController extends ControlData2DSource {
         if (isSettingValues) {
             return true;
         }
+        if (data2D == null) {
+            okButton.setDisable(true);
+            return false;
+        }
         if (infoLabel != null) {
             infoLabel.setText("");
         }
         if (!checkSelections()) {
-            if (infoLabel != null) {
+            if (data2D.getError() != null) {
+                infoLabel.setText(message("Invalid") + ": " + message("RowFilter") + "\n"
+                        + data2D.getError());
+            } else if (infoLabel != null) {
                 infoLabel.setText(message("SelectToHandle"));
             }
             okButton.setDisable(true);

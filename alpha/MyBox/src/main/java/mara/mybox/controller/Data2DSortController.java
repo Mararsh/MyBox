@@ -10,7 +10,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.data.ColumnDefinition;
@@ -38,8 +37,6 @@ public class Data2DSortController extends BaseData2DHandleController {
     protected CheckBox descendCheck;
     @FXML
     protected Label memoryNoticeLabel;
-    @FXML
-    protected Tab optionsTab;
 
     public Data2DSortController() {
         baseTitle = message("Sort");
@@ -54,15 +51,6 @@ public class Data2DSortController extends BaseData2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     checkOptions();
-                }
-            });
-
-            optionsTab.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    if (newValue) {
-                        checkMemoryLabel();
-                    }
                 }
             });
 

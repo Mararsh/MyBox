@@ -380,7 +380,7 @@ public abstract class Data2DReader {
     }
 
     public boolean filterRecord() {
-        return data2D.filter(record, rowIndex + 1);
+        return data2D.filterInTask(record, rowIndex + 1);
     }
 
     public void handleRecord() {

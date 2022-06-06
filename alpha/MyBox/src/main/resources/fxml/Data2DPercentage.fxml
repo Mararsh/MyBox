@@ -31,7 +31,7 @@ License:    Apache License Version 2.0
                 <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%Percentage" textAlignment="CENTER" VBox.vgrow="NEVER" />
             </children>
         </HBox>
-      <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+      <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
          <tabs>
             <Tab fx:id="dataTab" text="%Data">
                <content>
@@ -246,7 +246,7 @@ License:    Apache License Version 2.0
       </TabPane>
         <HBox alignment="CENTER_LEFT" spacing="5.0">
             <children>
-                <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
+                <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" />
                 <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

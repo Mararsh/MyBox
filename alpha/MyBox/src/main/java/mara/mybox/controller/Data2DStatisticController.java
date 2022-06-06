@@ -8,7 +8,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
@@ -51,8 +50,6 @@ public class Data2DStatisticController extends BaseData2DHandleController {
     protected FlowPane categoryColumnsPane;
     @FXML
     protected ComboBox<String> categoryColumnSelector;
-    @FXML
-    protected Tab optionsTab;
 
     public Data2DStatisticController() {
         baseTitle = message("DescriptiveStatistics");
@@ -295,15 +292,6 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                             scaleSelector.getEditor().setStyle(UserConfig.badStyle());
                         }
                     });
-
-            optionsTab.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    if (newValue) {
-                        checkMemoryLabel();
-                    }
-                }
-            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

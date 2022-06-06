@@ -13,6 +13,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
@@ -119,15 +120,6 @@ public class ControlData2DRowExpression extends TreeNodesController {
             if (!colnames.isEmpty()) {
                 String col1 = colnames.get(0);
                 PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
-                        "'#{" + col1 + "}'.search(/Hello/ig) >= 0",
-                        "'#{" + col1 + "}'.length > 0",
-                        "'#{" + col1 + "}'.indexOf('Hello') == 3",
-                        "'#{" + col1 + "}'.startsWith('Hello')",
-                        "'#{" + col1 + "}'.endsWith('Hello')",
-                        "var array = [ 'A', 'B', 'C', 'D' ];\n"
-                        + "array.includes('#{" + col1 + "}')"
-                ));
-                PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
                         "#{" + message("DataRowNumber") + "} % 2 == 0",
                         "#{" + message("DataRowNumber") + "} % 2 == 1",
                         "#{" + message("DataRowNumber") + "} >= 9 && #{" + message("DataRowNumber") + "} <= 24",
@@ -137,6 +129,16 @@ public class ControlData2DRowExpression extends TreeNodesController {
                         "Math.abs(#{" + col1 + "}) >= 0",
                         "#{" + col1 + "} < 0 || #{" + col1 + "} > 100 ",
                         "#{" + col1 + "} != 6"
+                ));
+
+                PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
+                        "'#{" + col1 + "}'.search(/Hello/ig) >= 0",
+                        "'#{" + col1 + "}'.length > 0",
+                        "'#{" + col1 + "}'.indexOf('Hello') == 3",
+                        "'#{" + col1 + "}'.startsWith('Hello')",
+                        "'#{" + col1 + "}'.endsWith('Hello')",
+                        "var array = [ 'A', 'B', 'C', 'D' ];\n"
+                        + "array.includes('#{" + col1 + "}')"
                 ));
             }
 
@@ -180,6 +182,19 @@ public class ControlData2DRowExpression extends TreeNodesController {
     @FXML
     protected void popScriptHistories(MouseEvent mouseEvent) {
         PopTools.popStringValues(this, scriptInput, mouseEvent, hisName, true);
+    }
+
+    public boolean checkExpression() {
+        String script = scriptInput.getText();
+        if (script == null || script.isBlank()) {
+            return true;
+        }
+        if (sourceController.data2D.validateExpression(script)) {
+            TableStringValues.add(hisName, script.trim());
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }
