@@ -720,6 +720,13 @@ public class ControlData2D extends BaseController {
             menu.setDisable(invalidData);
             popMenu.getItems().add(menu);
 
+            menu = new MenuItem(message("Delete"), StyleTools.getIconImage("iconDelete.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DDeleteController.open(tableController);
+            });
+            menu.setDisable(empty);
+            popMenu.getItems().add(menu);
+
             popMenu.getItems().add(new SeparatorMenuItem());
 
             Menu trimMenu = new Menu(message("Trim"), StyleTools.getIconImage("iconClean.png"));

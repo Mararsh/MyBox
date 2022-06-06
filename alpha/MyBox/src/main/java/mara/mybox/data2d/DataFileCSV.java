@@ -310,6 +310,68 @@ public class DataFileCSV extends DataFileText {
     }
 
     @Override
+    public boolean delete(boolean errorContinue) {
+        if (file == null || !file.exists() || file.length() == 0) {
+            return false;
+        }
+        File tmpFile = TmpFileTools.getTempFile();
+        CSVFormat format = cvsFormat();
+        File validFile = FileTools.removeBOM(file);
+        try ( CSVParser parser = CSVParser.parse(validFile, charset, format);
+                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, charset), format)) {
+            Iterator<CSVRecord> iterator = parser.iterator();
+            if (iterator != null) {
+                if (hasHeader) {
+                    try {
+                        csvPrinter.printRecord(parser.getHeaderNames());
+                    } catch (Exception e) {  // skip  bad lines
+                    }
+                }
+                if (rowFilter != null && !rowFilter.isBlank()) {
+                    rowIndex = 0;
+                    while (iterator.hasNext() && task != null && !task.isCancelled()) {
+                        try {
+                            CSVRecord record = iterator.next();
+                            if (record == null) {
+                                continue;
+                            }
+                            filterInTask(record.toList(), ++rowIndex);
+                            if (error != null) {
+                                if (errorContinue) {
+                                    continue;
+                                } else {
+                                    task.setError(error);
+                                    return false;
+                                }
+                            }
+                            if (filterPassed) {
+                                continue;
+                            }
+                            List<String> row = new ArrayList<>();
+                            for (int i = 0; i < columns.size(); i++) {
+                                if (i < record.size()) {
+                                    row.add(record.get(i));
+                                } else {
+                                    row.add(null);
+                                }
+                            }
+                            csvPrinter.printRecord(row);
+                        } catch (Exception e) {  // skip  bad lines
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return false;
+        }
+        return FileTools.rename(tmpFile, file, false);
+    }
+
+    @Override
     public long clearData() {
         File tmpFile = TmpFileTools.getTempFile();
         CSVFormat cvsFormat = cvsFormat();

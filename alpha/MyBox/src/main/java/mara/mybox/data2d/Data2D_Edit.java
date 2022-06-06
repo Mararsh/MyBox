@@ -38,6 +38,8 @@ public abstract class Data2D_Edit extends Data2D_Data {
 
     public abstract boolean setValue(List<Integer> cols, String value, boolean errorContinue);
 
+    public abstract boolean delete(boolean errorContinue);
+
     public abstract long clearData();
 
     /*

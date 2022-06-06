@@ -194,6 +194,11 @@ public class DataMatrix extends Data2D {
     }
 
     @Override
+    public boolean delete(boolean errorContinue) {
+        return false;
+    }
+
+    @Override
     public long clearData() {
         long count = -1;
         try ( Connection conn = DerbyBase.getConnection();

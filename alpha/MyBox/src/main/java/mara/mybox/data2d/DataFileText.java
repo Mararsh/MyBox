@@ -383,6 +383,61 @@ public class DataFileText extends DataFile {
         return FileTools.rename(tmpFile, file, false);
     }
 
+    @Override
+    public boolean delete(boolean errorContinue) {
+        if (file == null || !file.exists() || file.length() == 0) {
+            return false;
+        }
+        File tmpFile = TmpFileTools.getTempFile();
+        File validFile = FileTools.removeBOM(file);
+        try ( BufferedReader reader = new BufferedReader(new FileReader(validFile, charset));
+                 BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, charset, false))) {
+            List<String> names = columnNames();
+            if (hasHeader && names != null) {
+                readValidLine(reader);
+                TextFileTools.writeLine(writer, names, delimiter);
+            }
+            if (rowFilter != null && !rowFilter.isBlank()) {
+                String line;
+                rowIndex = 0;
+                while ((line = reader.readLine()) != null && task != null && !task.isCancelled()) {
+                    List<String> record = parseFileLine(line);
+                    if (record == null || record.isEmpty()) {
+                        continue;
+                    }
+                    filterInTask(record, ++rowIndex);
+                    if (error != null) {
+                        if (errorContinue) {
+                            continue;
+                        } else {
+                            task.setError(error);
+                            return false;
+                        }
+                    }
+                    if (filterPassed) {
+                        continue;
+                    }
+                    List<String> row = new ArrayList<>();
+                    for (int i = 0; i < columns.size(); i++) {
+                        if (i < record.size()) {
+                            row.add(record.get(i));
+                        } else {
+                            row.add(null);
+                        }
+                    }
+                    TextFileTools.writeLine(writer, row, delimiter);
+                }
+            }
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return false;
+        }
+        return FileTools.rename(tmpFile, file, false);
+    }
+
     public static DataFileText toText(DataFileCSV csvData) {
         if (csvData == null) {
             return null;

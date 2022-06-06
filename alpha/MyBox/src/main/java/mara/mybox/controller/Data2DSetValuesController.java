@@ -154,6 +154,12 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             super.setParameters(tableController);
 
             expressionController.setParamters(this);
+            expressionController.scriptInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    checkOptions();
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -217,6 +223,12 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
         } else {
             if (expressionRadio.isSelected()) {
                 ok = expressionController.checkExpression();
+                if (!ok) {
+                    if (data2D.getError() != null) {
+                        infoLabel.setText(message("Invalid") + ": " + message("RowExpression") + "\n"
+                                + data2D.getError());
+                    }
+                }
             }
             okButton.setDisable(!ok);
             return ok;
@@ -254,7 +266,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.setTask(null);
+                tableController.data2D.setTask(null);
                 task = null;
             }
 

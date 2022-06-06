@@ -860,7 +860,8 @@ public abstract class Data2D_Operations extends Data2D_Edit {
                 filledScript = findReplace.replaceStringAll(filledScript, "#{" + columns.get(i).getColumnName() + "}", row.get(i + 1));
             }
             filledScript = findReplace.replaceStringAll(filledScript, "#{" + message("DataRowNumber") + "}", row.get(0) + "");
-            filledScript = findReplace.replaceStringAll(filledScript, "#{" + message("TableRowNumber") + "}", (tableRowNumber + 1) + "");
+            filledScript = findReplace.replaceStringAll(filledScript, "#{" + message("TableRowNumber") + "}",
+                    tableRowNumber >= 0 ? (tableRowNumber + 1) + "" : "'Invalid'");
             return filledScript;
         } catch (Exception e) {
             error = e.toString();

@@ -187,6 +187,7 @@ public class Fxmls {
     public static final String Data2DLoadContentInSystemClipboardFxml = "/fxml/Data2DLoadContentInSystemClipboard.fxml";
     public static final String Data2DPasteContentInSystemClipboardFxml = "/fxml/Data2DPasteContentInSystemClipboard.fxml";
     public static final String Data2DPasteContentInMyBoxClipboardFxml = "/fxml/Data2DPasteContentInMyBoxClipboard.fxml";
+    public static final String Data2DDeleteFxml = "/fxml/Data2DDelete.fxml";
     public static final String Data2DExportFxml = "/fxml/Data2DExport.fxml";
     public static final String Data2DTransposeFxml = "/fxml/Data2DTranspose.fxml";
     public static final String Data2DStatisticFxml = "/fxml/Data2DStatistic.fxml";

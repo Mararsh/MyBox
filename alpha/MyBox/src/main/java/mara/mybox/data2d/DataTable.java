@@ -393,10 +393,10 @@ public class DataTable extends Data2D {
             try ( Connection conn = DerbyBase.getConnection();
                      PreparedStatement query = conn.prepareStatement("SELECT * FROM " + sheet);
                      ResultSet results = query.executeQuery()) {
-
                 Random random = new Random();
                 conn.setAutoCommit(false);
                 rowIndex = 0;
+                int count = 0;
                 while (results.next() && task != null && !task.isCancelled()) {
                     Data2DRow row = tableData2D.readData(results);
                     List<String> rowValues = new ArrayList<>();
@@ -437,7 +437,55 @@ public class DataTable extends Data2D {
                         }
                     }
                     tableData2D.updateData(conn, row);
-                    if (rowIndex % DerbyBase.BatchSize == 0) {
+                    if (++count % DerbyBase.BatchSize == 0) {
+                        conn.commit();
+                    }
+                }
+                conn.commit();
+            } catch (Exception e) {
+                if (task != null) {
+                    task.setError(e.toString());
+                }
+                MyBoxLog.debug(e);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean delete(boolean errorContinue) {
+        if (rowFilter == null || rowFilter.isBlank()) {
+            return clearData() >= 0;
+        } else {
+            try ( Connection conn = DerbyBase.getConnection();
+                     PreparedStatement query = conn.prepareStatement("SELECT * FROM " + sheet);
+                     ResultSet results = query.executeQuery()) {
+                conn.setAutoCommit(false);
+                rowIndex = 0;
+                int count = 0;
+                while (results.next() && task != null && !task.isCancelled()) {
+                    Data2DRow row = tableData2D.readData(results);
+                    List<String> rowValues = new ArrayList<>();
+                    for (int c = 0; c < columns.size(); c++) {
+                        Data2DColumn column = columns.get(c);
+                        Object v = row.getColumnValue(columns.get(c).getColumnName());
+                        rowValues.add(column.toString(v));
+                    }
+                    filterInTask(rowValues, ++rowIndex);
+                    if (error != null) {
+                        if (errorContinue) {
+                            continue;
+                        } else {
+                            task.setError(error);
+                            return false;
+                        }
+                    }
+                    if (!filterPassed) {
+                        continue;
+                    }
+                    tableData2D.deleteData(conn, row);
+                    if (++count % DerbyBase.BatchSize == 0) {
                         conn.commit();
                     }
                 }
