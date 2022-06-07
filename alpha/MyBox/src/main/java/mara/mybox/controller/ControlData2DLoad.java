@@ -925,7 +925,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     public void deleteRowsAction() {
         List<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
         if (selected == null || selected.isEmpty()) {
-            data2D.getStyles().clear();
+            data2D.getPageStyles().clear();
             return;
         }
         for (Integer index : selected) {
@@ -936,7 +936,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
 
     @Override
     protected void afterClear() {
-        data2D.getStyles().clear();
+        data2D.getPageStyles().clear();
         super.afterClear();
     }
 

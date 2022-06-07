@@ -32,7 +32,7 @@ License:    Apache License Version 2.0
                             <children>
                                 <HBox fx:id="buttonsBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
-                                        <Label fx:id="titleLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Copy" wrapText="true" HBox.hgrow="ALWAYS" />
+                                        <Label fx:id="titleLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%SelectToPaste" wrapText="true" HBox.hgrow="ALWAYS" />
                                         <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

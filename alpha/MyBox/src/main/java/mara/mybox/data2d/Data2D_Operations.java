@@ -5,14 +5,11 @@ import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.application.Platform;
-import javafx.scene.web.WebView;
 import mara.mybox.calculation.DescriptiveStatistic;
 import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.calculation.Normalization;
 import mara.mybox.calculation.SimpleLinearRegression;
 import mara.mybox.controller.ControlDataConvert;
-import mara.mybox.data.FindReplaceString;
 import mara.mybox.data2d.scan.Data2DReader;
 import mara.mybox.data2d.scan.Data2DReader.Operation;
 import mara.mybox.db.data.ColumnDefinition;
@@ -841,158 +838,6 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             return targetData;
         } else {
             return null;
-        }
-    }
-
-    public String rowExpression(String script, List<String> row, int tableRowNumber) {
-        try {
-            if (script == null || script.isBlank()
-                    || row == null || row.isEmpty()
-                    || columns == null || columns.isEmpty()) {
-                return script;
-            }
-            if (findReplace == null) {
-                findReplace = FindReplaceString.create().setOperation(FindReplaceString.Operation.ReplaceAll)
-                        .setIsRegex(false).setCaseInsensitive(false).setMultiline(false);
-            }
-            String filledScript = script;
-            for (int i = 0; i < columns.size(); i++) {
-                filledScript = findReplace.replaceStringAll(filledScript, "#{" + columns.get(i).getColumnName() + "}", row.get(i + 1));
-            }
-            filledScript = findReplace.replaceStringAll(filledScript, "#{" + message("DataRowNumber") + "}", row.get(0) + "");
-            filledScript = findReplace.replaceStringAll(filledScript, "#{" + message("TableRowNumber") + "}",
-                    tableRowNumber >= 0 ? (tableRowNumber + 1) + "" : "'Invalid'");
-            return filledScript;
-        } catch (Exception e) {
-            error = e.toString();
-            return null;
-        }
-    }
-
-    public boolean calculateExpression(String script, List<String> row, int tableRowNumber) {
-        return calculateExpression(rowExpression(script, row, tableRowNumber));
-    }
-
-    public boolean calculateExpression(String script) {
-        try {
-            error = null;
-            expressionResult = null;
-            if (script == null || script.isBlank()) {
-                return true;
-            }
-            if (webEngine == null) {
-                webEngine = new WebView().getEngine();
-            }
-            Object o = webEngine.executeScript(script);
-            if (o != null) {
-                expressionResult = o.toString();
-            }
-            return true;
-        } catch (Exception e) {
-            error = e.toString();
-            return false;
-        }
-    }
-
-    public boolean filter(List<String> row, int tableRowIndex) {
-        if (rowFilter == null || rowFilter.isBlank()) {
-            return true;
-        }
-        filterPassed = calculateExpression(rowFilter, row, tableRowIndex)
-                && "true".equals(expressionResult);
-        if (filterReversed) {
-            filterPassed = !filterPassed;
-        }
-        return filterPassed;
-    }
-
-    public boolean filterAndCalculate(List<String> data, long dataRowIndex, final String script) {
-        try {
-            error = null;
-            filterPassed = false;
-            if (data == null) {
-                return false;
-            }
-            if (rowFilter == null || rowFilter.isBlank()) {
-                filterPassed = true;
-                if (script == null) {
-                    return true;
-                }
-            }
-            Platform.runLater(() -> {
-                synchronized (lock) {
-                    try {
-                        List<String> values = new ArrayList<>();
-                        values.add(dataRowIndex + "");
-                        values.addAll(data);
-                        filterPassed = filter(values, -1);
-                        if (filterPassed && script != null) {
-                            calculateExpression(script, values, -1);
-                        }
-                    } catch (Exception e) {
-                        error = e.toString();
-                    }
-                    lock.notify();
-                }
-            });
-            synchronized (lock) {
-                lock.wait();
-            }
-        } catch (Exception e) {
-            error = e.toString();
-        }
-        return filterPassed;
-    }
-
-    public boolean filterInTask(List<String> data, long dataRowIndex) {
-        try {
-            error = null;
-            filterPassed = false;
-            if (data == null) {
-                return false;
-            }
-            if (rowFilter == null || rowFilter.isBlank()) {
-                filterPassed = true;
-                return true;
-            }
-            Platform.runLater(() -> {
-                synchronized (lock) {
-                    try {
-                        List<String> values = new ArrayList<>();
-                        values.add(dataRowIndex + "");
-                        values.addAll(data);
-                        filterPassed = filter(values, -1);
-                    } catch (Exception e) {
-                        error = e.toString();
-                    }
-                    lock.notify();
-                }
-            });
-            synchronized (lock) {
-                lock.wait();
-            }
-        } catch (Exception e) {
-            error = e.toString();
-        }
-        return filterPassed;
-    }
-
-    public boolean validateExpression(String script) {
-        try {
-            error = null;
-            expressionResult = null;
-            if (script == null || script.isBlank()) {
-                return true;
-            }
-            List<String> row = new ArrayList<>();
-            row.add("1");
-            for (int i = 0; i < columns.size(); i++) {
-                row.add("0");
-            }
-            return calculateExpression(rowExpression(script, row, 1));
-        } catch (Exception e) {
-            error = e.toString();
-            return false;
         }
     }
 

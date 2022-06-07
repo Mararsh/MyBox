@@ -223,11 +223,9 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
         } else {
             if (expressionRadio.isSelected()) {
                 ok = expressionController.checkExpression();
-                if (!ok) {
-                    if (data2D.getError() != null) {
-                        infoLabel.setText(message("Invalid") + ": " + message("RowExpression") + "\n"
-                                + data2D.getError());
-                    }
+                if (!ok && data2D.getError() != null) {
+                    infoLabel.setText(message("Invalid") + ": " + message("RowExpression") + "\n"
+                            + data2D.getError());
                 }
             }
             okButton.setDisable(!ok);

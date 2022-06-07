@@ -29,7 +29,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
     protected int pageSize, newColumnIndex;
     protected long dataSize, pagesNumber;
     protected long currentPage, startRowOfCurrentPage, endRowOfCurrentPage;   // 0-based, excluded end
-    protected Map<String, String> styles;
+    protected Map<String, String> pageStyles;
     protected ControlData2DLoad loadController;
     protected boolean tableChanged, filterReversed, filterPassed;
     protected SingletonTask task, backgroundTask;
@@ -44,7 +44,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         tableData2DColumn = new TableData2DColumn();
         tableData2DStyle = new TableData2DStyle();
         pageSize = 50;
-        styles = new HashMap<>();
+        pageStyles = new HashMap<>();
         initData();
     }
 
@@ -58,7 +58,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         newColumnIndex = -1;
         tableChanged = false;
         options = null;
-        styles.clear();
+        pageStyles.clear();
         error = null;
         rowFilter = null;
         webEngine = null;
@@ -108,7 +108,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
             columns = d.columns;
             savedColumns = d.savedColumns;
             newColumnIndex = d.newColumnIndex;
-            styles = d.styles;
+            pageStyles = d.pageStyles;
             dataSize = d.dataSize;
             pageSize = d.pageSize;
             pagesNumber = d.pagesNumber;
@@ -243,12 +243,12 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         this.savedColumns = savedColumns;
     }
 
-    public Map<String, String> getStyles() {
-        return styles;
+    public Map<String, String> getPageStyles() {
+        return pageStyles;
     }
 
-    public void setStyles(Map<String, String> styles) {
-        this.styles = styles;
+    public void setPageStyles(Map<String, String> pageStyles) {
+        this.pageStyles = pageStyles;
     }
 
     public String getRowFilter() {

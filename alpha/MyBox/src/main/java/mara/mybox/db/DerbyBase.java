@@ -649,13 +649,6 @@ public class DerbyBase {
                     MyBoxLog.error(e);
                 }
             }
-            if (!indexes.contains("Data2D_Style_unique_index".toLowerCase())) {
-                try ( Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableData2DStyle.Create_Unique_Index);
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
-            }
             return true;
         } catch (Exception e) {
             MyBoxLog.console(e);

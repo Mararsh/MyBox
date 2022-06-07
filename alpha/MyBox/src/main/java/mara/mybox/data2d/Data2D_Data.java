@@ -489,9 +489,9 @@ public abstract class Data2D_Data extends Data2D_Attributes {
             return false;
         }
         if (style == null || style.isBlank()) {
-            styles.remove(key);
+            pageStyles.remove(key);
         } else {
-            styles.put(key, style);
+            pageStyles.put(key, style);
         }
         return true;
     }
@@ -505,20 +505,20 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         if (key == null) {
             return null;
         }
-        return styles.get(key);
+        return pageStyles.get(key);
     }
 
     public boolean moveDownStyles(int index, int number) {
-        if (styles.isEmpty() || number < 1 || index < 0) {
+        if (pageStyles.isEmpty() || number < 1 || index < 0) {
             return false;
         }
         try {
             Map<String, String> tStyles = new HashMap<>();
-            for (String key : styles.keySet()) {
+            for (String key : pageStyles.keySet()) {
                 int pos = key.indexOf(",");
                 int row = Integer.valueOf(key.substring(0, pos));
                 String colName = key.substring(pos + 1);
-                String style = styles.get(key);
+                String style = pageStyles.get(key);
                 if (row < index) {
                     tStyles.put(key, style);
                 } else {
@@ -526,7 +526,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
                     tStyles.put(row + "," + colName, style);
                 }
             }
-            styles = tStyles;
+            pageStyles = tStyles;
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -535,16 +535,16 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     }
 
     public boolean moveUpStyles(int index) {
-        if (styles.isEmpty() || index < 0) {
+        if (pageStyles.isEmpty() || index < 0) {
             return false;
         }
         try {
             Map<String, String> tStyles = new HashMap<>();
-            for (String key : styles.keySet()) {
+            for (String key : pageStyles.keySet()) {
                 int pos = key.indexOf(",");
                 int row = Integer.valueOf(key.substring(0, pos));
                 String colName = key.substring(pos + 1);
-                String style = styles.get(key);
+                String style = pageStyles.get(key);
                 if (row < index) {
                     tStyles.put(key, style);
                 } else {
@@ -552,7 +552,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
                     tStyles.put(row + "," + colName, style);
                 }
             }
-            styles = tStyles;
+            pageStyles = tStyles;
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
@@ -38,32 +39,22 @@ public class TableData2DStyle extends BaseTable<Data2DStyle> {
         addColumn(new ColumnDefinition("d2id", ColumnType.Long, true)
                 .setReferName("Data2D_Style_d2id_fk").setReferTable("Data2D_Definition").setReferColumn("d2did")
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade));
-        addColumn(new ColumnDefinition("row", ColumnType.Long, true));
-        addColumn(new ColumnDefinition("colName", ColumnType.String, true));
+        addColumn(new ColumnDefinition("rowStart", ColumnType.Long)); // 0-based
+        addColumn(new ColumnDefinition("rowEnd", ColumnType.Long));  // Exclude
+        addColumn(new ColumnDefinition("colName", ColumnType.String).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("moreConditions", ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("style", ColumnType.String, true).setLength(StringMaxLength));
         return this;
     }
 
-    public static final String Create_Unique_Index
-            = "CREATE UNIQUE INDEX Data2D_Style_unique_index on Data2D_Style ( d2id , row, colName  )";
-
     public static final String QueryStyles
             = "SELECT * FROM Data2D_Style WHERE d2id=?";
 
-    public static final String QueryStyle
-            = "SELECT * FROM Data2D_Style WHERE d2id=? AND row=? AND colName=? FETCH FIRST ROW ONLY";
-
     public static final String QueryPageStyles
-            = "SELECT * FROM Data2D_Style WHERE d2id=? AND row>=? AND row<?";
+            = "SELECT * FROM Data2D_Style WHERE d2id=? AND (rowStart IS NULL OR rowStart<=?) AND (rowEnd IS NULL OR rowEnd>=?)";
 
-    public static final String ClearStyle
+    public static final String ClearStyles
             = "DELETE FROM Data2D_Style WHERE d2id=?";
-
-    public static final String CheckColumns
-            = "DELETE FROM Data2D_Style WHERE d2id=? AND colName NOT IN ( ? )";
-
-    public static final String CheckRows
-            = "DELETE FROM Data2D_Style WHERE d2id=? AND (row < 0 OR row >= ?)";
 
     @Override
     public Object readForeignValue(ResultSet results, String column) {
@@ -90,49 +81,39 @@ public class TableData2DStyle extends BaseTable<Data2DStyle> {
         return true;
     }
 
-    public Data2DStyle query(Connection conn, Data2DStyle d2Style) {
-        if (conn == null || d2Style == null) {
+    public List<Data2DStyle> query(Connection conn, long d2id) {
+        if (conn == null || d2id < 0) {
             return null;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(QueryStyle)) {
-            statement.setLong(1, d2Style.getD2id());
-            statement.setLong(2, d2Style.getRow());
-            statement.setString(3, d2Style.getColName());
-            ResultSet results = statement.executeQuery();
-            if (results.next()) {
-                return readData(results);
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
+        String sql = "SELECT * FROM Data2D_Style WHERE d2id=" + d2id;
+        return query(conn, sql);
     }
 
-    public Data2DStyle write(Connection conn, Data2DStyle d2Style) {
-        if (conn == null || d2Style == null) {
-            return null;
+    public List<Data2DStyle> queryStyles(Connection conn, long d2id, long rowStart, long rowEnd) {
+        List<Data2DStyle> styles = new ArrayList<>();
+        if (conn == null || d2id < 0) {
+            return styles;
         }
-        try {
-            Data2DStyle exist = query(conn, d2Style);
-            if (exist == null) {
-                return insertData(conn, d2Style);
-            } else {
-                d2Style.setD2sid(exist.getD2sid());
-                return updateData(conn, d2Style);
+        try ( PreparedStatement statement = conn.prepareStatement(QueryPageStyles)) {
+            statement.setLong(1, d2id);
+            statement.setLong(2, rowStart);
+            statement.setLong(3, rowEnd);
+            ResultSet results = statement.executeQuery();
+            while (results.next()) {
+                Data2DStyle style = readData(results);
+                styles.add(style);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return null;
         }
+        return styles;
     }
 
     public boolean clear(Connection conn, long d2id) {
         if (conn == null || d2id < 0) {
             return false;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(ClearStyle)) {
+        try ( PreparedStatement statement = conn.prepareStatement(ClearStyles)) {
             statement.setLong(1, d2id);
             statement.executeUpdate();
             return true;
@@ -166,22 +147,6 @@ public class TableData2DStyle extends BaseTable<Data2DStyle> {
         }
     }
 
-    public boolean checkRows(Connection conn, long d2id, long maxRow) {
-        if (conn == null || d2id < 0 || maxRow < 0) {
-            return false;
-        }
-        try ( PreparedStatement statement = conn.prepareStatement(CheckRows)) {
-            statement.setLong(1, d2id);
-            statement.setLong(2, maxRow);
-            statement.executeUpdate();
-            conn.commit();
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
     public int copyStyles(Connection conn, long sourceid, long targetid) {
         if (conn == null || sourceid < 0 || targetid < 0 || sourceid == targetid) {
             return -1;
@@ -195,7 +160,7 @@ public class TableData2DStyle extends BaseTable<Data2DStyle> {
                 Data2DStyle s = readData(results);
                 s.setD2sid(-1);
                 s.setD2id(targetid);
-                if (write(conn, s) != null) {
+                if (insertData(conn, s) != null) {
                     count++;
                 }
             }
