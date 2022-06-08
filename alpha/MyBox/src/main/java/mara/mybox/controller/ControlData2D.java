@@ -696,7 +696,7 @@ public class ControlData2D extends BaseController {
             menu.setOnAction((ActionEvent event) -> {
                 Data2DSetStylesController.open(tableController);
             });
-            menu.setDisable(empty);
+            menu.setDisable(empty || data2D.isTmpData());
             popMenu.getItems().add(menu);
 
             menu = new MenuItem(message("CopyFilterQuery"), StyleTools.getIconImage("iconCopy.png"));

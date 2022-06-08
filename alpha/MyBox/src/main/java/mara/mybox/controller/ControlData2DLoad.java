@@ -914,12 +914,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         }
     }
 
-    @Override
-    public void addRows(int index, int number) {
-        data2D.moveDownStyles(index, number);
-        super.addRows(index, number);
-    }
-
     @FXML
     @Override
     public void deleteRowsAction() {
@@ -927,9 +921,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         if (selected == null || selected.isEmpty()) {
             data2D.getPageStyles().clear();
             return;
-        }
-        for (Integer index : selected) {
-            data2D.moveUpStyles(index);
         }
         super.deleteRowsAction();
     }

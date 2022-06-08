@@ -2,9 +2,7 @@ package mara.mybox.data2d;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
@@ -475,10 +473,6 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         return row + "," + colName;
     }
 
-    public String styleKey(long row, int col) {
-        return styleKey(row, colName(col));
-    }
-
     public boolean setStyle(long row, int col, String style) {
         return setStyle(row, colName(col), style);
     }
@@ -496,68 +490,12 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         return true;
     }
 
-    public String getStyle(long row, int col) {
-        return getStyle(row, colName(col));
-    }
-
     public String getStyle(long row, String colName) {
         String key = styleKey(row, colName);
         if (key == null) {
             return null;
         }
         return pageStyles.get(key);
-    }
-
-    public boolean moveDownStyles(int index, int number) {
-        if (pageStyles.isEmpty() || number < 1 || index < 0) {
-            return false;
-        }
-        try {
-            Map<String, String> tStyles = new HashMap<>();
-            for (String key : pageStyles.keySet()) {
-                int pos = key.indexOf(",");
-                int row = Integer.valueOf(key.substring(0, pos));
-                String colName = key.substring(pos + 1);
-                String style = pageStyles.get(key);
-                if (row < index) {
-                    tStyles.put(key, style);
-                } else {
-                    row += number;
-                    tStyles.put(row + "," + colName, style);
-                }
-            }
-            pageStyles = tStyles;
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-    public boolean moveUpStyles(int index) {
-        if (pageStyles.isEmpty() || index < 0) {
-            return false;
-        }
-        try {
-            Map<String, String> tStyles = new HashMap<>();
-            for (String key : pageStyles.keySet()) {
-                int pos = key.indexOf(",");
-                int row = Integer.valueOf(key.substring(0, pos));
-                String colName = key.substring(pos + 1);
-                String style = pageStyles.get(key);
-                if (row < index) {
-                    tStyles.put(key, style);
-                } else {
-                    row--;
-                    tStyles.put(row + "," + colName, style);
-                }
-            }
-            pageStyles = tStyles;
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
     }
 
 }

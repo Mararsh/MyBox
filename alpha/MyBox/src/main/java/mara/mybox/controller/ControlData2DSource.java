@@ -100,7 +100,7 @@ public class ControlData2DSource extends ControlData2DLoad {
             };
             tableController.statusNotify.addListener(tableStatusListener);
 
-            filterController.setParamters(this);
+            filterController.setParamters(tableController.data2D);
             tableView.requestFocus();
 
             sourceChanged();
@@ -146,6 +146,7 @@ public class ControlData2DSource extends ControlData2DLoad {
             pagesNumber = tableController.pagesNumber;
             dataSize = tableController.dataSize;
             dataSizeLoaded = true;
+            filterController.data2D = data2D;
             isSettingValues = false;
             refreshControls();
             notifyLoaded();

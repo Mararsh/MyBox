@@ -160,7 +160,13 @@ public class DataMigration {
             statement.executeUpdate("DROP INDEX Data2D_Style_unique_index");
             statement.executeUpdate("ALTER TABLE Data2D_Style ADD COLUMN rowStart BigInt");
             statement.executeUpdate("ALTER TABLE Data2D_Style ADD COLUMN rowEnd BigInt");
+            statement.executeUpdate("ALTER TABLE Data2D_Style ADD COLUMN columns VARCHAR(" + StringMaxLength + ")");
             statement.executeUpdate("ALTER TABLE Data2D_Style ADD COLUMN moreConditions VARCHAR(" + StringMaxLength + ")");
+            statement.executeUpdate("ALTER TABLE Data2D_Style ADD COLUMN fontColor VARCHAR(64)");
+            statement.executeUpdate("ALTER TABLE Data2D_Style ADD COLUMN fontSize VARCHAR(64)");
+            statement.executeUpdate("ALTER TABLE Data2D_Style ADD COLUMN bgColor VARCHAR(64)");
+            statement.executeUpdate("ALTER TABLE Data2D_Style ADD COLUMN bold Boolean");
+            statement.executeUpdate("ALTER TABLE Data2D_Style ADD COLUMN moreStyle VARCHAR(" + StringMaxLength + ")");
 
             conn.setAutoCommit(false);
             TableData2DStyle tableData2DStyle = new TableData2DStyle();
@@ -181,14 +187,14 @@ public class DataMigration {
                         conn.commit();
                     }
                     rowStart = row;
-                    data2DStyle.setD2id(d2id).setColName(colName).setStyle(style)
+                    data2DStyle.setD2id(d2id).setColumns(colName).setMoreStyle(style)
                             .setRowStart(rowStart).setRowEnd(rowStart + 1);
                 } else if (row > lastRow + 1) {
                     data2DStyle.setD2sid(-1).setRowEnd(lastRow + 1);
                     tableData2DStyle.insertData(conn, data2DStyle);
                     conn.commit();
                     rowStart = row;
-                    data2DStyle.setD2id(d2id).setColName(colName).setStyle(style)
+                    data2DStyle.setD2id(d2id).setColumns(colName).setMoreStyle(style)
                             .setRowStart(rowStart).setRowEnd(rowStart + 1);
                 }
                 lastD2id = d2id;
@@ -204,7 +210,9 @@ public class DataMigration {
 
             conn.setAutoCommit(true);
             statement.executeUpdate("ALTER TABLE Data2D_Style DROP COLUMN row");
-            statement.executeUpdate("DELETE FROM Data2D_Style WHERE rowStart IS NULL");
+            statement.executeUpdate("ALTER TABLE Data2D_Style DROP COLUMN colName");
+            statement.executeUpdate("ALTER TABLE Data2D_Style DROP COLUMN style");
+            statement.executeUpdate("DELETE FROM Data2D_Style WHERE columns IS NULL");
 
         } catch (Exception e) {
             MyBoxLog.error(e);

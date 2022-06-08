@@ -153,7 +153,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
         try {
             super.setParameters(tableController);
 
-            expressionController.setParamters(this);
+            expressionController.setParamters(data2D);
             expressionController.scriptInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {

@@ -1,6 +1,7 @@
 package mara.mybox.db.data;
 
 import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -9,22 +10,83 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class Data2DStyle extends BaseData {
 
+    public static final String ColumnSeparator = "::";
+
     protected Data2DDefinition data2DDefinition;
-    protected long d2sid, d2id, rowStart, rowEnd;
-    protected String colName, moreConditions, style;
+    protected long d2sid, d2id;
+    protected long rowStart, rowEnd; // 0-based, exlcuded
+    protected String columns, moreConditions, fontColor, bgColor, fontSize, moreStyle;
+    protected boolean bold;
 
     private void init() {
         d2sid = -1;
         d2id = -1;
         rowStart = -1;
         rowEnd = -1;
-        colName = null;
+        columns = null;
         moreConditions = null;
-        style = null;
+        fontColor = null;
+        bgColor = null;
+        fontSize = null;
+        moreStyle = null;
+        bold = false;
     }
 
     public Data2DStyle() {
         init();
+    }
+
+    public String finalStyle() {
+        String styleValue = "";
+        if (fontSize != null && !message("Default").equals(fontSize)) {
+            styleValue = "-fx-font-size: " + fontSize + "; ";
+        }
+        if (fontColor != null && !message("Default").equals(fontColor)) {
+            styleValue += "-fx-text-fill: " + fontColor + "; ";
+        }
+        if (bgColor != null && !message("Default").equals(bgColor)) {
+            styleValue += "-fx-background-color: " + bgColor + "; ";
+        }
+        if (bold) {
+            styleValue += "-fx-font-weight: bolder; ";
+        }
+        if (moreStyle != null && !moreStyle.isBlank()) {
+            styleValue += moreStyle.replaceAll("\n", " ");
+        }
+        return styleValue.isBlank() ? null : styleValue.trim();
+    }
+
+    public Data2DStyle cloneAll() {
+        try {
+            Data2DStyle newData = (Data2DStyle) super.clone();
+            newData.cloneFrom(this);
+            return newData;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
+        }
+    }
+
+    public void cloneFrom(Data2DStyle style) {
+        try {
+            if (style == null) {
+                return;
+            }
+            data2DDefinition = style.data2DDefinition;
+            d2sid = style.d2sid;
+            d2id = style.d2id;
+            rowStart = style.rowStart;
+            rowEnd = style.rowEnd;
+            columns = style.columns;
+            moreConditions = style.moreConditions;
+            fontColor = style.fontColor;
+            bgColor = style.bgColor;
+            fontSize = style.fontSize;
+            moreStyle = style.moreStyle;
+            bold = style.bold;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
     }
 
     /*
@@ -35,7 +97,7 @@ public class Data2DStyle extends BaseData {
     }
 
     public static boolean valid(Data2DStyle data) {
-        return data != null && data.getD2id() >= 0 && data.getStyle() != null;
+        return data != null && data.getD2id() >= 0;
     }
 
     public static boolean setValue(Data2DStyle data, String column, Object value) {
@@ -56,14 +118,26 @@ public class Data2DStyle extends BaseData {
                 case "rowEnd":
                     data.setRowEnd(value == null ? -1 : (long) value);
                     return true;
-                case "colName":
-                    data.setColName(value == null ? null : (String) value);
+                case "columns":
+                    data.setColumns(value == null ? null : (String) value);
                     return true;
                 case "moreConditions":
                     data.setMoreConditions(value == null ? null : (String) value);
                     return true;
-                case "style":
-                    data.setStyle(value == null ? null : (String) value);
+                case "fontColor":
+                    data.setFontColor(value == null ? null : (String) value);
+                    return true;
+                case "bgColor":
+                    data.setBgColor(value == null ? null : (String) value);
+                    return true;
+                case "fontSize":
+                    data.setFontSize(value == null ? null : (String) value);
+                    return true;
+                case "moreStyle":
+                    data.setMoreStyle(value == null ? null : (String) value);
+                    return true;
+                case "bold":
+                    data.setBold(value == null ? false : (boolean) value);
                     return true;
             }
         } catch (Exception e) {
@@ -86,17 +160,37 @@ public class Data2DStyle extends BaseData {
                     return data.getRowStart();
                 case "rowEnd":
                     return data.getRowEnd();
-                case "colName":
-                    return data.getColName();
+                case "columns":
+                    return data.getColumns();
                 case "moreConditions":
                     return data.getMoreConditions();
-                case "style":
-                    return data.getStyle();
+                case "fontColor":
+                    return data.getFontColor();
+                case "bgColor":
+                    return data.getBgColor();
+                case "fontSize":
+                    return data.getFontSize();
+                case "moreStyle":
+                    return data.getMoreStyle();
+                case "bold":
+                    return data.isBold();
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
         return null;
+    }
+
+    /*
+        interface get
+        1-based, inlcuded
+     */
+    public long getFrom() {
+        return rowStart < 0 ? -1 : rowStart + 1;
+    }
+
+    public long getTo() {
+        return rowEnd;
     }
 
     /*
@@ -138,12 +232,12 @@ public class Data2DStyle extends BaseData {
         return this;
     }
 
-    public String getColName() {
-        return colName;
+    public String getColumns() {
+        return columns;
     }
 
-    public Data2DStyle setColName(String colName) {
-        this.colName = colName;
+    public Data2DStyle setColumns(String columns) {
+        this.columns = columns;
         return this;
     }
 
@@ -156,12 +250,48 @@ public class Data2DStyle extends BaseData {
         return this;
     }
 
-    public String getStyle() {
-        return style;
+    public String getFontColor() {
+        return fontColor;
     }
 
-    public Data2DStyle setStyle(String style) {
-        this.style = style;
+    public Data2DStyle setFontColor(String fontColor) {
+        this.fontColor = fontColor;
+        return this;
+    }
+
+    public String getBgColor() {
+        return bgColor;
+    }
+
+    public Data2DStyle setBgColor(String bgColor) {
+        this.bgColor = bgColor;
+        return this;
+    }
+
+    public String getFontSize() {
+        return fontSize;
+    }
+
+    public Data2DStyle setFontSize(String fontSize) {
+        this.fontSize = fontSize;
+        return this;
+    }
+
+    public String getMoreStyle() {
+        return moreStyle;
+    }
+
+    public Data2DStyle setMoreStyle(String moreStyle) {
+        this.moreStyle = moreStyle;
+        return this;
+    }
+
+    public boolean isBold() {
+        return bold;
+    }
+
+    public Data2DStyle setBold(boolean bold) {
+        this.bold = bold;
         return this;
     }
 

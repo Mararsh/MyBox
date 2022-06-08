@@ -12,6 +12,7 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.MouseEvent;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableTreeNode;
@@ -27,7 +28,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlData2DRowExpression extends TreeNodesController {
 
-    protected ControlData2DSource sourceController;
+    protected Data2D data2D;
     protected String hisName;
 
     @FXML
@@ -40,8 +41,8 @@ public class ControlData2DRowExpression extends TreeNodesController {
         hisName = "RowExpressionHistories";
     }
 
-    public void setParamters(ControlData2DSource sourceController) {
-        this.sourceController = sourceController;
+    public void setParamters(Data2D data2D) {
+        this.data2D = data2D;
         tableTreeNode = new TableTreeNode();
         tableTreeNodeTag = new TableTreeNodeTag();
         loadTree(null);
@@ -107,7 +108,7 @@ public class ControlData2DRowExpression extends TreeNodesController {
             topButtons.add(clearInputButton);
             controller.addFlowPane(topButtons);
 
-            List<String> colnames = sourceController.data2D.columnNames();
+            List<String> colnames = data2D.columnNames();
             List<String> names = new ArrayList<>();
             names.add(message("TableRowNumber"));
             names.add(message("DataRowNumber"));
@@ -189,7 +190,7 @@ public class ControlData2DRowExpression extends TreeNodesController {
         if (script == null || script.isBlank()) {
             return true;
         }
-        if (sourceController.data2D.validateExpression(script)) {
+        if (data2D.validateExpression(script)) {
             TableStringValues.add(hisName, script.trim());
             return true;
         } else {

@@ -22,8 +22,8 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
     public boolean checkExpression() {
         if (super.checkExpression()) {
             String script = scriptInput.getText();
-            sourceController.data2D.setRowFilter(script);
-            sourceController.data2D.setFilterReversed(!trueRadio.isSelected());
+            data2D.setRowFilter(script);
+            data2D.setFilterReversed(!trueRadio.isSelected());
             return true;
         } else {
             return false;

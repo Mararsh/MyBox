@@ -547,7 +547,7 @@ public class DataTable extends Data2D {
                         Object v = dataRow.getColumnValue(columns.get(c).getColumnName());
                         rowValues.add(column.toString(v));
                     }
-                    filter(rowValues, ++rowIndex);
+                    filter(rowValues, rowIndex++);
                     if (!filterPassed) {
                         continue;
                     }

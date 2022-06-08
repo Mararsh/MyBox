@@ -397,7 +397,6 @@ public abstract class BaseData2DHandleController extends ControlData2DSource {
                     newRows.add(newRow);
                 }
                 int index = targetController.insertRadio.isSelected() ? row : row + 1;
-                tableController.data2D.moveDownStyles(index, newRows.size());
                 tableController.tableData.addAll(index, newRows);
             }
             tableController.tableView.refresh();
