@@ -1,40 +1,34 @@
 package mara.mybox.controller;
 
-import java.sql.Connection;
-import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.VBox;
-import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
  * @CreateDate 2022-2-13
  * @License Apache License Version 2.0
  */
-public class Data2DConvertToDataBaseController extends Data2DTableCreateController {
-
-    protected List<Integer> selectedRowsIndices, selectedColumnsIndices;
+public class Data2DConvertToDataBaseController extends BaseData2DHandleController {
 
     @FXML
-    protected Tab dataTab;
-    @FXML
-    protected ControlData2DSource sourceController;
-    @FXML
-    protected VBox dataVBox;
+    protected Tab dataTab, logsTab, attributesTab;
     @FXML
     protected CheckBox importCheck;
     @FXML
-    protected Label dataLabel, infoLabel;
+    protected VBox dataVBox, filterVBox, attributesBox;
+    @FXML
+    protected ControlNewDataTable attributesController;
+    @FXML
+    protected Data2DConvertToDataBaseTask taskController;
 
     public Data2DConvertToDataBaseController() {
         baseTitle = message("ConvertToDatabaseTable");
@@ -42,131 +36,59 @@ public class Data2DConvertToDataBaseController extends Data2DTableCreateControll
     }
 
     @Override
-    public void setParameters(ControlData2DEditTable tableController) {
+    public void initControls() {
         try {
-            super.setParameters(tableController);
+            super.initControls();
 
-            attributesController.nameInput.setText(tableController.data2D.shortName());
-
-            sourceController.setParameters(this, tableController);
-            sourceController.setLabel(message("SelectRowsColumnsToHanlde"));
-
-            sourceController.loadedNotify.addListener(new ChangeListener<Boolean>() {
+            importCheck.setSelected(UserConfig.getBoolean(baseName + "Import", true));
+            importCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    checkSource();
+                    UserConfig.setBoolean(baseName + "Import", importCheck.isSelected());
                 }
             });
-            sourceController.selectedNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    checkSource();
-                }
-            });
-            checkSource();
 
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
+            okButton = startButton;
 
-    public boolean checkSource() {
-        try {
-            getMyStage().setTitle(baseTitle
-                    + (tableController.data2D == null ? "" : " - " + tableController.data2D.displayName()));
-            infoLabel.setText("");
-
-            selectedColumnsIndices = sourceController.checkedColsIndices;
-            if (selectedColumnsIndices == null || selectedColumnsIndices.isEmpty()) {
-                infoLabel.setText(message("SelectToHandle") + ": " + message("Columns"));
-                tabPane.getSelectionModel().select(dataTab);
-                return false;
-            }
-            attributesController.setColumns(selectedColumnsIndices);
-
-            if (!sourceController.isAllPages()) {
-                selectedRowsIndices = sourceController.checkedRowsIndices;
-                if (selectedRowsIndices == null || selectedRowsIndices.isEmpty()) {
-                    infoLabel.setText(message("SelectToHandle") + ": " + message("Rows"));
-                    tabPane.getSelectionModel().select(dataTab);
-                    return false;
-                }
-            } else {
-                selectedRowsIndices = null;
-            }
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return false;
-        }
-    }
-
-    @Override
-    public boolean checkOptions() {
-        try {
-            infoLabel.setText("");
-            if (!tableController.data2D.hasData()) {
-                infoLabel.setText(message("NoData"));
-                tabPane.getSelectionModel().select(dataTab);
-                return false;
-            }
-            return super.checkOptions();
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return false;
-        }
-    }
-
-    @Override
-    public void beforeTask() {
-        try {
-            dataVBox.setDisable(true);
-            attributesBox.setDisable(true);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
     @Override
-    public boolean doTask() {
-        try ( Connection conn = DerbyBase.getConnection()) {
-            if (!attributesController.createTable(conn)) {
-                return false;
-            }
-            if (importCheck.isSelected()) {
-                if (sourceController.isAllPages() && tableController.data2D.isMutiplePages()) {
-                    attributesController.importAllData(conn);
-                } else {
-                    attributesController.importData(conn, selectedRowsIndices);
-                }
-            }
-            return true;
-        } catch (Exception e) {
-            updateLogs(e.toString());
-            return false;
-        }
-
-    }
-
-    @Override
-    public void afterSuccess() {
+    public void setParameters(ControlData2DEditTable editController) {
         try {
-            SoundTools.miao3();
-            DataTablesController c = DataTablesController.open(attributesController.dataTable);
-            c.refreshAction();
+            super.setParameters(editController);
+
+            taskController.setParameters(this);
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
     @Override
-    public void afterTask() {
-        try {
-            dataVBox.setDisable(false);
-            attributesBox.setDisable(false);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+    public void sourceChanged() {
+        if (tableController == null) {
+            return;
         }
+        super.sourceChanged();
+        attributesController.nameInput.setText(data2D.shortName());
+        attributesController.columnsController.setValues(data2D.columnNames());
+    }
+
+    public void columnSelected() {
+        if (isSettingValues) {
+            return;
+        }
+        checkColumns();
+        attributesController.setColumns(checkedColsIndices);
+    }
+
+    @FXML
+    @Override
+    public void startAction() {
+        taskController.startAction();
     }
 
     /*

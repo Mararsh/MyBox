@@ -21,7 +21,7 @@ import mara.mybox.value.Fxmls;
  */
 public class Data2DTableCreateController extends BaseTaskController {
 
-    protected ControlData2DEditTable tableController;
+    protected ControlData2DEditTable editController;
     protected ChangeListener<Boolean> columnStatusListener;
 
     @FXML
@@ -31,10 +31,10 @@ public class Data2DTableCreateController extends BaseTaskController {
     @FXML
     protected ControlNewDataTable attributesController;
 
-    public void setParameters(ControlData2DEditTable tableController) {
+    public void setParameters(ControlData2DEditTable editController) {
         try {
-            this.tableController = tableController;
-            attributesController.setParameters(this, tableController);
+            this.editController = editController;
+            attributesController.setParameters(this, editController.data2D);
 
             columnStatusListener = new ChangeListener<Boolean>() {
                 @Override
@@ -42,7 +42,8 @@ public class Data2DTableCreateController extends BaseTaskController {
                     refreshControls();
                 }
             };
-            tableController.columnChangedNotify.addListener(columnStatusListener);
+            editController.columnChangedNotify.addListener(columnStatusListener);
+
             refreshControls();
 
         } catch (Exception e) {
@@ -50,15 +51,18 @@ public class Data2DTableCreateController extends BaseTaskController {
         }
     }
 
-    public synchronized void refreshControls() {
+    public void refreshControls() {
         try {
-            getMyStage().setTitle(tableController.getTitle());
+            if (editController == null) {
+                return;
+            }
+            getMyStage().setTitle(editController.getTitle());
 
-            if (tableController.data2D.getColumns() == null) {
+            if (editController.data2D.getColumns() == null) {
                 attributesController.setColumns(null);
             } else {
                 List<Integer> indices = new ArrayList<>();
-                for (int i = 0; i < tableController.data2D.getColumns().size(); i++) {
+                for (int i = 0; i < editController.data2D.getColumns().size(); i++) {
                     indices.add(i);
                 }
                 attributesController.setColumns(indices);
@@ -93,7 +97,7 @@ public class Data2DTableCreateController extends BaseTaskController {
             if (!attributesController.createTable(conn)) {
                 return false;
             }
-            if (tableController.data2D.isMutiplePages()) {
+            if (editController.data2D.isMutiplePages()) {
                 attributesController.importAllData(conn);
             } else {
                 attributesController.importData(conn, null);
@@ -109,9 +113,10 @@ public class Data2DTableCreateController extends BaseTaskController {
     public void afterSuccess() {
         try {
             SoundTools.miao3();
-            tableController.dataController.setData(attributesController.dataTable);
-            tableController.dataSaved();
-
+            if (editController != null) {
+                editController.dataController.setData(attributesController.dataTable);
+                editController.dataSaved();
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -130,9 +135,12 @@ public class Data2DTableCreateController extends BaseTaskController {
     @Override
     public void cleanPane() {
         try {
-            tableController.columnChangedNotify.removeListener(columnStatusListener);
-            columnStatusListener = null;
-            tableController = null;
+            if (editController != null) {
+                editController.columnChangedNotify.removeListener(columnStatusListener);
+                columnStatusListener = null;
+                editController = null;
+            }
+
         } catch (Exception e) {
         }
         super.cleanPane();

@@ -21,6 +21,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Hyperlink;
@@ -530,7 +531,8 @@ public class PopTools {
         popStringValues(parent, input, mouseEvent, name, false);
     }
 
-    public static void popStringValues(BaseController parent, TextInputControl input, MouseEvent mouseEvent, String name, boolean clearAndSet) {
+    public static void popStringValues(BaseController parent, TextInputControl input, MouseEvent mouseEvent, String name, boolean alwaysClear) {
+
         try {
             int max = UserConfig.getInt(name + "MaxSaved", 20);
 
@@ -552,7 +554,7 @@ public class PopTools {
                 public void handle(ActionEvent event) {
                     TableStringValues.clear(name);
                     controller.close();
-                    popStringValues(parent, input, mouseEvent, name, clearAndSet);
+                    popStringValues(parent, input, mouseEvent, name, alwaysClear);
                 }
             });
             setButtons.add(clearValuesButton);
@@ -574,8 +576,21 @@ public class PopTools {
                 }
             });
             setButtons.add(maxButton);
-
             setButtons.add(new Label(message("RightClickToDelete")));
+
+            if (alwaysClear) {
+                UserConfig.setBoolean(name + "ValuesClearAndSet", true);
+            } else {
+                CheckBox clearCheck = new CheckBox(message("ClearAndPaste"));
+                clearCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        UserConfig.setBoolean(name + "ValuesClearAndSet", clearCheck.isSelected());
+                    }
+                });
+                setButtons.add(clearCheck);
+            }
+
             controller.addFlowPane(setButtons);
             controller.addNode(new Separator());
 
@@ -586,7 +601,7 @@ public class PopTools {
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        if (clearAndSet) {
+                        if (UserConfig.getBoolean(name + "ValuesClearAndSet", true)) {
                             input.setText(value);
                         } else {
                             input.replaceText(input.getSelection(), value);
@@ -601,7 +616,7 @@ public class PopTools {
                         if (event.getButton() == MouseButton.SECONDARY) {
                             TableStringValues.delete(name, value);
                             controller.close();
-                            popStringValues(parent, input, mouseEvent, name, clearAndSet);
+                            popStringValues(parent, input, mouseEvent, name, alwaysClear);
                         }
                     }
                 });

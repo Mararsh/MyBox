@@ -222,7 +222,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             return false;
         } else {
             if (expressionRadio.isSelected()) {
-                ok = expressionController.checkExpression();
+                ok = expressionController.checkExpression(isAllPages());
                 if (!ok && data2D.getError() != null) {
                     infoLabel.setText(message("Invalid") + ": " + message("RowExpression") + "\n"
                             + data2D.getError());

@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.MouseEvent;
@@ -42,10 +43,16 @@ public class ControlData2DRowExpression extends TreeNodesController {
     }
 
     public void setParamters(Data2D data2D) {
-        this.data2D = data2D;
-        tableTreeNode = new TableTreeNode();
-        tableTreeNodeTag = new TableTreeNodeTag();
-        loadTree(null);
+        try {
+            this.data2D = data2D;
+            tableTreeNode = new TableTreeNode();
+            tableTreeNodeTag = new TableTreeNodeTag();
+            if (!loadExamples()) {
+                loadTree(null);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @Override
@@ -60,15 +67,14 @@ public class ControlData2DRowExpression extends TreeNodesController {
 
     @Override
     protected void editNode(TreeItem<TreeNode> item) {
-        scriptInput.clear();
         if (item == null) {
             return;
         }
         TreeNode node = item.getValue();
-        if (node == null) {
+        if (node == null || node.getValue() == null) {
             return;
         }
-        scriptInput.setText(node.getValue());
+        scriptInput.replaceText(scriptInput.getSelection(), node.getValue());
     }
 
     @FXML
@@ -117,6 +123,7 @@ public class ControlData2DRowExpression extends TreeNodesController {
                 names.set(i, "#{" + names.get(i) + "}");
             }
             PopTools.addButtonsPane(controller, scriptInput, names);
+            controller.addNode(new Separator());
 
             if (!colnames.isEmpty()) {
                 String col1 = colnames.get(0);
@@ -182,15 +189,15 @@ public class ControlData2DRowExpression extends TreeNodesController {
 
     @FXML
     protected void popScriptHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, scriptInput, mouseEvent, hisName, true);
+        PopTools.popStringValues(this, scriptInput, mouseEvent, hisName);
     }
 
-    public boolean checkExpression() {
+    public boolean checkExpression(boolean allPages) {
         String script = scriptInput.getText();
         if (script == null || script.isBlank()) {
             return true;
         }
-        if (data2D.validateExpression(script)) {
+        if (data2D.validateExpression(script, allPages)) {
             TableStringValues.add(hisName, script.trim());
             return true;
         } else {

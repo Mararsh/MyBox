@@ -10,7 +10,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -35,11 +34,10 @@ public class ControlData2DSource extends ControlData2DLoad {
     @FXML
     protected RadioButton selectedRadio, allPagesRadio, currentPageRadio;
     @FXML
-    protected FlowPane rowsPane, columnsPane;
-    @FXML
     protected VBox dataBox;
     @FXML
     protected ControlData2DRowFilter filterController;
+
 
     /*
         controls
@@ -101,6 +99,7 @@ public class ControlData2DSource extends ControlData2DLoad {
             tableController.statusNotify.addListener(tableStatusListener);
 
             filterController.setParamters(tableController.data2D);
+
             tableView.requestFocus();
 
             sourceChanged();
@@ -116,15 +115,6 @@ public class ControlData2DSource extends ControlData2DLoad {
 
     public void noColumnSelection(boolean noColumnSelection) {
         this.noColumnSelection = noColumnSelection;
-        if (noColumnSelection) {
-            if (dataBox.getChildren().contains(columnsPane)) {
-                dataBox.getChildren().remove(columnsPane);
-            }
-        } else {
-            if (!dataBox.getChildren().contains(columnsPane)) {
-                dataBox.getChildren().add(2, columnsPane);
-            }
-        }
     }
 
     public void sourceLoaded() {
@@ -206,7 +196,7 @@ public class ControlData2DSource extends ControlData2DLoad {
                 cb.setSelected(true);
             }
             isSettingValues = false;
-            notifySelected();
+            columnSelected();
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -225,10 +215,13 @@ public class ControlData2DSource extends ControlData2DLoad {
                 cb.setSelected(false);
             }
             isSettingValues = false;
-            notifySelected();
+            columnSelected();
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
+    }
+
+    public void columnSelected() {
     }
 
     public void restoreSelections() {
@@ -257,25 +250,11 @@ public class ControlData2DSource extends ControlData2DLoad {
             return false;
         }
         data2D.setError(null);
-        return filterController.checkExpression();
+        return filterController.checkExpression(isAllPages());
     }
 
     public boolean isAllPages() {
         return allPagesRadio.isSelected();
-    }
-
-    public boolean notSelectColumn() {
-        if (noColumnSelection) {
-            return true;
-        }
-        for (int i = 2; i < tableView.getColumns().size(); i++) {
-            TableColumn tableColumn = tableView.getColumns().get(i);
-            CheckBox cb = (CheckBox) tableColumn.getGraphic();
-            if (cb.isSelected()) {
-                return false;
-            }
-        }
-        return true;
     }
 
     public boolean isSquare() {
@@ -308,7 +287,7 @@ public class ControlData2DSource extends ControlData2DLoad {
                 cb.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        notifySelected();
+                        columnSelected();
                     }
                 });
                 tableColumn.setGraphic(cb);
@@ -320,7 +299,7 @@ public class ControlData2DSource extends ControlData2DLoad {
     }
 
     // If none selected then select all
-    private boolean checkColumns() {
+    public boolean checkColumns() {
         try {
             checkedColsIndices = new ArrayList<>();
             checkedColsNames = new ArrayList<>();
@@ -381,7 +360,7 @@ public class ControlData2DSource extends ControlData2DLoad {
                 selectNoneColumn();
             }
             isSettingValues = false;
-            notifySelected();
+            columnSelected();
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }

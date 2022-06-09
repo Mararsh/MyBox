@@ -14,7 +14,6 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -330,8 +329,6 @@ License:    Apache License Version 2.0
                                                    </children></FlowPane>
                                                                 <TextArea fx:id="moreInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
                                                                 <Hyperlink maxWidth="1.7976931348623157E308" minHeight="-Infinity" onAction="#cssGuide" text="%JavafxCssGuide" wrapText="true" />
-                                                                <Separator prefWidth="200.0" />
-                                                                <Label fx:id="effectLabel" text="%Effect" />
                                                             </children>
                                                             <padding>
                                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

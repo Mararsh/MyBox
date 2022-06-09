@@ -521,9 +521,6 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
         if (dataController != null) {
             dataController.checkStatus();
         }
-        if (status == Status.Loaded || status == Status.Applied) {
-            tableController.notifyColumnChanged();
-        }
     }
 
     public boolean isChanged() {

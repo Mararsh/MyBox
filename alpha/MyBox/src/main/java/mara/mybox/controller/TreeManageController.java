@@ -31,6 +31,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.data.VisitHistory;
@@ -41,9 +42,10 @@ import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.value.AppVariables;
+import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -411,15 +413,9 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         tree
      */
     public void loadTree(TreeNode selectedNode) {
-        if (!AppVariables.isTesting) {
-            File file = TreeNode.exampleFile(category);
-            if (file != null && tableTreeNode.categoryEmpty(category)
-                    && PopTools.askSure(this, getBaseTitle(), message("ImportExamples"))) {
-                nodesController.importExamples();
-                return;
-            }
+        if (!nodesController.loadExamples()) {
+            nodesController.loadTree(selectedNode);
         }
-        nodesController.loadTree(selectedNode);
     }
 
     public void clearQuery() {
@@ -853,6 +849,30 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
                 return result.get() == buttonNotSave;
             }
         }
+    }
+
+    /*
+        static methods
+     */
+    public static TreeManageController oneOpen() {
+        TreeManageController controller = null;
+        List<Window> windows = new ArrayList<>();
+        windows.addAll(Window.getWindows());
+        for (Window window : windows) {
+            Object object = window.getUserData();
+            if (object != null && object instanceof TreeManageController) {
+                try {
+                    controller = (WebFavoritesController) object;
+                    break;
+                } catch (Exception e) {
+                }
+            }
+        }
+        if (controller == null) {
+            controller = (TreeManageController) WindowTools.openStage(Fxmls.TreeManageFxml);
+        }
+        controller.requestMouse();
+        return controller;
     }
 
 }

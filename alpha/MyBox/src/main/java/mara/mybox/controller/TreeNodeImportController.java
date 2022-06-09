@@ -37,6 +37,7 @@ import static mara.mybox.value.Languages.message;
 public class TreeNodeImportController extends BaseBatchFileController {
 
     protected TreeManageController treeController;
+    protected TreeNodesController nodesController;
     protected TableTreeNode tableTreeNode;
     protected TableTreeNodeTag tableTreeNodeTag;
     protected TableTag tableTag;
@@ -68,8 +69,16 @@ public class TreeNodeImportController extends BaseBatchFileController {
         iconCheck.setVisible(treeController instanceof WebFavoritesController);
     }
 
-    public void importExamples(TreeManageController treeController) {
-        setManage(treeController);
+    public void setManage(TreeNodesController nodeController) {
+        this.nodesController = nodeController;
+        tableTreeNode = nodeController.tableTreeNode;
+        tableTreeNodeTag = nodeController.tableTreeNodeTag;
+        tableTag = new TableTag();
+        category = nodeController.category;
+        iconCheck.setVisible(false);
+    }
+
+    public void importExamples() {
         File file = TreeNode.exampleFile(category);
         if (file == null) {
             return;
@@ -235,7 +244,6 @@ public class TreeNodeImportController extends BaseBatchFileController {
             parents.put(message(rootNode.getTitle()), rootNode);
             boolean isWebFavorite = TreeNode.WebFavorite.equals(category);
             int morePrefixLen = TreeNode.MorePrefix.length();
-            MyBoxLog.console(morePrefixLen);
             while ((line = reader.readLine()) != null && !line.isBlank()) {
                 parentid = getParent(conn, parents, line);
                 if (parentid < -1) {
@@ -423,6 +431,10 @@ public class TreeNodeImportController extends BaseBatchFileController {
             treeController.tagsController.refreshAction();
             treeController.refreshTimes();
             treeController.alertInformation(message("Imported") + ": " + totalItemsHandled);
+            closeStage();
+        } else if (nodesController != null) {
+            nodesController.loadTree();
+            nodesController.alertInformation(message("Imported") + ": " + totalItemsHandled);
             closeStage();
         } else {
             tableView.refresh();

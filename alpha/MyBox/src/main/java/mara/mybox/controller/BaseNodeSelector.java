@@ -119,6 +119,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
     protected abstract void treeView(Connection conn, P node, int indent, String parentNumber, StringBuilder s);
 
+    public abstract TreeManageController openManager();
 
     /*
         Common methods may need not changed
@@ -458,6 +459,13 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             clickMenu.getItems().addAll(clickPopMenu, editNodeMenu, pasteNodeMenu, loadChildrenMenu, loadDescendantsMenu);
 
             items.add(clickMenu);
+
+        } else {
+            menu = new MenuItem(message("Manage"), StyleTools.getIconImage("iconData.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                openManager();
+            });
+            items.add(menu);
         }
 
         items.add(new SeparatorMenuItem());
@@ -571,6 +579,14 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
             items.add(new SeparatorMenuItem());
         } else {
+
+            menu = new MenuItem(message("Examples"), StyleTools.getIconImage("iconExamples.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                importExamples();
+            });
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("Unfold"), StyleTools.getIconImage("iconPLus.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {

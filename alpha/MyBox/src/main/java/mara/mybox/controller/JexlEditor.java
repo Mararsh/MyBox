@@ -103,7 +103,7 @@ public class JexlEditor extends JShellEditor {
 
     @FXML
     protected void popScriptHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, valueInput, mouseEvent, "JexlScriptHistories", true);
+        PopTools.popStringValues(this, valueInput, mouseEvent, "JexlScriptHistories");
     }
 
     @FXML
@@ -123,7 +123,7 @@ public class JexlEditor extends JShellEditor {
 
     @FXML
     protected void popContextHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, moreInput, mouseEvent, "JexlContextHistories", true);
+        PopTools.popStringValues(this, moreInput, mouseEvent, "JexlContextHistories");
     }
 
     @FXML
@@ -133,7 +133,7 @@ public class JexlEditor extends JShellEditor {
 
     @FXML
     protected void popParametersHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, parametersInput, mouseEvent, "JexlParamtersHistories", true);
+        PopTools.popStringValues(this, parametersInput, mouseEvent, "JexlParamtersHistories");
     }
 
 }

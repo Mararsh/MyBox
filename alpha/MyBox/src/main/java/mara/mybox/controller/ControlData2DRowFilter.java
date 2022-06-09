@@ -19,8 +19,8 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
     }
 
     @Override
-    public boolean checkExpression() {
-        if (super.checkExpression()) {
+    public boolean checkExpression(boolean allPages) {
+        if (super.checkExpression(allPages)) {
             String script = scriptInput.getText();
             data2D.setRowFilter(script);
             data2D.setFilterReversed(!trueRadio.isSelected());

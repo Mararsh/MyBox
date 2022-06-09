@@ -60,7 +60,7 @@ public class Data2DSetStylesController extends BaseSysTableController<Data2DStyl
     @FXML
     protected TextArea moreInput;
     @FXML
-    protected Label idLabel, effectLabel;
+    protected Label idLabel;
     @FXML
     protected RadioButton colorDefaultRadio, colorSetRadio, bgDefaultRadio, bgSetRadio;
     @FXML
@@ -285,9 +285,9 @@ public class Data2DSetStylesController extends BaseSysTableController<Data2DStyl
         updatedStyle.setFontSize(fontSizeSelector.getValue());
         updatedStyle.setBold(boldCheck.isSelected());
         updatedStyle.setMoreStyle(moreInput.getText());
-        effectLabel.setStyle(updatedStyle.finalStyle());
         idLabel.setText(updatedStyle.getD2sid() < 0
                 ? message("NewData") : (message("ID") + ": " + updatedStyle.getD2sid()));
+        idLabel.setStyle(updatedStyle.finalStyle());
     }
 
     public void loadNull() {

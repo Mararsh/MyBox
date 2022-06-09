@@ -414,7 +414,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
             }
             filledScript = findReplace.replaceStringAll(filledScript, "#{" + message("DataRowNumber") + "}", row.get(0) + "");
             filledScript = findReplace.replaceStringAll(filledScript, "#{" + message("TableRowNumber") + "}",
-                    tableRowNumber >= 0 ? (tableRowNumber + 1) + "" : "'Invalid'");
+                    tableRowNumber >= 0 ? (tableRowNumber + 1) + "" : "TableRowNumberShouldNotBeUsedWhenAllPages");
             return filledScript;
         } catch (Exception e) {
             error = e.toString();
@@ -536,7 +536,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
         return filterPassed;
     }
 
-    public boolean validateExpression(String script) {
+    public boolean validateExpression(String script, boolean allPages) {
         try {
             error = null;
             expressionResult = null;
@@ -548,7 +548,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
             for (int i = 0; i < columns.size(); i++) {
                 row.add("0");
             }
-            return calculateExpression(rowExpression(script, row, 0));
+            return calculateExpression(rowExpression(script, row, allPages ? -1 : 0));
         } catch (Exception e) {
             error = e.toString();
             return false;

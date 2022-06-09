@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
@@ -24,7 +25,7 @@ import static mara.mybox.value.Languages.message;
 public class ControlNewDataTable extends BaseController {
 
     protected BaseTaskController taskController;
-    protected ControlData2DEditTable tableController;
+    protected Data2D data2D;
     protected DataTable dataTable;
     protected TableData2D tableData2D;
     protected List<Integer> columnIndices;
@@ -43,10 +44,10 @@ public class ControlNewDataTable extends BaseController {
         TipsLabelKey = message("SqlIdentifierComments");
     }
 
-    public void setParameters(BaseTaskController taskController, ControlData2DEditTable tableController) {
+    public void setParameters(BaseTaskController taskController, Data2D data2D) {
         try {
             this.taskController = taskController;
-            this.tableController = tableController;
+            this.data2D = data2D;
 
             dataTable = new DataTable();
             tableData2D = new TableData2D();
@@ -60,7 +61,7 @@ public class ControlNewDataTable extends BaseController {
 
     public void setColumns(List<Integer> columnIndices) {
         try {
-            if (tableController == null || tableController.data2D == null) {
+            if (data2D == null) {
                 return;
             }
             this.columnIndices = columnIndices;
@@ -70,7 +71,7 @@ public class ControlNewDataTable extends BaseController {
             }
             List<String> names = new ArrayList<>();
             for (int index : columnIndices) {
-                names.add(tableController.data2D.getColumns().get(index).getColumnName());
+                names.add(data2D.getColumns().get(index).getColumnName());
             }
             columnsController.setValues(names);
         } catch (Exception e) {
@@ -116,7 +117,7 @@ public class ControlNewDataTable extends BaseController {
                 keys = columnsController.checkedValues();
             }
             for (int index : columnIndices) {
-                Data2DColumn dataColumn = tableController.data2D.getColumns().get(index);
+                Data2DColumn dataColumn = data2D.getColumns().get(index);
                 ColumnDefinition dbColumn = new ColumnDefinition();
                 dbColumn.cloneFrom(dataColumn);
                 String columeName = DerbyBase.fixedIdentifier(dataColumn.getColumnName());
@@ -170,17 +171,17 @@ public class ControlNewDataTable extends BaseController {
         try {
             conn.setAutoCommit(false);
             count = 0;
-            if (rows == null) {
-                for (List<String> pageRow : tableController.tableData) {
+            if (rows == null || rows.isEmpty()) {
+                for (List<String> pageRow : data2D.tableData()) {
                     importRow(conn, pageRow);
                 }
             } else {
                 for (Integer row : rows) {
-                    importRow(conn, tableController.tableData.get(row));
+                    importRow(conn, data2D.tableData().get(row));
                 }
             }
             dataTable.setRowsNumber(count);
-            tableController.tableData2DDefinition.updateData(conn, dataTable);
+            data2D.getTableData2DDefinition().updateData(conn, dataTable);
             conn.commit();
             taskController.updateLogs(message("Imported") + ": " + count);
             setRowsNumber(conn);
@@ -195,7 +196,7 @@ public class ControlNewDataTable extends BaseController {
         try {
             Data2DRow data2DRow = tableData2D.newRow();
             for (int col : columnIndices) {
-                Data2DColumn column = tableController.data2D.getColumns().get(col);
+                Data2DColumn column = data2D.getColumns().get(col);
                 String name = column.getColumnName();
                 Object value = column.fromString(pageRow.get(col + 1));
                 if (value != null) {
@@ -215,7 +216,7 @@ public class ControlNewDataTable extends BaseController {
     public boolean importAllData(Connection conn) {
         try {
             dataTable.setTask(task);
-            count = tableController.data2D.writeTable(conn, tableData2D, columnIndices);
+            count = data2D.writeTable(conn, tableData2D, columnIndices);
             dataTable.setTask(null);
             taskController.updateLogs(message("Imported") + ": " + count);
             setRowsNumber(conn);
