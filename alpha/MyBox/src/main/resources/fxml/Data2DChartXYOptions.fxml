@@ -16,6 +16,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
@@ -192,33 +193,9 @@ License:    Apache License Version 2.0
                                                 </HBox>
                                             </children>
                                         </VBox>
-                                        <VBox fx:id="bubbleBox" spacing="10.0">
+                                        <VBox fx:id="bubbleBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="ALWAYS">
                                             <children>
-                                                <HBox alignment="CENTER_LEFT" spacing="2.0">
-                                                    <children>
-                                                        <Label minWidth="-Infinity" text="%BubbleStyle" />
-                                                        <TextField fx:id="bubbleStyleInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                        <Button fx:id="defaultBubbleButton" mnemonicParsing="false" onAction="#defaultBubbleStyle">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/Red/iconDefault.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                        <Button fx:id="goBubbleButton" layoutX="455.0" layoutY="10.0" mnemonicParsing="false" onAction="#applyBubbleStyle">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/Red/iconGo.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                    </children>
-                                                </HBox>
-                                                <FlowPane fx:id="categoryCoordinatePane1" hgap="2.0" vgap="2.0">
+                                                <FlowPane hgap="2.0" vgap="2.0">
                                                     <children>
                                                         <Label maxWidth="1.7976931348623157E308" text="%Coordinate" />
                                                         <RadioButton fx:id="sizeCartesianRadio" mnemonicParsing="false" selected="true" text="%CartesianCoordinate">
@@ -231,6 +208,8 @@ License:    Apache License Version 2.0
                                                         <RadioButton fx:id="sizeLogarithmic10Radio" mnemonicParsing="false" text="%Logarithmic10Coordinate" toggleGroup="$sizeCoordinateGroup" />
                                                     </children>
                                                 </FlowPane>
+                                                  <Label minWidth="-Infinity" text="%BubbleStyle" />
+                                    <TextArea fx:id="bubbleStyleInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="120.0" wrapText="true" VBox.vgrow="ALWAYS" />
                                                 <Hyperlink maxWidth="1.7976931348623157E308" minHeight="-Infinity" onAction="#cssGuide" text="%JavafxCssGuide" wrapText="true" />
                                             </children>
                                         </VBox>

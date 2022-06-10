@@ -67,6 +67,7 @@ public class Data2DExportController extends BaseData2DHandleController {
     public void setParameters(ControlData2DEditTable editController) {
         try {
             convertController.setControls(taskController);
+            taskController.setParameters(this);
 
             super.setParameters(editController);
 

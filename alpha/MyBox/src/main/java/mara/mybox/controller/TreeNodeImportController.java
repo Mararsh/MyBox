@@ -27,6 +27,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.IconTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.AppValues;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -430,11 +431,15 @@ public class TreeNodeImportController extends BaseBatchFileController {
             treeController.nodesController.loadTree();
             treeController.tagsController.refreshAction();
             treeController.refreshTimes();
-            treeController.alertInformation(message("Imported") + ": " + totalItemsHandled);
+            if (!AppVariables.isTesting) {
+                treeController.alertInformation(message("Imported") + ": " + totalItemsHandled);
+            }
             closeStage();
         } else if (nodesController != null) {
             nodesController.loadTree();
-            nodesController.alertInformation(message("Imported") + ": " + totalItemsHandled);
+            if (!AppVariables.isTesting) {
+                nodesController.alertInformation(message("Imported") + ": " + totalItemsHandled);
+            }
             closeStage();
         } else {
             tableView.refresh();

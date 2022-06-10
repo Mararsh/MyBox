@@ -225,7 +225,7 @@ public class ControlData2DView extends BaseController {
                     if (value == null) {
                         value = "";
                     }
-                    String style = data2D.getStyle(i, data2D.colName(col));
+                    String style = data2D.cellStyle(i, data2D.colName(col));
                     if (style != null && !style.isBlank()) {
                         style = style.replace("-fx-font-size:", "font-size:")
                                 .replace("-fx-text-fill:", "color:")
@@ -275,7 +275,7 @@ public class ControlData2DView extends BaseController {
                     if (value == null) {
                         value = "";
                     }
-                    String style = data2D.getStyle(r, data2D.colName(col));
+                    String style = data2D.cellStyle(r, data2D.colName(col));
                     if (style != null && !style.isBlank()) {
                         style = style.replace("-fx-font-size:", "font-size:")
                                 .replace("-fx-text-fill:", "color:")

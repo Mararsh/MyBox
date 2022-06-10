@@ -463,39 +463,4 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         }
     }
 
-    /*
-        styles
-     */
-    public String styleKey(long row, String colName) {
-        if (colName == null || row < 0) {
-            return null;
-        }
-        return row + "," + colName;
-    }
-
-    public boolean setStyle(long row, int col, String style) {
-        return setStyle(row, colName(col), style);
-    }
-
-    public boolean setStyle(long row, String colName, String style) {
-        String key = styleKey(row, colName);
-        if (key == null) {
-            return false;
-        }
-        if (style == null || style.isBlank()) {
-            pageStyles.remove(key);
-        } else {
-            pageStyles.put(key, style);
-        }
-        return true;
-    }
-
-    public String getStyle(long row, String colName) {
-        String key = styleKey(row, colName);
-        if (key == null) {
-            return null;
-        }
-        return pageStyles.get(key);
-    }
-
 }

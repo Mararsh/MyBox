@@ -15,6 +15,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.PopTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -79,7 +80,7 @@ public class ControlNewDataTable extends BaseController {
         }
     }
 
-    public boolean checkOptions(Connection conn) {
+    public boolean checkOptions(Connection conn, boolean onlySQL) {
         try {
             if (nameInput.getText().isBlank()) {
                 taskController.popError(message("InvalidParameters") + ": " + message("TableName"));
@@ -91,8 +92,16 @@ public class ControlNewDataTable extends BaseController {
             }
             String tableName = DerbyBase.fixedIdentifier(nameInput.getText().trim());
             if (tableData2D.exist(conn, tableName)) {
-                taskController.popError(message("AlreadyExisted") + ": " + message("TableName"));
-                return false;
+                if (onlySQL) {
+                    alertWarning(message("AlreadyExisted"));
+                    return true;
+                } else {
+                    if (PopTools.askSure(this, message("AlreadyExisted"), message("SureReplaceExistedDatabaseTable"))) {
+                        return dataTable.getTableData2DDefinition().deleteUserTable(conn, tableName) >= 0;
+                    } else {
+                        return false;
+                    }
+                }
             }
             return true;
         } catch (Exception e) {
@@ -130,7 +139,12 @@ public class ControlNewDataTable extends BaseController {
             }
             return true;
         } catch (Exception e) {
-            popError(e.toString());
+            if (task == null) {
+                popError(e.toString());
+            } else {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -243,7 +257,7 @@ public class ControlNewDataTable extends BaseController {
     @FXML
     public void sqlAction() {
         try ( Connection conn = DerbyBase.getConnection()) {
-            if (!checkOptions(conn) || !makeTable()) {
+            if (!checkOptions(conn, true) || !makeTable()) {
                 return;
             }
             String sql = tableData2D.createTableStatement();
@@ -251,6 +265,11 @@ public class ControlNewDataTable extends BaseController {
         } catch (Exception e) {
             popError(e.toString());
         }
+    }
+
+    @FXML
+    public void sqlLink() {
+        openLink("https://db.apache.org/derby/docs/10.15/ref/crefsqlj18919.html");
     }
 
 }

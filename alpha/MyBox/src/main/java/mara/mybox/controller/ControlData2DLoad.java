@@ -602,15 +602,19 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                         = new TableAutoCommitCell<List<String>, String>(new DefaultStringConverter()) {
                                     @Override
                                     public void updateItem(String item, boolean empty) {
-                                        setStyle(null);
-                                        try {
-                                            setStyle(data2D.getStyle(getTableRow().getIndex(), name));
-                                        } catch (Exception e) {
-                                        }
+                                        updateStyle();
                                         super.updateItem(item, empty);
                                         if (empty || item == null) {
                                             setText(null);
                                             setGraphic(null);
+                                        }
+                                    }
+
+                                    public void updateStyle() {
+                                        setStyle(null);
+                                        try {
+                                            setStyle(data2D.cellStyle(rowIndex(), name));
+                                        } catch (Exception e) {
                                         }
                                     }
 
@@ -637,7 +641,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                                     || (value != null && !value.equals(oldValue))) {
                                                 super.commitEdit(value);
                                                 row.set(col, value);
-                                                tableChanged(true);
+                                                tableData.set(rowIndex, row);
                                             }
                                         } catch (Exception e) {
                                             MyBoxLog.debug(e);
@@ -663,7 +667,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                     public void updateItem(String item, boolean empty) {
                                         setStyle(null);
                                         try {
-                                            setStyle(data2D.getStyle(getTableRow().getIndex(), name));
+                                            setStyle(data2D.cellStyle(getTableRow().getIndex(), name));
                                         } catch (Exception e) {
                                         }
                                         super.updateItem(item, empty);
@@ -912,23 +916,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 }
             }
         }
-    }
-
-    @FXML
-    @Override
-    public void deleteRowsAction() {
-        List<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
-        if (selected == null || selected.isEmpty()) {
-            data2D.getPageStyles().clear();
-            return;
-        }
-        super.deleteRowsAction();
-    }
-
-    @Override
-    protected void afterClear() {
-        data2D.getPageStyles().clear();
-        super.afterClear();
     }
 
     /*

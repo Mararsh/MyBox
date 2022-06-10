@@ -1,6 +1,5 @@
 package mara.mybox.data2d;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javafx.scene.web.WebEngine;
@@ -8,6 +7,7 @@ import mara.mybox.controller.ControlData2DLoad;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.db.data.Data2DStyle;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.db.table.TableData2DStyle;
@@ -29,7 +29,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
     protected int pageSize, newColumnIndex;
     protected long dataSize, pagesNumber;
     protected long currentPage, startRowOfCurrentPage, endRowOfCurrentPage;   // 0-based, excluded end
-    protected Map<String, String> pageStyles;
+    protected List<Data2DStyle> styles;
     protected ControlData2DLoad loadController;
     protected boolean tableChanged, filterReversed, filterPassed;
     protected SingletonTask task, backgroundTask;
@@ -44,7 +44,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         tableData2DColumn = new TableData2DColumn();
         tableData2DStyle = new TableData2DStyle();
         pageSize = 50;
-        pageStyles = new HashMap<>();
+        styles = null;
         initData();
     }
 
@@ -58,7 +58,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         newColumnIndex = -1;
         tableChanged = false;
         options = null;
-        pageStyles.clear();
+        styles = null;
         error = null;
         rowFilter = null;
         webEngine = null;
@@ -108,7 +108,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
             columns = d.columns;
             savedColumns = d.savedColumns;
             newColumnIndex = d.newColumnIndex;
-            pageStyles = d.pageStyles;
+            styles = d.styles;
             dataSize = d.dataSize;
             pageSize = d.pageSize;
             pagesNumber = d.pagesNumber;
@@ -243,12 +243,12 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         this.savedColumns = savedColumns;
     }
 
-    public Map<String, String> getPageStyles() {
-        return pageStyles;
+    public List<Data2DStyle> getStyles() {
+        return styles;
     }
 
-    public void setPageStyles(Map<String, String> pageStyles) {
-        this.pageStyles = pageStyles;
+    public void setStyles(List<Data2DStyle> styles) {
+        this.styles = styles;
     }
 
     public String getRowFilter() {

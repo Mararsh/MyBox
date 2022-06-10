@@ -324,16 +324,24 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                     popFunctionsMenu(null, item);
                     break;
                 case "Edit":
-                    editNode(item);
+                    if (manageMode) {
+                        editNode(item);
+                    }
                     break;
                 case "Paste":
-                    pasteNode(item);
+                    if (manageMode) {
+                        pasteNode(item);
+                    }
                     break;
                 case "LoadChildren":
-                    listChildren(item);
+                    if (manageMode) {
+                        listChildren(item);
+                    }
                     break;
                 case "LoadDescendants":
-                    listDescentants(item);
+                    if (manageMode) {
+                        listDescentants(item);
+                    }
                     break;
                 default:
                     break;

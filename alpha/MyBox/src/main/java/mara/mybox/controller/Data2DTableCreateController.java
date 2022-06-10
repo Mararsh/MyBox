@@ -75,7 +75,7 @@ public class Data2DTableCreateController extends BaseTaskController {
     @Override
     public boolean checkOptions() {
         try ( Connection conn = DerbyBase.getConnection()) {
-            boolean ok = attributesController.checkOptions(conn);
+            boolean ok = attributesController.checkOptions(conn, false);
             if (!ok) {
                 tabPane.getSelectionModel().select(attributesTab);
             }

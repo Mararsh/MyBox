@@ -50,11 +50,13 @@ public class Data2DConvertToDataBaseTask extends Data2DTableCreateController {
     @Override
     public boolean doTask() {
         try ( Connection conn = DerbyBase.getConnection()) {
+            attributesController.columnIndices = convertController.checkedColsIndices;
             if (!attributesController.createTable(conn)) {
                 return false;
             }
             if (convertController.importCheck.isSelected()) {
                 if (convertController.isAllPages() && convertController.data2D.isMutiplePages()) {
+                    attributesController.task = task;
                     attributesController.importAllData(conn);
                 } else {
                     attributesController.importData(conn, convertController.checkedRowsIndices);

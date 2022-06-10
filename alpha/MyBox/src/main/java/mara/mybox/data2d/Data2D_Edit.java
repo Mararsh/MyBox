@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -200,7 +201,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
     }
 
     public void readPageStyles(Connection conn, List<List<String>> rows) {
-        pageStyles.clear();
+        styles = new ArrayList<>();
         if (d2did < 0 || startRowOfCurrentPage >= endRowOfCurrentPage) {
             return;
         }
@@ -208,47 +209,11 @@ public abstract class Data2D_Edit extends Data2D_Data {
             statement.setLong(1, d2did);
             try ( ResultSet results = statement.executeQuery()) {
                 while (results.next()) {
-                    Data2DStyle d = tableData2DStyle.readData(results);
-                    if (d == null) {
-                        continue;
-                    }
-                    for (long index = startRowOfCurrentPage; index < endRowOfCurrentPage; index++) {
-                        if (d.getRowStart() >= 0) {
-                            if (index < d.getRowStart() || (d.getRowEnd() >= 0 && index >= d.getRowEnd())) {
-                                continue;
-                            }
-                        }
-                        int tableRowIndex = (int) (index - startRowOfCurrentPage);
-                        String filter = d.getMoreConditions();
-                        if (filter != null && !filter.isBlank()) {
-                            List<String> values = new ArrayList<>();
-                            values.addAll(rows.get(tableRowIndex));
-                            rowFilter = filter;
-                            if (!filterInTask(values, index + 1, tableRowIndex)) {
-                                continue;
-                            }
-                        }
-                        List<String> names = new ArrayList<>();
-                        String scolumns = d.getColumns();
-                        if (scolumns == null || scolumns.isBlank()) {
-                            for (Data2DColumn column : columns) {
-                                names.add(column.getColumnName());
-                            }
-                        } else {
-                            String[] ns = scolumns.split(Data2DStyle.ColumnSeparator);
-                            for (String s : ns) {
-                                if (s != null && !s.isBlank()) {
-                                    names.add(s);
-                                }
-                            }
-                        }
-                        for (String name : names) {
-                            setStyle(tableRowIndex, name, d.finalStyle());
-                        }
+                    Data2DStyle style = tableData2DStyle.readData(results);
+                    if (style != null) {
+                        styles.add(style);
                     }
                 }
-            } catch (Exception e) {
-                MyBoxLog.error(e);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -395,12 +360,13 @@ public abstract class Data2D_Edit extends Data2D_Data {
 
     /*
         filter
+        first value of "tableRow" should be "dataRowNumber" 
+        "tableRowNumber" is 0-based while "dataRowNumber" is 1-based
      */
-    // tableRowNumber is 0-based
-    public String rowExpression(String script, List<String> row, int tableRowNumber) {
+    public String rowExpression(String script, List<String> tableRow, int tableRowNumber) {
         try {
             if (script == null || script.isBlank()
-                    || row == null || row.isEmpty()
+                    || tableRow == null || tableRow.isEmpty()
                     || columns == null || columns.isEmpty()) {
                 return script;
             }
@@ -410,11 +376,11 @@ public abstract class Data2D_Edit extends Data2D_Data {
             }
             String filledScript = script;
             for (int i = 0; i < columns.size(); i++) {
-                filledScript = findReplace.replaceStringAll(filledScript, "#{" + columns.get(i).getColumnName() + "}", row.get(i + 1));
+                filledScript = findReplace.replaceStringAll(filledScript, "#{" + columns.get(i).getColumnName() + "}", tableRow.get(i + 1));
             }
-            filledScript = findReplace.replaceStringAll(filledScript, "#{" + message("DataRowNumber") + "}", row.get(0) + "");
+            filledScript = findReplace.replaceStringAll(filledScript, "#{" + message("DataRowNumber") + "}", tableRow.get(0) + "");
             filledScript = findReplace.replaceStringAll(filledScript, "#{" + message("TableRowNumber") + "}",
-                    tableRowNumber >= 0 ? (tableRowNumber + 1) + "" : "TableRowNumberShouldNotBeUsedWhenAllPages");
+                    tableRowNumber >= 0 ? (tableRowNumber + 1) + "" : message("NoTableRowNumberWhenAllPages"));
             return filledScript;
         } catch (Exception e) {
             error = e.toString();
@@ -422,9 +388,8 @@ public abstract class Data2D_Edit extends Data2D_Data {
         }
     }
 
-    // tableRowNumber is 0-based
-    public boolean calculateExpression(String script, List<String> row, int tableRowNumber) {
-        return calculateExpression(rowExpression(script, row, tableRowNumber));
+    public boolean calculateExpression(String script, List<String> tableRow, int tableRowNumber) {
+        return calculateExpression(rowExpression(script, tableRow, tableRowNumber));
     }
 
     public boolean calculateExpression(String script) {
@@ -448,12 +413,12 @@ public abstract class Data2D_Edit extends Data2D_Data {
         }
     }
 
-    // tableRowNumber is 0-based
-    public boolean filter(List<String> row, int tableRowIndex) {
+    public boolean filter(List<String> tableRow, int tableRowIndex) {
         if (rowFilter == null || rowFilter.isBlank()) {
+            filterPassed = true;
             return true;
         }
-        filterPassed = calculateExpression(rowFilter, row, tableRowIndex)
+        filterPassed = calculateExpression(rowFilter, tableRow, tableRowIndex)
                 && "true".equals(expressionResult);
         if (filterReversed) {
             filterPassed = !filterPassed;
@@ -461,11 +426,11 @@ public abstract class Data2D_Edit extends Data2D_Data {
         return filterPassed;
     }
 
-    public boolean filterAndCalculate(List<String> data, long dataRowIndex, final String script) {
+    public boolean filterAndCalculate(List<String> dataRow, long dataRowIndex, final String script) {
         try {
             error = null;
             filterPassed = false;
-            if (data == null) {
+            if (dataRow == null) {
                 return false;
             }
             if (rowFilter == null || rowFilter.isBlank()) {
@@ -479,7 +444,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
                     try {
                         List<String> values = new ArrayList<>();
                         values.add(dataRowIndex + "");
-                        values.addAll(data);
+                        values.addAll(dataRow);
                         filterPassed = filter(values, -1);
                         if (filterPassed && script != null) {
                             calculateExpression(script, values, -1);
@@ -499,28 +464,28 @@ public abstract class Data2D_Edit extends Data2D_Data {
         return filterPassed;
     }
 
-    public boolean filterInTask(List<String> data, long dataRowIndex) {
-        return filterInTask(data, dataRowIndex, -1);
+    public boolean filterInTask(List<String> dataRow, long dataRowIndex) {
+        return filterInTask(dataRow, dataRowIndex, -1);
     }
 
-    public boolean filterInTask(List<String> data, long dataRowIndex, int tableRowNumber) {
+    public boolean filterInTask(List<String> dataRow, long dataRowIndex, int tableRowNumber) {
         try {
             error = null;
             filterPassed = false;
-            if (data == null) {
+            if (dataRow == null) {
                 return false;
             }
             if (rowFilter == null || rowFilter.isBlank()) {
                 filterPassed = true;
                 return true;
             }
+            List<String> tableRow = new ArrayList<>();
+            tableRow.add(dataRowIndex + "");
+            tableRow.addAll(dataRow);
             Platform.runLater(() -> {
                 synchronized (lock) {
                     try {
-                        List<String> values = new ArrayList<>();
-                        values.add(dataRowIndex + "");
-                        values.addAll(data);
-                        filterPassed = filter(values, tableRowNumber);
+                        filterPassed = filter(tableRow, tableRowNumber);
                     } catch (Exception e) {
                         error = e.toString();
                     }
@@ -543,15 +508,69 @@ public abstract class Data2D_Edit extends Data2D_Data {
             if (script == null || script.isBlank()) {
                 return true;
             }
-            List<String> row = new ArrayList<>();
-            row.add("1");
+            List<String> tableRow = new ArrayList<>();
+            tableRow.add("1");
             for (int i = 0; i < columns.size(); i++) {
-                row.add("0");
+                tableRow.add("0");
             }
-            return calculateExpression(rowExpression(script, row, allPages ? -1 : 0));
+            return calculateExpression(rowExpression(script, tableRow, allPages ? -1 : 0));
         } catch (Exception e) {
             error = e.toString();
             return false;
         }
     }
+
+    public String cellStyle(int tableRowIndex, String colName) {
+        try {
+            if (styles == null || styles.isEmpty() || colName == null || colName.isBlank()) {
+                return null;
+            }
+            List<String> tableRow = tableViewRow(tableRowIndex);
+            if (tableRow == null || tableRow.size() < 1) {
+                return null;
+            }
+            String cellStyle = null;
+            long dataRowIndex = Long.parseLong(tableRow.get(0)) - 1;
+            for (Data2DStyle style : styles) {
+                String names = style.getColumns();
+                if (names != null && !names.isBlank()) {
+                    String[] cols = names.split(Data2DStyle.ColumnSeparator);
+                    if (cols != null && cols.length > 1) {
+                        if (!(Arrays.asList(cols).contains(colName))) {
+                            continue;
+                        }
+                    }
+                }
+                long rowStart = style.getRowStart();
+                if (dataRowIndex < rowStart) {
+                    continue;
+                }
+                if (rowStart >= 0) {
+                    long rowEnd = style.getRowEnd();
+                    if (rowEnd >= 0 && dataRowIndex >= rowEnd) {
+                        continue;
+                    }
+                }
+                rowFilter = style.getMoreConditions();
+                if (filter(tableRow, tableRowIndex)) {
+                    String styleValue = style.finalStyle();
+                    if (styleValue == null || styleValue.isBlank()) {
+                        cellStyle = null;
+                    } else if (cellStyle == null) {
+                        cellStyle = style.finalStyle();
+                    } else {
+                        if (!cellStyle.trim().endsWith(";")) {
+                            cellStyle += ";";
+                        }
+                        cellStyle += style.finalStyle();
+                    }
+                }
+            }
+            return cellStyle;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
 }

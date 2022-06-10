@@ -15,6 +15,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -66,7 +67,9 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
             categoryFontSizeSelector, categoryTickRotationSelector, barGapSelector, categoryGapSelector,
             numberFontSizeSelector, numberTickRotationSelector;
     @FXML
-    protected TextField categoryInput, valueInput, bubbleStyleInput;
+    protected TextField categoryInput, valueInput;
+    @FXML
+    protected TextArea bubbleStyleInput;
 
     public Data2DChartXYOptionsController() {
     }
@@ -333,7 +336,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
 
     @FXML
     public void applyBubbleStyle() {
-        chartMaker.setBubbleStyle(bubbleStyleInput.getText());
+        chartMaker.setBubbleStyle(bubbleStyleInput.getText().replaceAll("\n", " "));
     }
 
     @FXML
