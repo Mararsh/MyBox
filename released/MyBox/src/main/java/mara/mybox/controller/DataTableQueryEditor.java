@@ -6,7 +6,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
-import mara.mybox.data2d.DataFile;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.table.TableData2D;
@@ -40,8 +39,7 @@ public class DataTableQueryEditor extends TreeNodeEditor {
             dataTable = (DataTable) tableController.data2D;
 
             dataLabel.setText(dataTable.displayName());
-            targetController.setParameters(this, tableController);
-            targetController.setNotInTable(true);
+            targetController.setParameters(this, null);
 
             rowNumberCheck.setSelected(UserConfig.getBoolean(baseName + "CopyRowNumber", false));
             rowNumberCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -74,24 +72,20 @@ public class DataTableQueryEditor extends TreeNodeEditor {
         }
         task = new SingletonTask<Void>(this) {
 
-            private DataFile handledFile;
+            private DataFileCSV dataCSV;
 
             @Override
             protected boolean handle() {
                 TableStringValues.add("DataTableQueryHistories", query);
                 dataTable.setTask(task);
-                DataFileCSV dataCSV = dataTable.query(query, rowNumberCheck.isSelected());
-                if (dataCSV == null) {
-                    return false;
-                }
-                handledFile = dataCSV.convert(myController, dataCSV, targetController.target);
-                return handledFile != null;
+                dataCSV = dataTable.query(query, rowNumberCheck.isSelected());
+                return dataCSV != null;
             }
 
             @Override
             protected void whenSucceeded() {
                 popDone();
-                handledFile.output(myController, handledFile, targetController.target);
+                DataFileCSV.open(myController, dataCSV, targetController.target);
             }
 
             @Override

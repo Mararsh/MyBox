@@ -155,7 +155,14 @@ public class FileTools {
         return min > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) min;
     }
 
+    public static boolean hasData(File file) {
+        return file != null && file.exists() && file.isFile() && file.length() > 0;
+    }
+
     public static File removeBOM(File file) {
+        if (!hasData(file)) {
+            return file;
+        }
         String bom = null;
         try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
             byte[] header = new byte[4];

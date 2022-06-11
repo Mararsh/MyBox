@@ -13,6 +13,7 @@ import mara.mybox.controller.DataTablesController;
 import mara.mybox.controller.MatricesManageController;
 import mara.mybox.controller.MyBoxTablesController;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.FileNameTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -170,6 +171,42 @@ public class Data2DDefinition extends BaseData {
         return type == Type.InternalTable;
     }
 
+    public String titleName() {
+        String name;
+        if (isDataFile() && file != null) {
+            name = file.getAbsolutePath();
+            if (isExcel()) {
+                name += " - " + sheet;
+            }
+        } else if (this.isTable()) {
+            name = sheet;
+        } else {
+            name = dataName;
+        }
+        if (name == null && d2did < 0) {
+            name = message("NewData");
+        }
+        return name;
+    }
+
+    public String displayName() {
+        String name = titleName();
+        name = message(type.name()) + (d2did >= 0 ? " - " + d2did : "") + (name != null ? " - " + name : "");
+        return name;
+    }
+
+    public String shortName() {
+        if (file != null) {
+            return FileNameTools.prefix(file.getName());
+        } else if (sheet != null) {
+            return sheet;
+        } else if (dataName != null) {
+            return dataName;
+        } else {
+            return "";
+        }
+    }
+
 
     /*
         static methods
@@ -287,6 +324,24 @@ public class Data2DDefinition extends BaseData {
             return Type.Texts;
         }
         return types[type];
+    }
+
+    public static Type type(File file) {
+        if (file == null) {
+            return null;
+        }
+        String suffix = FileNameTools.suffix(file.getAbsolutePath());
+        if (suffix == null) {
+            return null;
+        }
+        switch (suffix) {
+            case "xlsx":
+            case "xls":
+                return Type.Excel;
+            case "csv":
+                return Type.CSV;
+        }
+        return Type.Texts;
     }
 
     public static BaseController open(Data2DDefinition def) {

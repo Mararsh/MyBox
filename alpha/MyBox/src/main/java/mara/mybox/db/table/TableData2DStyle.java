@@ -3,7 +3,6 @@ package mara.mybox.db.table;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.List;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
@@ -46,15 +45,13 @@ public class TableData2DStyle extends BaseTable<Data2DStyle> {
         addColumn(new ColumnDefinition("bgColor", ColumnType.String).setLength(64));
         addColumn(new ColumnDefinition("bold", ColumnType.Boolean));
         addColumn(new ColumnDefinition("moreStyle", ColumnType.String).setLength(StringMaxLength));
-        orderColumns = "d2sid ASC";
+        addColumn(new ColumnDefinition("sequence", ColumnType.Float));
+        orderColumns = "d2id, sequence, d2sid";
         return this;
     }
 
     public static final String QueryStyles
-            = "SELECT * FROM Data2D_Style WHERE d2id=?";
-
-    public static final String QueryPageStyles
-            = "SELECT * FROM Data2D_Style WHERE d2id=? AND (rowStart IS NULL OR rowStart<=?) AND (rowEnd IS NULL OR rowEnd>=?)";
+            = "SELECT * FROM Data2D_Style WHERE d2id=? ORDER BY sequence,d2sid";
 
     public static final String ClearStyles
             = "DELETE FROM Data2D_Style WHERE d2id=?";
@@ -82,14 +79,6 @@ public class TableData2DStyle extends BaseTable<Data2DStyle> {
             data.setData2DDefinition((Data2DDefinition) value);
         }
         return true;
-    }
-
-    public List<Data2DStyle> query(Connection conn, long d2id) {
-        if (conn == null || d2id < 0) {
-            return null;
-        }
-        String sql = "SELECT * FROM Data2D_Style WHERE d2id=" + d2id;
-        return query(conn, sql);
     }
 
     public boolean clear(Connection conn, long d2id) {

@@ -1,15 +1,12 @@
 package mara.mybox.controller;
 
-import java.util.List;
 import javafx.fxml.FXML;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
-import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -21,9 +18,7 @@ public class DataManufactureSaveController extends BaseChildController {
     protected ControlData2DEditTable tableController;
 
     @FXML
-    protected ToggleGroup targetGroup;
-    @FXML
-    protected RadioButton csvRadio, excelRadio, textsRadio, matrixRadio, tableRadio, myBoxClipboardRadio;
+    protected ControlData2DTarget targetController;
 
     public DataManufactureSaveController() {
         baseTitle = message("DataManufacture");
@@ -33,32 +28,7 @@ public class DataManufactureSaveController extends BaseChildController {
         try {
             this.tableController = tableController;
 
-            String target = UserConfig.getString(baseName + "DataTarget", "csv");
-            if (target == null) {
-                target = "csv";
-            }
-            switch (target) {
-                case "csv":
-                    csvRadio.fire();
-                    break;
-                case "excel":
-                    excelRadio.fire();
-                    break;
-                case "texts":
-                    textsRadio.fire();
-                    break;
-                case "matrix":
-                    matrixRadio.fire();
-                    break;
-                case "myBoxClipboard":
-                    myBoxClipboardRadio.fire();
-                    break;
-                case "table":
-                    tableRadio.fire();
-                    break;
-                default:
-                    csvRadio.fire();
-            }
+            targetController.setParameters(this, null);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -68,37 +38,52 @@ public class DataManufactureSaveController extends BaseChildController {
     @FXML
     @Override
     public void okAction() {
-        try {
-            String target = "csv";
-            BaseData2DController c = null;
-            List<Data2DColumn> cols = tableController.data2D.getColumns();
-            List<List<String>> data = tableController.data2D.tableRowsWithoutNumber();
-            if (csvRadio.isSelected()) {
-                c = DataFileCSVController.open(cols, data);
-            } else if (excelRadio.isSelected()) {
-                c = DataFileExcelController.open(cols, data);
-                target = "excel";
-            } else if (textsRadio.isSelected()) {
-                c = DataFileTextController.open(cols, data);
-                target = "texts";
-            } else if (matrixRadio.isSelected()) {
-                c = MatricesManageController.open(cols, data);
-                target = "matrix";
-            } else if (tableRadio.isSelected()) {
-                c = DataTablesController.open(cols, data);
-                target = "table";
-            } else if (myBoxClipboardRadio.isSelected()) {
-                tableController.copyToMyBoxClipboard2(cols, data);
-                target = "myBoxClipboard";
-            }
-            UserConfig.setString(baseName + "DataTarget", target);
-            closeStage();
-            if (c != null) {
-                c.saveAction();
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            private DataFileCSV csvFile;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    if (tableController.data2D.isMutiplePages()) {
+                        if (tableController.data2D.isTableChanged()) {
+                            tableController.data2D.setTask(task);
+                            csvFile = ((DataFileCSV) (tableController.data2D)).savePageAs();
+                            tableController.data2D.setTask(null);
+                        } else {
+                            csvFile = (DataFileCSV) tableController.data2D;
+                        }
+                    } else {
+                        csvFile = DataFileCSV.save(task, tableController.data2D.getColumns(),
+                                tableController.data2D.tableRowsWithoutNumber());
+                    }
+                    return csvFile != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                closeStage();
+                DataFileCSV.open(tableController, csvFile, targetController.target);
+                if (csvFile.isTableChanged()) {
+                    tableController.loadDef(csvFile);
+                }
+            }
+
+            @Override
+            protected void finalAction() {
+                tableController.data2D.setTask(null);
+                task = null;
+            }
+        };
+        start(task);
     }
 
     /*

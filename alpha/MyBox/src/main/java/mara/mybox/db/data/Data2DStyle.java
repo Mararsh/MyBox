@@ -17,6 +17,7 @@ public class Data2DStyle extends BaseData {
     protected long rowStart, rowEnd; // 0-based, exlcuded
     protected String columns, moreConditions, fontColor, bgColor, fontSize, moreStyle;
     protected boolean bold;
+    protected float sequence;
 
     private void init() {
         d2sid = -1;
@@ -30,6 +31,7 @@ public class Data2DStyle extends BaseData {
         fontSize = null;
         moreStyle = null;
         bold = false;
+        sequence = 0;
     }
 
     public Data2DStyle() {
@@ -84,6 +86,7 @@ public class Data2DStyle extends BaseData {
             fontSize = style.fontSize;
             moreStyle = style.moreStyle;
             bold = style.bold;
+            sequence = style.sequence;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -139,6 +142,9 @@ public class Data2DStyle extends BaseData {
                 case "bold":
                     data.setBold(value == null ? false : (boolean) value);
                     return true;
+                case "sequence":
+                    data.setSequence(value == null ? 0 : (float) value);
+                    return true;
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -174,6 +180,8 @@ public class Data2DStyle extends BaseData {
                     return data.getMoreStyle();
                 case "bold":
                     return data.isBold();
+                case "sequence":
+                    return data.getSequence();
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -292,6 +300,15 @@ public class Data2DStyle extends BaseData {
 
     public Data2DStyle setBold(boolean bold) {
         this.bold = bold;
+        return this;
+    }
+
+    public float getSequence() {
+        return sequence;
+    }
+
+    public Data2DStyle setSequence(float sequence) {
+        this.sequence = sequence;
         return this;
     }
 

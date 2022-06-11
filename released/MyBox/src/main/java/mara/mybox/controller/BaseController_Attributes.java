@@ -223,6 +223,14 @@ public abstract class BaseController_Attributes {
         }
     }
 
+    public boolean isShowing() {
+        if (getMyStage() != null) {
+            return myStage.isShowing();
+        } else {
+            return false;
+        }
+    }
+
     /*
         get/set
      */

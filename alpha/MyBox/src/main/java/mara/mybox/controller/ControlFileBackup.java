@@ -264,8 +264,9 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    tableData.add(0, savedBackup);
-                    tableView.refresh();
+//                    tableData.add(0, savedBackup);
+//                    tableView.refresh();
+                    loadBackups();
                 }
             });
             return savedBackup;

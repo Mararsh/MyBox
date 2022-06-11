@@ -45,6 +45,8 @@ public class Data2DSetStylesController extends BaseSysTableController<Data2DStyl
     @FXML
     protected TableColumn<Data2DStyle, Long> sidColumn, fromColumn, toColumn;
     @FXML
+    protected TableColumn<Data2DStyle, Integer> sequenceColumn;
+    @FXML
     protected TableColumn<Data2DStyle, String> columnsColumn, filterColumn,
             fontColorColumn, bgColorColumn, fontSizeColumn, boldColumn, moreColumn;
     @FXML
@@ -56,7 +58,7 @@ public class Data2DSetStylesController extends BaseSysTableController<Data2DStyl
     @FXML
     protected CheckBox colorCheck, bgCheck, sizeCheck, boldCheck;
     @FXML
-    protected TextField fromInput, toInput;
+    protected TextField fromInput, toInput, sequenceInput;
     @FXML
     protected TextArea moreInput;
     @FXML
@@ -83,46 +85,21 @@ public class Data2DSetStylesController extends BaseSysTableController<Data2DStyl
             fromInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> v, String ov, String nv) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    try {
-                        if (updatedStyle == null) {
-                            updatedStyle = new Data2DStyle();
-                        }
-                        String sv = fromInput.getText();
-                        if (sv == null || sv.isBlank()) {
-                            updatedStyle.setRowStart(-1);
-                        } else {
-                            updatedStyle.setRowStart(Long.parseLong(sv) - 1);
-                        }
-                        fromInput.setStyle(null);
-                    } catch (Exception e) {
-                        fromInput.setStyle(UserConfig.badStyle());
-                    }
+                    checkInputs();
                 }
             });
 
             toInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> v, String ov, String nv) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    try {
-                        if (updatedStyle == null) {
-                            updatedStyle = new Data2DStyle();
-                        }
-                        String sv = toInput.getText();
-                        if (sv == null || sv.isBlank()) {
-                            updatedStyle.setRowEnd(-1);
-                        } else {
-                            updatedStyle.setRowEnd(Long.parseLong(sv));
-                        }
-                        toInput.setStyle(null);
-                    } catch (Exception e) {
-                        toInput.setStyle(UserConfig.badStyle());
-                    }
+                    checkInputs();
+                }
+            });
+
+            sequenceInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> v, String ov, String nv) {
+                    checkInputs();
                 }
             });
 
@@ -202,6 +179,8 @@ public class Data2DSetStylesController extends BaseSysTableController<Data2DStyl
     protected void initColumns() {
         try {
             super.initColumns();
+            sidColumn.setCellValueFactory(new PropertyValueFactory<>("d2sid"));
+            sequenceColumn.setCellValueFactory(new PropertyValueFactory<>("sequence"));
             fromColumn.setCellValueFactory(new PropertyValueFactory<>("from"));
             toColumn.setCellValueFactory(new PropertyValueFactory<>("to"));
             columnsColumn.setCellValueFactory(new PropertyValueFactory<>("columns"));
@@ -211,7 +190,6 @@ public class Data2DSetStylesController extends BaseSysTableController<Data2DStyl
             fontSizeColumn.setCellValueFactory(new PropertyValueFactory<>("fontSize"));
             boldColumn.setCellValueFactory(new PropertyValueFactory<>("bold"));
             moreColumn.setCellValueFactory(new PropertyValueFactory<>("moreStyle"));
-            sidColumn.setCellValueFactory(new PropertyValueFactory<>("d2sid"));
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -234,6 +212,7 @@ public class Data2DSetStylesController extends BaseSysTableController<Data2DStyl
             };
             tableController.statusNotify.addListener(tableStatusListener);
 
+            filterController.setParamters(tableController.data2D);
             filterController.tipsView.setVisible(false);
 
             sourceChanged();
@@ -262,6 +241,48 @@ public class Data2DSetStylesController extends BaseSysTableController<Data2DStyl
             editStyle(orignialStyle);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void checkInputs() {
+        if (isSettingValues) {
+            return;
+        }
+        if (updatedStyle == null) {
+            updatedStyle = new Data2DStyle();
+        }
+        try {
+            String sv = fromInput.getText();
+            if (sv == null || sv.isBlank()) {
+                updatedStyle.setRowStart(-1);
+            } else {
+                updatedStyle.setRowStart(Long.parseLong(sv) - 1);
+            }
+            fromInput.setStyle(null);
+        } catch (Exception e) {
+            fromInput.setStyle(UserConfig.badStyle());
+        }
+        try {
+            String sv = toInput.getText();
+            if (sv == null || sv.isBlank()) {
+                updatedStyle.setRowEnd(-1);
+            } else {
+                updatedStyle.setRowEnd(Long.parseLong(sv));
+            }
+            toInput.setStyle(null);
+        } catch (Exception e) {
+            toInput.setStyle(UserConfig.badStyle());
+        }
+        try {
+            String sv = sequenceInput.getText();
+            if (sv == null || sv.isBlank()) {
+                updatedStyle.setSequence(dataSize + 1);
+            } else {
+                updatedStyle.setSequence(Float.valueOf(sv));
+            }
+            sequenceInput.setStyle(null);
+        } catch (Exception e) {
+            sequenceInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -303,8 +324,10 @@ public class Data2DSetStylesController extends BaseSysTableController<Data2DStyl
         fontSizeSelector.setValue(message("Default"));
         boldCheck.setSelected(false);
         moreInput.clear();
+        sequenceInput.setText((dataSize + 1) + "");
         isSettingValues = false;
         checkStyle();
+        checkInputs();
         recoverButton.setDisable(true);
     }
 
@@ -338,14 +361,15 @@ public class Data2DSetStylesController extends BaseSysTableController<Data2DStyl
     // For display, indices are 1-based and included
     // For internal, indices are 0-based and excluded
     public void editStyle(Data2DStyle style) {
-        loadNull();
         if (style == null) {
+            loadNull();
             return;
         }
         orignialStyle = style;
-        updatedStyle = orignialStyle.cloneAll();
+        updatedStyle = style.cloneAll();
         recoverButton.setDisable(updatedStyle.getD2sid() >= 0);
 
+        isSettingValues = true;
         fromInput.setText(updatedStyle.getRowStart() < 0 ? "" : (updatedStyle.getRowStart() + 1) + "");
         toInput.setText(updatedStyle.getRowEnd() < 0 ? "" : updatedStyle.getRowEnd() + "");
         String scolumns = updatedStyle.getColumns();
@@ -366,7 +390,6 @@ public class Data2DSetStylesController extends BaseSysTableController<Data2DStyl
         }
         filterController.scriptInput.setText(updatedStyle.getMoreConditions());
 
-        isSettingValues = true;
         if (updatedStyle.getFontColor() != null && !updatedStyle.getFontColor().isBlank()) {
             fontColorController.setColor(Color.web(updatedStyle.getFontColor()));
             colorSetRadio.fire();
@@ -378,6 +401,7 @@ public class Data2DSetStylesController extends BaseSysTableController<Data2DStyl
         fontSizeSelector.setValue(updatedStyle.getFontSize());
         boldCheck.setSelected(updatedStyle.isBold());
         moreInput.setText(updatedStyle.getMoreStyle());
+        sequenceInput.setText(updatedStyle.getSequence() + "");
         isSettingValues = false;
         checkStyle();
     }
@@ -393,6 +417,7 @@ public class Data2DSetStylesController extends BaseSysTableController<Data2DStyl
         orignialStyle = updatedStyle.cloneAll();
         orignialStyle.setD2sid(-1);
         updatedStyle = orignialStyle;
+        sequenceInput.setText((dataSize + 1) + "");
         checkStyle();
     }
 

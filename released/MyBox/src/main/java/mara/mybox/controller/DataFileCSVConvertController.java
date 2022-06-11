@@ -7,11 +7,11 @@ import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
-import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
@@ -65,9 +65,6 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
 
     public String withHeader(File srcFile, File targetPath) {
         String result;
-        CSVFormat csvFormat = CSVFormat.DEFAULT
-                .withFirstRecordAsHeader().withDelimiter(csvReadController.delimiter)
-                .withIgnoreEmptyLines().withTrim().withNullString("");
         Charset fileCharset;
         if (csvReadController.autoDetermine) {
             fileCharset = TextFileTools.charset(srcFile);
@@ -75,7 +72,8 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
             fileCharset = csvReadController.charset;
         }
         File validFile = FileTools.removeBOM(srcFile);
-        try ( CSVParser parser = CSVParser.parse(validFile, fileCharset, csvFormat)) {
+        try ( CSVParser parser = CSVParser.parse(validFile, fileCharset,
+                CsvTools.csvFormat(csvReadController.delimiter, true))) {
             List<String> names = new ArrayList<>();
             names.addAll(parser.getHeaderNames());
             convertController.setParameters(targetPath, names, filePrefix(srcFile), skip);
@@ -99,9 +97,6 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
 
     public String withoutHeader(File srcFile, File targetPath) {
         String result;
-        CSVFormat csvFormat = CSVFormat.DEFAULT
-                .withDelimiter(csvReadController.delimiter)
-                .withIgnoreEmptyLines().withTrim().withNullString("");
         Charset fileCharset;
         if (csvReadController.autoDetermine) {
             fileCharset = TextFileTools.charset(srcFile);
@@ -109,7 +104,8 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
             fileCharset = csvReadController.charset;
         }
         File validFile = FileTools.removeBOM(srcFile);
-        try ( CSVParser parser = CSVParser.parse(validFile, fileCharset, csvFormat)) {
+        try ( CSVParser parser = CSVParser.parse(validFile, fileCharset,
+                CsvTools.csvFormat(csvReadController.delimiter, false))) {
             List<String> names = null;
             for (CSVRecord record : parser) {
                 if (task == null || task.isCancelled()) {

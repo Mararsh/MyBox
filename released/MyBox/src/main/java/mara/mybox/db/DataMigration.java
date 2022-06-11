@@ -23,6 +23,7 @@ import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.db.data.Data2DCell;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.db.data.Data2DStyle;
 import mara.mybox.db.data.Dataset;
 import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.db.data.GeographyCode;
@@ -41,6 +42,7 @@ import mara.mybox.db.table.TableConvolutionKernel;
 import mara.mybox.db.table.TableData2DCell;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
+import mara.mybox.db.table.TableData2DStyle;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.db.table.TableImageClipboard;
@@ -138,6 +140,9 @@ public class DataMigration {
                 if (lastVersion < 6005005) {
                     updateIn655(conn);
                 }
+                if (lastVersion < 6005006) {
+                    updateIn656(conn);
+                }
             }
             TableStringValues.add(conn, "InstalledVersions", AppValues.AppVersion);
             conn.setAutoCommit(true);
@@ -145,6 +150,77 @@ public class DataMigration {
             MyBoxLog.debug(e.toString());
         }
         return true;
+    }
+
+    private static void updateIn656(Connection conn) {
+        try ( Statement statement = conn.createStatement()) {
+            MyBoxLog.info("Updating tables in 6.5.6...");
+
+            conn.setAutoCommit(true);
+            statement.executeUpdate("DROP INDEX Data2D_Style_unique_index");
+            statement.executeUpdate("ALTER TABLE Data2D_Style ADD COLUMN rowStart BigInt");
+            statement.executeUpdate("ALTER TABLE Data2D_Style ADD COLUMN rowEnd BigInt");
+            statement.executeUpdate("ALTER TABLE Data2D_Style ADD COLUMN columns VARCHAR(" + StringMaxLength + ")");
+            statement.executeUpdate("ALTER TABLE Data2D_Style ADD COLUMN moreConditions VARCHAR(" + StringMaxLength + ")");
+            statement.executeUpdate("ALTER TABLE Data2D_Style ADD COLUMN fontColor VARCHAR(64)");
+            statement.executeUpdate("ALTER TABLE Data2D_Style ADD COLUMN fontSize VARCHAR(64)");
+            statement.executeUpdate("ALTER TABLE Data2D_Style ADD COLUMN bgColor VARCHAR(64)");
+            statement.executeUpdate("ALTER TABLE Data2D_Style ADD COLUMN bold Boolean");
+            statement.executeUpdate("ALTER TABLE Data2D_Style ADD COLUMN moreStyle VARCHAR(" + StringMaxLength + ")");
+            statement.executeUpdate("ALTER TABLE Data2D_Style ADD COLUMN sequence int");
+
+            conn.setAutoCommit(false);
+            TableData2DStyle tableData2DStyle = new TableData2DStyle();
+            ResultSet query = statement.executeQuery("SELECT * FROM Data2D_Style ORDER BY d2id,colName,row");
+            long lastD2id = -1, lastRow = -2, rowStart = -1, sequence = 1;
+            String lastColName = null, lastStyle = null;
+            Data2DStyle data2DStyle = Data2DStyle.create()
+                    .setRowStart(rowStart).setRowEnd(rowStart);
+            while (query.next()) {
+                long d2id = query.getLong("d2id");
+                String colName = query.getString("colName");
+                String style = query.getString("style");
+                long row = query.getLong("row");
+                if (lastD2id != d2id || !colName.equals(lastColName) || !style.equals(lastStyle)) {
+                    if (data2DStyle.getRowStart() >= 0) {
+                        if (lastD2id != d2id) {
+                            sequence = 1;
+                        }
+                        data2DStyle.setD2sid(-1).setRowEnd(lastRow + 1).setSequence(sequence++);
+                        tableData2DStyle.insertData(conn, data2DStyle);
+                        conn.commit();
+                    }
+                    rowStart = row;
+                    data2DStyle.setD2id(d2id).setColumns(colName).setMoreStyle(style)
+                            .setRowStart(rowStart).setRowEnd(rowStart + 1);
+                } else if (row > lastRow + 1) {
+                    data2DStyle.setD2sid(-1).setRowEnd(lastRow + 1).setSequence(sequence++);
+                    tableData2DStyle.insertData(conn, data2DStyle);
+                    conn.commit();
+                    rowStart = row;
+                    data2DStyle.setD2id(d2id).setColumns(colName).setMoreStyle(style)
+                            .setRowStart(rowStart).setRowEnd(rowStart + 1);
+                }
+                lastD2id = d2id;
+                lastRow = row;
+                lastColName = colName;
+                lastStyle = style;
+            }
+            if (data2DStyle.getRowStart() >= 0) {
+                data2DStyle.setD2sid(-1).setRowEnd(lastRow + 1).setSequence(sequence++);
+                tableData2DStyle.insertData(conn, data2DStyle);
+                conn.commit();
+            }
+
+            conn.setAutoCommit(true);
+            statement.executeUpdate("ALTER TABLE Data2D_Style DROP COLUMN row");
+            statement.executeUpdate("ALTER TABLE Data2D_Style DROP COLUMN colName");
+            statement.executeUpdate("ALTER TABLE Data2D_Style DROP COLUMN style");
+            statement.executeUpdate("DELETE FROM Data2D_Style WHERE columns IS NULL");
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     private static void updateIn655(Connection conn) {
@@ -227,7 +303,8 @@ public class DataMigration {
             statement.executeUpdate("INSERT INTO tree_node (category, title, value, oldNodeid, oldParentid)  "
                     + "SELECT '" + TreeNode.Notebook + "', name , description, nbid, owner FROM notebook");
             statement.executeUpdate("Update tree_node AS A set parentid="
-                    + "(select B.nodeid from tree_node AS B WHERE A.oldParentid=B.oldNodeid AND B.category='" + TreeNode.Notebook + "' AND A.category='" + TreeNode.Notebook + "') "
+                    + "(select B.nodeid from tree_node AS B WHERE A.oldParentid=B.oldNodeid AND B.category='"
+                    + TreeNode.Notebook + "' AND A.category='" + TreeNode.Notebook + "') "
                     + " WHERE A.category='" + TreeNode.Notebook + "'");
             statement.executeUpdate("INSERT INTO tree_node (category, title, value, update_time, oldNodeid, oldParentid) "
                     + "SELECT 'Note', title, html, update_time, ntid, notebook FROM note");
@@ -235,7 +312,8 @@ public class DataMigration {
                     + "(select B.nodeid from tree_node AS B WHERE A.oldParentid=B.oldNodeid AND B.category='Notebook' AND A.category='Note')  "
                     + "WHERE A.category='Note'");
             statement.executeUpdate("INSERT INTO tree_node_tag (tnodeid, tagid)  "
-                    + "SELECT tree_node.nodeid, note_tag.tagid FROM tree_node, note_tag where tree_node.oldNodeid=note_tag.noteid AND tree_node.category='Note'");
+                    + "SELECT tree_node.nodeid, note_tag.tagid FROM tree_node, note_tag "
+                    + "where tree_node.oldNodeid=note_tag.noteid AND tree_node.category='Note'");
             statement.executeUpdate("Update tree_node set category='" + TreeNode.Notebook + "' WHERE category='Note'");
 
             statement.executeUpdate("ALTER TABLE tree_node DROP COLUMN oldNodeid");
@@ -1337,6 +1415,7 @@ public class DataMigration {
                             "Tree_Examples_en.txt", "Tree_Examples_zh.txt",
                             "JavaScript_Examples_en.txt", "JavaScript_Examples_zh.txt",
                             "JShell_Examples_en.txt", "JShell_Examples_zh.txt",
+                            "JEXL_Examples_en.txt", "JEXL_Examples_zh.txt",
                             "WebFavorites_Examples_en.txt", "WebFavorites_Examples_zh.txt"
                     );
                     for (String name : names) {

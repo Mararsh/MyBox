@@ -205,6 +205,7 @@ License:    Apache License Version 2.0
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#DataManufacture" text="%DataManufacture" />
                                 <MenuItem mnemonicParsing="false" onAction="#manageData" text="%ManageData" />
+                                <MenuItem mnemonicParsing="false" onAction="#SpliceData" text="%SpliceData" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <Menu mnemonicParsing="false" text="%DataFile">
                                     <items>
@@ -240,6 +241,8 @@ License:    Apache License Version 2.0
                                 <Menu mnemonicParsing="false" text="%Calculation">
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#JShell" text="%JShell" />
+                                        <MenuItem mnemonicParsing="false" onAction="#JEXL" text="%JEXL" />
+                                        <MenuItem mnemonicParsing="false" onAction="#JavaScript" text="JavaScript" />
                                     </items>
                                 </Menu>   
                                 <SeparatorMenuItem mnemonicParsing="false" />

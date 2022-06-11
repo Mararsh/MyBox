@@ -119,6 +119,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
     protected abstract void treeView(Connection conn, P node, int indent, String parentNumber, StringBuilder s);
 
+    public abstract TreeManageController openManager();
 
     /*
         Common methods may need not changed
@@ -251,11 +252,13 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                 protected void whenSucceeded() {
                     treeView.setRoot(rootItem);
                     rootItem.setExpanded(true);
-                    TreeItem<P> selecItem = find(selectNode);
-                    if (selecItem != null) {
-                        select(selecItem);
-                    } else {
-                        select(rootItem);
+                    if (selectNode != null) {
+                        TreeItem<P> selecItem = find(selectNode);
+                        if (selecItem != null) {
+                            select(selecItem);
+                        } else {
+                            select(rootItem);
+                        }
                     }
                 }
             };
@@ -321,16 +324,24 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                     popFunctionsMenu(null, item);
                     break;
                 case "Edit":
-                    editNode(item);
+                    if (manageMode) {
+                        editNode(item);
+                    }
                     break;
                 case "Paste":
-                    pasteNode(item);
+                    if (manageMode) {
+                        pasteNode(item);
+                    }
                     break;
                 case "LoadChildren":
-                    listChildren(item);
+                    if (manageMode) {
+                        listChildren(item);
+                    }
                     break;
                 case "LoadDescendants":
-                    listDescentants(item);
+                    if (manageMode) {
+                        listDescentants(item);
+                    }
                     break;
                 default:
                     break;
@@ -347,6 +358,9 @@ public abstract class BaseNodeSelector<P> extends BaseController {
     }
 
     public void popFunctionsMenu(MouseEvent event, TreeItem<P> node) {
+        if (getMyWindow() == null) {
+            return;
+        }
         List<MenuItem> items = makeNodeMenu(node);
         items.add(new SeparatorMenuItem());
 
@@ -379,7 +393,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         boolean isRoot = targetItem == null || isRoot(targetItem.getValue());
 
         List<MenuItem> items = new ArrayList<>();
-        MenuItem menu = new MenuItem(chainName(targetItem));
+        MenuItem menu = new MenuItem(PopTools.limitMenuName(chainName(targetItem)));
         menu.setStyle("-fx-text-fill: #2e598a;");
         items.add(menu);
         items.add(new SeparatorMenuItem());
@@ -453,6 +467,13 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             clickMenu.getItems().addAll(clickPopMenu, editNodeMenu, pasteNodeMenu, loadChildrenMenu, loadDescendantsMenu);
 
             items.add(clickMenu);
+
+        } else {
+            menu = new MenuItem(message("Manage"), StyleTools.getIconImage("iconData.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                openManager();
+            });
+            items.add(menu);
         }
 
         items.add(new SeparatorMenuItem());
@@ -526,6 +547,18 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             });
             items.add(menu);
 
+            menu = new MenuItem(message("Unfold"), StyleTools.getIconImage("iconPLus.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                unfoldNodes();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Fold"), StyleTools.getIconImage("iconMinus.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                foldNodes();
+            });
+            items.add(menu);
+
             items.add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("Export"), StyleTools.getIconImage("iconExport.png"));
@@ -553,19 +586,28 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             items.add(menu);
 
             items.add(new SeparatorMenuItem());
+        } else {
+
+            menu = new MenuItem(message("Examples"), StyleTools.getIconImage("iconExamples.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                importExamples();
+            });
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("Unfold"), StyleTools.getIconImage("iconPLus.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                unfoldNodes();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Fold"), StyleTools.getIconImage("iconMinus.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                foldNodes();
+            });
+            items.add(menu);
         }
-
-        menu = new MenuItem(message("Unfold"), StyleTools.getIconImage("iconPLus.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            unfoldNodes();
-        });
-        items.add(menu);
-
-        menu = new MenuItem(message("Fold"), StyleTools.getIconImage("iconMinus.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            foldNodes();
-        });
-        items.add(menu);
 
         return items;
     }
@@ -1126,10 +1168,6 @@ public abstract class BaseNodeSelector<P> extends BaseController {
     @Override
     public void cleanPane() {
         try {
-//            selectedNotify = null;
-//            changedNotify = null;
-//            selectedItem = null;
-//            changedItem = null;
             ignoreNode = null;
 
         } catch (Exception e) {

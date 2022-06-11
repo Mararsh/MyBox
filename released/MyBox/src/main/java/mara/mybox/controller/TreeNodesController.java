@@ -12,8 +12,10 @@ import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -344,11 +346,31 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
         }
     }
 
+    protected boolean loadExamples() {
+        try {
+            File file = TreeNode.exampleFile(category);
+            if (file != null && tableTreeNode.categoryEmpty(category)) {
+                if (AppVariables.isTesting || PopTools.askSure(this, getBaseTitle(), message("ImportExamples"))) {
+                    importExamples();
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return false;
+    }
+
     @FXML
     @Override
     protected void importExamples() {
         TreeNodeImportController controller = (TreeNodeImportController) WindowTools.openChildStage(getMyWindow(), Fxmls.TreeNodeImportFxml);
-        controller.importExamples(treeController);
+        if (treeController != null) {
+            controller.setManage(treeController);
+        } else {
+            controller.setManage(this);
+        }
+        controller.importExamples();
     }
 
     @FXML
@@ -414,4 +436,27 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
         }
     }
 
+    @Override
+    public TreeManageController openManager() {
+        if (category == null) {
+            return null;
+        }
+        switch (category) {
+            case TreeNode.WebFavorite:
+                return WebFavoritesController.oneOpen();
+            case TreeNode.Notebook:
+                return NotesController.oneOpen();
+            case TreeNode.JShellCode:
+                return JShellController.open("");
+            case TreeNode.SQL:
+                return DatabaseSqlController.open(false);
+            case TreeNode.JavaScript:
+                return JavaScriptController.open("");
+            case TreeNode.InformationInTree:
+                return TreeManageController.oneOpen();
+            case TreeNode.JEXL:
+                return JexlController.open("", "", "");
+        }
+        return null;
+    }
 }

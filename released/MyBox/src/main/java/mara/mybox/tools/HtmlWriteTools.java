@@ -71,8 +71,9 @@ public class HtmlWriteTools {
     /*
         build html
      */
-    public static String emptyHmtl() {
-        return html(null, "utf-8", null, "<BODY>\n\n\n</BODY>\n");
+    public static String emptyHmtl(String title) {
+        String body = title == null ? "<BODY>\n\n\n</BODY>\n" : "<BODY>\n<h2>" + title + "</h2>\n</BODY>\n";
+        return html(title, "utf-8", null, body);
     }
 
     public static String htmlPrefix(String title, String charset, String styleValue) {

@@ -6,7 +6,6 @@ import javafx.scene.chart.StackedBarChart;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import mara.mybox.controller.BaseData2DChartXYController;
 
 /**
  * Reference:
@@ -19,8 +18,7 @@ import mara.mybox.controller.BaseData2DChartXYController;
  */
 public class LabeledStackedBarChart<X, Y> extends StackedBarChart<X, Y> {
 
-    protected BaseData2DChartXYController chartController;
-    protected XYChartOptions<X, Y> options;
+    protected XYChartMaker chartMaker;
 
     public LabeledStackedBarChart(Axis xAxis, Axis yAxis) {
         super(xAxis, yAxis);
@@ -33,31 +31,29 @@ public class LabeledStackedBarChart<X, Y> extends StackedBarChart<X, Y> {
         this.setMaxHeight(Double.MAX_VALUE);
         VBox.setVgrow(this, Priority.ALWAYS);
         HBox.setHgrow(this, Priority.ALWAYS);
-        options = new XYChartOptions<>(this);
     }
 
-    public LabeledStackedBarChart setChartController(BaseData2DChartXYController chartController) {
-        this.chartController = chartController;
-        options = new XYChartOptions<>(chartController);
+    public LabeledStackedBarChart   setMaker(XYChartMaker<X,Y> chartMaker) {
+        this.chartMaker = chartMaker;
         return this;
     }
 
     @Override
     protected void seriesAdded(Series<X, Y> series, int seriesIndex) {
         super.seriesAdded(series, seriesIndex);
-        options.makeLabels(series, getPlotChildren());
+        chartMaker.makeLabels(series, getPlotChildren());
     }
 
     @Override
     protected void seriesRemoved(final Series<X, Y> series) {
-        options.removeLabels(series, getPlotChildren());
+        chartMaker.removeLabels(getPlotChildren());
         super.seriesRemoved(series);
     }
 
     @Override
     protected void layoutPlotChildren() {
         super.layoutPlotChildren();
-        options.displayLabels();
+        chartMaker.displayLabels();
     }
 
 }

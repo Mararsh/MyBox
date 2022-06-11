@@ -40,7 +40,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlData2DList extends BaseSysTableController<Data2DDefinition> {
 
-    protected BaseData2DController data2DController;
+    protected BaseData2DController manageController;
     protected TableData2DDefinition tableData2DDefinition;
 
     @FXML
@@ -90,30 +90,34 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
         }
     }
 
-    public void setParameters(BaseData2DController data2DController) {
+    public void setParameters(BaseData2DController manageController) {
         try {
-            this.data2DController = data2DController;
-            tableData2DDefinition = data2DController.loadController.tableData2DDefinition;
+            this.manageController = manageController;
+            tableData2DDefinition = manageController.tableData2DDefinition;
             tableDefinition = tableData2DDefinition;
             tableName = tableDefinition.getTableName();
             idColumn = tableDefinition.getIdColumn();
 
-            if (data2DController instanceof Data2DManageController) {
+            if (manageController instanceof Data2DSpliceController) {
+                buttonsPane.getChildren().removeAll(renameDataButton);
                 queryConditions = " data_type != " + Data2D.type(Data2DDefinition.Type.InternalTable);
 
-            } else if (data2DController instanceof MyBoxTablesController) {
+            } else if (manageController instanceof Data2DManageController) {
+                queryConditions = " data_type != " + Data2D.type(Data2DDefinition.Type.InternalTable);
+
+            } else if (manageController instanceof MyBoxTablesController) {
                 buttonsPane.getChildren().removeAll(openButton, queryButton, clearDataButton, deleteDataButton, renameDataButton);
                 queryConditions = " data_type = " + Data2D.type(Data2DDefinition.Type.InternalTable);
 
-            } else if (data2DController instanceof DataInMyBoxClipboardController) {
+            } else if (manageController instanceof DataInMyBoxClipboardController) {
                 buttonsPane.getChildren().removeAll(queryButton);
                 queryConditions = " data_type = " + Data2D.type(Data2DDefinition.Type.MyBoxClipboard);
 
-            } else if (data2DController instanceof MatricesManageController) {
+            } else if (manageController instanceof MatricesManageController) {
                 buttonsPane.getChildren().removeAll(openButton, queryButton);
                 queryConditions = " data_type = " + Data2D.type(Data2DDefinition.Type.Matrix);
 
-            } else if (data2DController instanceof DataTablesController) {
+            } else if (manageController instanceof DataTablesController) {
                 buttonsPane.getChildren().removeAll(openButton, queryButton);
                 queryConditions = " data_type = " + Data2D.type(Data2DDefinition.Type.DatabaseTable);
 
@@ -121,7 +125,6 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
                 queryConditions = null;
 
             }
-
             loadList();
 
         } catch (Exception e) {
@@ -130,7 +133,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
     }
 
     public void loadList() {
-        if (data2DController instanceof MyBoxTablesController) {
+        if (manageController instanceof MyBoxTablesController) {
             task = new SingletonTask<Void>(this) {
 
                 @Override
@@ -156,7 +159,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
             };
             start(task);
 
-        } else if (data2DController instanceof DataTablesController) {
+        } else if (manageController instanceof DataTablesController) {
             task = new SingletonTask<Void>(this) {
 
                 @Override
@@ -194,22 +197,25 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
     @FXML
     @Override
     public void editAction() {
-        if (data2DController.loadController.data2D == null) {
+        if (manageController.data2D == null) {
             return;
         }
-        Data2DDefinition.open(data2DController.loadController.data2D);
+        Data2DDefinition.open(manageController.data2D);
     }
 
     @Override
     protected List<MenuItem> makeTableContextMenu() {
         try {
             List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
 
-            MenuItem menu = new MenuItem(message("Load"), StyleTools.getIconImage("iconData.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                load();
-            });
-            items.add(menu);
+            if (!(manageController instanceof Data2DSpliceController)) {
+                menu = new MenuItem(message("Load"), StyleTools.getIconImage("iconData.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    load();
+                });
+                items.add(menu);
+            }
 
             if (buttonsPane.getChildren().contains(renameDataButton)) {
                 menu = new MenuItem(message("Rename"), StyleTools.getIconImage("iconRename.png"));
@@ -274,8 +280,8 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
         if (data == null || data.isEmpty()) {
             return 0;
         }
-        if (data2DController instanceof Data2DManageController
-                || data2DController instanceof DataTablesController) {
+        if (manageController instanceof Data2DManageController
+                || manageController instanceof DataTablesController) {
             boolean changed = false;
             try ( Connection conn = DerbyBase.getConnection();
                      Statement statement = conn.createStatement()) {
@@ -287,12 +293,12 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
                         } catch (Exception e) {
                             MyBoxLog.debug(e, item.getSheet());
                         }
-                        if (data2DController.loadController.data2D != null
-                                && item.getD2did() == data2DController.loadController.data2D.getD2did()) {
+                        if (manageController.data2D != null
+                                && item.getD2did() == manageController.data2D.getD2did()) {
                             Platform.runLater(new Runnable() {
                                 @Override
                                 public void run() {
-                                    data2DController.loadDef(null);
+                                    manageController.loadDef(null);
                                 }
                             });
                         }
@@ -305,9 +311,9 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        if (data2DController instanceof Data2DManageController) {
+                        if (manageController instanceof Data2DManageController) {
                             DataTablesController.updateList();
-                        } else if (data2DController instanceof DataTablesController) {
+                        } else if (manageController instanceof DataTablesController) {
                             Data2DManageController.updateList();
                         }
                     }
@@ -319,8 +325,8 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
 
     @Override
     protected long clearData() {
-        if (data2DController instanceof Data2DManageController
-                || data2DController instanceof DataTablesController) {
+        if (manageController instanceof Data2DManageController
+                || manageController instanceof DataTablesController) {
             String sql = "SELECT d2did, sheet FROM " + tableData2DDefinition.getTableName()
                     + " WHERE  data_type = " + Data2D.type(Data2DDefinition.Type.DatabaseTable);
             boolean isCurrent = false;
@@ -331,8 +337,8 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
                 List<String> names = new ArrayList<>();
                 while (results.next()) {
                     names.add(results.getString("sheet"));
-                    isCurrent = data2DController.loadController.data2D != null
-                            && results.getLong("d2did") == data2DController.loadController.data2D.getD2did();
+                    isCurrent = manageController.data2D != null
+                            && results.getLong("d2did") == manageController.data2D.getD2did();
                 }
                 for (String name : names) {
                     try {
@@ -350,11 +356,11 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
                 @Override
                 public void run() {
                     if (loadNull) {
-                        data2DController.loadDef(null);
+                        manageController.loadDef(null);
                     }
-                    if (data2DController instanceof Data2DManageController) {
+                    if (manageController instanceof Data2DManageController) {
                         DataTablesController.updateList();
-                    } else if (data2DController instanceof DataTablesController) {
+                    } else if (manageController instanceof DataTablesController) {
                         Data2DManageController.updateList();
                     }
                 }
@@ -373,11 +379,11 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
 
     public void load(Data2DDefinition source) {
         try {
-            if (source == null || data2DController == null
-                    || !data2DController.checkBeforeNextAction()) {
+            if (source == null || manageController == null
+                    || !manageController.checkBeforeNextAction()) {
                 return;
             }
-            data2DController.loadDef(source);
+            manageController.loadDef(source);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -385,7 +391,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
 
     @FXML
     public void renameAction() {
-        if (data2DController == null) {
+        if (manageController.loadController == null) {
             return;
         }
         int index = tableView.getSelectionModel().getSelectedIndex();
@@ -393,7 +399,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
         if (selected == null) {
             return;
         }
-        data2DController.loadController.renameAction(this, index, selected);
+        manageController.loadController.renameAction(this, index, selected);
     }
 
     @FXML
@@ -403,7 +409,8 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
 
     @FXML
     public void popOpen(MouseEvent mouseEvent) {
-        if (!(data2DController instanceof Data2DManageController)) {
+        if (!(manageController instanceof Data2DManageController)
+                && !(manageController instanceof Data2DSpliceController)) {
             return;
         }
         try {
@@ -471,7 +478,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
     @Override
     public void cleanPane() {
         try {
-            data2DController = null;
+            manageController = null;
         } catch (Exception e) {
         }
         super.cleanPane();

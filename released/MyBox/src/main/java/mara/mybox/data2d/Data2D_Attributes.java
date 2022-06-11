@@ -1,11 +1,13 @@
 package mara.mybox.data2d;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javafx.scene.web.WebEngine;
 import mara.mybox.controller.ControlData2DLoad;
+import mara.mybox.data.FindReplaceString;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.db.data.Data2DStyle;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.db.table.TableData2DStyle;
@@ -27,18 +29,22 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
     protected int pageSize, newColumnIndex;
     protected long dataSize, pagesNumber;
     protected long currentPage, startRowOfCurrentPage, endRowOfCurrentPage;   // 0-based, excluded end
-    protected Map<String, String> styles;
+    protected List<Data2DStyle> styles;
     protected ControlData2DLoad loadController;
-    protected boolean tableChanged;
+    protected boolean tableChanged, filterReversed, filterPassed;
     protected SingletonTask task, backgroundTask;
-    protected String error;
+    protected String error, rowFilter;
+    protected final Object lock = new Object();
+    public WebEngine webEngine;
+    public FindReplaceString findReplace;
+    public String expressionResult;
 
     public Data2D_Attributes() {
         tableData2DDefinition = new TableData2DDefinition();
         tableData2DColumn = new TableData2DColumn();
         tableData2DStyle = new TableData2DStyle();
         pageSize = 50;
-        styles = new HashMap<>();
+        styles = null;
         initData();
     }
 
@@ -52,8 +58,12 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         newColumnIndex = -1;
         tableChanged = false;
         options = null;
-        styles.clear();
+        styles = null;
         error = null;
+        rowFilter = null;
+        webEngine = null;
+        findReplace = null;
+        expressionResult = null;
     }
 
     public void resetData() {
@@ -79,6 +89,8 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
             backgroundTask = d.backgroundTask;
             error = d.error;
             options = d.options;
+            webEngine = d.webEngine;
+            findReplace = d.findReplace;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -104,6 +116,8 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
             startRowOfCurrentPage = d.startRowOfCurrentPage;
             endRowOfCurrentPage = d.endRowOfCurrentPage;
             tableChanged = d.tableChanged;
+            rowFilter = d.rowFilter;
+            expressionResult = d.expressionResult;
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -140,8 +154,9 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         return columns;
     }
 
-    public void setColumns(List<Data2DColumn> columns) {
+    public Data2D_Attributes setColumns(List<Data2DColumn> columns) {
         this.columns = columns;
+        return this;
     }
 
     public long getDataSize() {
@@ -228,12 +243,52 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         this.savedColumns = savedColumns;
     }
 
-    public Map<String, String> getStyles() {
+    public List<Data2DStyle> getStyles() {
         return styles;
     }
 
-    public void setStyles(Map<String, String> styles) {
+    public void setStyles(List<Data2DStyle> styles) {
         this.styles = styles;
+    }
+
+    public String getRowFilter() {
+        return rowFilter;
+    }
+
+    public void setRowFilter(String rowFilter) {
+        this.rowFilter = rowFilter;
+    }
+
+    public boolean isFilterReversed() {
+        return filterReversed;
+    }
+
+    public void setFilterReversed(boolean filterReversed) {
+        this.filterReversed = filterReversed;
+    }
+
+    public WebEngine getWebEngine() {
+        return webEngine;
+    }
+
+    public void setWebEngine(WebEngine webEngine) {
+        this.webEngine = webEngine;
+    }
+
+    public FindReplaceString getFindReplace() {
+        return findReplace;
+    }
+
+    public void setFindReplace(FindReplaceString findReplace) {
+        this.findReplace = findReplace;
+    }
+
+    public String getExpressionResult() {
+        return expressionResult;
+    }
+
+    public void setExpressionResult(String expressionResult) {
+        this.expressionResult = expressionResult;
     }
 
     public SingletonTask getTask() {

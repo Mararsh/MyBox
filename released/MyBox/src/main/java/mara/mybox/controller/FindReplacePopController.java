@@ -1,14 +1,9 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
-import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -20,7 +15,7 @@ import mara.mybox.value.Languages;
 public class FindReplacePopController extends MenuTextBaseController {
 
     @FXML
-    protected ControlFindReplace findReplaceController;
+    protected ControlFindReplace replaceController;
 
     public FindReplacePopController() {
         baseTitle = Languages.message("FindReplace");
@@ -31,7 +26,7 @@ public class FindReplacePopController extends MenuTextBaseController {
         try {
             super.setParameters(parent, node, x, y);
 
-            findReplaceController.setEditInput(parent, textInput);
+            replaceController.setEditInput(parent, textInput);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -47,14 +42,7 @@ public class FindReplacePopController extends MenuTextBaseController {
             if (parent == null || node == null) {
                 return null;
             }
-            List<Window> windows = new ArrayList<>();
-            windows.addAll(Window.getWindows());
-            for (Window window : windows) {
-                Object object = window.getUserData();
-                if (object != null && object instanceof FindReplacePopController) {
-                    ((FindReplacePopController) object).close();
-                }
-            }
+            closeAll();
             FindReplacePopController controller
                     = (FindReplacePopController) WindowTools.openChildStage(parent.getMyStage(), Fxmls.FindReplacePopFxml, false);
             controller.setParameters(parent, node, x, y);

@@ -29,12 +29,12 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.HtmlStyles;
+import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.JsonTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
-import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -399,9 +399,8 @@ public class ControlDataConvert extends BaseController {
                 csvFile = parent.makeTargetFile(currentPrefix, ".csv", targetPath);
                 if (csvFile != null) {
                     updateLogs(message("Writing") + " " + csvFile.getAbsolutePath());
-                    CSVFormat csvFormat = CSVFormat.DEFAULT
-                            .withDelimiter(csvWriteController.delimiter).withTrim().withNullString("");
-                    csvPrinter = new CSVPrinter(new FileWriter(csvFile, csvWriteController.charset), csvFormat);
+                    csvPrinter = new CSVPrinter(new FileWriter(csvFile, csvWriteController.charset),
+                            CsvTools.csvFormat(csvWriteController.delimiter));
                     if (csvWriteController.withNamesCheck.isSelected()) {
                         csvPrinter.printRecord(names);
                     }
@@ -503,9 +502,7 @@ public class ControlDataConvert extends BaseController {
                 dataClipboardFile = DataClipboard.newFile();
                 if (dataClipboardFile != null) {
                     updateLogs(message("Writing") + " " + dataClipboardFile.getAbsolutePath());
-                    CSVFormat csvFormat = CSVFormat.DEFAULT
-                            .withDelimiter(',').withTrim().withNullString("");
-                    dataClipboardPrinter = new CSVPrinter(new FileWriter(dataClipboardFile, Charset.forName("UTF-8")), csvFormat);
+                    dataClipboardPrinter = new CSVPrinter(new FileWriter(dataClipboardFile, Charset.forName("UTF-8")), CsvTools.csvFormat());
                     dataClipboardPrinter.printRecord(names);
                 } else if (skip) {
                     updateLogs(message("Skipped"));

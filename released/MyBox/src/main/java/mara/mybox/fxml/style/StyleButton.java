@@ -94,6 +94,7 @@ public class StyleButton {
         if (id.startsWith("clear")) {
             switch (id) {
                 case "clearButton":
+                case "clearCodesButton":
                     return new StyleData(id, message("Clear"), "CTRL+g", "iconClear.png");
                 default:
                     return new StyleData(id, message("Clear"), "", "iconClear.png");
@@ -198,10 +199,6 @@ public class StyleButton {
             switch (id) {
                 case "copyButton":
                     return new StyleData(id, message("Copy"), "CTRL+c / ALT+c ", "iconCopy.png");
-                case "copyAsAButton":
-                    return new StyleData("copyAsAButton", message("CopyAsMatrixA"), "", "iconCopyA.png");
-                case "copyAsBButton":
-                    return new StyleData("copyAsAButton", message("CopyAsMatrixB"), "", "iconCopyB.png");
                 case "copyEnglishButton":
                     return new StyleData(id, message("CopyEnglish"), "CTRL+e / ALT+e ", "iconCopy.png");
                 default:
@@ -280,14 +277,25 @@ public class StyleButton {
         if (id.startsWith("input")) {
             return new StyleData(id, message("Input"), "", "iconRename.png");
         }
-        if (id.startsWith("dataImport") || id.startsWith("import")) {
-            return new StyleData(id, message("Import"), "", "iconImport.png");
-        }
-        if (id.startsWith("dataExport") || id.startsWith("export")) {
-            return new StyleData(id, message("Export"), "", "iconExport.png");
+        if (id.startsWith("suggestion")) {
+            return new StyleData(id, message("CodeCompletionSuggestions"), "CTRL+1 / ALT+1", "iconInput.png");
         }
         if (id.startsWith("data")) {
-            return new StyleData(id, message("Data"), "", "iconData.png");
+            if (id.startsWith("database")) {
+                return new StyleData(id, "", message("DatabaseTable"), "", "iconDatabase.png");
+            } else if (id.startsWith("dataImport") || id.startsWith("import")) {
+                return new StyleData(id, message("Import"), "", "iconImport.png");
+            } else if (id.startsWith("dataExport") || id.startsWith("export")) {
+                return new StyleData(id, message("Export"), "", "iconExport.png");
+            } else if (id.startsWith("dataset")) {
+                return new StyleData(id, message("DataSet"), "", "iconDataset.png");
+            } else if (id.startsWith("dataA")) {
+                return new StyleData(id, message("SetAsDataA"), "", "iconA.png");
+            } else if (id.startsWith("dataBB")) {
+                return new StyleData(id, message("SetAsDataB"), "", "iconB.png");
+            } else {
+                return new StyleData(id, message("Data"), "", "iconData.png");
+            }
         }
         if (id.startsWith("query")) {
             return new StyleData(id, message("Query"), "", "iconData.png");
@@ -295,9 +303,7 @@ public class StyleButton {
         if (id.startsWith("map")) {
             return new StyleData(id, message("Map"), "", "iconMap.png");
         }
-        if (id.startsWith("dataset")) {
-            return new StyleData(id, message("DataSet"), "", "iconDataset.png");
-        }
+
         if (id.startsWith("sureButton")) {
             return new StyleData(id, message("Sure"), "", "iconYes.png");
         }
@@ -413,17 +419,15 @@ public class StyleButton {
         if (id.startsWith("comma")) {
             return new StyleData(id, message("Comma"), "", "iconDelimiter.png");
         }
-        if (id.startsWith("matrixA")) {
-            return new StyleData(id, message("SetAsMatrixA"), "", "iconA.png");
-        }
-        if (id.startsWith("matrixB")) {
-            return new StyleData(id, message("SetAsMatrixB"), "", "iconB.png");
-        }
+
         if (id.startsWith("matrix")) {
-            return new StyleData(id, message("Matrix"), "", "iconMatrix.png");
-        }
-        if (id.startsWith("database")) {
-            return new StyleData(id, "", message("DatabaseTable"), "", "iconDatabase.png");
+            if (id.startsWith("matrixA")) {
+                return new StyleData(id, message("SetAsMatrixA"), "", "iconA.png");
+            } else if (id.startsWith("matrixB")) {
+                return new StyleData(id, message("SetAsMatrixB"), "", "iconB.png");
+            } else {
+                return new StyleData(id, message("Matrix"), "", "iconMatrix.png");
+            }
         }
         if (id.startsWith("tableDefinition")) {
             return new StyleData(id, "", message("TableDefinition"), "", "iconInfo.png");
@@ -621,6 +625,9 @@ public class StyleButton {
         }
         if (id.startsWith("straightLine")) {
             return new StyleData(id, message("StraightLine"), "", "iconStraightLine.png");
+        }
+        if (id.startsWith("jar")) {
+            return new StyleData(id, message("JarFile"), "", "iconJar.png");
         }
         return null;
     }

@@ -1,227 +1,697 @@
 package mara.mybox.fxml.chart;
 
-import java.util.HashMap;
-import java.util.Map;
-import javafx.collections.ObservableList;
-import javafx.scene.Node;
+import javafx.geometry.Side;
+import javafx.scene.chart.Axis;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
-import mara.mybox.controller.BaseData2DChartXYController;
-import mara.mybox.controller.ControlFxChart;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.chart.ChartTools.ChartCoordinate;
-import mara.mybox.fxml.chart.ChartTools.LabelType;
-import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
- * @CreateDate 2022-4-12
+ * @CreateDate 2022-5-13
  * @License Apache License Version 2.0
  */
-public class XYChartOptions<X, Y> {
+public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
 
-    protected BaseData2DChartXYController chartController;
-    protected ControlFxChart paneController;
     protected XYChart xyChart;
-    protected LabelType labelType;
-    protected ChartCoordinate xCoordinate, yCoordinate, sCoordinate;
-    protected int labelFontSize, scale;
-    protected boolean popLabel, disName, isXY, isCategoryNumbers;
-    protected ChartTools.LabelLocation labelLocation;
-    protected Map<Node, Node> nodeLabels = new HashMap<>();
+    protected LabeledLineChart lineChart;
+    protected LabeledBarChart barChart;
+    protected LabeledStackedBarChart stackedBarChart;
+    protected LabeledScatterChart​ scatterChart​;
+    protected LabeledAreaChart areaChart;
+    protected LabeledStackedAreaChart stackedAreaChart;
+    protected LabeledBubbleChart bubbleChart;
+    protected BoxWhiskerChart boxWhiskerChart;
+    protected SimpleRegressionChart simpleRegressionChart;
+    protected ResidualChart residualChart;
 
-    public XYChartOptions(XYChart xyChart) {
-        this.xyChart = xyChart;
-        labelType = LabelType.CategoryAndValue;
-        xCoordinate = ChartCoordinate.Cartesian;
-        yCoordinate = ChartCoordinate.Cartesian;
-        labelFontSize = 10;
-        scale = 2;
-        popLabel = true;
-        disName = false;
-        isXY = true;
-        isCategoryNumbers = false;
-        labelLocation = ChartTools.LabelLocation.Above;
+    protected CategoryAxis categoryStringAxis;
+    protected NumberAxis categoryNumberAxis, valueAxis;
+    protected Axis xAxis, yAxis, categoryAxis;
+
+    protected ChartCoordinate categoryCoordinate, numberCoordinate, sizeCoordinate,
+            xCoordinate, yCoordinate;
+    protected int lineWidth, categoryFontSize, categoryMargin, categoryTickRotation,
+            numberFontSize, numberTickRotation;
+    protected boolean isXY, categoryIsNumbers,
+            displayCategoryMark, displayCategoryTick, displayNumberMark, displayNumberTick,
+            altRowsFill, altColumnsFill, displayVlines, displayHlines, displayVZero, displayHZero,
+            dotted;
+    protected LabelLocation labelLocation;
+    protected Side categorySide, numberSide;
+    protected double barGap, categoryGap;
+    protected String bubbleStyle;
+
+    public static enum LabelLocation {
+        Above, Below, Center
     }
 
-    public XYChartOptions(BaseData2DChartXYController chartController) {
-        this.chartController = chartController;
-        this.paneController = chartController.getChartController();
-        refreshOptions();
+    public static enum ChartCoordinate {
+        Cartesian, LogarithmicE, Logarithmic10, SquareRoot
     }
 
-    public XYChartOptions(BaseData2DChartXYController chartController, ControlFxChart paneController) {
-        this.chartController = chartController;
-        this.paneController = paneController;
-        refreshOptions();
+    public static final String DefaultBubbleStyle
+            = "radial-gradient(center 50% 50%, radius 50%, transparent 0%, transparent 90%, derive(-fx-bubble-fill,0%) 100%)";
+
+    public XYChartOptions() {
     }
 
-    public final void refreshOptions() {
-        if (chartController == null) {
-            return;
-        }
-        xyChart = chartController.getXyChart();
-        labelFontSize = chartController.getLabelFontSize();
-        scale = chartController.getScale();
-        isXY = chartController.isXY();
-        isCategoryNumbers = chartController.isCategoryNumbers();
-        xCoordinate = chartController.getxCoordinate();
-        yCoordinate = chartController.getyCoordinate();
-        sCoordinate = chartController.getsCoordinate();
-        labelLocation = chartController.getLabelLocation();
-        labelType = paneController.getLabelType();
-        popLabel = paneController.popLabel();
-        disName = paneController.disName();
-    }
-
-    protected void makeLabels(XYChart.Series<X, Y> series, ObservableList<Node> nodes) {
-        if (labelType == null || xyChart == null) {
-            return;
-        }
+    public XYChartOptions initXYChartOptions() {
         try {
-            refreshOptions();
-            xyChart.setStyle("-fx-font-size: " + labelFontSize + "px;  -fx-text-fill: black;");
-            for (int s = 0; s < series.getData().size(); s++) {
-                XYChart.Data<X, Y> item = series.getData().get(s);
-                Node label = makeLabel(series.getName(), item);
-                if (label != null) {
-                    label.setStyle("-fx-font-size: " + labelFontSize + "px;  -fx-text-fill: black;");
-                    nodeLabels.put(item.getNode(), label);
-                    nodes.add(label);
+            if (chartName == null) {
+                return this;
+            }
+            initChartOptions();
+
+            isXY = UserConfig.getBoolean(chartName + "XY", true);
+            switch (chartType) {
+                case Bubble:
+                    categoryIsNumbers = true;
+                    labelLocation = LabelLocation.Center;
+                    break;
+                case SimpleRegressionChart:
+                case ResidualChart:
+                    categoryIsNumbers = true;
+                    labelLocation = LabelLocation.Above;
+                    break;
+                case Bar:
+                case StackedBar:
+                case Area:
+                case StackedArea:
+                    categoryIsNumbers = false;
+                    labelLocation = LabelLocation.Above;
+                    break;
+                default:
+                    categoryIsNumbers = UserConfig.getBoolean(chartName + "CategoryIsNumbers", false);
+                    labelLocation = LabelLocation.Below;
+                    break;
+            }
+            displayCategoryMark = UserConfig.getBoolean(chartName + "DisplayCategoryMark", true);
+            displayCategoryTick = UserConfig.getBoolean(chartName + "DisplayCategoryTick", true);
+            displayNumberMark = UserConfig.getBoolean(chartName + "DisplayNumberMark", true);
+            displayNumberTick = UserConfig.getBoolean(chartName + "DisplayNumberTick", true);
+            plotAnimated = UserConfig.getBoolean(chartName + "PlotAnimated", false);
+
+            altRowsFill = UserConfig.getBoolean(chartName + "AltRowsFill", false);
+            altColumnsFill = UserConfig.getBoolean(chartName + "AltColumnsFill", false);
+            displayVlines = UserConfig.getBoolean(chartName + "DisplayVlines", true);
+            displayHlines = UserConfig.getBoolean(chartName + "DisplayHlines", true);
+            displayVZero = UserConfig.getBoolean(chartName + "DisplayVZero", true);
+            displayHZero = UserConfig.getBoolean(chartName + "DisplayHZero", true);
+            dotted = UserConfig.getBoolean(chartName + "Dotted", false);
+
+            categoryFontSize = UserConfig.getInt(chartName + "CategoryFontSize", 10);
+            categoryMargin = UserConfig.getInt(chartName + "CategoryMargin", 2);
+            categoryTickRotation = UserConfig.getInt(chartName + "CategoryTickRotation", 90);
+            numberFontSize = UserConfig.getInt(chartName + "NumberFontSize", 10);
+            numberTickRotation = UserConfig.getInt(chartName + "NumberTickRotation", 0);
+            lineWidth = UserConfig.getInt(chartName + "LineWidth", 2);
+            barGap = UserConfig.getDouble(chartName + "BarGap", 2d);
+            categoryGap = UserConfig.getDouble(chartName + "CategoryGap", 20d);
+
+            bubbleStyle = UserConfig.getString(chartName + "BubbleStyle", DefaultBubbleStyle);
+
+            String saved = UserConfig.getString(chartName + "LabelLocation", labelLocation.name());
+            if (saved != null) {
+                for (LabelLocation type : LabelLocation.values()) {
+                    if (type.name().equals(saved)) {
+                        labelLocation = type;
+                        break;
+                    }
                 }
             }
+
+            categorySide = Side.BOTTOM;
+            saved = UserConfig.getString(chartName + "CategorySide", "BOTTOM");
+            if (saved != null) {
+                for (Side value : Side.values()) {
+                    if (value.name().equals(saved)) {
+                        categorySide = value;
+                        break;
+                    }
+                }
+            }
+
+            numberSide = Side.LEFT;
+            saved = UserConfig.getString(chartName + "NumberSide", "LEFT");
+            if (saved != null) {
+                for (Side value : Side.values()) {
+                    if (value.name().equals(saved)) {
+                        numberSide = value;
+                        break;
+                    }
+                }
+            }
+
+            categoryCoordinate = ChartCoordinate.Cartesian;
+            saved = UserConfig.getString(chartName + "CategoryCoordinate", "Cartesian");
+            if (saved != null) {
+                for (ChartCoordinate value : ChartCoordinate.values()) {
+                    if (value.name().equals(saved)) {
+                        categoryCoordinate = value;
+                        break;
+                    }
+                }
+            }
+
+            numberCoordinate = ChartCoordinate.Cartesian;
+            saved = UserConfig.getString(chartName + "NumberCoordinate", "Cartesian");
+            if (saved != null) {
+                for (ChartCoordinate value : ChartCoordinate.values()) {
+                    if (value.name().equals(saved)) {
+                        numberCoordinate = value;
+                        break;
+                    }
+                }
+            }
+
+            sizeCoordinate = ChartCoordinate.Cartesian;
+            saved = UserConfig.getString(chartName + "SizeCoordinate", "Cartesian");
+            if (saved != null) {
+                for (ChartCoordinate value : ChartCoordinate.values()) {
+                    if (value.name().equals(saved)) {
+                        sizeCoordinate = value;
+                        break;
+                    }
+                }
+            }
+
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.error(e.toString());
         }
-    }
-
-    private Node makeLabel(String numberName, XYChart.Data item) {
-        if (item == null || item.getNode() == null) {
-            return null;
-        }
-        try {
-            String categoryName, category, number, extra, categoryDis, numberDis, extraDis;
-            if (isXY) {
-                categoryName = xyChart.getXAxis().getLabel();
-                category = item.getXValue().toString();
-                if (isCategoryNumbers) {
-                    categoryDis = DoubleTools.format(ChartTools.realValue(xCoordinate, Double.valueOf(category)), scale);
-                } else {
-                    categoryDis = category;
-                }
-                number = item.getYValue().toString();
-                numberDis = DoubleTools.format(ChartTools.realValue(yCoordinate, Double.valueOf(number)), scale);
-            } else {
-                categoryName = xyChart.getYAxis().getLabel();
-                category = item.getYValue().toString();
-                if (isCategoryNumbers) {
-                    categoryDis = DoubleTools.format(ChartTools.realValue(yCoordinate, Double.valueOf(category)), scale);
-                } else {
-                    categoryDis = category;
-                }
-                number = item.getXValue().toString();
-                numberDis = DoubleTools.format(ChartTools.realValue(xCoordinate, Double.valueOf(number)), scale);
-            }
-
-            if (item.getExtraValue() != null) {
-                double d = (double) item.getExtraValue();
-                extra = "\n" + (disName ? message("Size") + ": " : "") + DoubleTools.format(d, scale);
-                extraDis = "\n" + (disName ? message("Size") + ": " : "") + DoubleTools.format(ChartTools.realValue(sCoordinate, d), scale);
-            } else {
-                extra = "";
-                extraDis = "";
-            }
-            if (popLabel || labelType == LabelType.Pop) {
-                NodeStyleTools.setTooltip(item.getNode(),
-                        categoryName + ": " + categoryDis + "\n"
-                        + numberName + ": " + numberDis + extraDis);
-            }
-            if (labelType == null || labelType == LabelType.NotDisplay) {
-                return null;
-            }
-            String display = null;
-
-            switch (labelType) {
-                case Category:
-                    display = (disName ? categoryName + ": " : "") + categoryDis;
-                    break;
-                case Value:
-                    display = (disName ? numberName + ": " : "") + numberDis + extraDis;
-                    break;
-                case CategoryAndValue:
-                    display = (disName ? categoryName + ": " : "") + categoryDis + "\n"
-                            + (disName ? numberName + ": " : "") + numberDis + extraDis;
-                    break;
-            }
-            if (display != null && !display.isBlank()) {
-                Text text = new Text(display);
-                text.setTextAlignment(TextAlignment.CENTER);
-                return text;
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-            return null;
-        }
-    }
-
-    protected void displayLabels() {
-        if (labelType == null || labelLocation == null
-                || labelType == LabelType.NotDisplay || labelType == LabelType.Pop) {
-            return;
-        }
-        for (Node node : nodeLabels.keySet()) {
-            Node text = nodeLabels.get(node);
-            switch (labelLocation) {
-                case Below:
-                    LocateTools.belowCenter(text, node);
-                    break;
-                case Above:
-                    LocateTools.aboveCenter(text, node);
-                    break;
-                case Center:
-                    LocateTools.center(text, node);
-                    break;
-            }
-        }
-    }
-
-    protected void removeLabels(XYChart.Series<X, Y> series, ObservableList<Node> nodes) {
-        if (labelType == null || labelType == LabelType.NotDisplay || labelType == LabelType.Pop) {
-            return;
-        }
-        for (Node node : nodeLabels.keySet()) {
-            Node text = nodeLabels.get(node);
-            nodes.remove(text);
-        }
-        nodeLabels.clear();
+        return this;
     }
 
     /*
         get/set
      */
-    public XYChartOptions<X, Y> setLabelType(LabelType labelType) {
-        this.labelType = labelType;
+    public ChartCoordinate getCategoryCoordinate() {
+        categoryCoordinate = categoryCoordinate == null ? ChartCoordinate.Cartesian : categoryCoordinate;
+        return categoryCoordinate;
+    }
+
+    public void setCategoryCoordinate(ChartCoordinate categoryCoordinate) {
+        this.categoryCoordinate = categoryCoordinate;
+        UserConfig.setString(chartName + "CategoryCoordinate", getCategoryCoordinate().name());
+    }
+
+    public ChartCoordinate getNumberCoordinate() {
+        numberCoordinate = numberCoordinate == null ? ChartCoordinate.Cartesian : numberCoordinate;
+        return numberCoordinate;
+    }
+
+    public void setNumberCoordinate(ChartCoordinate numberCoordinate) {
+        this.numberCoordinate = numberCoordinate;
+        UserConfig.setString(chartName + "NumberCoordinate", getNumberCoordinate().name());
+    }
+
+    public ChartCoordinate getSizeCoordinate() {
+        sizeCoordinate = sizeCoordinate == null ? ChartCoordinate.Cartesian : sizeCoordinate;
+        return sizeCoordinate;
+    }
+
+    public void setSizeCoordinate(ChartCoordinate sizeCoordinate) {
+        this.sizeCoordinate = sizeCoordinate;
+        UserConfig.setString(chartName + "SizeCoordinate", getSizeCoordinate().name());
+    }
+
+    public ChartCoordinate getxCoordinate() {
+        return xCoordinate;
+    }
+
+    public void setxCoordinate(ChartCoordinate xCoordinate) {
+        this.xCoordinate = xCoordinate;
+    }
+
+    public ChartCoordinate getyCoordinate() {
+        return yCoordinate;
+    }
+
+    public void setyCoordinate(ChartCoordinate yCoordinate) {
+        this.yCoordinate = yCoordinate;
+    }
+
+    public int getLineWidth() {
+        lineWidth = lineWidth <= 0 ? 2 : lineWidth;
+        return lineWidth;
+    }
+
+    public void setLineWidth(int lineWidth) {
+        this.lineWidth = lineWidth;
+        UserConfig.setInt(chartName + "LineWidth", getLineWidth());
+    }
+
+    @Override
+    public XYChartOptions setCategoryLabel(String categoryLabel) {
+        this.categoryLabel = categoryLabel;
+        if (categoryAxis != null) {
+            categoryAxis.setLabel((displayLabelName ? message("Category") + ": " : "") + categoryLabel);
+        }
         return this;
     }
 
-    public XYChartOptions<X, Y> setLabelFontSize(int labelFontSize) {
-        this.labelFontSize = labelFontSize;
+    public int getCategoryFontSize() {
+        categoryFontSize = categoryFontSize < 0 ? 10 : categoryFontSize;
+        return categoryFontSize;
+    }
+
+    public void setCategoryFontSize(int categoryFontSize) {
+        this.categoryFontSize = categoryFontSize;
+        UserConfig.setInt(chartName + "CategoryFontSize", getCategoryFontSize());
+        if (categoryAxis != null) {
+            categoryAxis.setStyle("-fx-font-size: " + this.categoryFontSize + "px;");
+        }
+    }
+
+    public int getCategoryMargin() {
+        categoryMargin = categoryMargin < 0 ? 0 : categoryMargin;
+        return categoryMargin;
+    }
+
+    public void setCategoryMargin(int categoryMargin) {
+        this.categoryMargin = categoryMargin;
+        UserConfig.setInt(chartName + "CategoryMargin", getCategoryMargin());
+        if (categoryStringAxis != null) {
+            categoryStringAxis.setStartMargin(this.categoryMargin);
+            categoryStringAxis.setEndMargin(this.categoryMargin);
+        }
+    }
+
+    public int getCategoryTickRotation() {
+        categoryTickRotation = categoryTickRotation < 0 ? 90 : categoryTickRotation;
+        return categoryTickRotation;
+    }
+
+    public void setCategoryTickRotation(int categoryTickRotation) {
+        this.categoryTickRotation = categoryTickRotation;
+        UserConfig.setInt(chartName + "CategoryTickRotation", getCategoryTickRotation());
+        if (categoryAxis != null) {
+            categoryAxis.setTickLabelRotation(this.categoryTickRotation);
+        }
+    }
+
+    @Override
+    public XYChartOptions setValueLabel(String valueLabel) {
+        this.valueLabel = valueLabel;
+        if (valueAxis != null) {
+            valueAxis.setLabel((displayLabelName ? message("Value") + ": " : "") + valueLabel);
+        }
         return this;
     }
 
-    public XYChartOptions<X, Y> setIsXY(boolean isXY) {
+    public int getNumberFontSize() {
+        numberFontSize = numberFontSize < 0 ? 10 : numberFontSize;
+        return numberFontSize;
+    }
+
+    public void setNumberFontSize(int numberFontSize) {
+        this.numberFontSize = numberFontSize;
+        UserConfig.setInt(chartName + "NumberFontSize", getNumberFontSize());
+        if (valueAxis != null) {
+            valueAxis.setStyle("-fx-font-size: " + this.numberFontSize + "px;");
+        }
+    }
+
+    public int getNumberTickRotation() {
+        numberTickRotation = numberTickRotation < 0 ? 0 : numberTickRotation;
+        return numberTickRotation;
+    }
+
+    public void setNumberTickRotation(int numberTickRotation) {
+        this.numberTickRotation = numberTickRotation;
+        UserConfig.setInt(chartName + "NumberTickRotation", getNumberTickRotation());
+        if (valueAxis != null) {
+            valueAxis.setTickLabelRotation(this.numberTickRotation);
+        }
+    }
+
+    @Override
+    public void setTickFontSize(int tickFontSize) {
+        super.setTickFontSize(tickFontSize);
+        if (categoryAxis != null) {
+            categoryAxis.setStyle("-fx-font-size: " + categoryFontSize
+                    + "px; -fx-tick-label-font-size: " + this.tickFontSize + "px; ");
+        }
+        if (valueAxis != null) {
+            valueAxis.setStyle("-fx-font-size: " + numberFontSize
+                    + "px; -fx-tick-label-font-size: " + this.tickFontSize + "px; ");
+        }
+    }
+
+    public boolean isIsXY() {
+        return isXY;
+    }
+
+    public void setIsXY(boolean isXY) {
         this.isXY = isXY;
+        UserConfig.setBoolean(chartName + "XY", isXY);
+    }
+
+    public boolean isCategoryIsNumbers() {
+        return categoryIsNumbers;
+    }
+
+    public void setCategoryIsNumbers(boolean categoryIsNumbers) {
+        this.categoryIsNumbers = categoryIsNumbers;
+        UserConfig.setBoolean(chartName + "CategoryIsNumbers", categoryIsNumbers);
+    }
+
+    public boolean isDisplayCategoryMark() {
+        return displayCategoryMark;
+    }
+
+    public void setDisplayCategoryMark(boolean displayCategoryMark) {
+        this.displayCategoryMark = displayCategoryMark;
+        UserConfig.setBoolean(chartName + "DisplayCategoryMark", displayCategoryMark);
+        if (categoryAxis != null) {
+            categoryAxis.setTickMarkVisible(displayCategoryMark);
+        }
+    }
+
+    public boolean isDisplayCategoryTick() {
+        return displayCategoryTick;
+    }
+
+    public void setDisplayCategoryTick(boolean displayCategoryTick) {
+        this.displayCategoryTick = displayCategoryTick;
+        UserConfig.setBoolean(chartName + "DisplayCategoryTick", displayCategoryTick);
+        if (categoryAxis != null) {
+            categoryAxis.setTickLabelsVisible(displayCategoryTick);
+        }
+    }
+
+    public boolean isDisplayNumberMark() {
+        return displayNumberMark;
+    }
+
+    public void setDisplayNumberMark(boolean displayNumberMark) {
+        this.displayNumberMark = displayNumberMark;
+        UserConfig.setBoolean(chartName + "DisplayNumberMark", displayNumberTick);
+        if (valueAxis != null) {
+            valueAxis.setTickMarkVisible(displayNumberMark);
+        }
+    }
+
+    public boolean isDisplayNumberTick() {
+        return displayNumberTick;
+    }
+
+    public void setDisplayNumberTick(boolean displayNumberTick) {
+        this.displayNumberTick = displayNumberTick;
+        UserConfig.setBoolean(chartName + "DisplayNumberTick", displayNumberTick);
+        if (valueAxis != null) {
+            valueAxis.setTickLabelsVisible(displayNumberTick);
+        }
+    }
+
+    public boolean isAltRowsFill() {
+        return altRowsFill;
+    }
+
+    public void setAltRowsFill(boolean altRowsFill) {
+        this.altRowsFill = altRowsFill;
+        UserConfig.setBoolean(chartName + "AltRowsFill", altRowsFill);
+        if (xyChart != null) {
+            xyChart.setAlternativeRowFillVisible(altRowsFill);
+        }
+    }
+
+    public boolean isAltColumnsFill() {
+        return altColumnsFill;
+    }
+
+    public void setAltColumnsFill(boolean altColumnsFill) {
+        this.altColumnsFill = altColumnsFill;
+        UserConfig.setBoolean(chartName + "AltColumnsFill", altColumnsFill);
+        if (xyChart != null) {
+            xyChart.setAlternativeColumnFillVisible(altColumnsFill);
+        }
+    }
+
+    public boolean isDisplayVlines() {
+        return displayVlines;
+    }
+
+    public void setDisplayVlines(boolean displayVlines) {
+        this.displayVlines = displayVlines;
+        UserConfig.setBoolean(chartName + "DisplayVlines", displayVlines);
+        if (xyChart != null) {
+            xyChart.setVerticalGridLinesVisible(displayVlines);
+        }
+    }
+
+    public boolean isDisplayHlines() {
+        return displayHlines;
+    }
+
+    public void setDisplayHlines(boolean displayHlines) {
+        this.displayHlines = displayHlines;
+        UserConfig.setBoolean(chartName + "DisplayHlines", displayHlines);
+        if (xyChart != null) {
+            xyChart.setHorizontalGridLinesVisible(displayHlines);
+        }
+    }
+
+    public boolean isDisplayVZero() {
+        return displayVZero;
+    }
+
+    public void setDisplayVZero(boolean displayVZero) {
+        this.displayVZero = displayVZero;
+        UserConfig.setBoolean(chartName + "DisplayVZero", displayVZero);
+        if (xyChart != null) {
+            xyChart.setVerticalZeroLineVisible(displayVZero);
+        }
+    }
+
+    public boolean isDisplayHZero() {
+        return displayHZero;
+    }
+
+    public void setDisplayHZero(boolean displayHZero) {
+        this.displayHZero = displayHZero;
+        UserConfig.setBoolean(chartName + "DisplayHZero", displayHZero);
+        if (xyChart != null) {
+            xyChart.setHorizontalZeroLineVisible(displayHZero);
+        }
+    }
+
+    public LabelLocation getLabelLocation() {
+        labelLocation = labelLocation == null ? LabelLocation.Center : labelLocation;
+        return labelLocation;
+    }
+
+    public void setLabelLocation(LabelLocation labelLocation) {
+        this.labelLocation = labelLocation;
+        UserConfig.setString(chartName + "LabelLocation", getLabelLocation().name());
+    }
+
+    public Side getCategorySide() {
+        categorySide = categorySide == null ? Side.BOTTOM : categorySide;
+        return categorySide;
+    }
+
+    public void setCategorySide(Side categorySide) {
+        this.categorySide = categorySide;
+        UserConfig.setString(chartName + "CategorySide", getCategorySide().name());
+        if (categoryAxis != null) {
+            categoryAxis.setSide(this.categorySide);
+        }
+    }
+
+    public Side getNumberSide() {
+        numberSide = numberSide == null ? Side.LEFT : numberSide;
+        return numberSide;
+    }
+
+    public void setNumberSide(Side numberSide) {
+        this.numberSide = numberSide;
+        UserConfig.setString(chartName + "NumberSide", getNumberSide().name());
+        if (valueAxis != null) {
+            valueAxis.setSide(this.numberSide);
+        }
+    }
+
+    public double getBarGap() {
+        barGap = barGap < 0 ? 0 : barGap;
+        return barGap;
+    }
+
+    public void setBarGap(double barGap) {
+        this.barGap = barGap;
+        UserConfig.setDouble(chartName + "BarGap", getBarGap());
+    }
+
+    public double getCategoryGap() {
+        categoryGap = categoryGap < 0 ? 4 : categoryGap;
+        return categoryGap;
+    }
+
+    public void setCategoryGap(double categoryGap) {
+        this.categoryGap = categoryGap;
+        UserConfig.setDouble(chartName + "CategoryGap", getCategoryGap());
+    }
+
+    public XYChart getXyChart() {
+        return xyChart;
+    }
+
+    public void setXyChart(XYChart xyChart) {
+        this.xyChart = xyChart;
+    }
+
+    public CategoryAxis getCategoryStringAxis() {
+        return categoryStringAxis;
+    }
+
+    public void setCategoryStringAxis(CategoryAxis categoryStringAxis) {
+        this.categoryStringAxis = categoryStringAxis;
+    }
+
+    public NumberAxis getCategoryNumberAxis() {
+        return categoryNumberAxis;
+    }
+
+    public void setCategoryNumberAxis(NumberAxis categoryNumberAxis) {
+        this.categoryNumberAxis = categoryNumberAxis;
+    }
+
+    public NumberAxis getValueAxis() {
+        return valueAxis;
+    }
+
+    public void setValueAxis(NumberAxis valueAxis) {
+        this.valueAxis = valueAxis;
+    }
+
+    public Axis getxAxis() {
+        return xAxis;
+    }
+
+    public void setxAxis(Axis xAxis) {
+        this.xAxis = xAxis;
+    }
+
+    public Axis getyAxis() {
+        return yAxis;
+    }
+
+    public void setyAxis(Axis yAxis) {
+        this.yAxis = yAxis;
+    }
+
+    public Axis getCategoryAxis() {
+        return categoryAxis;
+    }
+
+    public void setCategoryAxis(Axis categoryAxis) {
+        this.categoryAxis = categoryAxis;
+    }
+
+    public String getBubbleStyle() {
+        bubbleStyle = bubbleStyle == null || bubbleStyle.isBlank() ? DefaultBubbleStyle : bubbleStyle;
+        return bubbleStyle;
+    }
+
+    public void setBubbleStyle(String bubbleStyle) {
+        this.bubbleStyle = bubbleStyle;
+        UserConfig.setString(chartName + "BubbleStyle", bubbleStyle);
+        if (bubbleChart != null) {
+            ChartTools.setBubbleChart​Colors(bubbleChart, getBubbleStyle(), palette, legendSide != null);
+        }
+    }
+
+    public boolean isDotted() {
+        return dotted;
+    }
+
+    public XYChartOptions<X, Y> setDotted(boolean dotted) {
+        this.dotted = dotted;
+        UserConfig.setBoolean(chartName + "Dotted", dotted);
         return this;
     }
 
-    public void setPaneController(ControlFxChart paneController) {
-        this.paneController = paneController;
+    public LabeledLineChart getLineChart() {
+        return lineChart;
+    }
+
+    public void setLineChart(LabeledLineChart lineChart) {
+        this.lineChart = lineChart;
+    }
+
+    public LabeledBarChart getBarChart() {
+        return barChart;
+    }
+
+    public void setBarChart(LabeledBarChart barChart) {
+        this.barChart = barChart;
+    }
+
+    public LabeledStackedBarChart getStackedBarChart() {
+        return stackedBarChart;
+    }
+
+    public void setStackedBarChart(LabeledStackedBarChart stackedBarChart) {
+        this.stackedBarChart = stackedBarChart;
+    }
+
+    public LabeledScatterChart getScatterChart() {
+        return scatterChart;
+    }
+
+    public void setScatterChart(LabeledScatterChart scatterChart) {
+        this.scatterChart = scatterChart;
+    }
+
+    public LabeledAreaChart getAreaChart() {
+        return areaChart;
+    }
+
+    public void setAreaChart(LabeledAreaChart areaChart) {
+        this.areaChart = areaChart;
+    }
+
+    public LabeledStackedAreaChart getStackedAreaChart() {
+        return stackedAreaChart;
+    }
+
+    public void setStackedAreaChart(LabeledStackedAreaChart stackedAreaChart) {
+        this.stackedAreaChart = stackedAreaChart;
+    }
+
+    public LabeledBubbleChart getBubbleChart() {
+        return bubbleChart;
+    }
+
+    public void setBubbleChart(LabeledBubbleChart bubbleChart) {
+        this.bubbleChart = bubbleChart;
+    }
+
+    public BoxWhiskerChart getBoxWhiskerChart() {
+        return boxWhiskerChart;
+    }
+
+    public void setBoxWhiskerChart(BoxWhiskerChart boxWhiskerChart) {
+        this.boxWhiskerChart = boxWhiskerChart;
+    }
+
+    public SimpleRegressionChart getSimpleRegressionChart() {
+        return simpleRegressionChart;
+    }
+
+    public void setSimpleRegressionChart(SimpleRegressionChart simpleRegressionChart) {
+        this.simpleRegressionChart = simpleRegressionChart;
+    }
+
+    public ResidualChart getResidualChart() {
+        return residualChart;
+    }
+
+    public void setResidualChart(ResidualChart residualChart) {
+        this.residualChart = residualChart;
     }
 
 }

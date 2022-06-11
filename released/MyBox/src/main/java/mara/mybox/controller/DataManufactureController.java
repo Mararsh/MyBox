@@ -28,7 +28,6 @@ public class DataManufactureController extends BaseData2DController {
     public void initData() {
         try {
             setDataType(Data2D.Type.CSV);
-            dataController.isManufacture = true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

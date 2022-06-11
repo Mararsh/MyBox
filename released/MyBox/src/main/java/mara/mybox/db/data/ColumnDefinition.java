@@ -305,6 +305,16 @@ public class ColumnDefinition extends BaseData {
                     } else {
                         return -1;
                     }
+                case Date:
+                    long e1 = new Date(value1).getTime();
+                    long e2 = new Date(value2).getTime();
+                    if (e1 == e2) {
+                        return 0;
+                    } else if (e1 > e2) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
                 default:
                     return StringTools.compare(value1, value2);
             }

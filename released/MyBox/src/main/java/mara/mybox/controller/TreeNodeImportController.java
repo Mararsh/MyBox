@@ -27,6 +27,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.IconTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.AppValues;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -37,6 +38,7 @@ import static mara.mybox.value.Languages.message;
 public class TreeNodeImportController extends BaseBatchFileController {
 
     protected TreeManageController treeController;
+    protected TreeNodesController nodesController;
     protected TableTreeNode tableTreeNode;
     protected TableTreeNodeTag tableTreeNodeTag;
     protected TableTag tableTag;
@@ -68,8 +70,16 @@ public class TreeNodeImportController extends BaseBatchFileController {
         iconCheck.setVisible(treeController instanceof WebFavoritesController);
     }
 
-    public void importExamples(TreeManageController treeController) {
-        setManage(treeController);
+    public void setManage(TreeNodesController nodeController) {
+        this.nodesController = nodeController;
+        tableTreeNode = nodeController.tableTreeNode;
+        tableTreeNodeTag = nodeController.tableTreeNodeTag;
+        tableTag = new TableTag();
+        category = nodeController.category;
+        iconCheck.setVisible(false);
+    }
+
+    public void importExamples() {
         File file = TreeNode.exampleFile(category);
         if (file == null) {
             return;
@@ -233,6 +243,8 @@ public class TreeNodeImportController extends BaseBatchFileController {
             Map<String, TreeNode> parents = new HashMap<>();
             parents.put(rootNode.getTitle(), rootNode);
             parents.put(message(rootNode.getTitle()), rootNode);
+            boolean isWebFavorite = TreeNode.WebFavorite.equals(category);
+            int morePrefixLen = TreeNode.MorePrefix.length();
             while ((line = reader.readLine()) != null && !line.isBlank()) {
                 parentid = getParent(conn, parents, line);
                 if (parentid < -1) {
@@ -273,19 +285,26 @@ public class TreeNodeImportController extends BaseBatchFileController {
                             value += "\n" + line;
                         }
                     }
-                    if (value != null && !value.isBlank() && TreeNode.WebFavorite.equals(category)) {
-                        String[] lines = value.split("\n");
-                        if (lines.length > 1) {
-                            value = lines[0];
-                            more = lines[0];
-                        }
-                        if (more == null || more.isBlank()) {
-                            try {
-                                File iconFile = IconTools.readIcon(value, iconCheck.isSelected());
-                                if (iconFile != null && iconFile.exists()) {
-                                    more = iconFile.getAbsolutePath();
+
+                    if (value != null && !value.isBlank()) {
+                        int pos = value.indexOf(TreeNode.MorePrefix);
+                        if (pos >= 0) {
+                            more = value.substring(pos + morePrefixLen);
+                            value = value.substring(0, pos);
+                        } else if (isWebFavorite) {
+                            String[] lines = value.split("\n");
+                            if (lines.length > 1) {
+                                value = lines[0];
+                                more = lines[0];
+                            }
+                            if (more == null || more.isBlank()) {
+                                try {
+                                    File iconFile = IconTools.readIcon(value, iconCheck.isSelected());
+                                    if (iconFile != null && iconFile.exists()) {
+                                        more = iconFile.getAbsolutePath();
+                                    }
+                                } catch (Exception e) {
                                 }
-                            } catch (Exception e) {
                             }
                         }
                     }
@@ -412,7 +431,15 @@ public class TreeNodeImportController extends BaseBatchFileController {
             treeController.nodesController.loadTree();
             treeController.tagsController.refreshAction();
             treeController.refreshTimes();
-            treeController.alertInformation(message("Imported") + ": " + totalItemsHandled);
+            if (!AppVariables.isTesting) {
+                treeController.alertInformation(message("Imported") + ": " + totalItemsHandled);
+            }
+            closeStage();
+        } else if (nodesController != null) {
+            nodesController.loadTree();
+            if (!AppVariables.isTesting) {
+                nodesController.alertInformation(message("Imported") + ": " + totalItemsHandled);
+            }
             closeStage();
         } else {
             tableView.refresh();

@@ -5,11 +5,11 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import mara.mybox.calculation.SimpleLinearRegression;
-import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.calculation.DescriptiveStatistic;
 import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.calculation.Normalization;
+import mara.mybox.calculation.SimpleLinearRegression;
+import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.data2d.DataFileCSV;
@@ -42,7 +42,7 @@ public abstract class Data2DReader {
     protected File readerFile;
     protected Operation operation;
     protected long rowIndex, rowsStart, rowsEnd, count;
-    protected int columnsNumber, colsLen, scale = -1, scanPass, col;
+    protected int columnsNumber, colsLen, scale = -1, scanPass, colIndex;
     protected List<String> record, names;
     protected List<List<String>> rows = new ArrayList<>();
     protected List<Integer> cols;
@@ -66,7 +66,7 @@ public abstract class Data2DReader {
 
     public static enum Operation {
         ReadDefinition, ReadTotal, ReadColumnNames, ReadPage,
-        ReadCols, Export, WriteTable, Copy,
+        ReadCols, ReadRows, Export, WriteTable, Copy,
         StatisticColumns, StatisticRows, StatisticAll,
         PercentageColumns, PercentageRows, PercentageAll,
         NormalizeMinMaxColumns, NormalizeSumColumns, NormalizeZscoreColumns,
@@ -379,11 +379,21 @@ public abstract class Data2DReader {
         rows.add(row);
     }
 
+    public boolean filterRecord() {
+        return data2D.filterInTask(record, rowIndex + 1);
+    }
+
     public void handleRecord() {
         try {
+            if (!filterRecord()) {
+                return;
+            }
             switch (operation) {
                 case ReadCols:
                     handleReadCols();
+                    break;
+                case ReadRows:
+                    handleReadRows();
                     break;
                 case Export:
                     handleExport();
@@ -477,6 +487,18 @@ public abstract class Data2DReader {
             if (row.isEmpty()) {
                 return;
             }
+            if (includeRowNumber) {
+                row.add(0, (rowIndex + 1) + "");
+            }
+            rows.add(row);
+        } catch (Exception e) {
+        }
+    }
+
+    public void handleReadRows() {
+        try {
+            List<String> row = new ArrayList<>();
+            row.addAll(record);
             if (includeRowNumber) {
                 row.add(0, (rowIndex + 1) + "");
             }
@@ -843,7 +865,7 @@ public abstract class Data2DReader {
 
     public void handleFrequency() {
         try {
-            frequency.addValue(record.get(col));
+            frequency.addValue(record.get(colIndex));
         } catch (Exception e) {
         }
     }
@@ -1248,12 +1270,12 @@ public abstract class Data2DReader {
         this.count = count;
     }
 
-    public int getCol() {
-        return col;
+    public int getColIndex() {
+        return colIndex;
     }
 
     public Data2DReader setCol(int col) {
-        this.col = col;
+        this.colIndex = col;
         return this;
     }
 

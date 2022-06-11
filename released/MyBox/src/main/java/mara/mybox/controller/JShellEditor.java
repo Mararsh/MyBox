@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,22 +10,18 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import jdk.jshell.JShell;
-import jdk.jshell.SnippetEvent;
 import jdk.jshell.SourceCodeAnalysis;
-import mara.mybox.data.JShellSnippet;
-import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.HtmlStyles;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.tools.JShellTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -37,44 +32,32 @@ import static mara.mybox.value.Languages.message;
 public class JShellEditor extends TreeNodeEditor {
 
     protected JShellController jShellController;
-    protected JShellSnippets snippetsController;
     protected String outputs = "";
     protected JShell jShell;
+    protected SingletonTask resetTask;
 
     @FXML
-    protected Button clearCodesButton;
+    protected Button clearCodesButton, suggestionsButton;
 
     public JShellEditor() {
         defaultExt = "java";
     }
 
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-
-            NodeStyleTools.setTooltip(clearCodesButton, new Tooltip(message("Clear") + "\nCTRL+g"));
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
     protected void setParameters(JShellController jShellController) {
         this.jShellController = jShellController;
-        snippetsController = jShellController.snippetsController;
         resetJShell();
     }
 
     @FXML
     public synchronized void resetJShell() {
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonTask<Void>(this) {
+        reset();
+        resetTask = new SingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
                 try {
-                    jShell = JShell.create();
+                    if (jShell == null) {
+                        jShell = JShell.create();
+                    }
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
@@ -83,11 +66,13 @@ public class JShellEditor extends TreeNodeEditor {
             }
 
             @Override
-            protected void finalAction() {
-                cancelAction();
+            protected void whenSucceeded() {
+                jShellController.pathsController.resetPaths(jShell);
+                jShellController.snippetsController.refreshSnippets();
             }
+
         };
-        start(task);
+        start(resetTask, true);
     }
 
     @Override
@@ -97,16 +82,14 @@ public class JShellEditor extends TreeNodeEditor {
     @FXML
     @Override
     public void startAction() {
+        String codes = valueInput.getText();
+        if (codes == null || codes.isBlank()) {
+            popError(message("NoInput"));
+            return;
+        }
         if (startButton.getUserData() != null) {
             cancelAction();
             return;
-        }
-        String codes = valueInput.getText();
-        if (codes == null || codes.isBlank()) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
         }
         StyleTools.setNameIcon(startButton, message("Stop"), "iconStop.png");
         startButton.applyCss();
@@ -115,7 +98,7 @@ public class JShellEditor extends TreeNodeEditor {
         task = new SingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
-                return runCodes(codes);
+                return handleCodes(codes);
             }
 
             @Override
@@ -127,12 +110,20 @@ public class JShellEditor extends TreeNodeEditor {
         start(task);
     }
 
+    protected boolean handleCodes(String codes) {
+        TableStringValues.add("JShellHistories", codes.trim());
+        return runCodes(codes);
+    }
+
     protected boolean runCodes(String codes) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try {
+            if (codes == null || codes.isBlank()) {
+                return false;
+            }
             String leftCodes = codes;
             while (leftCodes != null && !leftCodes.isBlank()) {
                 SourceCodeAnalysis.CompletionInfo info = jShell.sourceCodeAnalysis().analyzeCompletion(leftCodes);
-                if (!runSnippet(conn, info.source())) {
+                if (!runSnippet(info.source())) {
                     return false;
                 }
                 leftCodes = info.remaining();
@@ -146,47 +137,24 @@ public class JShellEditor extends TreeNodeEditor {
         }
     }
 
-    protected boolean runSnippet(Connection conn, String source) {
+    protected boolean runSnippet(String source) {
+        return runSnippet(source, source);
+    }
+
+    protected boolean runSnippet(String orignalSource, String source) {
         try {
             if (source == null || source.isBlank()) {
                 return false;
             }
-            String snippet = source.trim();
-            TableStringValues.add(conn, "JShellHistories", snippet);
-            List<SnippetEvent> events = jShell.eval(snippet);
+            String snippet = orignalSource == null ? source.trim() : orignalSource.trim();
             String snippetOutputs = DateTools.nowString()
                     + "<div class=\"valueText\" >"
                     + HtmlWriteTools.stringToHtml(snippet)
                     + "</div>";
-            String results = "";
-            for (int i = 0; i < events.size(); i++) {
-                if (task == null || task.isCancelled()) {
-                    output(message("Canceled"));
-                    return true;
-                }
-                SnippetEvent e = events.get(i);
-                JShellSnippet jShellSnippet = new JShellSnippet(jShell, e.snippet());
-                if (i > 0) {
-                    results += "\n";
-                }
-                results += "id: " + jShellSnippet.getId() + "\n";
-                if (jShellSnippet.getStatus() != null) {
-                    results += message("Status") + ": " + jShellSnippet.getStatus() + "\n";
-                }
-                if (jShellSnippet.getType() != null) {
-                    results += message("Type") + ": " + jShellSnippet.getType() + "\n";
-                }
-                if (jShellSnippet.getName() != null) {
-                    results += message("Name") + ": " + jShellSnippet.getName() + "\n";
-                }
-                if (jShellSnippet.getValue() != null) {
-                    results += message("Value") + ": " + jShellSnippet.getValue() + "\n";
-                }
-            }
+            String results = JShellTools.runSnippet(jShell, orignalSource, source);
             snippetOutputs += "<div class=\"valueBox\">"
-                    + HtmlWriteTools.stringToHtml(results) + "</div>";
+                    + HtmlWriteTools.stringToHtml(results.trim()) + "</div>";
             output(snippetOutputs);
-
         } catch (Exception e) {
             output(e.toString());
         }
@@ -197,6 +165,13 @@ public class JShellEditor extends TreeNodeEditor {
     public void cancelAction() {
         if (task != null) {
             task.cancel();
+        }
+        reset();
+    }
+
+    public void reset() {
+        if (resetTask != null) {
+            resetTask.cancel();
         }
         if (jShell != null) {
             jShell.stop();
@@ -254,8 +229,10 @@ public class JShellEditor extends TreeNodeEditor {
                     "String[] sArray = new String[3]; "
             ));
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
-                    ";", " , ", "( )", " = ", " { } ", "[ ]", "\"", " + ", " - ", " * ", " / ",
-                    " == ", " != ", " >= ", " > ", " <= ", " < "
+                    ";", " , ", "( )", " = ", " { } ", "[ ]", "\"", " + ", " - ", " * ", " / "
+            ));
+            PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
+                    " == ", " != ", " >= ", " > ", " <= ", " < ", " && ", " || ", " ! "
             ));
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
                     "if (3 > 2) {\n"
@@ -307,10 +284,22 @@ public class JShellEditor extends TreeNodeEditor {
         PopTools.popStringValues(this, valueInput, mouseEvent, "JShellHistories");
     }
 
+    @FXML
+    public void popSuggesions() {
+        PopTools.popJShellSuggesions(this, jShell, valueInput);
+    }
+
+    @Override
+    public boolean controlAlt1() {
+        popSuggesions();
+        return true;
+    }
+
     @Override
     public void cleanPane() {
         try {
             cancelAction();
+            resetTask = null;
             jShell = null;
         } catch (Exception e) {
         }

@@ -14,7 +14,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.ScrollPane;
@@ -325,10 +324,9 @@ public class ColorPalettePopupController extends BaseChildController {
             });
             items.add(menu);
 
-            Menu exmaplesMenu = new Menu(message("ExamplePalettes"));
-            exmaplesMenu.getItems().addAll(PaletteTools.paletteExamplesMenu(parentController == null ? myController : parentController,
+            items.add(new SeparatorMenuItem());
+            items.addAll(PaletteTools.paletteExamplesMenu(parentController == null ? myController : parentController,
                     tableColorPaletteName, tableColorPalette, tableColor));
-            items.add(exmaplesMenu);
 
             items.add(new SeparatorMenuItem());
 

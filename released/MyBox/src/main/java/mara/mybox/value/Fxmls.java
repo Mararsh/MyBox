@@ -178,6 +178,7 @@ public class Fxmls {
     public static final String DataInMyBoxClipboardFxml = "/fxml/DataInMyBoxClipboard.fxml";
     public static final String DataManufactureFxml = "/fxml/DataManufacture.fxml";
     public static final String DataManufactureSaveFxml = "/fxml/DataManufactureSave.fxml";
+    public static final String Data2DSpliceFxml = "/fxml/Data2DSplice.fxml";
 
     public static final String TableAddRowsFxml = "/fxml/TableAddRows.fxml";
     public static final String Data2DSetValuesFxml = "/fxml/Data2DSetValues.fxml";
@@ -186,6 +187,7 @@ public class Fxmls {
     public static final String Data2DLoadContentInSystemClipboardFxml = "/fxml/Data2DLoadContentInSystemClipboard.fxml";
     public static final String Data2DPasteContentInSystemClipboardFxml = "/fxml/Data2DPasteContentInSystemClipboard.fxml";
     public static final String Data2DPasteContentInMyBoxClipboardFxml = "/fxml/Data2DPasteContentInMyBoxClipboard.fxml";
+    public static final String Data2DDeleteFxml = "/fxml/Data2DDelete.fxml";
     public static final String Data2DExportFxml = "/fxml/Data2DExport.fxml";
     public static final String Data2DTransposeFxml = "/fxml/Data2DTranspose.fxml";
     public static final String Data2DStatisticFxml = "/fxml/Data2DStatistic.fxml";
@@ -203,8 +205,11 @@ public class Fxmls {
     public static final String Data2DTableCreateFxml = "/fxml/Data2DTableCreate.fxml";
     public static final String DataTableQueryFxml = "/fxml/DataTableQuery.fxml";
     public static final String Data2DSimpleLinearRegressionFxml = "/fxml/Data2DSimpleLinearRegression.fxml";
+    public static final String Data2DChartXYOptionsFxml = "/fxml/Data2DChartXYOptions.fxml";
+    public static final String Data2DChartPieOptionsFxml = "/fxml/Data2DChartPieOptions.fxml";
 
     public static final String JShellFxml = "/fxml/JShell.fxml";
+    public static final String JexlFxml = "/fxml/Jexl.fxml";
 
     public static final String DataFileCSVFxml = "/fxml/DataFileCSV.fxml";
     public static final String DataFileCSVConvertFxml = "/fxml/DataFileCSVConvert.fxml";

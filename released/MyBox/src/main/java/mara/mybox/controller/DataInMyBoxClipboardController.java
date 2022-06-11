@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.stage.Window;
+import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -34,7 +35,6 @@ public class DataInMyBoxClipboardController extends BaseData2DController {
                     && !(object instanceof Data2DPasteContentInMyBoxClipboardController)) {
                 try {
                     controller = (DataInMyBoxClipboardController) object;
-                    controller.refreshAction();
                     break;
                 } catch (Exception e) {
                 }
@@ -69,6 +69,12 @@ public class DataInMyBoxClipboardController extends BaseData2DController {
     public static DataInMyBoxClipboardController open(Data2DDefinition clip) {
         DataInMyBoxClipboardController c = oneOpen();
         c.loadDef(clip);
+        return c;
+    }
+
+    public static DataInMyBoxClipboardController loadData(DataFileCSV csvData) {
+        DataInMyBoxClipboardController c = oneOpen();
+        c.loadCSVData(csvData);
         return c;
     }
 

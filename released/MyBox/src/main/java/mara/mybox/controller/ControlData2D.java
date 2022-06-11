@@ -47,6 +47,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlData2D extends BaseController {
 
+    protected BaseData2DController manageController;
     protected Data2D.Type type;
     protected Data2D data2D;
     protected TableData2DDefinition tableData2DDefinition;
@@ -55,7 +56,6 @@ public class ControlData2D extends BaseController {
     protected ControlData2DEditText textController;
     protected final SimpleBooleanProperty statusNotify, loadedNotify, savedNotify;
     protected ControlFileBackup backupController;
-    protected boolean isManufacture;
 
     @FXML
     protected Tab editTab, viewTab, attributesTab, columnsTab;
@@ -80,7 +80,6 @@ public class ControlData2D extends BaseController {
         statusNotify = new SimpleBooleanProperty(false);
         loadedNotify = new SimpleBooleanProperty(false);
         savedNotify = new SimpleBooleanProperty(false);
-        isManufacture = false;
     }
 
     @Override
@@ -106,6 +105,14 @@ public class ControlData2D extends BaseController {
         }
     }
 
+    public void setParameters(BaseData2DController topController) {
+        try {
+            this.manageController = topController;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     /*
         database
      */
@@ -116,6 +123,7 @@ public class ControlData2D extends BaseController {
                 saveButton = parent.saveButton;
                 recoverButton = parent.recoverButton;
                 baseTitle = parent.baseTitle;
+                baseName = parent.baseName;
             }
             this.type = type;
             editController.setParameters(this);
@@ -262,6 +270,9 @@ public class ControlData2D extends BaseController {
     public void notifySaved() {
         notifyStatus();
         savedNotify.set(!savedNotify.get());
+        if (manageController != null) {
+            manageController.refreshAction();
+        }
     }
 
     public synchronized void checkStatus() {
@@ -411,7 +422,7 @@ public class ControlData2D extends BaseController {
         if (checkBeforeSave() < 0) {
             return;
         }
-        if (isManufacture) {
+        if (manageController != null && manageController instanceof DataManufactureController) {
             DataManufactureSaveController.open(tableController);
             return;
         }
@@ -447,6 +458,8 @@ public class ControlData2D extends BaseController {
                     }
                     data2D.setTask(task);
                     data2D.savePageData(targetData);
+                    data2D.setTask(task);
+                    data2D.countSize();
                     Data2D.saveAttributes(data2D, targetData);
                     data2D.cloneAll(targetData);
                     return true;
@@ -487,9 +500,8 @@ public class ControlData2D extends BaseController {
                     data2D.setTask(task);
                     data2D.savePageData(targetData);
                     data2D.setTask(task);
-                    MyBoxLog.debug(targetData.getFile() + "  " + targetData.getCharset());
+                    data2D.countSize();
                     Data2D.saveAttributes(data2D, targetData);
-                    MyBoxLog.debug(targetData.getFile() + "  " + targetData.getCharset());
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
@@ -503,12 +515,9 @@ public class ControlData2D extends BaseController {
                 if (targetData.getFile() != null) {
                     recordFileWritten(targetData.getFile());
                 }
-                MyBoxLog.debug(targetData.getFile() + "  " + targetData.getCharset());
                 if (saveAsType == SaveAsType.Load) {
                     data2D.cloneAll(targetData);
-                    MyBoxLog.debug(data2D.getFile() + "  " + data2D.getCharset());
                     resetStatus();
-                    MyBoxLog.debug(data2D.getFile() + "  " + data2D.getCharset());
                     readDefinition();
                 } else if (saveAsType == SaveAsType.Open) {
                     Data2DDefinition.open(targetData);
@@ -687,10 +696,10 @@ public class ControlData2D extends BaseController {
             menu.setOnAction((ActionEvent event) -> {
                 Data2DSetStylesController.open(tableController);
             });
-            menu.setDisable(empty);
+            menu.setDisable(empty || data2D.isTmpData());
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Copy"), StyleTools.getIconImage("iconCopy.png"));
+            menu = new MenuItem(message("CopyFilterQuery"), StyleTools.getIconImage("iconCopy.png"));
             menu.setOnAction((ActionEvent event) -> {
                 tableController.copyAction();
             });
@@ -709,6 +718,13 @@ public class ControlData2D extends BaseController {
                 tableController.pasteContentInMyboxClipboard();
             });
             menu.setDisable(invalidData);
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Delete"), StyleTools.getIconImage("iconDelete.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DDeleteController.open(tableController);
+            });
+            menu.setDisable(empty);
             popMenu.getItems().add(menu);
 
             popMenu.getItems().add(new SeparatorMenuItem());
@@ -767,8 +783,6 @@ public class ControlData2D extends BaseController {
             });
             menu.setDisable(empty);
             calMenu.getItems().add(menu);
-
-            popMenu.getItems().add(new SeparatorMenuItem());
 
             Menu chartMenu = new Menu(message("Charts"), StyleTools.getIconImage("iconGraph.png"));
             popMenu.getItems().add(chartMenu);

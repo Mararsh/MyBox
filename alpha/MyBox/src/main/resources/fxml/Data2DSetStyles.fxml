@@ -74,6 +74,8 @@ License:    Apache License Version 2.0
                                                 <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
                                             </graphic>
                                         </TableColumn>
+                                        <TableColumn fx:id="sidColumn" prefWidth="60.0" text="%ID" />
+                              <TableColumn fx:id="sequenceColumn" prefWidth="50.0" text="%Sequence" />
                                         <TableColumn fx:id="fromColumn" prefWidth="60.0" text="%From" />
                                         <TableColumn fx:id="toColumn" prefWidth="70.0" text="%To" />
                                         <TableColumn fx:id="columnsColumn" prefWidth="120.0" text="%Columns" />
@@ -83,7 +85,6 @@ License:    Apache License Version 2.0
                               <TableColumn fx:id="fontSizeColumn" text="%FontSize" />
                               <TableColumn fx:id="boldColumn" text="%Bold" />
                                         <TableColumn fx:id="moreColumn" prefWidth="160.0" text="%More" />
-                                        <TableColumn fx:id="sidColumn" text="%ID" />
                                     </columns>
                                 </TableView>
                                 <FlowPane fx:id="paginationPane" hgap="2.0" vgap="2.0">
@@ -283,6 +284,12 @@ License:    Apache License Version 2.0
                                                     <content>
                                                         <VBox fx:id="styleBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                             <children>
+                                                <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+                                                   <children>
+                                                      <Label text="%Sequence" />
+                                                      <TextField fx:id="sequenceInput" prefWidth="120.0" />
+                                                   </children>
+                                                </FlowPane>
                                                                 <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">
                                                                     <children>
                                                                         <Label text="%FontColor" />

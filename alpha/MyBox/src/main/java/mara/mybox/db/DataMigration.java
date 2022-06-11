@@ -167,11 +167,12 @@ public class DataMigration {
             statement.executeUpdate("ALTER TABLE Data2D_Style ADD COLUMN bgColor VARCHAR(64)");
             statement.executeUpdate("ALTER TABLE Data2D_Style ADD COLUMN bold Boolean");
             statement.executeUpdate("ALTER TABLE Data2D_Style ADD COLUMN moreStyle VARCHAR(" + StringMaxLength + ")");
+            statement.executeUpdate("ALTER TABLE Data2D_Style ADD COLUMN sequence int");
 
             conn.setAutoCommit(false);
             TableData2DStyle tableData2DStyle = new TableData2DStyle();
             ResultSet query = statement.executeQuery("SELECT * FROM Data2D_Style ORDER BY d2id,colName,row");
-            long lastD2id = -1, lastRow = -2, rowStart = -1;
+            long lastD2id = -1, lastRow = -2, rowStart = -1, sequence = 1;
             String lastColName = null, lastStyle = null;
             Data2DStyle data2DStyle = Data2DStyle.create()
                     .setRowStart(rowStart).setRowEnd(rowStart);
@@ -182,7 +183,10 @@ public class DataMigration {
                 long row = query.getLong("row");
                 if (lastD2id != d2id || !colName.equals(lastColName) || !style.equals(lastStyle)) {
                     if (data2DStyle.getRowStart() >= 0) {
-                        data2DStyle.setD2sid(-1).setRowEnd(lastRow + 1);
+                        if (lastD2id != d2id) {
+                            sequence = 1;
+                        }
+                        data2DStyle.setD2sid(-1).setRowEnd(lastRow + 1).setSequence(sequence++);
                         tableData2DStyle.insertData(conn, data2DStyle);
                         conn.commit();
                     }
@@ -190,7 +194,7 @@ public class DataMigration {
                     data2DStyle.setD2id(d2id).setColumns(colName).setMoreStyle(style)
                             .setRowStart(rowStart).setRowEnd(rowStart + 1);
                 } else if (row > lastRow + 1) {
-                    data2DStyle.setD2sid(-1).setRowEnd(lastRow + 1);
+                    data2DStyle.setD2sid(-1).setRowEnd(lastRow + 1).setSequence(sequence++);
                     tableData2DStyle.insertData(conn, data2DStyle);
                     conn.commit();
                     rowStart = row;
@@ -203,7 +207,7 @@ public class DataMigration {
                 lastStyle = style;
             }
             if (data2DStyle.getRowStart() >= 0) {
-                data2DStyle.setD2sid(-1).setRowEnd(lastRow + 1);
+                data2DStyle.setD2sid(-1).setRowEnd(lastRow + 1).setSequence(sequence++);
                 tableData2DStyle.insertData(conn, data2DStyle);
                 conn.commit();
             }

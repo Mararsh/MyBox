@@ -1,8 +1,6 @@
 package mara.mybox.controller;
 
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -14,9 +12,11 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -27,9 +27,11 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-2-21
  * @License Apache License Version 2.0
  */
-public class BaseData2DController extends BaseController {
+public abstract class BaseData2DController extends BaseController {
 
     protected Data2D.Type type;
+    protected TableData2DDefinition tableData2DDefinition;
+    protected Data2D data2D;
 
     @FXML
     protected ControlData2DList listController;
@@ -88,10 +90,11 @@ public class BaseData2DController extends BaseController {
 
             }
 
-            if (loadController != null) {
-                loadController.dataLabel = nameLabel;
-                loadController.baseTitle = baseTitle;
-            }
+            tableData2DDefinition = loadController.tableData2DDefinition;
+            data2D = loadController.data2D;
+
+            loadController.dataLabel = nameLabel;
+            loadController.baseTitle = baseTitle;
             checkButtons();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -104,18 +107,12 @@ public class BaseData2DController extends BaseController {
             super.initControls();
 
             if (dataController != null) {
-                dataController.savedNotify.addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                        refreshAction();
-                    }
-                });
+                dataController.setParameters(this);
             }
 
             if (listController != null) {
                 rightPaneControl = listController.rightPaneControl;
                 initRightPaneControl();
-
             }
 
         } catch (Exception e) {
@@ -138,6 +135,13 @@ public class BaseData2DController extends BaseController {
         }
         loadController.loadDef(def);
         checkButtons();
+    }
+
+    public void loadCSVData(DataFileCSV csvData) {
+        if (csvData == null || loadController == null || !checkBeforeNextAction()) {
+            return;
+        }
+        loadController.loadCSVData(csvData);
     }
 
     public void loadData(List<Data2DColumn> cols, List<List<String>> data) {

@@ -3,8 +3,6 @@ package mara.mybox.db.table;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.List;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
@@ -38,32 +36,25 @@ public class TableData2DStyle extends BaseTable<Data2DStyle> {
         addColumn(new ColumnDefinition("d2id", ColumnType.Long, true)
                 .setReferName("Data2D_Style_d2id_fk").setReferTable("Data2D_Definition").setReferColumn("d2did")
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade));
-        addColumn(new ColumnDefinition("row", ColumnType.Long, true));
-        addColumn(new ColumnDefinition("colName", ColumnType.String, true));
-        addColumn(new ColumnDefinition("style", ColumnType.String, true).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("rowStart", ColumnType.Long)); // 0-based
+        addColumn(new ColumnDefinition("rowEnd", ColumnType.Long));  // Exclude
+        addColumn(new ColumnDefinition("columns", ColumnType.String).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("moreConditions", ColumnType.String).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("fontColor", ColumnType.String).setLength(64));
+        addColumn(new ColumnDefinition("fontSize", ColumnType.String).setLength(64));
+        addColumn(new ColumnDefinition("bgColor", ColumnType.String).setLength(64));
+        addColumn(new ColumnDefinition("bold", ColumnType.Boolean));
+        addColumn(new ColumnDefinition("moreStyle", ColumnType.String).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("sequence", ColumnType.Float));
+        orderColumns = "d2id, sequence, d2sid";
         return this;
     }
 
-    public static final String Create_Unique_Index
-            = "CREATE UNIQUE INDEX Data2D_Style_unique_index on Data2D_Style ( d2id , row, colName  )";
-
     public static final String QueryStyles
-            = "SELECT * FROM Data2D_Style WHERE d2id=?";
+            = "SELECT * FROM Data2D_Style WHERE d2id=? ORDER BY sequence,d2sid";
 
-    public static final String QueryStyle
-            = "SELECT * FROM Data2D_Style WHERE d2id=? AND row=? AND colName=? FETCH FIRST ROW ONLY";
-
-    public static final String QueryPageStyles
-            = "SELECT * FROM Data2D_Style WHERE d2id=? AND row>=? AND row<?";
-
-    public static final String ClearStyle
+    public static final String ClearStyles
             = "DELETE FROM Data2D_Style WHERE d2id=?";
-
-    public static final String CheckColumns
-            = "DELETE FROM Data2D_Style WHERE d2id=? AND colName NOT IN ( ? )";
-
-    public static final String CheckRows
-            = "DELETE FROM Data2D_Style WHERE d2id=? AND (row < 0 OR row >= ?)";
 
     @Override
     public Object readForeignValue(ResultSet results, String column) {
@@ -90,91 +81,13 @@ public class TableData2DStyle extends BaseTable<Data2DStyle> {
         return true;
     }
 
-    public Data2DStyle query(Connection conn, Data2DStyle d2Style) {
-        if (conn == null || d2Style == null) {
-            return null;
-        }
-        try ( PreparedStatement statement = conn.prepareStatement(QueryStyle)) {
-            statement.setLong(1, d2Style.getD2id());
-            statement.setLong(2, d2Style.getRow());
-            statement.setString(3, d2Style.getColName());
-            ResultSet results = statement.executeQuery();
-            if (results.next()) {
-                return readData(results);
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
-    public Data2DStyle write(Connection conn, Data2DStyle d2Style) {
-        if (conn == null || d2Style == null) {
-            return null;
-        }
-        try {
-            Data2DStyle exist = query(conn, d2Style);
-            if (exist == null) {
-                return insertData(conn, d2Style);
-            } else {
-                d2Style.setD2sid(exist.getD2sid());
-                return updateData(conn, d2Style);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
     public boolean clear(Connection conn, long d2id) {
         if (conn == null || d2id < 0) {
             return false;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(ClearStyle)) {
+        try ( PreparedStatement statement = conn.prepareStatement(ClearStyles)) {
             statement.setLong(1, d2id);
             statement.executeUpdate();
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-    public boolean checkColumns(Connection conn, long d2id, List<String> colNames) {
-        if (conn == null || d2id < 0 || colNames == null || colNames.isEmpty()) {
-            return false;
-        }
-        String in = null;
-        for (String col : colNames) {
-            if (in == null) {
-                in = "'" + DerbyBase.stringValue(col) + "'";
-            } else {
-                in += ", '" + DerbyBase.stringValue(col) + "'";
-            }
-        }
-        String sql = "DELETE FROM Data2D_Style WHERE d2id=" + d2id
-                + "  AND colName NOT IN ( " + in + " )";
-        try ( Statement statement = conn.createStatement()) {
-            statement.executeUpdate(sql);
-            conn.commit();
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e, sql);
-            return false;
-        }
-    }
-
-    public boolean checkRows(Connection conn, long d2id, long maxRow) {
-        if (conn == null || d2id < 0 || maxRow < 0) {
-            return false;
-        }
-        try ( PreparedStatement statement = conn.prepareStatement(CheckRows)) {
-            statement.setLong(1, d2id);
-            statement.setLong(2, maxRow);
-            statement.executeUpdate();
-            conn.commit();
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -189,16 +102,21 @@ public class TableData2DStyle extends BaseTable<Data2DStyle> {
         clear(conn, targetid);
         int count = 0;
         try ( PreparedStatement statement = conn.prepareStatement(QueryStyles)) {
+            conn.setAutoCommit(false);
             statement.setLong(1, sourceid);
             ResultSet results = statement.executeQuery();
             while (results.next()) {
                 Data2DStyle s = readData(results);
                 s.setD2sid(-1);
                 s.setD2id(targetid);
-                if (write(conn, s) != null) {
+                if (insertData(conn, s) != null) {
                     count++;
+                    if (count % DerbyBase.BatchSize == 0) {
+                        conn.commit();
+                    }
                 }
             }
+            conn.commit();
         } catch (Exception e) {
             MyBoxLog.error(e);
             return -1;

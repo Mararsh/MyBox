@@ -15,8 +15,8 @@ import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.fxml.cell.TableDateCell;
+import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 
 /**

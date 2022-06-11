@@ -307,7 +307,7 @@ public class DataFileText extends DataFile {
     }
 
     @Override
-    public boolean setValue(List<Integer> cols, String value) {
+    public boolean setValue(List<Integer> cols, String value, boolean errorContinue) {
         if (file == null || !file.exists() || file.length() == 0
                 || cols == null || cols.isEmpty()) {
             return false;
@@ -322,21 +322,46 @@ public class DataFileText extends DataFile {
                 TextFileTools.writeLine(writer, names, delimiter);
             }
             String line;
-            boolean isRandom = "MyBox##random".equals(value);
-            boolean isRandomNn = "MyBox##randomNn".equals(value);
+            boolean isRandom = false, isRandomNn = false, isBlank = false;
+            String expression = null;
+            if (value != null) {
+                if ("MyBox##blank".equals(value)) {
+                    isBlank = true;
+                } else if ("MyBox##random".equals(value)) {
+                    isRandom = true;
+                } else if ("MyBox##randomNn".equals(value)) {
+                    isRandomNn = true;
+                } else if (value.startsWith("MyBox##Expression##")) {
+                    expression = value.substring("MyBox##Expression##".length());
+                }
+            }
             Random random = new Random();
+            rowIndex = 0;
             while ((line = reader.readLine()) != null && task != null && !task.isCancelled()) {
                 List<String> record = parseFileLine(line);
                 if (record == null || record.isEmpty()) {
                     continue;
                 }
+                filterAndCalculate(record, ++rowIndex, expression);
+                if (expression != null && error != null) {
+                    if (errorContinue) {
+                        continue;
+                    } else {
+                        task.setError(error);
+                        return false;
+                    }
+                }
                 List<String> row = new ArrayList<>();
                 for (int i = 0; i < columns.size(); i++) {
-                    if (cols.contains(i)) {
-                        if (isRandom) {
+                    if (filterPassed && cols.contains(i)) {
+                        if (isBlank) {
+                            row.add("");
+                        } else if (isRandom) {
                             row.add(random(random, i, false));
                         } else if (isRandomNn) {
                             row.add(random(random, i, true));
+                        } else if (expression != null) {
+                            row.add(expressionResult);
                         } else {
                             row.add(value);
                         }
@@ -347,6 +372,61 @@ public class DataFileText extends DataFile {
                     }
                 }
                 TextFileTools.writeLine(writer, row, delimiter);
+            }
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return false;
+        }
+        return FileTools.rename(tmpFile, file, false);
+    }
+
+    @Override
+    public boolean delete(boolean errorContinue) {
+        if (file == null || !file.exists() || file.length() == 0) {
+            return false;
+        }
+        File tmpFile = TmpFileTools.getTempFile();
+        File validFile = FileTools.removeBOM(file);
+        try ( BufferedReader reader = new BufferedReader(new FileReader(validFile, charset));
+                 BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, charset, false))) {
+            List<String> names = columnNames();
+            if (hasHeader && names != null) {
+                readValidLine(reader);
+                TextFileTools.writeLine(writer, names, delimiter);
+            }
+            if (rowFilter != null && !rowFilter.isBlank()) {
+                String line;
+                rowIndex = 0;
+                while ((line = reader.readLine()) != null && task != null && !task.isCancelled()) {
+                    List<String> record = parseFileLine(line);
+                    if (record == null || record.isEmpty()) {
+                        continue;
+                    }
+                    filterInTask(record, ++rowIndex);
+                    if (error != null) {
+                        if (errorContinue) {
+                            continue;
+                        } else {
+                            task.setError(error);
+                            return false;
+                        }
+                    }
+                    if (filterPassed) {
+                        continue;
+                    }
+                    List<String> row = new ArrayList<>();
+                    for (int i = 0; i < columns.size(); i++) {
+                        if (i < record.size()) {
+                            row.add(record.get(i));
+                        } else {
+                            row.add(null);
+                        }
+                    }
+                    TextFileTools.writeLine(writer, row, delimiter);
+                }
             }
         } catch (Exception e) {
             if (task != null) {

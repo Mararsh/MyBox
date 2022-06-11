@@ -535,7 +535,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
                 String names = style.getColumns();
                 if (names != null && !names.isBlank()) {
                     String[] cols = names.split(Data2DStyle.ColumnSeparator);
-                    if (cols != null && cols.length > 1) {
+                    if (cols != null && cols.length > 0) {
                         if (!(Arrays.asList(cols).contains(colName))) {
                             continue;
                         }

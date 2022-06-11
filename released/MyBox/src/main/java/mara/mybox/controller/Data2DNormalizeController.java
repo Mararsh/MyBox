@@ -27,15 +27,13 @@ public class Data2DNormalizeController extends BaseData2DHandleController {
 
     @Override
     public boolean checkOptions() {
-        targetController.setNotInTable(sourceController.allPages());
+        targetController.setNotInTable(isAllPages());
         return super.checkOptions();
     }
 
     @Override
     public boolean handleRows() {
         try {
-            List<Integer> checkedRowsIndices = sourceController.checkedRowsIndices();
-            List<Integer> checkedColsIndices = sourceController.checkedColsIndices();
             if (checkedRowsIndices == null || checkedRowsIndices.isEmpty()
                     || checkedColsIndices == null || checkedColsIndices.isEmpty()) {
                 return false;
@@ -84,37 +82,37 @@ public class Data2DNormalizeController extends BaseData2DHandleController {
             } else {
                 a = Normalization.Algorithm.MinMax;
             }
-            return data2D.normalizeRows(a, sourceController.checkedColsIndices,
+            return data2D.normalizeRows(a, checkedColsIndices,
                     normalizeController.from, normalizeController.to,
                     rowNumberCheck.isSelected(), colNameCheck.isSelected(), scale);
 
         } else if (normalizeController.allRadio.isSelected()) {
             if (normalizeController.minmaxRadio.isSelected()) {
-                return data2D.normalizeMinMaxAll(sourceController.checkedColsIndices,
+                return data2D.normalizeMinMaxAll(checkedColsIndices,
                         normalizeController.from, normalizeController.to,
                         rowNumberCheck.isSelected(), colNameCheck.isSelected(), scale);
 
             } else if (normalizeController.sumRadio.isSelected()) {
-                return data2D.normalizeSumAll(sourceController.checkedColsIndices,
+                return data2D.normalizeSumAll(checkedColsIndices,
                         rowNumberCheck.isSelected(), colNameCheck.isSelected(), scale);
 
             } else if (normalizeController.zscoreRadio.isSelected()) {
-                return data2D.normalizeZscoreAll(sourceController.checkedColsIndices,
+                return data2D.normalizeZscoreAll(checkedColsIndices,
                         rowNumberCheck.isSelected(), colNameCheck.isSelected(), scale);
             }
 
         } else {
             if (normalizeController.minmaxRadio.isSelected()) {
-                return data2D.normalizeMinMaxColumns(sourceController.checkedColsIndices,
+                return data2D.normalizeMinMaxColumns(checkedColsIndices,
                         normalizeController.from, normalizeController.to,
                         rowNumberCheck.isSelected(), colNameCheck.isSelected(), scale);
 
             } else if (normalizeController.sumRadio.isSelected()) {
-                return data2D.normalizeSumColumns(sourceController.checkedColsIndices,
+                return data2D.normalizeSumColumns(checkedColsIndices,
                         rowNumberCheck.isSelected(), colNameCheck.isSelected(), scale);
 
             } else if (normalizeController.zscoreRadio.isSelected()) {
-                return data2D.normalizeZscoreColumns(sourceController.checkedColsIndices,
+                return data2D.normalizeZscoreColumns(checkedColsIndices,
                         rowNumberCheck.isSelected(), colNameCheck.isSelected(), scale);
             }
         }

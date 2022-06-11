@@ -1,7 +1,5 @@
 package mara.mybox.controller;
 
-import java.io.File;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -32,7 +30,6 @@ public class Data2DSortController extends BaseData2DHandleController {
     protected List<Integer> colsIndices;
     protected List<String> colsNames;
     protected String orderName;
-    protected ChangeListener<Boolean> tableStatusListener;
 
     @FXML
     protected ComboBox<String> colSelector;
@@ -57,22 +54,16 @@ public class Data2DSortController extends BaseData2DHandleController {
                 }
             });
 
-            tableStatusListener = new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    refreshControls();
-                }
-            };
-            tableController.statusNotify.addListener(tableStatusListener);
-
-            refreshControls();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
+    @Override
     public void refreshControls() {
         try {
+            super.refreshControls();
+
             List<String> names = tableController.data2D.columnNames();
             if (names == null || names.isEmpty()) {
                 colSelector.getItems().clear();
@@ -85,18 +76,26 @@ public class Data2DSortController extends BaseData2DHandleController {
             } else {
                 colSelector.getSelectionModel().select(0);
             }
+            checkMemoryLabel();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
+    public void checkMemoryLabel() {
+        if (isSettingValues) {
+            return;
+        }
+        memoryNoticeLabel.setVisible(isAllPages() && (hasRowFilter() || !data2D.isTable()));
+    }
+
     @Override
     public boolean checkOptions() {
         boolean ok = super.checkOptions();
-        targetController.setNotInTable(sourceController.allPages());
-        memoryNoticeLabel.setVisible(!data2D.isTable() && sourceController.allPages());
+        targetController.setNotInTable(isAllPages());
+        checkMemoryLabel();
         orderCol = data2D.colOrder(colSelector.getSelectionModel().getSelectedItem());
-        colsIndices = sourceController.checkedColsIndices();
+        colsIndices = checkedColsIndices;
         if (colsIndices == null || colsIndices.isEmpty() || orderCol < 0) {
             infoLabel.setText(message("SelectToHandle"));
             okButton.setDisable(true);
@@ -108,7 +107,7 @@ public class Data2DSortController extends BaseData2DHandleController {
 
     public List<Integer> adjustedCols() {
         try {
-            colsNames = sourceController.checkedColsNames();
+            colsNames = checkedColsNames;
             if (!colsIndices.contains(orderCol)) {
                 colsIndices.add(orderCol);
                 colsNames.add(orderName);
@@ -134,8 +133,7 @@ public class Data2DSortController extends BaseData2DHandleController {
     @Override
     public boolean handleRows() {
         try {
-            outputData = sourceController.selectedData(
-                    sourceController.checkedRowsIndices(), adjustedCols(), showRowNumber());
+            outputData = selectedData(adjustedCols(), showRowNumber());
             sort(outputData);
             if (showRowNumber()) {
                 outputData.add(0, colsNames);
@@ -182,17 +180,11 @@ public class Data2DSortController extends BaseData2DHandleController {
             return ((DataTable) data2D).sort(colsIndices, orderName, descendCheck.isSelected(), showRowNumber());
         } else {
             try {
-                List<List<String>> rows = data2D.allRows(adjustedCols(), showRowNumber());
-                if (!sort(rows)) {
+                List<List<String>> data = data2D.allRows(adjustedCols(), showRowNumber());
+                if (!sort(data)) {
                     return null;
                 }
-                DataFileCSV dataFileCSV = new DataFileCSV();
-                File file = dataFileCSV.tmpFile(colsNames, rows);
-
-                dataFileCSV.setFile(file).setCharset(Charset.forName("UTF-8"))
-                        .setDelimiter(",").setHasHeader(true)
-                        .setColsNumber(colsNames.size()).setRowsNumber(rows.size());
-                return dataFileCSV;
+                return DataFileCSV.save(task, outputColumns, data);
             } catch (Exception e) {
                 if (task != null) {
                     task.setError(e.toString());
@@ -201,16 +193,6 @@ public class Data2DSortController extends BaseData2DHandleController {
                 return null;
             }
         }
-    }
-
-    @Override
-    public void cleanPane() {
-        try {
-            tableController.statusNotify.removeListener(tableStatusListener);
-            tableStatusListener = null;
-        } catch (Exception e) {
-        }
-        super.cleanPane();
     }
 
     /*

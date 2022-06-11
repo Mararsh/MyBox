@@ -56,10 +56,10 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.NodeTools;
+import mara.mybox.fxml.chart.ChartOptions.LabelType;
 import mara.mybox.fxml.chart.ChartTools;
-import mara.mybox.fxml.chart.ChartTools.ChartCoordinate;
-import mara.mybox.fxml.chart.ChartTools.LabelType;
 import mara.mybox.fxml.chart.LabeledBarChart;
+import mara.mybox.fxml.chart.XYChartOptions.ChartCoordinate;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.imagefile.ImageGifFile;
@@ -809,7 +809,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 palette.add(colorsController.locationColor(report.getLocationFullName()));
             }
 
-            ChartTools.setPieColors(pie, palette, legendSide != null);
+            ChartTools.setPieColors(pie, palette, legendSide != null, 10);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -978,7 +978,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 }
             }
 
-            ChartTools.setLineChartColors(lineChart, 4, palette, legendSide != null);
+            ChartTools.setLineChartColors(lineChart, 4, palette, legendSide != null, false);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }

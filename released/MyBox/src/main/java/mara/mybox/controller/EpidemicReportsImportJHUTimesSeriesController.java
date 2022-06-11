@@ -15,10 +15,10 @@ import mara.mybox.db.data.GeographyCodeLevel;
 import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableGeographyCode;
+import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.value.Languages.message;
-import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
@@ -44,8 +44,7 @@ public class EpidemicReportsImportJHUTimesSeriesController extends EpidemicRepor
         long importCount = 0, insertCount = 0, updateCount = 0, skipCount = 0, failedCount = 0, lineCount = 0, dataCount = 0;
         EpidemicReport.ValueName valueName;
         File validFile = FileTools.removeBOM(file);
-        try ( CSVParser parser = CSVParser.parse(validFile, StandardCharsets.UTF_8,
-                CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(',').withTrim().withNullString(""));
+        try ( CSVParser parser = CSVParser.parse(validFile, StandardCharsets.UTF_8, CsvTools.csvFormat());
                  PreparedStatement geoInsert = conn.prepareStatement(TableGeographyCode.Insert);
                  PreparedStatement equalQuery = conn.prepareStatement(TableEpidemicReport.ExistQuery);
                  PreparedStatement update

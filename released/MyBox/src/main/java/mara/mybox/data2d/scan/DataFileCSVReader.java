@@ -29,6 +29,9 @@ public class DataFileCSVReader extends Data2DReader {
 
     @Override
     public void scanData() {
+        if (!FileTools.hasData(readerFile)) {
+            return;
+        }
         readerCSV.checkForLoad();
         File validFile = FileTools.removeBOM(readerFile);
         try ( CSVParser parser = CSVParser.parse(validFile, readerCSV.getCharset(), readerCSV.cvsFormat())) {

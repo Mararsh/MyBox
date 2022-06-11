@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -20,13 +21,16 @@ import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.DataClipboard;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileExcel;
 import mara.mybox.data2d.DataFileText;
+import mara.mybox.data2d.DataMatrix;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
@@ -51,10 +55,11 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     protected char copyDelimiter = ',';
     protected boolean readOnly, notUpdateTitle;
     protected SimpleBooleanProperty statusNotify;
-    protected Label dataLabel;
 
     @FXML
     protected TableColumn<List<String>, Integer> dataRowColumn;
+    @FXML
+    protected Label dataLabel;
 
     public ControlData2DLoad() {
         statusNotify = new SimpleBooleanProperty(false);
@@ -351,6 +356,13 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         if (csvFile == null || !csvFile.exists()) {
             return;
         }
+        loadCSVData(new DataFileCSV(csvFile));
+    }
+
+    public void loadCSVData(DataFileCSV csvData) {
+        if (csvData == null || csvData.getFile() == null || !csvData.getFile().exists()) {
+            return;
+        }
         task = new SingletonTask<Void>(this) {
             private Data2D fileData;
 
@@ -358,15 +370,22 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             protected boolean handle() {
                 try {
                     if (data2D.getType() == Data2D.Type.Texts) {
-                        fileData = new DataFileText(csvFile);
+                        fileData = new DataFileText();
+                        fileData.setFile(csvData.getFile())
+                                .setDelimiter(csvData.getDelimiter())
+                                .setCharset(csvData.getCharset());
+                        recordFileWritten(fileData.getFile(), VisitHistory.FileType.Text);
                     } else {
-                        DataFileCSV csvData = new DataFileCSV(csvFile);
                         switch (data2D.getType()) {
                             case CSV:
                                 fileData = csvData;
+                                recordFileWritten(fileData.getFile(), VisitHistory.FileType.CSV);
                                 break;
                             case Excel: {
                                 DataFileExcel excelData = DataFileExcel.toExcel(task, csvData);
+                                if (excelData != null) {
+                                    recordFileWritten(excelData.getFile(), VisitHistory.FileType.Excel);
+                                }
                                 fileData = excelData;
                                 break;
                             }
@@ -375,8 +394,22 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                 fileData = dataTable;
                                 break;
                             }
+                            case MyBoxClipboard: {
+                                DataClipboard clip = DataClipboard.toClip(task, csvData);
+                                fileData = clip;
+                                break;
+                            }
+                            case Matrix: {
+                                DataMatrix matrix = DataMatrix.toMatrix(task, csvData);
+                                fileData = matrix;
+                                break;
+                            }
+                        }
+                        if (fileData == null) {
+                            return false;
                         }
                     }
+                    Data2D.saveAttributes(csvData, fileData);
                     return fileData != null;
                 } catch (Exception e) {
                     error = e.toString();
@@ -387,6 +420,9 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             @Override
             protected void whenSucceeded() {
                 loadDef(fileData);
+                if (dataController != null && dataController.manageController != null) {
+                    dataController.manageController.refreshAction();
+                }
             }
         };
         start(task);
@@ -566,15 +602,19 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                         = new TableAutoCommitCell<List<String>, String>(new DefaultStringConverter()) {
                                     @Override
                                     public void updateItem(String item, boolean empty) {
-                                        setStyle(null);
-                                        try {
-                                            setStyle(data2D.getStyle(getTableRow().getIndex(), name));
-                                        } catch (Exception e) {
-                                        }
+                                        updateStyle();
                                         super.updateItem(item, empty);
                                         if (empty || item == null) {
                                             setText(null);
                                             setGraphic(null);
+                                        }
+                                    }
+
+                                    public void updateStyle() {
+                                        setStyle(null);
+                                        try {
+                                            setStyle(data2D.cellStyle(rowIndex(), name));
+                                        } catch (Exception e) {
                                         }
                                     }
 
@@ -601,7 +641,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                                     || (value != null && !value.equals(oldValue))) {
                                                 super.commitEdit(value);
                                                 row.set(col, value);
-                                                tableChanged(true);
+                                                tableData.set(rowIndex, row);
                                             }
                                         } catch (Exception e) {
                                             MyBoxLog.debug(e);
@@ -627,7 +667,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                     public void updateItem(String item, boolean empty) {
                                         setStyle(null);
                                         try {
-                                            setStyle(data2D.getStyle(getTableRow().getIndex(), name));
+                                            setStyle(data2D.cellStyle(getTableRow().getIndex(), name));
                                         } catch (Exception e) {
                                         }
                                         super.updateItem(item, empty);
@@ -648,6 +688,13 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                     });
 
                 }
+
+                tableColumn.setComparator(new Comparator<String>() {
+                    @Override
+                    public int compare(String v1, String v2) {
+                        return dataColumn.compare(v1, v2);
+                    }
+                });
 
                 if (dataController != null) {
                     tableColumn.widthProperty().addListener(new ChangeListener<Number>() {
@@ -730,6 +777,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
 
                     @Override
                     protected boolean handle() {
+                        data2D.countSize();
                         return data2D.saveAttributes();
                     }
 
@@ -870,32 +918,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         }
     }
 
-    @Override
-    public void addRows(int index, int number) {
-        data2D.moveDownStyles(index, number);
-        super.addRows(index, number);
-    }
-
-    @FXML
-    @Override
-    public void deleteRowsAction() {
-        List<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
-        if (selected == null || selected.isEmpty()) {
-            data2D.getStyles().clear();
-            return;
-        }
-        for (Integer index : selected) {
-            data2D.moveUpStyles(index);
-        }
-        super.deleteRowsAction();
-    }
-
-    @Override
-    protected void afterClear() {
-        data2D.getStyles().clear();
-        super.afterClear();
-    }
-
     /*
         interface
      */
@@ -905,9 +927,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         myStage = getMyStage();
         if (data2D != null) {
             String name = data2D.displayName();
-            if (dataLabel != null) {
-                dataLabel.setText(name);
-            }
             if (myStage != null && !notUpdateTitle) {
                 String title = getRootBaseTitle() + " : " + name;
                 if (data2D.isTableChanged()) {
@@ -916,14 +935,17 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 myStage.setTitle(title);
             }
         } else {
-            if (dataLabel != null) {
-                dataLabel.setText("");
-            }
             if (myStage != null && !notUpdateTitle) {
                 myStage.setTitle(baseTitle);
             }
         }
         validateData();
+    }
+
+    public void setLabel(String s) {
+        if (dataLabel != null) {
+            dataLabel.setText(s);
+        }
     }
 
     @Override

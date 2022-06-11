@@ -57,8 +57,6 @@ public class JShellEditor extends TreeNodeEditor {
                 try {
                     if (jShell == null) {
                         jShell = JShell.create();
-                    } else {
-
                     }
                     return true;
                 } catch (Exception e) {

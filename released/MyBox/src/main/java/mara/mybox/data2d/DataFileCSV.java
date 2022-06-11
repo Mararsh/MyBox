@@ -9,12 +9,25 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Random;
+import mara.mybox.controller.BaseController;
+import mara.mybox.controller.DataFileCSVController;
+import mara.mybox.controller.DataFileExcelController;
+import mara.mybox.controller.DataFileTextController;
+import mara.mybox.controller.DataInMyBoxClipboardController;
+import mara.mybox.controller.DataTablesController;
+import mara.mybox.controller.MatricesManageController;
 import mara.mybox.data.StringTable;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.TextClipboardTools;
+import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
+import mara.mybox.value.AppPaths;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -48,13 +61,7 @@ public class DataFileCSV extends DataFileText {
         if (delimiter == null || delimiter.isEmpty()) {
             delimiter = ",";
         }
-        CSVFormat csvFormat = CSVFormat.DEFAULT
-                .withIgnoreEmptyLines().withTrim().withNullString("")
-                .withDelimiter(delimiter.charAt(0));
-        if (hasHeader) {
-            csvFormat = csvFormat.withFirstRecordAsHeader();
-        }
-        return csvFormat;
+        return CsvTools.csvFormat(delimiter.charAt(0), hasHeader);
     }
 
     @Override
@@ -196,14 +203,8 @@ public class DataFileCSV extends DataFileText {
                 return null;
             }
         }
-        CSVFormat csvFormat = CSVFormat.DEFAULT
-                .withIgnoreEmptyLines().withTrim().withNullString("")
-                .withDelimiter(',');
-        if (cols != null && !cols.isEmpty()) {
-            csvFormat = csvFormat.withFirstRecordAsHeader();
-        }
         File tmpFile = TmpFileTools.csvFile();
-        try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, Charset.forName("UTF-8")), csvFormat)) {
+        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(tmpFile)) {
             if (cols != null && !cols.isEmpty()) {
                 csvPrinter.printRecord(cols);
             }
@@ -226,7 +227,7 @@ public class DataFileCSV extends DataFileText {
     }
 
     @Override
-    public boolean setValue(List<Integer> cols, String value) {
+    public boolean setValue(List<Integer> cols, String value, boolean errorContinue) {
         if (file == null || !file.exists() || file.length() == 0 || cols == null || cols.isEmpty()) {
             return false;
         }
@@ -243,32 +244,120 @@ public class DataFileCSV extends DataFileText {
                     } catch (Exception e) {  // skip  bad lines
                     }
                 }
-                boolean isRandom = "MyBox##random".equals(value);
-                boolean isRandomNn = "MyBox##randomNn".equals(value);
-                Random random = new Random();
+                boolean isRandom = false, isRandomNn = false, isBlank = false;
+                String expression = null;
+                if (value != null) {
+                    if ("MyBox##blank".equals(value)) {
+                        isBlank = true;
+                    } else if ("MyBox##random".equals(value)) {
+                        isRandom = true;
+                    } else if ("MyBox##randomNn".equals(value)) {
+                        isRandomNn = true;
+                    } else if (value.startsWith("MyBox##Expression##")) {
+                        expression = value.substring("MyBox##Expression##".length());
+                    }
+                }
+                final Random random = new Random();
+                rowIndex = 0;
                 while (iterator.hasNext() && task != null && !task.isCancelled()) {
                     try {
                         CSVRecord record = iterator.next();
-                        if (record != null) {
+                        if (record == null) {
+                            continue;
+                        }
+                        filterAndCalculate(record.toList(), ++rowIndex, expression);
+                        if (expression != null && error != null) {
+                            if (errorContinue) {
+                                continue;
+                            } else {
+                                task.setError(error);
+                                return false;
+                            }
+                        }
+                        List<String> row = new ArrayList<>();
+                        for (int i = 0; i < columns.size(); i++) {
+                            if (filterPassed && cols.contains(i)) {
+                                if (isBlank) {
+                                    row.add("");
+                                } else if (isRandom) {
+                                    row.add(random(random, i, false));
+                                } else if (isRandomNn) {
+                                    row.add(random(random, i, true));
+                                } else if (expression != null) {
+                                    row.add(expressionResult);
+                                } else {
+                                    row.add(value);
+                                }
+                            } else if (i < record.size()) {
+                                row.add(record.get(i));
+                            } else {
+                                row.add(null);
+                            }
+                        }
+                        csvPrinter.printRecord(row);
+                    } catch (Exception e) {  // skip  bad lines
+                    }
+                }
+            }
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return false;
+        }
+        return FileTools.rename(tmpFile, file, false);
+    }
+
+    @Override
+    public boolean delete(boolean errorContinue) {
+        if (file == null || !file.exists() || file.length() == 0) {
+            return false;
+        }
+        File tmpFile = TmpFileTools.getTempFile();
+        CSVFormat format = cvsFormat();
+        File validFile = FileTools.removeBOM(file);
+        try ( CSVParser parser = CSVParser.parse(validFile, charset, format);
+                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, charset), format)) {
+            Iterator<CSVRecord> iterator = parser.iterator();
+            if (iterator != null) {
+                if (hasHeader) {
+                    try {
+                        csvPrinter.printRecord(parser.getHeaderNames());
+                    } catch (Exception e) {  // skip  bad lines
+                    }
+                }
+                if (rowFilter != null && !rowFilter.isBlank()) {
+                    rowIndex = 0;
+                    while (iterator.hasNext() && task != null && !task.isCancelled()) {
+                        try {
+                            CSVRecord record = iterator.next();
+                            if (record == null) {
+                                continue;
+                            }
+                            filterInTask(record.toList(), ++rowIndex);
+                            if (error != null) {
+                                if (errorContinue) {
+                                    continue;
+                                } else {
+                                    task.setError(error);
+                                    return false;
+                                }
+                            }
+                            if (filterPassed) {
+                                continue;
+                            }
                             List<String> row = new ArrayList<>();
                             for (int i = 0; i < columns.size(); i++) {
-                                if (cols.contains(i)) {
-                                    if (isRandom) {
-                                        row.add(random(random, i, false));
-                                    } else if (isRandomNn) {
-                                        row.add(random(random, i, true));
-                                    } else {
-                                        row.add(value);
-                                    }
-                                } else if (i < record.size()) {
+                                if (i < record.size()) {
                                     row.add(record.get(i));
                                 } else {
                                     row.add(null);
                                 }
                             }
                             csvPrinter.printRecord(row);
+                        } catch (Exception e) {  // skip  bad lines
                         }
-                    } catch (Exception e) {  // skip  bad lines
                     }
                 }
             }
@@ -309,9 +398,37 @@ public class DataFileCSV extends DataFileText {
         }
     }
 
+    public DataFileCSV savePageAs() {
+        try {
+            DataFileCSV targetData = (DataFileCSV) this.cloneAll();
+            File csvFile = TmpFileTools.getPathTempFile(AppPaths.getGeneratedPath(), ".csv");
+            targetData.setFile(csvFile);
+            savePageData(targetData);
+            return targetData;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     /*
         static
      */
+    public static DataFileCSV tmpCSV() {
+        try {
+            File csvFile = TmpFileTools.getPathTempFile(AppPaths.getGeneratedPath(), ".csv");
+            DataFileCSV dataFileCSV = new DataFileCSV();
+            dataFileCSV.setFile(csvFile)
+                    .setCharset(Charset.forName("UTF-8"))
+                    .setDelimiter(",")
+                    .setHasHeader(true);
+            return dataFileCSV;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public static LinkedHashMap<File, Boolean> save(File path, String filePrefix, List<StringTable> tables) {
         if (tables == null || tables.isEmpty()) {
             return null;
@@ -320,9 +437,7 @@ public class DataFileCSV extends DataFileText {
             LinkedHashMap<File, Boolean> files = new LinkedHashMap<>();
             String[][] data;
             int count = 1;
-            CSVFormat csvFormat = CSVFormat.DEFAULT
-                    .withDelimiter(',')
-                    .withIgnoreEmptyLines().withTrim().withNullString("");
+            CSVFormat csvFormat = CsvTools.csvFormat();
             for (StringTable stringTable : tables) {
                 List<List<String>> tableData = stringTable.getData();
                 if (tableData == null || tableData.isEmpty()) {
@@ -360,6 +475,65 @@ public class DataFileCSV extends DataFileText {
             return null;
         }
 
+    }
+
+    public static DataFileCSV save(SingletonTask task, List<Data2DColumn> cols, List<List<String>> data) {
+        try {
+            if (cols == null || cols.isEmpty()) {
+                if (data == null || data.isEmpty()) {
+                    return null;
+                }
+            }
+            List<Data2DColumn> targetColumns = new ArrayList<>();
+            List<String> names = null;
+            if (cols != null) {
+                names = new ArrayList<>();
+                for (Data2DColumn c : cols) {
+                    names.add(c.getColumnName());
+                    targetColumns.add(c.cloneAll().setD2cid(-1).setD2id(-1));
+                }
+            }
+            DataFileCSV dataFileCSV = new DataFileCSV();
+            dataFileCSV.setTask(task);
+            File file = dataFileCSV.tmpFile(names, data);
+            dataFileCSV.setColumns(targetColumns)
+                    .setFile(file)
+                    .setCharset(Charset.forName("UTF-8"))
+                    .setDelimiter(",")
+                    .setHasHeader(!targetColumns.isEmpty())
+                    .setColsNumber(targetColumns.size())
+                    .setRowsNumber(data.size());
+            dataFileCSV.saveAttributes();
+            dataFileCSV.setTask(null);
+            return dataFileCSV;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static void open(BaseController controller, DataFileCSV csvFile, String target) {
+        if (csvFile == null || target == null) {
+            return;
+        }
+        if ("csv".equals(target)) {
+            DataFileCSVController.loadData(csvFile);
+        } else if ("excel".equals(target)) {
+            DataFileExcelController.loadData(csvFile);
+        } else if ("texts".equals(target)) {
+            DataFileTextController.loadData(csvFile);
+        } else if ("matrix".equals(target)) {
+            MatricesManageController.loadData(csvFile);
+        } else if ("systemClipboard".equals(target)) {
+            TextClipboardTools.copyToSystemClipboard(controller, TextFileTools.readTexts(csvFile.getFile()));
+        } else if ("myBoxClipboard".equals(target)) {
+            DataInMyBoxClipboardController.loadData(csvFile);
+        } else if ("table".equals(target)) {
+            DataTablesController.loadData(csvFile);
+        }
     }
 
 }

@@ -364,12 +364,17 @@ public class ControlWebView extends BaseController {
                         value = WebViewTools.frameIndex(webEngine, msg.substring("FrameReadyName-".length()));
                     } else if (msg.startsWith("scrollTop-")) {
                         scrollTop = Double.valueOf(msg.substring("scrollTop-".length()));
+                        ev.consume();
+                        return;
                     } else if (msg.startsWith("scrollLeft-")) {
                         scrollLeft = Double.valueOf(msg.substring("scrollLeft-".length()));
+                        ev.consume();
+                        return;
                     }
                     if (value < 0) {
                         return;
                     }
+                    ev.consume();
                     int frameIndex = value;
                     Timer timer = new Timer();
                     timer.schedule(new TimerTask() {
@@ -1085,7 +1090,7 @@ public class ControlWebView extends BaseController {
             MenuItem menu;
 
             if (address != null && !address.isBlank()) {
-                menu = new MenuItem(address);
+                menu = new MenuItem(PopTools.limitMenuName(address));
                 menu.setStyle("-fx-text-fill: #2e598a;");
                 items.add(menu);
                 items.add(new SeparatorMenuItem());

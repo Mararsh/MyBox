@@ -268,6 +268,15 @@ public class FileFilters {
         }
     };
 
+    public static List<FileChooser.ExtensionFilter> DataFileExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("*", "*.csv", "*.xlsx", "*.xls", "*.txt"));
+            add(new FileChooser.ExtensionFilter("csv", "*.csv"));
+            add(new FileChooser.ExtensionFilter("excel", "*.xlsx", "*.xls"));
+            addAll(TextExtensionFilter);
+        }
+    };
+
     public static List<FileChooser.ExtensionFilter> SheetExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
             add(new FileChooser.ExtensionFilter("excel", "*.xlsx", "*.xls"));
@@ -318,6 +327,12 @@ public class FileFilters {
         }
     };
 
+    public static List<FileChooser.ExtensionFilter> JarExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("jar", "*.jar"));
+        }
+    };
+
     public static List<FileChooser.ExtensionFilter> ImagesListExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
             add(new FileChooser.ExtensionFilter("*", "*.png", "*.jpg", "*.jpeg", "*.bmp",
@@ -357,7 +372,6 @@ public class FileFilters {
             default:
                 return ImageExtensionFilter;
         }
-
     }
 
 }

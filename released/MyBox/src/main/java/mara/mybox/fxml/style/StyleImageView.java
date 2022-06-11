@@ -34,6 +34,9 @@ public class StyleImageView {
         if (id.startsWith("links")) {
             return new StyleData(id, "", message("Links"), "iconLink.png");
         }
+        if (id.startsWith("tableTipsView")) {
+            return new StyleData(id, "", message("TableTips"), "iconTipsRight.png");
+        }
         if (id.toLowerCase().endsWith("tipsview")) {
             switch (id) {
                 case "refTipsView":

@@ -50,7 +50,7 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
         try {
             super.initControls();
 
-            sourceController.noColumnSelection(true);
+            noColumnSelection(true);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -69,23 +69,15 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
                 }
             });
 
-            tableStatusListener = new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    refreshControls();
-                }
-            };
-            tableController.statusNotify.addListener(tableStatusListener);
-
-            refreshControls();
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
+    @Override
     public void refreshControls() {
         try {
+            super.refreshControls();
             List<String> names = tableController.data2D.columnNames();
             if (names == null || names.isEmpty()) {
                 colSelector.getItems().clear();
@@ -106,8 +98,8 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
     @Override
     public boolean checkOptions() {
         boolean ok = super.checkOptions();
-        targetController.setNotInTable(sourceController.allPages());
-        if (!data2D.isTable() && sourceController.allPages()) {
+        targetController.setNotInTable(isAllPages());
+        if (!data2D.isTable() && isAllPages()) {
             memoryNoticeLabel.setVisible(true);
         } else {
             memoryNoticeLabel.setVisible(false);
@@ -162,7 +154,7 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
             frequency = caseInsensitiveCheck.isSelected()
                     ? new Frequency(String.CASE_INSENSITIVE_ORDER)
                     : new Frequency();
-            if (sourceController.allPages()) {
+            if (isAllPages()) {
                 handleAllTask();
             } else {
                 handleRowsTask();
@@ -176,7 +168,7 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
     public boolean handleRows() {
         try {
             outputData = new ArrayList<>();
-            for (int r : sourceController.checkedRowsIndices) {
+            for (int r : checkedRowsIndices) {
                 List<String> tableRow = tableController.tableData.get(r);
                 String d = tableRow.get(freCol + 1);
                 frequency.addValue(d);

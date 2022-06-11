@@ -185,7 +185,7 @@ License:    Apache License Version 2.0
                                              <content>
                                                 <VBox fx:id="areaBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                    <children>
-                                                      <VBox fx:id="rectangleBox" minHeight="-Infinity" spacing="5.0" styleClass="focusBox" stylesheets="@../../../../../tmp/MyBox-6.4.6-src/MyBox/src/main/resources/styles/MyBox.css">
+                                                      <VBox fx:id="rectangleBox" minHeight="-Infinity" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                          <children>
                                                             <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                                                <children>
@@ -194,7 +194,7 @@ License:    Apache License Version 2.0
                                                                      <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                            <image>
-                                                                              <Image url="@../../../../../tmp/MyBox-6.4.6-src/MyBox/src/main/resources/buttons/Red/iconOK.png" />
+                                                                              <Image url="@../buttons/Red/iconOK.png" />
                                                                            </image>
                                                                         </ImageView>
                                                                      </graphic>
@@ -237,7 +237,7 @@ License:    Apache License Version 2.0
                                                             </FlowPane>
                                                          </children>
                                                       </VBox>
-                                                      <VBox fx:id="circleBox" minHeight="-Infinity" spacing="5.0" styleClass="focusBox" stylesheets="@../../../../../tmp/MyBox-6.4.6-src/MyBox/src/main/resources/styles/MyBox.css">
+                                                      <VBox fx:id="circleBox" minHeight="-Infinity" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                          <children>
                                                             <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                                                <children>
@@ -246,7 +246,7 @@ License:    Apache License Version 2.0
                                                                      <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                            <image>
-                                                                              <Image url="@../../../../../tmp/MyBox-6.4.6-src/MyBox/src/main/resources/buttons/Red/iconOK.png" />
+                                                                              <Image url="@../buttons/Red/iconOK.png" />
                                                                            </image>
                                                                         </ImageView>
                                                                      </graphic>

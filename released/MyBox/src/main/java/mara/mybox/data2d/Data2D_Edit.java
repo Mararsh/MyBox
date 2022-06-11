@@ -3,11 +3,14 @@ package mara.mybox.data2d;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import javafx.application.Platform;
+import javafx.scene.web.WebView;
+import mara.mybox.data.FindReplaceString;
 import mara.mybox.data2d.scan.Data2DReader;
 import mara.mybox.data2d.scan.Data2DReader.Operation;
 import mara.mybox.db.DerbyBase;
@@ -36,7 +39,9 @@ public abstract class Data2D_Edit extends Data2D_Data {
 
     public abstract boolean savePageData(Data2D targetData);
 
-    public abstract boolean setValue(List<Integer> cols, String value);
+    public abstract boolean setValue(List<Integer> cols, String value, boolean errorContinue);
+
+    public abstract boolean delete(boolean errorContinue);
 
     public abstract long clearData();
 
@@ -133,7 +138,6 @@ public abstract class Data2D_Edit extends Data2D_Data {
                 if (d2did >= 0) {
                     tableData2DColumn.save(conn, d2did, columns);
                     tableData2DDefinition.updateData(conn, this);
-                    tableData2DStyle.checkColumns(conn, d2did, names);
                 }
             } else {
                 colsNumber = 0;
@@ -163,7 +167,6 @@ public abstract class Data2D_Edit extends Data2D_Data {
         rowsNumber = dataSize;
         try ( Connection conn = DerbyBase.getConnection()) {
             tableData2DDefinition.updateData(conn, this);
-            tableData2DStyle.checkRows(conn, d2did, dataSize);
         } catch (Exception e) {
             if (backgroundTask != null) {
                 backgroundTask.setError(e.toString());
@@ -193,24 +196,22 @@ public abstract class Data2D_Edit extends Data2D_Data {
         if (rows != null) {
             endRowOfCurrentPage = startRowOfCurrentPage + rows.size();
         }
-        readPageStyles(conn);
+        readPageStyles(conn, rows);
         return rows;
     }
 
-    public void readPageStyles(Connection conn) {
-        styles.clear();
+    public void readPageStyles(Connection conn, List<List<String>> rows) {
+        styles = new ArrayList<>();
         if (d2did < 0 || startRowOfCurrentPage >= endRowOfCurrentPage) {
             return;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(TableData2DStyle.QueryPageStyles)) {
+        try ( PreparedStatement statement = conn.prepareStatement(TableData2DStyle.QueryStyles);) {
             statement.setLong(1, d2did);
-            statement.setLong(2, startRowOfCurrentPage);
-            statement.setLong(3, endRowOfCurrentPage);
             try ( ResultSet results = statement.executeQuery()) {
                 while (results.next()) {
-                    Data2DStyle d = tableData2DStyle.readData(results);
-                    if (d != null) {
-                        setStyle(d.getRow() - startRowOfCurrentPage, d.getColName(), d.getStyle());
+                    Data2DStyle style = tableData2DStyle.readData(results);
+                    if (style != null) {
+                        styles.add(style);
                     }
                 }
             }
@@ -245,112 +246,8 @@ public abstract class Data2D_Edit extends Data2D_Data {
     }
 
     public boolean saveAttributes() {
-        countSize();
         try ( Connection conn = DerbyBase.getConnection()) {
-            return saveColumns(conn, (Data2D) this, columns)
-                    && savePageStyles(conn);
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-    public boolean savePageStyles(Connection conn) {
-        if (conn == null || d2did < 0) {
-            return false;
-        }
-        try ( Statement statement = conn.createStatement()) {
-            if (endRowOfCurrentPage > startRowOfCurrentPage) {
-                String sql = "DELETE FROM Data2D_Style WHERE d2id=" + d2did
-                        + " AND row>=" + startRowOfCurrentPage + " AND row<" + endRowOfCurrentPage;
-                statement.executeUpdate(sql);
-                conn.commit();
-            }
-            if (isMutiplePages()) {
-                long offset = tableRowsNumber() - (endRowOfCurrentPage - startRowOfCurrentPage);
-                if (offset != 0) {
-                    String sql = "UPDATE Data2D_Style SET row=row+" + offset
-                            + " WHERE d2id=" + d2did + " AND row >= " + endRowOfCurrentPage;
-                    statement.executeUpdate(sql);
-                    conn.commit();
-                }
-            }
-            if (styles.isEmpty()) {
-                return true;
-            }
-            conn.setAutoCommit(false);
-            long count = 0;
-            for (String key : styles.keySet()) {
-                String style = styles.get(key);
-                int pos = key.indexOf(",");
-                int row = Integer.valueOf(key.substring(0, pos));
-                String colName = key.substring(pos + 1);
-                Data2DStyle d2Style = new Data2DStyle(d2did, row + startRowOfCurrentPage, colName, style);
-                tableData2DStyle.write(conn, d2Style);
-                if (++count >= DerbyBase.BatchSize) {
-                    conn.commit();
-                }
-            }
-            conn.commit();
-            return true;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-    public boolean saveStyles(List<String> cols, String style) {
-        if (cols == null || cols.isEmpty() || tableChanged || d2did < 0) {
-            return false;
-        }
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement statement = conn.createStatement()) {
-            if (dataSize <= 0) {
-                String in = null;
-                for (String col : cols) {
-                    if (in == null) {
-                        in = col;
-                    } else {
-                        in += "," + col;
-                    }
-                }
-                String sql = "DELETE FROM Data2D_Style WHERE d2id=" + d2did;
-                statement.executeUpdate(sql);
-                conn.commit();
-            } else if (style == null || style.isBlank()) {
-                String in = null;
-                for (String col : cols) {
-                    if (in == null) {
-                        in = "'" + col + "'";
-                    } else {
-                        in += ", '" + col + "'";
-                    }
-                }
-                String sql = "DELETE FROM Data2D_Style WHERE d2id=" + d2did
-                        + " AND colName IN (" + in + ")";
-                statement.executeUpdate(sql);
-                conn.commit();
-            } else {
-                conn.setAutoCommit(false);
-                long count = 0;
-                for (int row = 0; row < dataSize; row++) {
-                    for (String colName : cols) {
-                        Data2DStyle d2Style = new Data2DStyle(d2did, row, colName, style);
-                        tableData2DStyle.write(conn, d2Style);
-                    }
-                    if (++count >= DerbyBase.BatchSize) {
-                        conn.commit();
-                    }
-                }
-                conn.commit();
-            }
-            return true;
+            return saveColumns(conn, (Data2D) this, columns);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -362,13 +259,11 @@ public abstract class Data2D_Edit extends Data2D_Data {
 
     public static boolean saveAttributes(Data2D source, Data2D target) {
         try ( Connection conn = DerbyBase.getConnection()) {
-            source.countSize();
             target.cloneAttributes(source);
             if (!saveColumns(conn, target, source.getColumns())) {
                 return false;
             }
-            target.getTableData2DStyle().copyStyles(conn, source.getD2did(), target.getD2did());
-            return target.savePageStyles(conn);
+            return target.getTableData2DStyle().copyStyles(conn, source.getD2did(), target.getD2did()) >= 0;
         } catch (Exception e) {
             if (source.getTask() != null) {
                 source.getTask().setError(e.toString());
@@ -460,6 +355,221 @@ public abstract class Data2D_Edit extends Data2D_Data {
             }
             MyBoxLog.error(e);
             return false;
+        }
+    }
+
+    /*
+        filter
+        first value of "tableRow" should be "dataRowNumber" 
+        "tableRowNumber" is 0-based while "dataRowNumber" is 1-based
+     */
+    public String rowExpression(String script, List<String> tableRow, int tableRowNumber) {
+        try {
+            if (script == null || script.isBlank()
+                    || tableRow == null || tableRow.isEmpty()
+                    || columns == null || columns.isEmpty()) {
+                return script;
+            }
+            if (findReplace == null) {
+                findReplace = FindReplaceString.create().setOperation(FindReplaceString.Operation.ReplaceAll)
+                        .setIsRegex(false).setCaseInsensitive(false).setMultiline(false);
+            }
+            String filledScript = script;
+            for (int i = 0; i < columns.size(); i++) {
+                filledScript = findReplace.replaceStringAll(filledScript, "#{" + columns.get(i).getColumnName() + "}", tableRow.get(i + 1));
+            }
+            filledScript = findReplace.replaceStringAll(filledScript, "#{" + message("DataRowNumber") + "}", tableRow.get(0) + "");
+            filledScript = findReplace.replaceStringAll(filledScript, "#{" + message("TableRowNumber") + "}",
+                    tableRowNumber >= 0 ? (tableRowNumber + 1) + "" : message("NoTableRowNumberWhenAllPages"));
+            return filledScript;
+        } catch (Exception e) {
+            error = e.toString();
+            return null;
+        }
+    }
+
+    public boolean calculateExpression(String script, List<String> tableRow, int tableRowNumber) {
+        return calculateExpression(rowExpression(script, tableRow, tableRowNumber));
+    }
+
+    public boolean calculateExpression(String script) {
+        try {
+            error = null;
+            expressionResult = null;
+            if (script == null || script.isBlank()) {
+                return true;
+            }
+            if (webEngine == null) {
+                webEngine = new WebView().getEngine();
+            }
+            Object o = webEngine.executeScript(script);
+            if (o != null) {
+                expressionResult = o.toString();
+            }
+            return true;
+        } catch (Exception e) {
+            error = e.toString();
+            return false;
+        }
+    }
+
+    public boolean filter(List<String> tableRow, int tableRowIndex) {
+        if (rowFilter == null || rowFilter.isBlank()) {
+            filterPassed = true;
+            return true;
+        }
+        filterPassed = calculateExpression(rowFilter, tableRow, tableRowIndex)
+                && "true".equals(expressionResult);
+        if (filterReversed) {
+            filterPassed = !filterPassed;
+        }
+        return filterPassed;
+    }
+
+    public boolean filterAndCalculate(List<String> dataRow, long dataRowIndex, final String script) {
+        try {
+            error = null;
+            filterPassed = false;
+            if (dataRow == null) {
+                return false;
+            }
+            if (rowFilter == null || rowFilter.isBlank()) {
+                filterPassed = true;
+                if (script == null) {
+                    return true;
+                }
+            }
+            Platform.runLater(() -> {
+                synchronized (lock) {
+                    try {
+                        List<String> values = new ArrayList<>();
+                        values.add(dataRowIndex + "");
+                        values.addAll(dataRow);
+                        filterPassed = filter(values, -1);
+                        if (filterPassed && script != null) {
+                            calculateExpression(script, values, -1);
+                        }
+                    } catch (Exception e) {
+                        error = e.toString();
+                    }
+                    lock.notify();
+                }
+            });
+            synchronized (lock) {
+                lock.wait();
+            }
+        } catch (Exception e) {
+            error = e.toString();
+        }
+        return filterPassed;
+    }
+
+    public boolean filterInTask(List<String> dataRow, long dataRowIndex) {
+        return filterInTask(dataRow, dataRowIndex, -1);
+    }
+
+    public boolean filterInTask(List<String> dataRow, long dataRowIndex, int tableRowNumber) {
+        try {
+            error = null;
+            filterPassed = false;
+            if (dataRow == null) {
+                return false;
+            }
+            if (rowFilter == null || rowFilter.isBlank()) {
+                filterPassed = true;
+                return true;
+            }
+            List<String> tableRow = new ArrayList<>();
+            tableRow.add(dataRowIndex + "");
+            tableRow.addAll(dataRow);
+            Platform.runLater(() -> {
+                synchronized (lock) {
+                    try {
+                        filterPassed = filter(tableRow, tableRowNumber);
+                    } catch (Exception e) {
+                        error = e.toString();
+                    }
+                    lock.notify();
+                }
+            });
+            synchronized (lock) {
+                lock.wait();
+            }
+        } catch (Exception e) {
+            error = e.toString();
+        }
+        return filterPassed;
+    }
+
+    public boolean validateExpression(String script, boolean allPages) {
+        try {
+            error = null;
+            expressionResult = null;
+            if (script == null || script.isBlank()) {
+                return true;
+            }
+            List<String> tableRow = new ArrayList<>();
+            tableRow.add("1");
+            for (int i = 0; i < columns.size(); i++) {
+                tableRow.add("0");
+            }
+            return calculateExpression(rowExpression(script, tableRow, allPages ? -1 : 0));
+        } catch (Exception e) {
+            error = e.toString();
+            return false;
+        }
+    }
+
+    public String cellStyle(int tableRowIndex, String colName) {
+        try {
+            if (styles == null || styles.isEmpty() || colName == null || colName.isBlank()) {
+                return null;
+            }
+            List<String> tableRow = tableViewRow(tableRowIndex);
+            if (tableRow == null || tableRow.size() < 1) {
+                return null;
+            }
+            String cellStyle = null;
+            long dataRowIndex = Long.parseLong(tableRow.get(0)) - 1;
+            for (Data2DStyle style : styles) {
+                String names = style.getColumns();
+                if (names != null && !names.isBlank()) {
+                    String[] cols = names.split(Data2DStyle.ColumnSeparator);
+                    if (cols != null && cols.length > 0) {
+                        if (!(Arrays.asList(cols).contains(colName))) {
+                            continue;
+                        }
+                    }
+                }
+                long rowStart = style.getRowStart();
+                if (dataRowIndex < rowStart) {
+                    continue;
+                }
+                if (rowStart >= 0) {
+                    long rowEnd = style.getRowEnd();
+                    if (rowEnd >= 0 && dataRowIndex >= rowEnd) {
+                        continue;
+                    }
+                }
+                rowFilter = style.getMoreConditions();
+                if (filter(tableRow, tableRowIndex)) {
+                    String styleValue = style.finalStyle();
+                    if (styleValue == null || styleValue.isBlank()) {
+                        cellStyle = null;
+                    } else if (cellStyle == null) {
+                        cellStyle = style.finalStyle();
+                    } else {
+                        if (!cellStyle.trim().endsWith(";")) {
+                            cellStyle += ";";
+                        }
+                        cellStyle += style.finalStyle();
+                    }
+                }
+            }
+            return cellStyle;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
         }
     }
 

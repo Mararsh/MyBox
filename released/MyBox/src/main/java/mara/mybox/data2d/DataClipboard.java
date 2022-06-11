@@ -2,13 +2,16 @@ package mara.mybox.data2d;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.controller.DataInMyBoxClipboardController;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppPaths;
 
@@ -63,7 +66,7 @@ public class DataClipboard extends DataFileCSV {
     }
 
     public static DataClipboard create(SingletonTask task, List<Data2DColumn> cols, File dFile,
-            int rowsNumber, int colsNumber) {
+            long rowsNumber, long colsNumber) {
         if (dFile == null || rowsNumber <= 0) {
             return null;
         }
@@ -111,6 +114,39 @@ public class DataClipboard extends DataFileCSV {
             } else {
                 return null;
             }
+        } else {
+            MyBoxLog.error("Failed");
+            return null;
+        }
+    }
+
+    public static DataClipboard toClip(SingletonTask task, DataFileCSV csvData) {
+        if (task == null || csvData == null) {
+            return null;
+        }
+        File csvFile = csvData.getFile();
+        if (csvFile == null || !csvFile.exists() || csvFile.length() == 0) {
+            return null;
+        }
+        List<Data2DColumn> cols = csvData.getColumns();
+        if (cols == null || cols.isEmpty()) {
+            try ( Connection conn = DerbyBase.getConnection()) {
+                csvData.readColumns(conn);
+                cols = csvData.getColumns();
+                if (cols == null || cols.isEmpty()) {
+                    return null;
+                }
+            } catch (Exception e) {
+                if (task != null) {
+                    task.setError(e.toString());
+                }
+                MyBoxLog.error(e);
+                return null;
+            }
+        }
+        File dFile = newFile();
+        if (FileCopyTools.copyFile(csvFile, dFile, true, true)) {
+            return create(task, cols, dFile, csvData.getRowsNumber(), cols.size());
         } else {
             MyBoxLog.error("Failed");
             return null;

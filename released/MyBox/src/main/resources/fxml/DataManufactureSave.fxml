@@ -9,85 +9,22 @@ License:    Apache License Version 2.0
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataManufactureSaveController">
+<VBox fx:id="thisPane" prefWidth="400.0" spacing="10.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataManufactureSaveController">
     <children>
         <HBox alignment="CENTER" VBox.vgrow="NEVER">
             <children>
                 <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%SaveAs" textAlignment="CENTER" VBox.vgrow="NEVER" />
             </children>
         </HBox>
-        <FlowPane alignment="CENTER_LEFT" hgap="5.0" minWidth="-Infinity" prefWrapLength="500.0" vgap="5.0">
-            <children>
-                <RadioButton fx:id="csvRadio" mnemonicParsing="false" selected="true">
-                    <graphic>
-                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconCSV.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                    <toggleGroup>
-                        <ToggleGroup fx:id="targetGroup" />
-                    </toggleGroup>
-                </RadioButton>
-                <RadioButton fx:id="excelRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
-                    <graphic>
-                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconExcel.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </RadioButton>
-                <RadioButton fx:id="textsRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
-                    <graphic>
-                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconTxt.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </RadioButton>
-                <RadioButton fx:id="matrixRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
-                    <graphic>
-                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconMatrix.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </RadioButton>
-                <RadioButton fx:id="tableRadio" layoutX="133.0" layoutY="10.0" mnemonicParsing="false" toggleGroup="$targetGroup">
-                    <graphic>
-                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconDatabase.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </RadioButton>
-                <RadioButton fx:id="myBoxClipboardRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
-                    <graphic>
-                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconClipboard.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </RadioButton>
-            </children>
-        </FlowPane>
+      <fx:include fx:id="target" source="ControlData2DTargetExternal.fxml" />
         <HBox alignment="CENTER_LEFT" spacing="5.0">
             <children>
-                <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
+                <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" />
                 <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

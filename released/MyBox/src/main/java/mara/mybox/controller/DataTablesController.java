@@ -5,6 +5,7 @@ import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.stage.Window;
+import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.table.TableData2D;
@@ -65,6 +66,7 @@ public class DataTablesController extends BaseData2DController {
             if (object != null && object instanceof DataTablesController) {
                 try {
                     controller = (DataTablesController) object;
+                    controller.refreshAction();
                     break;
                 } catch (Exception e) {
                 }
@@ -88,6 +90,14 @@ public class DataTablesController extends BaseData2DController {
     public static DataTablesController open(List<Data2DColumn> cols, List<List<String>> data) {
         DataTablesController controller = oneOpen();
         controller.dataController.loadTmpData(cols, data);
+        return controller;
+    }
+
+    public static DataTablesController loadData(DataFileCSV csvData) {
+        DataTablesController controller = oneOpen();
+        if (csvData != null) {
+            controller.loadCSVData(csvData);
+        }
         return controller;
     }
 

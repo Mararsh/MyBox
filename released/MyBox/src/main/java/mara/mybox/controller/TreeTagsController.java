@@ -140,6 +140,7 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
     public void setParameters(TreeManageController treeController) {
         try {
             this.treeController = treeController;
+            this.parentController = treeController;
             this.baseName = treeController.baseName;
             category = treeController.category;
             tableTreeNode = treeController.tableTreeNode;

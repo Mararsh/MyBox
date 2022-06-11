@@ -48,6 +48,7 @@ public class ControlData2DEditTable extends ControlData2DLoad {
         try {
             dataController = editController.dataController;
             baseTitle = dataController.baseTitle;
+            baseName = dataController.baseName;
 
             paginationPane = dataController.paginationPane;
             pageSizeSelector = dataController.pageSizeSelector;

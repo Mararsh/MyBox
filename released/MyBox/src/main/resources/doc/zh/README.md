@@ -4,23 +4,21 @@
 这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。
 
 ## 新内容
-2022-5-10 版本6.5.5          
+2022-6-11 版本6.5.6          
 
-* 数据编辑：设置单元风格；可把第一行设为列名；转置可对所有页实施，可选把第一列设为列名；数据库执行结果不限行数；示例数据。                
-* 数据计算：描述性统计可计算更多的值；统计/百分比/归一化可选按照列/行/全部；计算频度；简单线性回归。                
-* 数据图：类别轴可为字串或数字；显示图的数据；比较条图；自比较条图；箱线图。           
-* 树形信息：可显示序列号；可选复制子节点或所有后代；左键点击节点的选项。                     
-* 其它：生成/粘贴图片的base64代码；在调色盘上输入/选择新颜色。                     
-* 解决：数据文件的自动备份失效；数据统计所有页时所选列未生效；另存文本文件时没有按要求删除BOM；无法清除所有颜色。        
+* 数据：所有数据处理均可设置行过滤条件(JavaScript代码的布尔表达式) ；横向/纵向拼接两个数据；“赋值”可以设置为行表达式；按行过滤条件删除数据；“设置风格”可增删改规则。              
+* 计算：管理和编辑JavaScript代码；管理和编辑JEXL(Java Expression Language)代码；JShell可设置类路径、可弹出代码完成建议(CTRL+1)、完善示例。                
+* 数据图：参数可在弹出窗口中设置(F12)。                         
+* 解决：一些fxml文件包含本地文件路径；点击表头应按数据类型排序；在文本菜单中点击“替换”按钮弹出错误；对所有页或数据库表无法计算描述性统计。        
  
-[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.5)             
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.6)             
    
 
 ## 下载与运行
-每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases)目录下（点击上面的`releases`页签）。       
+每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases)目录下（点击此项目主页的`releases`页签）。       
 
 ### 源码
-[MyBox-6.5.5-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.5/MyBox-6.5.5-src.zip)   40M（大约值）       
+[MyBox-6.5.6-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-src.zip)   40M（大约值）       
 
 关于源码的结构、编辑、和构建，请参考[开发指南](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-DevGuide-2.1-zh.pdf) 和
 [打包步骤](https://mararsh.github.io/MyBox/pack_steps.html)       
@@ -31,9 +29,9 @@
 
 | 平台 | 链接 | 大小（大约值） | 启动文件 |
 | --- | --- | --- |  --- |
-| win10 x64 | [MyBox-6.5.5-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.5/MyBox-6.5.5-win10-x64.zip)  | 220MB | MyBox.exe |
-| CentOS 7 x64 | [MyBox-6.5.5-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.5/MyBox-6.5.5-CentOS7-x64.tar.gz)  | 252MB  | bin/MyBox  |
-| mac x64| [MyBox-6.5.5-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.5/MyBox-6.5.5-mac.dmg)  | 232MB  |  MyBox-6.5.5.app   |
+| win10 x64 | [MyBox-6.5.6-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-win10-x64.zip)  | 220MB | MyBox.exe |
+| CentOS 7 x64 | [MyBox-6.5.6-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-CentOS7-x64.tar.gz)  | 252MB  | bin/MyBox  |
+| mac x64| [MyBox-6.5.6-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-mac.dmg)  | 232MB  |  MyBox-6.5.6.app   |
 
 双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。        
   
@@ -43,14 +41,14 @@
 
 | 平台 | 链接 | 大小（大约值） | 运行需要 |
 | --- | --- | --- |  --- |
-| win | [MyBox-6.5.5-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.5/MyBox-6.5.5-win-jar.zip)  | 156MB | Java 18或更高版本 |
-| linux | [MyBox-6.5.5-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.5/MyBox-6.5.5-linux-jar.zip)  | 186MB  | Java 18或更高版本 |
-| mac | [MyBox-6.5.5-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.5/MyBox-6.5.5-mac-jar.zip)  |  159MB  | Java 18或更高版本 |
+| win | [MyBox-6.5.6-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-win-jar.zip)  | 156MB | Java 18或更高版本 |
+| linux | [MyBox-6.5.6-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-linux-jar.zip)  | 186MB  | Java 18或更高版本 |
+| mac | [MyBox-6.5.6-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-mac-jar.zip)  |  159MB  | Java 18或更高版本 |
 
 执行以下命令来启动程序：       
-<PRE><CODE>     java   -jar   MyBox-6.5.5.jar</CODE></PRE>       
+<PRE><CODE>     java   -jar   MyBox-6.5.6.jar</CODE></PRE>       
 程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：       
-<PRE><CODE>     java   -jar   MyBox-6.5.5.jar   /tmp/a1.jpg</CODE></PRE>       
+<PRE><CODE>     java   -jar   MyBox-6.5.6.jar   /tmp/a1.jpg</CODE></PRE>       
 
 ### 其它下载地址       
 从云盘下载：  [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)       
@@ -70,9 +68,9 @@
 
 | 平台 | MyBox配置文件的目录 |
 | --- | --- |
-| win | `C:\用户\用户名\mybox\MyBox_v6.5.5.ini`  |
-| linux | `/home/用户名/mybox/MyBox_v6.5.5.ini` |
-| mac | `/Users/用户名/mybox/MyBox_v6.5.5.ini` |       
+| win | `C:\用户\用户名\mybox\MyBox_v6.5.6.ini`  |
+| linux | `/home/用户名/mybox/MyBox_v6.5.6.ini` |
+| mac | `/Users/用户名/mybox/MyBox_v6.5.6.ini` |       
 
 可以临时改变配置文件：在命令行启动jar包时设置参数"config=\"配置文件名\""。       
 利用“设置”功能也可以修改配置参数。       
@@ -91,8 +89,8 @@
 # 文档       
 | 文档名 | 版本 | 修改时间  | 链接 |       
 | --- | --- | --- | --- |
-| 开发日志 | 6.5.5 | 2022-5-10 | [html](#devLog) |
-| 快捷键 | 6.4.7 |  2021-8-17 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
+| 开发日志 | 6.5.6 | 2022-6-11 | [html](#devLog) |
+| 快捷键 | 6.5.6 |  2022-6-11 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
 | 打包步骤 | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps.html) |
 | 开发指南 | 2.1 |  2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf) |
 | 用户手册-综述 |  5.0 |  2019-4-19 | [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-UserGuide-5.0-Overview-zh.pdf) |
@@ -109,13 +107,13 @@ MyBox基于以下开放资源：
 | --- | --- | --- |
 | JDK | Java语言 | http://jdk.java.net/   |
 |   |   | https://www.oracle.com/technetwork/java/javase/downloads/index.html  |
-|   |   | https://docs.oracle.com/en/java/javase/17/docs/api/index.html  |
+|   |   | https://docs.oracle.com/en/java/javase/18/docs/api/index.html  |
 | JavaFx | 图形化界面 | https://gluonhq.com/products/javafx/  |
 |   |   |  https://docs.oracle.com/javafx/2/  |
 |   |   |  https://gluonhq.com/products/scene-builder/ |
-|   |   |  https://openjfx.io/javadoc/17/ |
+|   |   |  https://openjfx.io/javadoc/18/ |
 | NetBeans | 集成开发环境 | https://netbeans.org/ |
-| jpackage | 自包含包 | https://docs.oracle.com/en/java/javase/16/docs/specs/man/jpackage.html |
+| jpackage | 自包含包 | https://docs.oracle.com/en/java/javase/18/docs/specs/man/jpackage.html |
 | maven | 代码构建 | https://maven.apache.org/ |
 | jai-imageio | 图像处理 | https://github.com/jai-imageio/jai-imageio-core |
 | PDFBox | PDF处理 | https://pdfbox.apache.org/ |
@@ -167,7 +165,7 @@ MyBox基于以下开放资源：
 
 
 # 当前版本       
-当前是版本6.5.5，已实现的特点概述如下:      
+当前是版本6.5.6，已实现的特点概述如下:      
   
 * [跨平台](#cross-platform)
 * [国际化](#international)
@@ -204,10 +202,13 @@ MyBox基于以下开放资源：
     - [大图片的处理](#bigImage)
 * [数据工具](#dataTools)
     - [编辑数据](#editData)
+    - [行过滤](#rowFilter)
+    - [加工数据](#manufactureData)
     - [整理数据](#trimData)
     - [计算数据](#calculateData)
     - [数据图](#dataCharts)
     - [管理数据](#manageData)
+    - [拼接数据](#spliceData)
     - [数据文件](#dataFiles)
     - [系统粘贴板中数据](#dataInSystemClipboard)
     - [MyBox粘贴板中的数据](#dataInMyBoxClipboard)
@@ -215,6 +216,8 @@ MyBox基于以下开放资源：
     - [数据库表](#dataTables)
     - [数据库SQL](#dbSQL)
     - [JShell（Java交互编程工具）](#JShell)
+    - [JEXL（Java表达式语言）](#JEXL)
+    - [Javascript](#Javascript)
     - [通用的数据处理](#dataManufacture)
     - [地图数据](#mapData)
     - [地理编码](#geographyCode)
@@ -813,101 +816,215 @@ MyBox v5.3以前的版本均基于Java 8。
 	- “属性/列的修改被保存到数据库中。
 8. 点击按钮“恢复”以丢弃所有修改并从文件和数据库中加载数据。
 9. 同步显示数据的文本格式和网页格式。
-10. 赋值：
-	- 数据：选择表中行、或所有数据行（所有页），同时选择列。
-	- 对所选数据赋值为：0、1、空格、随机数、随机数（非负）、或输入的值
-	- 当所选数据为方阵（行列数相同），可赋值为：高斯分布、单位矩阵、上三角矩阵、下三角矩阵
-11. 风格：
-	- 数据：选择表中行、或所有数据行（所有页），同时选择列。
-	- 对所选数据单元可设置：字体颜色、背景色、字体大小、是否粗体、或输入的css风格。
-	- 对所选数据单元可清除风格。
-12. 复制：
-	- 数据：选择表中行、或所有数据行（所有页），同时选择列。
-	- 当选择表中行，目标可为：新的csv/excel/文本文件、矩阵、系统粘贴板、MyBox粘贴板，或者在表内指定位置插入、附加、或替换。     
-	- 当选择所有数据行（所有页），目标可为：新的csv/excel/文本文件、矩阵、系统粘贴板、MyBox粘贴板。
-13. 粘贴系统粘贴板的内容      
+10. 加载系统粘贴板的内容   
 	- 读取并解析系统粘贴板的内容。
 	- 可选数据分隔符：特殊字符、或输入的规则表达式。
 	- 可选把第一行定义为列名。
-	- 选择要粘贴的位置：行、列。
-	- 选择操作：替换、插入、附加。
-14. 粘贴MyBox粘贴板的内容      
-	- 选择MyBox粘贴板中的数据项。
-	- 选择要复制的行和列。
-	- 选择要粘贴的位置：行、列。
-	- 选择操作：替换、插入、附加。
-15. 导出：      
-	- 数据：选择表中行、或所有数据行（所有页），同时选择列。
-	- 目标文件格式：csv、文本、excel、xml、json、html、pdf。可以设置目标文件的选项。
-	- 可按最大行数分割导出后的文件。
-16. 转换为数据库表：
-	- 数据：选择表中行、或所有数据行（所有页），同时选择列。
-	- 生成自增主键、或选择主键列。
-	- 可选是否导入数据。
-17. 加载系统粘贴板的内容：
-	- 读取并解析系统粘贴板的内容。
-	- 可选数据分隔符：特殊字符、或输入的规则表达式。
-	- 可选把第一行定义为列名。
-18. 示例：
+11. 示例：
 	- 中国的统计数据
 	- 回归相关的数据
 
-![截屏-dataChart](https://mararsh.github.io/MyBox/snap-dataEdit.jpg)        
+![截屏-dataChart](https://mararsh.github.io/MyBox/snap-dataEdit.jpg)       
+
+### 行过滤<a id="rowFilter" />               
+在加工、整理、计算、生成数据图时，可以输入JavaScript表达式作为过滤数据的条件：     
+           
+1. 若脚本为空，则不过滤。       
+2. 编辑脚本：             
+	- 脚本可以包含任何合法的JavaScript元素。            
+	- 脚本应当最终返回布尔值("true"或"false")。            
+	- 脚本可以包含以下占位符：               
+                 #{表行号}              
+                 #{数据行号}            
+                 #{<列名>}               
+	- 悬停"示例"按钮以弹出所有合法的占位符的列表。            
+	- 点击"编辑"按钮以保存脚本。            
+3. 在MyBox计算表达式时:             
+	- 占位符被数据行的实际值替换。            
+	- '#{xxx} '被处理为字符串而#{xxx}被处理为数字。            
+	- 处理所有页时，脚本若包含"#{表行号}"则会失败。            
+4. 示例:                             
+                         
+| 表达式 | 含义 |    
+| --- | --- |    
+| #{数据行号} % 2 == 0  |  数据行号为偶数 |    
+| #{表行号}  % 2 == 0 | 当前页的偶数行 |    
+| Math.abs(#{值1}) >= 0 | 列"值1"的值是数值 |    
+| #{值1}) > 0 | 列"值1"的值大于零 |    
+| #{值1} - #{值2}  < 100 | 列"值1"与"值2"的值差小于100  |    
+| '#{值1}'.length > 0 | 列"值1"的值不为空值 |    
+| '#{值1}'.search(/Hello/ig) >= 0 | 列"值1"的值包含字符串"Hello"（忽略大小写） |    
+|  '#{值1}'.startsWith('Hello')  | 列"值1"的值以"Hello"开头 |    
+| var array = [ 'A', 'B', 'C']; array.includes('#{值1}') | 列"值1"的值为'A'或 'B'或 'C' |          
+
+![截屏-dataChart](https://mararsh.github.io/MyBox/snap-dataRowFilter.jpg)         
+
+### 加工数据<a id="manufactureData" />       
+
+#### 赋值   
+1. 选择数据：
+	- 行可以是：当前页、选中的行、或所有页。
+	- 选择列，若不选则取所有列。
+	- 设置行过滤条件。
+2. 对所选数据赋值为：0、1、空格、随机数、随机数（非负）、或输入的值
+3. 当所选数据为方阵（行列数相同），可赋值为：高斯分布、单位矩阵、上三角矩阵、下三角矩阵
+4. 对所选数据赋值为行表达式：             
+	- 若脚本为空，则返回空字符串。             
+	- 编辑脚本：             
+ 		- 脚本可以包含任何合法的JavaScript元素。             
+ 		- 脚本应当最终返回一个值。             
+ 		- 脚本可以包含以下占位符：             
+                          #{表行号}             
+                          #{数据行号}             
+                          #{<列名>}                    
+ 		- 悬停"示例"按钮以弹出所有合法占位符的列表。             
+ 		- 点击"编辑"按钮以保存脚本。             
+	- 在MyBox计算表达式时:             
+ 		- 占位符被数据行的实际值替换。             
+ 		-  '#{xxx} '被处理为字符串而#{xxx}被处理为数字。             
+ 		- 处理所有页时，脚本若包含"#{表行号}"则会失败。             
+	- 示例:             
+    
+| 表达式 | 含义 |    
+| --- | --- |    
+| #{数据行号} % 2 == 0 | 数据行号为偶数 |    
+| #{表行号}  % 2 == 0 | 当前页的偶数行 |    
+| Math.abs(#{值1}) + Math.PI * Math.sqrt(#{值2}) | 数学计算 |    
+| '#{值1}'.replace(/hello/ig, 'Hello') | 把列"值1"的值中所有"hello"(忽略大小写)替换"Hello" |    
+|  '#{值1}'.toLowerCase() | 列"值1"的值的小写 |    
+| '#{值1}'.split(',') | 把列"值1"的值按逗号分隔 |           
+
+5. 若处理数据文件的所有页，则在赋值之前对数据文件自动备份。          
+
+![截屏-dataChart](https://mararsh.github.io/MyBox/snap-dataSetValues.jpg)           
+
+#### 风格   
+1. 添加/编辑/删除风格。                     
+2. 定义条件以约束风格应用于哪些数据单元：
+	- 设置数据行的范围                     
+	- 选择列名                     
+	- 输入行过滤                               
+	- 注意：在添加或删除一些数据行以后，数据的行号可能会改变。                     
+          例如，在第6行之前插入两行，则原来的第12行变成了第14行，而现在的第12行是原来的第10行。                     
+          所以“行号”不是定位特定数据行的正确方式。                     
+          引用特定的行的一个方法是列值构成的表达式。                     
+3. 定义风格的值：
+	- 序号
+	- 字体颜色、字体大小、背景颜色、是否粗体
+	- 可以输入JavaFx CSS格式的更多值。
+4. 风格按序号被逐条应用于数据。
+
+![截屏-dataChart](https://mararsh.github.io/MyBox/snap-dataStyles.jpg)           
+
+#### 复制   
+1. 选择数据：
+	- 行可以是：当前页、选中的行、或所有页。
+	- 选择列，若不选则取所有列。
+	- 设置行过滤条件。
+2. 目标可为：新的csv/excel/文本文件、矩阵、系统粘贴板、MyBox粘贴板、数据库表。
+3. 当选择当前页或选中行时，目标还可以为：在表内指定位置插入、附加、或替换。     
+
+#### 删除  
+1. 选择数据：
+	- 行可以是：当前页、选中的行、或所有页。
+	- 选择列，若不选则取所有列。
+	- 设置行过滤条件。
+2. 选项：是否在错误时继续处理。
+3. 若处理数据文件的所有页，则在删除之前对数据文件自动备份。
+
+#### 导出   
+1. 选择数据：
+	- 行可以是：当前页、选中的行、或所有页。
+	- 选择列，若不选则取所有列。
+	- 设置行过滤条件。
+2. 目标文件格式：csv、文本、excel、xml、json、html、pdf。可以设置目标文件的选项。
+3. 可按最大行数分割导出后的文件。
+
+![截屏-dataChart](https://mararsh.github.io/MyBox/snap-dataExport.jpg)           
+
+#### 转换为数据库表   
+1. 选择数据：
+	- 行可以是：当前页、选中的行、或所有页。
+	- 选择列，若不选则取所有列。
+	- 设置行过滤条件。
+2. 生成自增主键、或选择主键列。
+3. 可选是否导入数据。   
+
+![截屏-dataChart](https://mararsh.github.io/MyBox/snap-dataConvertDB.jpg)           
 
 ### 整理数据<a id="trimData" />       
 #### 排序     
-1. 数据：选择表中行、或所有数据行（所有页），同时选择列。
+1. 选择数据：
+	- 行可以是：当前页、选中的行、或所有页。
+	- 选择列，若不选则取所有列。
+	- 设置行过滤条件。
 2. 计算：
 	- 选择要排序的列、是否降序。
 	- 列的数据类型影响排序的结果。
-3. 当选择表中行，目标可为：新的csv/excel/文本文件、矩阵、系统粘贴板、MyBox粘贴板，或者在表内指定位置插入、附加、或替换。     
-4. 当选择所有数据行（所有页），目标可为：新的csv/excel/文本文件、矩阵、系统粘贴板、MyBox粘贴板。
+3. 目标可为：新的csv/excel/文本文件、矩阵、系统粘贴板、MyBox粘贴板、数据库表。
+4. 当选择当前页或选中行时，目标还可以为：在表内指定位置插入、附加、或替换。  
 5. 当以下条件都满足时，排序需要考虑内存限制：    
 	- 处理所有数据行（所有页）
-	- 数据不是数据库表
+	- 以下之一：
+ 		- 行过滤不为空
+ 		- 数据不是数据库表
 
 #### 转置     
-1. 数据：选择表中行、或所有数据行（所有页），同时选择列。
+1. 选择数据：
+	- 行可以是：当前页、选中的行、或所有页。
+	- 选择列，若不选则取所有列。
+	- 设置行过滤条件。
 2. 计算：可选“把第一列当作列名”。
-3. 目标：新的csv/excel/文本文件、矩阵、系统粘贴板、MyBox粘贴板，或者在表内指定位置插入、附加、或替换。     
+3. 目标：新的csv/excel/文本文件、矩阵、系统粘贴板、MyBox粘贴板、数据库表，或者在表内指定位置插入、附加、或替换。     
 4. 当处理所有数据行（所有页）时，转置需要考虑内存限制。
 
 #### 归一化     
-1. 数据：选择表中行、或所有数据行（所有页），同时选择列。
+1. 选择数据：
+	- 行可以是：当前页、选中的行、或所有页。
+	- 选择列，若不选则取所有列。
+	- 设置行过滤条件。
 2. 计算：
 	- 可选按照：列、行、所有。
 	- 算法可选：最大最小值（可设置区间）、和（L1）、ZScore（L2）。
-3. 当选择表中行，目标可为：新的csv/excel/文本文件、矩阵、系统粘贴板、MyBox粘贴板，或者在表内指定位置插入、附加、或替换。     
-4. 当选择所有数据行（所有页），目标可为：新的csv/excel/文本文件、矩阵、系统粘贴板、MyBox粘贴板。
+3. 目标可为：新的csv/excel/文本文件、矩阵、系统粘贴板、MyBox粘贴板、数据库表。
+4. 当选择当前页或选中行时，目标还可以为：在表内指定位置插入、附加、或替换。  
         
 ![截屏-dataChart](https://mararsh.github.io/MyBox/snap-dataNormalize.jpg)        
 
 ### 计算数据<a id="calculateData" />        
 
 #### 描述性统计       
-1. 数据：选择表中行、或所有数据行（所有页），同时选择列。
+1. 选择数据：
+	- 行可以是：当前页、选中的行、或所有页。
+	- 选择列，若不选则取所有列。
+	- 设置行过滤条件。
 2. 计算：
 	- 选择要统计的值：             
           计数、合计、均值、几何平均数、平方和、总体方差、样本方差、总体标准差、样本标准差、斜度、            
            最小值（Q0）、下四分位数（Q1）、中位数（Q2）、上四分位数（Q3）、最大值（Q4）、               
-           上极端异常值线（E4）、上温和异常值线（E3）、下温和异常值线（E2）、下极端异常值线（E1）、众数
-	- 选择按照：列、行（可选类比列）、所有。
+           上极端异常值线（E4）、上温和异常值线（E3）、下温和异常值线（E2）、下极端异常值线（E1）、众数         
+	- 选择按照：列、行（可选类比列）、所有。        
 	- 设置小数位数。
-3. 目标：新的csv/excel/文本文件、矩阵、系统粘贴板、MyBox粘贴板，或者在表内指定位置插入、附加、或替换。     
+3. 目标：新的csv/excel/文本文件、矩阵、系统粘贴板、MyBox粘贴板、数据库表，或者在表内指定位置插入、附加、或替换。     
 4. 当以下条件都满足时，描述性统计需要考虑内存限制：    
 	- 处理所有数据行（所有页）
 	- 计算以下值之一：中位数、上四分位数、下四分位数、异常值线、众数
 	- 以下之一：     
  		- 按照所有数据计算
- 		- 按照列计算、并且数据不是数据库表                   
-
-![截屏-dataChart](https://mararsh.github.io/MyBox/snap-dataStatistic.jpg)        
+ 		- 按照列计算，并且以下之一：
+ 			- 行过滤不为空
+ 			- 数据不是数据库表               
+         
+![截屏-dataChart](https://mararsh.github.io/MyBox/snap-dataStatistic.jpg)         
 
 #### 简单线性回归             
 此工具基于Apache Commons Math。                  
 回归过程不存储数据，所以在处理很多数据时计算本身没有内存限制。           
 
-1. 数据：选择表中行、或所有数据行（所有页）。
+1. 选择数据：
+	- 行可以是：当前页、选中的行、或所有页。
+	- 选择列，若不选则取所有列。
+	- 设置行过滤条件。
 2. 计算：
 	- 选择一列作为自变量。
 	- 选择另一列作为因变量。
@@ -920,9 +1037,9 @@ MyBox v5.3以前的版本均基于Java 8。
 	- 显示回归最后一步的数据值状态。
 	- 输入的自变量，可以生成预测值。
 4. 拟合图：
-	- 当处理所有数据行（所有页）时，选择是否在图上显示所有值。
-           若选择“在图上显示所有值”，则当图中加载很多数据时可能发生内存不够。
-           否则，图上只显示当前页的数据，同时所有页都参与回归，所以没有内存限制。
+	- 当处理所有数据行（所有页）时，选择是否在图上显示所有值。           
+           若选择“在图上显示所有值”，则当图中加载很多数据时可能发生内存不够。            
+           否则，图上只显示当前页的数据，同时所有页都参与回归，所以没有内存限制。         
 	- 可设置布局、横轴、竖轴的参数。
 	- 可选择图上是否显示：拟合点、拟合线、模型描述。
 	- 可选择数据的标签形式。
@@ -941,30 +1058,39 @@ MyBox v5.3以前的版本均基于Java 8。
 
 
 #### 频数分布             
-1. 数据：选择表中行、或所有数据行（所有页）。
+1. 选择数据：
+	- 行可以是：当前页、选中的行、或所有页。
+	- 选择列，若不选则取所有列。
+	- 设置行过滤条件。
 2. 计算：
 	- 选择一列计算频数。
 	- 选择是否忽略大小写
 	- 设置小数位数
-3. 当选择表中行，目标可为：新的csv/excel/文本文件、矩阵、系统粘贴板、MyBox粘贴板，或者在表内指定位置插入、附加、或替换。     
-4. 当选择所有数据行（所有页），目标可为：新的csv/excel/文本文件、矩阵、系统粘贴板、MyBox粘贴板。
+3. 目标可为：新的csv/excel/文本文件、矩阵、系统粘贴板、MyBox粘贴板、数据库表。
+4. 当选择当前页或选中行时，目标还可以为：在表内指定位置插入、附加、或替换。     
 5. 当以下条件都满足时，计算需要考虑内存限制：    
  		- 处理所有数据行（所有页）
  		- 数据不是数据库表
 
 #### 数值百分比               
-1. 数据：选择表中行、或所有数据行（所有页），同时选择列。
+1. 选择数据：
+	- 行可以是：当前页、选中的行、或所有页。
+	- 选择列，若不选则取所有列。
+	- 设置行过滤条件。
 2. 计算：
 	- 选择按照：列、行、所有
 	- 选择把负数计为：零、绝对值
 	- 设置小数位数
-3. 当选择表中行，目标可为：新的csv/excel/文本文件、矩阵、系统粘贴板、MyBox粘贴板，或者在表内指定位置插入、附加、或替换。     
-4. 当选择所有数据行（所有页），目标可为：新的csv/excel/文本文件、矩阵、系统粘贴板、MyBox粘贴板。
+3. 目标可为：新的csv/excel/文本文件、矩阵、系统粘贴板、MyBox粘贴板、数据库表。
+4. 当选择当前页或选中行时，目标还可以为：在表内指定位置插入、附加、或替换。     
       
 
 ### 数据图<a id="dataCharts" />       
 #### 坐标图             
-1. 数据：选择表中行、或所有数据行（所有页），同时选择列。
+1. 选择数据：
+	- 行可以是：当前页、选中的行、或所有页。
+	- 选择列，若不选则取所有列。
+	- 设置行过滤条件。
 2. 计算：
 	- 当数据无法被解析为数字时，计为零。
 	- 忽略非法数据。
@@ -1001,7 +1127,10 @@ MyBox v5.3以前的版本均基于Java 8。
 ![截屏-dataChart](https://mararsh.github.io/MyBox/snap-dataChartXY.jpg)         
 
 #### 饼图             
-1. 数据：选择表中行、或所有数据行（所有页）。
+1. 选择数据：
+	- 行可以是：当前页、选中的行、或所有页。
+	- 选择列，若不选则取所有列。
+	- 设置行过滤条件。
 2. 计算：
 	- 选择一列为“类别”。
 	- 选择一列为“数值”。
@@ -1041,14 +1170,14 @@ MyBox v5.3以前的版本均基于Java 8。
 ![截屏-dataChart](https://mararsh.github.io/MyBox/snap-dataChartBox.jpg)        
 
 #### 自比较条图               
-1. 自比较条图用来对比数据与参考值。以下规则用来计算所选数据值的颜色条：
-	-若值等于零，不显示条
-	-当按绝对值比较时：                          
+1. 自比较条图用来对比数据与参考值。以下规则用来计算所选数据值的颜色条：       
+	- 若值等于零，不显示条
+	- 当按绝对值比较时：                          
                 最大值 = 列/行/所有的最大绝对值            
                 百分比 = 值的绝对值 /  最大值            
                 宽度 = 最大宽度 * 百分比            
                 颜色 = 若值大于零， 为列的颜色；若值小于零，为列的颜色的反色            
-	-当按最大最小值区间比较时：            
+	- 当按最大最小值区间比较时：            
                 最大值 = 列/行/所有的最大值            
                 最小值 = 列/行/所有的最小值            
                 百分比 = （值 - 最小值）/ （最大值 - 最小值）            
@@ -1069,8 +1198,8 @@ MyBox v5.3以前的版本均基于Java 8。
 ![截屏-dataChart](https://mararsh.github.io/MyBox/snap-dataChartSelfComparison.jpg)        
 
 #### 相比较条图            
-1. 相比较条图用来对比两类数据。以下规则用来计算颜色条：
-	- 若值等于零，不显示条
+1. 相比较条图用来对比两类数据。以下规则用来计算颜色条：             
+	- 若值等于零，不显示条      
 	- 当按绝对值比较时：            
                   最大值 = 两个值列的最大绝对值            
                   百分比 = 值的绝对值 /  最大值            
@@ -1117,8 +1246,20 @@ MyBox v5.3以前的版本均基于Java 8。
 	- 数据保存在MyBox数据库的表中。
 	- 删除数据库表的记录将会同时删除数据库表包含的数据。           
 
-![截屏-manageData](https://mararsh.github.io/MyBox/snap-dataManage.jpg)        
+![截屏-manageData](https://mararsh.github.io/MyBox/snap-dataManage.jpg)         
 
+### 拼接数据<a id="spliceData" />
+1. 选择或打开两个数据。
+2. 分别选择两个数据的行列：
+	- 行可以是：当前页、选中的行、或所有页。
+	- 选择列，若不选则取所有列。
+	- 设置行过滤条件。
+3. 拼接选项：
+	- 方向：横向、纵向。
+	- 行/列数按照：数据A、数据B、较长的、较短的。
+4. 目标可为：新的csv/excel/文本文件、矩阵、系统粘贴板、MyBox粘贴板、数据库表。            
+        
+![截屏-manageData](https://mararsh.github.io/MyBox/snap-dataSplice.jpg)              
 
 ### 数据文件<a id="dataFiles" />
 1. 编辑数据文件：
@@ -1134,19 +1275,21 @@ MyBox v5.3以前的版本均基于Java 8。
 	- 可按最大行数分割转换后的文件。
 3. 合并csv/excel/文本数据文件。        
 
-![截屏-dataEdit](https://mararsh.github.io/MyBox/snap-dataEdit.jpg)         
-  
+![截屏-dataEdit](https://mararsh.github.io/MyBox/snap-dataFile.jpg)           
 
 ### 系统粘贴板中数据<a id="dataInMyBoxClipboard" />
-1. 输入文本或粘贴系统粘贴板中文本。
-2. 选择数据行和列，粘贴到目标表单的指定位置。       
+1. 读取并解析系统粘贴板的内容。
+2. 可选数据分隔符：特殊字符、或输入的规则表达式。
+3. 可选把第一行定义为列名。
+4. 选择要粘贴的位置：行、列。
+5. 选择操作：替换、插入、附加。
 
-![截屏-dataInSC](https://mararsh.github.io/MyBox/snap-dataInSC.jpg)         
-
+![截屏-dataChart](https://mararsh.github.io/MyBox/snap-dataInSC.jpg)           
 
 ### MyBox粘贴板中的数据<a id="dataInSystemClipboard" />
-1. 复制、编辑、保存数据到数据库。
-2. 选择数据行和列，粘贴到目标表单的指定位置。       
+1. 选择要复制的行和列。
+2. 选择要粘贴的位置：行、列。
+3. 选择操作：替换、插入、附加。
 
 ![截屏-dataInMC](https://mararsh.github.io/MyBox/snap-dataInMC.jpg)         
 
@@ -1158,6 +1301,7 @@ MyBox v5.3以前的版本均基于Java 8。
 伴随矩阵、余子式、归一化、乘以数值、除以数值、幂。        
 4. 矩阵的二元计算：加、减、乘、克罗内克积、哈达马积、水平合并、垂直合并。
 
+![截屏-dataInMC](https://mararsh.github.io/MyBox/snap-dataMatrix.jpg)          
 
 ### 数据库表<a id="dataTables" />
 1. 表名和列名应当满足“SQL标识符的限制”：
@@ -1199,26 +1343,67 @@ MyBox v5.3以前的版本均基于Java 8。
 
 
 ### JShell（Java交互编程工具）<a id="JShell" />             
-JShell是JDK包含的工具之一。此工具帮助图形化运行JShell:         
-    
+JShell是JDK包含的工具之一：            
+
 1. JShell提供交互执行"snippets"的能力，即"读取-执行-输出"循环 (REPL)。 
 2. "Snippet"是Java编程语言的单个表达式、语句、或声明的代码：
 	- 语句结尾必须有分号，而表达式不需要。
-	- 除了基本类，在调用多数Java类之前需要把它们导入进来。  
 	- 可以定义变量和方法、然后调用它们。  
-3. 输入若干snippet，然后点击 "开始"按钮以执行它们： 
-	- Snippets被逐个计算。   
-	- Snippets的结果会影响后续的snippets，即如"一个运行环境"。  
-	- 所有已执行过的snippets的属性被显示在一张表中。
-	- 点击按钮"删除"或"清除"以把一些或全部snippets从当前环境中移除出去。
-	- 点击按钮"重置"以清零JShell，环境将变为空白。
-4. JShell可以用于科学计算、和调试Java代码。    
-5. JShell代码可以被组织为树状信息。
-6. 可以打开或保存为外部文件。
+3. 外部Java类应当可访问：
+	- JShell取系统环境中CLASSPATH。  
+	- 其它Jar文件或路径可以附加在CLASSPATH后面。  
+	- 除了基本类，在调用多数Java类之前需要把它们导入进来。  
+4. JShell可以用于科学计算、和调试Java代码。           
+
+此工具帮助图形化运行JShell:             
+
+1. 输入若干snippet，然后点击 "开始"按钮以执行它们： 
+2. Snippets被逐个计算。  
+3. Snippets的结果会影响后续的snippets，即如"一个运行环境"。  
+4. 所有已执行过的snippets的属性被显示在一张表中。
+5. 点击按钮"删除"或"清除"以把一些或全部snippets从当前环境中移除出去。
+6. 点击按钮"重置"以清零JShell，环境将变为空白。
+7. 按下"CTRL+1"可以弹出代码的完成建议列表。
+8. 若已添加了MyBox类路径，则可以引用MyBox的所有方法。
+9. JShell代码被组织为树形，并提供示例。
 
 ![截屏-dataInMC](https://mararsh.github.io/MyBox/snap-JShell.jpg)         
 
+### JEXL（Java表达式语言）<a id="JEXL" />             
+JEXL（Java表达式语言）是一个库文件，以变量和脚本来动态生成值：        
 
+1. JEXL与Java的语法有所不同，它更像是javascript。 
+2. 在运行表达式/脚本之前，其中所有变量应当在JexlContext中有值。 
+3. 创建Java类的实例为本地变量以引用它们。当用“new”时注意写全包名。
+4. JEXL可用于科学计算和数据处理。           
+
+此工具帮助图形化运行JEXL：              
+
+1. 输入JEXL表达式或脚本。                
+    注意：用单引号而不是双引号来围住字符串。
+2. 按以下格式输入Java代码，以设置JexlContext：                  
+                jexlContext.set("name", value);                  
+    例如，设置以下语句以在表达式/脚本中使用Math.PI：                  
+                jexlContext.set("Math", Math.class);                  
+3. 输入JEXL脚本的参数（如果有）。以逗号分隔。                  
+4. 点击按钮“开始”以计算表达式/脚本。                  
+5. MyBox在JShell环境下自动执行以下步骤：                  
+	- 把MyBox的库路径加到CLASSPATH。                  
+	- 导入必要的JEXL包。                  
+	- 运行JexlContext代码。                  
+	- 带上参数（如果有）计算表达式/脚本。                  
+6. 若所有变量和参数都有合法的值，则结果显示在右边面板中。                  
+7. JEXL代码被组织为树形，并提供示例。
+
+![截屏-dataInMC](https://mararsh.github.io/MyBox/snap-JEXL.jpg)                           
+
+
+### Javascript<a id="Javascript" />             
+此工具帮助编辑、运行、保存Javascript代码。                  
+Javascript代码被组织为树形，并提供示例。        
+
+![截屏-dataInMC](https://mararsh.github.io/MyBox/snap-Javascript.jpg)                           
+         
 ### 通用的数据处理<a id="dataManufacture" />
 1. 定义数据
 2. 数据约束：
@@ -1892,6 +2077,15 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 
 
 # 开发日志<a id="devLog" />             
+2022-6-11 版本6.5.6          
+
+* 数据：所有数据处理均可设置行过滤条件(JavaScript代码的布尔表达式) ；横向/纵向拼接两个数据；“赋值”可以设置为行表达式；按行过滤条件删除数据；“设置风格”可增删改规则。              
+* 计算：管理和编辑JavaScript代码；管理和编辑JEXL(Java Expression Language)代码；JShell可设置类路径、可弹出代码完成建议(CTRL+1)、完善示例。                
+* 数据图：参数可在弹出窗口中设置(F12)。                         
+* 解决：一些fxml文件包含本地文件路径；点击表头应按数据类型排序；在文本菜单中点击“替换”按钮弹出错误；对所有页或数据库表无法计算描述性统计。        
+ 
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.6)             
+   
 2022-5-10 版本6.5.5          
 
 * 数据编辑：设置单元风格；可把第一行设为列名；转置可对所有页实施，可选把第一列设为列名；数据库执行结果不限行数；示例数据。                

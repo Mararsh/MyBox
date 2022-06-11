@@ -1,7 +1,6 @@
 package mara.mybox.fxml.chart;
 
 import java.util.List;
-import java.util.Map;
 import javafx.geometry.Bounds;
 import javafx.geometry.Side;
 import javafx.scene.Node;
@@ -12,8 +11,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
-import mara.mybox.controller.BaseData2DChartXYController;
-import mara.mybox.controller.ControlFxChart;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -27,12 +24,7 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class LabeledScatterChart<X, Y> extends ScatterChart<X, Y> {
 
-    protected BaseData2DChartXYController chartController;
-    protected XYChartOptions<X, Y> options;
-    protected boolean written;
-    protected int dataNumber;
-    protected int lineWidth = 2;
-    protected Map<String, String> palette;
+    protected XYChartMaker chartMaker;
 
     public LabeledScatterChart(Axis xAxis, Axis yAxis) {
         super(xAxis, yAxis);
@@ -45,53 +37,29 @@ public class LabeledScatterChart<X, Y> extends ScatterChart<X, Y> {
         this.setMaxHeight(Double.MAX_VALUE);
         VBox.setVgrow(this, Priority.ALWAYS);
         HBox.setHgrow(this, Priority.ALWAYS);
-        options = new XYChartOptions<>(this);
     }
 
-    public LabeledScatterChart setChartController(BaseData2DChartXYController chartController) {
-        this.chartController = chartController;
-        options = new XYChartOptions<>(chartController);
-        return this;
-    }
-
-    public LabeledScatterChart setChartController(BaseData2DChartXYController chartController, ControlFxChart paneController) {
-        this.chartController = chartController;
-        options = new XYChartOptions<>(chartController, paneController);
+    public LabeledScatterChart setMaker(XYChartMaker<X, Y> chartMaker) {
+        this.chartMaker = chartMaker;
         return this;
     }
 
     @Override
     protected void seriesAdded(Series<X, Y> series, int seriesIndex) {
         super.seriesAdded(series, seriesIndex);
-        writeControls(series, seriesIndex);
-        written = seriesIndex == dataNumber - 1;
-    }
-
-    public void writeControls(Series<X, Y> series, int seriesIndex) {
-        options.makeLabels(series, getPlotChildren());
+        chartMaker.makeLabels(series, getPlotChildren());
     }
 
     @Override
     protected void seriesRemoved(final Series<X, Y> series) {
+        chartMaker.removeLabels(getPlotChildren());
         super.seriesRemoved(series);
-        removeControls(series);
-        written = false;
-    }
-
-    public void removeControls(Series<X, Y> series) {
-        options.removeLabels(series, getPlotChildren());
     }
 
     @Override
     protected void layoutPlotChildren() {
         super.layoutPlotChildren();
-        if (dataNumber <= 0 || written) {
-            displayControls();
-        }
-    }
-
-    public void displayControls() {
-        options.displayLabels();
+        chartMaker.displayLabels();
     }
 
     public void drawLine(List<XYChart.Data<X, Y>> data, Line line, boolean pointsVisible) {
@@ -106,7 +74,7 @@ public class LabeledScatterChart<X, Y> extends ScatterChart<X, Y> {
                 Bounds regionBounds = node.getBoundsInParent();
                 double x = regionBounds.getMinX() + regionBounds.getWidth() / 2;
                 double y = regionBounds.getMinY() + regionBounds.getHeight() / 2;
-                if (chartController.isXY()) {
+                if (chartMaker.isXY) {
                     if (x > endX) {
                         endX = x;
                         endY = y;
@@ -140,29 +108,6 @@ public class LabeledScatterChart<X, Y> extends ScatterChart<X, Y> {
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
-    }
-
-
-    /*
-        set/set
-     */
-    public int getDataNumber() {
-        return dataNumber;
-    }
-
-    public LabeledScatterChart setDataNumber(int dataNumber) {
-        this.dataNumber = dataNumber;
-        return this;
-    }
-
-    public LabeledScatterChart setLineWidth(int lineWidth) {
-        this.lineWidth = lineWidth;
-        return this;
-    }
-
-    public LabeledScatterChart setPalette(Map<String, String> palette) {
-        this.palette = palette;
-        return this;
     }
 
 }

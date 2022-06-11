@@ -35,15 +35,15 @@ import mara.mybox.db.DerbyBase.DerbyStatus;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableVisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import static mara.mybox.fxml.WindowTools.refreshInterfaceAll;
 import static mara.mybox.fxml.WindowTools.reloadAll;
 import static mara.mybox.fxml.WindowTools.styleAll;
+import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -539,7 +539,7 @@ public class SettingsController extends BaseController {
         try {
             int mb = 1024 * 1024;
             OperatingSystemMXBean osmxb = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
-            final long totalM = osmxb.getTotalPhysicalMemorySize() / mb;
+            final long totalM = osmxb.getTotalMemorySize() / mb;
             String m = message("PhysicalMemory") + ": " + totalM + "MB";
             Runtime r = Runtime.getRuntime();
             final long jvmM = r.maxMemory() / mb;
@@ -635,7 +635,7 @@ public class SettingsController extends BaseController {
                     || newPath.trim().equals(AppVariables.MyboxDataPath)) {
                 return;
             }
-            if (!PopTools.askSure(this,getBaseTitle(), message("ChangeDataPathConfirm"))) {
+            if (!PopTools.askSure(this, getBaseTitle(), message("ChangeDataPathConfirm"))) {
                 return;
             }
             popInformation(message("CopyingFilesFromTo"));
@@ -759,7 +759,7 @@ public class SettingsController extends BaseController {
 
     @FXML
     protected void clearFileHistories(ActionEvent event) {
-        if (!PopTools.askSure(this,getBaseTitle(), message("SureClear"))) {
+        if (!PopTools.askSure(this, getBaseTitle(), message("SureClear"))) {
             return;
         }
         new TableVisitHistory().clear();
@@ -1080,7 +1080,7 @@ public class SettingsController extends BaseController {
 
     @FXML
     protected void clearImageHistories(ActionEvent event) {
-        if (!PopTools.askSure(this,getBaseTitle(), message("SureClear"))) {
+        if (!PopTools.askSure(this, getBaseTitle(), message("SureClear"))) {
             return;
         }
         new TableImageEditHistory().clear();

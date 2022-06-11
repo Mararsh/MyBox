@@ -183,6 +183,11 @@ public class FindReplaceString {
         }
     }
 
+    public String replaceStringAll(String string, String find, String replace) {
+        setInputString(string).setFindString(find).setReplaceString(replace).setAnchor(0).run();
+        return outputString;
+    }
+
     /*
         static methods
      */
@@ -246,6 +251,11 @@ public class FindReplaceString {
                 .setIsRegex(isRegex).setCaseInsensitive(caseInsensitive).setMultiline(multiline);
         stringFind.run();
         return stringFind.getOutputString();
+    }
+
+    public static String replaceAll(FindReplaceString findReplace, String string, String find, String replace) {
+        findReplace.setInputString(string).setFindString(find).setReplaceString(replace).setAnchor(0).run();
+        return findReplace.getOutputString();
     }
 
     public static String replace(String string, String find, String replace) {

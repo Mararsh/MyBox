@@ -74,7 +74,7 @@ public class MyBoxSetupController implements Initializable {
             }
 
             OperatingSystemMXBean osmxb = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
-            totalM = osmxb.getTotalPhysicalMemorySize() / (1024 * 1024);
+            totalM = osmxb.getTotalMemorySize() / (1024 * 1024);
 
             makeListView();
 

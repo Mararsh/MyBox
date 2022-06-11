@@ -37,8 +37,8 @@ public class TableUserConf extends BaseTable<StringValue> {
         return this;
     }
 
-    final static String QueryString = "SELECT string_Value FROM User_Conf WHERE key_Name=?";
-    final static String QueryInt = " SELECT int_Value FROM User_Conf WHERE key_Name=?";
+    final static String QueryString = "SELECT string_Value FROM User_Conf WHERE key_Name=?  FETCH FIRST ROW ONLY";
+    final static String QueryInt = " SELECT int_Value FROM User_Conf WHERE key_Name=?  FETCH FIRST ROW ONLY";
     final static String InsertInt = "INSERT INTO User_Conf (key_Name, int_Value) VALUES(?, ? )";
     final static String InsertString = "INSERT INTO User_Conf(key_Name, string_Value) VALUES(?, ? )";
     final static String UpdateString = "UPDATE User_Conf SET string_Value=? WHERE key_Name=?";
@@ -106,30 +106,33 @@ public class TableUserConf extends BaseTable<StringValue> {
         if (conn == null || keyName == null) {
             return defaultValue;
         }
+        String value = defaultValue;
         try ( PreparedStatement queryStatement = conn.prepareStatement(QueryString)) {
-            queryStatement.setMaxRows(1);
             queryStatement.setString(1, keyName);
             try ( ResultSet resultSet = queryStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    String value = resultSet.getString(1);
-                    if (value == null) {
-                        delete(conn, keyName);
-                    } else {
-                        return value;
-                    }
+                    value = resultSet.getString(1);
                 }
+            } catch (Exception e) {
+                MyBoxLog.debug(e);
             }
-            if (defaultValue != null) {
-                try ( PreparedStatement insert = conn.prepareStatement(InsertString)) {
-                    insert.setString(1, keyName);
-                    insert.setString(2, defaultValue);
-                    insert.executeUpdate();
+            if (value == null) {
+                delete(conn, keyName);
+                if (defaultValue != null) {
+                    try ( PreparedStatement insert = conn.prepareStatement(InsertString)) {
+                        insert.setString(1, keyName);
+                        insert.setString(2, defaultValue);
+                        insert.executeUpdate();
+                    } catch (Exception e) {
+                        MyBoxLog.debug(e);
+                    }
+                    value = defaultValue;
                 }
             }
         } catch (Exception e) {
-//            MyBoxLog.debug(e);
+            MyBoxLog.debug(e);
         }
-        return defaultValue;
+        return value;
     }
 
     public static String readString(Connection conn, String keyName) {
@@ -146,10 +149,12 @@ public class TableUserConf extends BaseTable<StringValue> {
                     statement.setString(1, keyName);
                     statement.setInt(2, defaultValue);
                     statement.executeUpdate();
+                } catch (Exception e) {
+                    MyBoxLog.debug(e);
                 }
             }
         } catch (Exception e) {
-//            MyBoxLog.debug(e);
+            MyBoxLog.debug(e);
         }
         return defaultValue;
     }
@@ -160,7 +165,6 @@ public class TableUserConf extends BaseTable<StringValue> {
             return value;
         }
         try ( PreparedStatement queryStatement = conn.prepareStatement(QueryInt)) {
-            queryStatement.setMaxRows(1);
             queryStatement.setString(1, keyName);
             try ( ResultSet resultSet = queryStatement.executeQuery()) {
                 if (resultSet != null && resultSet.next()) {

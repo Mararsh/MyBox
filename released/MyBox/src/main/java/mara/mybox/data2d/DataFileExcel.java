@@ -461,7 +461,7 @@ public class DataFileExcel extends DataFile {
     }
 
     @Override
-    public boolean setValue(List<Integer> cols, String value) {
+    public boolean setValue(List<Integer> cols, String value, boolean errorContinue) {
         if (file == null || !file.exists() || file.length() == 0
                 || cols == null || cols.isEmpty()) {
             return false;
@@ -501,22 +501,51 @@ public class DataFileExcel extends DataFile {
                     while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
                     }
                 }
-                boolean isRandom = "MyBox##random".equals(value);
-                boolean isRandomNn = "MyBox##randomNn".equals(value);
+                boolean isRandom = false, isRandomNn = false, isBlank = false;
+                String expression = null;
+                if (value != null) {
+                    if ("MyBox##blank".equals(value)) {
+                        isBlank = true;
+                    } else if ("MyBox##random".equals(value)) {
+                        isRandom = true;
+                    } else if ("MyBox##randomNn".equals(value)) {
+                        isRandomNn = true;
+                    } else if (value.startsWith("MyBox##Expression##")) {
+                        expression = value.substring("MyBox##Expression##".length());
+                    }
+                }
                 Random random = new Random();
+                rowIndex = 0;
                 while (iterator.hasNext() && task != null && !task.isCancelled()) {
                     Row sourceRow = iterator.next();
                     if (sourceRow == null) {
                         continue;
                     }
                     Row targetRow = targetSheet.createRow(targetRowIndex++);
+                    List<String> values = new ArrayList<>();
+                    for (int c = sourceRow.getFirstCellNum(); c < sourceRow.getLastCellNum(); c++) {
+                        values.add(MicrosoftDocumentTools.cellString(sourceRow.getCell(c)));
+                    }
+                    filterAndCalculate(values, ++rowIndex, expression);
+                    if (expression != null && error != null) {
+                        if (errorContinue) {
+                            continue;
+                        } else {
+                            task.setError(error);
+                            return false;
+                        }
+                    }
                     for (int c = sourceRow.getFirstCellNum(); c < sourceRow.getLastCellNum(); c++) {
                         String v;
-                        if (cols.contains(c)) {
-                            if (isRandom) {
+                        if (filterPassed && cols.contains(c)) {
+                            if (isBlank) {
+                                v = "";
+                            } else if (isRandom) {
                                 v = random(random, c, false);
                             } else if (isRandomNn) {
                                 v = random(random, c, true);
+                            } else if (expression != null) {
+                                v = expressionResult;
                             } else {
                                 v = value;
                             }
@@ -525,6 +554,93 @@ public class DataFileExcel extends DataFile {
                         }
                         Cell targetCell = targetRow.createCell(c, CellType.STRING);
                         targetCell.setCellValue(v);
+                    }
+                }
+            }
+            try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
+                targetBook.write(fileOut);
+            }
+            targetBook.close();
+            FileDeleteTools.delete(tmpDataFile);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            return false;
+        }
+        return FileTools.rename(tmpFile, file, false);
+    }
+
+    @Override
+    public boolean delete(boolean errorContinue) {
+        if (file == null || !file.exists() || file.length() == 0) {
+            return false;
+        }
+        File tmpFile = TmpFileTools.getTempFile();
+        try ( Workbook sourceBook = WorkbookFactory.create(file)) {
+            Sheet sourceSheet;
+            if (sheet != null) {
+                sourceSheet = sourceBook.getSheet(sheet);
+            } else {
+                sourceSheet = sourceBook.getSheetAt(0);
+                sheet = sourceSheet.getSheetName();
+            }
+            Workbook targetBook;
+            Sheet targetSheet;
+            File tmpDataFile = null;
+            int sheetsNumber = sourceBook.getNumberOfSheets();
+            if (sheetsNumber == 1) {
+                targetBook = new XSSFWorkbook();
+                targetSheet = targetBook.createSheet(sheet);
+            } else {
+                tmpDataFile = TmpFileTools.getTempFile();
+                FileCopyTools.copyFile(file, tmpDataFile);
+                targetBook = WorkbookFactory.create(tmpDataFile);
+                int index = targetBook.getSheetIndex(sheet);
+                targetBook.removeSheetAt(index);
+                targetSheet = targetBook.createSheet(sheet);
+                targetBook.setSheetOrder(sheet, index);
+            }
+            int targetRowIndex = 0;
+            if (hasHeader) {
+                targetRowIndex = writeHeader(targetSheet, targetRowIndex);
+            }
+            Iterator<Row> iterator = sourceSheet.iterator();
+            if (iterator != null && iterator.hasNext()) {
+                if (hasHeader) {
+                    while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
+                    }
+                }
+                if (rowFilter != null && !rowFilter.isBlank()) {
+                    rowIndex = 0;
+                    while (iterator.hasNext() && task != null && !task.isCancelled()) {
+                        Row sourceRow = iterator.next();
+                        if (sourceRow == null) {
+                            continue;
+                        }
+                        Row targetRow = targetSheet.createRow(targetRowIndex++);
+                        List<String> values = new ArrayList<>();
+                        for (int c = sourceRow.getFirstCellNum(); c < sourceRow.getLastCellNum(); c++) {
+                            values.add(MicrosoftDocumentTools.cellString(sourceRow.getCell(c)));
+                        }
+                        filterInTask(values, ++rowIndex);
+                        if (error != null) {
+                            if (errorContinue) {
+                                continue;
+                            } else {
+                                task.setError(error);
+                                return false;
+                            }
+                        }
+                        if (filterPassed) {
+                            continue;
+                        }
+                        for (int c = sourceRow.getFirstCellNum(); c < sourceRow.getLastCellNum(); c++) {
+                            String v = MicrosoftDocumentTools.cellString(sourceRow.getCell(c));
+                            Cell targetCell = targetRow.createCell(c, CellType.STRING);
+                            targetCell.setCellValue(v);
+                        }
                     }
                 }
             }
@@ -610,6 +726,7 @@ public class DataFileExcel extends DataFile {
             targetData.setFile(excelFile).setSheet(targetSheetName)
                     .setHasHeader(targetHasHeader)
                     .setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
+            Data2D.saveAttributes(csvData, targetData);
             return targetData;
         } else {
             return null;
