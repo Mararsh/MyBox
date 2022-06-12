@@ -134,7 +134,7 @@ License:    Apache License Version 2.0
                                         <RadioButton mnemonicParsing="false" text="%Others" toggleGroup="$takeGroup" />
                                     </children>
                                 </FlowPane>
-                                <TextArea fx:id="scriptInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                                <TextArea fx:id="scriptInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
                             </children>
                         </VBox>
                     </content>

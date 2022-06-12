@@ -18,7 +18,7 @@
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases)目录下（点击此项目主页的`releases`页签）。       
 
 ### 源码
-[MyBox-6.5.6-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-src.zip)   40M（大约值）       
+[MyBox-6.5.6-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-src.zip)   41M（大约值）       
 
 关于源码的结构、编辑、和构建，请参考[开发指南](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-DevGuide-2.1-zh.pdf) 和
 [打包步骤](https://mararsh.github.io/MyBox/pack_steps.html)       
@@ -29,9 +29,9 @@
 
 | 平台 | 链接 | 大小（大约值） | 启动文件 |
 | --- | --- | --- |  --- |
-| win10 x64 | [MyBox-6.5.6-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-win10-x64.zip)  | 220MB | MyBox.exe |
-| CentOS 7 x64 | [MyBox-6.5.6-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-CentOS7-x64.tar.gz)  | 252MB  | bin/MyBox  |
-| mac x64| [MyBox-6.5.6-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-mac.dmg)  | 232MB  |  MyBox-6.5.6.app   |
+| win10 x64 | [MyBox-6.5.6-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-win10-x64.zip)  | 210MB | MyBox.exe |
+| CentOS 7 x64 | [MyBox-6.5.6-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-CentOS7-x64.tar.gz)  | 242MB  | bin/MyBox  |
+| mac x64| [MyBox-6.5.6-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-mac.dmg)  | 220MB  |  MyBox-6.5.6.app   |
 
 双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。        
   
@@ -41,9 +41,9 @@
 
 | 平台 | 链接 | 大小（大约值） | 运行需要 |
 | --- | --- | --- |  --- |
-| win | [MyBox-6.5.6-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-win-jar.zip)  | 156MB | Java 18或更高版本 |
-| linux | [MyBox-6.5.6-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-linux-jar.zip)  | 186MB  | Java 18或更高版本 |
-| mac | [MyBox-6.5.6-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-mac-jar.zip)  |  159MB  | Java 18或更高版本 |
+| win | [MyBox-6.5.6-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-win-jar.zip)  | 144MB | Java 18或更高版本 |
+| linux | [MyBox-6.5.6-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-linux-jar.zip)  | 175MB  | Java 18或更高版本 |
+| mac | [MyBox-6.5.6-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-mac-jar.zip)  |  147MB  | Java 18或更高版本 |
 
 执行以下命令来启动程序：       
 <PRE><CODE>     java   -jar   MyBox-6.5.6.jar</CODE></PRE>       
@@ -162,6 +162,7 @@ MyBox基于以下开放资源：
 | 微博 | 素材 | https://weibo.com/2328516855/LhFIHy26O |
 | 知乎 | 素材 | https://www.zhihu.com/question/41580677/answer/1300242801 |
 | commons-math | 计算 | https://commons.apache.org/proper/commons-math/index.html |
+| JEXL | 计算 | https://commons.apache.org/proper/commons-jexl |
 
 
 # 当前版本       

@@ -24,7 +24,7 @@ You can find them by clicking `releases` tab in main page of this project.
 
 
 ### Source Codes
-[MyBox-6.5.6-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-src.zip)   40M(approximation)        
+[MyBox-6.5.6-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-src.zip)   41M(approximation)        
 
 About structure, editing, and building of source codes, please refer to [Developement Guide](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-DevGuide-2.1-en.pdf) and
 [Packing Steps](https://mararsh.github.io/MyBox/pack_steps_en.html)        
@@ -35,9 +35,9 @@ Self-contain packages include all files and need not java env nor installation.
 
 | Platform | Link | Size(approximation)  | Launcher |        
 | --- | --- | ---  | ---  |
-| win10 x64 | [MyBox-6.5.6-win-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-win10-x64.zip)  | 219MB | MyBox.exe |
-| CentOS 7 x64 | [MyBox-6.5.6-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-CentOS7-x64.tar.gz)  | 252MB  | bin/MyBox  |
-| mac | [MyBox-6.5.6-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-mac.dmg)  | 232MB  |  MyBox-6.5.6.app   |        
+| win10 x64 | [MyBox-6.5.6-win-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-win10-x64.zip)  | 210MB | MyBox.exe |
+| CentOS 7 x64 | [MyBox-6.5.6-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-CentOS7-x64.tar.gz)  | 242MB  | bin/MyBox  |
+| mac | [MyBox-6.5.6-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-mac.dmg)  | 220MB  |  MyBox-6.5.6.app   |        
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.        
 
@@ -46,9 +46,9 @@ When JRE or JDK([Oracle jdk](https://www.oracle.com/technetwork/java/javase/down
    
 | Platform | Link | Size(approximation)  | Requirements |        
 | --- | --- | ---  | ---  |
-| win | [MyBox-6.5.6-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-win-jar.zip)  | 156MB | Java 18 or higher |
-| linux | [MyBox-6.5.6-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-linux-jar.zip)  | 186MB  | Java 18 or higher |
-| mac | [MyBox-6.5.6-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-mac-jar.zip)  |  159MB  | Java 18 or higher |        
+| win | [MyBox-6.5.6-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-win-jar.zip)  | 144MB | Java 18 or higher |
+| linux | [MyBox-6.5.6-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-linux-jar.zip)  | 175MB  | Java 18 or higher |
+| mac | [MyBox-6.5.6-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-mac-jar.zip)  |  147MB  | Java 18 or higher |        
 
 
 Run following command to launch this program with Jar package:        
@@ -171,6 +171,7 @@ MyBox is based on following open sources:
 | WeiBo | Materials | https://weibo.com/2328516855/LhFIHy26O |
 | ZhiHu | Materials | https://www.zhihu.com/question/41580677/answer/1300242801 |             
 | commons-math | Calculation | https://commons.apache.org/proper/commons-math/index.html |
+| JEXL | Calculation | https://commons.apache.org/proper/commons-jexl |
 
 # Current Version        
 Current version is 6.5.6. Its features are mentioned below in summary:          

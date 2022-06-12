@@ -21,20 +21,20 @@ import mara.mybox.fxml.SingletonTask;
  */
 public abstract class Data2D_Attributes extends Data2DDefinition {
 
-    protected TableData2DDefinition tableData2DDefinition;
-    protected TableData2DColumn tableData2DColumn;
-    protected TableData2DStyle tableData2DStyle;
-    protected List<Data2DColumn> columns, savedColumns;
-    protected Map<String, Object> options;
-    protected int pageSize, newColumnIndex;
-    protected long dataSize, pagesNumber;
-    protected long currentPage, startRowOfCurrentPage, endRowOfCurrentPage;   // 0-based, excluded end
-    protected List<Data2DStyle> styles;
-    protected ControlData2DLoad loadController;
-    protected boolean tableChanged, filterReversed, filterPassed;
-    protected SingletonTask task, backgroundTask;
-    protected String error, rowFilter;
-    protected final Object lock = new Object();
+    public TableData2DDefinition tableData2DDefinition;
+    public TableData2DColumn tableData2DColumn;
+    public TableData2DStyle tableData2DStyle;
+    public List<Data2DColumn> columns, savedColumns;
+    public Map<String, Object> options;
+    public int pageSize, newColumnIndex;
+    public long dataSize, pagesNumber;
+    public long currentPage, startRowOfCurrentPage, endRowOfCurrentPage;   // 0-based, excluded end
+    public List<Data2DStyle> styles;
+    public ControlData2DLoad loadController;
+    public boolean tableChanged, filterReversed, filterPassed;
+    public SingletonTask task, backgroundTask;
+    public String error, rowFilter;
+    public final Object lock = new Object();
     public WebEngine webEngine;
     public FindReplaceString findReplace;
     public String expressionResult;

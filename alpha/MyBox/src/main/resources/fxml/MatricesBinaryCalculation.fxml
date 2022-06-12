@@ -13,7 +13,8 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -29,7 +30,7 @@ License:    Apache License Version 2.0
     <center>
         <VBox fx:id="mainPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
             <children>
-                <SplitPane fx:id="splitPane" dividerPositions="0.3, 0.7" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                <SplitPane fx:id="splitPane" dividerPositions="0.3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <items>
                         <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                             <content>
@@ -44,68 +45,38 @@ License:    Apache License Version 2.0
                             <children>
                                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                                     <children>
-                                        <ImageView fx:id="leftPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconDoubleLeft.png" />
-                                            </image>
-                                        </ImageView>
                                         <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
                                                 <Image url="@../buttons/Red/iconTips.png" />
                                             </image>
                                         </ImageView>
                                         <Label fx:id="matrixLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                              <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
-                                 <graphic>
-                                    <ImageView fx:id="leftPaneControl1" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconDoubleLeft.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </CheckBox>
-                              <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../buttons/Red/iconDoubleRight.png" />
-                                 </image>
-                              </ImageView>
+                                        <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
+                                            <graphic>
+                                                <ImageView fx:id="leftPaneControl1" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconDoubleLeft.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </CheckBox>
                                     </children>
                                 </HBox>
-                                <TitledPane fx:id="matrixAPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="boldTitle" stylesheets="@../styles/MyBox.css" text="%MatrixA" VBox.vgrow="ALWAYS">
-                                    <content>
-                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                                    <tabs>
+                                        <Tab fx:id="dataATab" text="%MatrixA">
                                             <content>
                                                 <fx:include fx:id="dataA" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2D.fxml" />
                                             </content>
-                                        </ScrollPane>
-                                    </content>
-                                </TitledPane>
-                                <TitledPane fx:id="matrixBPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="boldTitle" stylesheets="@../styles/MyBox.css" text="%MatrixB" VBox.vgrow="ALWAYS">
-                                    <content>
-                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                        </Tab>
+                                        <Tab fx:id="dataBTab" text="%MatrixB">
                                             <content>
                                                 <fx:include fx:id="dataB" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2D.fxml" />
                                             </content>
-                                        </ScrollPane>
-                                    </content>
-                                </TitledPane>
-                            </children>
-                            <padding>
-                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                            </padding>
-                        </VBox>
-                        <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                            <content>
-                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                    <children>
-                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
-                                            <children>
-                                                <Label fx:id="matrixLabel1" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%BinaryCalculation" textAlignment="CENTER" HBox.hgrow="ALWAYS" />
-                                            </children>
-                                        </HBox>
-                                        <TitledPane minHeight="-Infinity" text="%Calculation" VBox.vgrow="NEVER">
+                                        </Tab>
+                                        <Tab text="%Calculation">
                                             <content>
-                                                <VBox fx:id="calBox" minHeight="-Infinity" spacing="5.0">
+                                                <VBox fx:id="calBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>
                                                         <FlowPane hgap="5.0" minHeight="-Infinity" vgap="5.0">
                                                             <children>
@@ -137,30 +108,32 @@ License:    Apache License Version 2.0
                                                             </children>
                                                         </HBox>
                                                     </children>
+                                                    <padding>
+                                                        <Insets bottom="10.0" left="20.0" right="10.0" top="10.0" />
+                                                    </padding>
                                                 </VBox>
                                             </content>
-                                        </TitledPane>
-                                        <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Result" VBox.vgrow="ALWAYS">
+                                        </Tab>
+                                        <Tab fx:id="resultTab" text="%Result">
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                     <children>
-                                                        <Label fx:id="resultLabel" minHeight="-Infinity" VBox.vgrow="NEVER" />
-                                                        <ScrollPane fx:id="resultTablePane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-                                                            <content>
-                                                                <fx:include fx:id="result" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2D.fxml" />
-                                                            </content>
-                                                        </ScrollPane>
+                                                        <Label fx:id="resultLabel" minHeight="-Infinity" wrapText="true" VBox.vgrow="NEVER" />
+                                                        <fx:include fx:id="result" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2D.fxml" VBox.vgrow="ALWAYS" />
                                                     </children>
+                                                    <padding>
+                                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                    </padding>
                                                 </VBox>
                                             </content>
-                                        </TitledPane>
-                                    </children>
-                                    <padding>
-                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                    </padding>
-                                </VBox>
-                            </content>
-                        </ScrollPane>
+                                        </Tab>
+                                    </tabs>
+                                </TabPane>
+                            </children>
+                            <padding>
+                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                            </padding>
+                        </VBox>
                     </items>
                 </SplitPane>
             </children>

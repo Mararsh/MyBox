@@ -13,9 +13,10 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -24,14 +25,14 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MatrixUnaryCalculationController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MatrixUnaryCalculationController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
     <center>
         <VBox fx:id="mainPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" BorderPane.alignment="CENTER">
             <children>
-                <SplitPane fx:id="splitPane" dividerPositions="0.3, 0.7" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                <SplitPane fx:id="splitPane" dividerPositions="0.3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <items>
                         <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                             <content>
@@ -46,11 +47,6 @@ License:    Apache License Version 2.0
                             <children>
                                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
                                     <children>
-                                        <ImageView fx:id="leftPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconDoubleLeft.png" />
-                                            </image>
-                                        </ImageView>
                                         <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
                                                 <Image url="@../buttons/Red/iconTips.png" />
@@ -66,64 +62,64 @@ License:    Apache License Version 2.0
                                     </ImageView>
                                  </graphic>
                               </CheckBox>
-                                        <Button fx:id="loadContentInSystemClipboard2Button" mnemonicParsing="false" onAction="#loadContentInSystemClipboard">
-                                            <graphic>
-                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconImageSystem.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="createDataButton" mnemonicParsing="false" onAction="#createAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconAdd.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconRecover.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconSave.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconDoubleRight.png" />
-                                            </image>
-                                        </ImageView>
                                     </children>
                                 </HBox>
-                                <fx:include fx:id="data" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2D.fxml" VBox.vgrow="ALWAYS" />
-                            </children>
-                        </VBox>
-                        <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                            <content>
-                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                    <children>
-                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
-                                            <children>
-                                                <Label fx:id="matrixLabel1" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%UnaryCalculation" textAlignment="CENTER" HBox.hgrow="ALWAYS" />
-                                            </children>
-                                        </HBox>
-                                        <TitledPane minHeight="-Infinity" text="%Calculation" VBox.vgrow="NEVER">
-                                            <content>
-                                                <VBox fx:id="calBox" minHeight="-Infinity" spacing="5.0">
+                        <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                          <tabs>
+                            <Tab fx:id="dataTab" text="%Data">
+                                 <content>
+                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                       <children>
+                                          <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                             <children>
+                                                          <Button fx:id="loadContentInSystemClipboard2Button" mnemonicParsing="false" onAction="#loadContentInSystemClipboard">
+                                                              <graphic>
+                                                                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                      <image>
+                                                                          <Image url="@../buttons/iconImageSystem.png" />
+                                                                      </image>
+                                                                  </ImageView>
+                                                              </graphic>
+                                                          </Button>
+                                                          <Button fx:id="createDataButton" mnemonicParsing="false" onAction="#createAction">
+                                                              <graphic>
+                                                                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                      <image>
+                                                                          <Image url="@../buttons/Red/iconAdd.png" />
+                                                                      </image>
+                                                                  </ImageView>
+                                                              </graphic>
+                                                          </Button>
+                                                          <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
+                                                              <graphic>
+                                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                      <image>
+                                                                          <Image url="@../buttons/Red/iconRecover.png" />
+                                                                      </image>
+                                                                  </ImageView>
+                                                              </graphic>
+                                                          </Button>
+                                                          <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
+                                                              <graphic>
+                                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                      <image>
+                                                                          <Image url="@../buttons/Red/iconSave.png" />
+                                                                      </image>
+                                                                  </ImageView>
+                                                              </graphic>
+                                                          </Button>
+                                             </children>
+                                          </HBox>
+                                                  <fx:include fx:id="data" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2D.fxml" VBox.vgrow="ALWAYS" />
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                       </padding></VBox>
+                                 </content>
+                              </Tab>
+                            <Tab fx:id="calculateTab" text="%Calculation">
+                                 <content>
+                                                <VBox fx:id="calBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>
                                                         <VBox minHeight="-Infinity" spacing="5.0">
                                                             <children>
@@ -207,12 +203,15 @@ License:    Apache License Version 2.0
                                                             </children>
                                                         </HBox>
                                                     </children>
+                                       <padding>
+                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                       </padding>
                                                 </VBox>
-                                            </content>
-                                        </TitledPane>
-                                        <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Result" VBox.vgrow="ALWAYS">
-                                            <content>
-                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                 </content>
+                              </Tab>
+                              <Tab fx:id="resultTab" text="%Result">
+                                 <content>
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                     <children>
                                                         <Label fx:id="resultLabel" minHeight="-Infinity" VBox.vgrow="NEVER" />
                                                         <VBox fx:id="resultBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
@@ -220,19 +219,22 @@ License:    Apache License Version 2.0
                                                                 <TextArea fx:id="resultArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
                                                                 <ScrollPane fx:id="resultTablePane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                                                                     <content>
-                                                                        <fx:include fx:id="result" maxHeight="1.7976931348623157E308" source="ControlData2D.fxml" />
+                                                                        <fx:include fx:id="result" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2D.fxml" />
                                                                     </content>
                                                                 </ScrollPane>
                                                             </children>
                                                         </VBox>
                                                     </children>
+                                       <padding>
+                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                       </padding>
                                                 </VBox>
-                                            </content>
-                                        </TitledPane>
-                                    </children>
-                                </VBox>
-                            </content>
-                        </ScrollPane>
+                                 </content>
+                              </Tab>
+                          </tabs>
+                        </TabPane>
+                            </children>
+                        </VBox>
                     </items>
                 </SplitPane>
             </children>
