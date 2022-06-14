@@ -37,8 +37,8 @@ public class SingletonTask<Void> extends BaseTask<Void> {
                     controller.popError(error);
                 } else {
                     controller.alertError(error);
-                    MyBoxLog.debug(error);
                 }
+                MyBoxLog.debug(controller.getTitle() + ": " + error);
             } else {
                 controller.popFailed();
             }

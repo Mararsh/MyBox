@@ -292,6 +292,7 @@ public abstract class BaseData2DHandleController extends ControlData2DSource {
 
         };
         start(task);
+
     }
 
     public DataFileCSV generatedFile() {

@@ -245,7 +245,7 @@ public class DataFileCSV extends DataFileText {
                     }
                 }
                 boolean isRandom = false, isRandomNn = false, isBlank = false;
-                String expression = null;
+                String script = null;
                 if (value != null) {
                     if ("MyBox##blank".equals(value)) {
                         isBlank = true;
@@ -254,7 +254,7 @@ public class DataFileCSV extends DataFileText {
                     } else if ("MyBox##randomNn".equals(value)) {
                         isRandomNn = true;
                     } else if (value.startsWith("MyBox##Expression##")) {
-                        expression = value.substring("MyBox##Expression##".length());
+                        script = value.substring("MyBox##Expression##".length());
                     }
                 }
                 final Random random = new Random();
@@ -265,26 +265,29 @@ public class DataFileCSV extends DataFileText {
                         if (record == null) {
                             continue;
                         }
-                        filterAndCalculate(record.toList(), ++rowIndex, expression);
-                        if (expression != null && error != null) {
-                            if (errorContinue) {
-                                continue;
-                            } else {
-                                task.setError(error);
-                                return false;
+                        List<String> values = record.toList();
+                        if (filterDataRow(values, ++rowIndex) && script != null) {
+                            calculateDataRowExpression(script, values, rowIndex);
+                            if (error != null) {
+                                if (errorContinue) {
+                                    continue;
+                                } else {
+                                    task.setError(error);
+                                    return false;
+                                }
                             }
                         }
                         List<String> row = new ArrayList<>();
                         for (int i = 0; i < columns.size(); i++) {
-                            if (filterPassed && cols.contains(i)) {
+                            if (filterPassed()&& cols.contains(i)) {
                                 if (isBlank) {
                                     row.add("");
                                 } else if (isRandom) {
                                     row.add(random(random, i, false));
                                 } else if (isRandomNn) {
                                     row.add(random(random, i, true));
-                                } else if (expression != null) {
-                                    row.add(expressionResult);
+                                } else if (script != null) {
+                                    row.add(getExpressionResult());
                                 } else {
                                     row.add(value);
                                 }
@@ -327,7 +330,7 @@ public class DataFileCSV extends DataFileText {
                     } catch (Exception e) {  // skip  bad lines
                     }
                 }
-                if (rowFilter != null && !rowFilter.isBlank()) {
+                if (needFilter()) {
                     rowIndex = 0;
                     while (iterator.hasNext() && task != null && !task.isCancelled()) {
                         try {
@@ -335,7 +338,7 @@ public class DataFileCSV extends DataFileText {
                             if (record == null) {
                                 continue;
                             }
-                            filterInTask(record.toList(), ++rowIndex);
+                            filterDataRow(record.toList(), ++rowIndex);
                             if (error != null) {
                                 if (errorContinue) {
                                     continue;
@@ -344,7 +347,7 @@ public class DataFileCSV extends DataFileText {
                                     return false;
                                 }
                             }
-                            if (filterPassed) {
+                            if (filterPassed()) {
                                 continue;
                             }
                             List<String> row = new ArrayList<>();

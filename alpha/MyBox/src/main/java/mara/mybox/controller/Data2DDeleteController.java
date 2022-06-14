@@ -55,12 +55,9 @@ public class Data2DDeleteController extends BaseData2DHandleController {
         if (!tableController.checkBeforeNextAction()) {
             return;
         }
-        if (isAllPages()) {
-            String script = data2D.getRowFilter();
-            if (script == null || script.isBlank()) {
-                if (!PopTools.askSure(this, baseTitle, message("SureDeleteAll"))) {
-                    return;
-                }
+        if (isAllPages() && data2D.emptyFilter()) {
+            if (!PopTools.askSure(this, baseTitle, message("SureDeleteAll"))) {
+                return;
             }
         }
         task = new SingletonTask<Void>(this) {

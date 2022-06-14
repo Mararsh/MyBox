@@ -189,7 +189,6 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             reader = Data2DReader.create(this)
                     .setCsvPrinter(csvPrinter).setCols(cols).setIncludeRowNumber(includeRowNumber)
                     .setReaderTask(task).start(Data2DReader.Operation.Copy);
-
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());

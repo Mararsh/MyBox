@@ -8,9 +8,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
-import javafx.application.Platform;
-import javafx.scene.web.WebView;
-import mara.mybox.data.FindReplaceString;
 import mara.mybox.data2d.scan.Data2DReader;
 import mara.mybox.data2d.scan.Data2DReader.Operation;
 import mara.mybox.db.DerbyBase;
@@ -360,166 +357,44 @@ public abstract class Data2D_Edit extends Data2D_Data {
 
     /*
         filter
-        first value of "tableRow" should be "dataRowNumber" 
-        "tableRowNumber" is 0-based while "dataRowNumber" is 1-based
      */
-    public String rowExpression(String script, List<String> tableRow, int tableRowNumber) {
-        try {
-            if (script == null || script.isBlank()
-                    || tableRow == null || tableRow.isEmpty()
-                    || columns == null || columns.isEmpty()) {
-                return script;
-            }
-            if (findReplace == null) {
-                findReplace = FindReplaceString.create().setOperation(FindReplaceString.Operation.ReplaceAll)
-                        .setIsRegex(false).setCaseInsensitive(false).setMultiline(false);
-            }
-            String filledScript = script;
-            for (int i = 0; i < columns.size(); i++) {
-                filledScript = findReplace.replaceStringAll(filledScript, "#{" + columns.get(i).getColumnName() + "}", tableRow.get(i + 1));
-            }
-            filledScript = findReplace.replaceStringAll(filledScript, "#{" + message("DataRowNumber") + "}", tableRow.get(0) + "");
-            filledScript = findReplace.replaceStringAll(filledScript, "#{" + message("TableRowNumber") + "}",
-                    tableRowNumber >= 0 ? (tableRowNumber + 1) + "" : message("NoTableRowNumberWhenAllPages"));
-            return filledScript;
-        } catch (Exception e) {
-            error = e.toString();
-            return null;
-        }
+    public boolean needFilter() {
+        return !emptyFilter();
     }
 
-    public boolean calculateExpression(String script, List<String> tableRow, int tableRowNumber) {
-        return calculateExpression(rowExpression(script, tableRow, tableRowNumber));
+    public boolean emptyFilter() {
+        return expressionCalculator == null
+                || expressionCalculator.filterScript == null
+                || expressionCalculator.filterScript.isBlank();
     }
 
-    public boolean calculateExpression(String script) {
-        try {
-            error = null;
-            expressionResult = null;
-            if (script == null || script.isBlank()) {
-                return true;
-            }
-            if (webEngine == null) {
-                webEngine = new WebView().getEngine();
-            }
-            Object o = webEngine.executeScript(script);
-            if (o != null) {
-                expressionResult = o.toString();
-            }
-            return true;
-        } catch (Exception e) {
-            error = e.toString();
-            return false;
-        }
+    public boolean calculateTableRowExpression(String script, List<String> tableRow, long tableRowNumber) {
+        return expressionCalculator == null
+                || expressionCalculator.calculateTableRowExpression(script, tableRow, tableRowNumber);
     }
 
-    public boolean filter(List<String> tableRow, int tableRowIndex) {
-        if (rowFilter == null || rowFilter.isBlank()) {
-            filterPassed = true;
-            return true;
-        }
-        filterPassed = calculateExpression(rowFilter, tableRow, tableRowIndex)
-                && "true".equals(expressionResult);
-        if (filterReversed) {
-            filterPassed = !filterPassed;
-        }
-        return filterPassed;
+    public boolean calculateDataRowExpression(String script, List<String> dataRow, long dataRowNumber) {
+        return expressionCalculator == null
+                || expressionCalculator.calculateDataRowExpression(script, dataRow, dataRowNumber);
     }
 
-    public boolean filterAndCalculate(List<String> dataRow, long dataRowIndex, final String script) {
-        try {
-            error = null;
-            filterPassed = false;
-            if (dataRow == null) {
-                return false;
-            }
-            if (rowFilter == null || rowFilter.isBlank()) {
-                filterPassed = true;
-                if (script == null) {
-                    return true;
-                }
-            }
-            Platform.runLater(() -> {
-                synchronized (lock) {
-                    try {
-                        List<String> values = new ArrayList<>();
-                        values.add(dataRowIndex + "");
-                        values.addAll(dataRow);
-                        filterPassed = filter(values, -1);
-                        if (filterPassed && script != null) {
-                            calculateExpression(script, values, -1);
-                        }
-                    } catch (Exception e) {
-                        error = e.toString();
-                    }
-                    lock.notify();
-                }
-            });
-            synchronized (lock) {
-                lock.wait();
-            }
-        } catch (Exception e) {
-            error = e.toString();
-        }
-        return filterPassed;
+    public boolean filterDataRow(List<String> dataRow, long dataRowIndex) {
+        return expressionCalculator == null
+                || expressionCalculator.filterDataRow(dataRow, dataRowIndex);
     }
 
-    public boolean filterInTask(List<String> dataRow, long dataRowIndex) {
-        return filterInTask(dataRow, dataRowIndex, -1);
+    public boolean filterPassed() {
+        return expressionCalculator == null
+                || expressionCalculator.filterPassed;
     }
 
-    public boolean filterInTask(List<String> dataRow, long dataRowIndex, int tableRowNumber) {
-        try {
-            error = null;
-            filterPassed = false;
-            if (dataRow == null) {
-                return false;
-            }
-            if (rowFilter == null || rowFilter.isBlank()) {
-                filterPassed = true;
-                return true;
-            }
-            List<String> tableRow = new ArrayList<>();
-            tableRow.add(dataRowIndex + "");
-            tableRow.addAll(dataRow);
-            Platform.runLater(() -> {
-                synchronized (lock) {
-                    try {
-                        filterPassed = filter(tableRow, tableRowNumber);
-                    } catch (Exception e) {
-                        error = e.toString();
-                    }
-                    lock.notify();
-                }
-            });
-            synchronized (lock) {
-                lock.wait();
-            }
-        } catch (Exception e) {
-            error = e.toString();
-        }
-        return filterPassed;
+    public String getExpressionResult() {
+        return expressionCalculator == null ? null : expressionCalculator.expressionResult;
     }
 
-    public boolean validateExpression(String script, boolean allPages) {
-        try {
-            error = null;
-            expressionResult = null;
-            if (script == null || script.isBlank()) {
-                return true;
-            }
-            List<String> tableRow = new ArrayList<>();
-            tableRow.add("1");
-            for (int i = 0; i < columns.size(); i++) {
-                tableRow.add("0");
-            }
-            return calculateExpression(rowExpression(script, tableRow, allPages ? -1 : 0));
-        } catch (Exception e) {
-            error = e.toString();
-            return false;
-        }
-    }
-
+    /*
+        style
+     */
     public String cellStyle(int tableRowIndex, String colName) {
         try {
             if (styles == null || styles.isEmpty() || colName == null || colName.isBlank()) {
@@ -551,8 +426,8 @@ public abstract class Data2D_Edit extends Data2D_Data {
                         continue;
                     }
                 }
-                rowFilter = style.getMoreConditions();
-                if (filter(tableRow, tableRowIndex)) {
+                if (expressionCalculator != null
+                        && expressionCalculator.filterTableRow(style.getMoreConditions(), tableRow, tableRowIndex)) {
                     String styleValue = style.finalStyle();
                     if (styleValue == null || styleValue.isBlank()) {
                         cellStyle = null;

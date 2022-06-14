@@ -345,7 +345,7 @@ public class DataTable extends Data2D {
             return false;
         }
         boolean isRandom = false, isRandomNn = false, isBlank = false;
-        String expression = null;
+        String script = null;
         if (value != null) {
             if ("MyBox##blank".equals(value)) {
                 isBlank = true;
@@ -354,11 +354,10 @@ public class DataTable extends Data2D {
             } else if ("MyBox##randomNn".equals(value)) {
                 isRandomNn = true;
             } else if (value.startsWith("MyBox##Expression##")) {
-                expression = value.substring("MyBox##Expression##".length());
+                script = value.substring("MyBox##Expression##".length());
             }
         }
-        if (!isRandom && !isRandomNn && expression == null
-                && (rowFilter == null || rowFilter.isBlank())) {
+        if (!isRandom && !isRandomNn && script == null && emptyFilter()) {
             try ( Connection conn = DerbyBase.getConnection();
                      Statement update = conn.createStatement()) {
                 String sql = null;
@@ -405,16 +404,18 @@ public class DataTable extends Data2D {
                         Object v = row.getColumnValue(columns.get(c).getColumnName());
                         rowValues.add(column.toString(v));
                     }
-                    filterAndCalculate(rowValues, ++rowIndex, expression);
-                    if (!filterPassed) {
+                    if (!filterDataRow(rowValues, ++rowIndex)) {
                         continue;
                     }
-                    if (error != null) {
-                        if (errorContinue) {
-                            continue;
-                        } else {
-                            task.setError(error);
-                            return false;
+                    if (script != null) {
+                        calculateDataRowExpression(script, rowValues, rowIndex);
+                        if (error != null) {
+                            if (errorContinue) {
+                                continue;
+                            } else {
+                                task.setError(error);
+                                return false;
+                            }
                         }
                     }
                     for (int c = 0; c < columns.size(); c++) {
@@ -428,8 +429,8 @@ public class DataTable extends Data2D {
                                 v = random(random, c, false);
                             } else if (isRandomNn) {
                                 v = random(random, c, true);
-                            } else if (expression != null) {
-                                v = expressionResult;
+                            } else if (script != null) {
+                                v = getExpressionResult();
                             } else {
                                 v = value;
                             }
@@ -455,7 +456,7 @@ public class DataTable extends Data2D {
 
     @Override
     public boolean delete(boolean errorContinue) {
-        if (rowFilter == null || rowFilter.isBlank()) {
+        if (emptyFilter()) {
             return clearData() >= 0;
         } else {
             try ( Connection conn = DerbyBase.getConnection();
@@ -472,7 +473,7 @@ public class DataTable extends Data2D {
                         Object v = row.getColumnValue(columns.get(c).getColumnName());
                         rowValues.add(column.toString(v));
                     }
-                    filterInTask(rowValues, ++rowIndex);
+                    filterDataRow(rowValues, ++rowIndex);
                     if (error != null) {
                         if (errorContinue) {
                             continue;
@@ -481,7 +482,7 @@ public class DataTable extends Data2D {
                             return false;
                         }
                     }
-                    if (!filterPassed) {
+                    if (!filterPassed()) {
                         continue;
                     }
                     tableData2D.deleteData(conn, row);
@@ -547,8 +548,8 @@ public class DataTable extends Data2D {
                         Object v = dataRow.getColumnValue(columns.get(c).getColumnName());
                         rowValues.add(column.toString(v));
                     }
-                    filter(rowValues, rowIndex++);
-                    if (!filterPassed) {
+                    filterDataRow(rowValues, ++rowIndex);
+                    if (!filterPassed()) {
                         continue;
                     }
                     if (showRowNumber) {
@@ -691,7 +692,7 @@ public class DataTable extends Data2D {
         if (frequency == null || colName == null || col < 0) {
             return null;
         }
-        if (rowFilter != null && !rowFilter.isBlank()) {
+        if (needFilter()) {
             return super.frequency(frequency, colName, col, scale);
         }
         File csvFile = tmpCSV("frequency");

@@ -26,7 +26,7 @@ public class ControlData2DSpliceSource extends ControlData2DSource {
     @Override
     public void loadDef(Data2DDefinition def) {
         super.loadDef(def);
-        filterController.setParamters(data2D);
+        filterController.setParameters(data2D);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class ControlData2DSpliceSource extends ControlData2DSource {
             setData(Data2D.create(Data2DDefinition.type(file)));
             data2D.initFile(file);
             readDefinition();
-            filterController.setParamters(data2D);
+            filterController.setParameters(data2D);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

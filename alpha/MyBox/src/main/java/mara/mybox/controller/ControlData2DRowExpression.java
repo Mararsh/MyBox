@@ -42,19 +42,24 @@ public class ControlData2DRowExpression extends TreeNodesController {
         hisName = "RowExpressionHistories";
     }
 
-    public void setParamters(Data2D data2D) {
+    public void setParameters(Data2D data2D) {
         try {
             this.data2D = data2D;
+
             tableTreeNode = new TableTreeNode();
             tableTreeNodeTag = new TableTreeNodeTag();
             if (!loadExamples()) {
                 loadTree(null);
             }
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
+    /*
+        tree
+     */
     @Override
     protected void doubleClicked(TreeItem<TreeNode> item) {
         editNode(item);
@@ -82,6 +87,9 @@ public class ControlData2DRowExpression extends TreeNodesController {
         JavaScriptController.open(scriptInput.getText());
     }
 
+    /*
+        script
+     */
     @FXML
     public void clearScript() {
         scriptInput.clear();
@@ -199,7 +207,7 @@ public class ControlData2DRowExpression extends TreeNodesController {
         if (script == null || script.isBlank()) {
             return true;
         }
-        if (data2D.validateExpression(script, allPages)) {
+        if (data2D.expressionCalculator.validateExpression(script, allPages)) {
             TableStringValues.add(hisName, script.trim());
             return true;
         } else {

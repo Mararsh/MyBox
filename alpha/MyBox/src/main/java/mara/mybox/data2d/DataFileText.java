@@ -323,7 +323,7 @@ public class DataFileText extends DataFile {
             }
             String line;
             boolean isRandom = false, isRandomNn = false, isBlank = false;
-            String expression = null;
+            String script = null;
             if (value != null) {
                 if ("MyBox##blank".equals(value)) {
                     isBlank = true;
@@ -332,7 +332,7 @@ public class DataFileText extends DataFile {
                 } else if ("MyBox##randomNn".equals(value)) {
                     isRandomNn = true;
                 } else if (value.startsWith("MyBox##Expression##")) {
-                    expression = value.substring("MyBox##Expression##".length());
+                    script = value.substring("MyBox##Expression##".length());
                 }
             }
             Random random = new Random();
@@ -342,26 +342,28 @@ public class DataFileText extends DataFile {
                 if (record == null || record.isEmpty()) {
                     continue;
                 }
-                filterAndCalculate(record, ++rowIndex, expression);
-                if (expression != null && error != null) {
-                    if (errorContinue) {
-                        continue;
-                    } else {
-                        task.setError(error);
-                        return false;
+                if (filterDataRow(record, ++rowIndex) && script != null) {
+                    calculateDataRowExpression(script, record, rowIndex);
+                    if (error != null) {
+                        if (errorContinue) {
+                            continue;
+                        } else {
+                            task.setError(error);
+                            return false;
+                        }
                     }
                 }
                 List<String> row = new ArrayList<>();
                 for (int i = 0; i < columns.size(); i++) {
-                    if (filterPassed && cols.contains(i)) {
+                    if (filterPassed() && cols.contains(i)) {
                         if (isBlank) {
                             row.add("");
                         } else if (isRandom) {
                             row.add(random(random, i, false));
                         } else if (isRandomNn) {
                             row.add(random(random, i, true));
-                        } else if (expression != null) {
-                            row.add(expressionResult);
+                        } else if (script != null) {
+                            row.add(getExpressionResult());
                         } else {
                             row.add(value);
                         }
@@ -397,7 +399,7 @@ public class DataFileText extends DataFile {
                 readValidLine(reader);
                 TextFileTools.writeLine(writer, names, delimiter);
             }
-            if (rowFilter != null && !rowFilter.isBlank()) {
+            if (needFilter()) {
                 String line;
                 rowIndex = 0;
                 while ((line = reader.readLine()) != null && task != null && !task.isCancelled()) {
@@ -405,7 +407,7 @@ public class DataFileText extends DataFile {
                     if (record == null || record.isEmpty()) {
                         continue;
                     }
-                    filterInTask(record, ++rowIndex);
+                    filterDataRow(record, ++rowIndex);
                     if (error != null) {
                         if (errorContinue) {
                             continue;
@@ -414,7 +416,7 @@ public class DataFileText extends DataFile {
                             return false;
                         }
                     }
-                    if (filterPassed) {
+                    if (filterPassed()) {
                         continue;
                     }
                     List<String> row = new ArrayList<>();

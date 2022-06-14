@@ -11,6 +11,7 @@ import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataClipboard;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -74,6 +75,11 @@ public class ControlData2DEditTable extends ControlData2DLoad {
             super.setData(data);
 
             headerButton.setVisible(data2D.isTmpData() || data2D.isDataFile() || data.isClipboard());
+
+            ExpressionCalculator calculator = new ExpressionCalculator()
+                    .setWebEngine(dataController.viewController.htmlController.webEngine)
+                    .setData2D(data2D);
+            data2D.setExpressionCalculator(calculator);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

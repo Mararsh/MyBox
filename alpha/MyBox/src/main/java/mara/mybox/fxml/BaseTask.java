@@ -61,7 +61,9 @@ public class BaseTask<P> extends Task<P> {
     @Override
     protected void succeeded() {
         super.succeeded();
-        cost = new Date().getTime() - startTime.getTime();
+        if (startTime != null) {
+            cost = new Date().getTime() - startTime.getTime();
+        }
         taskQuit();
         Platform.runLater(() -> {
             if (isCancelled()) {

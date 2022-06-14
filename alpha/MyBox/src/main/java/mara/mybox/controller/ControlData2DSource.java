@@ -98,7 +98,7 @@ public class ControlData2DSource extends ControlData2DLoad {
             };
             tableController.statusNotify.addListener(tableStatusListener);
 
-            filterController.setParamters(tableController.data2D);
+            filterController.setParameters(tableController.data2D);
 
             tableView.requestFocus();
 
@@ -379,14 +379,14 @@ public class ControlData2DSource extends ControlData2DLoad {
             List<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
             if (currentPageRadio.isSelected() || selected == null || selected.isEmpty()) {
                 for (int i = 0; i < tableData.size(); i++) {
-                    if (!data2D.filter(tableData.get(i), i)) {
+                    if (!data2D.getExpressionCalculator().filterTableRow(tableData.get(i), i)) {
                         continue;
                     }
                     checkedRowsIndices.add(i);
                 }
             } else {
                 for (int i : selected) {
-                    if (!data2D.filter(tableData.get(i), i)) {
+                    if (!data2D.getExpressionCalculator().filterTableRow(tableData.get(i), i)) {
                         continue;
                     }
                     checkedRowsIndices.add(i);

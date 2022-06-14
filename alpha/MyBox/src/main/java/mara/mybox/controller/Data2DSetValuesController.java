@@ -153,13 +153,13 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
         try {
             super.setParameters(tableController);
 
-            expressionController.setParamters(data2D);
-            expressionController.scriptInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    checkOptions();
-                }
-            });
+            expressionController.setParameters(data2D);
+//            expressionController.scriptInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
+//                @Override
+//                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+//                    checkOptions();
+//                }
+//            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -264,7 +264,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                tableController.data2D.setTask(null);
+                data2D.setTask(null);
                 task = null;
             }
 
@@ -309,7 +309,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                 if (blankRadio.isSelected()) {
                     v = "";
                 } else if (expressionRadio.isSelected()) {
-                    if (!data2D.calculateExpression(expressionController.scriptInput.getText(), values, row)) {
+                    if (!data2D.calculateTableRowExpression(expressionController.scriptInput.getText(), values, row)) {
                         if (errorContinueCheck.isSelected()) {
                             continue;
                         } else {

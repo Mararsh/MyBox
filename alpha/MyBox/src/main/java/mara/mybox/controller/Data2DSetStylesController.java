@@ -212,7 +212,7 @@ public class Data2DSetStylesController extends BaseSysTableController<Data2DStyl
             };
             tableController.statusNotify.addListener(tableStatusListener);
 
-            filterController.setParamters(tableController.data2D);
+            filterController.setParameters(tableController.data2D);
             filterController.tipsView.setVisible(false);
 
             sourceChanged();

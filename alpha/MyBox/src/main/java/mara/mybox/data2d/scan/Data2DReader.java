@@ -308,6 +308,9 @@ public abstract class Data2DReader {
             scale = data2D.getScale();
         }
         record = new ArrayList<>();
+        if (data2D.needFilter()) {
+            data2D.expressionCalculator.loop(readerTask);
+        }
         scanData();
         afterScanned();
         return this;
@@ -379,13 +382,9 @@ public abstract class Data2DReader {
         rows.add(row);
     }
 
-    public boolean filterRecord() {
-        return data2D.filterInTask(record, rowIndex + 1);
-    }
-
     public void handleRecord() {
         try {
-            if (!filterRecord()) {
+            if (!data2D.filterDataRow(record, rowIndex + 1)) {
                 return;
             }
             switch (operation) {
@@ -1046,6 +1045,9 @@ public abstract class Data2DReader {
 
     public void afterScanned() {
         try {
+            if (data2D.needFilter()) {
+                data2D.expressionCalculator.stop();
+            }
             switch (operation) {
                 case StatisticColumns:
                     if (scanPass == 1) {
