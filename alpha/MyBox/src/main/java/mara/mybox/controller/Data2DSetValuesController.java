@@ -149,21 +149,12 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
     }
 
     @Override
-    public void setParameters(ControlData2DEditTable tableController) {
-        try {
-            super.setParameters(tableController);
-
-            expressionController.setParameters(data2D);
-//            expressionController.scriptInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
-//                @Override
-//                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-//                    checkOptions();
-//                }
-//            });
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+    public void sourceChanged() {
+        if (tableController == null) {
+            return;
         }
+        super.sourceChanged();
+        expressionController.setData2D(data2D);
     }
 
     @Override
@@ -248,7 +239,10 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                         tableController.dataController.backupController.addBackup(task, data2D.getFile());
                     }
                     data2D.setTask(task);
-                    return data2D.setValue(checkedColsIndices, value, errorContinueCheck.isSelected());
+                    data2D.startExpressionService(task);
+                    ok = data2D.setValue(checkedColsIndices, value, errorContinueCheck.isSelected());
+                    data2D.stopExpressionService();
+                    return ok;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -257,13 +251,16 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
 
             @Override
             protected void whenSucceeded() {
-                popDone();
                 tableController.dataController.goPage();
+                tableController.requestMouse();
+                tableController.popDone();
+                tabPane.getSelectionModel().select(dataTab);
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
+                data2D.stopExpressionService();
                 data2D.setTask(null);
                 task = null;
             }
@@ -294,6 +291,8 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             }
             tableController.isSettingValues = false;
             tableController.tableChanged(true);
+            tableController.requestMouse();
+            tabPane.getSelectionModel().select(dataTab);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             popError(message(e.toString()));

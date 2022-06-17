@@ -357,7 +357,7 @@ public class DataTable extends Data2D {
                 script = value.substring("MyBox##Expression##".length());
             }
         }
-        if (!isRandom && !isRandomNn && script == null && emptyFilter()) {
+        if (!isRandom && !isRandomNn && script == null && !needFilter()) {
             try ( Connection conn = DerbyBase.getConnection();
                      Statement update = conn.createStatement()) {
                 String sql = null;
@@ -396,6 +396,7 @@ public class DataTable extends Data2D {
                 conn.setAutoCommit(false);
                 rowIndex = 0;
                 int count = 0;
+                startFilter();
                 while (results.next() && task != null && !task.isCancelled()) {
                     Data2DRow row = tableData2D.readData(results);
                     List<String> rowValues = new ArrayList<>();
@@ -404,7 +405,8 @@ public class DataTable extends Data2D {
                         Object v = row.getColumnValue(columns.get(c).getColumnName());
                         rowValues.add(column.toString(v));
                     }
-                    if (!filterDataRow(rowValues, ++rowIndex)) {
+                    filterDataRow(rowValues, ++rowIndex);
+                    if (!filterPassed()) {
                         continue;
                     }
                     if (script != null) {
@@ -441,6 +443,9 @@ public class DataTable extends Data2D {
                     if (++count % DerbyBase.BatchSize == 0) {
                         conn.commit();
                     }
+                    if (filterReachMaxFilterPassed()) {
+                        break;
+                    }
                 }
                 conn.commit();
             } catch (Exception e) {
@@ -456,7 +461,7 @@ public class DataTable extends Data2D {
 
     @Override
     public boolean delete(boolean errorContinue) {
-        if (emptyFilter()) {
+        if (!needFilter()) {
             return clearData() >= 0;
         } else {
             try ( Connection conn = DerbyBase.getConnection();
@@ -465,6 +470,7 @@ public class DataTable extends Data2D {
                 conn.setAutoCommit(false);
                 rowIndex = 0;
                 int count = 0;
+                startFilter();
                 while (results.next() && task != null && !task.isCancelled()) {
                     Data2DRow row = tableData2D.readData(results);
                     List<String> rowValues = new ArrayList<>();
@@ -488,6 +494,9 @@ public class DataTable extends Data2D {
                     tableData2D.deleteData(conn, row);
                     if (++count % DerbyBase.BatchSize == 0) {
                         conn.commit();
+                    }
+                    if (filterReachMaxFilterPassed()) {
+                        break;
                     }
                 }
                 conn.commit();
@@ -540,6 +549,7 @@ public class DataTable extends Data2D {
                 csvPrinter.printRecord(names);
                 colsSize = names.size();
                 List<String> fileRow = new ArrayList<>();
+                startFilter();
                 while (results.next() && task != null && !task.isCancelled()) {
                     Data2DRow dataRow = tableData2D.readData(results);
                     List<String> rowValues = new ArrayList<>();
@@ -561,6 +571,9 @@ public class DataTable extends Data2D {
                     }
                     csvPrinter.printRecord(fileRow);
                     fileRow.clear();
+                    if (filterReachMaxFilterPassed()) {
+                        break;
+                    }
                 }
             } catch (Exception e) {
                 if (task != null) {

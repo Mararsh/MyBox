@@ -42,9 +42,10 @@ public class ControlData2DRowExpression extends TreeNodesController {
         hisName = "RowExpressionHistories";
     }
 
-    public void setParameters(Data2D data2D) {
+    @Override
+    public void initControls() {
         try {
-            this.data2D = data2D;
+            super.initControls();
 
             tableTreeNode = new TableTreeNode();
             tableTreeNodeTag = new TableTreeNodeTag();
@@ -55,6 +56,10 @@ public class ControlData2DRowExpression extends TreeNodesController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    public void setData2D(Data2D data2D) {
+        this.data2D = data2D;
     }
 
     /*
@@ -203,6 +208,11 @@ public class ControlData2DRowExpression extends TreeNodesController {
     }
 
     public boolean checkExpression(boolean allPages) {
+        error = null;
+        if (data2D == null || !data2D.hasData() || data2D.expressionCalculator == null) {
+            error = message("InvalidData");
+            return false;
+        }
         String script = scriptInput.getText();
         if (script == null || script.isBlank()) {
             return true;
@@ -211,6 +221,7 @@ public class ControlData2DRowExpression extends TreeNodesController {
             TableStringValues.add(hisName, script.trim());
             return true;
         } else {
+            error = data2D.expressionCalculator.error;
             return false;
         }
     }

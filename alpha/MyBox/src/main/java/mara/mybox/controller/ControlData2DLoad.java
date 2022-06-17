@@ -34,6 +34,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
@@ -55,6 +56,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     protected char copyDelimiter = ',';
     protected boolean readOnly, notUpdateTitle;
     protected SimpleBooleanProperty statusNotify;
+    protected ExpressionCalculator expressionCalculator;
 
     @FXML
     protected TableColumn<List<String>, Integer> dataRowColumn;
@@ -64,6 +66,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     public ControlData2DLoad() {
         statusNotify = new SimpleBooleanProperty(false);
         readOnly = true;
+        expressionCalculator = new ExpressionCalculator();
     }
 
     @Override
@@ -138,6 +141,10 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 showPaginationPane(!data2D.isTmpData() && !data2D.isMatrix());
             }
             data2D.setLoadController(this);
+
+            expressionCalculator.setData2D(data2D);
+            data2D.setExpressionCalculator(expressionCalculator);
+
             validateData();
 
         } catch (Exception e) {

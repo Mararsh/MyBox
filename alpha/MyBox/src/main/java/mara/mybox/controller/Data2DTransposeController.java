@@ -68,7 +68,9 @@ public class Data2DTransposeController extends BaseData2DHandleController {
             @Override
             protected boolean handle() {
                 data2D.setTask(task);
+                data2D.startExpressionService(task);
                 outputData = data2D.allRows(checkedColsIndices, showRowNumber());
+                data2D.stopExpressionService();
                 return transpose();
             }
 
@@ -84,6 +86,7 @@ public class Data2DTransposeController extends BaseData2DHandleController {
             @Override
             protected void finalAction() {
                 super.finalAction();
+                data2D.stopExpressionService();
                 data2D.setTask(null);
                 task = null;
             }

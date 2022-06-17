@@ -212,7 +212,6 @@ public class Data2DSetStylesController extends BaseSysTableController<Data2DStyl
             };
             tableController.statusNotify.addListener(tableStatusListener);
 
-            filterController.setParameters(tableController.data2D);
             filterController.tipsView.setVisible(false);
 
             sourceChanged();
@@ -500,6 +499,7 @@ public class Data2DSetStylesController extends BaseSysTableController<Data2DStyl
     public void reloadDataPage() {
         if (tableController.checkBeforeNextAction()) {
             tableController.dataController.goPage();
+            tableController.requestMouse();
         }
     }
 

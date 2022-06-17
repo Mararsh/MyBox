@@ -33,7 +33,7 @@ import org.apache.commons.csv.CSVRecord;
 public class Data2DSpliceController extends BaseData2DController {
 
     @FXML
-    protected ControlData2DSource dataAController, dataBController;
+    protected BaseData2DSourceController dataAController, dataBController;
     @FXML
     protected RadioButton horizontalRadio, aRadio, bRadio, longerRadio, shorterRadio;
     @FXML
@@ -90,15 +90,19 @@ public class Data2DSpliceController extends BaseData2DController {
     @Override
     public void okAction() {
         if (dataAController.data2D == null || !dataAController.data2D.hasData()) {
-            popError(message("NoData") + ": " + message("DataA"));
+            popError(message("DataA") + ": " + message("NoData"));
+            return;
+        } else if (!dataAController.checkSelections()) {
+            popError(message("DataA") + ": "
+                    + (dataAController.error != null ? dataAController.error : message("SelectToHanle")));
             return;
         }
         if (dataBController.data2D == null || !dataBController.data2D.hasData()) {
-            popError(message("NoData") + ": " + message("DataB"));
+            popError(message("DataB") + ": " + message("NoData"));
             return;
-        }
-        if (!dataAController.checkSelections() || !dataBController.checkSelections()) {
-            popError(message("SelectToHanle"));
+        } else if (!dataBController.checkSelections()) {
+            popError(message("DataB") + ": "
+                    + (dataBController.error != null ? dataBController.error : message("SelectToHanle")));
             return;
         }
         if (task != null) {

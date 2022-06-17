@@ -20,7 +20,7 @@ import mara.mybox.value.UserConfig;
 public class Data2DConvertToDataBaseController extends BaseData2DHandleController {
 
     @FXML
-    protected Tab dataTab, logsTab, attributesTab;
+    protected Tab logsTab, attributesTab;
     @FXML
     protected CheckBox importCheck;
     @FXML
@@ -77,6 +77,7 @@ public class Data2DConvertToDataBaseController extends BaseData2DHandleControlle
         attributesController.columnsController.setValues(data2D.columnNames());
     }
 
+    @Override
     public void columnSelected() {
         if (isSettingValues) {
             return;

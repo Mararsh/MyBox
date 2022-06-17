@@ -50,6 +50,7 @@ public class Data2DConvertToDataBaseTask extends Data2DTableCreateController {
     @Override
     public boolean doTask() {
         try ( Connection conn = DerbyBase.getConnection()) {
+            convertController.data2D.startExpressionService(task);
             attributesController.columnIndices = convertController.checkedColsIndices;
             if (!attributesController.createTable(conn)) {
                 return false;
@@ -62,9 +63,11 @@ public class Data2DConvertToDataBaseTask extends Data2DTableCreateController {
                     attributesController.importData(conn, convertController.checkedRowsIndices);
                 }
             }
+            convertController.data2D.stopExpressionService();
             return true;
         } catch (Exception e) {
             updateLogs(e.toString());
+            convertController.data2D.stopExpressionService();
             return false;
         }
 
@@ -87,6 +90,7 @@ public class Data2DConvertToDataBaseTask extends Data2DTableCreateController {
             convertController.dataVBox.setDisable(false);
             convertController.filterVBox.setDisable(false);
             convertController.attributesBox.setDisable(false);
+            convertController.data2D.stopExpressionService();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

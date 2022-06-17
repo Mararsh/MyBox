@@ -18,6 +18,7 @@ import mara.mybox.db.data.Data2DStyle;
 import mara.mybox.db.table.TableData2DStyle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.Languages.message;
 
@@ -359,13 +360,14 @@ public abstract class Data2D_Edit extends Data2D_Data {
         filter
      */
     public boolean needFilter() {
-        return !emptyFilter();
+        return expressionCalculator != null
+                && expressionCalculator.needFilter();
     }
 
-    public boolean emptyFilter() {
-        return expressionCalculator == null
-                || expressionCalculator.filterScript == null
-                || expressionCalculator.filterScript.isBlank();
+    public void startFilter() {
+        if (expressionCalculator != null) {
+            expressionCalculator.startFilter();
+        }
     }
 
     public boolean calculateTableRowExpression(String script, List<String> tableRow, long tableRowNumber) {
@@ -374,13 +376,29 @@ public abstract class Data2D_Edit extends Data2D_Data {
     }
 
     public boolean calculateDataRowExpression(String script, List<String> dataRow, long dataRowNumber) {
-        return expressionCalculator == null
-                || expressionCalculator.calculateDataRowExpression(script, dataRow, dataRowNumber);
+        if (expressionCalculator == null) {
+            return true;
+        }
+        if (expressionCalculator.calculateDataRowExpression(script, dataRow, dataRowNumber)) {
+            error = null;
+            return true;
+        } else {
+            error = expressionCalculator.getError();
+            return false;
+        }
     }
 
     public boolean filterDataRow(List<String> dataRow, long dataRowIndex) {
-        return expressionCalculator == null
-                || expressionCalculator.filterDataRow(dataRow, dataRowIndex);
+        if (expressionCalculator == null) {
+            return true;
+        }
+        if (expressionCalculator.filterDataRow(dataRow, dataRowIndex)) {
+            error = null;
+            return true;
+        } else {
+            error = expressionCalculator.getError();
+            return false;
+        }
     }
 
     public boolean filterPassed() {
@@ -388,8 +406,25 @@ public abstract class Data2D_Edit extends Data2D_Data {
                 || expressionCalculator.filterPassed;
     }
 
+    public boolean filterReachMaxFilterPassed() {
+        return expressionCalculator != null
+                && expressionCalculator.reachMaxFilterPassed();
+    }
+
     public String getExpressionResult() {
         return expressionCalculator == null ? null : expressionCalculator.expressionResult;
+    }
+
+    public void startExpressionService(SingletonTask task) {
+        if (needFilter()) {
+            expressionCalculator.startService(task);
+        }
+    }
+
+    public void stopExpressionService() {
+        if (expressionCalculator != null) {
+            expressionCalculator.stopService();
+        }
     }
 
     /*

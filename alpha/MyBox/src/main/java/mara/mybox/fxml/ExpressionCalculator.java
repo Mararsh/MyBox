@@ -21,6 +21,7 @@ public class ExpressionCalculator {
     public WebEngine webEngine;
     public FindReplaceString findReplace;
     public String expression, expressionResult, error, filterScript;
+    public long filterPassedNumber, maxFilterPassed;
     public Data2D data2D;
     public boolean filterReversed, filterPassed, stopped;
     public SingletonTask task;
@@ -49,8 +50,7 @@ public class ExpressionCalculator {
             }
             return true;
         } catch (Exception e) {
-            error = e.toString();
-            MyBoxLog.error(error);
+            handleError(e);
             return false;
         }
     }
@@ -65,12 +65,25 @@ public class ExpressionCalculator {
     }
 
     public boolean calculateDataRowExpression(String script, List<String> dataRow, long dataRowNumber) {
-        return calculateExpression(dataRowExpression(script, dataRow, dataRowNumber));
+        try {
+            if (task == null || task.isQuit()) {
+                return calculateExpression(dataRowExpression(script, dataRow, dataRowNumber));
+            }
+            synchronized (expressionLock) {
+                this.expression = dataRowExpression(script, dataRow, dataRowNumber);
+                expressionLock.notify();
+                expressionLock.wait();
+            }
+        } catch (Exception e) {
+            handleError(e);
+            return false;
+        }
+        return true;
     }
 
     public boolean validateExpression(String script, boolean allPages) {
         try {
-            error = null;
+            handleError(null);
             if (script == null || script.isBlank()) {
                 return true;
             }
@@ -79,17 +92,30 @@ public class ExpressionCalculator {
                 row.add("0");
             }
             if (allPages) {
-                return calculateDataRowExpression(script, row, 1);
+                return calculateExpression(dataRowExpression(script, row, 1));
             } else {
                 row.add(0, "1");
                 return calculateTableRowExpression(script, row, 0);
             }
         } catch (Exception e) {
-            error = e.toString();
-            MyBoxLog.error(error);
+            handleError(e);
             return false;
         }
     }
+
+    public void handleError(Exception e) {
+        error = e == null ? null : e.toString();
+        if (data2D != null) {
+            data2D.setError(error);
+        }
+        if (task != null) {
+            task.setError(error);
+        }
+        if (e != null) {
+            MyBoxLog.debug(error);
+        }
+    }
+
 
     /*
         expression
@@ -114,7 +140,7 @@ public class ExpressionCalculator {
             }
             return filledScript;
         } catch (Exception e) {
-            error = e.toString();
+            handleError(e);
             return null;
         }
     }
@@ -140,7 +166,7 @@ public class ExpressionCalculator {
                     tableRowNumber >= 0 ? (tableRowNumber + 1) + "" : message("NoTableRowNumberWhenAllPages"));
             return filledScript;
         } catch (Exception e) {
-            error = e.toString();
+            handleError(e);
             return null;
         }
     }
@@ -148,6 +174,19 @@ public class ExpressionCalculator {
     /*
         filter
      */
+    public boolean needFilter() {
+        return (filterScript != null && !filterScript.isBlank())
+                || maxFilterPassed > 0;
+    }
+
+    public void startFilter() {
+        filterPassedNumber = 0;
+    }
+
+    public boolean reachMaxFilterPassed() {
+        return maxFilterPassed > 0 && filterPassedNumber > maxFilterPassed;
+    }
+
     public boolean filterTableRow(List<String> tableRow, long tableRowIndex) {
         return filterTableRow(filterScript, tableRow, tableRowIndex);
     }
@@ -155,12 +194,16 @@ public class ExpressionCalculator {
     public boolean filterTableRow(String script, List<String> tableRow, long tableRowIndex) {
         if (script == null || script.isBlank()) {
             filterPassed = true;
+            filterPassedNumber++;
             return true;
         }
         filterPassed = calculateTableRowExpression(script, tableRow, tableRowIndex)
                 && "true".equals(expressionResult);
         if (filterReversed) {
             filterPassed = !filterPassed;
+        }
+        if (filterPassed) {
+            filterPassedNumber++;
         }
         return filterPassed;
     }
@@ -178,15 +221,27 @@ public class ExpressionCalculator {
             }
             if (script == null || script.isBlank()) {
                 filterPassed = true;
+                filterPassedNumber++;
                 return true;
             }
-            filterPassed = dataRowFilter(dataRowExpression(script, dataRow, dataRowIndex));
+            if (task == null || task.isQuit()) {
+                return calculateExpression(dataRowExpression(script, dataRow, dataRowIndex));
+            }
+            synchronized (expressionLock) {
+                expression = dataRowExpression(script, dataRow, dataRowIndex);
+                expressionLock.notify();
+                expressionLock.wait();
+                filterPassed = "true".equals(expressionResult);
+                expressionResult = null;
+            }
             if (filterReversed) {
                 filterPassed = !filterPassed;
             }
         } catch (Exception e) {
-            error = e.toString();
-            MyBoxLog.error(error);
+            handleError(e);
+        }
+        if (filterPassed) {
+            filterPassedNumber++;
         }
         return filterPassed;
     }
@@ -194,59 +249,49 @@ public class ExpressionCalculator {
     /*
         task
      */
-    public void loop(SingletonTask inTask) {
-        stopped = false;
-        task = inTask;
-        if (task == null || task.isQuit()) {
-            return;
-        }
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    while (!stopped && data2D != null && task != null && !task.isQuit()) {
-                        synchronized (expressionLock) {
-                            if (expression != null) {
-                                calculateExpression();
+    public void startService(SingletonTask inTask) {
+        try {
+            stopped = true;
+            task = inTask;
+            startFilter();
+            if (task == null || task.isQuit()) {
+                return;
+            }
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        stopped = false;
+                        while (!stopped && data2D != null && task != null && !task.isQuit()) {
+                            synchronized (expressionLock) {
+                                if (expression != null) {
+                                    calculateExpression();
+                                }
                                 expression = null;
                                 expressionLock.notify();
+                                expressionLock.wait();
                             }
-                            expressionLock.wait();
                         }
+                    } catch (Exception e) {
+                        error = e.toString();
+                        if (task != null) {
+                            task.setError(error);
+                        }
+                        MyBoxLog.debug(e);
                     }
-                } catch (Exception e) {
-                    error = e.toString();
-                    if (task != null) {
-                        task.setError(error);
-                    }
-                    MyBoxLog.error(e);
+                    stopService();
                 }
-                stop();
-            }
-        });
-    }
-
-    public boolean dataRowFilter(String expression) {
-        filterPassed = false;
-        try {
+            });
             synchronized (expressionLock) {
-                this.expression = expression;
-                expressionLock.notify();
+                expression = null;
                 expressionLock.wait();
-                filterPassed = "true".equals(expressionResult);
-                expressionResult = null;
             }
         } catch (Exception e) {
-            error = e.toString();
-            if (task != null) {
-                task.setError(error);
-            }
-            MyBoxLog.error(error);
+            handleError(e);
         }
-        return filterPassed;
     }
 
-    public void stop() {
+    public void stopService() {
         stopped = true;
         task = null;
         synchronized (expressionLock) {
@@ -270,6 +315,16 @@ public class ExpressionCalculator {
 
     public ExpressionCalculator setFilterScript(String filterScript) {
         this.filterScript = filterScript;
+        return this;
+    }
+
+    public ExpressionCalculator setFilterPassedNumber(long filterPassedNumber) {
+        this.filterPassedNumber = filterPassedNumber;
+        return this;
+    }
+
+    public ExpressionCalculator setMaxFilterPassed(long maxFilterPassed) {
+        this.maxFilterPassed = maxFilterPassed;
         return this;
     }
 
@@ -297,6 +352,14 @@ public class ExpressionCalculator {
 
     public String getError() {
         return error;
+    }
+
+    public long getMaxFilterPassed() {
+        return maxFilterPassed;
+    }
+
+    public long getFilterPassedNumber() {
+        return filterPassedNumber;
     }
 
 }

@@ -259,6 +259,8 @@ public class DataFileCSV extends DataFileText {
                 }
                 final Random random = new Random();
                 rowIndex = 0;
+                boolean needSetValue;
+                startFilter();
                 while (iterator.hasNext() && task != null && !task.isCancelled()) {
                     try {
                         CSVRecord record = iterator.next();
@@ -266,7 +268,9 @@ public class DataFileCSV extends DataFileText {
                             continue;
                         }
                         List<String> values = record.toList();
-                        if (filterDataRow(values, ++rowIndex) && script != null) {
+                        filterDataRow(values, ++rowIndex);
+                        needSetValue = filterPassed() && !filterReachMaxFilterPassed();
+                        if (needSetValue && script != null) {
                             calculateDataRowExpression(script, values, rowIndex);
                             if (error != null) {
                                 if (errorContinue) {
@@ -279,7 +283,7 @@ public class DataFileCSV extends DataFileText {
                         }
                         List<String> row = new ArrayList<>();
                         for (int i = 0; i < columns.size(); i++) {
-                            if (filterPassed()&& cols.contains(i)) {
+                            if (needSetValue && cols.contains(i)) {
                                 if (isBlank) {
                                     row.add("");
                                 } else if (isRandom) {
@@ -332,6 +336,7 @@ public class DataFileCSV extends DataFileText {
                 }
                 if (needFilter()) {
                     rowIndex = 0;
+                    startFilter();
                     while (iterator.hasNext() && task != null && !task.isCancelled()) {
                         try {
                             CSVRecord record = iterator.next();
@@ -347,7 +352,7 @@ public class DataFileCSV extends DataFileText {
                                     return false;
                                 }
                             }
-                            if (filterPassed()) {
+                            if (filterPassed() && !filterReachMaxFilterPassed()) {
                                 continue;
                             }
                             List<String> row = new ArrayList<>();

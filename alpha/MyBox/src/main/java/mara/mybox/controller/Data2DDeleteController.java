@@ -44,6 +44,8 @@ public class Data2DDeleteController extends BaseData2DHandleController {
             tableController.tableData.setAll(data);
             tableController.isSettingValues = false;
             tableController.tableChanged(true);
+            tableController.requestMouse();
+            tabPane.getSelectionModel().select(dataTab);
             popDone();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -55,7 +57,7 @@ public class Data2DDeleteController extends BaseData2DHandleController {
         if (!tableController.checkBeforeNextAction()) {
             return;
         }
-        if (isAllPages() && data2D.emptyFilter()) {
+        if (isAllPages() && !data2D.needFilter()) {
             if (!PopTools.askSure(this, baseTitle, message("SureDeleteAll"))) {
                 return;
             }
@@ -70,7 +72,10 @@ public class Data2DDeleteController extends BaseData2DHandleController {
                         tableController.dataController.backupController.addBackup(task, data2D.getFile());
                     }
                     data2D.setTask(task);
-                    return data2D.delete(errorContinueCheck.isSelected());
+                    data2D.startExpressionService(task);
+                    ok = data2D.delete(errorContinueCheck.isSelected());
+                    data2D.stopExpressionService();
+                    return ok;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -82,11 +87,14 @@ public class Data2DDeleteController extends BaseData2DHandleController {
                 popDone();
                 tableController.dataSizeLoaded = false;
                 tableController.dataController.goPage();
+                tableController.requestMouse();
+                tabPane.getSelectionModel().select(dataTab);
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
+                data2D.stopExpressionService();
                 data2D.setTask(null);
                 task = null;
             }

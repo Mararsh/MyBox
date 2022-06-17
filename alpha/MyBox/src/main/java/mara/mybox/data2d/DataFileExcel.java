@@ -516,6 +516,8 @@ public class DataFileExcel extends DataFile {
                 }
                 Random random = new Random();
                 rowIndex = 0;
+                boolean needSetValue;
+                startFilter();
                 while (iterator.hasNext() && task != null && !task.isCancelled()) {
                     Row sourceRow = iterator.next();
                     if (sourceRow == null) {
@@ -526,7 +528,9 @@ public class DataFileExcel extends DataFile {
                     for (int c = sourceRow.getFirstCellNum(); c < sourceRow.getLastCellNum(); c++) {
                         values.add(MicrosoftDocumentTools.cellString(sourceRow.getCell(c)));
                     }
-                    if (filterDataRow(values, ++rowIndex) && script != null) {
+                    filterDataRow(values, ++rowIndex);
+                    needSetValue = filterPassed() && !filterReachMaxFilterPassed();
+                    if (needSetValue && script != null) {
                         calculateDataRowExpression(script, values, rowIndex);
                         if (error != null) {
                             if (errorContinue) {
@@ -539,7 +543,7 @@ public class DataFileExcel extends DataFile {
                     }
                     for (int c = sourceRow.getFirstCellNum(); c < sourceRow.getLastCellNum(); c++) {
                         String v;
-                        if (filterPassed()&& cols.contains(c)) {
+                        if (needSetValue && cols.contains(c)) {
                             if (isBlank) {
                                 v = "";
                             } else if (isRandom) {
@@ -616,6 +620,7 @@ public class DataFileExcel extends DataFile {
                 }
                 if (needFilter()) {
                     rowIndex = 0;
+                    startFilter();
                     while (iterator.hasNext() && task != null && !task.isCancelled()) {
                         Row sourceRow = iterator.next();
                         if (sourceRow == null) {
@@ -635,7 +640,7 @@ public class DataFileExcel extends DataFile {
                                 return false;
                             }
                         }
-                        if (filterPassed()) {
+                        if (filterPassed() && !filterReachMaxFilterPassed()) {
                             continue;
                         }
                         for (int c = sourceRow.getFirstCellNum(); c < sourceRow.getLastCellNum(); c++) {

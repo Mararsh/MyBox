@@ -29,13 +29,15 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-9-4
  * @License Apache License Version 2.0
  */
-public abstract class BaseData2DHandleController extends ControlData2DSource {
+public abstract class BaseData2DHandleController extends BaseData2DSourceController {
 
     protected List<List<String>> outputData;
     protected List<Data2DColumn> outputColumns;
     protected int scale, defaultScale = 2;
     protected ObjectType objectType;
 
+    @FXML
+    protected Tab dataTab;
     @FXML
     protected ControlData2DTarget targetController;
     @FXML
@@ -160,13 +162,6 @@ public abstract class BaseData2DHandleController extends ControlData2DSource {
                 }
             });
 
-            filterController.scriptInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    checkOptions();
-                }
-            });
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -209,19 +204,13 @@ public abstract class BaseData2DHandleController extends ControlData2DSource {
         if (isSettingValues) {
             return true;
         }
-        if (data2D == null) {
-            okButton.setDisable(true);
-            return false;
-        }
         if (infoLabel != null) {
             infoLabel.setText("");
         }
         if (!checkSelections()) {
-            if (data2D.getError() != null) {
-                infoLabel.setText(message("Invalid") + ": " + message("RowFilter") + "\n"
-                        + data2D.getError());
-            } else if (infoLabel != null) {
-                infoLabel.setText(message("SelectToHandle"));
+            MyBoxLog.console("error:" + error);
+            if (infoLabel != null) {
+                infoLabel.setText(error != null ? error : message("SelectToHandle"));
             }
             okButton.setDisable(true);
             return false;
@@ -269,7 +258,9 @@ public abstract class BaseData2DHandleController extends ControlData2DSource {
             @Override
             protected boolean handle() {
                 data2D.setTask(task);
+                data2D.startExpressionService(task);
                 csvFile = generatedFile();
+                data2D.stopExpressionService();
                 if (csvFile == null) {
                     return false;
                 }
@@ -286,6 +277,7 @@ public abstract class BaseData2DHandleController extends ControlData2DSource {
             @Override
             protected void finalAction() {
                 super.finalAction();
+                data2D.stopExpressionService();
                 data2D.setTask(null);
                 task = null;
             }
@@ -306,7 +298,10 @@ public abstract class BaseData2DHandleController extends ControlData2DSource {
             protected boolean handle() {
                 try {
                     data2D.setTask(task);
-                    return handleRows();
+                    data2D.startExpressionService(task);
+                    ok = handleRows();
+                    data2D.stopExpressionService();
+                    return ok;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -326,6 +321,7 @@ public abstract class BaseData2DHandleController extends ControlData2DSource {
             protected void finalAction() {
                 super.finalAction();
                 data2D.setTask(null);
+                data2D.stopExpressionService();
                 task = null;
                 if (targetController != null) {
                     targetController.refreshControls();
@@ -406,6 +402,7 @@ public abstract class BaseData2DHandleController extends ControlData2DSource {
             tableController.tableView.refresh();
             tableController.isSettingValues = false;
             tableController.tableChanged(true);
+            tableController.requestMouse();
             popDone();
             return true;
         } catch (Exception e) {

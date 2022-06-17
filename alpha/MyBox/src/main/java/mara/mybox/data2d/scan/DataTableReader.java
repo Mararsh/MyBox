@@ -94,7 +94,7 @@ public class DataTableReader extends Data2DReader {
         String sql = "SELECT * FROM " + readerTable.getSheet();
         try ( PreparedStatement statement = conn.prepareStatement(sql);
                  ResultSet results = statement.executeQuery()) {
-            while (results.next()) {
+            while (results.next() && !readerStopped()) {
                 makeRecord(tableData2D.readData(results));
                 handleRecord();
                 rowIndex++;

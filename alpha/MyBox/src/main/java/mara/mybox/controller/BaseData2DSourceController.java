@@ -13,6 +13,8 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ExpressionCalculator;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -20,7 +22,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-10-18
  * @License Apache License Version 2.0
  */
-public class ControlData2DSource extends ControlData2DLoad {
+public class BaseData2DSourceController extends ControlData2DLoad {
 
     protected ControlData2DEditTable tableController;
     protected List<Integer> checkedRowsIndices, checkedColsIndices;
@@ -98,9 +100,9 @@ public class ControlData2DSource extends ControlData2DLoad {
             };
             tableController.statusNotify.addListener(tableStatusListener);
 
-            filterController.setParameters(tableController.data2D);
-
             tableView.requestFocus();
+
+            expressionCalculator.setWebEngine(tableController.dataController.viewController.htmlController.webEngine);
 
             sourceChanged();
 
@@ -136,7 +138,9 @@ public class ControlData2DSource extends ControlData2DLoad {
             pagesNumber = tableController.pagesNumber;
             dataSize = tableController.dataSize;
             dataSizeLoaded = true;
-            filterController.data2D = data2D;
+            data2D.setExpressionCalculator(expressionCalculator);
+            expressionCalculator.setData2D(data2D);
+            filterController.setData2D(data2D);
             isSettingValues = false;
             refreshControls();
             notifyLoaded();
@@ -233,24 +237,31 @@ public class ControlData2DSource extends ControlData2DLoad {
         status
      */
     public boolean checkSelections() {
-        if (data2D == null) {
+        if (!checkRowFilter() || !checkedRows() || !checkColumns()) {
             return false;
         }
-        if (!checkRowFilter()) {
+        if ((allPagesRadio.isSelected() || (checkedRowsIndices != null && !checkedRowsIndices.isEmpty()))
+                && (noColumnSelection || (checkedColsIndices != null && !checkedColsIndices.isEmpty()))) {
+            return true;
+        } else {
+            error = message("SelectToHandle");
             return false;
         }
-        checkedRows();
-        checkColumns();
-        return (allPagesRadio.isSelected() || (checkedRowsIndices != null && !checkedRowsIndices.isEmpty()))
-                && (noColumnSelection || (checkedColsIndices != null && !checkedColsIndices.isEmpty()));
+
     }
 
     public boolean checkRowFilter() {
-        if (data2D == null) {
+        error = null;
+        if (data2D == null || !data2D.hasData()) {
+            error = message("InvalidData");
             return false;
         }
-        data2D.setError(null);
-        return filterController.checkExpression(isAllPages());
+        if (!filterController.checkExpression(isAllPages())) {
+            error = filterController.error;
+            return false;
+        } else {
+            return true;
+        }
     }
 
     public boolean isAllPages() {
@@ -339,6 +350,7 @@ public class ControlData2DSource extends ControlData2DLoad {
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
+            error = e.toString();
             return false;
         }
     }
@@ -370,30 +382,41 @@ public class ControlData2DSource extends ControlData2DLoad {
         rows
      */
     // If none selected then select all
-    private void checkedRows() {
+    private boolean checkedRows() {
         try {
             checkedRowsIndices = new ArrayList<>();
             if (allPagesRadio.isSelected()) {
-                return;
+                return true;
             }
+            ExpressionCalculator calculator = data2D.getExpressionCalculator();
+            calculator.startFilter();
             List<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
             if (currentPageRadio.isSelected() || selected == null || selected.isEmpty()) {
                 for (int i = 0; i < tableData.size(); i++) {
-                    if (!data2D.getExpressionCalculator().filterTableRow(tableData.get(i), i)) {
+                    if (!calculator.filterTableRow(tableData.get(i), i)) {
                         continue;
+                    }
+                    if (calculator.reachMaxFilterPassed()) {
+                        break;
                     }
                     checkedRowsIndices.add(i);
                 }
             } else {
                 for (int i : selected) {
-                    if (!data2D.getExpressionCalculator().filterTableRow(tableData.get(i), i)) {
+                    if (!calculator.filterTableRow(tableData.get(i), i)) {
                         continue;
+                    }
+                    if (calculator.reachMaxFilterPassed()) {
+                        break;
                     }
                     checkedRowsIndices.add(i);
                 }
             }
+            return true;
         } catch (Exception e) {
+            error = e.toString();
             MyBoxLog.debug(e);
+            return false;
         }
     }
 

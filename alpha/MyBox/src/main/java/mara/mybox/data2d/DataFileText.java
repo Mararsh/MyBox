@@ -337,12 +337,16 @@ public class DataFileText extends DataFile {
             }
             Random random = new Random();
             rowIndex = 0;
+            boolean needSetValue;
+            startFilter();
             while ((line = reader.readLine()) != null && task != null && !task.isCancelled()) {
                 List<String> record = parseFileLine(line);
                 if (record == null || record.isEmpty()) {
                     continue;
                 }
-                if (filterDataRow(record, ++rowIndex) && script != null) {
+                filterDataRow(record, ++rowIndex);
+                needSetValue = filterPassed() && !filterReachMaxFilterPassed();
+                if (needSetValue && script != null) {
                     calculateDataRowExpression(script, record, rowIndex);
                     if (error != null) {
                         if (errorContinue) {
@@ -355,7 +359,7 @@ public class DataFileText extends DataFile {
                 }
                 List<String> row = new ArrayList<>();
                 for (int i = 0; i < columns.size(); i++) {
-                    if (filterPassed() && cols.contains(i)) {
+                    if (needSetValue && cols.contains(i)) {
                         if (isBlank) {
                             row.add("");
                         } else if (isRandom) {
@@ -402,6 +406,7 @@ public class DataFileText extends DataFile {
             if (needFilter()) {
                 String line;
                 rowIndex = 0;
+                startFilter();
                 while ((line = reader.readLine()) != null && task != null && !task.isCancelled()) {
                     List<String> record = parseFileLine(line);
                     if (record == null || record.isEmpty()) {
@@ -416,7 +421,7 @@ public class DataFileText extends DataFile {
                             return false;
                         }
                     }
-                    if (filterPassed()) {
+                    if (filterPassed() && !filterReachMaxFilterPassed()) {
                         continue;
                     }
                     List<String> row = new ArrayList<>();
