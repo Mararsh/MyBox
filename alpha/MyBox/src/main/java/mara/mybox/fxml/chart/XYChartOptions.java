@@ -42,6 +42,7 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
             dotted;
     protected LabelLocation labelLocation;
     protected Side categorySide, numberSide;
+    protected Sort sort;
     protected double barGap, categoryGap;
     protected String bubbleStyle;
 
@@ -51,6 +52,10 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
 
     public static enum ChartCoordinate {
         Cartesian, LogarithmicE, Logarithmic10, SquareRoot
+    }
+
+    public static enum Sort {
+        None, X, Y
     }
 
     public static final String DefaultBubbleStyle
@@ -692,6 +697,14 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
 
     public void setResidualChart(ResidualChart residualChart) {
         this.residualChart = residualChart;
+    }
+
+    public Sort getSort() {
+        return sort;
+    }
+
+    public void setSort(Sort sort) {
+        this.sort = sort;
     }
 
 }

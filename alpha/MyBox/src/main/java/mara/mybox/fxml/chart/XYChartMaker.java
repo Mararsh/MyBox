@@ -4,6 +4,7 @@ import java.util.List;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.text.Text;
@@ -180,6 +181,13 @@ public class XYChartMaker<X, Y> extends XYChartOptions<X, Y> {
     public boolean makeLineChart() {
         try {
             lineChart = new LabeledLineChart(xAxis, yAxis).setMaker(this);
+            if (sort == Sort.X) {
+                lineChart.setAxisSortingPolicy​(LineChart.SortingPolicy.X_AXIS);
+            } else if (sort == Sort.X) {
+                lineChart.setAxisSortingPolicy​(LineChart.SortingPolicy.Y_AXIS);
+            } else {
+                lineChart.setAxisSortingPolicy​(LineChart.SortingPolicy.NONE);
+            }
             xyChart = lineChart;
             return true;
         } catch (Exception e) {

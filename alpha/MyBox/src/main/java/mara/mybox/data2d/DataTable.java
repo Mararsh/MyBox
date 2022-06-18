@@ -10,7 +10,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import mara.mybox.db.DerbyBase;
@@ -25,13 +24,9 @@ import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DoubleTools;
-import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TmpFileTools;
 import static mara.mybox.value.Languages.message;
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.math3.stat.Frequency;
 
 /**
@@ -814,86 +809,6 @@ public class DataTable extends Data2D {
             MyBoxLog.error(e);
             return false;
         }
-    }
-
-    public static DataTable toTable(SingletonTask task, DataFileCSV csvData, boolean dropExisted) {
-        if (task == null || csvData == null) {
-            return null;
-        }
-        File csvFile = csvData.getFile();
-        if (csvFile == null || !csvFile.exists() || csvFile.length() == 0) {
-            return null;
-        }
-        DataTable dataTable = new DataTable();
-        try ( Connection conn = DerbyBase.getConnection()) {
-            List<Data2DColumn> columns = csvData.getColumns();
-            if (columns == null || columns.isEmpty()) {
-                csvData.readColumns(conn);
-                columns = csvData.getColumns();
-            }
-            if (columns == null || columns.isEmpty()) {
-                return null;
-            }
-            TableData2D tableData2D = dataTable.getTableData2D();
-            String tableName = DerbyBase.fixedIdentifier(FileNameTools.prefix(csvFile.getName()));
-            if (tableData2D.exist(conn, tableName)) {
-                if (!dropExisted) {
-                    return null;
-                }
-                dataTable.getTableData2DDefinition().deleteUserTable(conn, tableName);
-                conn.commit();
-            }
-            if (!dataTable.createTable(task, conn, csvData, tableName)) {
-                return null;
-            }
-            columns = dataTable.getColumns();
-            if (columns == null || columns.isEmpty()) {
-                return null;
-            }
-            File validFile = FileTools.removeBOM(csvFile);
-            try ( CSVParser parser = CSVParser.parse(validFile, csvData.getCharset(), csvData.cvsFormat())) {
-                Iterator<CSVRecord> iterator = parser.iterator();
-                int colsNumber = columns.size() - 1;
-                int count = 0;
-                conn.setAutoCommit(false);
-                while (iterator.hasNext() && task != null && !task.isCancelled()) {
-                    try {
-                        CSVRecord record = iterator.next();
-                        if (record != null) {
-                            Data2DRow data2DRow = tableData2D.newRow();
-                            for (int i = 0; i < Math.min(colsNumber, record.size()); i++) {
-                                Data2DColumn column = columns.get(i + 1);
-                                String name = column.getColumnName();
-                                Object value = column.fromString(record.get(i));
-                                if (value != null) {
-                                    data2DRow.setColumnValue(name, value);
-                                }
-                            }
-                            tableData2D.insertData(conn, data2DRow);
-                            if (++count % DerbyBase.BatchSize == 0) {
-                                conn.commit();
-                            }
-                        }
-                    } catch (Exception e) {  // skip  bad lines
-                        MyBoxLog.error(e);
-                    }
-                }
-                conn.commit();
-            } catch (Exception e) {
-                if (task != null) {
-                    task.setError(e.toString());
-                }
-                MyBoxLog.error(e);
-                return null;
-            }
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return null;
-        }
-        return dataTable;
     }
 
     public static DataFileCSV save(SingletonTask task, ResultSet results, boolean showRowNumber) {

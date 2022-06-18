@@ -33,30 +33,34 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
         try {
             super.initControls();
 
-            maxData = UserConfig.getLong(baseName + "MaxDataNumber", -1);
-            if (maxData > 0) {
-                maxInput.setText(maxData + "");
-            }
-            maxInput.setStyle(null);
-            maxInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    String maxs = maxInput.getText();
-                    if (maxs == null || maxs.isBlank()) {
-                        maxData = -1;
-                        maxInput.setStyle(null);
-                        UserConfig.setLong(baseName + "MaxDataNumber", -1);
-                    } else {
-                        try {
-                            maxData = Long.parseLong(maxs);
+            if (maxInput != null) {
+                maxData = UserConfig.getLong(baseName + "MaxDataNumber", -1);
+                if (maxData > 0) {
+                    maxInput.setText(maxData + "");
+                }
+                maxInput.setStyle(null);
+                maxInput.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue ov, String oldValue, String newValue) {
+                        String maxs = maxInput.getText();
+                        if (maxs == null || maxs.isBlank()) {
+                            maxData = -1;
                             maxInput.setStyle(null);
-                            UserConfig.setLong(baseName + "MaxDataNumber", maxData);
-                        } catch (Exception e) {
-                            maxInput.setStyle(UserConfig.badStyle());
+                            UserConfig.setLong(baseName + "MaxDataNumber", -1);
+                        } else {
+                            try {
+                                maxData = Long.parseLong(maxs);
+                                maxInput.setStyle(null);
+                                UserConfig.setLong(baseName + "MaxDataNumber", maxData);
+                            } catch (Exception e) {
+                                maxInput.setStyle(UserConfig.badStyle());
+                            }
                         }
                     }
-                }
-            });
+                });
+            } else {
+                maxData = -1;
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -68,7 +72,7 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
         if (!super.checkExpression(allPages)) {
             return false;
         }
-        if (UserConfig.badStyle().equals(maxInput.getStyle())) {
+        if (maxInput != null && UserConfig.badStyle().equals(maxInput.getStyle())) {
             error = message("InvalidParameter") + ": " + message("MaxDataTake");
             return false;
         }

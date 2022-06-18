@@ -51,7 +51,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
     @FXML
     protected HBox barGapBox, categoryGapBox, lineWidthBox;
     @FXML
-    protected ToggleGroup titleSideGroup, labelLocaionGroup,
+    protected ToggleGroup titleSideGroup, labelLocaionGroup, sortGroup,
             categorySideGroup, categoryCoordinateGroup, categoryValuesGroup,
             numberCoordinateGroup, numberSideGroup, sizeCoordinateGroup;
     @FXML
@@ -61,7 +61,8 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
     protected RadioButton cartesianRadio, logarithmicERadio, logarithmic10Radio, squareRootRadio,
             categoryStringRadio, categoryNumberRadio, labelLocaionAboveRadio,
             categoryCartesianRadio, categorySquareRootRadio, categoryLogarithmicERadio, categoryLogarithmic10Radio,
-            sizeCartesianRadio, sizeSquareRootRadio, sizeLogarithmicERadio, sizeLogarithmic10Radio;
+            sizeCartesianRadio, sizeSquareRootRadio, sizeLogarithmicERadio, sizeLogarithmic10Radio,
+            sortVertivalRadio, sortHorizontalRadio;
     @FXML
     protected ComboBox<String> labelFontSizeSelector, lineWdithSelector, tickFontSizeSelector,
             categoryFontSizeSelector, categoryTickRotationSelector, barGapSelector, categoryGapSelector,
@@ -172,6 +173,22 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
                 }
             });
 
+//            sortGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+//                @Override
+//                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+//                    if (isSettingValues || newValue == null) {
+//                        return;
+//                    }
+//                    if (sortVertivalRadio.isSelected()) {
+//                        chartMaker.setSort(XYChartOptions.Sort.Y);
+//                    } else if (sortHorizontalRadio.isSelected()) {
+//                        chartMaker.setSort(XYChartOptions.Sort.X);
+//                    } else {
+//                        chartMaker.setSort(XYChartOptions.Sort.None);
+//                    }
+//                    chartController.redraw();
+//                }
+//            });
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

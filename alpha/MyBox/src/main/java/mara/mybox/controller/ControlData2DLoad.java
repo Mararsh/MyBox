@@ -39,6 +39,7 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.tools.DoubleMatrixTools;
+import mara.mybox.tools.FileNameTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -397,7 +398,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                 break;
                             }
                             case DatabaseTable: {
-                                DataTable dataTable = DataTable.toTable(task, csvData, true);
+                                DataTable dataTable = csvData.toTable(task, FileNameTools.prefix(csvData.getFile().getName()), true);
                                 fileData = dataTable;
                                 break;
                             }
