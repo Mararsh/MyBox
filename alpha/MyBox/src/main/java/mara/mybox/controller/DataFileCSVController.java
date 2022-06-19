@@ -11,6 +11,7 @@ import javafx.scene.layout.VBox;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.DataTable;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
@@ -186,9 +187,16 @@ public class DataFileCSVController extends BaseData2DFileController {
         return controller;
     }
 
-    public static DataFileCSVController loadData(DataFileCSV csvData) {
+    public static DataFileCSVController loadCSV(DataFileCSV csvData) {
         DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
         controller.loadCSVData(csvData);
+        controller.requestMouse();
+        return controller;
+    }
+
+    public static DataFileCSVController loadTable(DataTable dataTable) {
+        DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
+        controller.loadTableData(dataTable);
         controller.requestMouse();
         return controller;
     }

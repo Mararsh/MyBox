@@ -2,9 +2,7 @@ package mara.mybox.data2d;
 
 import java.io.File;
 import java.nio.charset.Charset;
-import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import mara.mybox.calculation.DescriptiveStatistic;
 import mara.mybox.calculation.DoubleStatistic;
@@ -12,13 +10,9 @@ import mara.mybox.calculation.Normalization;
 import mara.mybox.calculation.SimpleLinearRegression;
 import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.data2d.scan.Data2DReader;
-import mara.mybox.data2d.scan.Data2DReader.Operation;
-import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
-import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppValues;
@@ -31,7 +25,7 @@ import org.apache.commons.math3.stat.Frequency;
  * @CreateDate 2022-2-25
  * @License Apache License Version 2.0
  */
-public abstract class Data2D_Operations extends Data2D_Edit {
+public abstract class Data2D_Operations extends Data2D_Convert {
 
     public static enum ObjectType {
         Columns, Rows, All
@@ -43,86 +37,8 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         }
         Data2DReader reader = Data2DReader.create(this)
                 .setConvertController(convertController).setCols(cols)
-                .setReaderTask(task).start(Operation.Export);
+                .setReaderTask(task).start(Data2DReader.Operation.Export);
         return reader != null && !reader.isFailed();
-    }
-
-    public DataTable createTable(Connection conn, String targetName, boolean dropExisted) {
-        try {
-            if (conn == null) {
-                return null;
-            }
-            if (targetName == null || targetName.isBlank()) {
-                targetName = "tmp" + new Date().getTime();
-            }
-            if (columns == null || columns.isEmpty()) {
-                readColumns(conn);
-            }
-            if (columns == null || columns.isEmpty()) {
-                return null;
-            }
-            DataTable dataTable = new DataTable();
-            TableData2D tableData2D = dataTable.getTableData2D();
-            String tableName = DerbyBase.fixedIdentifier(targetName);
-            if (tableData2D.exist(conn, tableName)) {
-                if (!dropExisted) {
-                    return null;
-                }
-                dataTable.getTableData2DDefinition().deleteUserTable(conn, tableName);
-                conn.commit();
-            }
-            if (!dataTable.createTable(task, conn, (Data2D) this, tableName)) {
-                return null;
-            }
-            return dataTable;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
-    public long writeTable(Connection conn, TableData2D targetTable, List<Integer> cols) {
-        if (conn == null || targetTable == null || cols == null || cols.isEmpty()) {
-            return -1;
-        }
-        Data2DReader reader = Data2DReader.create(this)
-                .setConn(conn).setTableData2D(targetTable).setCols(cols)
-                .setReaderTask(task).start(Operation.WriteTable);
-        if (reader != null && !reader.isFailed()) {
-            return reader.getCount();
-        } else {
-            return -1;
-        }
-    }
-
-    public long writeTable(Connection conn, TableData2D targetTable) {
-        if (conn == null || targetTable == null || columns == null || columns.isEmpty()) {
-            return -1;
-        }
-        List<Integer> cols = new ArrayList<>();
-        for (int i = 0; i < columns.size(); i++) {
-            cols.add(i);
-        }
-        return writeTable(conn, targetTable, cols);
-    }
-
-    public DataTable toTable(SingletonTask task, String targetName, boolean dropExisted) {
-        try ( Connection conn = DerbyBase.getConnection()) {
-            DataTable dataTable = createTable(conn, targetName, dropExisted);
-            if (dataTable != null) {
-                writeTable(conn, dataTable.getTableData2D());
-            }
-            return dataTable;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return null;
-        }
     }
 
     public List<List<String>> allRows(List<Integer> cols, boolean rowNumber) {

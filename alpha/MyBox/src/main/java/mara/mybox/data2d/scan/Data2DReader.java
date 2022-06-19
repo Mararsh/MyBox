@@ -51,6 +51,7 @@ public abstract class Data2DReader {
     protected double[] colValues;
     protected ControlDataConvert convertController;
     protected Connection conn;
+    protected DataTable dataTable;
     protected TableData2D tableData2D;
     protected DoubleStatistic[] statisticData;
     protected List<Skewness> skewnessList;
@@ -143,7 +144,7 @@ public abstract class Data2DReader {
                 }
                 break;
             case WriteTable:
-                if (cols == null || cols.isEmpty() || conn == null || tableData2D == null) {
+                if (cols == null || cols.isEmpty() || conn == null || dataTable == null) {
                     failed = true;
                     return null;
                 }
@@ -531,16 +532,25 @@ public abstract class Data2DReader {
             int len = record.size();
             for (int col : cols) {
                 if (col >= 0 && col < len) {
-                    Data2DColumn column = data2D.getColumns().get(col);
-                    String name = column.getColumnName();
-                    Object value = column.fromString(record.get(col));
+                    Data2DColumn sourceColumn = data2D.getColumns().get(col);
+                    Object value = sourceColumn.fromString(record.get(col));
                     if (value != null) {
+                        String name = sourceColumn.getColumnName();
+                        if (dataTable.getColumnsMap() != null) {
+                            String tableColumnName = dataTable.getColumnsMap().get(name);
+                            if (tableColumnName != null) {
+                                name = tableColumnName;
+                            }
+                        }
                         data2DRow.setColumnValue(name, value);
                     }
                 }
             }
             if (data2DRow.isEmpty()) {
                 return;
+            }
+            if (includeRowNumber) {
+                data2DRow.setColumnValue(message("SourceRowNumber"), rowIndex + 1);
             }
             tableData2D.insertData(conn, data2DRow);
             if (++count % DerbyBase.BatchSize == 0) {
@@ -1122,6 +1132,9 @@ public abstract class Data2DReader {
                     frequency.clear();
                     break;
             }
+            if (conn != null) {
+                conn.commit();
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
             if (readerTask != null) {
@@ -1222,8 +1235,11 @@ public abstract class Data2DReader {
         return this;
     }
 
-    public Data2DReader setTableData2D(TableData2D tableData2D) {
-        this.tableData2D = tableData2D;
+    public Data2DReader setDataTable(DataTable dataTable) {
+        this.dataTable = dataTable;
+        if (dataTable != null) {
+            tableData2D = dataTable.getTableData2D();
+        }
         return this;
     }
 

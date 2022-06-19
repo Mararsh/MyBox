@@ -13,6 +13,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.DataTable;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
@@ -142,6 +143,13 @@ public abstract class BaseData2DController extends BaseController {
             return;
         }
         loadController.loadCSVData(csvData);
+    }
+
+    public void loadTableData(DataTable dataTable) {
+        if (dataTable == null || loadController == null || !checkBeforeNextAction()) {
+            return;
+        }
+        loadController.loadTableData(dataTable);
     }
 
     public void loadData(List<Data2DColumn> cols, List<List<String>> data) {

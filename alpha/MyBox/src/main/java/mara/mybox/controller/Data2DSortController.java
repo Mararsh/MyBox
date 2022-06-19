@@ -176,22 +176,27 @@ public class Data2DSortController extends BaseData2DHandleController {
 
     @Override
     public DataFileCSV generatedFile() {
-        if (data2D instanceof DataTable) {
-            return ((DataTable) data2D).sort(colsIndices, orderName, descendCheck.isSelected(), showRowNumber());
-        } else {
-            try {
-                List<List<String>> data = data2D.allRows(adjustedCols(), showRowNumber());
-                if (!sort(data)) {
-                    return null;
+        try {
+            DataTable dataTable;
+            List<Integer> cols = new ArrayList<>();
+            if (data2D instanceof DataTable) {
+                dataTable = (DataTable) data2D;
+                cols.addAll(colsIndices);
+            } else {
+                MyBoxLog.console(colsIndices);
+                dataTable = data2D.toTable(task, colsIndices, showRowNumber());
+                for (int i = 0; i < dataTable.getColumns().size(); i++) {
+                    cols.add(i);
                 }
-                return DataFileCSV.save(task, outputColumns, data);
-            } catch (Exception e) {
-                if (task != null) {
-                    task.setError(e.toString());
-                }
-                MyBoxLog.error(e.toString());
-                return null;
+                MyBoxLog.console(cols);
             }
+            return dataTable.sort(task, cols, orderName, descendCheck.isSelected(), showRowNumber());
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return null;
         }
     }
 

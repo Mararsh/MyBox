@@ -24,7 +24,7 @@ public class Data2DConvertToDataBaseTask extends Data2DTableCreateController {
             logsTab = convertController.logsTab;
             attributesTab = convertController.attributesTab;
 
-            attributesController.setParameters(this, convertController.data2D);
+            attributesController.setParameters(this);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

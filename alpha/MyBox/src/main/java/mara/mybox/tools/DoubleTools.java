@@ -16,7 +16,7 @@ import static mara.mybox.value.Languages.message;
 public class DoubleTools {
 
     public static boolean invalidDouble(double value) {
-        return Double.isNaN(value) || value == Double.MAX_VALUE || value == AppValues.InvalidDouble;
+        return Double.isNaN(value) || value == AppValues.InvalidDouble;
     }
 
     public static String percentage(double data, double total) {

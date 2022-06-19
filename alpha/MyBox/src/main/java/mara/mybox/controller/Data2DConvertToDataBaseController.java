@@ -73,8 +73,8 @@ public class Data2DConvertToDataBaseController extends BaseData2DHandleControlle
             return;
         }
         super.sourceChanged();
-        attributesController.nameInput.setText(data2D.shortName());
-        attributesController.columnsController.setValues(data2D.columnNames());
+        attributesController.setData(data2D);
+        attributesController.setColumns(checkedColsIndices);
     }
 
     @Override

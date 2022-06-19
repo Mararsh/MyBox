@@ -71,7 +71,7 @@ public class DataManufactureSaveController extends BaseChildController {
             @Override
             protected void whenSucceeded() {
                 closeStage();
-                DataFileCSV.open(tableController, csvFile, targetController.target);
+                DataFileCSV.openCSV(tableController, csvFile, targetController.target);
                 if (csvFile.isTableChanged()) {
                     tableController.loadDef(csvFile);
                 }

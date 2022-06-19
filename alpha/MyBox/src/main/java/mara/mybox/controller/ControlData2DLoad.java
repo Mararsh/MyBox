@@ -398,6 +398,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                 break;
                             }
                             case DatabaseTable: {
+                                csvData.setTask(task);
                                 DataTable dataTable = csvData.toTable(task, FileNameTools.prefix(csvData.getFile().getName()), true);
                                 fileData = dataTable;
                                 break;
@@ -428,6 +429,73 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             @Override
             protected void whenSucceeded() {
                 loadDef(fileData);
+                if (dataController != null && dataController.manageController != null) {
+                    dataController.manageController.refreshAction();
+                }
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                csvData.setTask(null);
+            }
+        };
+        start(task);
+    }
+
+    public void loadTableData(DataTable dataTable) {
+        if (dataTable == null) {
+            return;
+        }
+        task = new SingletonTask<Void>(this) {
+            private Data2D targetData;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    switch (data2D.getType()) {
+                        case Texts:
+                            targetData = DataTable.toText(task, dataTable);
+                            if (targetData != null) {
+                                recordFileWritten(targetData.getFile(), VisitHistory.FileType.Text);
+                            }
+                            break;
+                        case CSV:
+                            targetData = DataTable.toCSV(task, dataTable);
+                            if (targetData != null) {
+                                recordFileWritten(targetData.getFile(), VisitHistory.FileType.CSV);
+                            }
+                            break;
+                        case Excel: {
+                            targetData = DataTable.toExcel(task, dataTable);
+                            if (targetData != null) {
+                                recordFileWritten(targetData.getFile(), VisitHistory.FileType.Excel);
+                            }
+                            break;
+                        }
+                        case DatabaseTable: {
+                            targetData = dataTable;
+                            break;
+                        }
+                        case MyBoxClipboard: {
+                            targetData = DataTable.toClip(task, dataTable);
+                            break;
+                        }
+                        case Matrix: {
+                            targetData = DataTable.toMatrix(task, dataTable);
+                            break;
+                        }
+                    }
+                    return targetData != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                loadDef(targetData);
                 if (dataController != null && dataController.manageController != null) {
                     dataController.manageController.refreshAction();
                 }

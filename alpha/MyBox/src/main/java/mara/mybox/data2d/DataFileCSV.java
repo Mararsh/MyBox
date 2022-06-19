@@ -523,24 +523,45 @@ public class DataFileCSV extends DataFileText {
         }
     }
 
-    public static void open(BaseController controller, DataFileCSV csvFile, String target) {
+    public static void openCSV(BaseController controller, DataFileCSV csvFile, String target) {
         if (csvFile == null || target == null) {
             return;
         }
         if ("csv".equals(target)) {
-            DataFileCSVController.loadData(csvFile);
+            DataFileCSVController.loadCSV(csvFile);
         } else if ("excel".equals(target)) {
-            DataFileExcelController.loadData(csvFile);
+            DataFileExcelController.loadCSV(csvFile);
         } else if ("texts".equals(target)) {
-            DataFileTextController.loadData(csvFile);
+            DataFileTextController.loadCSV(csvFile);
         } else if ("matrix".equals(target)) {
-            MatricesManageController.loadData(csvFile);
+            MatricesManageController.loadCSV(csvFile);
         } else if ("systemClipboard".equals(target)) {
             TextClipboardTools.copyToSystemClipboard(controller, TextFileTools.readTexts(csvFile.getFile()));
         } else if ("myBoxClipboard".equals(target)) {
-            DataInMyBoxClipboardController.loadData(csvFile);
+            DataInMyBoxClipboardController.loadCSV(csvFile);
         } else if ("table".equals(target)) {
-            DataTablesController.loadData(csvFile);
+            DataTablesController.loadCSV(csvFile);
+        }
+    }
+
+    public static void openDataTable(BaseController controller, DataTable dataTable, String target) {
+        if (dataTable == null || target == null) {
+            return;
+        }
+        if ("csv".equals(target)) {
+            DataFileCSVController.loadTable(dataTable);
+        } else if ("excel".equals(target)) {
+            DataFileExcelController.loadTable(dataTable);
+        } else if ("texts".equals(target)) {
+            DataFileTextController.loadTable(dataTable);
+        } else if ("matrix".equals(target)) {
+            MatricesManageController.loadTable(dataTable);
+        } else if ("systemClipboard".equals(target)) {
+            TextClipboardTools.copyToSystemClipboard(controller, DataTable.toString(null, dataTable));
+        } else if ("myBoxClipboard".equals(target)) {
+            DataInMyBoxClipboardController.loadTable(dataTable);
+        } else if ("table".equals(target)) {
+            DataTablesController.loadTable(dataTable);
         }
     }
 

@@ -71,6 +71,8 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                 }
             });
 
+            filterController.setParameters(this);
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

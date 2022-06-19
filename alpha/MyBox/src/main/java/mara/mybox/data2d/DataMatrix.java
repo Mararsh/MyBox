@@ -1,6 +1,5 @@
 package mara.mybox.data2d;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,7 +10,6 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DCell;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
-import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableData2DCell;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -131,11 +129,6 @@ public class DataMatrix extends Data2D {
         return false;
     }
 
-    @Override
-    public long writeTable(Connection conn, TableData2D tableData2D, List<Integer> cols) {
-        return -1;
-    }
-
     public boolean isSquare() {
         return isValid() && tableColsNumber() == tableRowsNumber();
     }
@@ -213,48 +206,15 @@ public class DataMatrix extends Data2D {
         return count;
     }
 
-    public static DataMatrix toMatrix(SingletonTask task, DataFileCSV csvData) {
-        if (task == null || csvData == null) {
-            return null;
-        }
-        File csvFile = csvData.getFile();
-        if (csvFile == null || !csvFile.exists() || csvFile.length() == 0) {
-            return null;
-        }
-        List<List<String>> data = csvData.allRows(false);
-        List<Data2DColumn> cols = csvData.getColumns();
-        if (cols == null || cols.isEmpty()) {
-            try ( Connection conn = DerbyBase.getConnection()) {
-                csvData.readColumns(conn);
-                cols = csvData.getColumns();
-                if (cols == null || cols.isEmpty()) {
-                    return null;
-                }
-            } catch (Exception e) {
-                if (task != null) {
-                    task.setError(e.toString());
-                }
-                MyBoxLog.error(e);
-                return null;
-            }
-        }
-        DataMatrix matrix = new DataMatrix();
-        if (save(task, matrix, cols, data)) {
-            return matrix;
-        } else {
-            return null;
-        }
-    }
-
     public static boolean save(SingletonTask task, DataMatrix matrix,
-            List<Data2DColumn> cols, List<List<String>> data) {
-        if (matrix == null || cols == null || data == null) {
+            List<Data2DColumn> cols, List<List<String>> rows) {
+        if (matrix == null || cols == null || rows == null) {
             return false;
         }
         TableData2DCell tableData2DCell = matrix.tableData2DCell;
         try ( Connection conn = DerbyBase.getConnection()) {
             matrix.setColsNumber(cols.size());
-            matrix.setRowsNumber(data.size());
+            matrix.setRowsNumber(rows.size());
             Data2D.saveColumns(conn, matrix, cols);
             long did = matrix.getD2did();
             if (did < 0) {
@@ -271,8 +231,8 @@ public class DataMatrix extends Data2D {
             }
             conn.commit();
             conn.setAutoCommit(false);
-            for (int r = 0; r < data.size(); r++) {
-                List<String> row = data.get(r);
+            for (int r = 0; r < rows.size(); r++) {
+                List<String> row = rows.get(r);
                 for (int c = 0; c < row.size(); c++) {
                     double d = toDouble(row.get(c));
                     if (d == 0 || DoubleTools.invalidDouble(d)) {

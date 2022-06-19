@@ -11,17 +11,13 @@ import java.util.Random;
 import mara.mybox.data2d.scan.Data2DReader;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileDeleteTools;
-import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
 import mara.mybox.tools.TmpFileTools;
 import static mara.mybox.value.Languages.message;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -664,80 +660,6 @@ public class DataFileExcel extends DataFile {
             return false;
         }
         return FileTools.rename(tmpFile, file, false);
-    }
-
-    public static DataFileExcel toExcel(SingletonTask task, DataFileCSV csvData) {
-        if (task == null || csvData == null) {
-            return null;
-        }
-        File csvFile = csvData.getFile();
-        if (csvFile == null || !csvFile.exists() || csvFile.length() == 0) {
-            return null;
-        }
-        File excelFile = new File(FileNameTools.replaceSuffix(csvFile.getAbsolutePath(), "xlsx"));
-        boolean targetHasHeader = false;
-        int tcolsNumber = 0, trowsNumber = 0;
-        String targetSheetName = message("Sheet") + "1";
-        File validFile = FileTools.removeBOM(csvFile);
-        try ( CSVParser parser = CSVParser.parse(validFile, csvData.getCharset(), csvData.cvsFormat());
-                 Workbook targetBook = new XSSFWorkbook()) {
-            Sheet targetSheet = targetBook.createSheet(targetSheetName);
-            int targetRowIndex = 0;
-            Iterator<CSVRecord> iterator = parser.iterator();
-            if (iterator != null) {
-                if (csvData.isHasHeader()) {
-                    try {
-                        List<String> names = parser.getHeaderNames();
-                        if (names != null) {
-                            Row targetRow = targetSheet.createRow(targetRowIndex++);
-                            for (int col = 0; col < names.size(); col++) {
-                                Cell targetCell = targetRow.createCell(col, CellType.STRING);
-                                targetCell.setCellValue(names.get(col));
-                            }
-                            tcolsNumber = names.size();
-                            targetHasHeader = true;
-                        }
-                    } catch (Exception e) {  // skip  bad lines
-                        MyBoxLog.error(e);
-                    }
-                }
-                while (iterator.hasNext() && task != null && !task.isCancelled()) {
-                    try {
-                        CSVRecord record = iterator.next();
-                        if (record != null) {
-                            Row targetRow = targetSheet.createRow(targetRowIndex++);
-                            for (int col = 0; col < record.size(); col++) {
-                                Cell targetCell = targetRow.createCell(col, CellType.STRING);
-                                targetCell.setCellValue(record.get(col));
-                            }
-                            trowsNumber++;
-                        }
-                    } catch (Exception e) {  // skip  bad lines
-                        MyBoxLog.error(e);
-                    }
-                }
-                try ( FileOutputStream fileOut = new FileOutputStream(excelFile)) {
-                    targetBook.write(fileOut);
-                }
-                targetBook.close();
-            }
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return null;
-        }
-        if (excelFile != null && excelFile.exists()) {
-            DataFileExcel targetData = new DataFileExcel();
-            targetData.setFile(excelFile).setSheet(targetSheetName)
-                    .setHasHeader(targetHasHeader)
-                    .setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
-            Data2D.saveAttributes(csvData, targetData);
-            return targetData;
-        } else {
-            return null;
-        }
     }
 
     @Override

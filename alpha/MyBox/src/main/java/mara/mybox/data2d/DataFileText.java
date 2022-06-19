@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Random;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.FileCopyTools;
-import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
@@ -443,25 +441,6 @@ public class DataFileText extends DataFile {
             return false;
         }
         return FileTools.rename(tmpFile, file, false);
-    }
-
-    public static DataFileText toText(DataFileCSV csvData) {
-        if (csvData == null) {
-            return null;
-        }
-        File csvFile = csvData.getFile();
-        if (csvFile == null || !csvFile.exists() || csvFile.length() == 0) {
-            return null;
-        }
-        File txtFile = new File(FileNameTools.replaceSuffix(csvFile.getAbsolutePath(), "txt"));
-        if (FileCopyTools.copyFile(csvFile, txtFile)) {
-            DataFileText targetData = new DataFileText();
-            targetData.cloneAll(csvData);
-            targetData.setType(Type.Texts).setFile(txtFile);
-            return targetData;
-        } else {
-            return null;
-        }
     }
 
     @Override

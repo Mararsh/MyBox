@@ -85,7 +85,7 @@ public class DataTableQueryEditor extends TreeNodeEditor {
             @Override
             protected void whenSucceeded() {
                 popDone();
-                DataFileCSV.open(myController, dataCSV, targetController.target);
+                DataFileCSV.openCSV(myController, dataCSV, targetController.target);
             }
 
             @Override

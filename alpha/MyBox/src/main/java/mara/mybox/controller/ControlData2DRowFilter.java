@@ -28,10 +28,9 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
         hisName = "RowFilterHistories";
     }
 
-    @Override
-    public void initControls() {
+    public void setParameters(BaseController parent) {
         try {
-            super.initControls();
+            baseName = parent.baseName;
 
             if (maxInput != null) {
                 maxData = UserConfig.getLong(baseName + "MaxDataNumber", -1);

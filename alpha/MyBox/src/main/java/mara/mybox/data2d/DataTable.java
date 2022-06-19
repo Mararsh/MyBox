@@ -5,12 +5,12 @@ import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
@@ -24,7 +24,6 @@ import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DoubleTools;
-import mara.mybox.tools.TmpFileTools;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.math3.stat.Frequency;
@@ -37,6 +36,7 @@ import org.apache.commons.math3.stat.Frequency;
 public class DataTable extends Data2D {
 
     protected TableData2D tableData2D;
+    protected Map<String, String> columnsMap;
 
     public DataTable() {
         type = Type.DatabaseTable;
@@ -232,6 +232,24 @@ public class DataTable extends Data2D {
             return data2DRow;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
+            return null;
+        }
+    }
+
+    public Data2DRow makeRow(Connection conn, Data2D source, List<String> data, List<Integer> cols) {
+        try {
+            Data2DRow data2DRow = tableData2D.newRow();
+            for (int col : cols) {
+                Data2DColumn column = source.getColumns().get(col);
+                String name = column.getColumnName();
+                Object value = column.fromString(data.get(col + 1));
+                if (value != null) {
+                    data2DRow.setColumnValue(name, value);
+                }
+            }
+            return data2DRow;
+        } catch (Exception e) {
+            error = e.toString();
             return null;
         }
     }
@@ -511,7 +529,7 @@ public class DataTable extends Data2D {
         return tableData2D.clearData();
     }
 
-    public DataFileCSV sort(List<Integer> cols, String orderName, boolean desc, boolean showRowNumber) {
+    public DataFileCSV sort(SingletonTask task, List<Integer> cols, String orderName, boolean desc, boolean showRowNumber) {
         try {
             if (cols == null || cols.isEmpty() || orderName == null || orderName.isBlank()) {
                 return null;
@@ -527,6 +545,7 @@ public class DataTable extends Data2D {
             }
             sql = "SELECT " + sql + " FROM " + sheet + " ORDER BY " + orderName
                     + (desc ? " DESC" : "");
+            MyBoxLog.console(sql);
             File csvFile = tmpCSV("sort");
             rowIndex = 0;
             int colsSize;
@@ -600,7 +619,7 @@ public class DataTable extends Data2D {
                  PreparedStatement statement = conn.prepareStatement(query);
                  ResultSet results = statement.executeQuery()) {
             if (results != null) {
-                targetData = save(task, results, showRowNumber);
+                targetData = DataFileCSV.save(task, results, showRowNumber);
             }
         } catch (Exception e) {
             if (task != null) {
@@ -772,106 +791,6 @@ public class DataTable extends Data2D {
         }
     }
 
-    public boolean createTable(SingletonTask task, Connection conn, Data2D sourceData, String name) {
-        try {
-            tableData2D.reset();
-            String tableName = DerbyBase.fixedIdentifier(name);
-            tableData2D.setTableName(tableName);
-            String idname = tableName.replace("\"", "") + "_id";
-            Data2DColumn idcolumn = new Data2DColumn(idname, ColumnDefinition.ColumnType.Long);
-            idcolumn.setAuto(true).setIsPrimaryKey(true).setNotNull(true).setEditable(false);
-            columns = new ArrayList<>();
-            columns.add(idcolumn);
-            tableData2D.addColumn(idcolumn);
-            for (Data2DColumn sourceColumn : sourceData.getColumns()) {
-                Data2DColumn dataColumn = new Data2DColumn();
-                dataColumn.cloneFrom(sourceColumn);
-                dataColumn.setD2id(-1);
-                dataColumn.setD2cid(-1);
-                String columeName = DerbyBase.fixedIdentifier(sourceColumn.getColumnName());
-                if (columeName.equalsIgnoreCase(idname)) {
-                    columeName += "m";
-                }
-                dataColumn.setColumnName(columeName);
-                columns.add(dataColumn);
-                tableData2D.addColumn(dataColumn);
-            }
-            if (conn.createStatement().executeUpdate(tableData2D.createTableStatement()) < 0) {
-                return false;
-            }
-            conn.commit();
-            rowsNumber = sourceData.getRowsNumber();
-            return recordTable(conn, tableName, columns);
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-    public static DataFileCSV save(SingletonTask task, ResultSet results, boolean showRowNumber) {
-        try {
-            if (results == null) {
-                return null;
-            }
-            File csvFile = TmpFileTools.csvFile();
-            long count = 0;
-            int colsSize;
-            List<Data2DColumn> db2Columns = new ArrayList<>();
-            try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
-                List<String> names = new ArrayList<>();
-                if (showRowNumber) {
-                    names.add(message("SourceRowNumber"));
-                }
-                ResultSetMetaData meta = results.getMetaData();
-
-                for (int col = 1; col <= meta.getColumnCount(); col++) {
-                    String name = meta.getColumnName(col);
-                    names.add(name);
-                    Data2DColumn dc = new Data2DColumn(name,
-                            ColumnDefinition.sqlColumnType(meta.getColumnType(col)),
-                            meta.isNullable(col) == ResultSetMetaData.columnNoNulls);
-                    db2Columns.add(dc);
-                }
-                csvPrinter.printRecord(names);
-                colsSize = names.size();
-                List<String> fileRow = new ArrayList<>();
-                while (results.next() && task != null && !task.isCancelled()) {
-                    count++;
-                    if (showRowNumber) {
-                        fileRow.add(count + "");
-                    }
-                    for (Data2DColumn column : db2Columns) {
-                        Object v = results.getObject(column.getColumnName());
-                        fileRow.add(v == null ? "" : column.toString(v));
-                    }
-                    csvPrinter.printRecord(fileRow);
-                    fileRow.clear();
-                }
-            } catch (Exception e) {
-                MyBoxLog.error(e.toString());
-                return null;
-            }
-            DataFileCSV targetData = new DataFileCSV();
-            targetData.setFile(csvFile).setCharset(Charset.forName("UTF-8"))
-                    .setDelimiter(",").setHasHeader(true)
-                    .setColsNumber(colsSize).setRowsNumber(count);
-            if (showRowNumber) {
-                db2Columns.add(0, new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
-            }
-            targetData.setColumns(db2Columns);
-            return targetData;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e.toString());
-            return null;
-        }
-    }
-
     /*
         static
      */
@@ -899,6 +818,14 @@ public class DataTable extends Data2D {
 
     public void setTableData2D(TableData2D tableData2D) {
         this.tableData2D = tableData2D;
+    }
+
+    public Map<String, String> getColumnsMap() {
+        return columnsMap;
+    }
+
+    public void setColumnsMap(Map<String, String> columnsMap) {
+        this.columnsMap = columnsMap;
     }
 
 }

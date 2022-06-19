@@ -80,6 +80,8 @@ public class Data2DSetStylesController extends BaseSysTableController<Data2DStyl
         try {
             super.initControls();
 
+            filterController.setParameters(this);
+
             // For display, indices are 1-based and included
             // For internal, indices are 0-based and excluded
             fromInput.textProperty().addListener(new ChangeListener<String>() {

@@ -271,7 +271,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             @Override
             protected void whenSucceeded() {
                 popDone();
-                DataFileCSV.open(myController, csvFile, targetController.target);
+                DataFileCSV.openCSV(myController, csvFile, targetController.target);
             }
 
             @Override

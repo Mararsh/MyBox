@@ -156,7 +156,7 @@ public class Data2DSpliceController extends BaseData2DController {
 
             @Override
             protected void whenSucceeded() {
-                DataFileCSV.open(myController, targetCSV, targetController.target);
+                DataFileCSV.openCSV(myController, targetCSV, targetController.target);
             }
 
             @Override
