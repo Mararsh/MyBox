@@ -1132,9 +1132,6 @@ public abstract class Data2DReader {
                     frequency.clear();
                     break;
             }
-            if (conn != null) {
-                conn.commit();
-            }
         } catch (Exception e) {
             MyBoxLog.error(e);
             if (readerTask != null) {

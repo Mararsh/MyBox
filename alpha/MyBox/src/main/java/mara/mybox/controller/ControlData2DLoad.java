@@ -372,54 +372,53 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             return;
         }
         task = new SingletonTask<Void>(this) {
-            private Data2D fileData;
+            private Data2D targetData;
 
             @Override
             protected boolean handle() {
                 try {
                     if (data2D.getType() == Data2D.Type.Texts) {
-                        fileData = new DataFileText();
-                        fileData.setFile(csvData.getFile())
+                        targetData = new DataFileText();
+                        targetData.setFile(csvData.getFile())
                                 .setDelimiter(csvData.getDelimiter())
                                 .setCharset(csvData.getCharset());
-                        recordFileWritten(fileData.getFile(), VisitHistory.FileType.Text);
+                        recordFileWritten(targetData.getFile(), VisitHistory.FileType.Text);
                     } else {
                         switch (data2D.getType()) {
                             case CSV:
-                                fileData = csvData;
-                                recordFileWritten(fileData.getFile(), VisitHistory.FileType.CSV);
+                                targetData = csvData;
+                                recordFileWritten(targetData.getFile(), VisitHistory.FileType.CSV);
                                 break;
                             case Excel: {
                                 DataFileExcel excelData = DataFileExcel.toExcel(task, csvData);
                                 if (excelData != null) {
                                     recordFileWritten(excelData.getFile(), VisitHistory.FileType.Excel);
                                 }
-                                fileData = excelData;
+                                targetData = excelData;
                                 break;
                             }
                             case DatabaseTable: {
-                                csvData.setTask(task);
                                 DataTable dataTable = csvData.toTable(task, FileNameTools.prefix(csvData.getFile().getName()), true);
-                                fileData = dataTable;
+                                targetData = dataTable;
                                 break;
                             }
                             case MyBoxClipboard: {
                                 DataClipboard clip = DataClipboard.toClip(task, csvData);
-                                fileData = clip;
+                                targetData = clip;
                                 break;
                             }
                             case Matrix: {
                                 DataMatrix matrix = DataMatrix.toMatrix(task, csvData);
-                                fileData = matrix;
+                                targetData = matrix;
                                 break;
                             }
                         }
-                        if (fileData == null) {
+                        if (targetData == null) {
                             return false;
                         }
                     }
-                    Data2D.saveAttributes(csvData, fileData);
-                    return fileData != null;
+                    Data2D.saveAttributes(csvData, targetData);
+                    return targetData != null;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -428,7 +427,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
 
             @Override
             protected void whenSucceeded() {
-                loadDef(fileData);
+                loadDef(targetData);
                 if (dataController != null && dataController.manageController != null) {
                     dataController.manageController.refreshAction();
                 }
@@ -437,7 +436,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                csvData.setTask(null);
             }
         };
         start(task);

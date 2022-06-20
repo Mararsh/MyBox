@@ -208,7 +208,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             infoLabel.setText("");
         }
         if (!checkSelections()) {
-            MyBoxLog.console("error:" + error);
             if (infoLabel != null) {
                 infoLabel.setText(error != null ? error : message("SelectToHandle"));
             }

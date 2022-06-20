@@ -236,24 +236,6 @@ public class DataTable extends Data2D {
         }
     }
 
-    public Data2DRow makeRow(Connection conn, Data2D source, List<String> data, List<Integer> cols) {
-        try {
-            Data2DRow data2DRow = tableData2D.newRow();
-            for (int col : cols) {
-                Data2DColumn column = source.getColumns().get(col);
-                String name = column.getColumnName();
-                Object value = column.fromString(data.get(col + 1));
-                if (value != null) {
-                    data2DRow.setColumnValue(name, value);
-                }
-            }
-            return data2DRow;
-        } catch (Exception e) {
-            error = e.toString();
-            return null;
-        }
-    }
-
     public boolean updateTable(Connection conn) {
         try {
             List<String> dbColumnNames = tableData2D.columnNames();
@@ -529,7 +511,7 @@ public class DataTable extends Data2D {
         return tableData2D.clearData();
     }
 
-    public DataFileCSV sort(SingletonTask task, List<Integer> cols, String orderName, boolean desc, boolean showRowNumber) {
+    public DataFileCSV sort(SingletonTask task, List<Integer> cols, String orderName, boolean desc) {
         try {
             if (cols == null || cols.isEmpty() || orderName == null || orderName.isBlank()) {
                 return null;
@@ -545,7 +527,6 @@ public class DataTable extends Data2D {
             }
             sql = "SELECT " + sql + " FROM " + sheet + " ORDER BY " + orderName
                     + (desc ? " DESC" : "");
-            MyBoxLog.console(sql);
             File csvFile = tmpCSV("sort");
             rowIndex = 0;
             int colsSize;
@@ -554,9 +535,6 @@ public class DataTable extends Data2D {
                      PreparedStatement statement = conn.prepareStatement(sql);
                      ResultSet results = statement.executeQuery()) {
                 List<String> names = new ArrayList<>();
-                if (showRowNumber) {
-                    names.add(message("SourceRowNumber"));
-                }
                 for (int col : cols) {
                     names.add(columns.get(col).getColumnName());
                 }
@@ -575,9 +553,6 @@ public class DataTable extends Data2D {
                     filterDataRow(rowValues, ++rowIndex);
                     if (!filterPassed()) {
                         continue;
-                    }
-                    if (showRowNumber) {
-                        fileRow.add(rowIndex + "");
                     }
                     for (int col : cols) {
                         Data2DColumn column = columns.get(col);

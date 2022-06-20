@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.data.ColumnDefinition;
@@ -182,15 +183,24 @@ public class Data2DSortController extends BaseData2DHandleController {
             if (data2D instanceof DataTable) {
                 dataTable = (DataTable) data2D;
                 cols.addAll(colsIndices);
+                return dataTable.sort(task, cols, orderName, descendCheck.isSelected());
             } else {
-                MyBoxLog.console(colsIndices);
                 dataTable = data2D.toTable(task, colsIndices, showRowNumber());
                 for (int i = 0; i < dataTable.getColumns().size(); i++) {
+                    if (dataTable.getColumns().get(i).getColumnName().startsWith(Data2D.TmpTablePrefix)) {
+                        continue;
+                    }
                     cols.add(i);
                 }
-                MyBoxLog.console(cols);
+                String order = orderName;
+                if (dataTable.getColumnsMap() != null) {
+                    String tableColumnName = dataTable.getColumnsMap().get(order);
+                    if (tableColumnName != null) {
+                        order = tableColumnName;
+                    }
+                }
+                return dataTable.sort(task, cols, order, descendCheck.isSelected());
             }
-            return dataTable.sort(task, cols, orderName, descendCheck.isSelected(), showRowNumber());
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
