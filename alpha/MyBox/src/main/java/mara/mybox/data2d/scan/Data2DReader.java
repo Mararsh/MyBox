@@ -385,7 +385,7 @@ public abstract class Data2DReader {
             if (!data2D.filterDataRow(record, rowIndex + 1)) {
                 return;
             }
-            if (data2D.filterReachMaxFilterPassed()) {
+            if (data2D.filterReachMaxPassed()) {
                 readerStopped = true;
                 return;
             }
@@ -535,14 +535,7 @@ public abstract class Data2DReader {
                     Data2DColumn sourceColumn = data2D.getColumns().get(col);
                     Object value = sourceColumn.fromString(record.get(col));
                     if (value != null) {
-                        String name = sourceColumn.getColumnName();
-                        if (dataTable.getColumnsMap() != null) {
-                            String tableColumnName = dataTable.getColumnsMap().get(name);
-                            if (tableColumnName != null) {
-                                name = tableColumnName;
-                            }
-                        }
-                        data2DRow.setColumnValue(name, value);
+                        data2DRow.setColumnValue(dataTable.mappedColumnName(sourceColumn.getColumnName()), value);
                     }
                 }
             }
@@ -550,7 +543,7 @@ public abstract class Data2DReader {
                 return;
             }
             if (includeRowNumber) {
-                data2DRow.setColumnValue(message("SourceRowNumber"), rowIndex + 1);
+                data2DRow.setColumnValue(dataTable.mappedColumnName(message("SourceRowNumber")), rowIndex + 1);
             }
             tableData2D.insertData(conn, data2DRow);
             if (++count % DerbyBase.BatchSize == 0) {

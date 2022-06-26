@@ -269,7 +269,7 @@ public class DataFileCSV extends DataFileText {
                         }
                         List<String> values = record.toList();
                         filterDataRow(values, ++rowIndex);
-                        needSetValue = filterPassed() && !filterReachMaxFilterPassed();
+                        needSetValue = filterPassed() && !filterReachMaxPassed();
                         if (needSetValue && script != null) {
                             calculateDataRowExpression(script, values, rowIndex);
                             if (error != null) {
@@ -352,7 +352,7 @@ public class DataFileCSV extends DataFileText {
                                     return false;
                                 }
                             }
-                            if (filterPassed() && !filterReachMaxFilterPassed()) {
+                            if (filterPassed() && !filterReachMaxPassed()) {
                                 continue;
                             }
                             List<String> row = new ArrayList<>();

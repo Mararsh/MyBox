@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Random;
 import javafx.scene.paint.Color;
 import mara.mybox.data.Era;
-import mara.mybox.db.table.BaseTable;
+import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
@@ -400,7 +400,7 @@ public class ColumnDefinition extends BaseData {
             if (results == null || type == null || columnName == null) {
                 return null;
             }
-            String savedName = BaseTable.savedName(columnName);
+            String savedName = DerbyBase.savedName(columnName);
             switch (type) {
                 case String:
                 case Text:

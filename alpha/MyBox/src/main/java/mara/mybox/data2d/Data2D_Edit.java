@@ -406,7 +406,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
                 || expressionCalculator.filterPassed;
     }
 
-    public boolean filterReachMaxFilterPassed() {
+    public boolean filterReachMaxPassed() {
         return expressionCalculator != null
                 && expressionCalculator.reachMaxFilterPassed();
     }

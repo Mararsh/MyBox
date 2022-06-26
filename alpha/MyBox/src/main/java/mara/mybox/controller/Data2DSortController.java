@@ -9,8 +9,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.data.ColumnDefinition;
@@ -36,8 +34,6 @@ public class Data2DSortController extends BaseData2DHandleController {
     protected ComboBox<String> colSelector;
     @FXML
     protected CheckBox descendCheck;
-    @FXML
-    protected Label memoryNoticeLabel;
 
     public Data2DSortController() {
         baseTitle = message("Sort");
@@ -77,24 +73,15 @@ public class Data2DSortController extends BaseData2DHandleController {
             } else {
                 colSelector.getSelectionModel().select(0);
             }
-            checkMemoryLabel();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-    }
-
-    public void checkMemoryLabel() {
-        if (isSettingValues) {
-            return;
-        }
-        memoryNoticeLabel.setVisible(isAllPages() && (hasRowFilter() || !data2D.isTable()));
     }
 
     @Override
     public boolean checkOptions() {
         boolean ok = super.checkOptions();
         targetController.setNotInTable(isAllPages());
-        checkMemoryLabel();
         orderCol = data2D.colOrder(colSelector.getSelectionModel().getSelectedItem());
         colsIndices = checkedColsIndices;
         if (colsIndices == null || colsIndices.isEmpty() || orderCol < 0) {
@@ -135,36 +122,22 @@ public class Data2DSortController extends BaseData2DHandleController {
     public boolean handleRows() {
         try {
             outputData = selectedData(adjustedCols(), showRowNumber());
-            sort(outputData);
-            if (showRowNumber()) {
-                outputData.add(0, colsNames);
-            }
-            return true;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e.toString());
-            return false;
-        }
-    }
-
-    public boolean sort(List<List<String>> data) {
-        try {
-            if (data == null || data.isEmpty()) {
+            if (outputData == null || outputData.isEmpty()) {
                 return false;
             }
             Data2DColumn column = data2D.getColumns().get(orderCol);
             int index = colsNames.indexOf(orderName);
             boolean desc = descendCheck.isSelected();
-            Collections.sort(data, new Comparator<List<String>>() {
+            Collections.sort(outputData, new Comparator<List<String>>() {
                 @Override
                 public int compare(List<String> r1, List<String> r2) {
                     int c = column.compare(r1.get(index), r2.get(index));
                     return desc ? -c : c;
                 }
             });
-            outputData = data;
+            if (showColNames()) {
+                outputData.add(0, colsNames);
+            }
             return true;
         } catch (Exception e) {
             if (task != null) {
@@ -178,29 +151,11 @@ public class Data2DSortController extends BaseData2DHandleController {
     @Override
     public DataFileCSV generatedFile() {
         try {
-            DataTable dataTable;
-            List<Integer> cols = new ArrayList<>();
-            if (data2D instanceof DataTable) {
-                dataTable = (DataTable) data2D;
-                cols.addAll(colsIndices);
-                return dataTable.sort(task, cols, orderName, descendCheck.isSelected());
-            } else {
-                dataTable = data2D.toTable(task, colsIndices, showRowNumber());
-                for (int i = 0; i < dataTable.getColumns().size(); i++) {
-                    if (dataTable.getColumns().get(i).getColumnName().startsWith(Data2D.TmpTablePrefix)) {
-                        continue;
-                    }
-                    cols.add(i);
-                }
-                String order = orderName;
-                if (dataTable.getColumnsMap() != null) {
-                    String tableColumnName = dataTable.getColumnsMap().get(order);
-                    if (tableColumnName != null) {
-                        order = tableColumnName;
-                    }
-                }
-                return dataTable.sort(task, cols, order, descendCheck.isSelected());
+            DataTable dataTable = data2D.toTable(task, colsIndices, showRowNumber());
+            if (dataTable == null) {
+                return null;
             }
+            return dataTable.sort(task, dataTable.mappedColumnName(orderName), descendCheck.isSelected());
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());

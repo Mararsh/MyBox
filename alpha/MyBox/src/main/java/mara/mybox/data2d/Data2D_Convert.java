@@ -102,9 +102,9 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         }
     }
 
-    public long writeTable(SingletonTask task, Connection conn, DataTable dataTable, List<Integer> cols, boolean includeRowNumber) {
+    public long writeTableData(SingletonTask task, Connection conn, DataTable dataTable, List<Integer> cols, boolean includeRowNumber) {
         try {
-            if (conn == null || dataTable == null || cols == null || cols.isEmpty()) {
+            if (conn == null || dataTable == null) {
                 return -1;
             }
             if (columns == null || columns.isEmpty()) {
@@ -112,6 +112,12 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             }
             if (columns == null || columns.isEmpty()) {
                 return -2;
+            }
+            if (cols == null || cols.isEmpty()) {
+                cols = new ArrayList<>();
+                for (int i = 0; i < columns.size(); i++) {
+                    cols.add(i);
+                }
             }
             Data2DReader reader = Data2DReader.create(this)
                     .setConn(conn).setDataTable(dataTable)
@@ -132,35 +138,14 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         }
     }
 
-    public long writeTable(SingletonTask task, Connection conn, DataTable dataTable) {
-        try {
-            if (conn == null || dataTable == null) {
-                return -1;
-            }
-            if (columns == null || columns.isEmpty()) {
-                readColumns(conn);
-            }
-            if (columns == null || columns.isEmpty()) {
-                return -2;
-            }
-            List<Integer> cols = new ArrayList<>();
-            for (int i = 0; i < columns.size(); i++) {
-                cols.add(i);
-            }
-            return writeTable(task, conn, dataTable, cols, false);
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return -3;
-        }
+    public long writeTableData(SingletonTask task, Connection conn, DataTable dataTable) {
+        return writeTableData(task, conn, dataTable, null, false);
     }
 
     public DataTable toTable(SingletonTask task, String targetName, boolean dropExisted) {
         try ( Connection conn = DerbyBase.getConnection()) {
             DataTable dataTable = createTable(task, conn, targetName, dropExisted);
-            writeTable(task, conn, dataTable);
+            writeTableData(task, conn, dataTable);
             return dataTable;
         } catch (Exception e) {
             if (task != null) {
@@ -174,7 +159,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
     public DataTable toTable(SingletonTask task, List<Integer> cols, boolean includeRowNumber) {
         try ( Connection conn = DerbyBase.getConnection()) {
             DataTable dataTable = createTable(task, conn, cols, includeRowNumber);
-            writeTable(task, conn, dataTable, cols, includeRowNumber);
+            writeTableData(task, conn, dataTable, cols, includeRowNumber);
             return dataTable;
         } catch (Exception e) {
             if (task != null) {

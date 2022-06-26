@@ -525,7 +525,7 @@ public class DataFileExcel extends DataFile {
                         values.add(MicrosoftDocumentTools.cellString(sourceRow.getCell(c)));
                     }
                     filterDataRow(values, ++rowIndex);
-                    needSetValue = filterPassed() && !filterReachMaxFilterPassed();
+                    needSetValue = filterPassed() && !filterReachMaxPassed();
                     if (needSetValue && script != null) {
                         calculateDataRowExpression(script, values, rowIndex);
                         if (error != null) {
@@ -636,7 +636,7 @@ public class DataFileExcel extends DataFile {
                                 return false;
                             }
                         }
-                        if (filterPassed() && !filterReachMaxFilterPassed()) {
+                        if (filterPassed() && !filterReachMaxPassed()) {
                             continue;
                         }
                         for (int c = sourceRow.getFirstCellNum(); c < sourceRow.getLastCellNum(); c++) {

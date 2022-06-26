@@ -208,7 +208,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         }
         try ( PreparedStatement statement = conn.prepareStatement(Query_Table)) {
             statement.setShort(1, Data2DDefinition.type(type));
-            statement.setString(2, DerbyBase.stringValue(BaseTable.savedName(referredName)));
+            statement.setString(2, DerbyBase.stringValue(DerbyBase.savedName(referredName)));
             return query(conn, statement);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -221,7 +221,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             return null;
         }
         try ( PreparedStatement statement = conn.prepareStatement(Query_UserTable)) {
-            statement.setString(1, DerbyBase.stringValue(BaseTable.savedName(referredName)));
+            statement.setString(1, DerbyBase.stringValue(DerbyBase.savedName(referredName)));
             return query(conn, statement);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -242,7 +242,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             return -3;
         }
         try ( PreparedStatement statement = conn.prepareStatement(Delete_UserTable)) {
-            statement.setString(1, DerbyBase.stringValue(BaseTable.savedName(referredName)));
+            statement.setString(1, DerbyBase.stringValue(DerbyBase.savedName(referredName)));
             return statement.executeUpdate();
         } catch (Exception e) {
             MyBoxLog.error(e);

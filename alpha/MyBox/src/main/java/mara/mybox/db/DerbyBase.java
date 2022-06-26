@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Locale;
 import mara.mybox.controller.MyBoxLoadingController;
 import mara.mybox.db.data.GeographyCodeTools;
-import mara.mybox.db.table.BaseTable;
 import mara.mybox.db.table.TableAlarmClock;
 import mara.mybox.db.table.TableBlobValue;
 import mara.mybox.db.table.TableColor;
@@ -286,7 +285,7 @@ public class DerbyBase {
                  ResultSet resultSet = statement.executeQuery(sql)) {
             while (resultSet.next()) {
                 String savedName = resultSet.getString("TABLENAME");
-                String referredName = BaseTable.referredName(savedName);
+                String referredName = referredName(savedName);
                 tables.add(referredName);
             }
         } catch (Exception e) {
@@ -304,7 +303,7 @@ public class DerbyBase {
                  ResultSet resultSet = statement.executeQuery(sql)) {
             while (resultSet.next()) {
                 String savedName = resultSet.getString("columnname");
-                String referredName = BaseTable.referredName(savedName);
+                String referredName = referredName(savedName);
                 columns.add(referredName + ", " + resultSet.getString("columndatatype"));
             }
         } catch (Exception e) {
@@ -323,7 +322,7 @@ public class DerbyBase {
                  ResultSet resultSet = statement.executeQuery(sql)) {
             while (resultSet.next()) {
                 String savedName = resultSet.getString("columnname");
-                String referredName = BaseTable.referredName(savedName);
+                String referredName = referredName(savedName);
                 columns.add(referredName);
             }
         } catch (Exception e) {
@@ -339,7 +338,7 @@ public class DerbyBase {
                  ResultSet resultSet = statement.executeQuery(sql)) {
             while (resultSet.next()) {
                 String savedName = resultSet.getString("CONGLOMERATENAME");
-                String referredName = BaseTable.referredName(savedName);
+                String referredName = referredName(savedName);
                 indexes.add(referredName);
             }
         } catch (Exception e) {
@@ -355,7 +354,7 @@ public class DerbyBase {
                  ResultSet resultSet = statement.executeQuery(sql)) {
             while (resultSet.next()) {
                 String savedName = resultSet.getString("TABLENAME");
-                String referredName = BaseTable.referredName(savedName);
+                String referredName = referredName(savedName);
                 tables.add(referredName);
             }
         } catch (Exception e) {
@@ -885,6 +884,22 @@ public class DerbyBase {
             return null;
         }
         return name.equals(name.toUpperCase()) ? name : "\"" + name + "\"";
+    }
+
+    public static String savedName(String referedName) {
+        if (referedName == null) {
+            return null;
+        }
+        return referedName.startsWith("\"") && referedName.endsWith("\"")
+                ? referedName.substring(1, referedName.length() - 1) : referedName.toUpperCase();
+    }
+
+    public static String referredName(String nameFromDB) {
+        if (nameFromDB == null) {
+            return null;
+        }
+        return nameFromDB.equals(nameFromDB.toUpperCase())
+                ? nameFromDB.toLowerCase() : "\"" + nameFromDB + "\"";
     }
 
 }

@@ -17,7 +17,6 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.Data2DRow;
-import mara.mybox.db.table.BaseTable;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
@@ -95,7 +94,7 @@ public class DataTable extends Data2D {
 
     public boolean recordTable(Connection conn, String tableName, List<Data2DColumn> dataColumns) {
         try {
-            sheet = BaseTable.savedName(tableName);
+            sheet = DerbyBase.savedName(tableName);
             dataName = tableName;
             colsNumber = dataColumns.size();
             tableData2DDefinition.insertData(conn, this);
@@ -234,6 +233,14 @@ public class DataTable extends Data2D {
             MyBoxLog.debug(e.toString());
             return null;
         }
+    }
+
+    public String mappedColumnName(String sourceName) {
+        if (columnsMap == null || columnsMap.isEmpty()
+                || !columnsMap.containsKey(sourceName)) {
+            return sourceName;
+        }
+        return columnsMap.get(sourceName);
     }
 
     public boolean updateTable(Connection conn) {
@@ -438,7 +445,7 @@ public class DataTable extends Data2D {
                     if (++count % DerbyBase.BatchSize == 0) {
                         conn.commit();
                     }
-                    if (filterReachMaxFilterPassed()) {
+                    if (filterReachMaxPassed()) {
                         break;
                     }
                 }
@@ -490,7 +497,7 @@ public class DataTable extends Data2D {
                     if (++count % DerbyBase.BatchSize == 0) {
                         conn.commit();
                     }
-                    if (filterReachMaxFilterPassed()) {
+                    if (filterReachMaxPassed()) {
                         break;
                     }
                 }
@@ -511,70 +518,35 @@ public class DataTable extends Data2D {
         return tableData2D.clearData();
     }
 
-    public DataFileCSV sort(SingletonTask task, List<Integer> cols, String orderName, boolean desc) {
-        try {
-            if (cols == null || cols.isEmpty() || orderName == null || orderName.isBlank()) {
+    // Based on results of "Data2D_Convert.toTable(...)"
+    public DataFileCSV sort(SingletonTask task, String orderName, boolean desc) {
+        File csvFile = tmpCSV("sort");
+        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile);
+                 Connection conn = DerbyBase.getConnection();
+                 PreparedStatement statement = conn.prepareStatement(
+                        "SELECT * FROM " + sheet + " ORDER BY " + orderName + (desc ? " DESC" : ""));
+                 ResultSet results = statement.executeQuery()) {
+            if (orderName == null || orderName.isBlank()) {
                 return null;
             }
-            String sql = null;
-            for (int col : cols) {
-                if (sql != null) {
-                    sql += ",";
-                } else {
-                    sql = "";
-                }
-                sql += columns.get(col).getColumnName();
-            }
-            sql = "SELECT " + sql + " FROM " + sheet + " ORDER BY " + orderName
-                    + (desc ? " DESC" : "");
-            File csvFile = tmpCSV("sort");
+            csvPrinter.printRecord(columnNames().subList(1, columns.size()));   // skip id column
             rowIndex = 0;
-            int colsSize;
-            try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile);
-                     Connection conn = DerbyBase.getConnection();
-                     PreparedStatement statement = conn.prepareStatement(sql);
-                     ResultSet results = statement.executeQuery()) {
-                List<String> names = new ArrayList<>();
-                for (int col : cols) {
-                    names.add(columns.get(col).getColumnName());
+            while (results.next() && task != null && !task.isCancelled()) {
+                Data2DRow dataRow = tableData2D.readData(results);
+                List<String> rowValues = new ArrayList<>();
+                for (int i = 1; i < columns.size(); i++) {  // skip id column
+                    Data2DColumn column = columns.get(i);
+                    Object v = dataRow.getColumnValue(column.getColumnName());
+                    rowValues.add(column.toString(v));
                 }
-                csvPrinter.printRecord(names);
-                colsSize = names.size();
-                List<String> fileRow = new ArrayList<>();
-                startFilter();
-                while (results.next() && task != null && !task.isCancelled()) {
-                    Data2DRow dataRow = tableData2D.readData(results);
-                    List<String> rowValues = new ArrayList<>();
-                    for (int c = 0; c < columns.size(); c++) {
-                        Data2DColumn column = columns.get(c);
-                        Object v = dataRow.getColumnValue(columns.get(c).getColumnName());
-                        rowValues.add(column.toString(v));
-                    }
-                    filterDataRow(rowValues, ++rowIndex);
-                    if (!filterPassed()) {
-                        continue;
-                    }
-                    for (int col : cols) {
-                        Data2DColumn column = columns.get(col);
-                        fileRow.add(column.toString(rowValues.get(col)));
-                    }
-                    csvPrinter.printRecord(fileRow);
-                    fileRow.clear();
-                    if (filterReachMaxFilterPassed()) {
-                        break;
-                    }
-                }
-            } catch (Exception e) {
-                if (task != null) {
-                    task.setError(e.toString());
-                }
-                MyBoxLog.error(e.toString());
-                return null;
+                csvPrinter.printRecord(rowValues);
+                rowIndex++;
             }
             DataFileCSV targetData = new DataFileCSV();
-            targetData.setFile(csvFile).setCharset(Charset.forName("UTF-8"))
+            targetData.setColumns(columns).setFile(csvFile)
+                    .setCharset(Charset.forName("UTF-8"))
                     .setDelimiter(",").setHasHeader(true)
-                    .setColsNumber(colsSize).setRowsNumber(rowIndex);
+                    .setColsNumber(columns.size() - 1).setRowsNumber(rowIndex);
             return targetData;
         } catch (Exception e) {
             if (task != null) {

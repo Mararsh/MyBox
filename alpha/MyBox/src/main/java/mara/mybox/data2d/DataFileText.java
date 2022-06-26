@@ -343,7 +343,7 @@ public class DataFileText extends DataFile {
                     continue;
                 }
                 filterDataRow(record, ++rowIndex);
-                needSetValue = filterPassed() && !filterReachMaxFilterPassed();
+                needSetValue = filterPassed() && !filterReachMaxPassed();
                 if (needSetValue && script != null) {
                     calculateDataRowExpression(script, record, rowIndex);
                     if (error != null) {
@@ -419,7 +419,7 @@ public class DataFileText extends DataFile {
                             return false;
                         }
                     }
-                    if (filterPassed() && !filterReachMaxFilterPassed()) {
+                    if (filterPassed() && !filterReachMaxPassed()) {
                         continue;
                     }
                     List<String> row = new ArrayList<>();
