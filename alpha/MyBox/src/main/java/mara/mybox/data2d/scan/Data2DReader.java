@@ -67,7 +67,7 @@ public abstract class Data2DReader {
 
     public static enum Operation {
         ReadDefinition, ReadTotal, ReadColumnNames, ReadPage,
-        ReadCols, ReadRows, Export, WriteTable, Copy,
+        ReadCols, ReadRows, Export, WriteTable, Copy, SingleColumn,
         StatisticColumns, StatisticRows, StatisticAll,
         PercentageColumns, PercentageRows, PercentageAll,
         NormalizeMinMaxColumns, NormalizeSumColumns, NormalizeZscoreColumns,
@@ -149,6 +149,12 @@ public abstract class Data2DReader {
                     return null;
                 }
                 names = data2D.columnNames();
+                break;
+            case SingleColumn:
+                if (cols == null || cols.isEmpty() || conn == null || dataTable == null) {
+                    failed = true;
+                    return null;
+                }
                 break;
             case Copy:
                 if (cols == null || cols.isEmpty() || csvPrinter == null) {
@@ -402,6 +408,9 @@ public abstract class Data2DReader {
                 case WriteTable:
                     handleWriteTable();
                     break;
+                case SingleColumn:
+                    handleSingleColumn();
+                    break;
                 case Copy:
                     handleCopy();
                     break;
@@ -548,6 +557,26 @@ public abstract class Data2DReader {
             tableData2D.insertData(conn, data2DRow);
             if (++count % DerbyBase.BatchSize == 0) {
                 conn.commit();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void handleSingleColumn() {
+        try {
+            int len = record.size();
+            for (int col : cols) {
+                if (col >= 0 && col < len) {
+                    Data2DColumn sourceColumn = data2D.getColumns().get(col);
+                    Object value = sourceColumn.fromString(record.get(col));
+                    Data2DRow data2DRow = tableData2D.newRow();
+                    data2DRow.setColumnValue("data", value);
+                    tableData2D.insertData(conn, data2DRow);
+                    if (++count % DerbyBase.BatchSize == 0) {
+                        conn.commit();
+                    }
+                }
             }
         } catch (Exception e) {
             MyBoxLog.error(e);

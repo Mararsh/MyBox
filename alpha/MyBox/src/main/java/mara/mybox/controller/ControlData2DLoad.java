@@ -417,7 +417,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                             return false;
                         }
                     }
-                    Data2D.saveAttributes(csvData, targetData);
+                    targetData.saveAttributes();
                     return targetData != null;
                 } catch (Exception e) {
                     error = e.toString();

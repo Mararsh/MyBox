@@ -36,6 +36,7 @@ public class DataTable extends Data2D {
 
     protected TableData2D tableData2D;
     protected Map<String, String> columnsMap;
+    protected List<Data2DColumn> sourceColumns;
 
     public DataTable() {
         type = Type.DatabaseTable;
@@ -241,6 +242,44 @@ public class DataTable extends Data2D {
             return sourceName;
         }
         return columnsMap.get(sourceName);
+    }
+
+    public String sourceColumnName(String mappedName) {
+        if (columnsMap == null || columnsMap.isEmpty()
+                || !columnsMap.containsValue(mappedName)) {
+            return mappedName;
+        }
+        for (String sourceName : columnsMap.keySet()) {
+            String v = columnsMap.get(sourceName);
+            if (mappedName == null) {
+                if (v == null) {
+                    return sourceName;
+                }
+            } else {
+                if (mappedName.equals(v)) {
+                    return sourceName;
+                }
+            }
+        }
+        return mappedName;
+    }
+
+    public List<Data2DColumn> sourceColumns() {
+        if (columnsMap == null || columnsMap.isEmpty() || sourceColumns == null) {
+            return columns;
+        }
+        return sourceColumns;
+    }
+
+    public List<String> sourceColumnNames() {
+        if (columnsMap == null || columnsMap.isEmpty() || sourceColumns == null) {
+            return columnNames();
+        }
+        List<String> names = new ArrayList<>();
+        for (Data2DColumn column : sourceColumns) {
+            names.add(column.getColumnName());
+        }
+        return names;
     }
 
     public boolean updateTable(Connection conn) {
@@ -520,16 +559,17 @@ public class DataTable extends Data2D {
 
     // Based on results of "Data2D_Convert.toTable(...)"
     public DataFileCSV sort(SingletonTask task, String orderName, boolean desc) {
+        if (orderName == null || orderName.isBlank() || sourceColumns == null) {
+            return null;
+        }
         File csvFile = tmpCSV("sort");
         try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile);
                  Connection conn = DerbyBase.getConnection();
                  PreparedStatement statement = conn.prepareStatement(
                         "SELECT * FROM " + sheet + " ORDER BY " + orderName + (desc ? " DESC" : ""));
                  ResultSet results = statement.executeQuery()) {
-            if (orderName == null || orderName.isBlank()) {
-                return null;
-            }
-            csvPrinter.printRecord(columnNames().subList(1, columns.size()));   // skip id column
+
+            csvPrinter.printRecord(sourceColumnNames()); // skip id column
             rowIndex = 0;
             while (results.next() && task != null && !task.isCancelled()) {
                 Data2DRow dataRow = tableData2D.readData(results);
@@ -543,10 +583,112 @@ public class DataTable extends Data2D {
                 rowIndex++;
             }
             DataFileCSV targetData = new DataFileCSV();
-            targetData.setColumns(columns).setFile(csvFile)
+            targetData.setColumns(sourceColumns).setFile(csvFile)
                     .setCharset(Charset.forName("UTF-8"))
                     .setDelimiter(",").setHasHeader(true)
-                    .setColsNumber(columns.size() - 1).setRowsNumber(rowIndex);
+                    .setColsNumber(sourceColumns.size()).setRowsNumber(rowIndex);
+            return targetData;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    // Based on results of "Data2D_Convert.toTable(...)"
+    public DataFileCSV transpose(SingletonTask task, boolean showColName, boolean firstColumnAsNames) {
+        if (sourceColumns == null) {
+            return null;
+        }
+        File csvFile = tmpCSV("transpose");
+        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile);
+                 Connection conn = DerbyBase.getConnection()) {
+            String idName = columns.get(0).getColumnName();
+            int rNumber = 0;
+            List<Data2DColumn> targetColumns = new ArrayList<>();
+            List<Data2DColumn> dataColumns = new ArrayList<>();
+            if (firstColumnAsNames && columns.get(1).getColumnName().equals(mappedColumnName(message("SourceRowNumber")))) {
+                dataColumns.add(columns.get(2));
+                dataColumns.add(columns.get(1));
+                for (int i = 3; i < columns.size(); i++) {
+                    dataColumns.add(columns.get(i));
+                }
+            } else {
+                for (int i = 1; i < columns.size(); i++) {
+                    dataColumns.add(columns.get(i));
+                }
+            }
+            for (int i = 0; i < dataColumns.size(); i++) {
+                if (task == null || task.isCancelled()) {
+                    break;
+                }
+                Data2DColumn column = dataColumns.get(i);
+                String columnName = column.getColumnName();
+                List<String> rowValues = new ArrayList<>();
+                try ( PreparedStatement statement = conn.prepareStatement(
+                        "SELECT " + idName + "," + columnName + " FROM " + sheet + " ORDER BY " + idName);
+                         ResultSet results = statement.executeQuery()) {
+                    while (results.next() && task != null && !task.isCancelled()) {
+                        rowValues.add(results.getString(columnName));
+                    }
+                } catch (Exception e) {
+                    if (task != null) {
+                        task.setError(e.toString());
+                    }
+                    MyBoxLog.error(e.toString());
+                    return null;
+                }
+                if (i == 0) {
+                    int cNumber = rowValues.size();
+                    List<String> names = new ArrayList<>();
+                    if (firstColumnAsNames) {
+                        for (int c = 0; c < cNumber; c++) {
+                            String name = rowValues.get(c);
+                            if (name == null || name.isBlank()) {
+                                name = message("Columns") + (c + 1);
+                            }
+                            while (names.contains(name)) {
+                                name += "m";
+                            }
+                            names.add(name);
+                        }
+                        if (showColName) {
+                            String name = message("ColumnName");
+                            while (names.contains(name)) {
+                                name += "m";
+                            }
+                            names.add(0, name);
+                        }
+                    } else {
+                        for (int c = 1; c <= cNumber; c++) {
+                            names.add(message("Column") + c);
+                        }
+                        if (showColName) {
+                            String name = message("ColumnName");
+                            while (names.contains(name)) {
+                                name += "m";
+                            }
+                            names.add(0, name);
+                        }
+                        csvPrinter.printRecord(names);
+                    }
+                    for (int c = 0; c < names.size(); c++) {
+                        targetColumns.add(new Data2DColumn(names.get(c), ColumnDefinition.ColumnType.String));
+                    }
+                }
+                if (showColName) {
+                    rowValues.add(0, columnName);
+                }
+                csvPrinter.printRecord(rowValues);
+                rNumber++;
+            }
+            DataFileCSV targetData = new DataFileCSV();
+            targetData.setColumns(targetColumns).setFile(csvFile)
+                    .setCharset(Charset.forName("UTF-8"))
+                    .setDelimiter(",").setHasHeader(true)
+                    .setColsNumber(targetColumns.size()).setRowsNumber(rNumber);
             return targetData;
         } catch (Exception e) {
             if (task != null) {
@@ -773,6 +915,14 @@ public class DataTable extends Data2D {
 
     public void setColumnsMap(Map<String, String> columnsMap) {
         this.columnsMap = columnsMap;
+    }
+
+    public List<Data2DColumn> getSourceColumns() {
+        return sourceColumns;
+    }
+
+    public void setSourceColumns(List<Data2DColumn> sourceColumns) {
+        this.sourceColumns = sourceColumns;
     }
 
 }

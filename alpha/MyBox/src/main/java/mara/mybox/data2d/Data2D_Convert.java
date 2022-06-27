@@ -170,6 +170,43 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         }
     }
 
+    public DataTable singleColumn(SingletonTask task, List<Integer> cols) {
+        try ( Connection conn = DerbyBase.getConnection()) {
+            if (columns == null || columns.isEmpty()) {
+                readColumns(conn);
+            }
+            if (columns == null || columns.isEmpty()) {
+                return null;
+            }
+            List<Data2DColumn> sourceColumns = new ArrayList<>();
+            Data2DColumn column = new Data2DColumn("data", ColumnDefinition.ColumnType.String);
+            column.setD2cid(-1).setD2id(-1);
+            sourceColumns.add(column);
+            DataTable dataTable = createTable(task, conn, tmpTableName(), sourceColumns, null, true);
+            if (cols == null || cols.isEmpty()) {
+                cols = new ArrayList<>();
+                for (int i = 0; i < columns.size(); i++) {
+                    cols.add(i);
+                }
+            }
+            Data2DReader reader = Data2DReader.create(this)
+                    .setConn(conn).setDataTable(dataTable).setCols(cols)
+                    .setReaderTask(task).start(Operation.SingleColumn);
+            if (reader != null && !reader.isFailed()) {
+                conn.commit();
+                return dataTable;
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public static String tmpTableName() {
         return TmpTablePrefix + new Date().getTime();
     }
@@ -218,6 +255,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             dataTable.setSheet(tableName);
             dataTable.setColumns(tableColumns);
             dataTable.setColumnsMap(columnsMap);
+            dataTable.setSourceColumns(sourceColumns);
             return dataTable;
         } catch (Exception e) {
             MyBoxLog.error(e);

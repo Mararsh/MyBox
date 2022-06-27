@@ -75,6 +75,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                         objectChanged();
                     }
                 });
+                objectChanged();
             }
 
             scale = (short) UserConfig.getInt(baseName + "Scale", defaultScale);
@@ -260,10 +261,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                 data2D.startExpressionService(task);
                 csvFile = generatedFile();
                 data2D.stopExpressionService();
-                if (csvFile == null) {
-                    return false;
-                }
-                csvFile.setColumns(outputColumns);
                 return csvFile != null;
             }
 
@@ -434,8 +431,10 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                 DataFileTextController.open(outputColumns, outputData);
                 break;
             case "matrix":
-                MatricesManageController controller = MatricesManageController.oneOpen();
-                controller.dataController.loadTmpData(outputColumns, outputData);
+                MatricesManageController.open(outputColumns, outputData);
+                break;
+            case "table":
+                DataTablesController.open(outputColumns, outputData);
                 break;
         }
         popDone();

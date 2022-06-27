@@ -409,6 +409,21 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         }
     }
 
+    public List<Integer> columnIndices() {
+        try {
+            if (!isColumnsValid()) {
+                return null;
+            }
+            List<Integer> indices = new ArrayList<>();
+            for (int i = 0; i < columns.size(); i++) {
+                indices.add(i);
+            }
+            return indices;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public boolean isColumnsValid() {
         return columns != null && !columns.isEmpty();
     }

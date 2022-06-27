@@ -13,7 +13,6 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
@@ -241,7 +240,6 @@ License:    Apache License Version 2.0
                                        </children>
                                     </FlowPane>
                                     <FlowPane hgap="2.0" layoutX="15.0" layoutY="48.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0" />
-                                        <Label fx:id="memoryNoticeLabel" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" text="%AllRowsLoadComments" wrapText="true" />
                                     </children>
                                 </VBox>
                               <VBox fx:id="dataOptionsBox" layoutX="20.0" layoutY="316.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
@@ -277,8 +275,6 @@ License:    Apache License Version 2.0
                                         <fx:include fx:id="target" source="ControlData2DTarget.fxml" />
                                  </children>
                                 </VBox>
-                              <Separator prefWidth="200.0" />
-                              <Label minHeight="-Infinity" text="%DataStatisticComments" wrapText="true" />
                            </children>
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
