@@ -197,7 +197,7 @@ public class Data2DDefinition extends BaseData {
 
     public String shortName() {
         if (file != null) {
-            return FileNameTools.prefix(file.getName());
+            return FileNameTools.prefix(file.getName()) + (sheet != null ? "_" + sheet : "");
         } else if (sheet != null) {
             return sheet;
         } else if (dataName != null) {

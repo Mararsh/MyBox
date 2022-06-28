@@ -82,46 +82,34 @@ public class Data2DSortController extends BaseData2DHandleController {
     public boolean checkOptions() {
         boolean ok = super.checkOptions();
         targetController.setNotInTable(isAllPages());
-        orderCol = data2D.colOrder(colSelector.getSelectionModel().getSelectedItem());
+        orderName = colSelector.getValue();
+        orderCol = data2D.colOrder(orderName);
         colsIndices = checkedColsIndices;
         if (colsIndices == null || colsIndices.isEmpty() || orderCol < 0) {
             infoLabel.setText(message("SelectToHandle"));
             okButton.setDisable(true);
             return false;
         }
-        orderName = data2D.colName(orderCol);
-        return ok;
-    }
-
-    public List<Integer> adjustedCols() {
-        try {
-            colsNames = checkedColsNames;
-            if (!colsIndices.contains(orderCol)) {
-                colsIndices.add(orderCol);
-                colsNames.add(orderName);
-            }
-            outputColumns = new ArrayList<>();
-            for (int col : colsIndices) {
-                outputColumns.add(data2D.column(col));
-            }
-            if (showRowNumber()) {
-                colsNames.add(0, message("SourceRowNumber"));
-                outputColumns.add(0, new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
-            }
-            return colsIndices;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e.toString());
-            return null;
+        colsNames = checkedColsNames;
+        if (!colsIndices.contains(orderCol)) {
+            colsIndices.add(orderCol);
+            colsNames.add(orderName);
         }
+        outputColumns = new ArrayList<>();
+        for (int col : colsIndices) {
+            outputColumns.add(data2D.column(col));
+        }
+        if (showRowNumber()) {
+            colsNames.add(0, message("SourceRowNumber"));
+            outputColumns.add(0, new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
+        }
+        return ok;
     }
 
     @Override
     public boolean handleRows() {
         try {
-            outputData = selectedData(adjustedCols(), showRowNumber());
+            outputData = selectedData(colsIndices, showRowNumber());
             if (outputData == null || outputData.isEmpty()) {
                 return false;
             }
@@ -151,11 +139,13 @@ public class Data2DSortController extends BaseData2DHandleController {
     @Override
     public DataFileCSV generatedFile() {
         try {
-            DataTable dataTable = data2D.toTable(task, adjustedCols(), showRowNumber());
-            if (dataTable == null) {
+            DataTable tmpTable = data2D.toTmpTable(task, colsIndices, showRowNumber());
+            if (tmpTable == null) {
                 return null;
             }
-            return dataTable.sort(task, dataTable.mappedColumnName(orderName), descendCheck.isSelected());
+            DataFileCSV csvData = tmpTable.sort(task, tmpTable.mappedColumnName(orderName), descendCheck.isSelected());
+            tmpTable.deleteTable();
+            return csvData;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());

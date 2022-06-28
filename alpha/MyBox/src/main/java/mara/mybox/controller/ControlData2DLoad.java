@@ -379,14 +379,17 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 try {
                     if (data2D.getType() == Data2D.Type.Texts) {
                         targetData = new DataFileText();
-                        targetData.setFile(csvData.getFile())
+                        targetData.setColumns(csvData.getColumns())
+                                .setFile(csvData.getFile())
                                 .setDelimiter(csvData.getDelimiter())
                                 .setCharset(csvData.getCharset());
+                        targetData.saveAttributes();
                         recordFileWritten(targetData.getFile(), VisitHistory.FileType.Text);
                     } else {
                         switch (data2D.getType()) {
                             case CSV:
                                 targetData = csvData;
+                                targetData.saveAttributes();
                                 recordFileWritten(targetData.getFile(), VisitHistory.FileType.CSV);
                                 break;
                             case Excel: {
@@ -398,7 +401,11 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                 break;
                             }
                             case DatabaseTable: {
-                                DataTable dataTable = csvData.toTable(task, FileNameTools.prefix(csvData.getFile().getName()), true);
+                                String name = FileNameTools.prefix(csvData.getFile().getName());
+                                if (name.startsWith(Data2D.TmpTablePrefix)) {
+                                    name = name.substring(Data2D.TmpTablePrefix.length());
+                                }
+                                DataTable dataTable = csvData.toTable(task, name, true);
                                 targetData = dataTable;
                                 break;
                             }
@@ -417,7 +424,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                             return false;
                         }
                     }
-                    targetData.saveAttributes();
+
                     return targetData != null;
                 } catch (Exception e) {
                     error = e.toString();

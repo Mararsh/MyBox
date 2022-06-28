@@ -557,6 +557,25 @@ public class DataTable extends Data2D {
         return tableData2D.clearData();
     }
 
+    public int deleteTable() {
+        if (sheet == null || sheet.isBlank()) {
+            return -4;
+        }
+        try ( Connection conn = DerbyBase.getConnection();) {
+            return deleteTable(conn, sheet);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return -5;
+        }
+    }
+
+    public int deleteTable(Connection conn, String name) {
+        if (name == null || name.isBlank()) {
+            return -4;
+        }
+        return tableData2DDefinition.deleteUserTable(conn, name);
+    }
+
     // Based on results of "Data2D_Convert.toTable(...)"
     public DataFileCSV sort(SingletonTask task, String orderName, boolean desc) {
         if (orderName == null || orderName.isBlank() || sourceColumns == null) {

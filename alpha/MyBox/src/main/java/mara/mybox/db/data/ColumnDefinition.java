@@ -401,6 +401,9 @@ public class ColumnDefinition extends BaseData {
                 return null;
             }
             String savedName = DerbyBase.savedName(columnName);
+            if (results.findColumn(savedName) < 0) {
+                return null;
+            }
             switch (type) {
                 case String:
                 case Text:

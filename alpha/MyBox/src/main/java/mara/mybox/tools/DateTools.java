@@ -41,6 +41,10 @@ public class DateTools {
         return datetimeToString(new Date());
     }
 
+    public static String nowString3() {
+        return datetimeToString(new Date(), TimeFormats.DatetimeFormat3, getTimeZone());
+    }
+
     public static boolean isBC(long value) {
         if (value == AppValues.InvalidLong) {
             return false;

@@ -215,7 +215,7 @@ public class DataMatrix extends Data2D {
         try ( Connection conn = DerbyBase.getConnection()) {
             matrix.setColsNumber(cols.size());
             matrix.setRowsNumber(rows.size());
-            Data2D.saveColumns(conn, matrix, cols);
+            Data2D.saveAttributes(conn, matrix, cols);
             long did = matrix.getD2did();
             if (did < 0) {
                 return false;

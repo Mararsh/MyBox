@@ -81,7 +81,7 @@ public class DataClipboard extends DataFileCSV {
             } else {
                 d.setDataName(dFile.getName());
             }
-            if (Data2D.saveColumns(d, cols)) {
+            if (Data2D.saveAttributes(d, cols)) {
                 DataInMyBoxClipboardController.update();
                 return d;
             } else {
@@ -105,7 +105,7 @@ public class DataClipboard extends DataFileCSV {
             DataClipboard d = new DataClipboard();
             d.cloneAll(data);
             d.setType(Type.MyBoxClipboard).setFile(dFile).setDataName(data.getFile().getName());
-            if (Data2D.saveColumns(d, cols)) {
+            if (Data2D.saveAttributes(d, cols)) {
                 DataInMyBoxClipboardController.update();
                 return d;
             } else {

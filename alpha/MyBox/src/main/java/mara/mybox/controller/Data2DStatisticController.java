@@ -469,16 +469,17 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                     data2D.startExpressionService(task);
                     calculation.setTask(task);
                     if (calculation.needStored()) {
-                        DataTable dataTable = data2D.toTable(task, checkedColsIndices, false);
+                        DataTable tmpTable = data2D.toTmpTable(task, checkedColsIndices, false);
                         data2D.stopExpressionService();
-                        if (dataTable == null) {
+                        if (tmpTable == null) {
                             return false;
                         }
-                        dataTable.setTask(task);
-                        calculation.setData2D(dataTable)
-                                .setColsIndices(dataTable.columnIndices().subList(1, dataTable.columnsNumber()))
-                                .setColsNames(dataTable.columnNames().subList(1, dataTable.columnsNumber()));
+                        tmpTable.setTask(task);
+                        calculation.setData2D(tmpTable)
+                                .setColsIndices(tmpTable.columnIndices().subList(1, tmpTable.columnsNumber()))
+                                .setColsNames(tmpTable.columnNames().subList(1, tmpTable.columnsNumber()));
                         ok = calculation.statisticAllByColumnsInDataTable();
+                        tmpTable.deleteTable();
                     } else {
                         ok = calculation.statisticAllByColumnsWithoutStored();
                         data2D.stopExpressionService();

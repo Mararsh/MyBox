@@ -51,8 +51,8 @@ public abstract class Data2DReader {
     protected double[] colValues;
     protected ControlDataConvert convertController;
     protected Connection conn;
-    protected DataTable dataTable;
-    protected TableData2D tableData2D;
+    protected DataTable writerTable;
+    protected TableData2D writerTableData2D;
     protected DoubleStatistic[] statisticData;
     protected List<Skewness> skewnessList;
     protected DoubleStatistic statisticAll;
@@ -144,14 +144,14 @@ public abstract class Data2DReader {
                 }
                 break;
             case WriteTable:
-                if (cols == null || cols.isEmpty() || conn == null || dataTable == null) {
+                if (cols == null || cols.isEmpty() || conn == null || writerTable == null || writerTableData2D == null) {
                     failed = true;
                     return null;
                 }
                 names = data2D.columnNames();
                 break;
             case SingleColumn:
-                if (cols == null || cols.isEmpty() || conn == null || dataTable == null) {
+                if (cols == null || cols.isEmpty() || conn == null || writerTable == null || writerTableData2D == null) {
                     failed = true;
                     return null;
                 }
@@ -537,14 +537,14 @@ public abstract class Data2DReader {
 
     public void handleWriteTable() {
         try {
-            Data2DRow data2DRow = tableData2D.newRow();
+            Data2DRow data2DRow = writerTableData2D.newRow();
             int len = record.size();
             for (int col : cols) {
                 if (col >= 0 && col < len) {
                     Data2DColumn sourceColumn = data2D.getColumns().get(col);
                     Object value = sourceColumn.fromString(record.get(col));
                     if (value != null) {
-                        data2DRow.setColumnValue(dataTable.mappedColumnName(sourceColumn.getColumnName()), value);
+                        data2DRow.setColumnValue(writerTable.mappedColumnName(sourceColumn.getColumnName()), value);
                     }
                 }
             }
@@ -552,9 +552,9 @@ public abstract class Data2DReader {
                 return;
             }
             if (includeRowNumber) {
-                data2DRow.setColumnValue(dataTable.mappedColumnName(message("SourceRowNumber")), rowIndex + 1);
+                data2DRow.setColumnValue(writerTable.mappedColumnName(message("SourceRowNumber")), rowIndex + 1);
             }
-            tableData2D.insertData(conn, data2DRow);
+            writerTableData2D.insertData(conn, data2DRow);
             if (++count % DerbyBase.BatchSize == 0) {
                 conn.commit();
             }
@@ -570,9 +570,9 @@ public abstract class Data2DReader {
                 if (col >= 0 && col < len) {
                     Data2DColumn sourceColumn = data2D.getColumns().get(col);
                     Object value = sourceColumn.fromString(record.get(col));
-                    Data2DRow data2DRow = tableData2D.newRow();
+                    Data2DRow data2DRow = writerTableData2D.newRow();
                     data2DRow.setColumnValue("data", value);
-                    tableData2D.insertData(conn, data2DRow);
+                    writerTableData2D.insertData(conn, data2DRow);
                     if (++count % DerbyBase.BatchSize == 0) {
                         conn.commit();
                     }
@@ -1255,9 +1255,9 @@ public abstract class Data2DReader {
     }
 
     public Data2DReader setDataTable(DataTable dataTable) {
-        this.dataTable = dataTable;
+        this.writerTable = dataTable;
         if (dataTable != null) {
-            tableData2D = dataTable.getTableData2D();
+            writerTableData2D = dataTable.getTableData2D();
         }
         return this;
     }

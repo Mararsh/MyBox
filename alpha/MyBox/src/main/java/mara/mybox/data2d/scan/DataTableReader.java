@@ -8,6 +8,7 @@ import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
+import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -18,12 +19,13 @@ import mara.mybox.dev.MyBoxLog;
 public class DataTableReader extends Data2DReader {
 
     protected DataTable readerTable;
+    protected TableData2D readerTableData2D;
 
     public DataTableReader(DataTable data) {
         init(data);
-        this.readerTable = data;
-        tableData2D = readerTable.getTableData2D();
-        tableData2D.setTableName(readerTable.getSheet());
+        readerTable = data;
+        readerTableData2D = readerTable.getTableData2D();
+        readerTableData2D.setTableName(readerTable.getSheet());
     }
 
     @Override
@@ -59,7 +61,7 @@ public class DataTableReader extends Data2DReader {
     @Override
     public void readTotal() {
         try {
-            rowIndex = tableData2D.size(conn);
+            rowIndex = readerTableData2D.size(conn);
         } catch (Exception e) {
             MyBoxLog.error(e);
             if (readerTask != null) {
@@ -75,7 +77,7 @@ public class DataTableReader extends Data2DReader {
         try ( PreparedStatement statement = conn.prepareStatement(readerTable.pageQuery());
                  ResultSet results = statement.executeQuery()) {
             while (results.next()) {
-                makeRecord(tableData2D.readData(results));
+                makeRecord(readerTableData2D.readData(results));
                 handlePageRow();
                 rowIndex++;
             }
@@ -95,7 +97,7 @@ public class DataTableReader extends Data2DReader {
         try ( PreparedStatement statement = conn.prepareStatement(sql);
                  ResultSet results = statement.executeQuery()) {
             while (results.next() && !readerStopped()) {
-                makeRecord(tableData2D.readData(results));
+                makeRecord(readerTableData2D.readData(results));
                 handleRecord();
                 rowIndex++;
             }

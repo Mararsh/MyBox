@@ -245,7 +245,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
 
     public boolean saveAttributes() {
         try ( Connection conn = DerbyBase.getConnection()) {
-            return saveColumns(conn, (Data2D) this, columns);
+            return saveAttributes(conn, (Data2D) this, columns);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -258,7 +258,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
     public static boolean saveAttributes(Data2D source, Data2D target) {
         try ( Connection conn = DerbyBase.getConnection()) {
             target.cloneAttributes(source);
-            if (!saveColumns(conn, target, source.getColumns())) {
+            if (!saveAttributes(conn, target, source.getColumns())) {
                 return false;
             }
             return target.getTableData2DStyle().copyStyles(conn, source.getD2did(), target.getD2did()) >= 0;
@@ -271,12 +271,12 @@ public abstract class Data2D_Edit extends Data2D_Data {
         }
     }
 
-    public static boolean saveColumns(Data2D d, List<Data2DColumn> cols) {
+    public static boolean saveAttributes(Data2D d, List<Data2DColumn> cols) {
         if (d == null) {
             return false;
         }
         try ( Connection conn = DerbyBase.getConnection()) {
-            return saveColumns(conn, d, cols);
+            return saveAttributes(conn, d, cols);
         } catch (Exception e) {
             if (d.getTask() != null) {
                 d.getTask().setError(e.toString());
@@ -286,7 +286,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
         }
     }
 
-    public static boolean saveColumns(Connection conn, Data2D d, List<Data2DColumn> inColumns) {
+    public static boolean saveAttributes(Connection conn, Data2D d, List<Data2DColumn> inColumns) {
         if (d == null) {
             return false;
         }
