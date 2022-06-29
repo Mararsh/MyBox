@@ -144,7 +144,7 @@ public class Data2DSortController extends BaseData2DHandleController {
                 return null;
             }
             DataFileCSV csvData = tmpTable.sort(task, tmpTable.mappedColumnName(orderName), descendCheck.isSelected());
-            tmpTable.deleteTable();
+            tmpTable.drop();
             return csvData;
         } catch (Exception e) {
             if (task != null) {

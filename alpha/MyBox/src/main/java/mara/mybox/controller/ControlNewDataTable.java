@@ -119,7 +119,7 @@ public class ControlNewDataTable extends BaseController {
                         if (dataTable == null) {
                             dataTable = new DataTable();
                         }
-                        return dataTable.deleteTable(conn, tableName) >= 0;
+                        return dataTable.drop(conn, tableName) >= 0;
                     } else {
                         return false;
                     }

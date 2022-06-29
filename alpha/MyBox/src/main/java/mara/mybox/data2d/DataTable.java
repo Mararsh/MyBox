@@ -557,26 +557,26 @@ public class DataTable extends Data2D {
         return tableData2D.clearData();
     }
 
-    public int deleteTable() {
+    public int drop() {
         if (sheet == null || sheet.isBlank()) {
             return -4;
         }
         try ( Connection conn = DerbyBase.getConnection();) {
-            return deleteTable(conn, sheet);
+            return drop(conn, sheet);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return -5;
         }
     }
 
-    public int deleteTable(Connection conn, String name) {
+    public int drop(Connection conn, String name) {
         if (name == null || name.isBlank()) {
             return -4;
         }
         return tableData2DDefinition.deleteUserTable(conn, name);
     }
 
-    // Based on results of "Data2D_Convert.toTable(...)"
+    // Based on results of "Data2D_Convert.toTmpTable(...)"
     public DataFileCSV sort(SingletonTask task, String orderName, boolean desc) {
         if (orderName == null || orderName.isBlank() || sourceColumns == null) {
             return null;
@@ -588,7 +588,7 @@ public class DataTable extends Data2D {
                         "SELECT * FROM " + sheet + " ORDER BY " + orderName + (desc ? " DESC" : ""));
                  ResultSet results = statement.executeQuery()) {
 
-            csvPrinter.printRecord(sourceColumnNames()); // skip id column
+            csvPrinter.printRecord(sourceColumnNames());
             rowIndex = 0;
             while (results.next() && task != null && !task.isCancelled()) {
                 Data2DRow dataRow = tableData2D.readData(results);
@@ -616,8 +616,8 @@ public class DataTable extends Data2D {
         }
     }
 
-    // Based on results of "Data2D_Convert.toTable(...)"
-    public DataFileCSV transpose(SingletonTask task, boolean showColName, boolean firstColumnAsNames) {
+    // Based on results of "Data2D_Convert.toTmpTable(...)"
+    public DataFileCSV transpose(SingletonTask task, boolean showColNames, boolean firstColumnAsNames) {
         if (sourceColumns == null) {
             return null;
         }
@@ -638,7 +638,7 @@ public class DataTable extends Data2D {
                 for (int i = 1; i < columns.size(); i++) {
                     dataColumns.add(columns.get(i));
                 }
-            }
+            }    // skip id column
             for (int i = 0; i < dataColumns.size(); i++) {
                 if (task == null || task.isCancelled()) {
                     break;
@@ -673,31 +673,26 @@ public class DataTable extends Data2D {
                             }
                             names.add(name);
                         }
-                        if (showColName) {
-                            String name = message("ColumnName");
-                            while (names.contains(name)) {
-                                name += "m";
-                            }
-                            names.add(0, name);
-                        }
                     } else {
                         for (int c = 1; c <= cNumber; c++) {
                             names.add(message("Column") + c);
                         }
-                        if (showColName) {
-                            String name = message("ColumnName");
-                            while (names.contains(name)) {
-                                name += "m";
-                            }
-                            names.add(0, name);
+                    }
+                    if (showColNames) {
+                        String name = message("ColumnName");
+                        while (names.contains(name)) {
+                            name += "m";
                         }
-                        csvPrinter.printRecord(names);
+                        names.add(0, name);
                     }
                     for (int c = 0; c < names.size(); c++) {
                         targetColumns.add(new Data2DColumn(names.get(c), ColumnDefinition.ColumnType.String));
                     }
+                    if (!firstColumnAsNames) {
+                        csvPrinter.printRecord(names);
+                    }
                 }
-                if (showColName) {
+                if (showColNames) {
                     rowValues.add(0, columnName);
                 }
                 csvPrinter.printRecord(rowValues);

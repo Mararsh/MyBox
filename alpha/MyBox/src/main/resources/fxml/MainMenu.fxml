@@ -238,7 +238,7 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#dataInSystemClipboard" text="%DataInSystemClipboard" />
                                 <MenuItem mnemonicParsing="false" onAction="#dataInMyBoxClipboard" text="%DataInMyBoxClipboard" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <Menu mnemonicParsing="false" text="%Calculation">
+                                <Menu mnemonicParsing="false" text="%CalculationTools">
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#JShell" text="%JShell" />
                                         <MenuItem mnemonicParsing="false" onAction="#JEXL" text="%JEXL" />

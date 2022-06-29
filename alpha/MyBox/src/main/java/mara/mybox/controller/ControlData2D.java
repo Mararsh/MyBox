@@ -699,13 +699,6 @@ public class ControlData2D extends BaseController {
             menu.setDisable(empty || data2D.isTmpData());
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("CopyFilterQuery"), StyleTools.getIconImage("iconCopy.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                tableController.copyAction();
-            });
-            menu.setDisable(empty);
-            popMenu.getItems().add(menu);
-
             menu = new MenuItem(message("PasteContentInSystemClipboard"), StyleTools.getIconImage("iconPasteSystem.png"));
             menu.setOnAction((ActionEvent event) -> {
                 tableController.pasteContentInSystemClipboard();
@@ -731,6 +724,13 @@ public class ControlData2D extends BaseController {
 
             Menu trimMenu = new Menu(message("Trim"), StyleTools.getIconImage("iconClean.png"));
             popMenu.getItems().add(trimMenu);
+
+            menu = new MenuItem(message("CopyFilterQuery"), StyleTools.getIconImage("iconCopy.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                tableController.copyAction();
+            });
+            menu.setDisable(empty);
+            trimMenu.getItems().add(menu);
 
             menu = new MenuItem(message("Sort"), StyleTools.getIconImage("iconSort.png"));
             menu.setOnAction((ActionEvent event) -> {

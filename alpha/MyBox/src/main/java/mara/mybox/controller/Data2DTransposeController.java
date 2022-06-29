@@ -50,28 +50,19 @@ public class Data2DTransposeController extends BaseData2DHandleController {
     @Override
     public boolean handleRows() {
         try {
-            outputData = selectedData(showRowNumber());
+            boolean showRowNumber = showRowNumber();
+            outputData = selectedData(showRowNumber);
             if (outputData == null) {
                 return false;
             }
-            if (showColNames()) {
-                List<String> names = checkedColsNames;
-                if (showRowNumber()) {
-                    names.add(0, message("SourceRowNumber"));
-                }
-                outputData.add(0, names);
-            }
+            boolean showColNames = showColNames();
             int rowsNumber = outputData.size(), columnsNumber = outputData.get(0).size();
-
-            outputColumns = null;
+            outputColumns = new ArrayList<>();
+            int nameIndex = showRowNumber ? 1 : 0;
+            List<String> names = new ArrayList<>();
             if (firstCheck.isSelected()) {
-                outputColumns = new ArrayList<>();
-                if (showRowNumber()) {
-                    outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
-                }
-                List<String> names = new ArrayList<>();
                 for (int c = 0; c < rowsNumber; ++c) {
-                    String name = outputData.get(c).get(0);
+                    String name = outputData.get(c).get(nameIndex);
                     if (name == null || name.isBlank()) {
                         name = message("Columns") + (c + 1);
                     }
@@ -79,15 +70,39 @@ public class Data2DTransposeController extends BaseData2DHandleController {
                         name += "m";
                     }
                     names.add(name);
-                    outputColumns.add(new Data2DColumn(name, ColumnDefinition.ColumnType.String));
                 }
+            } else {
+                for (int c = 1; c <= rowsNumber; c++) {
+                    names.add(message("Column") + c);
+                }
+            }
+            if (showColNames) {
+                String name = message("ColumnName");
+                while (names.contains(name)) {
+                    name += "m";
+                }
+                names.add(0, name);
+            }
+            for (int c = 0; c < names.size(); c++) {
+                outputColumns.add(new Data2DColumn(names.get(c), ColumnDefinition.ColumnType.String));
             }
 
             List<List<String>> transposed = new ArrayList<>();
-            for (int r = 0; r < columnsNumber; ++r) {
+            for (int c = 0; c < columnsNumber; ++c) {
                 List<String> row = new ArrayList<>();
-                for (int c = 0; c < rowsNumber; ++c) {
-                    row.add(outputData.get(c).get(r));
+                if (showColNames) {
+                    if (showRowNumber) {
+                        if (c == 0) {
+                            row.add(message("SourceRowNumber"));
+                        } else {
+                            row.add(checkedColsNames.get(c - 1));
+                        }
+                    } else {
+                        row.add(checkedColsNames.get(c));
+                    }
+                }
+                for (int r = 0; r < rowsNumber; ++r) {
+                    row.add(outputData.get(r).get(c));
                 }
                 transposed.add(row);
             }
@@ -111,7 +126,7 @@ public class Data2DTransposeController extends BaseData2DHandleController {
                 return null;
             }
             DataFileCSV csvData = tmpTable.transpose(task, showColNames(), firstCheck.isSelected());
-            tmpTable.deleteTable();
+            tmpTable.drop();
             return csvData;
         } catch (Exception e) {
             if (task != null) {

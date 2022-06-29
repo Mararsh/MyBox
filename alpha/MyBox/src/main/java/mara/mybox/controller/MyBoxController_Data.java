@@ -194,7 +194,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
             loadScene(Fxmls.JavaScriptFxml);
         });
 
-        Menu calculation = new Menu(message("Calculation"));
+        Menu calculation = new Menu(message("CalculationTools"));
         calculation.getItems().addAll(
                 jshell, jexl, JavaScript
         );

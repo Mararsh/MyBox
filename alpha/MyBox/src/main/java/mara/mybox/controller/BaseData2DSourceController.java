@@ -423,11 +423,11 @@ public class BaseData2DSourceController extends ControlData2DLoad {
     }
 
     // If none selected then select all
-    public List<List<String>> selectedData(boolean rowNumber) {
-        return selectedData(checkedColsIndices, rowNumber);
+    public List<List<String>> selectedData(boolean showRowNumber) {
+        return selectedData(checkedColsIndices, showRowNumber);
     }
 
-    public List<List<String>> selectedData(List<Integer> cols, boolean rowNumber) {
+    public List<List<String>> selectedData(List<Integer> cols, boolean showRowNumber) {
         try {
             if (checkedRowsIndices == null || checkedRowsIndices.isEmpty()
                     || cols == null || cols.isEmpty()) {
@@ -441,7 +441,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                 }
                 List<String> tableRow = tableData.get(row);
                 List<String> newRow = new ArrayList<>();
-                if (rowNumber) {
+                if (showRowNumber) {
                     newRow.add((row + 1) + "");
                 }
                 for (int col : cols) {

@@ -285,7 +285,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                 if (!dropExisted) {
                     return null;
                 }
-                dataTable.deleteTable(conn, tableName);
+                dataTable.drop(conn, tableName);
                 conn.commit();
             }
             dataTable = makeTable(tableName, sourceColumns, keys);

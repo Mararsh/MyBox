@@ -479,7 +479,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                                 .setColsIndices(tmpTable.columnIndices().subList(1, tmpTable.columnsNumber()))
                                 .setColsNames(tmpTable.columnNames().subList(1, tmpTable.columnsNumber()));
                         ok = calculation.statisticAllByColumnsInDataTable();
-                        tmpTable.deleteTable();
+                        tmpTable.drop();
                     } else {
                         ok = calculation.statisticAllByColumnsWithoutStored();
                         data2D.stopExpressionService();
