@@ -25,7 +25,6 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
 
     public ControlData2DRowFilter() {
         TipsLabelKey = "RowFilterTips";
-        hisName = "RowFilterHistories";
     }
 
     public void setParameters(BaseController parent) {

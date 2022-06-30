@@ -41,7 +41,7 @@ License:    Apache License Version 2.0
                                     </ImageView>
                                  </graphic>
                               </Button>
-                              <Button fx:id="historyScriptButton" mnemonicParsing="false" onMouseEntered="#popScriptHistories">
+                              <Button fx:id="historyScriptButton" mnemonicParsing="false" onAction="#showScriptHistories" onMouseEntered="#popScriptHistories">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -50,7 +50,7 @@ License:    Apache License Version 2.0
                                     </ImageView>
                                  </graphic>
                               </Button>
-                              <Button fx:id="exampleScriptButton" mnemonicParsing="false" onMouseEntered="#popScriptExamples">
+                              <Button fx:id="examplesScriptButton" mnemonicParsing="false" onAction="#showScriptExamples" onMouseEntered="#popScriptExamples">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -92,7 +92,7 @@ License:    Apache License Version 2.0
                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
                            <children>
                               <Label maxWidth="1.7976931348623157E308" text="%JexlContext" wrapText="true" HBox.hgrow="ALWAYS" />
-                              <Button fx:id="historyContextButton" mnemonicParsing="false" onMouseEntered="#popContextHistories">
+                              <Button fx:id="historyContextButton" mnemonicParsing="false" onAction="#showContextHistories" onMouseEntered="#popContextHistories">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -101,7 +101,7 @@ License:    Apache License Version 2.0
                                     </ImageView>
                                  </graphic>
                               </Button>
-                              <Button fx:id="exampleContextButton" mnemonicParsing="false" onMouseEntered="#popContextExamples">
+                              <Button fx:id="exampleContextButton" mnemonicParsing="false" onAction="#showContextExamples" onMouseEntered="#popContextExamples">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -134,7 +134,7 @@ License:    Apache License Version 2.0
                         <HBox alignment="CENTER_LEFT" layoutX="12.0" layoutY="276.0" maxWidth="1.7976931348623157E308" spacing="2.0">
                            <children>
                               <Label maxWidth="1.7976931348623157E308" text="%JexlParamters" wrapText="true" HBox.hgrow="ALWAYS" />
-                              <Button fx:id="historyParametersButton" mnemonicParsing="false" onMouseEntered="#popParametersHistories">
+                              <Button fx:id="historyParametersButton" mnemonicParsing="false" onAction="#showParametersHistories" onMouseEntered="#popParametersHistories">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>

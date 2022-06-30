@@ -518,6 +518,20 @@ public abstract class BaseController_Interface extends BaseController_Files {
         }
     }
 
+    public void setMinWidth(int minWidth) {
+        try {
+            if (getMyStage() == null) {
+                return;
+            }
+            int w = (int) myStage.getWidth();
+            if (w < minWidth) {
+                myStage.setWidth(minWidth);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     public void setInterfaceStyle(Scene scene, String style) {
         try {
             if (scene != null && style != null) {

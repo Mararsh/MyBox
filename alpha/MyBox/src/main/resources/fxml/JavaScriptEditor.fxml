@@ -50,7 +50,7 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="historyButton" mnemonicParsing="false" onMouseEntered="#popHistories">
+                                        <Button fx:id="historyButton" mnemonicParsing="false" onAction="#showHistories" onMouseEntered="#popHistories">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -59,7 +59,7 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                              <Button fx:id="examplesButton" mnemonicParsing="false" onMouseEntered="#popExamplesMenu">
+                              <Button fx:id="examplesButton" mnemonicParsing="false" onAction="#showExamplesMenu" onMouseEntered="#popExamplesMenu">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>

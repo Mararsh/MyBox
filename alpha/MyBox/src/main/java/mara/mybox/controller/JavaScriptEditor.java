@@ -4,21 +4,28 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Separator;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlWriteTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -91,14 +98,28 @@ public class JavaScriptEditor extends TreeNodeEditor {
     }
 
     @FXML
-    protected void popExamplesMenu(MouseEvent mouseEvent) {
+    protected void popExamplesMenu(MouseEvent event) {
+        if (UserConfig.getBoolean("JavaScriptExamplesPopWhenMousePassing", true)) {
+            examplesMenu(event);
+        }
+    }
+
+    @FXML
+    protected void showExamplesMenu(ActionEvent event) {
+        examplesMenu(event);
+    }
+
+    protected void examplesMenu(Event event) {
         try {
-            MenuController controller = MenuController.open(this, valueInput,
-                    mouseEvent.getScreenX(), mouseEvent.getScreenY() + 20);
+            Point2D everntCoord = LocateTools.getScreenCoordinate(event);
+            MenuController controller = MenuController.open(this, valueInput, everntCoord.getX(), everntCoord.getY() + 20);
+
             controller.setTitleLabel(message("Examples"));
 
             List<Node> topButtons = new ArrayList<>();
-            Button newLineButton = new Button(message("Newline"));
+            Button newLineButton = new Button();
+            newLineButton.setGraphic(StyleTools.getIconImage("iconTurnOver.png"));
+            NodeStyleTools.setTooltip(newLineButton, new Tooltip(message("Newline")));
             newLineButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -107,7 +128,10 @@ public class JavaScriptEditor extends TreeNodeEditor {
                 }
             });
             topButtons.add(newLineButton);
-            Button clearInputButton = new Button(message("ClearInputArea"));
+
+            Button clearInputButton = new Button();
+            clearInputButton.setGraphic(StyleTools.getIconImage("iconClear.png"));
+            NodeStyleTools.setTooltip(clearInputButton, new Tooltip(message("ClearInputArea")));
             clearInputButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -115,7 +139,21 @@ public class JavaScriptEditor extends TreeNodeEditor {
                 }
             });
             topButtons.add(clearInputButton);
+
+            CheckBox popCheck = new CheckBox();
+            popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMousePassing")));
+            popCheck.setSelected(UserConfig.getBoolean("JavaScriptExamplesPopWhenMousePassing", true));
+            popCheck.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("JavaScriptExamplesPopWhenMousePassing", popCheck.isSelected());
+                }
+            });
+            topButtons.add(popCheck);
+
             controller.addFlowPane(topButtons);
+            controller.addNode(new Separator());
 
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
                     " var ", " = ", ";", " += ", " -= ", " *= ", " /= ", " %= ",
@@ -166,7 +204,14 @@ public class JavaScriptEditor extends TreeNodeEditor {
 
     @FXML
     protected void popHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, valueInput, mouseEvent, "JavaScriptHistories");
+        if (UserConfig.getBoolean("JavaScriptHistoriesPopWhenMousePassing", true)) {
+            PopTools.popStringValues(this, valueInput, mouseEvent, "JavaScriptHistories", false, true);
+        }
+    }
+
+    @FXML
+    protected void showHistories(ActionEvent event) {
+        PopTools.popStringValues(this, valueInput, event, "JavaScriptHistories", false, true);
     }
 
     @Override

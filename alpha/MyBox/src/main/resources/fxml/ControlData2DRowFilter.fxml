@@ -104,7 +104,7 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="historyScriptButton" mnemonicParsing="false" onMouseEntered="#popScriptHistories">
+                                        <Button fx:id="historyScriptButton" mnemonicParsing="false" onAction="#showScriptHistories" onMouseEntered="#popScriptHistories">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -113,7 +113,7 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="exampleScriptButton" mnemonicParsing="false" onMouseEntered="#popScriptExamples">
+                                        <Button fx:id="exampleScriptButton" mnemonicParsing="false" onAction="#showScriptExamples" onMouseEntered="#popScriptExamples">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>

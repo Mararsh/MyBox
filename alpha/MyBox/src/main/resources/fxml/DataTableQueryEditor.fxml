@@ -21,7 +21,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataTableQueryEditor">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataTableQueryEditor">
     <children>
         <Label fx:id="dataLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" />
         <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
@@ -54,7 +54,7 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="historyButton" mnemonicParsing="false" onMouseEntered="#popHistories">
+                                        <Button fx:id="historyButton" mnemonicParsing="false" onAction="#showHistories" onMouseEntered="#popHistories">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -63,7 +63,7 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="examplesButton" mnemonicParsing="false" onMouseEntered="#popExamplesMenu">
+                                        <Button fx:id="examplesButton" mnemonicParsing="false" onAction="#showExamplesMenu" onMouseEntered="#popExamplesMenu">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -72,7 +72,7 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="listButton" mnemonicParsing="false" onMouseEntered="#popColumnNames">
+                                        <Button fx:id="listButton" mnemonicParsing="false" onAction="#showColumnNames" onMouseEntered="#popColumnNames">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>

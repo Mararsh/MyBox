@@ -4,13 +4,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data2d.Data2D;
@@ -19,8 +23,12 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -30,7 +38,6 @@ import static mara.mybox.value.Languages.message;
 public class ControlData2DRowExpression extends TreeNodesController {
 
     protected Data2D data2D;
-    protected String hisName;
 
     @FXML
     protected TextArea scriptInput;
@@ -39,7 +46,6 @@ public class ControlData2DRowExpression extends TreeNodesController {
         baseTitle = "JavaScript";
         category = TreeNode.JavaScript;
         TipsLabelKey = "RowExpressionTips";
-        hisName = "RowExpressionHistories";
     }
 
     @Override
@@ -102,13 +108,27 @@ public class ControlData2DRowExpression extends TreeNodesController {
 
     @FXML
     protected void popScriptExamples(MouseEvent mouseEvent) {
+        if (UserConfig.getBoolean(interfaceName + "ExamplesPopWhenMousePassing", true)) {
+            scriptExamples(mouseEvent);
+        }
+    }
+
+    @FXML
+    protected void showScriptExamples(ActionEvent event) {
+        scriptExamples(event);
+    }
+
+    protected void scriptExamples(Event event) {
         try {
+            Point2D everntCoord = LocateTools.getScreenCoordinate(event);
             MenuController controller = MenuController.open(this, scriptInput,
-                    mouseEvent.getScreenX(), mouseEvent.getScreenY() + 20);
+                    everntCoord.getX(), everntCoord.getY() + 20);
             controller.setTitleLabel(message("Examples"));
 
             List<Node> topButtons = new ArrayList<>();
-            Button newLineButton = new Button(message("Newline"));
+            Button newLineButton = new Button();
+            newLineButton.setGraphic(StyleTools.getIconImage("iconTurnOver.png"));
+            NodeStyleTools.setTooltip(newLineButton, new Tooltip(message("Newline")));
             newLineButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -117,7 +137,10 @@ public class ControlData2DRowExpression extends TreeNodesController {
                 }
             });
             topButtons.add(newLineButton);
-            Button clearInputButton = new Button(message("ClearInputArea"));
+
+            Button clearInputButton = new Button();
+            clearInputButton.setGraphic(StyleTools.getIconImage("iconClear.png"));
+            NodeStyleTools.setTooltip(clearInputButton, new Tooltip(message("ClearInputArea")));
             clearInputButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -125,6 +148,19 @@ public class ControlData2DRowExpression extends TreeNodesController {
                 }
             });
             topButtons.add(clearInputButton);
+
+            CheckBox popCheck = new CheckBox();
+            popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMousePassing")));
+            popCheck.setSelected(UserConfig.getBoolean(interfaceName + "ExamplesPopWhenMousePassing", true));
+            popCheck.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(interfaceName + "ExamplesPopWhenMousePassing", popCheck.isSelected());
+                }
+            });
+            topButtons.add(popCheck);
+
             controller.addFlowPane(topButtons);
 
             List<String> colnames = data2D.columnNames();
@@ -203,8 +239,15 @@ public class ControlData2DRowExpression extends TreeNodesController {
     }
 
     @FXML
-    protected void popScriptHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, scriptInput, mouseEvent, hisName);
+    protected void popScriptHistories(MouseEvent event) {
+        if (UserConfig.getBoolean(interfaceName + "HistoriesPopWhenMousePassing", true)) {
+            PopTools.popStringValues(this, scriptInput, event, interfaceName + "Histories", false, true);
+        }
+    }
+
+    @FXML
+    protected void showScriptHistories(ActionEvent event) {
+        PopTools.popStringValues(this, scriptInput, event, interfaceName + "Histories", false, true);
     }
 
     public boolean checkExpression(boolean allPages) {
@@ -218,7 +261,7 @@ public class ControlData2DRowExpression extends TreeNodesController {
             return true;
         }
         if (data2D.expressionCalculator.validateExpression(script, allPages)) {
-            TableStringValues.add(hisName, script.trim());
+            TableStringValues.add(interfaceName + "Histories", script.trim());
             return true;
         } else {
             error = data2D.expressionCalculator.error;
