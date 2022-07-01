@@ -193,6 +193,56 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
     }
 
+    public DataFileCSV rowExpression(String script, String name, boolean errorContinue,
+            List<Integer> cols, boolean includeRowNumber, boolean includeColName) {
+        if (cols == null || cols.isEmpty()) {
+            return null;
+        }
+        File csvFile = tmpCSV("RowExpression");
+        Data2DReader reader;
+        List<Data2DColumn> targetColumns = new ArrayList<>();
+        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
+            List<String> names = new ArrayList<>();
+            if (includeRowNumber) {
+                names.add(message("RowNumber"));
+                targetColumns.add(new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
+            }
+            for (int i = 0; i < columns.size(); i++) {
+                if (cols.contains(i)) {
+                    names.add(columns.get(i).getColumnName());
+                    targetColumns.add(columns.get(i).cloneAll().setD2cid(-1).setD2id(-1));
+                }
+            }
+            names.add(name);
+            targetColumns.add(new Data2DColumn(name, ColumnDefinition.ColumnType.String));
+            if (includeColName) {
+                csvPrinter.printRecord(names);
+            }
+            reader = Data2DReader.create(this)
+                    .setCsvPrinter(csvPrinter).setCols(cols).setIncludeRowNumber(includeRowNumber)
+                    .setScript(script).setName(name)
+                    .setReaderTask(task).start(Data2DReader.Operation.RowExpression);
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return null;
+        }
+        if (reader != null && csvFile != null && csvFile.exists()) {
+            DataFileCSV targetData = new DataFileCSV();
+            targetData.setColumns(targetColumns)
+                    .setFile(csvFile).setCharset(Charset.forName("UTF-8"))
+                    .setDelimiter(",").setHasHeader(includeColName)
+                    .setColsNumber(targetColumns.size())
+                    .setRowsNumber(reader.getRowIndex());
+            targetData.saveAttributes();
+            return targetData;
+        } else {
+            return null;
+        }
+    }
+
     public DataFileCSV percentageColumns(List<String> names, List<Integer> cols, boolean withValues, boolean abs, int scale) {
         if (cols == null || cols.isEmpty()) {
             return null;

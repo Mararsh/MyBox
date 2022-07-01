@@ -239,7 +239,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                         tableController.dataController.backupController.addBackup(task, data2D.getFile());
                     }
                     data2D.setTask(task);
-                    data2D.startExpressionService(task);
+                    data2D.startExpressionServiceAnyway(task);
                     ok = data2D.setValue(checkedColsIndices, value, errorContinueCheck.isSelected());
                     data2D.stopExpressionService();
                     return ok;
@@ -302,13 +302,14 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
     public boolean setValue() {
         try {
             Random random = new Random();
+            String script = expressionController.scriptInput.getText();
             for (int row : checkedRowsIndices) {
                 List<String> values = tableController.tableData.get(row);
                 String v = value;
                 if (blankRadio.isSelected()) {
                     v = "";
                 } else if (expressionRadio.isSelected()) {
-                    if (!data2D.calculateTableRowExpression(expressionController.scriptInput.getText(), values, row)) {
+                    if (!data2D.calculateTableRowExpression(script, values, row)) {
                         if (errorContinueCheck.isSelected()) {
                             continue;
                         } else {
@@ -436,12 +437,6 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             popError(message(e.toString()));
             return false;
         }
-    }
-
-    @FXML
-    @Override
-    public void cancelAction() {
-        close();
     }
 
     /*

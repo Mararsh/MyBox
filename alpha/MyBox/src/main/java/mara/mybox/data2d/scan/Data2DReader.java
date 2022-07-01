@@ -56,18 +56,18 @@ public abstract class Data2DReader {
     protected DoubleStatistic[] statisticData;
     protected List<Skewness> skewnessList;
     protected DoubleStatistic statisticAll;
-    protected String categoryName;
+    protected String categoryName, script, name;
     protected Skewness skewnessAll;
     protected DescriptiveStatistic statisticCalculation;
     protected Frequency frequency;
     protected SimpleLinearRegression simpleRegression;
     protected CSVPrinter csvPrinter;
-    protected boolean readerHasHeader, readerStopped, needCheckTask;
+    protected boolean readerHasHeader, readerStopped, needCheckTask, errorContinue;
     protected SingletonTask readerTask;
 
     public static enum Operation {
         ReadDefinition, ReadTotal, ReadColumnNames, ReadPage,
-        ReadCols, ReadRows, Export, WriteTable, Copy, SingleColumn,
+        ReadCols, ReadRows, Export, WriteTable, Copy, RowExpression, SingleColumn,
         StatisticColumns, StatisticRows, StatisticAll,
         PercentageColumns, PercentageRows, PercentageAll,
         NormalizeMinMaxColumns, NormalizeSumColumns, NormalizeZscoreColumns,
@@ -158,6 +158,12 @@ public abstract class Data2DReader {
                 break;
             case Copy:
                 if (cols == null || cols.isEmpty() || csvPrinter == null) {
+                    failed = true;
+                    return null;
+                }
+                break;
+            case RowExpression:
+                if (cols == null || cols.isEmpty() || csvPrinter == null || script == null || name == null) {
                     failed = true;
                     return null;
                 }
@@ -414,6 +420,9 @@ public abstract class Data2DReader {
                 case Copy:
                     handleCopy();
                     break;
+                case RowExpression:
+                    handleRowExpression();
+                    break;
                 case StatisticColumns:
                     handleStatisticColumns();
                     break;
@@ -598,6 +607,37 @@ public abstract class Data2DReader {
             }
             if (includeRowNumber) {
                 row.add(0, (rowIndex + 1) + "");
+            }
+            csvPrinter.printRecord(row);
+        } catch (Exception e) {
+        }
+    }
+
+    public void handleRowExpression() {
+        try {
+            List<String> row = new ArrayList<>();
+            for (int col : cols) {
+                if (col >= 0 && col < record.size()) {
+                    row.add(record.get(col));
+                } else {
+                    row.add(null);
+                }
+            }
+            if (row.isEmpty()) {
+                return;
+            }
+            if (includeRowNumber) {
+                row.add(0, (rowIndex + 1) + "");
+            }
+            if (data2D.calculateDataRowExpression(script, record, rowIndex + 1)) {
+                row.add(data2D.getExpressionResult());
+            } else {
+                if (errorContinue) {
+                    row.add(null);
+                } else {
+                    readerStopped = true;
+                    return;
+                }
             }
             csvPrinter.printRecord(row);
         } catch (Exception e) {
@@ -1294,6 +1334,21 @@ public abstract class Data2DReader {
 
     public Data2DReader setScanPass(int scanPass) {
         this.scanPass = scanPass;
+        return this;
+    }
+
+    public Data2DReader setScript(String script) {
+        this.script = script;
+        return this;
+    }
+
+    public Data2DReader setName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public Data2DReader setErrorContinue(boolean errorContinue) {
+        this.errorContinue = errorContinue;
         return this;
     }
 

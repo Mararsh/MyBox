@@ -421,6 +421,10 @@ public abstract class Data2D_Edit extends Data2D_Data {
         }
     }
 
+    public void startExpressionServiceAnyway(SingletonTask task) {
+        expressionCalculator.startService(task);
+    }
+
     public void stopExpressionService() {
         if (expressionCalculator != null) {
             expressionCalculator.stopService();

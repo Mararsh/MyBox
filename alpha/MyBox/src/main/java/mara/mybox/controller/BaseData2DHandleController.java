@@ -258,7 +258,11 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             @Override
             protected boolean handle() {
                 data2D.setTask(task);
-                data2D.startExpressionService(task);
+                if (myController instanceof Data2DRowExpressionController) {
+                    data2D.startExpressionServiceAnyway(task);
+                } else {
+                    data2D.startExpressionService(task);
+                }
                 csvFile = generatedFile();
                 data2D.stopExpressionService();
                 return csvFile != null;

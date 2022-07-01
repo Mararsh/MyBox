@@ -442,7 +442,11 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                 List<String> tableRow = tableData.get(row);
                 List<String> newRow = new ArrayList<>();
                 if (showRowNumber) {
-                    newRow.add((row + 1) + "");
+                    if (data2D.isTmpData()) {
+                        newRow.add((row + 1) + "");
+                    } else {
+                        newRow.add(tableRow.get(0) + "");
+                    }
                 }
                 for (int col : cols) {
                     int index = col + 1;

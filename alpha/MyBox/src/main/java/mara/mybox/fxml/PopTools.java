@@ -534,7 +534,7 @@ public class PopTools {
     }
 
     public static void popStringValues(BaseController parent, TextInputControl input, Event event,
-            String name, boolean alwaysClear, boolean popOption) {
+            String name, boolean alwaysClear, boolean checkPop) {
         try {
             int max = UserConfig.getInt(name + "MaxSaved", 20);
             Point2D everntCoord = LocateTools.getScreenCoordinate(event);
@@ -595,7 +595,7 @@ public class PopTools {
                 setButtons.add(clearCheck);
             }
 
-            if (popOption) {
+            if (checkPop) {
                 CheckBox popCheck = new CheckBox();
                 popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
                 NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMousePassing")));

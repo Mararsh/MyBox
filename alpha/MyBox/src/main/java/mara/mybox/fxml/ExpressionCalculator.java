@@ -61,7 +61,20 @@ public class ExpressionCalculator {
     }
 
     public boolean calculateTableRowExpression(String script, List<String> tableRow, long tableRowNumber) {
-        return calculateExpression(tableRowExpression(script, tableRow, tableRowNumber));
+        try {
+            if (task == null || task.isQuit()) {
+                return calculateExpression(tableRowExpression(script, tableRow, tableRowNumber));
+            }
+            synchronized (expressionLock) {
+                this.expression = tableRowExpression(script, tableRow, tableRowNumber);
+                expressionLock.notify();
+                expressionLock.wait();
+            }
+        } catch (Exception e) {
+            handleError(e);
+            return false;
+        }
+        return true;
     }
 
     public boolean calculateDataRowExpression(String script, List<String> dataRow, long dataRowNumber) {
@@ -119,6 +132,9 @@ public class ExpressionCalculator {
 
     /*
         expression
+     */
+ /*
+         "dataRowNumber" is 1-based
      */
     public String dataRowExpression(String script, List<String> dataRow, long dataRowNumber) {
         try {
@@ -251,9 +267,8 @@ public class ExpressionCalculator {
      */
     public void startService(SingletonTask inTask) {
         try {
-            stopped = true;
+            stopService();
             task = inTask;
-            startFilter();
             if (task == null || task.isQuit()) {
                 return;
             }

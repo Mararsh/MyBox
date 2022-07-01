@@ -190,6 +190,7 @@ public class Fxmls {
     public static final String Data2DDeleteFxml = "/fxml/Data2DDelete.fxml";
     public static final String Data2DExportFxml = "/fxml/Data2DExport.fxml";
     public static final String Data2DTransposeFxml = "/fxml/Data2DTranspose.fxml";
+    public static final String Data2DRowExpressionFxml = "/fxml/Data2DRowExpression.fxml";
     public static final String Data2DStatisticFxml = "/fxml/Data2DStatistic.fxml";
     public static final String Data2DPercentageFxml = "/fxml/Data2DPercentage.fxml";
     public static final String Data2DSortFxml = "/fxml/Data2DSort.fxml";

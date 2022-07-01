@@ -756,6 +756,13 @@ public class ControlData2D extends BaseController {
             Menu calMenu = new Menu(message("Calculation"), StyleTools.getIconImage("iconCalculator.png"));
             popMenu.getItems().add(calMenu);
 
+            menu = new MenuItem(message("RowExpression"), StyleTools.getIconImage("iconCalculate.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DRowExpressionController.open(tableController);
+            });
+            menu.setDisable(empty);
+            calMenu.getItems().add(menu);
+
             menu = new MenuItem(message("DescriptiveStatistics"), StyleTools.getIconImage("iconStatistic.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DStatisticController.open(tableController);
