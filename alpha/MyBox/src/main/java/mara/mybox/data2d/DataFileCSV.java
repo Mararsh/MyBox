@@ -260,7 +260,6 @@ public class DataFileCSV extends DataFileText {
                 final Random random = new Random();
                 rowIndex = 0;
                 boolean needSetValue;
-                startFilter();
                 while (iterator.hasNext() && task != null && !task.isCancelled()) {
                     try {
                         CSVRecord record = iterator.next();
@@ -336,7 +335,6 @@ public class DataFileCSV extends DataFileText {
                 }
                 if (needFilter()) {
                     rowIndex = 0;
-                    startFilter();
                     while (iterator.hasNext() && task != null && !task.isCancelled()) {
                         try {
                             CSVRecord record = iterator.next();

@@ -2,15 +2,9 @@ package mara.mybox.controller;
 
 import java.util.List;
 import java.util.Random;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.FlowPane;
+import mara.mybox.calculation.DescriptiveStatistic;
+import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -18,7 +12,6 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -27,21 +20,8 @@ import mara.mybox.value.UserConfig;
  */
 public class Data2DSetValuesController extends BaseData2DHandleController {
 
-    protected String value;
-
     @FXML
-    protected ToggleGroup valueGroup;
-    @FXML
-    protected RadioButton zeroRadio, oneRadio, blankRadio, randomRadio, randomNnRadio, expressionRadio,
-            setRadio, gaussianDistributionRadio, identifyRadio, upperTriangleRadio, lowerTriangleRadio;
-    @FXML
-    protected TextField valueInput;
-    @FXML
-    protected FlowPane matrixPane;
-    @FXML
-    protected ControlData2DRowExpression expressionController;
-    @FXML
-    protected CheckBox errorContinueCheck;
+    protected ControlData2DSetValue valueController;
 
     public Data2DSetValuesController() {
         baseTitle = message("SetValues");
@@ -50,116 +30,22 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
     @Override
     public void initControls() {
         super.initControls();
-        initValueRadios();
         idExclude(true);
-    }
-
-    public void initValueRadios() {
-        try {
-            value = UserConfig.getString(baseName + "Value", "0");
-            if (value == null) {
-                value = "0";
-            }
-            switch (value) {
-                case "0":
-                    zeroRadio.fire();
-                    break;
-                case "1":
-                    oneRadio.fire();
-                    break;
-                case "MyBox##blank":
-                    blankRadio.fire();
-                    break;
-                case "MyBox##random":
-                    randomRadio.fire();
-                    break;
-                case "MyBox##randomNn":
-                    randomNnRadio.fire();
-                    break;
-                case "MyBox##gaussianDistribution":
-                    gaussianDistributionRadio.fire();
-                    break;
-                case "MyBox##identify":
-                    identifyRadio.fire();
-                    break;
-                case "MyBox##upperTriangle":
-                    upperTriangleRadio.fire();
-                    break;
-                case "MyBox##lowerTriangle":
-                    lowerTriangleRadio.fire();
-                    break;
-                default:
-                    if (value.startsWith("MyBox##Expression")) {
-                        valueInput.setText(value.substring("MyBox##Expression".length()));
-                        expressionRadio.fire();
-                    } else {
-                        valueInput.setText(value);
-                        setRadio.fire();
-                    }
-            }
-            valueGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    checkValue();
-                }
-            });
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    public void checkValue() {
-        try {
-            if (isSettingValues) {
-                return;
-            }
-            value = null;
-            valueInput.setStyle(null);
-            if (setRadio.isSelected()) {
-                value = valueInput.getText();
-            } else if (zeroRadio.isSelected()) {
-                value = "0";
-            } else if (oneRadio.isSelected()) {
-                value = "1";
-            } else if (blankRadio.isSelected()) {
-                value = "MyBox##blank";
-            } else if (randomRadio.isSelected()) {
-                value = "MyBox##random";
-            } else if (randomNnRadio.isSelected()) {
-                value = "MyBox##randomNn";
-            } else if (gaussianDistributionRadio.isSelected()) {
-                value = "MyBox##gaussianDistribution";
-            } else if (identifyRadio.isSelected()) {
-                value = "MyBox##identify";
-            } else if (upperTriangleRadio.isSelected()) {
-                value = "MyBox##upperTriangle";
-            } else if (lowerTriangleRadio.isSelected()) {
-                value = "MyBox##lowerTriangle";
-            } else if (expressionRadio.isSelected()) {
-                value = "MyBox##Expression##" + expressionController.scriptInput.getText();
-            }
-            if (value != null && !value.isBlank()) {
-                UserConfig.setString(baseName + "Value", value);
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+        valueController.setParameter(this);
     }
 
     @Override
     public void sourceChanged() {
-        if (tableController == null) {
-            return;
-        }
         super.sourceChanged();
-        expressionController.setData2D(data2D);
+        valueController.setData2D(data2D);
     }
 
     @Override
     public void refreshControls() {
         try {
+            if (data2D == null) {
+                return;
+            }
             if (data2D.isMutiplePages()) {
                 allPagesRadio.setDisable(false);
             } else {
@@ -178,50 +64,9 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
     @Override
     public boolean checkOptions() {
         boolean ok = super.checkOptions();
-        if (isAllPages()) {
-            matrixPane.setDisable(true);
-            if (gaussianDistributionRadio.isSelected() || identifyRadio.isSelected()
-                    || upperTriangleRadio.isSelected() || lowerTriangleRadio.isSelected()) {
-                zeroRadio.fire();
-                return false;
-            }
-        } else {
-            boolean isSquare = isSquare();
-            boolean canGD = isSquare && checkedColsIndices.size() % 2 != 0;
-            gaussianDistributionRadio.setDisable(!canGD);
-            identifyRadio.setDisable(!isSquare);
-            upperTriangleRadio.setDisable(!isSquare);
-            lowerTriangleRadio.setDisable(!isSquare);
-            if (!isSquare) {
-                if (gaussianDistributionRadio.isSelected() || identifyRadio.isSelected()
-                        || upperTriangleRadio.isSelected() || lowerTriangleRadio.isSelected()) {
-                    zeroRadio.fire();
-                    return false;
-                }
-            }
-            if (!canGD) {
-                if (gaussianDistributionRadio.isSelected()) {
-                    zeroRadio.fire();
-                    return false;
-                }
-            }
-            matrixPane.setDisable(false);
-        }
-        checkValue();
-        if (value == null) {
-            okButton.setDisable(true);
-            return false;
-        } else {
-            if (expressionRadio.isSelected()) {
-                ok = expressionController.checkExpression(isAllPages());
-                if (!ok && data2D.getError() != null) {
-                    infoLabel.setText(message("Invalid") + ": " + message("RowExpression") + "\n"
-                            + data2D.getError());
-                }
-            }
-            okButton.setDisable(!ok);
-            return ok;
-        }
+        ok = valueController.checkSelection() && ok;
+        okButton.setDisable(!ok);
+        return ok;
     }
 
     @Override
@@ -239,8 +84,8 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                         tableController.dataController.backupController.addBackup(task, data2D.getFile());
                     }
                     data2D.setTask(task);
-                    data2D.startExpressionServiceAnyway(task);
-                    ok = data2D.setValue(checkedColsIndices, value, errorContinueCheck.isSelected());
+                    data2D.startExpressionService(task);
+                    ok = data2D.setValue(checkedColsIndices, valueController.value, valueController.errorContinueCheck.isSelected());
                     data2D.stopExpressionService();
                     return ok;
                 } catch (Exception e) {
@@ -272,15 +117,19 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
     @Override
     public void handleRowsTask() {
         try {
+            if (valueController.columnMeanRadio.isSelected()) {
+                setRowsMean();
+                return;
+            }
             tableController.isSettingValues = true;
             boolean ok;
-            if (gaussianDistributionRadio.isSelected()) {
+            if (valueController.gaussianDistributionRadio.isSelected()) {
                 ok = gaussianDistribution();
-            } else if (identifyRadio.isSelected()) {
+            } else if (valueController.identifyRadio.isSelected()) {
                 ok = identifyMatrix();
-            } else if (upperTriangleRadio.isSelected()) {
+            } else if (valueController.upperTriangleRadio.isSelected()) {
                 ok = upperTriangleMatrix();
-            } else if (lowerTriangleRadio.isSelected()) {
+            } else if (valueController.lowerTriangleRadio.isSelected()) {
                 ok = lowerTriangleMatrix();
             } else {
                 ok = setValue();
@@ -299,18 +148,87 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
         }
     }
 
+    public void setRowsMean() {
+        if (!tableController.checkBeforeNextAction()) {
+            return;
+        }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try {
+
+                    data2D.setTask(task);
+                    data2D.startExpressionService(task);
+                    ok = data2D.setValue(checkedColsIndices, valueController.value, valueController.errorContinueCheck.isSelected());
+                    data2D.stopExpressionService();
+                    return ok;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                tableController.dataController.goPage();
+                tableController.requestMouse();
+                tableController.popDone();
+                tabPane.getSelectionModel().select(dataTab);
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                data2D.stopExpressionService();
+                data2D.setTask(null);
+                task = null;
+            }
+
+        };
+        start(task);
+    }
+
+    public DescriptiveStatistic mean() {
+        try {
+            DescriptiveStatistic calculation = new DescriptiveStatistic()
+                    .setMean(true).setScale(4)
+                    .setStatisticObject(DescriptiveStatistic.StatisticObject.Columns)
+                    .setHandleController(this).setData2D(data2D)
+                    .setColsIndices(checkedColsIndices)
+                    .setColsNames(checkedColsNames);
+            if (data2D.isMutiplePages()) {
+
+            } else {
+                int rowsNumber = tableData.size();
+                for (int col : checkedColsIndices) {
+                    String[] colData = new String[rowsNumber];
+                    for (int r = 0; r < rowsNumber; r++) {
+                        colData[r] = tableData.get(r).get(col + 1);
+                    }
+                    DoubleStatistic statistic = new DoubleStatistic(colData, calculation);
+                    data2D.column(col).setDoubleStatistic(statistic);
+                }
+            }
+            return calculation;
+        } catch (Exception e) {
+            error = e.toString();
+            return null;
+        }
+    }
+
     public boolean setValue() {
         try {
             Random random = new Random();
-            String script = expressionController.scriptInput.getText();
+            String script = valueController.expressionController.scriptInput.getText();
             for (int row : checkedRowsIndices) {
                 List<String> values = tableController.tableData.get(row);
-                String v = value;
-                if (blankRadio.isSelected()) {
+                String v = valueController.value;
+                if (valueController.blankRadio.isSelected()) {
                     v = "";
-                } else if (expressionRadio.isSelected()) {
+                } else if (valueController.expressionRadio.isSelected()) {
                     if (!data2D.calculateTableRowExpression(script, values, row)) {
-                        if (errorContinueCheck.isSelected()) {
+                        if (valueController.errorContinueCheck.isSelected()) {
                             continue;
                         } else {
                             if (data2D.getError() != null) {
@@ -322,9 +240,9 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                     v = data2D.getExpressionResult();
                 }
                 for (int col : checkedColsIndices) {
-                    if (randomRadio.isSelected()) {
+                    if (valueController.randomRadio.isSelected()) {
                         v = tableController.data2D.random(random, col, false);
-                    } else if (randomNnRadio.isSelected()) {
+                    } else if (valueController.randomNnRadio.isSelected()) {
                         v = tableController.data2D.random(random, col, true);
                     }
                     values.set(col + 1, v);

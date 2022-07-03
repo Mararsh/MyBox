@@ -259,9 +259,9 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             protected boolean handle() {
                 data2D.setTask(task);
                 if (myController instanceof Data2DRowExpressionController) {
-                    data2D.startExpressionServiceAnyway(task);
-                } else {
                     data2D.startExpressionService(task);
+                } else {
+                    data2D.startFilterService(task);
                 }
                 csvFile = generatedFile();
                 data2D.stopExpressionService();
@@ -298,7 +298,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             protected boolean handle() {
                 try {
                     data2D.setTask(task);
-                    data2D.startExpressionService(task);
+                    data2D.startFilterService(task);
                     ok = handleRows();
                     data2D.stopExpressionService();
                     return ok;

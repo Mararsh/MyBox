@@ -72,7 +72,7 @@ public class Data2DDeleteController extends BaseData2DHandleController {
                         tableController.dataController.backupController.addBackup(task, data2D.getFile());
                     }
                     data2D.setTask(task);
-                    data2D.startExpressionService(task);
+                    data2D.startFilterService(task);
                     ok = data2D.delete(errorContinueCheck.isSelected());
                     data2D.stopExpressionService();
                     return ok;

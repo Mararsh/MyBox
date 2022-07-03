@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import javafx.scene.paint.Color;
+import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.data.Era;
 import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
@@ -41,6 +42,7 @@ public class ColumnDefinition extends BaseData {
     protected Object value;
     protected Number maxValue, minValue;
     protected Map<Object, String> data;  // value, displayString
+    protected DoubleStatistic doubleStatistic;
 
     public static enum ColumnType {
         String, Boolean, Text,
@@ -956,6 +958,15 @@ public class ColumnDefinition extends BaseData {
 
     public void setColor(Color color) {
         this.color = color;
+    }
+
+    public DoubleStatistic getDoubleStatistic() {
+        return doubleStatistic;
+    }
+
+    public ColumnDefinition setDoubleStatistic(DoubleStatistic doubleStatistic) {
+        this.doubleStatistic = doubleStatistic;
+        return this;
     }
 
 }

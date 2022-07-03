@@ -191,7 +191,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             protected boolean handle() {
                 try {
                     data2D.setTask(task);
-                    data2D.startExpressionService(task);
+                    data2D.startFilterService(task);
                     readData();
                     data2D.stopExpressionService();
                     return true;

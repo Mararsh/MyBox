@@ -50,7 +50,7 @@ public class Data2DConvertToDataBaseTask extends Data2DTableCreateController {
     @Override
     public boolean doTask() {
         try ( Connection conn = DerbyBase.getConnection()) {
-            convertController.data2D.startExpressionService(task);
+            convertController.data2D.startFilterService(task);
             attributesController.columnIndices = convertController.checkedColsIndices;
             if (!attributesController.createTable(conn)) {
                 return false;

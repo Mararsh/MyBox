@@ -513,7 +513,6 @@ public class DataFileExcel extends DataFile {
                 Random random = new Random();
                 rowIndex = 0;
                 boolean needSetValue;
-                startFilter();
                 while (iterator.hasNext() && task != null && !task.isCancelled()) {
                     Row sourceRow = iterator.next();
                     if (sourceRow == null) {
@@ -616,7 +615,6 @@ public class DataFileExcel extends DataFile {
                 }
                 if (needFilter()) {
                     rowIndex = 0;
-                    startFilter();
                     while (iterator.hasNext() && task != null && !task.isCancelled()) {
                         Row sourceRow = iterator.next();
                         if (sourceRow == null) {

@@ -466,7 +466,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
             protected boolean handle() {
                 try {
                     data2D.setTask(task);
-                    data2D.startExpressionService(task);
+                    data2D.startFilterService(task);
                     calculation.setTask(task);
                     if (calculation.needStored()) {
                         DataTable tmpTable = data2D.toTmpTable(task, checkedColsIndices, false);
@@ -525,7 +525,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
             protected boolean handle() {
                 try {
                     data2D.setTask(task);
-                    data2D.startExpressionService(task);
+                    data2D.startFilterService(task);
                     calculation.setTask(task);
                     if (calculation.needStored()) {
                         DataTable dataTable = data2D.singleColumn(task, checkedColsIndices);

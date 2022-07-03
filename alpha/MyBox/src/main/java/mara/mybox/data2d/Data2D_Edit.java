@@ -364,12 +364,6 @@ public abstract class Data2D_Edit extends Data2D_Data {
                 && expressionCalculator.needFilter();
     }
 
-    public void startFilter() {
-        if (expressionCalculator != null) {
-            expressionCalculator.startFilter();
-        }
-    }
-
     public boolean calculateTableRowExpression(String script, List<String> tableRow, long tableRowNumber) {
         return expressionCalculator == null
                 || expressionCalculator.calculateTableRowExpression(script, tableRow, tableRowNumber);
@@ -415,13 +409,13 @@ public abstract class Data2D_Edit extends Data2D_Data {
         return expressionCalculator == null ? null : expressionCalculator.expressionResult;
     }
 
-    public void startExpressionService(SingletonTask task) {
+    public void startFilterService(SingletonTask task) {
         if (needFilter()) {
             expressionCalculator.startService(task);
         }
     }
 
-    public void startExpressionServiceAnyway(SingletonTask task) {
+    public void startExpressionService(SingletonTask task) {
         expressionCalculator.startService(task);
     }
 

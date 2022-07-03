@@ -391,7 +391,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                 return true;
             }
             ExpressionCalculator calculator = data2D.getExpressionCalculator();
-            calculator.startFilter();
+            calculator.filterPassedNumber = 0;
             List<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
             if (currentPageRadio.isSelected() || selected == null || selected.isEmpty()) {
                 for (int i = 0; i < tableData.size(); i++) {
@@ -428,14 +428,18 @@ public class BaseData2DSourceController extends ControlData2DLoad {
     }
 
     public List<List<String>> selectedData(List<Integer> cols, boolean showRowNumber) {
+        return selectedData(checkedRowsIndices, checkedColsIndices, showRowNumber);
+    }
+
+    public List<List<String>> selectedData(List<Integer> rows, List<Integer> cols, boolean showRowNumber) {
         try {
-            if (checkedRowsIndices == null || checkedRowsIndices.isEmpty()
+            if (rows == null || rows.isEmpty()
                     || cols == null || cols.isEmpty()) {
                 return null;
             }
             List<List<String>> data = new ArrayList<>();
             int size = tableData.size();
-            for (int row : checkedRowsIndices) {
+            for (int row : rows) {
                 if (row < 0 || row >= size) {
                     continue;
                 }
@@ -482,6 +486,20 @@ public class BaseData2DSourceController extends ControlData2DLoad {
             notifySelected();
         } catch (Exception e) {
             MyBoxLog.debug(e);
+        }
+    }
+
+    public List<Integer> tableRows() {
+        try {
+            List<Integer> rows = new ArrayList<>();
+            for (int i = 0; i < tableData.size(); i++) {
+                rows.add(i);
+            }
+            return rows;
+        } catch (Exception e) {
+            error = e.toString();
+            MyBoxLog.debug(e);
+            return null;
         }
     }
 

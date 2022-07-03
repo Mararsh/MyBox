@@ -437,7 +437,6 @@ public class DataTable extends Data2D {
                 conn.setAutoCommit(false);
                 rowIndex = 0;
                 int count = 0;
-                startFilter();
                 while (results.next() && task != null && !task.isCancelled()) {
                     Data2DRow row = tableData2D.readData(results);
                     List<String> rowValues = new ArrayList<>();
@@ -511,7 +510,6 @@ public class DataTable extends Data2D {
                 conn.setAutoCommit(false);
                 rowIndex = 0;
                 int count = 0;
-                startFilter();
                 while (results.next() && task != null && !task.isCancelled()) {
                     Data2DRow row = tableData2D.readData(results);
                     List<String> rowValues = new ArrayList<>();

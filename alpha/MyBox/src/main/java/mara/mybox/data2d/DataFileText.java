@@ -336,7 +336,6 @@ public class DataFileText extends DataFile {
             Random random = new Random();
             rowIndex = 0;
             boolean needSetValue;
-            startFilter();
             while ((line = reader.readLine()) != null && task != null && !task.isCancelled()) {
                 List<String> record = parseFileLine(line);
                 if (record == null || record.isEmpty()) {
@@ -404,7 +403,6 @@ public class DataFileText extends DataFile {
             if (needFilter()) {
                 String line;
                 rowIndex = 0;
-                startFilter();
                 while ((line = reader.readLine()) != null && task != null && !task.isCancelled()) {
                     List<String> record = parseFileLine(line);
                     if (record == null || record.isEmpty()) {

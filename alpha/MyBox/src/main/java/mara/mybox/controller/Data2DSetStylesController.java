@@ -1,24 +1,15 @@
 package mara.mybox.controller;
 
-import java.util.Arrays;
-import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DStyle;
 import mara.mybox.db.table.TableData2DStyle;
@@ -50,25 +41,17 @@ public class Data2DSetStylesController extends BaseSysTableController<Data2DStyl
     protected TableColumn<Data2DStyle, String> columnsColumn, filterColumn,
             fontColorColumn, bgColorColumn, fontSizeColumn, boldColumn, moreColumn;
     @FXML
-    protected ToggleGroup colorGroup, bgGroup;
-    @FXML
-    protected ColorSet fontColorController, bgColorController;
-    @FXML
-    protected ComboBox<String> fontSizeSelector;
-    @FXML
-    protected CheckBox colorCheck, bgCheck, sizeCheck, boldCheck;
+    protected CheckBox sizeCheck;
     @FXML
     protected TextField fromInput, toInput, sequenceInput;
     @FXML
-    protected TextArea moreInput;
-    @FXML
     protected Label idLabel;
-    @FXML
-    protected RadioButton colorDefaultRadio, colorSetRadio, bgDefaultRadio, bgSetRadio;
     @FXML
     protected FlowPane columnsPane;
     @FXML
     protected ControlData2DRowFilter filterController;
+    @FXML
+    protected ControlStyleEdit editController;
 
     public Data2DSetStylesController() {
         baseTitle = message("SetStyles");
@@ -105,72 +88,7 @@ public class Data2DSetStylesController extends BaseSysTableController<Data2DStyl
                 }
             });
 
-            colorGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
-                    checkStyle();
-                }
-            });
-            fontColorController.thisPane.disableProperty().bind(colorDefaultRadio.selectedProperty());
-            fontColorController.init(this, baseName + "Color", Color.BLACK);
-            fontColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
-                @Override
-                public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
-                    checkStyle();
-                }
-            });
-
-            bgGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
-                    checkStyle();
-                }
-            });
-            bgColorController.thisPane.disableProperty().bind(bgDefaultRadio.selectedProperty());
-            bgColorController.init(this, baseName + "BgColor", Color.TRANSPARENT);
-            bgColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
-                @Override
-                public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
-                    checkStyle();
-                }
-            });
-
-            List<String> sizes = Arrays.asList(
-                    message("Default"), "0.8em", "1.2em",
-                    "18", "15", "9", "10", "12", "14", "17", "24", "36", "48", "64", "96");
-            fontSizeSelector.getItems().addAll(sizes);
-            fontSizeSelector.getSelectionModel().select(UserConfig.getString(baseName + "FontSize", message("Default")));
-            fontSizeSelector.valueProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> o, String oldValue, String newValue) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    UserConfig.setString(baseName + "FontSize", newValue);
-                    checkStyle();
-                }
-            });
-
-            boldCheck.setSelected(UserConfig.getBoolean(baseName + "Bold", false));
-            boldCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> o, Boolean oldValue, Boolean newValue) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    UserConfig.setBoolean(baseName + "Bold", newValue);
-                    checkStyle();
-                }
-            });
-
-            moreInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> o, Boolean oldValue, Boolean newValue) {
-                    if (!newValue) {
-                        checkStyle();
-                    }
-                }
-            });
+            editController.showLabel = idLabel;
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -294,22 +212,7 @@ public class Data2DSetStylesController extends BaseSysTableController<Data2DStyl
         if (updatedStyle == null) {
             updatedStyle = new Data2DStyle();
         }
-        if (colorDefaultRadio.isSelected()) {
-            updatedStyle.setFontColor(null);
-        } else {
-            updatedStyle.setFontColor(fontColorController.rgb());
-        }
-        if (bgDefaultRadio.isSelected()) {
-            updatedStyle.setBgColor(null);
-        } else {
-            updatedStyle.setBgColor(bgColorController.rgb());
-        }
-        updatedStyle.setFontSize(fontSizeSelector.getValue());
-        updatedStyle.setBold(boldCheck.isSelected());
-        updatedStyle.setMoreStyle(moreInput.getText());
-        idLabel.setText(updatedStyle.getD2sid() < 0
-                ? message("NewData") : (message("ID") + ": " + updatedStyle.getD2sid()));
-        idLabel.setStyle(updatedStyle.finalStyle());
+        editController.checkStyle(updatedStyle);
     }
 
     public void loadNull() {
@@ -320,11 +223,7 @@ public class Data2DSetStylesController extends BaseSysTableController<Data2DStyl
         toInput.clear();
         selectNoneColumn();
         filterController.scriptInput.clear();
-        colorDefaultRadio.fire();
-        bgDefaultRadio.fire();
-        fontSizeSelector.setValue(message("Default"));
-        boldCheck.setSelected(false);
-        moreInput.clear();
+        editController.loadNull(updatedStyle);
         sequenceInput.setText((dataSize + 1) + "");
         isSettingValues = false;
         checkStyle();
@@ -391,18 +290,8 @@ public class Data2DSetStylesController extends BaseSysTableController<Data2DStyl
         }
         filterController.scriptInput.setText(updatedStyle.getMoreConditions());
 
-        if (updatedStyle.getFontColor() != null && !updatedStyle.getFontColor().isBlank()) {
-            fontColorController.setColor(Color.web(updatedStyle.getFontColor()));
-            colorSetRadio.fire();
-        }
-        if (updatedStyle.getBgColor() != null && !updatedStyle.getBgColor().isBlank()) {
-            bgColorController.setColor(Color.web(updatedStyle.getBgColor()));
-            bgSetRadio.fire();
-        }
-        fontSizeSelector.setValue(updatedStyle.getFontSize());
-        boldCheck.setSelected(updatedStyle.isBold());
-        moreInput.setText(updatedStyle.getMoreStyle());
         sequenceInput.setText(updatedStyle.getSequence() + "");
+        editController.editStyle(updatedStyle);
         isSettingValues = false;
         checkStyle();
     }
@@ -503,16 +392,6 @@ public class Data2DSetStylesController extends BaseSysTableController<Data2DStyl
             tableController.dataController.goPage();
             tableController.requestMouse();
         }
-    }
-
-    @FXML
-    public void clearMoreSyles() {
-        moreInput.clear();
-    }
-
-    @FXML
-    public void cssGuide() {
-        WebBrowserController.oneOpen("https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html", true);
     }
 
     @Override

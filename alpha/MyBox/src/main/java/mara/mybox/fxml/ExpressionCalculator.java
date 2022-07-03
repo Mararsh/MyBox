@@ -133,7 +133,24 @@ public class ExpressionCalculator {
     /*
         expression
      */
- /*
+    public String valueExpression(String script, String value) {
+        try {
+            if (script == null || script.isBlank()
+                    || value == null || value.isBlank()
+                    || data2D == null || !data2D.isValid()) {
+                return script;
+            }
+
+            String filledScript = script;
+            filledScript = findReplace.replaceStringAll(filledScript, "#{x}", value);
+            return filledScript;
+        } catch (Exception e) {
+            handleError(e);
+            return null;
+        }
+    }
+
+    /*
          "dataRowNumber" is 1-based
      */
     public String dataRowExpression(String script, List<String> dataRow, long dataRowNumber) {
@@ -193,10 +210,6 @@ public class ExpressionCalculator {
     public boolean needFilter() {
         return (filterScript != null && !filterScript.isBlank())
                 || maxFilterPassed > 0;
-    }
-
-    public void startFilter() {
-        filterPassedNumber = 0;
     }
 
     public boolean reachMaxFilterPassed() {
@@ -279,9 +292,7 @@ public class ExpressionCalculator {
                         stopped = false;
                         while (!stopped && data2D != null && task != null && !task.isQuit()) {
                             synchronized (expressionLock) {
-                                if (expression != null) {
-                                    calculateExpression();
-                                }
+                                calculateExpression();
                                 expression = null;
                                 expressionLock.notify();
                                 expressionLock.wait();
@@ -313,6 +324,7 @@ public class ExpressionCalculator {
             expression = null;
             expressionLock.notify();
         }
+        filterPassedNumber = 0;
     }
 
     /*

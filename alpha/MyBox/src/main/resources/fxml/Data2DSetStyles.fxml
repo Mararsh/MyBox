@@ -75,15 +75,15 @@ License:    Apache License Version 2.0
                                             </graphic>
                                         </TableColumn>
                                         <TableColumn fx:id="sidColumn" prefWidth="60.0" text="%ID" />
-                              <TableColumn fx:id="sequenceColumn" prefWidth="50.0" text="%Sequence" />
+                                        <TableColumn fx:id="sequenceColumn" prefWidth="50.0" text="%Sequence" />
                                         <TableColumn fx:id="fromColumn" prefWidth="60.0" text="%From" />
                                         <TableColumn fx:id="toColumn" prefWidth="70.0" text="%To" />
                                         <TableColumn fx:id="columnsColumn" prefWidth="120.0" text="%Columns" />
                                         <TableColumn fx:id="filterColumn" prefWidth="160.0" text="%RowFilter" />
-                              <TableColumn fx:id="fontColorColumn" text="%FontColor" />
-                              <TableColumn fx:id="bgColorColumn" text="%BackgroundColor" />
-                              <TableColumn fx:id="fontSizeColumn" text="%FontSize" />
-                              <TableColumn fx:id="boldColumn" text="%Bold" />
+                                        <TableColumn fx:id="fontColorColumn" text="%FontColor" />
+                                        <TableColumn fx:id="bgColorColumn" text="%BackgroundColor" />
+                                        <TableColumn fx:id="fontSizeColumn" text="%FontSize" />
+                                        <TableColumn fx:id="boldColumn" text="%Bold" />
                                         <TableColumn fx:id="moreColumn" prefWidth="160.0" text="%More" />
                                     </columns>
                                 </TableView>
@@ -97,7 +97,7 @@ License:    Apache License Version 2.0
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
                                                         <Image url="@../buttons/Red/iconGo.png" />
-                                                    </image>
+                                                    </image> 
                                                 </ImageView>
                                             </graphic>
                                         </Button>
@@ -182,15 +182,15 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                              <Button fx:id="copyDataButton" layoutX="439.0" layoutY="10.0" mnemonicParsing="false" onAction="#copyDataAction">
-                                 <graphic>
-                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconCopy.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
+                                        <Button fx:id="copyDataButton" layoutX="439.0" layoutY="10.0" mnemonicParsing="false" onAction="#copyDataAction">
+                                            <graphic>
+                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconCopy.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
                                         <Button fx:id="createButton" mnemonicParsing="false" onAction="#createAction">
                                             <graphic>
                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -261,14 +261,14 @@ License:    Apache License Version 2.0
                                                                                         </ImageView>
                                                                                     </graphic>
                                                                                 </Button>
-                                                            <Label text="%StyleColumnComments" />
+                                                                                <Label text="%StyleColumnComments" />
                                                                             </children>
                                                                         </FlowPane>
                                                                         <FlowPane fx:id="columnsPane" hgap="2.0" vgap="2.0" />
                                                                     </children>
                                                                 </VBox>
                                                                 <Label text="%RowFilter" />
-                                                <fx:include fx:id="filter" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DRowCondition.fxml" VBox.vgrow="ALWAYS" />
+                                                                <fx:include fx:id="filter" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DRowCondition.fxml" VBox.vgrow="ALWAYS" />
                                                             </children>
                                                             <padding>
                                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -284,58 +284,13 @@ License:    Apache License Version 2.0
                                                     <content>
                                                         <VBox fx:id="styleBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                             <children>
-                                                <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">
-                                                   <children>
-                                                      <Label text="%Sequence" />
-                                                      <TextField fx:id="sequenceInput" prefWidth="120.0" />
-                                                   </children>
-                                                </FlowPane>
                                                                 <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">
                                                                     <children>
-                                                                        <Label text="%FontColor" />
-                                                                        <RadioButton fx:id="colorDefaultRadio" mnemonicParsing="false" selected="true" text="%Default">
-                                                                            <toggleGroup>
-                                                                                <ToggleGroup fx:id="colorGroup" />
-                                                                            </toggleGroup>
-                                                                        </RadioButton>
-                                                                        <RadioButton fx:id="colorSetRadio" layoutX="63.0" layoutY="16.0" mnemonicParsing="false" text="%Set" toggleGroup="$colorGroup" />
-                                                                        <fx:include fx:id="fontColor" source="ColorSet.fxml" />
+                                                                        <Label text="%Sequence" />
+                                                                        <TextField fx:id="sequenceInput" prefWidth="120.0" />
                                                                     </children>
                                                                 </FlowPane>
-                                                                <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">
-                                                                    <children>
-                                                                        <Label text="%BackgroundColor" />
-                                                                        <RadioButton fx:id="bgDefaultRadio" mnemonicParsing="false" selected="true" text="%Default">
-                                                                            <toggleGroup>
-                                                                                <ToggleGroup fx:id="bgGroup" />
-                                                                            </toggleGroup>
-                                                                        </RadioButton>
-                                                                        <RadioButton fx:id="bgSetRadio" mnemonicParsing="false" text="%Set" toggleGroup="$bgGroup" />
-                                                                        <fx:include fx:id="bgColor" source="ColorSet.fxml" />
-                                                                    </children>
-                                                                </FlowPane>
-                                                                <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">
-                                                                    <children>
-                                                                        <Label text="%FontSize" />
-                                                                        <ComboBox fx:id="fontSizeSelector" editable="true" prefWidth="100.0" promptText="%Size" />
-                                                                        <CheckBox fx:id="boldCheck" mnemonicParsing="false" text="%Bold" />
-                                                                    </children>
-                                                                </FlowPane>
-                                                                <FlowPane hgap="5.0" layoutX="15.0" layoutY="48.0" prefWrapLength="0.0" vgap="5.0">
-                                                   <children>
-                                                                      <Label text="%More" />
-                                                      <Button fx:id="clearStyleButton" mnemonicParsing="false" onAction="#clearMoreSyles">
-                                                         <graphic>
-                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@../buttons/Red/iconClear.png" />
-                                                               </image>
-                                                            </ImageView>
-                                                         </graphic>
-                                                      </Button>
-                                                   </children></FlowPane>
-                                                                <TextArea fx:id="moreInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
-                                                                <Hyperlink maxWidth="1.7976931348623157E308" minHeight="-Infinity" onAction="#cssGuide" text="%JavafxCssGuide" wrapText="true" />
+                                                                <fx:include fx:id="edit" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlStyleEdit.fxml" VBox.vgrow="ALWAYS" />
                                                             </children>
                                                             <padding>
                                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
