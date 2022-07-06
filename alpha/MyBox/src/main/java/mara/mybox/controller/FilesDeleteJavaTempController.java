@@ -6,6 +6,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.tools.FileDeleteTools;
+import mara.mybox.tools.FileTools;
 import mara.mybox.value.Languages;
 import org.apache.commons.io.FileUtils;
 
@@ -14,15 +16,15 @@ import org.apache.commons.io.FileUtils;
  * @CreateDate 2020-11-21
  * @License Apache License Version 2.0
  */
-public class FilesDeleteSysTempController extends BaseController {
+public class FilesDeleteJavaTempController extends BaseController {
 
     protected File path;
 
     @FXML
     protected Label pathLabel, resultsLabel;
 
-    public FilesDeleteSysTempController() {
-        baseTitle = Languages.message("DeleteSysTemporaryPathFiles");
+    public FilesDeleteJavaTempController() {
+        baseTitle = Languages.message("DeleteJavaIOTemporaryPathFiles");
     }
 
     @Override
@@ -30,7 +32,7 @@ public class FilesDeleteSysTempController extends BaseController {
         try {
             super.initControls();
 
-            path = new File(System.getProperty("java.io.tmpdir"));
+            path = FileTools.javaIOTmpPath();
             pathLabel.setText(path.getAbsolutePath());
             countSize();
 
@@ -90,23 +92,7 @@ public class FilesDeleteSysTempController extends BaseController {
                     try {
                         System.gc();
                         before = FileUtils.sizeOfDirectory(path);
-                        File[] files = path.listFiles();
-                        if (files == null) {
-                            return true;
-                        }
-                        for (File file : files) {
-                            try {
-                                if (file.isDirectory()) {
-                                    try {
-                                        FileUtils.cleanDirectory(file);
-                                    } catch (Exception e) {
-                                    }
-                                } else {
-                                    FileUtils.deleteQuietly(file);
-                                }
-                            } catch (Exception e) {
-                            }
-                        }
+                        FileDeleteTools.clearJavaIOTmpPath();
                         after = FileUtils.sizeOfDirectory(path);
                     } catch (Exception e) {
 //                        MyBoxLog.debug(e.toString());

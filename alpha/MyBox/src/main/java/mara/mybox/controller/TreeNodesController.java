@@ -350,7 +350,8 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
         try {
             File file = TreeNode.exampleFile(category);
             if (file != null && tableTreeNode.categoryEmpty(category)) {
-                if (AppVariables.isTesting || PopTools.askSure(this, getBaseTitle(), message("ImportExamples"))) {
+                if (AppVariables.isTesting
+                        || PopTools.askSure(this, getBaseTitle(), message("ImportExamples") + ": " + message(category))) {
                     importExamples();
                     return true;
                 }

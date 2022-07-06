@@ -298,7 +298,7 @@ License:    Apache License Version 2.0
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <Menu mnemonicParsing="false" text="%FilesDelete">
                                     <items>
-                                        <MenuItem mnemonicParsing="false" onAction="#openDeleteSysTempPath" text="%DeleteSysTemporaryPathFiles" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openDeleteSysTempPath" text="%DeleteJavaIOTemporaryPathFiles" />
                                         <MenuItem mnemonicParsing="false" onAction="#openDeleteEmptyDirectories" text="%DeleteEmptyDirectories" />
                                         <MenuItem mnemonicParsing="false" onAction="#openFilesDelete" text="%FilesDelete" />
                                         <MenuItem mnemonicParsing="false" onAction="#openDeleteNestedDirectories" text="%DeleteNestedDirectories" />

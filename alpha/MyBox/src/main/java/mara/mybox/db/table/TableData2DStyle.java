@@ -39,13 +39,15 @@ public class TableData2DStyle extends BaseTable<Data2DStyle> {
         addColumn(new ColumnDefinition("rowStart", ColumnType.Long)); // 0-based
         addColumn(new ColumnDefinition("rowEnd", ColumnType.Long));  // Exclude
         addColumn(new ColumnDefinition("columns", ColumnType.String).setLength(StringMaxLength));
-        addColumn(new ColumnDefinition("moreConditions", ColumnType.String).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("rowFilter", ColumnType.String).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("columnFilter", ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("fontColor", ColumnType.String).setLength(64));
         addColumn(new ColumnDefinition("fontSize", ColumnType.String).setLength(64));
         addColumn(new ColumnDefinition("bgColor", ColumnType.String).setLength(64));
         addColumn(new ColumnDefinition("bold", ColumnType.Boolean));
         addColumn(new ColumnDefinition("moreStyle", ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("sequence", ColumnType.Float));
+        addColumn(new ColumnDefinition("abnoramlValues", ColumnType.Boolean));
         orderColumns = "d2id, sequence, d2sid";
         return this;
     }

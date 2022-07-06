@@ -44,11 +44,11 @@ License:    Apache License Version 2.0
                </graphic>
             </Button>
             <Label fx:id="label" maxWidth="1.7976931348623157E308" wrapText="true" HBox.hgrow="ALWAYS" />
-            <Button fx:id="dataButton" mnemonicParsing="false" onMouseEntered="#popDataMenu">
+            <Button fx:id="functionsButton" mnemonicParsing="false" onMouseEntered="#popDataMenu">
                <graphic>
-                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../buttons/Red/iconData.png" />
+                        <Image url="@../buttons/Red/iconFunction.png" />
                      </image>
                   </ImageView>
                </graphic>

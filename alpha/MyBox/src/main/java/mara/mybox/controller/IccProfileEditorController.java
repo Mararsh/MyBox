@@ -877,7 +877,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                         s += Languages.message("DeviceAttributes") + ": ";
                         s += ((boolean) header.value("DeviceAttributeTransparency") ? Languages.message("Transparency") : Languages.message("Reflective")) + "  ";
                         s += ((boolean) header.value("DeviceAttributeMatte") ? Languages.message("Matte") : Languages.message("Glossy")) + "  ";
-                        s += ((boolean) header.value("DeviceAttributeNegative") ? Languages.message("Negative") : Languages.message("Positive")) + "  ";
+                        s += ((boolean) header.value("DeviceAttributeNegative") ? Languages.message("Negative2") : Languages.message("Positive2")) + "  ";
                         s += ((boolean) header.value("DeviceAttributeBlackOrWhite") ? Languages.message("BlackOrWhite") : Languages.message("Colorful")) + "  ";
                         s += ((boolean) header.value("DeviceAttributePaperBased") ? Languages.message("PaperBased") : Languages.message("NonPaperBased")) + "  ";
                         s += ((boolean) header.value("DeviceAttributeTextured") ? Languages.message("Textured") : Languages.message("NonTextured")) + "  ";

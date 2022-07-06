@@ -460,7 +460,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
                     }
                 }
                 if (expressionCalculator != null
-                        && expressionCalculator.filterTableRow(style.getMoreConditions(), tableRow, tableRowIndex)) {
+                        && expressionCalculator.filterTableRow(style.getRowFilter(), tableRow, tableRowIndex)) {
                     String styleValue = style.finalStyle();
                     if (styleValue == null || styleValue.isBlank()) {
                         cellStyle = null;

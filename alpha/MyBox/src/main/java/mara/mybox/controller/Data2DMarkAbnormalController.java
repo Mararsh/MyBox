@@ -25,7 +25,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-4-7
  * @License Apache License Version 2.0
  */
-public class Data2DSetStylesController extends BaseSysTableController<Data2DStyle> {
+public class Data2DMarkAbnormalController extends BaseSysTableController<Data2DStyle> {
 
     protected ControlData2DEditTable tableController;
     protected TableData2DStyle tableData2DStyle;
@@ -41,7 +41,7 @@ public class Data2DSetStylesController extends BaseSysTableController<Data2DStyl
     protected TableColumn<Data2DStyle, String> columnsColumn, rowFilterColumn, columnFilterColumn,
             fontColorColumn, bgColorColumn, fontSizeColumn, boldColumn, moreColumn;
     @FXML
-    protected CheckBox sizeCheck;
+    protected CheckBox abnormalCheck, sizeCheck;
     @FXML
     protected TextField fromInput, toInput, sequenceInput;
     @FXML
@@ -55,9 +55,9 @@ public class Data2DSetStylesController extends BaseSysTableController<Data2DStyl
     @FXML
     protected ControlData2DStyle editController;
 
-    public Data2DSetStylesController() {
-        baseTitle = message("SetStyles");
-        TipsLabelKey = "Data2DSetStylesTips";
+    public Data2DMarkAbnormalController() {
+        baseTitle = message("MarkAbnormalValues");
+        TipsLabelKey = "MarkAbnormalValuesTips";
     }
 
     @Override
@@ -228,6 +228,7 @@ public class Data2DSetStylesController extends BaseSysTableController<Data2DStyl
         rowFilterController.scriptInput.clear();
         editController.loadNull(updatedStyle);
         sequenceInput.setText((dataSize + 1) + "");
+        abnormalCheck.setSelected(false);
         isSettingValues = false;
         checkStyle();
         checkInputs();
@@ -294,6 +295,8 @@ public class Data2DSetStylesController extends BaseSysTableController<Data2DStyl
         rowFilterController.scriptInput.setText(updatedStyle.getRowFilter());
 
         sequenceInput.setText(updatedStyle.getSequence() + "");
+        abnormalCheck.setSelected(updatedStyle.isAbnoramlValues());
+
         editController.editStyle(updatedStyle);
         isSettingValues = false;
         checkStyle();
@@ -372,6 +375,7 @@ public class Data2DSetStylesController extends BaseSysTableController<Data2DStyl
                     }
                     updatedStyle.setColumns(columns);
                     updatedStyle.setRowFilter(rowFilterController.scriptInput.getText());
+                    updatedStyle.setAbnoramlValues(abnormalCheck.isSelected());
                     return tableData2DStyle.writeData(updatedStyle) != null;
                 } catch (Exception e) {
                     error = e.toString();
@@ -411,10 +415,10 @@ public class Data2DSetStylesController extends BaseSysTableController<Data2DStyl
     /*
         static
      */
-    public static Data2DSetStylesController open(ControlData2DEditTable tableController) {
+    public static Data2DMarkAbnormalController open(ControlData2DEditTable tableController) {
         try {
-            Data2DSetStylesController controller = (Data2DSetStylesController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DSetStylesFxml, false);
+            Data2DMarkAbnormalController controller = (Data2DMarkAbnormalController) WindowTools.openChildStage(
+                    tableController.getMyWindow(), Fxmls.Data2DMarkAbnormalFxml, false);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

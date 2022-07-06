@@ -183,4 +183,30 @@ public class FileDeleteTools {
         return count;
     }
 
+    public static void clearJavaIOTmpPath() {
+        try {
+            System.gc();
+            File path = FileTools.javaIOTmpPath();
+            File[] files = path.listFiles();
+            if (files == null) {
+                return;
+            }
+            for (File file : files) {
+                try {
+                    if (file.isDirectory()) {
+                        try {
+                            FileUtils.cleanDirectory(file);
+                        } catch (Exception e) {
+                        }
+                    } else {
+                        FileUtils.deleteQuietly(file);
+                    }
+                } catch (Exception e) {
+                }
+            }
+        } catch (Exception e) {
+//            MyBoxLog.debug(e.toString());
+        }
+    }
+
 }

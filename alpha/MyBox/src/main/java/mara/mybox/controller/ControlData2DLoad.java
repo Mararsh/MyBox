@@ -683,19 +683,15 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                         = new TableAutoCommitCell<List<String>, String>(new DefaultStringConverter()) {
                                     @Override
                                     public void updateItem(String item, boolean empty) {
-                                        updateStyle();
                                         super.updateItem(item, empty);
-                                        if (empty || item == null) {
-                                            setText(null);
-                                            setGraphic(null);
-                                        }
-                                    }
-
-                                    public void updateStyle() {
                                         setStyle(null);
                                         try {
                                             setStyle(data2D.cellStyle(rowIndex(), name));
                                         } catch (Exception e) {
+                                        }
+                                        if (empty || item == null) {
+                                            setText(null);
+                                            setGraphic(null);
                                         }
                                     }
 
@@ -746,12 +742,12 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                 TableCell<List<String>, String> cell = new TableCell<List<String>, String>() {
                                     @Override
                                     public void updateItem(String item, boolean empty) {
+                                        super.updateItem(item, empty);
                                         setStyle(null);
                                         try {
                                             setStyle(data2D.cellStyle(getTableRow().getIndex(), name));
                                         } catch (Exception e) {
                                         }
-                                        super.updateItem(item, empty);
                                         if (empty || item == null) {
                                             setText(null);
                                             setGraphic(null);

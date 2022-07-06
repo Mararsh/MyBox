@@ -121,13 +121,52 @@ public class BufferedImageTools {
         }
     }
 
-    public static boolean same(BufferedImage imageA, BufferedImage imageB) {
+    public static boolean sameByMD5(BufferedImage imageA, BufferedImage imageB) {
         if (imageA == null || imageB == null
                 || imageA.getWidth() != imageB.getWidth()
                 || imageA.getHeight() != imageB.getHeight()) {
             return false;
         }
         return Arrays.equals(MessageDigestTools.MD5(imageA), MessageDigestTools.MD5(imageB));
+    }
+
+    // This way may be more quicker than comparing digests
+    public static boolean same(BufferedImage imageA, BufferedImage imageB) {
+        try {
+            if (imageA == null || imageB == null
+                    || imageA.getWidth() != imageB.getWidth()
+                    || imageA.getHeight() != imageB.getHeight()) {
+                return false;
+            }
+            int width = imageA.getWidth(), height = imageA.getHeight();
+            for (int y = 0; y < height / 2; y++) {
+                for (int x = 0; x < width / 2; x++) {
+                    if (imageA.getRGB(x, y) != imageA.getRGB(x, y)) {
+                        return false;
+                    }
+                }
+                for (int x = width - 1; x >= width / 2; x--) {
+                    if (imageA.getRGB(x, y) != imageA.getRGB(x, y)) {
+                        return false;
+                    }
+                }
+            }
+            for (int y = height - 1; y >= height / 2; y--) {
+                for (int x = 0; x < width / 2; x++) {
+                    if (imageA.getRGB(x, y) != imageA.getRGB(x, y)) {
+                        return false;
+                    }
+                }
+                for (int x = width - 1; x >= width / 2; x--) {
+                    if (imageA.getRGB(x, y) != imageA.getRGB(x, y)) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     // This way may be more quicker than comparing digests

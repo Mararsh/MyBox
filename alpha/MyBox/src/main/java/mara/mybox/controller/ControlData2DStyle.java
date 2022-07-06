@@ -24,7 +24,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-4-7
  * @License Apache License Version 2.0
  */
-public class ControlStyleEdit extends BaseController {
+public class ControlData2DStyle extends BaseController {
 
     protected Data2DStyle currentStyle;
     protected Label showLabel;

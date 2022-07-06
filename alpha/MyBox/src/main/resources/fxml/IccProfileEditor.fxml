@@ -231,7 +231,7 @@ License:    Apache License Version 2.0
                                                                 <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="374.0" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                                     <children>
                                                                         <Label text="%DeviceAttributes" visible="false" />
-                                                                        <CheckBox fx:id="negativeCheck" mnemonicParsing="false" text="%Negative" />
+                                                                        <CheckBox fx:id="negativeCheck" mnemonicParsing="false" text="%Negative2" />
                                                                         <Label fx:id="negativeMarkLabel" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" />
                                                                         <CheckBox fx:id="bwCheck" mnemonicParsing="false" text="%BlackOrWhite" />
                                                                         <Label fx:id="bwMarkLabel" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" />

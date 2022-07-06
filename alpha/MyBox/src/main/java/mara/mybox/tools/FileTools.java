@@ -196,4 +196,8 @@ public class FileTools {
         return tmpFile;
     }
 
+    public static File javaIOTmpPath() {
+        return new File(System.getProperty("java.io.tmpdir"));
+    }
+
 }

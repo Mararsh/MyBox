@@ -6,11 +6,13 @@ import java.util.List;
 import java.util.Optional;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -39,6 +41,7 @@ import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -92,16 +95,6 @@ public class ControlData2D extends BaseController {
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-            StyleTools.setIconTooltips(functionsButton, "iconFunction.png", "");
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -640,6 +633,17 @@ public class ControlData2D extends BaseController {
      */
     @FXML
     public void popFunctionsMenu(MouseEvent mouseEvent) {
+        if (UserConfig.getBoolean(interfaceName + "FunctionsPopWhenMousePassing", true)) {
+            functionsMenu(mouseEvent);
+        }
+    }
+
+    @FXML
+    public void showFunctionsMenu(ActionEvent event) {
+        functionsMenu(event);
+    }
+
+    public void functionsMenu(Event menuEvent) {
         try {
             setData(tableController.data2D);
 
@@ -692,11 +696,11 @@ public class ControlData2D extends BaseController {
             menu.setDisable(empty);
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("SetStyles"), StyleTools.getIconImage("iconColor.png"));
+            menu = new MenuItem(message("MarkAbnormalValues"), StyleTools.getIconImage("iconColor.png"));
             menu.setOnAction((ActionEvent event) -> {
-                Data2DSetStylesController.open(tableController);
+                Data2DMarkAbnormalController.open(tableController);
             });
-            menu.setDisable(empty || data2D.isTmpData());
+            menu.setDisable(empty);
             popMenu.getItems().add(menu);
 
             menu = new MenuItem(message("PasteContentInSystemClipboard"), StyleTools.getIconImage("iconPasteSystem.png"));
@@ -873,6 +877,16 @@ public class ControlData2D extends BaseController {
                 popMenu.getItems().add(examplesMenu);
             }
 
+            CheckMenuItem passPop = new CheckMenuItem(message("PopWhenMousePassing"));
+            passPop.setSelected(UserConfig.getBoolean(interfaceName + "FunctionsPopWhenMousePassing", true));
+            passPop.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(interfaceName + "FunctionsPopWhenMousePassing", passPop.isSelected());
+                }
+            });
+            popMenu.getItems().add(passPop);
+
             popMenu.getItems().add(new SeparatorMenuItem());
             menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
@@ -884,7 +898,7 @@ public class ControlData2D extends BaseController {
             });
             popMenu.getItems().add(menu);
 
-            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateBelow((Region) menuEvent.getSource(), popMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

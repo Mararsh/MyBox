@@ -15,8 +15,8 @@ public class Data2DStyle extends BaseData {
     protected Data2DDefinition data2DDefinition;
     protected long d2sid, d2id;
     protected long rowStart, rowEnd; // 0-based, exlcuded
-    protected String columns, moreConditions, fontColor, bgColor, fontSize, moreStyle;
-    protected boolean bold;
+    protected String columns, rowFilter, columnFilter, fontColor, bgColor, fontSize, moreStyle;
+    protected boolean abnoramlValues, bold;
     protected float sequence;
 
     private void init() {
@@ -25,11 +25,13 @@ public class Data2DStyle extends BaseData {
         rowStart = -1;
         rowEnd = -1;
         columns = null;
-        moreConditions = null;
+        rowFilter = null;
+        columnFilter = null;
         fontColor = null;
         bgColor = null;
         fontSize = null;
         moreStyle = null;
+        abnoramlValues = false;
         bold = false;
         sequence = 0;
     }
@@ -80,7 +82,7 @@ public class Data2DStyle extends BaseData {
             rowStart = style.rowStart;
             rowEnd = style.rowEnd;
             columns = style.columns;
-            moreConditions = style.moreConditions;
+            rowFilter = style.rowFilter;
             fontColor = style.fontColor;
             bgColor = style.bgColor;
             fontSize = style.fontSize;
@@ -124,8 +126,11 @@ public class Data2DStyle extends BaseData {
                 case "columns":
                     data.setColumns(value == null ? null : (String) value);
                     return true;
-                case "moreConditions":
-                    data.setMoreConditions(value == null ? null : (String) value);
+                case "rowFilter":
+                    data.setRowFilter(value == null ? null : (String) value);
+                    return true;
+                case "columnFilter":
+                    data.setColumnFilter(value == null ? null : (String) value);
                     return true;
                 case "fontColor":
                     data.setFontColor(value == null ? null : (String) value);
@@ -144,6 +149,9 @@ public class Data2DStyle extends BaseData {
                     return true;
                 case "sequence":
                     data.setSequence(value == null ? 0 : (float) value);
+                    return true;
+                case "abnoramlValues":
+                    data.setAbnoramlValues(value == null ? false : (boolean) value);
                     return true;
             }
         } catch (Exception e) {
@@ -168,8 +176,10 @@ public class Data2DStyle extends BaseData {
                     return data.getRowEnd();
                 case "columns":
                     return data.getColumns();
-                case "moreConditions":
-                    return data.getMoreConditions();
+                case "rowFilter":
+                    return data.getRowFilter();
+                case "columnFilter":
+                    return data.getColumnFilter();
                 case "fontColor":
                     return data.getFontColor();
                 case "bgColor":
@@ -182,6 +192,8 @@ public class Data2DStyle extends BaseData {
                     return data.isBold();
                 case "sequence":
                     return data.getSequence();
+                case "abnoramlValues":
+                    return data.isAbnoramlValues();
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -249,12 +261,21 @@ public class Data2DStyle extends BaseData {
         return this;
     }
 
-    public String getMoreConditions() {
-        return moreConditions;
+    public String getRowFilter() {
+        return rowFilter;
     }
 
-    public Data2DStyle setMoreConditions(String moreConditions) {
-        this.moreConditions = moreConditions;
+    public Data2DStyle setRowFilter(String rowFilter) {
+        this.rowFilter = rowFilter;
+        return this;
+    }
+
+    public String getColumnFilter() {
+        return columnFilter;
+    }
+
+    public Data2DStyle setColumnFilter(String columnFilter) {
+        this.columnFilter = columnFilter;
         return this;
     }
 
@@ -309,6 +330,15 @@ public class Data2DStyle extends BaseData {
 
     public Data2DStyle setSequence(float sequence) {
         this.sequence = sequence;
+        return this;
+    }
+
+    public boolean isAbnoramlValues() {
+        return abnoramlValues;
+    }
+
+    public Data2DStyle setAbnoramlValues(boolean abnoramlValues) {
+        this.abnoramlValues = abnoramlValues;
         return this;
     }
 

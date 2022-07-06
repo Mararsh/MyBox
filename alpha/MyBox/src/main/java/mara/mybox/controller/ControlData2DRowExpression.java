@@ -163,6 +163,49 @@ public class ControlData2DRowExpression extends TreeNodesController {
 
             controller.addFlowPane(topButtons);
 
+            scriptExampleButtons(controller);
+
+            PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
+                    " '' == ", " == ", " '' != ", " != ",
+                    " === ", " !== ", " true ", " false ", " null ", " undefined ",
+                    " >= ", " > ", " <= ", " < ", " && ", " || ", " ! "
+            ));
+            PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
+                    "''", " var ", " = ", ";", " += ", " -= ", " *= ", " /= ", " %= ",
+                    " + ", " - ", " * ", " / ", " % ", "++ ", "-- ",
+                    " , ", "( )", " { } ", "[ ]", "\" \"", ".", " this"
+            ));
+
+            PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
+                    "''.search(//ig) >= 0", "''.length > 0", "''.indexOf('') >= 0",
+                    "''.startsWith('')", "''.endsWith('')", "''.replace(//ig,'')"
+            ));
+
+            Hyperlink jlink = new Hyperlink("Learn JavaScript ");
+            jlink.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    openLink("https://www.tutorialsteacher.com/javascript");
+                }
+            });
+            controller.addNode(jlink);
+
+            Hyperlink alink = new Hyperlink("JavaScript Tutorial");
+            alink.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    openLink("https://www.w3school.com.cn/js/index.asp");
+                }
+            });
+            controller.addNode(alink);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    protected void scriptExampleButtons(MenuController controller) {
+        try {
             List<String> colnames = data2D.columnNames();
             List<String> names = new ArrayList<>();
             names.add(message("TableRowNumber"));
@@ -199,39 +242,6 @@ public class ControlData2DRowExpression extends TreeNodesController {
                         + "array.includes('#{" + col1 + "}')"
                 ));
             }
-            PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
-                    " '' == ", " == ", " '' != ", " != ",
-                    " === ", " !== ", " true ", " false ", " null ", " undefined ",
-                    " >= ", " > ", " <= ", " < ", " && ", " || ", " ! "
-            ));
-            PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
-                    "''", " var ", " = ", ";", " += ", " -= ", " *= ", " /= ", " %= ",
-                    " + ", " - ", " * ", " / ", " % ", "++ ", "-- ",
-                    " , ", "( )", " { } ", "[ ]", "\" \"", ".", " this"
-            ));
-
-            PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
-                    "''.search(//ig) >= 0", "''.length > 0", "''.indexOf('') >= 0",
-                    "''.startsWith('')", "''.endsWith('')", "''.replace(//ig,'')"
-            ));
-
-            Hyperlink jlink = new Hyperlink("Learn JavaScript ");
-            jlink.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    openLink("https://www.tutorialsteacher.com/javascript");
-                }
-            });
-            controller.addNode(jlink);
-
-            Hyperlink alink = new Hyperlink("JavaScript Tutorial");
-            alink.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    openLink("https://www.w3school.com.cn/js/index.asp");
-                }
-            });
-            controller.addNode(alink);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
