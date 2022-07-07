@@ -361,7 +361,8 @@ public abstract class Data2D_Edit extends Data2D_Data {
      */
     public boolean needFilter() {
         return expressionCalculator != null
-                && expressionCalculator.needFilter();
+                && expressionCalculator.rowFilter != null
+                && expressionCalculator.rowFilter.needFilter();
     }
 
     public boolean calculateTableRowExpression(String script, List<String> tableRow, long tableRowNumber) {
@@ -397,12 +398,14 @@ public abstract class Data2D_Edit extends Data2D_Data {
 
     public boolean filterPassed() {
         return expressionCalculator == null
-                || expressionCalculator.filterPassed;
+                || expressionCalculator.rowFilter == null
+                || expressionCalculator.rowFilter.passed;
     }
 
     public boolean filterReachMaxPassed() {
         return expressionCalculator != null
-                && expressionCalculator.reachMaxFilterPassed();
+                && expressionCalculator.rowFilter != null
+                && expressionCalculator.rowFilter.reachMaxPassed();
     }
 
     public String getExpressionResult() {

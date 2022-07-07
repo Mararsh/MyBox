@@ -32,21 +32,32 @@ License:    Apache License Version 2.0
                 <CheckBox fx:id="positiveCheck" layoutX="94.0" layoutY="10.0" mnemonicParsing="false" text="%Positive" />
             </children>
         </FlowPane>
-        <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-            <children>
-                <FlowPane hgap="2.0" vgap="2.0">
-                    <children>
-                        <Label text="%Outside" />
-                        <CheckBox fx:id="e4Check" mnemonicParsing="false" text="%UpperExtremeOutlierLine" />
-                        <CheckBox fx:id="e3Check" mnemonicParsing="false" text="%UpperMildOutlierLine" />
-                        <CheckBox fx:id="e2Check" mnemonicParsing="false" text="%LowerMildOutlierLine" />
-                        <CheckBox fx:id="e1Check" mnemonicParsing="false" text="%LowerExtremeOutlierLine" />
-                        <CheckBox fx:id="q1Check" mnemonicParsing="false" text="%LowerQuartile" />
-                        <CheckBox fx:id="q3Check" mnemonicParsing="false" text="%UpperQuartile" />
-                    </children>
-                </FlowPane>
-            </children>
-        </VBox>
+          <FlowPane hgap="2.0" vgap="2.0">
+              <children>
+                  <Label text="%LargerThan" />
+            <RadioButton layoutX="36.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Unlimit">
+               <toggleGroup>
+                  <ToggleGroup fx:id="largerGroup" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton layoutX="182.0" layoutY="10.0" mnemonicParsing="false" text="%UpperQuartile" toggleGroup="$largerGroup" />
+            <RadioButton layoutX="36.0" layoutY="10.0" mnemonicParsing="false" text="%UpperMildOutlierLine" toggleGroup="$largerGroup" />
+            <RadioButton mnemonicParsing="false" text="%UpperExtremeOutlierLine" toggleGroup="$largerGroup" />
+              </children>
+          </FlowPane>
+      <FlowPane hgap="2.0" vgap="2.0">
+         <children>
+            <Label text="%LessThan" />
+            <RadioButton mnemonicParsing="false" selected="true" text="%Unlimit">
+               <toggleGroup>
+                  <ToggleGroup fx:id="lessGroup" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton mnemonicParsing="false" text="%LowerQuartile" toggleGroup="$lessGroup" />
+            <RadioButton mnemonicParsing="false" text="%LowerMildOutlierLine" toggleGroup="$lessGroup" />
+            <RadioButton mnemonicParsing="false" text="%LowerExtremeOutlierLine" toggleGroup="$lessGroup" />
+         </children>
+      </FlowPane>
         <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
             <items>
                 <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" pannable="true">

@@ -1,5 +1,7 @@
 package mara.mybox.db.data;
 
+import mara.mybox.data.ColumnFilter;
+import mara.mybox.data.RowFilter;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
 
@@ -15,9 +17,11 @@ public class Data2DStyle extends BaseData {
     protected Data2DDefinition data2DDefinition;
     protected long d2sid, d2id;
     protected long rowStart, rowEnd; // 0-based, exlcuded
-    protected String columns, rowFilter, columnFilter, fontColor, bgColor, fontSize, moreStyle;
+    protected String columns, rowFilterString, columnFilterString, fontColor, bgColor, fontSize, moreStyle;
     protected boolean abnoramlValues, bold;
     protected float sequence;
+    protected RowFilter rowFilter;
+    protected ColumnFilter columnFilter;
 
     private void init() {
         d2sid = -1;
@@ -25,9 +29,13 @@ public class Data2DStyle extends BaseData {
         rowStart = -1;
         rowEnd = -1;
         columns = null;
+        rowFilterString = null;
+        columnFilterString = null;
         rowFilter = null;
         columnFilter = null;
         fontColor = null;
+        rowFilter = null;
+        columnFilter = null;
         bgColor = null;
         fontSize = null;
         moreStyle = null;
@@ -82,7 +90,7 @@ public class Data2DStyle extends BaseData {
             rowStart = style.rowStart;
             rowEnd = style.rowEnd;
             columns = style.columns;
-            rowFilter = style.rowFilter;
+            rowFilterString = style.rowFilterString;
             fontColor = style.fontColor;
             bgColor = style.bgColor;
             fontSize = style.fontSize;
@@ -127,10 +135,10 @@ public class Data2DStyle extends BaseData {
                     data.setColumns(value == null ? null : (String) value);
                     return true;
                 case "rowFilter":
-                    data.setRowFilter(value == null ? null : (String) value);
+                    data.setRowFilterString(value == null ? null : (String) value);
                     return true;
                 case "columnFilter":
-                    data.setColumnFilter(value == null ? null : (String) value);
+                    data.setColumnFilterString(value == null ? null : (String) value);
                     return true;
                 case "fontColor":
                     data.setFontColor(value == null ? null : (String) value);
@@ -177,9 +185,9 @@ public class Data2DStyle extends BaseData {
                 case "columns":
                     return data.getColumns();
                 case "rowFilter":
-                    return data.getRowFilter();
+                    return data.getRowFilterString();
                 case "columnFilter":
-                    return data.getColumnFilter();
+                    return data.getColumnFilterString();
                 case "fontColor":
                     return data.getFontColor();
                 case "bgColor":
@@ -212,6 +220,76 @@ public class Data2DStyle extends BaseData {
     public long getTo() {
         return rowEnd;
     }
+
+    /*
+        filter
+     */
+    public RowFilter getRowFilterFromString() {
+        if (rowFilterString == null || rowFilterString.isBlank()) {
+            rowFilter = null;
+        } else {
+            rowFilter = RowFilter.create();
+            if (rowFilterString.startsWith("Reversed;;")) {
+                rowFilter.setReversed(true).setScript(rowFilterString.substring("Reversed;;".length()));
+            } else {
+                rowFilter.setReversed(false).setScript(rowFilterString);
+            }
+        }
+        return rowFilter;
+    }
+
+    public String getStringFromRowFilter() {
+        if (rowFilter == null) {
+            rowFilterString = null;
+        } else {
+            if (rowFilter.reversed) {
+                rowFilterString = "Reversed;;" + (rowFilter.script == null ? "" : rowFilter.script);
+            } else {
+                rowFilterString = rowFilter.script;
+            }
+        }
+        return rowFilterString;
+    }
+
+    public Data2DStyle setRowFilter(String script, boolean reversed) {
+        if (reversed) {
+            rowFilterString = "Reversed;;" + (script == null ? "" : script);
+        } else {
+            rowFilterString = script;
+        }
+        getRowFilterFromString();
+        return this;
+    }
+
+    public Data2DStyle setRowFilterString(String rowFilterString) {
+        this.rowFilterString = rowFilterString;
+        getRowFilterFromString();
+        return this;
+    }
+
+    public Data2DStyle setRowFilter(RowFilter rowFilter) {
+        this.rowFilter = rowFilter;
+        getStringFromRowFilter();
+        return this;
+    }
+
+    public String getRowFilterString() {
+        return getStringFromRowFilter();
+    }
+
+    public RowFilter getRowFilter() {
+        return getRowFilterFromString();
+    }
+
+    public Data2DStyle setColumnFilterString(String columnFilterString) {
+        this.columnFilterString = columnFilterString;
+        return this;
+    }
+
+    public String getColumnFilterString() {
+        return columnFilterString;
+    }
+
 
     /*
         get/set
@@ -261,20 +339,11 @@ public class Data2DStyle extends BaseData {
         return this;
     }
 
-    public String getRowFilter() {
-        return rowFilter;
-    }
-
-    public Data2DStyle setRowFilter(String rowFilter) {
-        this.rowFilter = rowFilter;
-        return this;
-    }
-
-    public String getColumnFilter() {
+    public ColumnFilter getColumnFilter() {
         return columnFilter;
     }
 
-    public Data2DStyle setColumnFilter(String columnFilter) {
+    public Data2DStyle setColumnFilter(ColumnFilter columnFilter) {
         this.columnFilter = columnFilter;
         return this;
     }

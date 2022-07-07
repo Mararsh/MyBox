@@ -6,6 +6,7 @@ import javafx.application.Platform;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import mara.mybox.data.FindReplaceString;
+import mara.mybox.data.RowFilter;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
@@ -20,10 +21,10 @@ public class ExpressionCalculator {
     public final Object expressionLock = new Object();
     public WebEngine webEngine;
     public FindReplaceString findReplace;
-    public String expression, expressionResult, error, filterScript;
-    public long filterPassedNumber, maxFilterPassed;
+    public String expression, expressionResult, error;
     public Data2D data2D;
-    public boolean filterReversed, filterPassed, stopped;
+    public RowFilter rowFilter;
+    public boolean stopped;
     public SingletonTask task;
 
     public ExpressionCalculator() {
@@ -207,72 +208,73 @@ public class ExpressionCalculator {
     /*
         filter
      */
-    public boolean needFilter() {
-        return (filterScript != null && !filterScript.isBlank())
-                || maxFilterPassed > 0;
+    public RowFilter setRowFilter(String script, boolean reversed, long max) {
+        rowFilter = RowFilter.create().setCalculator(this)
+                .setScript(script).setReversed(reversed).setMaxPassed(max);
+        return rowFilter;
     }
 
-    public boolean reachMaxFilterPassed() {
-        return maxFilterPassed > 0 && filterPassedNumber > maxFilterPassed;
+    public void resetRowFilter() {
+        if (rowFilter != null) {
+            rowFilter.passedNumber = 0;
+        }
+    }
+
+    public boolean reachMaxRowFilterPassed() {
+        return rowFilter == null || rowFilter.reachMaxPassed();
+    }
+
+    public boolean filterTableRow(RowFilter rowFilter, List<String> tableRow, long tableRowIndex) {
+        this.rowFilter = rowFilter;
+        if (rowFilter != null) {
+            rowFilter.setCalculator(this);
+        }
+        return filterTableRow(tableRow, tableRowIndex);
     }
 
     public boolean filterTableRow(List<String> tableRow, long tableRowIndex) {
-        return filterTableRow(filterScript, tableRow, tableRowIndex);
-    }
-
-    public boolean filterTableRow(String script, List<String> tableRow, long tableRowIndex) {
-        if (script == null || script.isBlank()) {
-            filterPassed = true;
-            filterPassedNumber++;
+        if (rowFilter == null) {
             return true;
         }
-        filterPassed = calculateTableRowExpression(script, tableRow, tableRowIndex)
-                && "true".equals(expressionResult);
-        if (filterReversed) {
-            filterPassed = !filterPassed;
+        if (!rowFilter.needFilter()) {
+            rowFilter.passed = true;
+            rowFilter.passedNumber++;
+            return true;
         }
-        if (filterPassed) {
-            filterPassedNumber++;
-        }
-        return filterPassed;
+        return rowFilter.readResult(!calculateTableRowExpression(rowFilter.script, tableRow, tableRowIndex));
     }
 
     public boolean filterDataRow(List<String> dataRow, long dataRowIndex) {
-        return filterDataRow(filterScript, dataRow, dataRowIndex);
-    }
-
-    public boolean filterDataRow(String script, List<String> dataRow, long dataRowIndex) {
         try {
             error = null;
-            filterPassed = false;
             if (dataRow == null) {
+                if (rowFilter != null) {
+                    rowFilter.passed = false;
+                }
                 return false;
             }
-            if (script == null || script.isBlank()) {
-                filterPassed = true;
-                filterPassedNumber++;
+            if (rowFilter == null) {
+                return true;
+            }
+            if (!rowFilter.needFilter()) {
+                rowFilter.passed = true;
+                rowFilter.passedNumber++;
                 return true;
             }
             if (task == null || task.isQuit()) {
-                return calculateExpression(dataRowExpression(script, dataRow, dataRowIndex));
+                return rowFilter.readResult(!calculateExpression(dataRowExpression(rowFilter.script, dataRow, dataRowIndex)));
             }
             synchronized (expressionLock) {
-                expression = dataRowExpression(script, dataRow, dataRowIndex);
+                expression = dataRowExpression(rowFilter.script, dataRow, dataRowIndex);
                 expressionLock.notify();
                 expressionLock.wait();
-                filterPassed = "true".equals(expressionResult);
+                rowFilter.readResult(false);
                 expressionResult = null;
-            }
-            if (filterReversed) {
-                filterPassed = !filterPassed;
             }
         } catch (Exception e) {
             handleError(e);
         }
-        if (filterPassed) {
-            filterPassedNumber++;
-        }
-        return filterPassed;
+        return rowFilter.passed;
     }
 
     /*
@@ -324,7 +326,7 @@ public class ExpressionCalculator {
             expression = null;
             expressionLock.notify();
         }
-        filterPassedNumber = 0;
+        resetRowFilter();
     }
 
     /*
@@ -337,26 +339,6 @@ public class ExpressionCalculator {
 
     public ExpressionCalculator setData2D(Data2D data2D) {
         this.data2D = data2D;
-        return this;
-    }
-
-    public ExpressionCalculator setFilterScript(String filterScript) {
-        this.filterScript = filterScript;
-        return this;
-    }
-
-    public ExpressionCalculator setFilterPassedNumber(long filterPassedNumber) {
-        this.filterPassedNumber = filterPassedNumber;
-        return this;
-    }
-
-    public ExpressionCalculator setMaxFilterPassed(long maxFilterPassed) {
-        this.maxFilterPassed = maxFilterPassed;
-        return this;
-    }
-
-    public ExpressionCalculator setFilterReversed(boolean filterReversed) {
-        this.filterReversed = filterReversed;
         return this;
     }
 
@@ -379,14 +361,6 @@ public class ExpressionCalculator {
 
     public String getError() {
         return error;
-    }
-
-    public long getMaxFilterPassed() {
-        return maxFilterPassed;
-    }
-
-    public long getFilterPassedNumber() {
-        return filterPassedNumber;
     }
 
 }

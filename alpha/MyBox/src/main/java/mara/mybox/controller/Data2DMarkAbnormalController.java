@@ -112,8 +112,8 @@ public class Data2DMarkAbnormalController extends BaseSysTableController<Data2DS
             fromColumn.setCellValueFactory(new PropertyValueFactory<>("from"));
             toColumn.setCellValueFactory(new PropertyValueFactory<>("to"));
             columnsColumn.setCellValueFactory(new PropertyValueFactory<>("columns"));
-            rowFilterColumn.setCellValueFactory(new PropertyValueFactory<>("rowFilter"));
-            columnFilterColumn.setCellValueFactory(new PropertyValueFactory<>("columnFilter"));
+            rowFilterColumn.setCellValueFactory(new PropertyValueFactory<>("rowFilterString"));
+            columnFilterColumn.setCellValueFactory(new PropertyValueFactory<>("columnFilterString"));
             fontColorColumn.setCellValueFactory(new PropertyValueFactory<>("fontColor"));
             bgColorColumn.setCellValueFactory(new PropertyValueFactory<>("bgColor"));
             fontSizeColumn.setCellValueFactory(new PropertyValueFactory<>("fontSize"));
@@ -223,23 +223,6 @@ public class Data2DMarkAbnormalController extends BaseSysTableController<Data2DS
         editController.checkStyle(updatedStyle);
     }
 
-    public void loadNull() {
-        orignialStyle = new Data2DStyle();
-        updatedStyle = orignialStyle;
-        isSettingValues = true;
-        fromInput.clear();
-        toInput.clear();
-        selectNoneColumn();
-        rowFilterController.scriptInput.clear();
-        editController.loadNull(updatedStyle);
-        sequenceInput.setText((dataSize + 1) + "");
-        abnormalCheck.setSelected(false);
-        isSettingValues = false;
-        checkStyle();
-        checkInputs();
-        recoverButton.setDisable(true);
-    }
-
     @Override
     public void itemClicked() {
         editAction();
@@ -257,6 +240,24 @@ public class Data2DMarkAbnormalController extends BaseSysTableController<Data2DS
         reloadDataPage();
     }
 
+    @Override
+    public void editNull() {
+        orignialStyle = new Data2DStyle();
+        updatedStyle = orignialStyle;
+        isSettingValues = true;
+        fromInput.clear();
+        toInput.clear();
+        selectNoneColumn();
+        rowFilterController.scriptInput.clear();
+        editController.loadNull(updatedStyle);
+        sequenceInput.setText((dataSize + 1) + "");
+        abnormalCheck.setSelected(false);
+        isSettingValues = false;
+        checkStyle();
+        checkInputs();
+        recoverButton.setDisable(true);
+    }
+
     @FXML
     @Override
     public void editAction() {
@@ -271,7 +272,7 @@ public class Data2DMarkAbnormalController extends BaseSysTableController<Data2DS
     // For internal, indices are 0-based and excluded
     public void editStyle(Data2DStyle style) {
         if (style == null) {
-            loadNull();
+            editNull();
             return;
         }
         orignialStyle = style;
@@ -282,10 +283,8 @@ public class Data2DMarkAbnormalController extends BaseSysTableController<Data2DS
         fromInput.setText(updatedStyle.getRowStart() < 0 ? "" : (updatedStyle.getRowStart() + 1) + "");
         toInput.setText(updatedStyle.getRowEnd() < 0 ? "" : updatedStyle.getRowEnd() + "");
         String scolumns = updatedStyle.getColumns();
-        if (scolumns == null || scolumns.isBlank()) {
-            selectAllColumns();
-        } else {
-            selectNoneColumn();
+        selectNoneColumn();
+        if (scolumns != null && !scolumns.isBlank()) {
             String[] ns = scolumns.split(Data2DStyle.ColumnSeparator);
             for (String s : ns) {
                 for (Node node : columnsPane.getChildren()) {
@@ -297,7 +296,7 @@ public class Data2DMarkAbnormalController extends BaseSysTableController<Data2DS
                 }
             }
         }
-        rowFilterController.scriptInput.setText(updatedStyle.getRowFilter());
+        rowFilterController.load(updatedStyle.getRowFilter());
 
         sequenceInput.setText(updatedStyle.getSequence() + "");
         abnormalCheck.setSelected(updatedStyle.isAbnoramlValues());
@@ -310,7 +309,7 @@ public class Data2DMarkAbnormalController extends BaseSysTableController<Data2DS
     @FXML
     @Override
     public void createAction() {
-        loadNull();
+        editNull();
     }
 
     @FXML
@@ -379,7 +378,7 @@ public class Data2DMarkAbnormalController extends BaseSysTableController<Data2DS
                         columns = null;
                     }
                     updatedStyle.setColumns(columns);
-                    updatedStyle.setRowFilter(rowFilterController.scriptInput.getText());
+                    updatedStyle.setRowFilter(rowFilterController.scriptInput.getText(), !rowFilterController.trueRadio.isSelected());
                     updatedStyle.setAbnoramlValues(abnormalCheck.isSelected());
                     return tableData2DStyle.writeData(updatedStyle) != null;
                 } catch (Exception e) {

@@ -5,6 +5,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import mara.mybox.data.RowFilter;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -19,7 +20,7 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
     protected long maxData = -1;
 
     @FXML
-    protected RadioButton trueRadio;
+    protected RadioButton trueRadio, othersRadio;
     @FXML
     protected TextField maxInput;
 
@@ -65,6 +66,18 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
         }
     }
 
+    public void load(RowFilter rowFilter) {
+        if (rowFilter == null) {
+            scriptInput.clear();
+            trueRadio.fire();
+        } else {
+            scriptInput.setText(rowFilter.getScript());
+            if (rowFilter.reversed) {
+                othersRadio.fire();
+            }
+        }
+    }
+
     @Override
     public boolean checkExpression(boolean allPages) {
         if (!super.checkExpression(allPages)) {
@@ -74,9 +87,7 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
             error = message("InvalidParameter") + ": " + message("MaxDataTake");
             return false;
         }
-        data2D.expressionCalculator.setMaxFilterPassed(maxData)
-                .setFilterScript(scriptInput.getText())
-                .setFilterReversed(!trueRadio.isSelected());
+        data2D.expressionCalculator.setRowFilter(scriptInput.getText(), !trueRadio.isSelected(), maxData);
         return true;
     }
 

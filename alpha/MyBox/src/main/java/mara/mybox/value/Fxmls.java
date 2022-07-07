@@ -182,7 +182,6 @@ public class Fxmls {
 
     public static final String TableAddRowsFxml = "/fxml/TableAddRows.fxml";
     public static final String Data2DSetValuesFxml = "/fxml/Data2DSetValues.fxml";
-    public static final String Data2DSetStylesFxml = "/fxml/Data2DSetStyles.fxml";
     public static final String Data2DCopyFxml = "/fxml/Data2DCopy.fxml";
     public static final String Data2DLoadContentInSystemClipboardFxml = "/fxml/Data2DLoadContentInSystemClipboard.fxml";
     public static final String Data2DPasteContentInSystemClipboardFxml = "/fxml/Data2DPasteContentInSystemClipboard.fxml";

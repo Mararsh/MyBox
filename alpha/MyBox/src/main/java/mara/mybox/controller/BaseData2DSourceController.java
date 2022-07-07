@@ -391,14 +391,14 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                 return true;
             }
             ExpressionCalculator calculator = data2D.getExpressionCalculator();
-            calculator.filterPassedNumber = 0;
+            calculator.resetRowFilter();
             List<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
             if (currentPageRadio.isSelected() || selected == null || selected.isEmpty()) {
                 for (int i = 0; i < tableData.size(); i++) {
                     if (!calculator.filterTableRow(tableData.get(i), i)) {
                         continue;
                     }
-                    if (calculator.reachMaxFilterPassed()) {
+                    if (calculator.reachMaxRowFilterPassed()) {
                         break;
                     }
                     checkedRowsIndices.add(i);
@@ -408,7 +408,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                     if (!calculator.filterTableRow(tableData.get(i), i)) {
                         continue;
                     }
-                    if (calculator.reachMaxFilterPassed()) {
+                    if (calculator.reachMaxRowFilterPassed()) {
                         break;
                     }
                     checkedRowsIndices.add(i);
