@@ -16,6 +16,7 @@ import mara.mybox.db.table.TableData2DStyle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.cell.TableBooleanCell;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -37,6 +38,8 @@ public class Data2DMarkAbnormalController extends BaseSysTableController<Data2DS
     protected TableColumn<Data2DStyle, Long> sidColumn, fromColumn, toColumn;
     @FXML
     protected TableColumn<Data2DStyle, Integer> sequenceColumn;
+    @FXML
+    protected TableColumn<Data2DStyle, Boolean> abnormalColumn;
     @FXML
     protected TableColumn<Data2DStyle, String> columnsColumn, rowFilterColumn, columnFilterColumn,
             fontColorColumn, bgColorColumn, fontSizeColumn, boldColumn, moreColumn;
@@ -104,6 +107,8 @@ public class Data2DMarkAbnormalController extends BaseSysTableController<Data2DS
             super.initColumns();
             sidColumn.setCellValueFactory(new PropertyValueFactory<>("d2sid"));
             sequenceColumn.setCellValueFactory(new PropertyValueFactory<>("sequence"));
+            abnormalColumn.setCellValueFactory(new PropertyValueFactory<>("abnoramlValues"));
+            abnormalColumn.setCellFactory(new TableBooleanCell());
             fromColumn.setCellValueFactory(new PropertyValueFactory<>("from"));
             toColumn.setCellValueFactory(new PropertyValueFactory<>("to"));
             columnsColumn.setCellValueFactory(new PropertyValueFactory<>("columns"));

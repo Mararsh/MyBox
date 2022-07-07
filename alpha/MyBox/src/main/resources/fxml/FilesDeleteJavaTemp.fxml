@@ -20,7 +20,8 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FilesDeleteSysTempController">
+<BorderPane fx:id="thisPane" maxHeight="-Infinity" minHeight="-Infinity" minWidth="-Infinity" 
+            xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FilesDeleteJavaTempController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>

@@ -277,7 +277,7 @@ public class Fxmls {
     public static final String DirectorySynchronizeFxml = "/fxml/DirectorySynchronize.fxml";
     public static final String FilesArrangementFxml = "/fxml/FilesArrange.fxml";
     public static final String FilesDeleteEmptyDirFxml = "/fxml/FilesDeleteEmptyDir.fxml";
-    public static final String FilesDeleteSysTempFxml = "/fxml/FilesDeleteSysTemp.fxml";
+    public static final String FilesDeleteJavaTempFxml = "/fxml/FilesDeleteJavaTemp.fxml";
     public static final String FilesDeleteNestedDirFxml = "/fxml/FilesDeleteNestedDir.fxml";
     public static final String FileCutFxml = "/fxml/FileCut.fxml";
     public static final String FileRenameFxml = "/fxml/FileRename.fxml";

@@ -84,7 +84,7 @@ public abstract class MyBoxController_File extends MyBoxController_Image {
 
         MenuItem DeleteJavaTemporaryPathFiles = new MenuItem(Languages.message("DeleteJavaIOTemporaryPathFiles"));
         DeleteJavaTemporaryPathFiles.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.FilesDeleteSysTempFxml);
+            loadScene(Fxmls.FilesDeleteJavaTempFxml);
         });
 
         MenuItem DeleteNestedDirectories = new MenuItem(Languages.message("DeleteNestedDirectories"));

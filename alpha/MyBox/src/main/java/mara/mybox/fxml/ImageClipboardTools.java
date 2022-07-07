@@ -88,7 +88,6 @@ public class ImageClipboardTools {
         UserConfig.setBoolean("SaveImageInSystemClipboard", value);
     }
 
-
     /*
         Image in System Clipboard
      */

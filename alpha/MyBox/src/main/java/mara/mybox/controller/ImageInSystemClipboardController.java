@@ -7,7 +7,6 @@ import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -42,7 +41,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
     @FXML
     protected ControlPathInput targetPathInputController;
     @FXML
-    protected Button openPathButton, clearBoardButton;
+    protected Button openFolderButton, clearBoardButton;
     @FXML
     protected CheckBox saveCheck, copyCheck;
     @FXML
@@ -151,7 +150,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
                 }
             });
 
-            openPathButton.disableProperty().bind(targetPathInputController.valid.not());
+            openFolderButton.disableProperty().bind(targetPathInputController.valid.not());
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -178,13 +177,13 @@ public class ImageInSystemClipboardController extends ImageViewerController {
     }
 
     @FXML
-    protected void openTargetPath(ActionEvent event) {
+    public void openFolder() {
         view(targetPathInputController.file);
     }
 
     @FXML
     public void clearTmp() {
-        WindowTools.openStage(Fxmls.FilesDeleteSysTempFxml);
+        WindowTools.openStage(Fxmls.FilesDeleteJavaTempFxml);
     }
 
     public void startMonitor() {

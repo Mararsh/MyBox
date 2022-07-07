@@ -72,6 +72,7 @@ License:    Apache License Version 2.0
                                         </TableColumn>
                                         <TableColumn fx:id="sidColumn" prefWidth="60.0" text="%ID" />
                                         <TableColumn fx:id="sequenceColumn" prefWidth="50.0" text="%Sequence" />
+                              <TableColumn fx:id="abnormalColumn" prefWidth="60.0" text="%AbnormalValues" />
                                         <TableColumn fx:id="fromColumn" prefWidth="60.0" text="%From" />
                                         <TableColumn fx:id="toColumn" prefWidth="70.0" text="%To" />
                                         <TableColumn fx:id="columnsColumn" prefWidth="120.0" text="%Columns" />
@@ -213,9 +214,9 @@ License:    Apache License Version 2.0
                                         <Label text="%Sequence" />
                                         <TextField fx:id="sequenceInput" prefWidth="100.0" />
                                         <Label fx:id="idLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
+                              <CheckBox fx:id="abnormalCheck" mnemonicParsing="false" text="%AbnormalValues" />
                                     </children>
                                 </HBox>
-                        <CheckBox fx:id="abnormalCheck" mnemonicParsing="false" text="%AbnormalValues" />
                                 <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0" />
                                 <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                                     <tabs>

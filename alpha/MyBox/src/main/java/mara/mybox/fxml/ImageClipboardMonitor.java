@@ -86,18 +86,17 @@ public class ImageClipboardMonitor extends Timer {
                 public synchronized void run() {
                     try {
                         clearTmpClips();
-                        Clipboard clipboard = Clipboard.getSystemClipboard();
-                        if (!clipboard.hasImage()) {
-                            return;
-                        }
                         controller = ImageInSystemClipboardController.running();
                         if (controller == null && !ImageClipboardTools.isCopy()
                                 && (!ImageClipboardTools.isSave() || filePrefix == null || attributes == null)) {
                             ImageClipboardTools.stopImageClipboardMonitor();
                             return;
                         }
+                        Clipboard clipboard = Clipboard.getSystemClipboard();
+                        if (!clipboard.hasImage()) {
+                            return;
+                        }
                         clip = clipboard.getImage();
-                        clipboard.clear();
                         if (clip == null || FxImageTools.sameImage(lastImage, clip)) {
                             return;
                         }
