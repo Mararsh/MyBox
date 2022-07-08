@@ -669,7 +669,7 @@ public abstract class BaseTable<D> {
                 size = results.getInt(1);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+            MyBoxLog.debug(e, sql);
         }
         return size;
     }

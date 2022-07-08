@@ -5,7 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.Separator;
+import mara.mybox.data.ColumnFilter;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import static mara.mybox.value.Languages.message;
@@ -20,6 +22,8 @@ public class ControlData2DColumnFilter extends ControlData2DRowExpression {
     @FXML
     protected CheckBox emptyCheck, zeroCheck, negativeCheck, positiveCheck,
             q1Check, q3Check, e4Check, e3Check, e2Check, e1Check;
+    @FXML
+    protected RadioButton trueRadio, othersRadio;
 
     public ControlData2DColumnFilter() {
         TipsLabelKey = "ColumnFilterTips";
@@ -41,6 +45,18 @@ public class ControlData2DColumnFilter extends ControlData2DRowExpression {
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void load(ColumnFilter columnFilter) {
+        if (columnFilter == null) {
+            scriptInput.clear();
+            trueRadio.fire();
+        } else {
+            scriptInput.setText(columnFilter.getScript());
+            if (columnFilter.reversed) {
+                othersRadio.fire();
+            }
         }
     }
 
