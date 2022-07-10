@@ -5,8 +5,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
-import mara.mybox.data.RowFilter;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.RowFilter;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -18,6 +18,7 @@ import mara.mybox.value.UserConfig;
 public class ControlData2DRowFilter extends ControlData2DRowExpression {
 
     protected long maxData = -1;
+    protected RowFilter rowFilter;
 
     @FXML
     protected RadioButton trueRadio, othersRadio;
@@ -28,7 +29,13 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
         TipsLabelKey = "RowFilterTips";
     }
 
-    public void setParameters(BaseController parent) {
+    @Override
+    public void initCalculator() {
+        rowFilter = new RowFilter();
+        calculator = rowFilter;
+    }
+
+    public void setParameters(BaseController parent, ControlData2DEditTable tableController) {
         try {
             baseName = parent.baseName;
 
@@ -61,20 +68,21 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
                 maxData = -1;
             }
 
+            if (tableController != null) {
+                rowFilter.setWebEngine(tableController.dataController.viewController.htmlController.webEngine);
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    public void load(RowFilter rowFilter) {
-        if (rowFilter == null) {
-            scriptInput.clear();
-            trueRadio.fire();
+    public void load(String script, boolean reversed) {
+        scriptInput.setText(script);
+        if (reversed) {
+            othersRadio.fire();
         } else {
-            scriptInput.setText(rowFilter.getScript());
-            if (rowFilter.reversed) {
-                othersRadio.fire();
-            }
+            trueRadio.fire();
         }
     }
 
@@ -87,7 +95,11 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
             error = message("InvalidParameter") + ": " + message("MaxDataTake");
             return false;
         }
-        data2D.expressionCalculator.setRowFilter(scriptInput.getText(), !trueRadio.isSelected(), maxData);
+        rowFilter.setReversed(!trueRadio.isSelected())
+                .setMaxPassed(maxData).setPassedNumber(0)
+                .setScript(scriptInput.getText())
+                .setData2D(data2D);
+        data2D.setRowFilter(rowFilter);
         return true;
     }
 

@@ -10,7 +10,7 @@ import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.db.table.TableData2DStyle;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ExpressionCalculator;
+import mara.mybox.fxml.RowFilter;
 import mara.mybox.fxml.SingletonTask;
 
 /**
@@ -29,8 +29,8 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
     public long dataSize, pagesNumber;
     public long currentPage, startRowOfCurrentPage, endRowOfCurrentPage;   // 0-based, excluded end
     public List<Data2DStyle> styles;
+    public RowFilter rowFilter;
     public ControlData2DLoad loadController;
-    public ExpressionCalculator expressionCalculator;
     public boolean tableChanged;
     public SingletonTask task, backgroundTask;
     public String error;
@@ -56,7 +56,6 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         options = null;
         styles = null;
         error = null;
-        expressionCalculator = null;
     }
 
     public void resetData() {
@@ -107,7 +106,6 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
             startRowOfCurrentPage = d.startRowOfCurrentPage;
             endRowOfCurrentPage = d.endRowOfCurrentPage;
             tableChanged = d.tableChanged;
-            expressionCalculator = d.expressionCalculator;
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -237,16 +235,16 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         return styles;
     }
 
+    public RowFilter getRowFilter() {
+        return rowFilter;
+    }
+
+    public void setRowFilter(RowFilter rowFilter) {
+        this.rowFilter = rowFilter;
+    }
+
     public void setStyles(List<Data2DStyle> styles) {
         this.styles = styles;
-    }
-
-    public ExpressionCalculator getExpressionCalculator() {
-        return expressionCalculator;
-    }
-
-    public void setExpressionCalculator(ExpressionCalculator expressionCalculator) {
-        this.expressionCalculator = expressionCalculator;
     }
 
     public SingletonTask getTask() {

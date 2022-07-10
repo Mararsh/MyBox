@@ -1,4 +1,4 @@
-package mara.mybox.data;
+package mara.mybox.fxml;
 
 import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.value.AppValues;

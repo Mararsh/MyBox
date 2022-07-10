@@ -1,8 +1,8 @@
 package mara.mybox.db.data;
 
-import mara.mybox.data.ColumnFilter;
-import mara.mybox.data.RowFilter;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ColumnFilter;
+import mara.mybox.fxml.RowFilter;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -17,10 +17,10 @@ public class Data2DStyle extends BaseData {
     protected Data2DDefinition data2DDefinition;
     protected long d2sid, d2id;
     protected long rowStart, rowEnd; // 0-based, exlcuded
-    protected String columns, rowFilterString, columnFilterString, fontColor, bgColor, fontSize, moreStyle;
-    protected boolean abnoramlValues, bold;
+    protected String columns, rowFilterString, rowFilterScript, columnFilterString,
+            fontColor, bgColor, fontSize, moreStyle;
+    protected boolean abnoramlValues, bold, reversed;
     protected float sequence;
-    protected RowFilter rowFilter;
     protected ColumnFilter columnFilter;
 
     private void init() {
@@ -31,10 +31,10 @@ public class Data2DStyle extends BaseData {
         columns = null;
         rowFilterString = null;
         columnFilterString = null;
-        rowFilter = null;
+        rowFilterScript = null;
         columnFilter = null;
         fontColor = null;
-        rowFilter = null;
+        reversed = false;
         columnFilter = null;
         bgColor = null;
         fontSize = null;
@@ -224,61 +224,62 @@ public class Data2DStyle extends BaseData {
     /*
         filter
      */
-    public RowFilter getRowFilterFromString() {
+    public String getExpressionFromString() {
         if (rowFilterString == null || rowFilterString.isBlank()) {
-            rowFilter = null;
+            rowFilterScript = null;
         } else {
-            rowFilter = RowFilter.create();
             if (rowFilterString.startsWith("Reversed;;")) {
-                rowFilter.setReversed(true).setScript(rowFilterString.substring("Reversed;;".length()));
+                rowFilterScript = rowFilterString.substring("Reversed;;".length());
+                reversed = true;
             } else {
-                rowFilter.setReversed(false).setScript(rowFilterString);
+                rowFilterScript = rowFilterString;
+                reversed = false;
             }
         }
-        return rowFilter;
+        return rowFilterScript;
     }
 
-    public String getStringFromRowFilter() {
-        if (rowFilter == null) {
+    public String getStringFromExpression() {
+        if (rowFilterScript == null) {
             rowFilterString = null;
         } else {
-            if (rowFilter.reversed) {
-                rowFilterString = "Reversed;;" + (rowFilter.script == null ? "" : rowFilter.script);
-            } else {
-                rowFilterString = rowFilter.script;
-            }
+            rowFilterString = (reversed ? "Reversed;;" : "") + rowFilterScript;
         }
         return rowFilterString;
     }
 
-    public Data2DStyle setRowFilter(String script, boolean reversed) {
-        if (reversed) {
-            rowFilterString = "Reversed;;" + (script == null ? "" : script);
-        } else {
-            rowFilterString = script;
-        }
-        getRowFilterFromString();
+    public Data2DStyle setRowFilter(String expression, boolean reversed) {
+        this.reversed = reversed;
+        rowFilterScript = expression;
+        getStringFromExpression();
         return this;
     }
 
     public Data2DStyle setRowFilterString(String rowFilterString) {
         this.rowFilterString = rowFilterString;
-        getRowFilterFromString();
+        getExpressionFromString();
         return this;
     }
 
     public Data2DStyle setRowFilter(RowFilter rowFilter) {
-        this.rowFilter = rowFilter;
-        getStringFromRowFilter();
-        return this;
+        if (rowFilter == null) {
+            return setRowFilter(null, false);
+
+        } else {
+            return setRowFilter(rowFilter.expression, rowFilter.reversed);
+        }
     }
 
     public String getRowFilterString() {
-        return getStringFromRowFilter();
+        return getStringFromExpression();
     }
 
-    public RowFilter getRowFilter() {
-        return getRowFilterFromString();
+    public String getRowFilterScript() {
+        return getExpressionFromString();
+    }
+
+    public boolean isReversed() {
+        return reversed;
     }
 
     public Data2DStyle setColumnFilterString(String columnFilterString) {

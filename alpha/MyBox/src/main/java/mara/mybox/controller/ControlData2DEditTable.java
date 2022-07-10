@@ -75,7 +75,7 @@ public class ControlData2DEditTable extends ControlData2DLoad {
 
             headerButton.setVisible(data2D.isTmpData() || data2D.isDataFile() || data.isClipboard());
 
-            expressionCalculator.setWebEngine(dataController.viewController.htmlController.webEngine);
+            styleFilter.setWebEngine(dataController.viewController.htmlController.webEngine);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

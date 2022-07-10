@@ -69,7 +69,7 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
         closeCurrentCheck.setSelected(AppVariables.closeCurrentWhenOpenTool);
         recordWindowsSizeLocationCheck.setSelected(AppVariables.recordWindowsSizeLocation);
         popRecentCheck.setSelected(AppVariables.fileRecentNumber > 0);
-        popColorSetCheck.setSelected(UserConfig.getBoolean("PopColorSetWhenMousePassing", true));
+        popColorSetCheck.setSelected(UserConfig.getBoolean("PopColorSetWhenMouseHovering", true));
         controlPanesCheck.setSelected(UserConfig.getBoolean("MousePassControlPanes", true));
         checkControlColor();
     }
@@ -327,7 +327,7 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
 
     @FXML
     protected void popColorSetAction() {
-        UserConfig.setBoolean("PopColorSetWhenMousePassing", popColorSetCheck.isSelected());
+        UserConfig.setBoolean("PopColorSetWhenMouseHovering", popColorSetCheck.isSelected());
     }
 
     @FXML

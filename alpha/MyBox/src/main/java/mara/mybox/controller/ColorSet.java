@@ -123,7 +123,7 @@ public class ColorSet extends BaseController {
 
     @FXML
     public void popColorPalette(MouseEvent event) {
-        if (UserConfig.getBoolean("PopColorSetWhenMousePassing", true)) {
+        if (UserConfig.getBoolean("PopColorSetWhenMouseHovering", true)) {
             showColorPalette();
         }
     }

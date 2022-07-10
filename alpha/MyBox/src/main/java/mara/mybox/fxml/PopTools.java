@@ -598,12 +598,12 @@ public class PopTools {
             if (checkPop) {
                 CheckBox popCheck = new CheckBox();
                 popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
-                NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMousePassing")));
-                popCheck.setSelected(UserConfig.getBoolean(name + "PopWhenMousePassing", true));
+                NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
+                popCheck.setSelected(UserConfig.getBoolean(name + "PopWhenMouseHovering", true));
                 popCheck.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        UserConfig.setBoolean(name + "PopWhenMousePassing", popCheck.isSelected());
+                        UserConfig.setBoolean(name + "PopWhenMouseHovering", popCheck.isSelected());
                     }
                 });
                 setButtons.add(popCheck);
@@ -864,12 +864,12 @@ public class PopTools {
 
             CheckBox popCheck = new CheckBox();
             popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
-            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMousePassing")));
-            popCheck.setSelected(UserConfig.getBoolean("SqlExamplesPopWhenMousePassing", true));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
+            popCheck.setSelected(UserConfig.getBoolean("SqlExamplesPopWhenMouseHovering", true));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("SqlExamplesPopWhenMousePassing", popCheck.isSelected());
+                    UserConfig.setBoolean("SqlExamplesPopWhenMouseHovering", popCheck.isSelected());
                 }
             });
             topButtons.add(popCheck);

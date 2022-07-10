@@ -21,6 +21,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.RowFilter;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.StringTools;
@@ -49,8 +50,8 @@ public abstract class Data2DReader {
     protected boolean includeRowNumber, includeColName, withValues, failed, sumAbs;
     protected double from, to, tValue;
     protected double[] colValues;
-    protected ControlDataConvert convertController;
     protected Connection conn;
+    protected RowFilter rowFilter;
     protected DataTable writerTable;
     protected TableData2D writerTableData2D;
     protected DoubleStatistic[] statisticData;
@@ -62,6 +63,7 @@ public abstract class Data2DReader {
     protected Frequency frequency;
     protected SimpleLinearRegression simpleRegression;
     protected CSVPrinter csvPrinter;
+    protected ControlDataConvert convertController;
     protected boolean readerHasHeader, readerStopped, needCheckTask, errorContinue;
     protected SingletonTask readerTask;
 

@@ -117,7 +117,7 @@ public class JexlEditor extends JShellEditor {
 
     @FXML
     protected void popScriptExamples(MouseEvent event) {
-        if (UserConfig.getBoolean(interfaceName + "ScriptExamplesPopWhenMousePassing", true)) {
+        if (UserConfig.getBoolean(interfaceName + "ScriptExamplesPopWhenMouseHovering", true)) {
             jexlScriptExamples(event);
         }
     }
@@ -160,12 +160,12 @@ public class JexlEditor extends JShellEditor {
 
             CheckBox popCheck = new CheckBox();
             popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
-            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMousePassing")));
-            popCheck.setSelected(UserConfig.getBoolean(interfaceName + "ScriptExamplesPopWhenMousePassing", true));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
+            popCheck.setSelected(UserConfig.getBoolean(interfaceName + "ScriptExamplesPopWhenMouseHovering", true));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(interfaceName + "ScriptExamplesPopWhenMousePassing", popCheck.isSelected());
+                    UserConfig.setBoolean(interfaceName + "ScriptExamplesPopWhenMouseHovering", popCheck.isSelected());
                 }
             });
             topButtons.add(popCheck);
@@ -379,7 +379,7 @@ public class JexlEditor extends JShellEditor {
 
     @FXML
     protected void popScriptHistories(MouseEvent mouseEvent) {
-        if (UserConfig.getBoolean("JexlScriptHistoriesPopWhenMousePassing", true)) {
+        if (UserConfig.getBoolean("JexlScriptHistoriesPopWhenMouseHovering", true)) {
             PopTools.popStringValues(this, valueInput, mouseEvent, "JexlScriptHistories", false, true);
         }
     }
@@ -401,7 +401,7 @@ public class JexlEditor extends JShellEditor {
 
     @FXML
     protected void popContextExamples(MouseEvent event) {
-        if (UserConfig.getBoolean(interfaceName + "ContextExamplesPopWhenMousePassing", true)) {
+        if (UserConfig.getBoolean(interfaceName + "ContextExamplesPopWhenMouseHovering", true)) {
             jexlContextExamples(event);
         }
     }
@@ -444,12 +444,12 @@ public class JexlEditor extends JShellEditor {
 
             CheckBox popCheck = new CheckBox();
             popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
-            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMousePassing")));
-            popCheck.setSelected(UserConfig.getBoolean(interfaceName + "ContextExamplesPopWhenMousePassing", true));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
+            popCheck.setSelected(UserConfig.getBoolean(interfaceName + "ContextExamplesPopWhenMouseHovering", true));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(interfaceName + "ContextExamplesPopWhenMousePassing", popCheck.isSelected());
+                    UserConfig.setBoolean(interfaceName + "ContextExamplesPopWhenMouseHovering", popCheck.isSelected());
                 }
             });
             topButtons.add(popCheck);
@@ -495,7 +495,7 @@ public class JexlEditor extends JShellEditor {
 
     @FXML
     protected void popContextHistories(MouseEvent mouseEvent) {
-        if (UserConfig.getBoolean("JexlContextHistoriesPopWhenMousePassing", true)) {
+        if (UserConfig.getBoolean("JexlContextHistoriesPopWhenMouseHovering", true)) {
             PopTools.popStringValues(this, moreInput, mouseEvent, "JexlContextHistories", false, true);
         }
     }
@@ -512,7 +512,7 @@ public class JexlEditor extends JShellEditor {
 
     @FXML
     protected void popParametersHistories(MouseEvent mouseEvent) {
-        if (UserConfig.getBoolean("JexlParamtersHistoriesPopWhenMousePassing", true)) {
+        if (UserConfig.getBoolean("JexlParamtersHistoriesPopWhenMouseHovering", true)) {
             PopTools.popStringValues(this, parametersInput, mouseEvent, "JexlParamtersHistories", false, true);
         }
     }

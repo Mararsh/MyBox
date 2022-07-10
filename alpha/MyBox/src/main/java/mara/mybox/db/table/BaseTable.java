@@ -627,11 +627,10 @@ public abstract class BaseTable<D> {
     }
 
     public String sizeStatement() {
-        if (tableName == null || columns.isEmpty()) {
+        if (tableName == null) {
             return null;
         }
-        String sql = "SELECT COUNT(" + columns.get(0).getColumnName() + ") FROM " + tableName;
-        return sql;
+        return "SELECT COUNT(*) FROM " + tableName;
     }
 
     public int size() {

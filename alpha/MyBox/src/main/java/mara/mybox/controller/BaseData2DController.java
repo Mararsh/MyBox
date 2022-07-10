@@ -214,7 +214,7 @@ public abstract class BaseData2DController extends BaseController {
 
     @FXML
     protected void popExamplesMenu(MouseEvent mouseEvent) {
-        if (UserConfig.getBoolean("Data2DExamplesPopWhenMousePassing", true)) {
+        if (UserConfig.getBoolean("Data2DExamplesPopWhenMouseHovering", true)) {
             examplesMenu(mouseEvent);
         }
     }
@@ -239,12 +239,12 @@ public abstract class BaseData2DController extends BaseController {
 
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            CheckMenuItem pMenu = new CheckMenuItem(message("PopWhenMousePassing"), StyleTools.getIconImage("iconPop.png"));
-            pMenu.setSelected(UserConfig.getBoolean("Data2DExamplesPopWhenMousePassing", true));
+            CheckMenuItem pMenu = new CheckMenuItem(message("PopWhenMouseHovering"), StyleTools.getIconImage("iconPop.png"));
+            pMenu.setSelected(UserConfig.getBoolean("Data2DExamplesPopWhenMouseHovering", true));
             pMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("Data2DExamplesPopWhenMousePassing", pMenu.isSelected());
+                    UserConfig.setBoolean("Data2DExamplesPopWhenMouseHovering", pMenu.isSelected());
                 }
             });
             popMenu.getItems().add(pMenu);

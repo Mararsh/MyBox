@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import mara.mybox.db.data.Data2DStyle;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.RowFilter;
 
 /**
  * @Author Mara
@@ -17,6 +18,7 @@ public abstract class BaseData2DAbnormalController extends BaseController {
     protected ControlData2DEditTable tableController;
     protected Data2DStyle currentStyle;
     protected ChangeListener<Boolean> tableStatusListener;
+    protected RowFilter rowFilter;
 
     @FXML
     protected ControlData2DAbnormalList listController;
@@ -88,6 +90,17 @@ public abstract class BaseData2DAbnormalController extends BaseController {
         }
         tableController.dataController.goPage();
         tableController.requestMouse();
+    }
+
+    @FXML
+    public void dataAction() {
+        Data2DMarkAbnormalController.open(tableController);
+    }
+
+    @FXML
+    @Override
+    public void cancelAction() {
+        close();
     }
 
     @Override

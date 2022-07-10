@@ -142,7 +142,7 @@ public class Data2DRowExpressionController extends BaseData2DHandleController {
 
     @FXML
     protected void popNameHistories(MouseEvent event) {
-        if (UserConfig.getBoolean(interfaceName + "NameHistoriesPopWhenMousePassing", true)) {
+        if (UserConfig.getBoolean(interfaceName + "NameHistoriesPopWhenMouseHovering", true)) {
             PopTools.popStringValues(this, nameInput, event, interfaceName + "NameHistories", true, true);
         }
     }

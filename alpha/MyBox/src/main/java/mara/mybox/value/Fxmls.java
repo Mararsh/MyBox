@@ -208,6 +208,7 @@ public class Fxmls {
     public static final String Data2DChartXYOptionsFxml = "/fxml/Data2DChartXYOptions.fxml";
     public static final String Data2DChartPieOptionsFxml = "/fxml/Data2DChartPieOptions.fxml";
     public static final String Data2DMarkAbnormalFxml = "/fxml/Data2DMarkAbnormal.fxml";
+    public static final String Data2DDeleteAbnormalFxml = "/fxml/Data2DDeleteAbnormal.fxml";
 
     public static final String JShellFxml = "/fxml/JShell.fxml";
     public static final String JexlFxml = "/fxml/Jexl.fxml";

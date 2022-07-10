@@ -7,7 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Separator;
-import mara.mybox.data.ColumnFilter;
+import mara.mybox.fxml.ColumnFilter;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import static mara.mybox.value.Languages.message;

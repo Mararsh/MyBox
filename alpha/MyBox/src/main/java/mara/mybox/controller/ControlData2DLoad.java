@@ -34,8 +34,8 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.RowFilter;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.tools.DoubleMatrixTools;
@@ -57,7 +57,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     protected char copyDelimiter = ',';
     protected boolean readOnly, notUpdateTitle;
     protected SimpleBooleanProperty statusNotify;
-    protected ExpressionCalculator expressionCalculator;
+    protected RowFilter styleFilter;
 
     @FXML
     protected TableColumn<List<String>, Integer> dataRowColumn;
@@ -67,7 +67,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     public ControlData2DLoad() {
         statusNotify = new SimpleBooleanProperty(false);
         readOnly = true;
-        expressionCalculator = new ExpressionCalculator();
+        styleFilter = new RowFilter();
     }
 
     @Override
@@ -143,8 +143,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             }
             data2D.setLoadController(this);
 
-            expressionCalculator.setData2D(data2D);
-            data2D.setExpressionCalculator(expressionCalculator);
+            styleFilter.reset(data2D);
 
             validateData();
 
@@ -686,7 +685,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                         super.updateItem(item, empty);
                                         setStyle(null);
                                         try {
-                                            setStyle(data2D.cellStyle(rowIndex(), name));
+                                            setStyle(data2D.cellStyle(styleFilter, rowIndex(), name));
                                         } catch (Exception e) {
                                         }
                                         if (empty || item == null) {
@@ -745,7 +744,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                         super.updateItem(item, empty);
                                         setStyle(null);
                                         try {
-                                            setStyle(data2D.cellStyle(getTableRow().getIndex(), name));
+                                            setStyle(data2D.cellStyle(styleFilter, getTableRow().getIndex(), name));
                                         } catch (Exception e) {
                                         }
                                         if (empty || item == null) {

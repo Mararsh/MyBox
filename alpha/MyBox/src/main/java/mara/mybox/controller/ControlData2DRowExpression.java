@@ -23,6 +23,7 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -38,6 +39,7 @@ import mara.mybox.value.UserConfig;
 public class ControlData2DRowExpression extends TreeNodesController {
 
     protected Data2D data2D;
+    protected ExpressionCalculator calculator;
 
     @FXML
     protected TextArea scriptInput;
@@ -52,6 +54,7 @@ public class ControlData2DRowExpression extends TreeNodesController {
     public void initControls() {
         try {
             super.initControls();
+            initCalculator();
 
             tableTreeNode = new TableTreeNode();
             tableTreeNodeTag = new TableTreeNodeTag();
@@ -64,8 +67,13 @@ public class ControlData2DRowExpression extends TreeNodesController {
         }
     }
 
+    public void initCalculator() {
+        calculator = new ExpressionCalculator();
+    }
+
     public void setData2D(Data2D data2D) {
         this.data2D = data2D;
+        calculator.reset(data2D);
     }
 
     /*
@@ -108,7 +116,7 @@ public class ControlData2DRowExpression extends TreeNodesController {
 
     @FXML
     protected void popScriptExamples(MouseEvent mouseEvent) {
-        if (UserConfig.getBoolean(interfaceName + "ExamplesPopWhenMousePassing", true)) {
+        if (UserConfig.getBoolean(interfaceName + "ExamplesPopWhenMouseHovering", true)) {
             scriptExamples(mouseEvent);
         }
     }
@@ -151,12 +159,12 @@ public class ControlData2DRowExpression extends TreeNodesController {
 
             CheckBox popCheck = new CheckBox();
             popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
-            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMousePassing")));
-            popCheck.setSelected(UserConfig.getBoolean(interfaceName + "ExamplesPopWhenMousePassing", true));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
+            popCheck.setSelected(UserConfig.getBoolean(interfaceName + "ExamplesPopWhenMouseHovering", true));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(interfaceName + "ExamplesPopWhenMousePassing", popCheck.isSelected());
+                    UserConfig.setBoolean(interfaceName + "ExamplesPopWhenMouseHovering", popCheck.isSelected());
                 }
             });
             topButtons.add(popCheck);
@@ -250,7 +258,7 @@ public class ControlData2DRowExpression extends TreeNodesController {
 
     @FXML
     protected void popScriptHistories(MouseEvent event) {
-        if (UserConfig.getBoolean(interfaceName + "HistoriesPopWhenMousePassing", true)) {
+        if (UserConfig.getBoolean(interfaceName + "HistoriesPopWhenMouseHovering", true)) {
             PopTools.popStringValues(this, scriptInput, event, interfaceName + "Histories", false, true);
         }
     }
@@ -262,7 +270,7 @@ public class ControlData2DRowExpression extends TreeNodesController {
 
     public boolean checkExpression(boolean allPages) {
         error = null;
-        if (data2D == null || !data2D.hasData() || data2D.expressionCalculator == null) {
+        if (calculator == null || data2D == null || !data2D.hasData()) {
             error = message("InvalidData");
             return false;
         }
@@ -270,11 +278,11 @@ public class ControlData2DRowExpression extends TreeNodesController {
         if (script == null || script.isBlank()) {
             return true;
         }
-        if (data2D.expressionCalculator.validateExpression(script, allPages)) {
+        if (calculator.validateExpression(script, allPages)) {
             TableStringValues.add(interfaceName + "Histories", script.trim());
             return true;
         } else {
-            error = data2D.expressionCalculator.error;
+            error = calculator.error;
             return false;
         }
     }

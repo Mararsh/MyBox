@@ -18,6 +18,7 @@ import mara.mybox.db.data.Data2DStyle;
 import mara.mybox.db.table.TableData2DStyle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.RowFilter;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.Languages.message;
@@ -360,80 +361,76 @@ public abstract class Data2D_Edit extends Data2D_Data {
         filter
      */
     public boolean needFilter() {
-        return expressionCalculator != null
-                && expressionCalculator.rowFilter != null
-                && expressionCalculator.rowFilter.needFilter();
+        return rowFilter != null && rowFilter.needFilter();
     }
 
     public boolean calculateTableRowExpression(String script, List<String> tableRow, long tableRowNumber) {
-        return expressionCalculator == null
-                || expressionCalculator.calculateTableRowExpression(script, tableRow, tableRowNumber);
+        return rowFilter == null
+                || rowFilter.calculateTableRowExpression(script, tableRow, tableRowNumber);
     }
 
     public boolean calculateDataRowExpression(String script, List<String> dataRow, long dataRowNumber) {
-        if (expressionCalculator == null) {
+        if (rowFilter == null) {
             return true;
         }
-        if (expressionCalculator.calculateDataRowExpression(script, dataRow, dataRowNumber)) {
+        if (rowFilter.calculateDataRowExpression(script, dataRow, dataRowNumber)) {
             error = null;
             return true;
         } else {
-            error = expressionCalculator.getError();
+            error = getError();
             return false;
         }
     }
 
     public boolean filterDataRow(List<String> dataRow, long dataRowIndex) {
-        if (expressionCalculator == null) {
+        if (rowFilter == null) {
             return true;
         }
-        if (expressionCalculator.filterDataRow(dataRow, dataRowIndex)) {
+        if (rowFilter.filterDataRow(dataRow, dataRowIndex)) {
             error = null;
             return true;
         } else {
-            error = expressionCalculator.getError();
+            error = getError();
             return false;
         }
     }
 
     public boolean filterPassed() {
-        return expressionCalculator == null
-                || expressionCalculator.rowFilter == null
-                || expressionCalculator.rowFilter.passed;
+        return rowFilter == null || rowFilter.passed;
     }
 
     public boolean filterReachMaxPassed() {
-        return expressionCalculator != null
-                && expressionCalculator.rowFilter != null
-                && expressionCalculator.rowFilter.reachMaxPassed();
+        return rowFilter != null && rowFilter.reachMaxPassed();
     }
 
     public String getExpressionResult() {
-        return expressionCalculator == null ? null : expressionCalculator.expressionResult;
+        return rowFilter == null ? null : rowFilter.expressionResult;
     }
 
     public void startFilterService(SingletonTask task) {
         if (needFilter()) {
-            expressionCalculator.startService(task);
+            rowFilter.startService(task);
         }
     }
 
     public void startExpressionService(SingletonTask task) {
-        expressionCalculator.startService(task);
+        if (rowFilter != null) {
+            rowFilter.startService(task);
+        }
     }
 
     public void stopExpressionService() {
-        if (expressionCalculator != null) {
-            expressionCalculator.stopService();
+        if (rowFilter != null) {
+            rowFilter.stopService();
         }
     }
 
     /*
         style
      */
-    public String cellStyle(int tableRowIndex, String colName) {
+    public String cellStyle(RowFilter styleFilter, int tableRowIndex, String colName) {
         try {
-            if (styles == null || styles.isEmpty() || colName == null || colName.isBlank()) {
+            if (styleFilter == null || styles == null || styles.isEmpty() || colName == null || colName.isBlank()) {
                 return null;
             }
             List<String> tableRow = tableViewRow(tableRowIndex);
@@ -462,8 +459,10 @@ public abstract class Data2D_Edit extends Data2D_Data {
                         continue;
                     }
                 }
-                if (expressionCalculator != null
-                        && expressionCalculator.filterTableRow(style.getRowFilter(), tableRow, tableRowIndex)) {
+                styleFilter.reset().setData2D((Data2D) this);
+                styleFilter.setReversed(style.isReversed())
+                        .setScript(style.getRowFilterScript());
+                if (styleFilter.filterTableRow(tableRow, tableRowIndex)) {
                     String styleValue = style.finalStyle();
                     if (styleValue == null || styleValue.isBlank()) {
                         cellStyle = null;

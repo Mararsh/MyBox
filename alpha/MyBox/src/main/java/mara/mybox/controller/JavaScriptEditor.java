@@ -99,7 +99,7 @@ public class JavaScriptEditor extends TreeNodeEditor {
 
     @FXML
     protected void popExamplesMenu(MouseEvent event) {
-        if (UserConfig.getBoolean("JavaScriptExamplesPopWhenMousePassing", true)) {
+        if (UserConfig.getBoolean("JavaScriptExamplesPopWhenMouseHovering", true)) {
             examplesMenu(event);
         }
     }
@@ -142,12 +142,12 @@ public class JavaScriptEditor extends TreeNodeEditor {
 
             CheckBox popCheck = new CheckBox();
             popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
-            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMousePassing")));
-            popCheck.setSelected(UserConfig.getBoolean("JavaScriptExamplesPopWhenMousePassing", true));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
+            popCheck.setSelected(UserConfig.getBoolean("JavaScriptExamplesPopWhenMouseHovering", true));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("JavaScriptExamplesPopWhenMousePassing", popCheck.isSelected());
+                    UserConfig.setBoolean("JavaScriptExamplesPopWhenMouseHovering", popCheck.isSelected());
                 }
             });
             topButtons.add(popCheck);
@@ -204,7 +204,7 @@ public class JavaScriptEditor extends TreeNodeEditor {
 
     @FXML
     protected void popHistories(MouseEvent mouseEvent) {
-        if (UserConfig.getBoolean("JavaScriptHistoriesPopWhenMousePassing", true)) {
+        if (UserConfig.getBoolean("JavaScriptHistoriesPopWhenMouseHovering", true)) {
             PopTools.popStringValues(this, valueInput, mouseEvent, "JavaScriptHistories", false, true);
         }
     }

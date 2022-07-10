@@ -134,10 +134,10 @@ License:    Apache License Version 2.0
                                                         <CheckBox fx:id="closeCurrentCheck" mnemonicParsing="false" text="%CloseCurrentWhenOpenTool" />
                                                     </children>
                                                 </HBox>
-                                                <CheckBox fx:id="popColorSetCheck" mnemonicParsing="false" onAction="#popColorSet" selected="true" text="%PopColorSetWhenMousePassing" />
+                                                <CheckBox fx:id="popColorSetCheck" mnemonicParsing="false" onAction="#popColorSet" selected="true" text="%PopColorSetWhenMouseHovering" />
                                                 <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="159.0" spacing="10.0">
                                                     <children>
-                                                        <CheckBox fx:id="mousePassControlPanesCheck" layoutX="533.0" layoutY="10.0" mnemonicParsing="false" onAction="#mousePassControlPanes" selected="true" text="%ShowHidePanesWhenMousePassed" />
+                                                        <CheckBox fx:id="mousePassControlPanesCheck" layoutX="533.0" layoutY="10.0" mnemonicParsing="false" onAction="#mousePassControlPanes" selected="true" text="%ShowHidePanesWhenMouseHovering" />
                                                         <CheckBox fx:id="splitPaneSensitiveCheck" mnemonicParsing="false" onAction="#splitPaneSensitive" text="%Sensitive" />
                                                     </children>
                                                 </HBox>

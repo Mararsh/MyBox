@@ -633,7 +633,7 @@ public class ControlData2D extends BaseController {
      */
     @FXML
     public void popFunctionsMenu(MouseEvent mouseEvent) {
-        if (UserConfig.getBoolean(interfaceName + "FunctionsPopWhenMousePassing", true)) {
+        if (UserConfig.getBoolean(interfaceName + "FunctionsPopWhenMouseHovering", true)) {
             functionsMenu(mouseEvent);
         }
     }
@@ -753,6 +753,13 @@ public class ControlData2D extends BaseController {
             menu = new MenuItem(message("Normalize"), StyleTools.getIconImage("iconBinary.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DNormalizeController.open(tableController);
+            });
+            menu.setDisable(empty);
+            trimMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("DeleteAbnormalRows"), StyleTools.getIconImage("iconWrong.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DDeleteAbnormalController.open(tableController);
             });
             menu.setDisable(empty);
             trimMenu.getItems().add(menu);
@@ -877,12 +884,12 @@ public class ControlData2D extends BaseController {
                 popMenu.getItems().add(examplesMenu);
             }
 
-            CheckMenuItem passPop = new CheckMenuItem(message("PopWhenMousePassing"));
-            passPop.setSelected(UserConfig.getBoolean(interfaceName + "FunctionsPopWhenMousePassing", true));
+            CheckMenuItem passPop = new CheckMenuItem(message("PopWhenMouseHovering"));
+            passPop.setSelected(UserConfig.getBoolean(interfaceName + "FunctionsPopWhenMouseHovering", true));
             passPop.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(interfaceName + "FunctionsPopWhenMousePassing", passPop.isSelected());
+                    UserConfig.setBoolean(interfaceName + "FunctionsPopWhenMouseHovering", passPop.isSelected());
                 }
             });
             popMenu.getItems().add(passPop);

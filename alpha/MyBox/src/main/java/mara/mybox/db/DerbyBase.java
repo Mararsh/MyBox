@@ -53,7 +53,7 @@ import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.NetworkTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import org.apache.derby.drda.NetworkServerControl;
 
 /**
@@ -108,8 +108,6 @@ public class DerbyBase {
 
     public static String startDerby() {
         try {
-            Class.forName(embeddedDriver).getDeclaredConstructors()[0].newInstance();
-            Class.forName(ClientDriver).getDeclaredConstructors()[0].newInstance();
             if ("client".equals(readMode())) {
                 return networkMode();
             } else {
@@ -123,13 +121,16 @@ public class DerbyBase {
 
     public static String embeddedMode() {
         try {
-            String lang = Locale.getDefault().getLanguage().toLowerCase();
-            if (!canEmbeded()) {
-                status = DerbyStatus.NotConnected;
-                return MessageFormat.format(Languages.message(lang, "DerbyNotAvalibale"), AppVariables.MyBoxDerbyPath);
-            }
             if (isServerStarted(port)) {
                 shutdownDerbyServer();
+            } else {
+//                shutdownEmbeddedDerby();
+            }
+            Class.forName(embeddedDriver).getDeclaredConstructors()[0].newInstance();
+            String lang = Locale.getDefault().getLanguage().toLowerCase();
+            if (!startEmbededDriver()) {
+                status = DerbyStatus.NotConnected;
+                return MessageFormat.format(message(lang, "DerbyNotAvalibale"), AppVariables.MyBoxDerbyPath);
             }
             driver = embeddedDriver;
             protocol = "jdbc:derby:";
@@ -137,7 +138,7 @@ public class DerbyBase {
             mode = "embedded";
             ConfigTools.writeConfigValue("DerbyMode", mode);
             status = DerbyStatus.Embedded;
-            return Languages.message(lang, "DerbyEmbeddedMode");
+            return message(lang, "DerbyEmbeddedMode");
         } catch (Exception e) {
             status = DerbyStatus.EmbeddedFailed;
             MyBoxLog.error(e);
@@ -145,10 +146,22 @@ public class DerbyBase {
         }
     }
 
-    public static void shutdownEmbeddedDerby() {
-        try {
-            DriverManager.getConnection("jdbc:derby:;shutdown=true");
+    public static boolean startEmbededDriver() {
+        try ( Connection conn = DriverManager.getConnection("jdbc:derby:" + dbHome() + create)) {
+            return true;
         } catch (Exception e) {
+            status = DerbyStatus.EmbeddedFailed;
+            MyBoxLog.console(e);
+            return false;
+        }
+    }
+
+    // https://db.apache.org/derby/docs/10.4/devguide/rdevcsecure26537.html
+    public static void shutdownEmbeddedDerby() {
+        try ( Connection conn = DriverManager.getConnection("jdbc:derby:;shutdown=true")) {
+        } catch (Exception e) {
+            status = DerbyStatus.NotConnected;
+//            MyBoxLog.console(e);
         }
     }
 
@@ -158,8 +171,9 @@ public class DerbyBase {
         try {
             if (status == DerbyStatus.Starting) {
                 String lang = Locale.getDefault().getLanguage().toLowerCase();
-                return Languages.message(lang, "BeingStartingDerby");
+                return message(lang, "BeingStartingDerby");
             }
+            Class.forName(ClientDriver).getDeclaredConstructors()[0].newInstance();
             String lang = Locale.getDefault().getLanguage().toLowerCase();
             if (startDerbyServer()) {
                 driver = ClientDriver;
@@ -168,14 +182,14 @@ public class DerbyBase {
                 status = DerbyStatus.Nerwork;
                 ConfigTools.writeConfigValue("DerbyMode", mode);
                 MyBoxLog.console("Driver: " + driver);
-                return MessageFormat.format(Languages.message(lang, "DerbyServerListening"), port + "");
+                return MessageFormat.format(message(lang, "DerbyServerListening"), port + "");
 
-            } else if (canEmbeded() && status != DerbyStatus.EmbeddedFailed) {
+            } else if (startEmbededDriver() && status != DerbyStatus.EmbeddedFailed) {
                 return embeddedMode();
 
             } else {
                 status = DerbyStatus.NotConnected;
-                return MessageFormat.format(Languages.message(lang, "DerbyNotAvalibale"), AppVariables.MyBoxDerbyPath);
+                return MessageFormat.format(message(lang, "DerbyNotAvalibale"), AppVariables.MyBoxDerbyPath);
             }
         } catch (Exception e) {
             status = DerbyStatus.NerworkFailed;
@@ -242,17 +256,7 @@ public class DerbyBase {
             status = DerbyStatus.Nerwork;
             return true;
         } catch (Exception e) {
-
-            return false;
-        }
-    }
-
-    public static boolean canEmbeded() {
-        try ( Connection conn = DriverManager.getConnection("jdbc:derby:" + dbHome() + create)) {
-            return true;
-        } catch (Exception e) {
-            status = DerbyStatus.EmbeddedFailed;
-//            MyBoxLog.error(e);
+//            MyBoxLog.console(e);
             return false;
         }
     }

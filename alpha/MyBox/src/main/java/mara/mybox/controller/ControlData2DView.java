@@ -13,6 +13,7 @@ import javafx.scene.layout.HBox;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.RowFilter;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.HtmlWriteTools;
@@ -33,6 +34,7 @@ public class ControlData2DView extends BaseController {
     protected String displayDelimiterName;
     protected Data2D data2D;
     protected ChangeListener<Boolean> delimiterListener;
+    protected RowFilter styleFilter;
 
     @FXML
     protected Tab htmlTab, textTab;
@@ -45,10 +47,13 @@ public class ControlData2DView extends BaseController {
     @FXML
     protected HBox textButtonsBox;
 
+    public ControlData2DView() {
+        styleFilter = new RowFilter();
+    }
+
     protected void setParameters(ControlData2D dataController) {
         try {
             this.dataController = dataController;
-
             htmlController.setParent(parentController);
 
             tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
@@ -105,6 +110,8 @@ public class ControlData2DView extends BaseController {
     public void setData(Data2D data) {
         try {
             data2D = data;
+            styleFilter.reset(data2D);
+            styleFilter.setWebEngine(htmlController.webEngine);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -225,7 +232,7 @@ public class ControlData2DView extends BaseController {
                     if (value == null) {
                         value = "";
                     }
-                    String style = data2D.cellStyle(i, data2D.colName(col));
+                    String style = data2D.cellStyle(styleFilter, i, data2D.colName(col));
                     if (style != null && !style.isBlank()) {
                         style = style.replace("-fx-font-size:", "font-size:")
                                 .replace("-fx-text-fill:", "color:")
@@ -275,7 +282,7 @@ public class ControlData2DView extends BaseController {
                     if (value == null) {
                         value = "";
                     }
-                    String style = data2D.cellStyle(r, data2D.colName(col));
+                    String style = data2D.cellStyle(styleFilter, r, data2D.colName(col));
                     if (style != null && !style.isBlank()) {
                         style = style.replace("-fx-font-size:", "font-size:")
                                 .replace("-fx-text-fill:", "color:")

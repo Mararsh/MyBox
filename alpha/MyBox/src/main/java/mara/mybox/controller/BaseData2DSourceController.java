@@ -13,7 +13,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ExpressionCalculator;
+import mara.mybox.fxml.RowFilter;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -38,7 +38,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
     @FXML
     protected VBox dataBox;
     @FXML
-    protected ControlData2DRowFilter filterController;
+    protected ControlData2DRowFilter rowFilterController;
 
 
     /*
@@ -71,8 +71,6 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                 }
             });
 
-            filterController.setParameters(this);
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -85,6 +83,8 @@ public class BaseData2DSourceController extends ControlData2DLoad {
             }
             this.parentController = parent;
             this.tableController = tableController;
+
+            rowFilterController.setParameters(this, tableController);
 
             tableLoadListener = new ChangeListener<Boolean>() {
                 @Override
@@ -103,8 +103,6 @@ public class BaseData2DSourceController extends ControlData2DLoad {
             tableController.statusNotify.addListener(tableStatusListener);
 
             tableView.requestFocus();
-
-            expressionCalculator.setWebEngine(tableController.dataController.viewController.htmlController.webEngine);
 
             sourceChanged();
 
@@ -140,9 +138,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
             pagesNumber = tableController.pagesNumber;
             dataSize = tableController.dataSize;
             dataSizeLoaded = true;
-            data2D.setExpressionCalculator(expressionCalculator);
-            expressionCalculator.setData2D(data2D);
-            filterController.setData2D(data2D);
+            rowFilterController.setData2D(data2D);
             isSettingValues = false;
             refreshControls();
             notifyLoaded();
@@ -258,8 +254,8 @@ public class BaseData2DSourceController extends ControlData2DLoad {
             error = message("InvalidData");
             return false;
         }
-        if (!filterController.checkExpression(isAllPages())) {
-            error = filterController.error;
+        if (!rowFilterController.checkExpression(isAllPages())) {
+            error = rowFilterController.error;
             return false;
         } else {
             return true;
@@ -277,7 +273,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
     }
 
     public boolean hasRowFilter() {
-        String script = filterController.scriptInput.getText();
+        String script = rowFilterController.scriptInput.getText();
         return script != null && !script.isBlank();
     }
 
@@ -390,25 +386,25 @@ public class BaseData2DSourceController extends ControlData2DLoad {
             if (allPagesRadio.isSelected()) {
                 return true;
             }
-            ExpressionCalculator calculator = data2D.getExpressionCalculator();
-            calculator.resetRowFilter();
+            RowFilter rowFilter = data2D.rowFilter;
+            rowFilter.setPassedNumber(0);
             List<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
             if (currentPageRadio.isSelected() || selected == null || selected.isEmpty()) {
                 for (int i = 0; i < tableData.size(); i++) {
-                    if (!calculator.filterTableRow(tableData.get(i), i)) {
+                    if (!rowFilter.filterTableRow(tableData.get(i), i)) {
                         continue;
                     }
-                    if (calculator.reachMaxRowFilterPassed()) {
+                    if (rowFilter.reachMaxPassed()) {
                         break;
                     }
                     checkedRowsIndices.add(i);
                 }
             } else {
                 for (int i : selected) {
-                    if (!calculator.filterTableRow(tableData.get(i), i)) {
+                    if (!rowFilter.filterTableRow(tableData.get(i), i)) {
                         continue;
                     }
-                    if (calculator.reachMaxRowFilterPassed()) {
+                    if (rowFilter.reachMaxPassed()) {
                         break;
                     }
                     checkedRowsIndices.add(i);

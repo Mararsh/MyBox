@@ -117,7 +117,7 @@ public class DataTableQueryEditor extends TreeNodeEditor {
 
     @FXML
     protected void popExamplesMenu(MouseEvent mouseEvent) {
-        if (UserConfig.getBoolean("SqlExamplesPopWhenMousePassing", true)) {
+        if (UserConfig.getBoolean("SqlExamplesPopWhenMouseHovering", true)) {
             examplesMenu(mouseEvent);
         }
     }
@@ -135,7 +135,7 @@ public class DataTableQueryEditor extends TreeNodeEditor {
 
     @FXML
     protected void popHistories(MouseEvent mouseEvent) {
-        if (UserConfig.getBoolean("DataTableQueryHistoriesPopWhenMousePassing", true)) {
+        if (UserConfig.getBoolean("DataTableQueryHistoriesPopWhenMouseHovering", true)) {
             PopTools.popStringValues(this, valueInput, mouseEvent, "DataTableQueryHistories", false, true);
         }
     }
@@ -161,7 +161,7 @@ public class DataTableQueryEditor extends TreeNodeEditor {
 
     @FXML
     protected void popColumnNames(MouseEvent event) {
-        if (UserConfig.getBoolean("DataTableQueryPopWhenMousePassing", true)) {
+        if (UserConfig.getBoolean("DataTableQueryPopWhenMouseHovering", true)) {
             columnNames(event);
         }
     }
@@ -215,12 +215,12 @@ public class DataTableQueryEditor extends TreeNodeEditor {
 
             CheckBox popCheck = new CheckBox();
             popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
-            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMousePassing")));
-            popCheck.setSelected(UserConfig.getBoolean("DataTableQueryPopWhenMousePassing", true));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
+            popCheck.setSelected(UserConfig.getBoolean("DataTableQueryPopWhenMouseHovering", true));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("DataTableQueryPopWhenMousePassing", popCheck.isSelected());
+                    UserConfig.setBoolean("DataTableQueryPopWhenMouseHovering", popCheck.isSelected());
                 }
             });
             topButtons.add(popCheck);

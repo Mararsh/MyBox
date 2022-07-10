@@ -177,6 +177,9 @@ public class PaletteTools {
                 if (data == null) {
                     return false;
                 }
+                data.add(new ColorData(FxColorTools.color2rgba(Color.BLACK), message("Black")));
+                data.add(new ColorData(FxColorTools.color2rgba(Color.WHITE), message("White")));
+                data.add(new ColorData(0, message("Transparent")));
                 try ( Connection conn = DerbyBase.getConnection()) {
                     tableColor.writeData(conn, data, false);
                     if (paletteName != null && !paletteName.isBlank()) {

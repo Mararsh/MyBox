@@ -354,8 +354,8 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#settingsAction" text="%SettingsDot" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
 
-                                <CheckMenuItem fx:id="popColorSetCheck" mnemonicParsing="false" onAction="#popColorSetAction" text="%PopColorSetWhenMousePassing" />
-                                <CheckMenuItem fx:id="controlPanesCheck" mnemonicParsing="false" onAction="#controlPanesAction" text="%ShowHidePanesWhenMousePassed" />
+                                <CheckMenuItem fx:id="popColorSetCheck" mnemonicParsing="false" onAction="#popColorSetAction" text="%PopColorSetWhenMouseHovering" />
+                                <CheckMenuItem fx:id="controlPanesCheck" mnemonicParsing="false" onAction="#controlPanesAction" text="%ShowHidePanesWhenMouseHovering" />
                                 <CheckMenuItem fx:id="popRecentCheck" mnemonicParsing="false" onAction="#popRecentAction" text="%PopRecentFiles" />
                                 <CheckMenuItem fx:id="closeCurrentCheck" mnemonicParsing="false" onAction="#closeCurrentAction" text="%CloseCurrentWhenOpenTool" />
                                 <CheckMenuItem fx:id="recordWindowsSizeLocationCheck" mnemonicParsing="false" onAction="#RecordWindowsSizeLocationAction" text="%RecordWindowsSizeLocation" />

@@ -48,7 +48,6 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
         try {
             super.initControls();
 
-            rowFilterController.setParameters(this);
             columnFilterController.setParameters(this);
 
             // For display, indices are 1-based and included
@@ -75,6 +74,17 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
             });
 
             editController.showLabel = idLabel;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
+    public void setParameters(ControlData2DEditTable tableController) {
+        try {
+            super.setParameters(tableController);
+            rowFilterController.setParameters(this, tableController);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -161,7 +171,7 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
         fromInput.clear();
         toInput.clear();
         selectNoneColumn();
-        rowFilterController.load(null);
+        rowFilterController.load(null, false);
         columnFilterController.load(null);
         editController.loadNull(currentStyle);
         sequenceInput.setText((listController.dataSize + 1) + "");
@@ -201,7 +211,7 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
                 }
             }
         }
-        rowFilterController.load(updatedStyle.getRowFilter());
+        rowFilterController.load(updatedStyle.getRowFilterScript(), updatedStyle.isReversed());
         columnFilterController.load(updatedStyle.getColumnFilter());
 
         sequenceInput.setText(updatedStyle.getSequence() + "");

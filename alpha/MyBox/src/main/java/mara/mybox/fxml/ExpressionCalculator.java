@@ -6,7 +6,6 @@ import javafx.application.Platform;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import mara.mybox.data.FindReplaceString;
-import mara.mybox.data.RowFilter;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
@@ -21,16 +20,35 @@ public class ExpressionCalculator {
     public final Object expressionLock = new Object();
     public WebEngine webEngine;
     public FindReplaceString findReplace;
-    public String expression, expressionResult, error;
+    public String script, expression, expressionResult, error;
     public Data2D data2D;
-    public RowFilter rowFilter;
     public boolean stopped;
     public SingletonTask task;
 
     public ExpressionCalculator() {
-        findReplace = FindReplaceString.create().setOperation(FindReplaceString.Operation.ReplaceAll)
-                .setIsRegex(false).setCaseInsensitive(false).setMultiline(false);
+        init();
     }
+
+    private ExpressionCalculator init() {
+        stopService();
+        data2D = null;
+        return this;
+    }
+
+    public ExpressionCalculator reset() {
+        init();
+        if (findReplace != null) {
+            findReplace.reset();
+        }
+        return this;
+    }
+
+    public ExpressionCalculator reset(Data2D data2D) {
+        reset();
+        this.data2D = data2D;
+        return this;
+    }
+
 
     /*
         calculate
@@ -63,6 +81,7 @@ public class ExpressionCalculator {
 
     public boolean calculateTableRowExpression(String script, List<String> tableRow, long tableRowNumber) {
         try {
+            this.script = script;
             if (task == null || task.isQuit()) {
                 return calculateExpression(tableRowExpression(script, tableRow, tableRowNumber));
             }
@@ -80,6 +99,7 @@ public class ExpressionCalculator {
 
     public boolean calculateDataRowExpression(String script, List<String> dataRow, long dataRowNumber) {
         try {
+            this.script = script;
             if (task == null || task.isQuit()) {
                 return calculateExpression(dataRowExpression(script, dataRow, dataRowNumber));
             }
@@ -136,6 +156,7 @@ public class ExpressionCalculator {
      */
     public String valueExpression(String script, String value) {
         try {
+            this.script = script;
             if (script == null || script.isBlank()
                     || value == null || value.isBlank()
                     || data2D == null || !data2D.isValid()) {
@@ -143,6 +164,10 @@ public class ExpressionCalculator {
             }
 
             String filledScript = script;
+            if (findReplace == null) {
+                findReplace = FindReplaceString.create().setOperation(FindReplaceString.Operation.ReplaceAll)
+                        .setIsRegex(false).setCaseInsensitive(false).setMultiline(false);
+            }
             filledScript = findReplace.replaceStringAll(filledScript, "#{x}", value);
             return filledScript;
         } catch (Exception e) {
@@ -156,6 +181,7 @@ public class ExpressionCalculator {
      */
     public String dataRowExpression(String script, List<String> dataRow, long dataRowNumber) {
         try {
+            this.script = script;
             if (script == null || script.isBlank()
                     || dataRow == null || dataRow.isEmpty()
                     || data2D == null || !data2D.isValid()) {
@@ -166,6 +192,10 @@ public class ExpressionCalculator {
             if (filledScript.contains("#{" + message("TableRowNumber") + "}")) {
                 filledScript = message("NoTableRowNumberWhenAllPages");
             } else {
+                if (findReplace == null) {
+                    findReplace = FindReplaceString.create().setOperation(FindReplaceString.Operation.ReplaceAll)
+                            .setIsRegex(false).setCaseInsensitive(false).setMultiline(false);
+                }
                 List<String> names = data2D.columnNames();
                 for (int i = 0; i < names.size(); i++) {
                     filledScript = findReplace.replaceStringAll(filledScript, "#{" + names.get(i) + "}", dataRow.get(i));
@@ -185,6 +215,7 @@ public class ExpressionCalculator {
      */
     public String tableRowExpression(String script, List<String> tableRow, long tableRowNumber) {
         try {
+            this.script = script;
             if (script == null || script.isBlank()
                     || tableRow == null || tableRow.isEmpty()
                     || data2D == null || !data2D.isValid()) {
@@ -192,6 +223,10 @@ public class ExpressionCalculator {
             }
             String filledScript = script;
             List<String> names = data2D.columnNames();
+            if (findReplace == null) {
+                findReplace = FindReplaceString.create().setOperation(FindReplaceString.Operation.ReplaceAll)
+                        .setIsRegex(false).setCaseInsensitive(false).setMultiline(false);
+            }
             for (int i = 0; i < names.size(); i++) {
                 filledScript = findReplace.replaceStringAll(filledScript, "#{" + names.get(i) + "}", tableRow.get(i + 1));
             }
@@ -203,78 +238,6 @@ public class ExpressionCalculator {
             handleError(e);
             return null;
         }
-    }
-
-    /*
-        filter
-     */
-    public RowFilter setRowFilter(String script, boolean reversed, long max) {
-        rowFilter = RowFilter.create().setCalculator(this)
-                .setScript(script).setReversed(reversed).setMaxPassed(max);
-        return rowFilter;
-    }
-
-    public void resetRowFilter() {
-        if (rowFilter != null) {
-            rowFilter.passedNumber = 0;
-        }
-    }
-
-    public boolean reachMaxRowFilterPassed() {
-        return rowFilter == null || rowFilter.reachMaxPassed();
-    }
-
-    public boolean filterTableRow(RowFilter rowFilter, List<String> tableRow, long tableRowIndex) {
-        this.rowFilter = rowFilter;
-        if (rowFilter != null) {
-            rowFilter.setCalculator(this);
-        }
-        return filterTableRow(tableRow, tableRowIndex);
-    }
-
-    public boolean filterTableRow(List<String> tableRow, long tableRowIndex) {
-        if (rowFilter == null) {
-            return true;
-        }
-        if (!rowFilter.needFilter()) {
-            rowFilter.passed = true;
-            rowFilter.passedNumber++;
-            return true;
-        }
-        return rowFilter.readResult(!calculateTableRowExpression(rowFilter.script, tableRow, tableRowIndex));
-    }
-
-    public boolean filterDataRow(List<String> dataRow, long dataRowIndex) {
-        try {
-            error = null;
-            if (dataRow == null) {
-                if (rowFilter != null) {
-                    rowFilter.passed = false;
-                }
-                return false;
-            }
-            if (rowFilter == null) {
-                return true;
-            }
-            if (!rowFilter.needFilter()) {
-                rowFilter.passed = true;
-                rowFilter.passedNumber++;
-                return true;
-            }
-            if (task == null || task.isQuit()) {
-                return rowFilter.readResult(!calculateExpression(dataRowExpression(rowFilter.script, dataRow, dataRowIndex)));
-            }
-            synchronized (expressionLock) {
-                expression = dataRowExpression(rowFilter.script, dataRow, dataRowIndex);
-                expressionLock.notify();
-                expressionLock.wait();
-                rowFilter.readResult(false);
-                expressionResult = null;
-            }
-        } catch (Exception e) {
-            handleError(e);
-        }
-        return rowFilter.passed;
     }
 
     /*
@@ -326,7 +289,8 @@ public class ExpressionCalculator {
             expression = null;
             expressionLock.notify();
         }
-        resetRowFilter();
+        expressionResult = null;
+        error = null;
     }
 
     /*
@@ -339,6 +303,11 @@ public class ExpressionCalculator {
 
     public ExpressionCalculator setData2D(Data2D data2D) {
         this.data2D = data2D;
+        return this;
+    }
+
+    public ExpressionCalculator setScript(String script) {
+        this.script = script;
         return this;
     }
 
