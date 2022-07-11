@@ -173,7 +173,7 @@ public class FindReplaceString {
 //                MyBoxLog.debug(operation + " stringRange:" + stringRange.getStart() + " " + stringRange.getEnd() + " len:" + stringRange.getLength()
 //                        + " findString:>>" + findString + "<< lastMatch:>>" + lastMatch + "<<");
             } else {
-                outputString = inputString;
+                outputString = inputString + "";
             }
             return true;
         } catch (Exception e) {

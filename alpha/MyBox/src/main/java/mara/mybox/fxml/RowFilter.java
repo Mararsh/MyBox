@@ -9,6 +9,7 @@ import java.util.List;
  */
 public class RowFilter extends ExpressionCalculator {
 
+    public String script;
     public long passedNumber, maxPassed;
     public boolean reversed, passed;
 
@@ -53,7 +54,8 @@ public class RowFilter extends ExpressionCalculator {
     }
 
     public boolean filterTableRow(List<String> tableRow, long tableRowIndex) {
-        if (!needFilter()) {
+        error = null;
+        if (script == null || script.isBlank()) {
             passed = true;
             passedNumber++;
             return true;
@@ -68,7 +70,7 @@ public class RowFilter extends ExpressionCalculator {
                 passed = false;
                 return false;
             }
-            if (!needFilter()) {
+            if (script == null || script.isBlank()) {
                 passed = true;
                 passedNumber++;
                 return true;
@@ -93,6 +95,15 @@ public class RowFilter extends ExpressionCalculator {
     /*
         get/set
      */
+    public String getScript() {
+        return script;
+    }
+
+    public ExpressionCalculator setScript(String script) {
+        this.script = script;
+        return this;
+    }
+
     public long getPassedNumber() {
         return passedNumber;
     }

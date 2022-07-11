@@ -108,7 +108,14 @@ public class ControlData2DSetValue extends BaseController {
     }
 
     public void setParameter(BaseData2DHandleController handleController) {
-        this.handleController = handleController;
+        try {
+            this.handleController = handleController;
+            expressionController.calculator.setWebEngine(handleController.rowFilterController.rowFilter.webEngine);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+
     }
 
     public void checkValue() {

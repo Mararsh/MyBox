@@ -74,7 +74,7 @@ public class Data2DDeleteController extends BaseData2DHandleController {
                     data2D.setTask(task);
                     data2D.startFilterService(task);
                     ok = data2D.delete(errorContinueCheck.isSelected());
-                    data2D.stopExpressionService();
+                    data2D.stopFilterService();
                     return ok;
                 } catch (Exception e) {
                     error = e.toString();
@@ -94,7 +94,7 @@ public class Data2DDeleteController extends BaseData2DHandleController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopExpressionService();
+                data2D.stopFilterService();
                 data2D.setTask(null);
                 task = null;
             }

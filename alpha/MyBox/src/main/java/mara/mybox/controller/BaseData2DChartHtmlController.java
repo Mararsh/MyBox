@@ -173,7 +173,9 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
             protected boolean handle() {
                 try {
                     data2D.setTask(task);
+                    data2D.startFilterService(task);
                     readData();
+                    data2D.stopFilterService();
                     html = handleData();
                     return html != null;
                 } catch (Exception e) {

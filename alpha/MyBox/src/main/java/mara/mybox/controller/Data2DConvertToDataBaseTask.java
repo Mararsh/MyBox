@@ -63,11 +63,11 @@ public class Data2DConvertToDataBaseTask extends Data2DTableCreateController {
                     attributesController.importData(conn, convertController.checkedRowsIndices);
                 }
             }
-            convertController.data2D.stopExpressionService();
+            convertController.data2D.stopFilterService();
             return true;
         } catch (Exception e) {
             updateLogs(e.toString());
-            convertController.data2D.stopExpressionService();
+            convertController.data2D.stopFilterService();
             return false;
         }
 
@@ -90,7 +90,7 @@ public class Data2DConvertToDataBaseTask extends Data2DTableCreateController {
             convertController.dataVBox.setDisable(false);
             convertController.filterVBox.setDisable(false);
             convertController.attributesBox.setDisable(false);
-            convertController.data2D.stopExpressionService();
+            convertController.data2D.stopFilterService();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

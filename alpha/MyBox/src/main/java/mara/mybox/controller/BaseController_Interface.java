@@ -82,7 +82,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
                             checkSourceFileInput();
                         });
-//                sourceFileInput.setText(UserConfig.getString(baseName + "SourceFile", null));
+//                sourceFileInput.setText(UserConfig.getString(interfaceName + "SourceFile", null));
             }
 
             if (sourcePathInput != null) {
@@ -93,7 +93,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         checkSourcetPathInput();
                     }
                 });
-                sourcePathInput.setText(UserConfig.getString(baseName + "SourcePath", AppPaths.getGeneratedPath()));
+                sourcePathInput.setText(UserConfig.getString(interfaceName + "SourcePath", AppPaths.getGeneratedPath()));
             }
 
             if (targetPrefixInput != null) {
@@ -101,11 +101,11 @@ public abstract class BaseController_Interface extends BaseController_Files {
                     @Override
                     public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                         if (newValue != null && !newValue.isBlank()) {
-                            UserConfig.setString(baseName + "TargetPrefix", newValue);
+                            UserConfig.setString(interfaceName + "TargetPrefix", newValue);
                         }
                     }
                 });
-                targetPrefixInput.setText(UserConfig.getString(baseName + "TargetPrefix", "mm"));
+                targetPrefixInput.setText(UserConfig.getString(interfaceName + "TargetPrefix", "mm"));
             }
 
             if (targetFileController != null) {
@@ -117,7 +117,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         }
                     }
                 });
-                targetFileController.baseName(baseName).savedName(baseName + "TargetFile").type(TargetFileType).init();
+                targetFileController.baseName(interfaceName).savedName(interfaceName + "TargetFile").type(TargetFileType).init();
             }
 
             if (targetPathController != null) {
@@ -129,7 +129,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         }
                     }
                 });
-                targetPathController.baseName(baseName).savedName(baseName + "TargetPath").type(TargetPathType).init();
+                targetPathController.baseName(interfaceName).savedName(interfaceName + "TargetPath").type(TargetPathType).init();
             }
 
             if (operationBarController != null) {
@@ -149,7 +149,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
 
             saveAsType = BaseController.SaveAsType.Open;
             if (saveAsGroup != null && saveOpenRadio != null) {
-                String v = UserConfig.getString(baseName + "SaveAsType", BaseController.SaveAsType.Open.name());
+                String v = UserConfig.getString(interfaceName + "SaveAsType", BaseController.SaveAsType.Open.name());
                 for (BaseController.SaveAsType s : BaseController.SaveAsType.values()) {
                     if (v.equals(s.name())) {
                         saveAsType = s;
@@ -193,18 +193,18 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         } else {
                             saveAsType = BaseController.SaveAsType.Open;
                         }
-                        UserConfig.setString(baseName + "SaveAsType", saveAsType.name());
+                        UserConfig.setString(interfaceName + "SaveAsType", saveAsType.name());
                     }
                 });
             }
 
             if (topCheck != null) {
-                topCheck.setSelected(UserConfig.getBoolean(baseName + "Top", true));
+                topCheck.setSelected(UserConfig.getBoolean(interfaceName + "Top", true));
                 topCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                         if (!isSettingValues) {
-                            UserConfig.setBoolean(baseName + "Top", newValue);
+                            UserConfig.setBoolean(interfaceName + "Top", newValue);
                         }
                         checkAlwaysTop();
                     }
@@ -217,13 +217,13 @@ public abstract class BaseController_Interface extends BaseController_Files {
                     @Override
                     public void changed(ObservableValue<? extends Boolean> ov,
                             Boolean oldVal, Boolean newVal) {
-                        UserConfig.setBoolean(baseName + "SaveClose", saveCloseCheck.isSelected());
+                        UserConfig.setBoolean(interfaceName + "SaveClose", saveCloseCheck.isSelected());
                     }
                 });
-                saveCloseCheck.setSelected(UserConfig.getBoolean(baseName + "SaveClose", false));
+                saveCloseCheck.setSelected(UserConfig.getBoolean(interfaceName + "SaveClose", false));
             }
 
-            dpi = UserConfig.getInt(baseName + "DPI", 96);
+            dpi = UserConfig.getInt(interfaceName + "DPI", 96);
             if (dpiSelector != null) {
                 List<String> dpiValues = new ArrayList();
                 dpiValues.addAll(Arrays.asList("96", "72", "300", "160", "240", "120", "600", "400"));
@@ -359,7 +359,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
             int v = Integer.parseInt(dpiSelector.getValue());
             if (v > 0) {
                 dpi = v;
-                UserConfig.setInt(baseName + "DPI", dpi);
+                UserConfig.setInt(interfaceName + "DPI", dpi);
                 dpiSelector.getEditor().setStyle(null);
             } else {
                 dpiSelector.getEditor().setStyle(UserConfig.badStyle());
@@ -956,25 +956,25 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 return;
             }
             if (rightPaneCheck != null) {
-                rightPaneCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayRightPane", true));
+                rightPaneCheck.setSelected(UserConfig.getBoolean(interfaceName + "DisplayRightPane", true));
                 rightPaneCheck.selectedProperty().addListener(
                         (ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
                             if (isSettingValues) {
                                 return;
                             }
-                            UserConfig.setBoolean(baseName + "DisplayRightPane", rightPaneCheck.isSelected());
+                            UserConfig.setBoolean(interfaceName + "DisplayRightPane", rightPaneCheck.isSelected());
                             checkRightPane();
                         });
                 checkRightPane();
             }
 
             if (leftPaneCheck != null) {
-                leftPaneCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayLeftPane", true));
+                leftPaneCheck.setSelected(UserConfig.getBoolean(interfaceName + "DisplayLeftPane", true));
                 checkLeftPane();
                 leftPaneCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                        UserConfig.setBoolean(baseName + "DisplayLeftPane", leftPaneCheck.isSelected());
+                        UserConfig.setBoolean(interfaceName + "DisplayLeftPane", leftPaneCheck.isSelected());
                         checkLeftPane();
                     }
                 });
@@ -1040,7 +1040,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                     || splitPane.getItems().size() == 1) {
                 return false;
             }
-            if (!UserConfig.getBoolean(baseName + "ShowRightControl", true)) {
+            if (!UserConfig.getBoolean(interfaceName + "ShowRightControl", true)) {
                 hideRightPane();
             }
             setSplitDividerPositions();
@@ -1075,14 +1075,14 @@ public abstract class BaseController_Interface extends BaseController_Files {
             if (splitPane.getItems().contains(leftPane)) {
                 double defaultv = dividersSize == 1 ? 0.35 : 0.15;
                 try {
-                    String v = UserConfig.getString(baseName + "LeftPanePosition", defaultv + "");
+                    String v = UserConfig.getString(interfaceName + "LeftPanePosition", defaultv + "");
                     splitPane.setDividerPosition(0, Double.parseDouble(v));
                 } catch (Exception e) {
                     splitPane.setDividerPosition(0, defaultv);
                 }
                 leftDividerListener = (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
                     if (!isSettingValues) {
-                        UserConfig.setString(baseName + "LeftPanePosition", newValue.doubleValue() + "");
+                        UserConfig.setString(interfaceName + "LeftPanePosition", newValue.doubleValue() + "");
                     }
                 };
                 splitPane.getDividers().get(0).positionProperty().addListener(leftDividerListener);
@@ -1091,14 +1091,14 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 int index = splitPane.getDividers().size() - 1;
                 double defaultv = index > 0 ? 0.85 : 0.65;
                 try {
-                    String v = UserConfig.getString(baseName + "RightPanePosition", defaultv + "");
+                    String v = UserConfig.getString(interfaceName + "RightPanePosition", defaultv + "");
                     splitPane.setDividerPosition(index, Double.parseDouble(v));
                 } catch (Exception e) {
                     splitPane.setDividerPosition(index, defaultv);
                 }
                 rightDividerListener = (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
                     if (!isSettingValues) {
-                        UserConfig.setString(baseName + "RightPanePosition", newValue.doubleValue() + "");
+                        UserConfig.setString(interfaceName + "RightPanePosition", newValue.doubleValue() + "");
                     }
                 };
                 splitPane.getDividers().get(index).positionProperty().addListener(rightDividerListener);
@@ -1134,7 +1134,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
         isSettingValues = false;
         setSplitDividerPositions();
         refreshStyle(splitPane);
-        UserConfig.setBoolean(baseName + "ShowLeftControl", false);
+        UserConfig.setBoolean(interfaceName + "ShowLeftControl", false);
         if (leftPaneControl != null) {
             StyleTools.setIconName(leftPaneControl, "iconDoubleRight.png");
         }
@@ -1151,7 +1151,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
         isSettingValues = false;
         setSplitDividerPositions();
         refreshStyle(splitPane);
-        UserConfig.setBoolean(baseName + "ShowLeftControl", true);
+        UserConfig.setBoolean(interfaceName + "ShowLeftControl", true);
         if (leftPaneControl != null) {
             StyleTools.setIconName(leftPaneControl, "iconDoubleLeft.png");
         }
@@ -1184,7 +1184,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
         isSettingValues = false;
         setSplitDividerPositions();
         refreshStyle(splitPane);
-        UserConfig.setBoolean(baseName + "ShowRightControl", false);
+        UserConfig.setBoolean(interfaceName + "ShowRightControl", false);
         if (rightPaneControl != null) {
             StyleTools.setIconName(rightPaneControl, "iconDoubleLeft.png");
         }
@@ -1202,7 +1202,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
             isSettingValues = false;
             setSplitDividerPositions();
             refreshStyle(splitPane);
-            UserConfig.setBoolean(baseName + "ShowRightControl", true);
+            UserConfig.setBoolean(interfaceName + "ShowRightControl", true);
             if (rightPaneControl != null) {
                 StyleTools.setIconName(rightPaneControl, "iconDoubleRight.png");
             }

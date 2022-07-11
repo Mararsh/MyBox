@@ -59,7 +59,7 @@ public class Data2DExportTask extends BaseTaskController {
             exportController.formatVBox.setDisable(false);
             exportController.targetVBox.setDisable(false);
             exportController.data2D.setTask(null);
-            exportController.data2D.stopExpressionService();
+            exportController.data2D.stopFilterService();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -72,7 +72,7 @@ public class Data2DExportTask extends BaseTaskController {
             task = null;
         }
         exportController.convertController.closeWriters();
-        exportController.data2D.stopExpressionService();
+        exportController.data2D.stopFilterService();
     }
 
     @Override

@@ -424,7 +424,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
     }
 
     public List<List<String>> selectedData(List<Integer> cols, boolean showRowNumber) {
-        return selectedData(checkedRowsIndices, checkedColsIndices, showRowNumber);
+        return selectedData(checkedRowsIndices, cols, showRowNumber);
     }
 
     public List<List<String>> selectedData(List<Integer> rows, List<Integer> cols, boolean showRowNumber) {

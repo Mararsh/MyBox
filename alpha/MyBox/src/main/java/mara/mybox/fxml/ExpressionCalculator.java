@@ -20,7 +20,7 @@ public class ExpressionCalculator {
     public final Object expressionLock = new Object();
     public WebEngine webEngine;
     public FindReplaceString findReplace;
-    public String script, expression, expressionResult, error;
+    public String expression, expressionResult, error;
     public Data2D data2D;
     public boolean stopped;
     public SingletonTask task;
@@ -81,7 +81,6 @@ public class ExpressionCalculator {
 
     public boolean calculateTableRowExpression(String script, List<String> tableRow, long tableRowNumber) {
         try {
-            this.script = script;
             if (task == null || task.isQuit()) {
                 return calculateExpression(tableRowExpression(script, tableRow, tableRowNumber));
             }
@@ -99,7 +98,6 @@ public class ExpressionCalculator {
 
     public boolean calculateDataRowExpression(String script, List<String> dataRow, long dataRowNumber) {
         try {
-            this.script = script;
             if (task == null || task.isQuit()) {
                 return calculateExpression(dataRowExpression(script, dataRow, dataRowNumber));
             }
@@ -156,7 +154,6 @@ public class ExpressionCalculator {
      */
     public String valueExpression(String script, String value) {
         try {
-            this.script = script;
             if (script == null || script.isBlank()
                     || value == null || value.isBlank()
                     || data2D == null || !data2D.isValid()) {
@@ -181,7 +178,6 @@ public class ExpressionCalculator {
      */
     public String dataRowExpression(String script, List<String> dataRow, long dataRowNumber) {
         try {
-            this.script = script;
             if (script == null || script.isBlank()
                     || dataRow == null || dataRow.isEmpty()
                     || data2D == null || !data2D.isValid()) {
@@ -215,7 +211,6 @@ public class ExpressionCalculator {
      */
     public String tableRowExpression(String script, List<String> tableRow, long tableRowNumber) {
         try {
-            this.script = script;
             if (script == null || script.isBlank()
                     || tableRow == null || tableRow.isEmpty()
                     || data2D == null || !data2D.isValid()) {
@@ -303,11 +298,6 @@ public class ExpressionCalculator {
 
     public ExpressionCalculator setData2D(Data2D data2D) {
         this.data2D = data2D;
-        return this;
-    }
-
-    public ExpressionCalculator setScript(String script) {
-        this.script = script;
         return this;
     }
 

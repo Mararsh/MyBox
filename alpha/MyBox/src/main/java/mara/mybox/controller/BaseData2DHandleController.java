@@ -264,7 +264,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                     data2D.startFilterService(task);
                 }
                 csvFile = generatedFile();
-                data2D.stopExpressionService();
+                data2D.stopFilterService();
                 return csvFile != null;
             }
 
@@ -277,7 +277,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopExpressionService();
+                data2D.stopFilterService();
                 data2D.setTask(null);
                 task = null;
             }
@@ -291,7 +291,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         return null;
     }
 
-    public synchronized void handleRowsTask() {
+    public void handleRowsTask() {
         task = new SingletonTask<Void>(this) {
 
             @Override
@@ -300,7 +300,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                     data2D.setTask(task);
                     data2D.startFilterService(task);
                     ok = handleRows();
-                    data2D.stopExpressionService();
+                    data2D.stopFilterService();
                     return ok;
                 } catch (Exception e) {
                     error = e.toString();
@@ -321,7 +321,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             protected void finalAction() {
                 super.finalAction();
                 data2D.setTask(null);
-                data2D.stopExpressionService();
+                data2D.stopFilterService();
                 task = null;
                 if (targetController != null) {
                     targetController.refreshControls();

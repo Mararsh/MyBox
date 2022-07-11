@@ -482,23 +482,23 @@ public class XYChartMaker<X, Y> extends XYChartOptions<X, Y> {
             String categoryName, category, number, extra, categoryDis, numberDis, extraDis;
             if (isXY) {
                 categoryName = xyChart.getXAxis().getLabel();
-                category = item.getXValue().toString();
+                category = item.getXValue() == null ? "" : item.getXValue().toString();
                 if (categoryIsNumbers) {
                     categoryDis = DoubleTools.format(ChartTools.realValue(xCoordinate, Double.valueOf(category)), scale);
                 } else {
                     categoryDis = category;
                 }
-                number = item.getYValue().toString();
+                number = item.getYValue() == null ? "" : item.getYValue().toString();
                 numberDis = DoubleTools.format(ChartTools.realValue(yCoordinate, Double.valueOf(number)), scale);
             } else {
                 categoryName = xyChart.getYAxis().getLabel();
-                category = item.getYValue().toString();
+                category = item.getYValue() == null ? "" : item.getYValue().toString();
                 if (categoryIsNumbers) {
                     categoryDis = DoubleTools.format(ChartTools.realValue(yCoordinate, Double.valueOf(category)), scale);
                 } else {
                     categoryDis = category;
                 }
-                number = item.getXValue().toString();
+                number = item.getXValue() == null ? "" : item.getXValue().toString();
                 numberDis = DoubleTools.format(ChartTools.realValue(xCoordinate, Double.valueOf(number)), scale);
             }
 

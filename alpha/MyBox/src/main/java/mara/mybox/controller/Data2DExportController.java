@@ -129,7 +129,7 @@ public class Data2DExportController extends BaseData2DHandleController {
                 data2D.setTask(taskController.task);
                 data2D.startFilterService(taskController.task);
                 data2D.export(convertController, checkedColsIndices);
-                data2D.stopExpressionService();
+                data2D.stopFilterService();
                 data2D.setTask(null);
             }
 

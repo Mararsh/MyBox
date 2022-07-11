@@ -370,27 +370,27 @@ public abstract class Data2D_Edit extends Data2D_Data {
     }
 
     public boolean calculateDataRowExpression(String script, List<String> dataRow, long dataRowNumber) {
+        error = null;
         if (rowFilter == null) {
             return true;
         }
         if (rowFilter.calculateDataRowExpression(script, dataRow, dataRowNumber)) {
-            error = null;
             return true;
         } else {
-            error = getError();
+            error = rowFilter.getError();
             return false;
         }
     }
 
     public boolean filterDataRow(List<String> dataRow, long dataRowIndex) {
+        error = null;
         if (rowFilter == null) {
             return true;
         }
         if (rowFilter.filterDataRow(dataRow, dataRowIndex)) {
-            error = null;
             return true;
         } else {
-            error = getError();
+            error = rowFilter.getError();
             return false;
         }
     }
@@ -419,7 +419,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
         }
     }
 
-    public void stopExpressionService() {
+    public void stopFilterService() {
         if (rowFilter != null) {
             rowFilter.stopService();
         }

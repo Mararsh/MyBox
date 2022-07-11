@@ -94,7 +94,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
 
     private String dataHtml(double[][] bars, boolean allNeg, boolean allPos) {
         try {
-            if (bars == null) {
+            if (bars == null || normalization == null) {
                 return null;
             }
             int rowsNumber = bars.length;

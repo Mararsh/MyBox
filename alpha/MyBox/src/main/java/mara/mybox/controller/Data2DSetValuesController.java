@@ -7,6 +7,7 @@ import mara.mybox.calculation.DescriptiveStatistic;
 import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DoubleTools;
@@ -20,6 +21,8 @@ import static mara.mybox.value.Languages.message;
  */
 public class Data2DSetValuesController extends BaseData2DHandleController {
 
+    protected ExpressionCalculator calculator;
+
     @FXML
     protected ControlData2DSetValue valueController;
 
@@ -28,10 +31,18 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
     }
 
     @Override
-    public void initControls() {
-        super.initControls();
-        idExclude(true);
-        valueController.setParameter(this);
+    public void setParameters(ControlData2DEditTable tableController) {
+        try {
+            super.setParameters(tableController);
+
+            idExclude(true);
+            valueController.setParameter(this);
+
+            calculator = valueController.expressionController.calculator;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @Override
@@ -86,7 +97,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                     data2D.setTask(task);
                     data2D.startExpressionService(task);
                     ok = data2D.setValue(checkedColsIndices, valueController.value, valueController.errorContinueCheck.isSelected());
-                    data2D.stopExpressionService();
+                    data2D.stopFilterService();
                     return ok;
                 } catch (Exception e) {
                     error = e.toString();
@@ -105,7 +116,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopExpressionService();
+                data2D.stopFilterService();
                 data2D.setTask(null);
                 task = null;
             }
@@ -161,7 +172,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                     data2D.setTask(task);
                     data2D.startExpressionService(task);
                     ok = data2D.setValue(checkedColsIndices, valueController.value, valueController.errorContinueCheck.isSelected());
-                    data2D.stopExpressionService();
+                    data2D.stopFilterService();
                     return ok;
                 } catch (Exception e) {
                     error = e.toString();
@@ -180,7 +191,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopExpressionService();
+                data2D.stopFilterService();
                 data2D.setTask(null);
                 task = null;
             }

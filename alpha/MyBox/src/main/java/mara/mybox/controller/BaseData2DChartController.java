@@ -193,7 +193,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                     data2D.setTask(task);
                     data2D.startFilterService(task);
                     readData();
-                    data2D.stopExpressionService();
+                    data2D.stopFilterService();
                     return true;
                 } catch (Exception e) {
                     MyBoxLog.error(e);
@@ -214,7 +214,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopExpressionService();
+                data2D.stopFilterService();
                 data2D.setTask(null);
                 task = null;
             }

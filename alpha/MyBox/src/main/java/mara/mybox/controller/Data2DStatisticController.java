@@ -470,7 +470,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                     calculation.setTask(task);
                     if (calculation.needStored()) {
                         DataTable tmpTable = data2D.toTmpTable(task, checkedColsIndices, false);
-                        data2D.stopExpressionService();
+                        data2D.stopFilterService();
                         if (tmpTable == null) {
                             return false;
                         }
@@ -482,7 +482,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                         tmpTable.drop();
                     } else {
                         ok = calculation.statisticAllByColumnsWithoutStored();
-                        data2D.stopExpressionService();
+                        data2D.stopFilterService();
                     }
                     return ok;
                 } catch (Exception e) {
@@ -507,7 +507,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 super.finalAction();
                 data2D.setTask(null);
                 calculation.setTask(null);
-                data2D.stopExpressionService();
+                data2D.stopFilterService();
                 task = null;
                 if (targetController != null) {
                     targetController.refreshControls();
@@ -529,7 +529,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                     calculation.setTask(task);
                     if (calculation.needStored()) {
                         DataTable dataTable = data2D.singleColumn(task, checkedColsIndices);
-                        data2D.stopExpressionService();
+                        data2D.stopFilterService();
                         if (dataTable == null) {
                             return false;
                         }
@@ -542,7 +542,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                         return ok;
                     } else {
                         DoubleStatistic statisticData = data2D.statisticByAll(checkedColsIndices, calculation);
-                        data2D.stopExpressionService();
+                        data2D.stopFilterService();
                         if (statisticData == null) {
                             return false;
                         }
@@ -571,7 +571,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 super.finalAction();
                 data2D.setTask(null);
                 calculation.setTask(null);
-                data2D.stopExpressionService();
+                data2D.stopFilterService();
                 task = null;
                 if (targetController != null) {
                     targetController.refreshControls();
