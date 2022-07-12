@@ -77,12 +77,17 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
         }
     }
 
-    public void load(String script, boolean reversed) {
-        scriptInput.setText(script);
-        if (reversed) {
-            othersRadio.fire();
-        } else {
+    public void load(RowFilter rowFilter) {
+        if (rowFilter == null) {
+            scriptInput.clear();
             trueRadio.fire();
+        } else {
+            scriptInput.setText(rowFilter.script);
+            if (rowFilter.reversed) {
+                othersRadio.fire();
+            } else {
+                trueRadio.fire();
+            }
         }
     }
 

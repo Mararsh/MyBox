@@ -171,7 +171,7 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
         fromInput.clear();
         toInput.clear();
         selectNoneColumn();
-        rowFilterController.load(null, false);
+        rowFilterController.load(null);
         columnFilterController.load(null);
         editController.loadNull(currentStyle);
         sequenceInput.setText((listController.dataSize + 1) + "");
@@ -211,7 +211,7 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
                 }
             }
         }
-        rowFilterController.load(updatedStyle.getRowFilterScript(), updatedStyle.isReversed());
+        rowFilterController.load(updatedStyle.getRowFilter());
         columnFilterController.load(updatedStyle.getColumnFilter());
 
         sequenceInput.setText(updatedStyle.getSequence() + "");

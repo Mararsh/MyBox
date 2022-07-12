@@ -428,13 +428,17 @@ public abstract class Data2D_Edit extends Data2D_Data {
     /*
         style
      */
-    public String cellStyle(RowFilter styleFilter, int tableRowIndex, String colName) {
+    public String cellStyle(RowFilter calculator, int tableRowIndex, String colName) {
         try {
-            if (styleFilter == null || styles == null || styles.isEmpty() || colName == null || colName.isBlank()) {
+            if (calculator == null || styles == null || styles.isEmpty() || colName == null || colName.isBlank()) {
                 return null;
             }
             List<String> tableRow = tableViewRow(tableRowIndex);
             if (tableRow == null || tableRow.size() < 1) {
+                return null;
+            }
+            int colIndex = colOrder(colName);
+            if (colIndex < 0) {
                 return null;
             }
             String cellStyle = null;
@@ -459,10 +463,8 @@ public abstract class Data2D_Edit extends Data2D_Data {
                         continue;
                     }
                 }
-                styleFilter.reset().setData2D((Data2D) this);
-                styleFilter.setReversed(style.isReversed())
-                        .setScript(style.getRowFilterScript());
-                if (styleFilter.filterTableRow(tableRow, tableRowIndex)) {
+                calculator.reset().setData2D((Data2D) this);
+                if (style.filterCell(calculator, tableRow, tableRowIndex, colIndex)) {
                     String styleValue = style.finalStyle();
                     if (styleValue == null || styleValue.isBlank()) {
                         cellStyle = null;

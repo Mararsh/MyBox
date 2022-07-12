@@ -677,6 +677,19 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         nodeController.pasteText(node.getValue());
     }
 
+    public void executeNode(TreeNode node) {
+        editNode(node);
+        if (nodeController.startButton != null) {
+            nodeController.startAction();
+        } else if (nodeController.goButton != null) {
+            nodeController.goAction();
+        } else if (startButton != null) {
+            startAction();
+        } else if (goButton != null) {
+            goAction();
+        }
+    }
+
 
     /*
         node
@@ -713,6 +726,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     public boolean isNodeChanged() {
         return nodeController.nodeChanged;
     }
+
 
     /*
         Times

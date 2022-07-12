@@ -26,7 +26,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class TreeNodesController extends BaseNodeSelector<TreeNode> {
 
-    protected TreeManageController treeController;
+    protected TreeManageController manageController;
     protected TreeNodesController caller;
     protected TableTreeNode tableTreeNode;
     protected TableTreeNodeTag tableTreeNodeTag;
@@ -37,11 +37,15 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
 
     public void setParameters(TreeManageController parent, boolean manageMode) {
         super.setManager(parent, manageMode);
-        treeController = parent;
+        manageController = parent;
         tableTreeNode = parent.tableTreeNode;
         tableTreeNodeTag = parent.tableTreeNodeTag;
-        category = treeController.category;
+        category = manageController.category;
         baseTitle = category;
+        nodeExecutable = manageController != null
+                && (manageController.startButton != null || manageController.goButton != null
+                || (manageController.nodeController != null
+                && (manageController.nodeController.startButton != null || manageController.nodeController.goButton != null)));
     }
 
     public void setCaller(TreeNodesController caller) {
@@ -55,18 +59,18 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
 
     @Override
     public void listChildren(TreeItem<TreeNode> item) {
-        if (item == null || caller != null || treeController == null) {
+        if (item == null || caller != null || manageController == null) {
             return;
         }
-        treeController.loadChildren(item.getValue());
+        manageController.loadChildren(item.getValue());
     }
 
     @Override
     public void listDescentants(TreeItem<TreeNode> item) {
-        if (item == null || caller != null || treeController == null) {
+        if (item == null || caller != null || manageController == null) {
             return;
         }
-        treeController.loadDescendants(item.getValue());
+        manageController.loadDescendants(item.getValue());
     }
 
     @Override
@@ -76,7 +80,7 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
         }
         if (caller != null) {
             okAction();
-        } else if (manageMode && treeController != null) {
+        } else if (manageMode && manageController != null) {
             editNode(item);
         }
     }
@@ -86,33 +90,33 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
         if (caller != null) {
             caller.addNewNode(caller.find(parent), newNode);
         }
-        if (treeController != null) {
-            treeController.nodeAdded(parent, newNode);
+        if (manageController != null) {
+            manageController.nodeAdded(parent, newNode);
         }
     }
 
     @Override
     protected void nodeDeleted(TreeNode node) {
-        if (treeController == null) {
+        if (manageController == null) {
             return;
         }
-        treeController.nodeDeleted(node);
+        manageController.nodeDeleted(node);
     }
 
     @Override
     protected void nodeRenamed(TreeNode node) {
-        if (treeController == null) {
+        if (manageController == null) {
             return;
         }
-        treeController.nodeRenamed(node);
+        manageController.nodeRenamed(node);
     }
 
     @Override
     public void nodeMoved(TreeNode parent, TreeNode node) {
-        if (treeController == null) {
+        if (manageController == null) {
             return;
         }
-        treeController.nodeMoved(parent, node);
+        manageController.nodeMoved(parent, node);
     }
 
     @Override
@@ -210,7 +214,7 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
     protected void exportNode(TreeItem<TreeNode> item) {
         TreeNodeExportController exportController
                 = (TreeNodeExportController) WindowTools.openChildStage(getMyWindow(), Fxmls.TreeNodeExportFxml);
-        exportController.setParamters(treeController, item);
+        exportController.setParamters(manageController, item);
     }
 
     @Override
@@ -259,18 +263,26 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
 
     @Override
     protected void editNode(TreeItem<TreeNode> item) {
-        if (item == null || treeController == null) {
+        if (item == null || manageController == null) {
             return;
         }
-        treeController.editNode(item.getValue());
+        manageController.editNode(item.getValue());
     }
 
     @Override
     protected void pasteNode(TreeItem<TreeNode> item) {
-        if (item == null || treeController == null) {
+        if (item == null || manageController == null) {
             return;
         }
-        treeController.pasteNode(item.getValue());
+        manageController.pasteNode(item.getValue());
+    }
+
+    @Override
+    protected void executeNode(TreeItem<TreeNode> item) {
+        if (item == null || manageController == null) {
+            return;
+        }
+        manageController.executeNode(item.getValue());
     }
 
     @Override
@@ -366,8 +378,8 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
     @Override
     protected void importExamples() {
         TreeNodeImportController controller = (TreeNodeImportController) WindowTools.openChildStage(getMyWindow(), Fxmls.TreeNodeImportFxml);
-        if (treeController != null) {
-            controller.setManage(treeController);
+        if (manageController != null) {
+            controller.setManage(manageController);
         } else {
             controller.setManage(this);
         }
@@ -378,7 +390,7 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
     @Override
     protected void importAction() {
         TreeNodeImportController controller = (TreeNodeImportController) WindowTools.openChildStage(getMyWindow(), Fxmls.TreeNodeImportFxml);
-        controller.setManage(treeController);
+        controller.setManage(manageController);
     }
 
     public TreeNode copyNode(Connection conn, TreeNode sourceNode, TreeNode targetNode) {

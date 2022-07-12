@@ -29,20 +29,20 @@ public class TreeNodesCopyController extends TreeNodesController {
     }
 
     public void setParamters(TreeManageController treeController) {
-        this.treeController = treeController;
+        this.manageController = treeController;
         setCaller(treeController.nodesController);
     }
 
     @FXML
     @Override
     public void okAction() {
-        if (treeController == null || treeController.getMyStage() == null || !treeController.getMyStage().isShowing()) {
+        if (manageController == null || manageController.getMyStage() == null || !manageController.getMyStage().isShowing()) {
             return;
         }
-        List<TreeNode> nodes = treeController.tableView.getSelectionModel().getSelectedItems();
+        List<TreeNode> nodes = manageController.tableView.getSelectionModel().getSelectedItems();
         if (nodes == null || nodes.isEmpty()) {
             alertError(message("NoData"));
-            treeController.getMyStage().requestFocus();
+            manageController.getMyStage().requestFocus();
             return;
         }
         TreeItem<TreeNode> targetItem = treeView.getSelectionModel().getSelectedItem();
@@ -54,7 +54,7 @@ public class TreeNodesCopyController extends TreeNodesController {
         if (targetNode == null) {
             return;
         }
-        if (equal(targetNode, treeController.loadedParent)) {
+        if (equal(targetNode, manageController.loadedParent)) {
             alertError(message("TargetShouldDifferentWithSource"));
             return;
         }
@@ -85,8 +85,8 @@ public class TreeNodesCopyController extends TreeNodesController {
 
                 @Override
                 protected void whenSucceeded() {
-                    treeController.popSuccessful();
-                    treeController.nodesCopied(targetNode);
+                    manageController.popSuccessful();
+                    manageController.nodesCopied(targetNode);
                     closeStage();
                 }
             };

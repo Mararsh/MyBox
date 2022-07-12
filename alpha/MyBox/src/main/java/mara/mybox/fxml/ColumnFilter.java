@@ -1,6 +1,5 @@
 package mara.mybox.fxml;
 
-import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.value.AppValues;
 
 /**
@@ -8,12 +7,10 @@ import mara.mybox.value.AppValues;
  * @CreateDate 2022-7-7
  * @License Apache License Version 2.0
  */
-public class ColumnFilter {
+public class ColumnFilter extends RowFilter {
 
-    public boolean empty, zero, negative, positive, up, low, reversed, passed;
+    public boolean empty, zero, negative, positive, up, low;
     public double lowValue, upValue;
-    public String script;
-    public ExpressionCalculator calculator;
 
     public ColumnFilter() {
         init();
@@ -23,11 +20,37 @@ public class ColumnFilter {
         lowValue = upValue = AppValues.InvalidDouble;
         empty = zero = negative = positive = up = low = reversed = passed = false;
         script = null;
-        calculator = null;
     }
 
     public static ColumnFilter create() {
         return new ColumnFilter();
+    }
+
+    @Override
+    public ColumnFilter fromString(String rowFilterString) {
+        if (rowFilterString == null || rowFilterString.isBlank()) {
+            script = null;
+        } else {
+            if (rowFilterString.startsWith("Reversed;;")) {
+                script = rowFilterString.substring("Reversed;;".length());
+                reversed = true;
+            } else {
+                script = rowFilterString;
+                reversed = false;
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        String rowFilterString;
+        if (script == null) {
+            rowFilterString = null;
+        } else {
+            rowFilterString = (reversed ? "Reversed;;" : "") + script;
+        }
+        return rowFilterString;
     }
 
     /*
@@ -81,22 +104,6 @@ public class ColumnFilter {
         this.low = low;
     }
 
-    public boolean isReversed() {
-        return reversed;
-    }
-
-    public void setReversed(boolean reversed) {
-        this.reversed = reversed;
-    }
-
-    public boolean isPassed() {
-        return passed;
-    }
-
-    public void setPassed(boolean passed) {
-        this.passed = passed;
-    }
-
     public double getLowValue() {
         return lowValue;
     }
@@ -111,22 +118,6 @@ public class ColumnFilter {
 
     public void setUpValue(double upValue) {
         this.upValue = upValue;
-    }
-
-    public String getScript() {
-        return script;
-    }
-
-    public void setScript(String script) {
-        this.script = script;
-    }
-
-    public ExpressionCalculator getCalculator() {
-        return calculator;
-    }
-
-    public void setCalculator(ExpressionCalculator calculator) {
-        this.calculator = calculator;
     }
 
 }

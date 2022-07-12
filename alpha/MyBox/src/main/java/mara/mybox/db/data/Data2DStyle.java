@@ -1,5 +1,6 @@
 package mara.mybox.db.data;
 
+import java.util.List;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ColumnFilter;
 import mara.mybox.fxml.RowFilter;
@@ -17,10 +18,11 @@ public class Data2DStyle extends BaseData {
     protected Data2DDefinition data2DDefinition;
     protected long d2sid, d2id;
     protected long rowStart, rowEnd; // 0-based, exlcuded
-    protected String columns, rowFilterString, rowFilterScript, columnFilterString,
+    protected String columns, rowFilterString, columnFilterString,
             fontColor, bgColor, fontSize, moreStyle;
-    protected boolean abnoramlValues, bold, reversed;
+    protected boolean abnoramlValues, bold;
     protected float sequence;
+    protected RowFilter rowFilter;
     protected ColumnFilter columnFilter;
 
     private void init() {
@@ -31,11 +33,9 @@ public class Data2DStyle extends BaseData {
         columns = null;
         rowFilterString = null;
         columnFilterString = null;
-        rowFilterScript = null;
+        rowFilter = null;
         columnFilter = null;
         fontColor = null;
-        reversed = false;
-        columnFilter = null;
         bgColor = null;
         fontSize = null;
         moreStyle = null;
@@ -222,73 +222,90 @@ public class Data2DStyle extends BaseData {
     }
 
     /*
-        filter
+        row filter
      */
-    public String getExpressionFromString() {
-        if (rowFilterString == null || rowFilterString.isBlank()) {
-            rowFilterScript = null;
-        } else {
-            if (rowFilterString.startsWith("Reversed;;")) {
-                rowFilterScript = rowFilterString.substring("Reversed;;".length());
-                reversed = true;
-            } else {
-                rowFilterScript = rowFilterString;
-                reversed = false;
-            }
-        }
-        return rowFilterScript;
+    public Data2DStyle setRowFilter(String script, boolean reversed) {
+        return setRowFilter(new RowFilter(script, reversed));
     }
 
-    public String getStringFromExpression() {
-        if (rowFilterScript == null) {
+    public Data2DStyle setRowFilter(RowFilter rowFilter) {
+        this.rowFilter = rowFilter;
+        if (rowFilter == null) {
             rowFilterString = null;
         } else {
-            rowFilterString = (reversed ? "Reversed;;" : "") + rowFilterScript;
+            rowFilterString = rowFilter.toString();
         }
-        return rowFilterString;
+        return this;
     }
 
-    public Data2DStyle setRowFilter(String expression, boolean reversed) {
-        this.reversed = reversed;
-        rowFilterScript = expression;
-        getStringFromExpression();
-        return this;
+    public RowFilter getRowFilter() {
+        return rowFilter;
     }
 
     public Data2DStyle setRowFilterString(String rowFilterString) {
         this.rowFilterString = rowFilterString;
-        getExpressionFromString();
+        rowFilter = RowFilter.create().fromString(rowFilterString);
         return this;
     }
 
-    public Data2DStyle setRowFilter(RowFilter rowFilter) {
-        if (rowFilter == null) {
-            return setRowFilter(null, false);
-
-        } else {
-            return setRowFilter(rowFilter.expression, rowFilter.reversed);
-        }
-    }
-
     public String getRowFilterString() {
-        return getStringFromExpression();
+        return rowFilterString;
     }
 
-    public String getRowFilterScript() {
-        return getExpressionFromString();
+    /*
+        column filter
+     */
+    public Data2DStyle setColumnFilter(ColumnFilter columnFilter) {
+        this.columnFilter = columnFilter;
+        if (columnFilter == null) {
+            columnFilterString = null;
+        } else {
+            columnFilterString = columnFilter.toString();
+        }
+        return this;
     }
 
-    public boolean isReversed() {
-        return reversed;
+    public ColumnFilter getColumnFilter() {
+        return columnFilter;
     }
 
     public Data2DStyle setColumnFilterString(String columnFilterString) {
         this.columnFilterString = columnFilterString;
+        columnFilter = ColumnFilter.create().fromString(columnFilterString);
         return this;
     }
 
     public String getColumnFilterString() {
         return columnFilterString;
+    }
+
+    /*
+        filter cell
+     */
+    public boolean filterCell(RowFilter calculator, List<String> tableRow, long tableRowIndex, int colIndex) {
+        try {
+            if (calculator == null || tableRow == null || colIndex < 0 || colIndex >= tableRow.size()) {
+                return false;
+            }
+            if (rowFilter != null) {
+                calculator.setReversed(rowFilter.reversed)
+                        .setScript(rowFilter.script);
+                if (!calculator.filterTableRow(tableRow, tableRowIndex)) {
+                    return false;
+                }
+            }
+            if (columnFilter != null) {
+                calculator.setReversed(columnFilter.reversed)
+                        .setScript(columnFilter.script);
+                if (!calculator.filterTableRow(tableRow, tableRowIndex)) {
+                    return false;
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
     }
 
 
@@ -337,15 +354,6 @@ public class Data2DStyle extends BaseData {
 
     public Data2DStyle setColumns(String columns) {
         this.columns = columns;
-        return this;
-    }
-
-    public ColumnFilter getColumnFilter() {
-        return columnFilter;
-    }
-
-    public Data2DStyle setColumnFilter(ColumnFilter columnFilter) {
-        this.columnFilter = columnFilter;
         return this;
     }
 

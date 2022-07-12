@@ -17,6 +17,12 @@ public class RowFilter extends ExpressionCalculator {
         init();
     }
 
+    public RowFilter(String script, boolean reversed) {
+        init();
+        this.script = script;
+        this.reversed = reversed;
+    }
+
     private void init() {
         passedNumber = 0;
         maxPassed = -1;
@@ -26,6 +32,32 @@ public class RowFilter extends ExpressionCalculator {
 
     public static RowFilter create() {
         return new RowFilter();
+    }
+
+    public RowFilter fromString(String rowFilterString) {
+        if (rowFilterString == null || rowFilterString.isBlank()) {
+            script = null;
+        } else {
+            if (rowFilterString.startsWith("Reversed;;")) {
+                script = rowFilterString.substring("Reversed;;".length());
+                reversed = true;
+            } else {
+                script = rowFilterString;
+                reversed = false;
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        String rowFilterString;
+        if (script == null) {
+            rowFilterString = null;
+        } else {
+            rowFilterString = (reversed ? "Reversed;;" : "") + script;
+        }
+        return rowFilterString;
     }
 
     @Override
