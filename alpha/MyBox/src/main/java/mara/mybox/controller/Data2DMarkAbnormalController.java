@@ -48,8 +48,6 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
         try {
             super.initControls();
 
-            columnFilterController.setParameters(this);
-
             // For display, indices are 1-based and included
             // For internal, indices are 0-based and excluded
             fromInput.textProperty().addListener(new ChangeListener<String>() {
@@ -85,6 +83,7 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
         try {
             super.setParameters(tableController);
             rowFilterController.setParameters(this, tableController);
+            columnFilterController.setParameters(this, tableController);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -99,8 +98,8 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
             }
             super.sourceChanged();
 
-            rowFilterController.data2D = tableController.data2D;
-            columnFilterController.data2D = tableController.data2D;
+            rowFilterController.setData2D(tableController.data2D);
+            columnFilterController.setData2D(tableController.data2D);
 
             columnsPane.getChildren().clear();
             for (Data2DColumn column : tableController.data2D.getColumns()) {
@@ -184,7 +183,8 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
 
     @Override
     public void loadStyle(Data2DStyle style) {
-        if (style == null) {
+        if (style == null || tableController == null || tableController.data2D == null
+                || style.getD2id() != tableController.data2D.getD2did()) {
             loadNull();
             return;
         }
@@ -294,7 +294,8 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
                         columns = null;
                     }
                     updatedStyle.setColumns(columns);
-                    updatedStyle.setRowFilter(rowFilterController.scriptInput.getText(), !rowFilterController.trueRadio.isSelected());
+                    updatedStyle.setRowFilter(rowFilterController.pickValues());
+                    updatedStyle.setColumnFilter(columnFilterController.pickValues());
                     updatedStyle.setAbnoramlValues(abnormalCheck.isSelected());
                     return listController.tableData2DStyle.writeData(updatedStyle) != null;
                 } catch (Exception e) {

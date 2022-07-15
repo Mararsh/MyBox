@@ -137,7 +137,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
                 }
             }
             for (int col : checkedColsIndices) {
-                s.append("<TH>").append(data2D.colName(col)).append("</TH>\n");
+                s.append("<TH>").append(data2D.columnName(col)).append("</TH>\n");
             }
             s.append("</TR>\n");
 

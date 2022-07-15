@@ -210,7 +210,7 @@ public class ControlData2DView extends BaseController {
                     names.add(message("RowNumber"));
                 }
                 for (int i = 0; i < cNumber; i++) {
-                    names.add(data2D.colName(i));
+                    names.add(data2D.columnName(i));
                 }
             } else {
                 names = null;
@@ -232,7 +232,7 @@ public class ControlData2DView extends BaseController {
                     if (value == null) {
                         value = "";
                     }
-                    String style = data2D.cellStyle(styleFilter, i, data2D.colName(col));
+                    String style = data2D.cellStyle(styleFilter, i, data2D.columnName(col));
                     if (style != null && !style.isBlank()) {
                         style = style.replace("-fx-font-size:", "font-size:")
                                 .replace("-fx-text-fill:", "color:")
@@ -276,13 +276,13 @@ public class ControlData2DView extends BaseController {
                 for (int col = 0; col < cNumber; col++) {
                     List<String> htmlRow = new ArrayList<>();
                     if (columnCheck.isSelected()) {
-                        htmlRow.add(data2D.colName(col));
+                        htmlRow.add(data2D.columnName(col));
                     }
                     String value = dataRow.get(col + 1);
                     if (value == null) {
                         value = "";
                     }
-                    String style = data2D.cellStyle(styleFilter, r, data2D.colName(col));
+                    String style = data2D.cellStyle(styleFilter, r, data2D.columnName(col));
                     if (style != null && !style.isBlank()) {
                         style = style.replace("-fx-font-size:", "font-size:")
                                 .replace("-fx-text-fill:", "color:")
@@ -348,7 +348,7 @@ public class ControlData2DView extends BaseController {
             }
             for (int col = 0; col < data2D.columnsNumber(); col++) {
                 if (columnCheck.isSelected()) {
-                    s.append(data2D.colName(col)).append(": ");
+                    s.append(data2D.columnName(col)).append(": ");
                 }
                 String v = drow.get(col);
                 if (v == null) {

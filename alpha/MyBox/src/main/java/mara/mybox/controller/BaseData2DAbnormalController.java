@@ -66,7 +66,7 @@ public abstract class BaseData2DAbnormalController extends BaseController {
 
             listController.sourceChanged();
 
-            loadNull();
+            loadStyle(currentStyle);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

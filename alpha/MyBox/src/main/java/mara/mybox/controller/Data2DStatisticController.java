@@ -425,6 +425,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
             if (!checkOptions() || !calculation.prepare()) {
                 return;
             }
+            data2D.resetStatistic();
             if (isAllPages()) {
                 switch (objectType) {
                     case Rows:
@@ -478,7 +479,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                         calculation.setData2D(tmpTable)
                                 .setColsIndices(tmpTable.columnIndices().subList(1, tmpTable.columnsNumber()))
                                 .setColsNames(tmpTable.columnNames().subList(1, tmpTable.columnsNumber()));
-                        ok = calculation.statisticAllByColumnsInDataTable();
+                        ok = calculation.statisticAllByColumns();
                         tmpTable.drop();
                     } else {
                         ok = calculation.statisticAllByColumnsWithoutStored();
@@ -538,10 +539,10 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                         calculation.setData2D(dataTable)
                                 .setColsIndices(dataTable.columnIndices().subList(1, 2))
                                 .setColsNames(dataTable.columnNames().subList(1, 2));
-                        ok = calculation.statisticAllByColumnsInDataTable();
+                        ok = calculation.statisticAllByColumns();
                         return ok;
                     } else {
-                        DoubleStatistic statisticData = data2D.statisticByAll(checkedColsIndices, calculation);
+                        DoubleStatistic statisticData = data2D.statisticByAllWithoutStored(checkedColsIndices, calculation);
                         data2D.stopFilterService();
                         if (statisticData == null) {
                             return false;

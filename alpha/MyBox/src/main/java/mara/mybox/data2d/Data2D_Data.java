@@ -173,21 +173,6 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         return -1;
     }
 
-    public Data2DColumn col(String name) {
-        try {
-            if (name == null || name.isBlank()) {
-                return null;
-            }
-            for (Data2DColumn c : columns) {
-                if (name.equals(c.getColumnName())) {
-                    return c;
-                }
-            }
-        } catch (Exception e) {
-        }
-        return null;
-    }
-
     public List<String> tableRowWithoutNumber(int row) {
         try {
             List<String> values = tableData().get(row);
@@ -254,14 +239,6 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         }
     }
 
-    public List<Data2DColumn> tmpColumns(int cols) {
-        List<String> names = new ArrayList<>();
-        for (int c = 1; c <= cols; c++) {
-            names.add(colPrefix() + c);
-        }
-        return toColumns(names);
-    }
-
     public List<List<String>> tmpData(int rows, int cols) {
         Random random = new Random();
         List<List<String>> data = new ArrayList<>();
@@ -277,14 +254,6 @@ public abstract class Data2D_Data extends Data2D_Attributes {
             data.add(row);
         }
         return data;
-    }
-
-    public String colName(int col) {
-        try {
-            return column(col).getColumnName();
-        } catch (Exception e) {
-            return null;
-        }
     }
 
     public String rowName(int row) {
@@ -428,6 +397,29 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         }
     }
 
+    public Data2DColumn columnByName(String name) {
+        try {
+            if (name == null || name.isBlank()) {
+                return null;
+            }
+            for (Data2DColumn c : columns) {
+                if (name.equals(c.getColumnName())) {
+                    return c;
+                }
+            }
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
+    public String columnName(int col) {
+        try {
+            return column(col).getColumnName();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public boolean isColumnsValid() {
         return columns != null && !columns.isEmpty();
     }
@@ -479,6 +471,23 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
+        }
+    }
+
+    public List<Data2DColumn> tmpColumns(int cols) {
+        List<String> names = new ArrayList<>();
+        for (int c = 1; c <= cols; c++) {
+            names.add(colPrefix() + c);
+        }
+        return toColumns(names);
+    }
+
+    public void resetStatistic() {
+        if (!isValid()) {
+            return;
+        }
+        for (Data2DColumn column : columns) {
+            column.setDoubleStatistic(null);
         }
     }
 

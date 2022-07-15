@@ -27,41 +27,41 @@ License:    Apache License Version 2.0
     <children>
         <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
             <items>
-            <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" pannable="true">
-               <content>
-                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                     <children>
-                        <HBox fx:id="buttonsBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
-                           <children>
-                              <Label fx:id="titleLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%SelectToPaste" wrapText="true" HBox.hgrow="ALWAYS" />
-                              <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconRefresh.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
-                              <Button fx:id="functionsButton" mnemonicParsing="false" onMouseEntered="#popFunctionsMenu">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconFunction.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
-                           </children>
-                        </HBox>
-                        <TreeView fx:id="treeView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
-                     </children>
-                     <padding>
-                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                     </padding>
-                  </VBox>
-               </content>
-            </ScrollPane>
+                <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" pannable="true">
+                    <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                            <children>
+                                <HBox fx:id="buttonsBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                    <children>
+                                        <Label fx:id="titleLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%SelectToPaste" wrapText="true" HBox.hgrow="ALWAYS" />
+                                        <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconRefresh.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="functionsButton" mnemonicParsing="false" onMouseEntered="#popFunctionsMenu">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconFunction.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                                <TreeView fx:id="treeView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                            </children>
+                            <padding>
+                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                            </padding>
+                        </VBox>
+                    </content>
+                </ScrollPane>
                 <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                     <content>
                         <VBox fx:id="filterBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
@@ -71,11 +71,11 @@ License:    Apache License Version 2.0
                             <children>
                                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
                                     <children>
-                              <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../buttons/Red/iconTips.png" />
-                                 </image>
-                              </ImageView>
+                                        <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/Red/iconTips.png" />
+                                            </image>
+                                        </ImageView>
                                         <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
                                         <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
                                             <graphic>
@@ -126,21 +126,21 @@ License:    Apache License Version 2.0
                                 </HBox>
                                 <FlowPane hgap="2.0" vgap="2.0">
                                     <children>
-                                        <Label minHeight="-Infinity" text="%TakeDataWhenExpression" wrapText="true" />
+                                        <Label minHeight="-Infinity" text="%TakeDataWhenExpressionEmptyOr" wrapText="true" />
                                         <RadioButton fx:id="trueRadio" mnemonicParsing="false" selected="true" text="true">
                                             <toggleGroup>
                                                 <ToggleGroup fx:id="takeGroup" />
                                             </toggleGroup>
                                         </RadioButton>
-                                        <RadioButton fx:id="othersRadio" mnemonicParsing="false" text="%Others" toggleGroup="$takeGroup" />
+                                        <RadioButton fx:id="falseRadio" mnemonicParsing="false" text="false" toggleGroup="$takeGroup" />
                                     </children>
                                 </FlowPane>
-                        <FlowPane fx:id="maxPane" hgap="2.0" layoutX="12.0" layoutY="42.0" vgap="2.0">
-                           <children>
-                              <Label minHeight="-Infinity" text="%MaxDataTake" wrapText="true" />
-                              <TextField fx:id="maxInput" prefWidth="100.0" />
-                           </children>
-                        </FlowPane>
+                                <FlowPane fx:id="maxPane" hgap="2.0" layoutX="12.0" layoutY="42.0" vgap="2.0">
+                                    <children>
+                                        <Label minHeight="-Infinity" text="%MaxDataTake" wrapText="true" />
+                                        <TextField fx:id="maxInput" prefWidth="100.0" />
+                                    </children>
+                                </FlowPane>
                                 <TextArea fx:id="scriptInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
                             </children>
                         </VBox>

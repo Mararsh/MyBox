@@ -204,7 +204,7 @@ public class ControlData2DInput extends BaseController {
                         if (dataFileText.isColumnsValid()) {
                             columnNames = new ArrayList<>();
                             for (int i = 0; i < dataFileText.columnsNumber(); i++) {
-                                columnNames.add(dataFileText.colName(i));
+                                columnNames.add(dataFileText.columnName(i));
                             }
                             tcols = new ArrayList<>();
                             tcols.add(message("SourceRowNumber"));

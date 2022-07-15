@@ -76,9 +76,13 @@ public class ColumnDefinition extends BaseData {
         maxValue = null;
         minValue = null;
         color = FxColorTools.randomColor();
+        defaultValue = null;
         referName = null;
         referTable = null;
         referColumn = null;
+        label = null;
+        doubleStatistic = null;
+        data = null;
     }
 
     public ColumnDefinition() {
@@ -145,6 +149,7 @@ public class ColumnDefinition extends BaseData {
             maxValue = c.maxValue;
             minValue = c.minValue;
             columnValues = c.columnValues;
+            doubleStatistic = c.doubleStatistic;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }

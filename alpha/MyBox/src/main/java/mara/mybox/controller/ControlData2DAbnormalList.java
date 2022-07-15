@@ -90,13 +90,6 @@ public class ControlData2DAbnormalList extends BaseSysTableController<Data2DStyl
         }
     }
 
-    @Override
-    public void editNull() {
-        if (manageController != null) {
-            manageController.loadNull();
-        }
-    }
-
     @FXML
     @Override
     public void editAction() {

@@ -143,6 +143,9 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             }
             data2D.setLoadController(this);
 
+            if (dataController != null) {
+                styleFilter.webEngine = dataController.viewController.htmlController.webEngine;
+            }
             styleFilter.reset(data2D);
 
             validateData();

@@ -19,6 +19,8 @@ import org.apache.commons.math3.stat.descriptive.rank.Percentile;
  */
 public class DoubleStatistic {
 
+    public static double InvalidAs = 0;
+
     public String name;
     public long count;
     public double sum, mean, geometricMean, sumSquares,
@@ -26,7 +28,7 @@ public class DoubleStatistic {
             minimum, maximum, median, upperQuartile, lowerQuartile,
             upperMildOutlierLine, upperExtremeOutlierLine, lowerMildOutlierLine, lowerExtremeOutlierLine,
             vTmp;
-    public Object mode;
+    public Object modeValue, minimumValue, maximumValue, medianValue, upperQuartileValue, lowerQuartileValue;
     public DescriptiveStatistic options;
     public double[] doubles;
 
@@ -40,21 +42,21 @@ public class DoubleStatistic {
         mean = 0;
         geometricMean = 1;
         sumSquares = 0;
-        populationVariance = 0;
-        sampleVariance = 0;
-        populationStandardDeviation = 0;
-        sampleStandardDeviation = 0;
-        skewness = 0;
+        populationVariance = Double.NaN;
+        sampleVariance = Double.NaN;
+        populationStandardDeviation = Double.NaN;
+        sampleStandardDeviation = Double.NaN;
+        skewness = Double.NaN;
         maximum = -Double.MAX_VALUE;
         minimum = Double.MAX_VALUE;
-        median = 0;
-        upperQuartile = 0;
-        lowerQuartile = 0;
-        upperMildOutlierLine = 0;
-        upperExtremeOutlierLine = 0;
-        lowerMildOutlierLine = 0;
-        lowerExtremeOutlierLine = 0;
-        mode = null;
+        median = Double.NaN;
+        upperQuartile = Double.NaN;
+        lowerQuartile = Double.NaN;
+        upperMildOutlierLine = Double.NaN;
+        upperExtremeOutlierLine = Double.NaN;
+        lowerMildOutlierLine = Double.NaN;
+        lowerExtremeOutlierLine = Double.NaN;
+        modeValue = null;
         vTmp = 0;
     }
 
@@ -68,7 +70,7 @@ public class DoubleStatistic {
 
     public DoubleStatistic(String[] values, DescriptiveStatistic options) {
         if (options != null && options.isMode()) {
-            mode = modeObject(values);
+            modeValue = modeObject(values);
         }
         calculate(toDouble(values), options);
     }
@@ -85,7 +87,7 @@ public class DoubleStatistic {
             calculateVariance();
             calculatePercentile();
             calculateSkewness();
-            if (mode == null) {
+            if (modeValue == null) {
                 calculateMode();
             }
         } catch (Exception e) {
@@ -167,13 +169,16 @@ public class DoubleStatistic {
             percentile.setData(doubles);
             if (options.isMedian()) {
                 median = percentile.evaluate(50);
+                medianValue = median;
             }
             boolean needOutlier = options.needOutlier();
             if (options.isUpperQuartile() || needOutlier) {
                 upperQuartile = percentile.evaluate(75);
+                upperQuartileValue = upperQuartile;
             }
             if (options.isLowerQuartile() || needOutlier) {
                 lowerQuartile = percentile.evaluate(25);
+                lowerQuartileValue = lowerQuartile;
             }
             if (needOutlier) {
                 double qi = upperQuartile - lowerQuartile;
@@ -217,7 +222,7 @@ public class DoubleStatistic {
             if (!options.isMode()) {
                 return;
             }
-            mode = mode(doubles);
+            modeValue = mode(doubles);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -285,9 +290,9 @@ public class DoubleStatistic {
         }
         if (options.isMode()) {
             try {
-                list.add(DoubleTools.format((double) mode, scale));
+                list.add(DoubleTools.format((double) modeValue, scale));
             } catch (Exception e) {
-                list.add(mode.toString());
+                list.add(modeValue.toString());
             }
         }
         return list;
@@ -306,7 +311,7 @@ public class DoubleStatistic {
             try {
                 doubles[i] = Double.parseDouble(s.replaceAll(",", ""));
             } catch (Exception e) {
-                doubles[i] = 0;
+                doubles[i] = InvalidAs;
             }
         }
         return doubles;
@@ -512,12 +517,12 @@ public class DoubleStatistic {
         this.maximum = maximum;
     }
 
-    public Object getMode() {
-        return mode;
+    public Object getModeValue() {
+        return modeValue;
     }
 
-    public void setMode(Object mode) {
-        this.mode = mode;
+    public void setModeValue(Object modeValue) {
+        this.modeValue = modeValue;
     }
 
     public double getMedian() {
@@ -622,6 +627,46 @@ public class DoubleStatistic {
 
     public void setLowerExtremeOutlierLine(double lowerExtremeOutlierLine) {
         this.lowerExtremeOutlierLine = lowerExtremeOutlierLine;
+    }
+
+    public Object getMinimumValue() {
+        return minimumValue;
+    }
+
+    public void setMinimumValue(Object minimumValue) {
+        this.minimumValue = minimumValue;
+    }
+
+    public Object getMaximumValue() {
+        return maximumValue;
+    }
+
+    public void setMaximumValue(Object maximumValue) {
+        this.maximumValue = maximumValue;
+    }
+
+    public Object getMedianValue() {
+        return medianValue;
+    }
+
+    public void setMedianValue(Object medianValue) {
+        this.medianValue = medianValue;
+    }
+
+    public Object getUpperQuartileValue() {
+        return upperQuartileValue;
+    }
+
+    public void setUpperQuartileValue(Object upperQuartileValue) {
+        this.upperQuartileValue = upperQuartileValue;
+    }
+
+    public Object getLowerQuartileValue() {
+        return lowerQuartileValue;
+    }
+
+    public void setLowerQuartileValue(Object lowerQuartileValue) {
+        this.lowerQuartileValue = lowerQuartileValue;
     }
 
     public double getvTmp() {

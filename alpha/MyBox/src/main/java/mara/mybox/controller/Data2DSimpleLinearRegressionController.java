@@ -267,8 +267,8 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
 
             outputColumns = new ArrayList<>();
             outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
-            outputColumns.add(data2D.col(selectedCategory));
-            outputColumns.add(data2D.col(selectedValue));
+            outputColumns.add(data2D.columnByName(selectedCategory));
+            outputColumns.add(data2D.columnByName(selectedValue));
             outputColumns.add(new Data2DColumn(selectedValue + "_" + message("FittedValue"), ColumnDefinition.ColumnType.Double));
             for (int i = 0; i < outputData.size(); i++) {
                 List<String> rowData = outputData.get(i);

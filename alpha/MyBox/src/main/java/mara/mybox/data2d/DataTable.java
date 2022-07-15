@@ -12,6 +12,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import mara.mybox.calculation.DescriptiveStatistic;
+import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
@@ -813,6 +815,99 @@ public class DataTable extends Data2D {
             MyBoxLog.error(e.toString());
         }
         return percentile;
+    }
+
+    public DoubleStatistic[] statisticByColumnsForStored(List<Integer> cols, DescriptiveStatistic selections) {
+        if (cols == null || cols.isEmpty() || selections == null) {
+            return null;
+        }
+
+        try ( Connection conn = DerbyBase.getConnection()) {
+            int colLen = cols.size();
+            DoubleStatistic[] sData = new DoubleStatistic[colLen];
+            for (int c = 0; c < cols.size(); c++) {
+                Data2DColumn column = columns.get(cols.get(c));
+                DoubleStatistic colStatistic = column.getDoubleStatistic();
+                if (colStatistic == null) {
+                    colStatistic = new DoubleStatistic();
+                    column.setDoubleStatistic(colStatistic);
+                }
+                sData[c] = colStatistic;
+                if (selections.median) {
+                    Object m = percentile(conn, column, 50);
+                    if (column.isNumberType()) {
+                        colStatistic.modeValue = DoubleTools.format(Double.valueOf(m + ""), scale);
+                    } else {
+                        colStatistic.modeValue = column.toString(m);
+                    }
+                }
+                Object q1 = null, q3 = null;
+                if (selections.upperQuartile || selections.needOutlier()) {
+                    q3 = percentile(conn, column, 75);
+                    colStatistic.upperQuartileValue = q3;
+                    try {
+                        colStatistic.upperQuartile = Double.valueOf(q3 + "");
+                    } catch (Exception ex) {
+                        colStatistic.upperQuartile = Double.NaN;
+                    }
+                }
+                if (selections.lowerQuartile || selections.needOutlier()) {
+                    q1 = percentile(conn, column, 25);
+                    colStatistic.lowerQuartileValue = q1;
+                    try {
+                        colStatistic.lowerQuartile = Double.valueOf(q1 + "");
+                    } catch (Exception ex) {
+                        colStatistic.lowerQuartile = Double.NaN;
+                    }
+                }
+                if (selections.upperExtremeOutlierLine) {
+                    try {
+                        double d1 = Double.valueOf(q1 + "");
+                        double d3 = Double.valueOf(q3 + "");
+                        colStatistic.upperExtremeOutlierLine = d3 + 3 * (d3 - d1);
+                    } catch (Exception e) {
+                        colStatistic.upperExtremeOutlierLine = Double.NaN;
+                    }
+                }
+                if (selections.upperMildOutlierLine) {
+                    try {
+                        double d1 = Double.valueOf(q1 + "");
+                        double d3 = Double.valueOf(q3 + "");
+                        colStatistic.upperMildOutlierLine = d3 + 1.5 * (d3 - d1);
+                    } catch (Exception e) {
+                        colStatistic.upperMildOutlierLine = Double.NaN;
+                    }
+                }
+                if (selections.lowerMildOutlierLine) {
+                    try {
+                        double d1 = Double.valueOf(q1 + "");
+                        double d3 = Double.valueOf(q3 + "");
+                        colStatistic.lowerMildOutlierLine = d1 - 1.5 * (d3 - d1);
+                    } catch (Exception e) {
+                        colStatistic.lowerMildOutlierLine = Double.NaN;
+                    }
+                }
+                if (selections.lowerExtremeOutlierLine) {
+                    try {
+                        double d1 = Double.valueOf(q1 + "");
+                        double d3 = Double.valueOf(q3 + "");
+                        colStatistic.lowerExtremeOutlierLine = d1 - 3 * (d3 - d1);
+                    } catch (Exception e) {
+                        colStatistic.lowerExtremeOutlierLine = Double.NaN;
+                    }
+                }
+                if (selections.mode) {
+                    colStatistic.modeValue = mode(conn, column.getColumnName());
+                }
+            }
+            return sData;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e.toString());
+            return null;
+        }
     }
 
     @Override

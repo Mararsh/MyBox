@@ -48,26 +48,6 @@ public class Data2DStyle extends BaseData {
         init();
     }
 
-    public String finalStyle() {
-        String styleValue = "";
-        if (fontSize != null && !message("Default").equals(fontSize)) {
-            styleValue = "-fx-font-size: " + fontSize + "; ";
-        }
-        if (fontColor != null && !message("Default").equals(fontColor)) {
-            styleValue += "-fx-text-fill: " + fontColor + "; ";
-        }
-        if (bgColor != null && !message("Default").equals(bgColor)) {
-            styleValue += "-fx-background-color: " + bgColor + "; ";
-        }
-        if (bold) {
-            styleValue += "-fx-font-weight: bolder; ";
-        }
-        if (moreStyle != null && !moreStyle.isBlank()) {
-            styleValue += moreStyle.replaceAll("\n", " ");
-        }
-        return styleValue.isBlank() ? null : styleValue.trim();
-    }
-
     public Data2DStyle cloneAll() {
         try {
             Data2DStyle newData = (Data2DStyle) super.clone();
@@ -91,6 +71,9 @@ public class Data2DStyle extends BaseData {
             rowEnd = style.rowEnd;
             columns = style.columns;
             rowFilterString = style.rowFilterString;
+            columnFilterString = style.columnFilterString;
+            rowFilter = style.rowFilter;
+            columnFilter = style.columnFilter;
             fontColor = style.fontColor;
             bgColor = style.bgColor;
             fontSize = style.fontSize;
@@ -101,6 +84,27 @@ public class Data2DStyle extends BaseData {
             MyBoxLog.debug(e.toString());
         }
     }
+
+    public String finalStyle() {
+        String styleValue = "";
+        if (fontSize != null && !message("Default").equals(fontSize)) {
+            styleValue = "-fx-font-size: " + fontSize + "; ";
+        }
+        if (fontColor != null && !message("Default").equals(fontColor)) {
+            styleValue += "-fx-text-fill: " + fontColor + "; ";
+        }
+        if (bgColor != null && !message("Default").equals(bgColor)) {
+            styleValue += "-fx-background-color: " + bgColor + "; ";
+        }
+        if (bold) {
+            styleValue += "-fx-font-weight: bolder; ";
+        }
+        if (moreStyle != null && !moreStyle.isBlank()) {
+            styleValue += moreStyle.replaceAll("\n", " ");
+        }
+        return styleValue.isBlank() ? null : styleValue.trim();
+    }
+
 
     /*
         static methods
@@ -284,20 +288,19 @@ public class Data2DStyle extends BaseData {
      */
     public boolean filterCell(RowFilter calculator, List<String> tableRow, long tableRowIndex, int colIndex) {
         try {
-            if (calculator == null || tableRow == null || colIndex < 0 || colIndex >= tableRow.size()) {
+            if (calculator == null || tableRow == null) {
                 return false;
             }
             if (rowFilter != null) {
-                calculator.setReversed(rowFilter.reversed)
-                        .setScript(rowFilter.script);
-                if (!calculator.filterTableRow(tableRow, tableRowIndex)) {
+                rowFilter.cloneEnv(calculator);
+                if (!rowFilter.filterTableRow(tableRow, tableRowIndex)) {
                     return false;
                 }
             }
             if (columnFilter != null) {
-                calculator.setReversed(columnFilter.reversed)
-                        .setScript(columnFilter.script);
-                if (!calculator.filterTableRow(tableRow, tableRowIndex)) {
+                columnFilter.cloneEnv(calculator);
+                if (!columnFilter.filter(tableRow.get(colIndex + 1),
+                        calculator.data2D.getColumns().get(colIndex).isNumberType())) {
                     return false;
                 }
             }

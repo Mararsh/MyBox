@@ -9,6 +9,8 @@ import java.util.List;
  */
 public class RowFilter extends ExpressionCalculator {
 
+    public static String ReversedPrefix = "Reversed::";
+
     public String script;
     public long passedNumber, maxPassed;
     public boolean reversed, passed;
@@ -38,8 +40,8 @@ public class RowFilter extends ExpressionCalculator {
         if (rowFilterString == null || rowFilterString.isBlank()) {
             script = null;
         } else {
-            if (rowFilterString.startsWith("Reversed;;")) {
-                script = rowFilterString.substring("Reversed;;".length());
+            if (rowFilterString.startsWith(ReversedPrefix)) {
+                script = rowFilterString.substring(ReversedPrefix.length());
                 reversed = true;
             } else {
                 script = rowFilterString;
@@ -55,7 +57,7 @@ public class RowFilter extends ExpressionCalculator {
         if (script == null) {
             rowFilterString = null;
         } else {
-            rowFilterString = (reversed ? "Reversed;;" : "") + script;
+            rowFilterString = (reversed ? ReversedPrefix : "") + script;
         }
         return rowFilterString;
     }
@@ -76,9 +78,19 @@ public class RowFilter extends ExpressionCalculator {
         return maxPassed > 0 && passedNumber > maxPassed;
     }
 
-    public boolean readResult(boolean calculateFailed) {
-        passed = calculateFailed ? false : "true".equals(expressionResult);
-        passed = reversed ? !passed : passed;
+    public boolean readResult(boolean calculateSuccess) {
+        passed = false;
+        if (calculateSuccess) {
+            if (reversed) {
+                if ("false".equals(expressionResult)) {
+                    passed = true;
+                }
+            } else {
+                if ("true".equals(expressionResult)) {
+                    passed = true;
+                }
+            }
+        }
         if (passed) {
             passedNumber++;
         }
@@ -87,12 +99,16 @@ public class RowFilter extends ExpressionCalculator {
 
     public boolean filterTableRow(List<String> tableRow, long tableRowIndex) {
         error = null;
+        if (tableRow == null) {
+            passed = false;
+            return false;
+        }
         if (script == null || script.isBlank()) {
             passed = true;
             passedNumber++;
             return true;
         }
-        return readResult(!calculateTableRowExpression(script, tableRow, tableRowIndex));
+        return readResult(calculateTableRowExpression(script, tableRow, tableRowIndex));
     }
 
     public boolean filterDataRow(List<String> dataRow, long dataRowIndex) {
@@ -107,22 +123,12 @@ public class RowFilter extends ExpressionCalculator {
                 passedNumber++;
                 return true;
             }
-            if (task == null || task.isQuit()) {
-                return readResult(!calculateExpression(dataRowExpression(script, dataRow, dataRowIndex)));
-            }
-            synchronized (expressionLock) {
-                expression = dataRowExpression(script, dataRow, dataRowIndex);
-                expressionLock.notify();
-                expressionLock.wait();
-                readResult(false);
-                expressionResult = null;
-            }
+            return readResult(calculateDataRowExpression(script, dataRow, dataRowIndex));
         } catch (Exception e) {
             handleError(e);
         }
         return passed;
     }
-
 
     /*
         get/set

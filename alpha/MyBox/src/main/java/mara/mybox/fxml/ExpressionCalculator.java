@@ -49,6 +49,20 @@ public class ExpressionCalculator {
         return this;
     }
 
+    public ExpressionCalculator cloneEnv(ExpressionCalculator calculator) {
+        reset();
+        if (calculator != null) {
+            webEngine = calculator.webEngine;
+            findReplace = calculator.findReplace;
+            if (findReplace != null) {
+                findReplace.reset();
+            }
+            data2D = calculator.data2D;
+            task = calculator.task;
+        }
+        return this;
+    }
+
 
     /*
         calculate
@@ -113,6 +127,23 @@ public class ExpressionCalculator {
         return true;
     }
 
+    public boolean calculateDataColumnExpression(String script, String value) {
+        try {
+            if (task == null || task.isQuit()) {
+                return calculateExpression(dataColumnExpression(script, value));
+            }
+            synchronized (expressionLock) {
+                this.expression = dataColumnExpression(script, value);
+                expressionLock.notify();
+                expressionLock.wait();
+            }
+        } catch (Exception e) {
+            handleError(e);
+            return false;
+        }
+        return true;
+    }
+
     public boolean validateExpression(String script, boolean allPages) {
         try {
             handleError(null);
@@ -152,25 +183,26 @@ public class ExpressionCalculator {
     /*
         expression
      */
-    public String valueExpression(String script, String value) {
+    public String valueExpression(String script, String name, String value) {
         try {
-            if (script == null || script.isBlank()
-                    || value == null || value.isBlank()
-                    || data2D == null || !data2D.isValid()) {
+            if (script == null || script.isBlank()) {
                 return script;
             }
-
             String filledScript = script;
             if (findReplace == null) {
                 findReplace = FindReplaceString.create().setOperation(FindReplaceString.Operation.ReplaceAll)
                         .setIsRegex(false).setCaseInsensitive(false).setMultiline(false);
             }
-            filledScript = findReplace.replaceStringAll(filledScript, "#{x}", value);
+            filledScript = findReplace.replaceStringAll(filledScript, name, value);
             return filledScript;
         } catch (Exception e) {
             handleError(e);
             return null;
         }
+    }
+
+    public String dataColumnExpression(String script, String value) {
+        return valueExpression(script, ColumnFilter.placehold(), value);
     }
 
     /*
@@ -293,6 +325,11 @@ public class ExpressionCalculator {
      */
     public ExpressionCalculator setWebEngine(WebEngine webEngine) {
         this.webEngine = webEngine;
+        return this;
+    }
+
+    public ExpressionCalculator setFindReplace(FindReplaceString findReplace) {
+        this.findReplace = findReplace;
         return this;
     }
 

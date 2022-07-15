@@ -64,33 +64,48 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         return reader.getRows();
     }
 
-    public DoubleStatistic[] statisticByColumns(List<Integer> cols, DescriptiveStatistic selections) {
-        if (cols == null || cols.isEmpty()) {
-            return null;
-        }
-        int colLen = cols.size();
-        DoubleStatistic[] sData = new DoubleStatistic[colLen];
-        for (int c = 0; c < colLen; c++) {
-            sData[c] = new DoubleStatistic();
-        }
-        Data2DReader reader = Data2DReader.create(this)
-                .setStatisticData(sData).setCols(cols)
-                .setScanPass(1).setStatisticSelection(selections)
-                .setReaderTask(task).start(Data2DReader.Operation.StatisticColumns);
-        if (reader == null) {
-            return null;
-        }
-        if (selections.isPopulationStandardDeviation() || selections.isPopulationVariance()
-                || selections.isSampleStandardDeviation() || selections.isSampleVariance()) {
-            reader = Data2DReader.create(this)
+    // No percentile nor mode
+    public DoubleStatistic[] statisticByColumnsWithoutStored(List<Integer> cols, DescriptiveStatistic selections) {
+        try {
+            if (cols == null || cols.isEmpty() || selections == null) {
+                return null;
+            }
+            int colLen = cols.size();
+            DoubleStatistic[] sData = new DoubleStatistic[colLen];
+            for (int c = 0; c < colLen; c++) {
+                Data2DColumn column = columns.get(cols.get(c));
+                DoubleStatistic colStatistic = column.getDoubleStatistic();
+                if (colStatistic == null) {
+                    colStatistic = new DoubleStatistic();
+                    column.setDoubleStatistic(colStatistic);
+                }
+                sData[c] = colStatistic;
+            }
+            Data2DReader reader = Data2DReader.create(this)
                     .setStatisticData(sData).setCols(cols)
-                    .setScanPass(2).setStatisticSelection(selections)
+                    .setScanPass(1).setStatisticSelection(selections)
                     .setReaderTask(task).start(Data2DReader.Operation.StatisticColumns);
             if (reader == null) {
                 return null;
             }
+            if (selections.isPopulationStandardDeviation() || selections.isPopulationVariance()
+                    || selections.isSampleStandardDeviation() || selections.isSampleVariance()) {
+                reader = Data2DReader.create(this)
+                        .setStatisticData(sData).setCols(cols)
+                        .setScanPass(2).setStatisticSelection(selections)
+                        .setReaderTask(task).start(Data2DReader.Operation.StatisticColumns);
+                if (reader == null) {
+                    return null;
+                }
+            }
+            return sData;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e.toString());
+            return null;
         }
-        return sData;
     }
 
     public DataFileCSV statisticByRows(List<String> names, List<Integer> cols, DescriptiveStatistic selections) {
@@ -122,7 +137,8 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
     }
 
-    public DoubleStatistic statisticByAll(List<Integer> cols, DescriptiveStatistic selections) {
+    // No percentile nor mode
+    public DoubleStatistic statisticByAllWithoutStored(List<Integer> cols, DescriptiveStatistic selections) {
         if (cols == null || cols.isEmpty()) {
             return null;
         }
