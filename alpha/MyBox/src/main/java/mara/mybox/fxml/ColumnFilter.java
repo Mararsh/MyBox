@@ -1,5 +1,6 @@
 package mara.mybox.fxml;
 
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
@@ -21,19 +22,21 @@ public class ColumnFilter extends RowFilter {
     public static String E2 = "MyBox-e2";
     public static String E3 = "MyBox-e3";
     public static String E4 = "MyBox-e4";
+    public static String Mode = "MyBox-mode";
+    public static String Median = "MyBox-median";
 
-    public boolean work, empty, zero, negative, positive, equal, larger, less, columnExpression;
-    public String largerThan, lessThan, equalValue;
-    public double largerThanNumber, lessThanNumber;
+    public boolean work, empty, zero, negative, positive, number, nonNumeric,
+            equal, larger, less, columnExpression;
+    public String largerValue, lessValue, equalValue;
 
     public ColumnFilter() {
         init();
     }
 
     private void init() {
-        largerThan = lessThan = equalValue = null;
-        largerThanNumber = lessThanNumber = AppValues.InvalidDouble;
-        work = empty = zero = negative = positive = equal = larger = less = columnExpression
+        work = number = true;
+        largerValue = lessValue = equalValue = null;
+        empty = zero = negative = positive = equal = larger = less = columnExpression
                 = reversed = passed = false;
         script = null;
     }
@@ -50,13 +53,14 @@ public class ColumnFilter extends RowFilter {
     public ColumnFilter fromString(String columnFilterString) {
         init();
         if (columnFilterString != null && !columnFilterString.isBlank()) {
-            work = true;
             String[] vs = columnFilterString.split(ValueSeperator);
             for (String v : vs) {
                 if (v == null || v.isBlank()) {
                     continue;
                 }
-                if ("empty".equalsIgnoreCase(v)) {
+                if ("work".equalsIgnoreCase(v)) {
+                    work = true;
+                } else if ("empty".equalsIgnoreCase(v)) {
                     empty = true;
                 } else if ("zero".equalsIgnoreCase(v)) {
                     zero = true;
@@ -64,23 +68,19 @@ public class ColumnFilter extends RowFilter {
                     negative = true;
                 } else if ("positive".equalsIgnoreCase(v)) {
                     positive = true;
+                } else if ("number".equalsIgnoreCase(v)) {
+                    number = true;
+                } else if ("nonNumeric".equalsIgnoreCase(v)) {
+                    nonNumeric = true;
                 } else if (v.startsWith(EqualToPrefix)) {
                     equal = true;
                     equalValue = v.substring(EqualToPrefix.length());
                 } else if (v.startsWith(LargerThanPrefix)) {
                     larger = true;
-                    largerThan = v.substring(LargerThanPrefix.length());
-                    try {
-                        largerThanNumber = Double.valueOf(largerThan);
-                    } catch (Exception e) {
-                    }
+                    largerValue = v.substring(LargerThanPrefix.length());
                 } else if (v.startsWith(LessThanPrefix)) {
                     less = true;
-                    lessThan = v.substring(LessThanPrefix.length());
-                    try {
-                        lessThanNumber = Double.valueOf(lessThan);
-                    } catch (Exception e) {
-                    }
+                    lessValue = v.substring(LessThanPrefix.length());
                 } else if (v.startsWith(ReversedPrefix)) {
                     columnExpression = true;
                     script = v.substring(ReversedPrefix.length());
@@ -99,10 +99,10 @@ public class ColumnFilter extends RowFilter {
 
     @Override
     public String toString() {
-        if (!work) {
-            return null;
-        }
         String columnFilterString = "";
+        if (work) {
+            columnFilterString += "work" + ValueSeperator;
+        }
         if (empty) {
             columnFilterString += "empty" + ValueSeperator;
         }
@@ -115,14 +115,20 @@ public class ColumnFilter extends RowFilter {
         if (positive) {
             columnFilterString += "positive" + ValueSeperator;
         }
+        if (number) {
+            columnFilterString += "number" + ValueSeperator;
+        }
+        if (nonNumeric) {
+            columnFilterString += "nonNumeric" + ValueSeperator;
+        }
         if (equal && equalValue != null && !equalValue.isBlank()) {
             columnFilterString += EqualToPrefix + equalValue + ValueSeperator;
         }
-        if (largerThan != null && !largerThan.isBlank()) {
-            columnFilterString += LargerThanPrefix + largerThan + ValueSeperator;
+        if (largerValue != null && !largerValue.isBlank()) {
+            columnFilterString += LargerThanPrefix + largerValue + ValueSeperator;
         }
-        if (lessThan != null && !lessThan.isBlank()) {
-            columnFilterString += LessThanPrefix + lessThan + ValueSeperator;
+        if (lessValue != null && !lessValue.isBlank()) {
+            columnFilterString += LessThanPrefix + lessValue + ValueSeperator;
         }
         if (columnExpression && script != null && !script.isBlank()) {
             if (reversed) {
@@ -133,8 +139,58 @@ public class ColumnFilter extends RowFilter {
         return columnFilterString;
     }
 
+    public String value2Name(String value) {
+        if (value == null) {
+            return null;
+        }
+        if (Q1.equals(value)) {
+            return message("LowerQuartile");
+        } else if (Q3.equals(value)) {
+            return message("UpperQuartile");
+        } else if (E1.equals(value)) {
+            return message("LowerExtremeOutlierLine");
+        } else if (E2.equals(value)) {
+            return message("LowerMildOutlierLine");
+        } else if (E3.equals(value)) {
+            return message("UpperMildOutlierLine");
+        } else if (E4.equals(value)) {
+            return message("UpperExtremeOutlierLine");
+        } else if (Mode.equals(value)) {
+            return message("Mode");
+        } else if (Median.equals(value)) {
+            return message("Median");
+        } else {
+            return value;
+        }
+    }
+
+    public String name2Value(String name) {
+        if (name == null) {
+            return null;
+        }
+        if (message("LowerQuartile").equals(name)) {
+            return Q1;
+        } else if (message("UpperQuartile").equals(name)) {
+            return Q3;
+        } else if (message("LowerExtremeOutlierLine").equals(name)) {
+            return E1;
+        } else if (message("LowerMildOutlierLine").equals(name)) {
+            return E2;
+        } else if (message("UpperMildOutlierLine").equals(name)) {
+            return E3;
+        } else if (message("UpperExtremeOutlierLine").equals(name)) {
+            return E4;
+        } else if (message("Mode").equals(name)) {
+            return Mode;
+        } else if (message("Median").equals(name)) {
+            return Median;
+        } else {
+            return name;
+        }
+    }
+
     // return true if the value satisfies one of conditions
-    public boolean filter(String value, boolean isNumber) {
+    public boolean filter(Data2DColumn column, String value) {
         try {
             error = null;
             passed = false;
@@ -165,12 +221,12 @@ public class ColumnFilter extends RowFilter {
                     passed = true;
                     return true;
                 }
-                if (!isNumber) {
-                    if (largerThan != null && largerThan.compareTo(value) < 0) {
+                if (!column.isNumberType()) {
+                    if (largerValue != null && largerValue.compareTo(value) < 0) {
                         passed = true;
                         return true;
                     }
-                    if (lessThan != null && lessThan.compareTo(value) > 0) {
+                    if (lessValue != null && lessValue.compareTo(value) > 0) {
                         passed = true;
                         return true;
                     }
@@ -188,16 +244,16 @@ public class ColumnFilter extends RowFilter {
                     passed = true;
                     return true;
                 }
-                if (largerThan != null && largerThanNumber != AppValues.InvalidDouble
-                        && number > largerThanNumber) {
-                    passed = true;
-                    return true;
-                }
-                if (lessThan != null && lessThanNumber != AppValues.InvalidDouble
-                        && number < lessThanNumber) {
-                    passed = true;
-                    return true;
-                }
+//                if (largerValue != null && largerThanNumber != AppValues.InvalidDouble
+//                        && number > largerThanNumber) {
+//                    passed = true;
+//                    return true;
+//                }
+//                if (lessValue != null && lessThanNumber != AppValues.InvalidDouble
+//                        && number < lessThanNumber) {
+//                    passed = true;
+//                    return true;
+//                }
             }
             if (columnExpression) {
                 return filterScript(value);
@@ -273,21 +329,21 @@ public class ColumnFilter extends RowFilter {
         return this;
     }
 
-    public String getLargerThan() {
-        return largerThan;
+    public String getLargerValue() {
+        return largerValue;
     }
 
-    public ColumnFilter setLargerThan(String largerThan) {
-        this.largerThan = largerThan;
+    public ColumnFilter setLargerValue(String largerValue) {
+        this.largerValue = largerValue;
         return this;
     }
 
-    public String getLessThan() {
-        return lessThan;
+    public String getLessValue() {
+        return lessValue;
     }
 
-    public ColumnFilter setLessThan(String lessThan) {
-        this.lessThan = lessThan;
+    public ColumnFilter setLessValue(String lessValue) {
+        this.lessValue = lessValue;
         return this;
     }
 
@@ -327,21 +383,21 @@ public class ColumnFilter extends RowFilter {
         return this;
     }
 
-    public double getLargerThanNumber() {
-        return largerThanNumber;
+    public boolean isNumber() {
+        return number;
     }
 
-    public double getLessThanNumber() {
-        return lessThanNumber;
-    }
-
-    public ColumnFilter setLargerThanNumber(double largerThanNumber) {
-        this.largerThanNumber = largerThanNumber;
+    public ColumnFilter setNumber(boolean number) {
+        this.number = number;
         return this;
     }
 
-    public ColumnFilter setLessThanNumber(double lessThanNumber) {
-        this.lessThanNumber = lessThanNumber;
+    public boolean isNonNumeric() {
+        return nonNumeric;
+    }
+
+    public ColumnFilter setNonNumeric(boolean nonNumeric) {
+        this.nonNumeric = nonNumeric;
         return this;
     }
 
@@ -349,8 +405,9 @@ public class ColumnFilter extends RowFilter {
         return columnExpression;
     }
 
-    public void setColumnExpression(boolean columnExpression) {
+    public ColumnFilter setColumnExpression(boolean columnExpression) {
         this.columnExpression = columnExpression;
+        return this;
     }
 
 }

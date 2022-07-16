@@ -224,14 +224,14 @@ public abstract class Data2D_Edit extends Data2D_Data {
     }
 
     public void countAbnormalLines() {
+        resetStatistic();
         if (styles == null || styles.isEmpty()) {
             return;
         }
         try {
             List<String> colNames = new ArrayList<>();
             DescriptiveStatistic calculation = new DescriptiveStatistic()
-                    .setStatisticObject(DescriptiveStatistic.StatisticObject.Columns)
-                    .setData2D((Data2D) this);
+                    .setStatisticObject(DescriptiveStatistic.StatisticObject.Columns);
             for (Data2DStyle style : styles) {
                 String scolumns = style.getColumns();
                 if (scolumns != null && !scolumns.isBlank()) {
@@ -248,7 +248,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
                 if (columnFilter == null) {
                     continue;
                 }
-                String largerThan = columnFilter.getLargerThan();
+                String largerThan = columnFilter.getLargerValue();
                 if (ColumnFilter.Q3.equals(largerThan)) {
                     calculation.setUpperQuartile(true);
                 } else if (ColumnFilter.E3.equals(largerThan)) {
@@ -256,7 +256,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
                 } else if (ColumnFilter.E4.equals(largerThan)) {
                     calculation.setUpperExtremeOutlierLine(true);
                 }
-                String lessThan = columnFilter.getLargerThan();
+                String lessThan = columnFilter.getLargerValue();
                 if (ColumnFilter.Q1.equals(lessThan)) {
                     calculation.setLowerQuartile(true);
                 } else if (ColumnFilter.E2.equals(largerThan)) {
@@ -268,9 +268,25 @@ public abstract class Data2D_Edit extends Data2D_Data {
             if (colNames.isEmpty()) {
                 return;
             }
+            List<Integer> colIndices = new ArrayList<>();
             for (String name : colNames) {
-                Data2DColumn column = columnByName(name);
+                colIndices.add(colOrder(name));
             }
+            DataTable tmpTable = ((Data2D) this).toTmpTable(task, colIndices, false);
+            if (tmpTable == null) {
+                return;
+            }
+            tmpTable.setTask(task);
+            calculation.setData2D(tmpTable)
+                    .setColsIndices(tmpTable.columnIndices().subList(1, tmpTable.columnsNumber()));
+            calculation.statisticAllByColumns();
+            for (Data2DColumn tmpColumn : tmpTable.getColumns()) {
+                Data2DColumn column = columnByName(tmpTable.sourceColumnName(tmpColumn.getColumnName()));
+                if (column != null) {
+                    column.setDoubleStatistic(tmpColumn.getDoubleStatistic());
+                }
+            }
+            tmpTable.drop();
         } catch (Exception e) {
             MyBoxLog.error(e);
             if (task != null) {

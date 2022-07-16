@@ -266,6 +266,27 @@ public class DataTable extends Data2D {
         return mappedName;
     }
 
+    public Data2DColumn sourceColumn(Data2DColumn mappedColumn) {
+        if (columnsMap == null || columnsMap.isEmpty()
+                || mappedColumn == null) {
+            return null;
+        }
+        String sourceColumnName = sourceColumnName(mappedColumn.getColumnName());
+        if (sourceColumnName == null) {
+            return null;
+        }
+        List<Data2DColumn> sColumns = sourceColumns();
+        if (sColumns == null) {
+            return null;
+        }
+        for (Data2DColumn column : sColumns) {
+            if (sourceColumnName.equals(column.getColumnName())) {
+                return column;
+            }
+        }
+        return null;
+    }
+
     public List<Data2DColumn> sourceColumns() {
         if (columnsMap == null || columnsMap.isEmpty() || sourceColumns == null) {
             return columns;

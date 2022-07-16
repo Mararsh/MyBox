@@ -5,15 +5,14 @@ import java.util.Arrays;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Separator;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ColumnFilter;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.value.AppValues;
-import mara.mybox.value.UserConfig;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -26,18 +25,39 @@ public class ControlData2DColumnFilter extends ControlData2DRowExpression {
 
     @FXML
     protected CheckBox emptyCheck, zeroCheck, negativeCheck, positiveCheck,
-            equalCheck, largerCheck, lessCheck, expressionCheck;
+            numberCheck, nonNumbericCheck, equalCheck, largerCheck, lessCheck, expressionCheck;
     @FXML
-    protected RadioButton noneRadio, workRadio, trueRadio, falseRadio,
-            q3Radio, e3Radio, e4Radio, largerValueRadio,
-            q1Radio, e2Radio, e1Radio, lessValueRadio;
+    protected RadioButton noneRadio, workRadio, trueRadio, falseRadio;
     @FXML
-    protected TextField equalInput, largerInput, lessInput;
+    protected ComboBox<String> equalSelector, largerSelector, lessSelector;
     @FXML
     protected VBox conditionsBox;
 
     public ControlData2DColumnFilter() {
         TipsLabelKey = "ColumnFilterTips";
+    }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            List<String> values = new ArrayList<>();
+            values.add(message("LowerQuartile"));
+            values.add(message("UpperQuartile"));
+            values.add(message("LowerExtremeOutlierLine"));
+            values.add(message("LowerMildOutlierLine"));
+            values.add(message("UpperMildOutlierLine"));
+            values.add(message("UpperExtremeOutlierLine"));
+            values.add(message("Mode"));
+            values.add(message("Median"));
+            equalSelector.getItems().addAll(values);
+            largerSelector.getItems().addAll(values);
+            lessSelector.getItems().addAll(values);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @Override
@@ -76,12 +96,12 @@ public class ControlData2DColumnFilter extends ControlData2DRowExpression {
             equalCheck.setSelected(false);
             largerCheck.setSelected(false);
             lessCheck.setSelected(false);
+            numberCheck.setSelected(false);
+            nonNumbericCheck.setSelected(false);
             expressionCheck.setSelected(false);
-            largerValueRadio.fire();
-            lessValueRadio.fire();
-            equalInput.clear();
-            largerInput.clear();
-            lessInput.clear();
+            equalSelector.setValue(null);
+            largerSelector.setValue(null);
+            lessSelector.setValue(null);
             scriptInput.clear();
             trueRadio.fire();
         } else {
@@ -90,34 +110,14 @@ public class ControlData2DColumnFilter extends ControlData2DRowExpression {
             zeroCheck.setSelected(columnFilter.isZero());
             negativeCheck.setSelected(columnFilter.isNegative());
             positiveCheck.setSelected(columnFilter.isPositive());
+            numberCheck.setSelected(columnFilter.isNumber());
+            nonNumbericCheck.setSelected(columnFilter.isNonNumeric());
             equalCheck.setSelected(columnFilter.isEqual());
-            if (columnFilter.isEqual()) {
-                equalInput.setText(columnFilter.getEqualValue());
-            }
+            equalSelector.setValue(columnFilter.value2Name(columnFilter.getEqualValue()));
             largerCheck.setSelected(columnFilter.isLarger());
-            String larger = columnFilter.getLargerThan();
-            if (ColumnFilter.Q3.equals(larger)) {
-                q3Radio.fire();
-            } else if (ColumnFilter.E3.equals(larger)) {
-                e3Radio.fire();
-            } else if (ColumnFilter.E4.equals(larger)) {
-                e4Radio.fire();
-            } else {
-                largerValueRadio.fire();
-                largerInput.setText(larger);
-            }
+            largerSelector.setValue(columnFilter.value2Name(columnFilter.getLargerValue()));
             lessCheck.setSelected(columnFilter.isLess());
-            String less = columnFilter.getLessThan();
-            if (ColumnFilter.Q1.equals(larger)) {
-                q1Radio.fire();
-            } else if (ColumnFilter.E2.equals(larger)) {
-                e2Radio.fire();
-            } else if (ColumnFilter.E1.equals(larger)) {
-                e1Radio.fire();
-            } else {
-                lessValueRadio.fire();
-                lessInput.setText(less);
-            }
+            lessSelector.setValue(columnFilter.value2Name(columnFilter.getLessValue()));
             expressionCheck.setSelected(columnFilter.isColumnExpression());
             scriptInput.setText(columnFilter.getScript());
             if (columnFilter.reversed) {
@@ -129,55 +129,34 @@ public class ControlData2DColumnFilter extends ControlData2DRowExpression {
     }
 
     public ColumnFilter pickValues() {
+        if (!workRadio.isSelected()) {
+            return null;
+        }
         columnFilter.setWork(workRadio.isSelected())
                 .setEmpty(emptyCheck.isSelected())
                 .setZero(zeroCheck.isSelected())
                 .setPositive(positiveCheck.isSelected())
                 .setNegative(negativeCheck.isSelected())
+                .setNumber(numberCheck.isSelected())
+                .setNonNumeric(nonNumbericCheck.isSelected())
                 .setEqual(equalCheck.isSelected())
                 .setLarger(largerCheck.isSelected())
                 .setLess(lessCheck.isSelected())
                 .setColumnExpression(expressionCheck.isSelected());
         if (equalCheck.isSelected()) {
-            columnFilter.setEqualValue(equalInput.getText());
-        }
-        columnFilter.setLargerThanNumber(AppValues.InvalidDouble);
-        if (largerCheck.isSelected()) {
-            if (q3Radio.isSelected()) {
-                columnFilter.setLargerThan(ColumnFilter.Q3);
-            } else if (e3Radio.isSelected()) {
-                columnFilter.setLargerThan(ColumnFilter.E3);
-            } else if (e4Radio.isSelected()) {
-                columnFilter.setLargerThan(ColumnFilter.E4);
-            } else if (largerValueRadio.isSelected()) {
-                columnFilter.setLargerThan(largerInput.getText());
-                try {
-                    columnFilter.setLargerThanNumber(Double.valueOf(largerInput.getText()));
-                } catch (Exception e) {
-                }
-            }
+            columnFilter.setEqualValue(columnFilter.name2Value(equalSelector.getValue()));
         } else {
-            columnFilter.setLargerThan(null);
+            columnFilter.setEqualValue(null);
         }
-        columnFilter.setLessThanNumber(AppValues.InvalidDouble);
         if (largerCheck.isSelected()) {
-            if (q1Radio.isSelected()) {
-                columnFilter.setLessThan(ColumnFilter.Q1);
-            } else if (e2Radio.isSelected()) {
-                columnFilter.setLessThan(ColumnFilter.E2);
-            } else if (e1Radio.isSelected()) {
-                columnFilter.setLessThan(ColumnFilter.E1);
-            } else if (lessValueRadio.isSelected()) {
-                columnFilter.setLargerThan(lessInput.getText());
-                try {
-                    columnFilter.setLessThanNumber(Double.valueOf(lessInput.getText()));
-                    lessInput.setStyle(null);
-                } catch (Exception e) {
-                    lessInput.setStyle(UserConfig.badStyle());
-                }
-            }
+            columnFilter.setLargerValue(columnFilter.name2Value(largerSelector.getValue()));
         } else {
-            columnFilter.setLessThan(null);
+            columnFilter.setLargerValue(null);
+        }
+        if (lessCheck.isSelected()) {
+            columnFilter.setLessValue(columnFilter.name2Value(lessSelector.getValue()));
+        } else {
+            columnFilter.setLessValue(null);
         }
         if (expressionCheck.isSelected()) {
             columnFilter.setScript(scriptInput.getText());

@@ -299,8 +299,7 @@ public class Data2DStyle extends BaseData {
             }
             if (columnFilter != null) {
                 columnFilter.cloneEnv(calculator);
-                if (!columnFilter.filter(tableRow.get(colIndex + 1),
-                        calculator.data2D.getColumns().get(colIndex).isNumberType())) {
+                if (!columnFilter.filter(calculator.data2D.getColumns().get(colIndex), tableRow.get(colIndex + 1))) {
                     return false;
                 }
             }
