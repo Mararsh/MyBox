@@ -11,6 +11,7 @@ import java.util.Random;
 import mara.mybox.data2d.scan.Data2DReader;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -457,7 +458,7 @@ public class DataFileExcel extends DataFile {
     }
 
     @Override
-    public boolean setValue(List<Integer> cols, String value, boolean errorContinue) {
+    public boolean setValue(ExpressionCalculator calculator, List<Integer> cols, String value, boolean errorContinue) {
         if (file == null || !file.exists() || file.length() == 0
                 || cols == null || cols.isEmpty()) {
             return false;
@@ -513,6 +514,7 @@ public class DataFileExcel extends DataFile {
                 Random random = new Random();
                 rowIndex = 0;
                 boolean needSetValue;
+                startFilter();
                 while (iterator.hasNext() && task != null && !task.isCancelled()) {
                     Row sourceRow = iterator.next();
                     if (sourceRow == null) {
@@ -526,7 +528,8 @@ public class DataFileExcel extends DataFile {
                     filterDataRow(values, ++rowIndex);
                     needSetValue = filterPassed() && !filterReachMaxPassed();
                     if (needSetValue && script != null) {
-                        calculateDataRowExpression(script, values, rowIndex);
+                        calculator.calculateDataRowExpression(this, script, values, rowIndex);
+                        error = calculator.getError();
                         if (error != null) {
                             if (errorContinue) {
                                 continue;
@@ -546,7 +549,7 @@ public class DataFileExcel extends DataFile {
                             } else if (isRandomNn) {
                                 v = random(random, c, true);
                             } else if (script != null) {
-                                v = getExpressionResult();
+                                v = calculator.getResult();
                             } else {
                                 v = value;
                             }

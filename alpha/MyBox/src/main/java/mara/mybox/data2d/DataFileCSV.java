@@ -19,6 +19,7 @@ import mara.mybox.controller.MatricesManageController;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.CsvTools;
@@ -227,7 +228,7 @@ public class DataFileCSV extends DataFileText {
     }
 
     @Override
-    public boolean setValue(List<Integer> cols, String value, boolean errorContinue) {
+    public boolean setValue(ExpressionCalculator calculator, List<Integer> cols, String value, boolean errorContinue) {
         if (file == null || !file.exists() || file.length() == 0 || cols == null || cols.isEmpty()) {
             return false;
         }
@@ -260,6 +261,7 @@ public class DataFileCSV extends DataFileText {
                 final Random random = new Random();
                 rowIndex = 0;
                 boolean needSetValue;
+                startFilter();
                 while (iterator.hasNext() && task != null && !task.isCancelled()) {
                     try {
                         CSVRecord record = iterator.next();
@@ -270,7 +272,8 @@ public class DataFileCSV extends DataFileText {
                         filterDataRow(values, ++rowIndex);
                         needSetValue = filterPassed() && !filterReachMaxPassed();
                         if (needSetValue && script != null) {
-                            calculateDataRowExpression(script, values, rowIndex);
+                            calculator.calculateDataRowExpression(this, script, values, rowIndex);
+                            error = calculator.getError();
                             if (error != null) {
                                 if (errorContinue) {
                                     continue;
@@ -290,7 +293,7 @@ public class DataFileCSV extends DataFileText {
                                 } else if (isRandomNn) {
                                     row.add(random(random, i, true));
                                 } else if (script != null) {
-                                    row.add(getExpressionResult());
+                                    row.add(calculator.getResult());
                                 } else {
                                     row.add(value);
                                 }
@@ -510,7 +513,7 @@ public class DataFileCSV extends DataFileText {
                     .setColsNumber(targetColumns.size())
                     .setRowsNumber(data.size());
             dataFileCSV.saveAttributes();
-            dataFileCSV.setTask(null);
+            dataFileCSV.stopTask();
             return dataFileCSV;
         } catch (Exception e) {
             if (task != null) {

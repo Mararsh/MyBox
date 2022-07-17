@@ -466,25 +466,24 @@ public class Data2DStatisticController extends BaseData2DHandleController {
             @Override
             protected boolean handle() {
                 try {
-                    data2D.setTask(task);
-                    data2D.startFilterService(task);
+                    data2D.startTask(task, rowFilterController.rowFilter);
                     calculation.setTask(task);
                     if (calculation.needStored()) {
                         DataTable tmpTable = data2D.toTmpTable(task, checkedColsIndices, false);
-                        data2D.stopFilterService();
                         if (tmpTable == null) {
                             return false;
                         }
-                        tmpTable.setTask(task);
+                        tmpTable.startTask(task, rowFilterController.rowFilter);
                         calculation.setData2D(tmpTable)
                                 .setColsIndices(tmpTable.columnIndices().subList(1, tmpTable.columnsNumber()))
                                 .setColsNames(tmpTable.columnNames().subList(1, tmpTable.columnsNumber()));
                         ok = calculation.statisticAllByColumns();
+                        tmpTable.stopFilter();
                         tmpTable.drop();
                     } else {
                         ok = calculation.statisticAllByColumnsWithoutStored();
-                        data2D.stopFilterService();
                     }
+                    data2D.stopFilter();
                     return ok;
                 } catch (Exception e) {
                     error = e.toString();
@@ -506,9 +505,8 @@ public class Data2DStatisticController extends BaseData2DHandleController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.setTask(null);
+                data2D.stopTask();
                 calculation.setTask(null);
-                data2D.stopFilterService();
                 task = null;
                 if (targetController != null) {
                     targetController.refreshControls();
@@ -525,29 +523,28 @@ public class Data2DStatisticController extends BaseData2DHandleController {
             @Override
             protected boolean handle() {
                 try {
-                    data2D.setTask(task);
-                    data2D.startFilterService(task);
+                    data2D.startTask(task, rowFilterController.rowFilter);
                     calculation.setTask(task);
                     if (calculation.needStored()) {
                         DataTable dataTable = data2D.singleColumn(task, checkedColsIndices);
-                        data2D.stopFilterService();
                         if (dataTable == null) {
                             return false;
                         }
-                        dataTable.setTask(task);
+                        dataTable.startTask(task, rowFilterController.rowFilter);
                         calculation.setTask(task);
                         calculation.setData2D(dataTable)
                                 .setColsIndices(dataTable.columnIndices().subList(1, 2))
                                 .setColsNames(dataTable.columnNames().subList(1, 2));
                         ok = calculation.statisticAllByColumns();
+                        dataTable.stopFilter();
                         return ok;
                     } else {
                         DoubleStatistic statisticData = data2D.statisticByAllWithoutStored(checkedColsIndices, calculation);
-                        data2D.stopFilterService();
                         if (statisticData == null) {
                             return false;
                         }
                         calculation.statisticByColumnsWrite(statisticData);
+                        data2D.stopFilter();
                         return true;
                     }
                 } catch (Exception e) {
@@ -570,9 +567,8 @@ public class Data2DStatisticController extends BaseData2DHandleController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.setTask(null);
+                data2D.stopTask();
                 calculation.setTask(null);
-                data2D.stopFilterService();
                 task = null;
                 if (targetController != null) {
                     targetController.refreshControls();

@@ -39,7 +39,7 @@ import mara.mybox.value.UserConfig;
 public class ControlData2DRowExpression extends TreeNodesController {
 
     protected Data2D data2D;
-    protected ExpressionCalculator calculator;
+    public ExpressionCalculator calculator;
 
     @FXML
     protected TextArea scriptInput;
@@ -73,7 +73,6 @@ public class ControlData2DRowExpression extends TreeNodesController {
 
     public void setData2D(Data2D data2D) {
         this.data2D = data2D;
-        calculator.reset(data2D);
     }
 
     /*
@@ -270,7 +269,7 @@ public class ControlData2DRowExpression extends TreeNodesController {
 
     public boolean checkExpression(boolean allPages) {
         error = null;
-        if (calculator == null || data2D == null || !data2D.hasData()) {
+        if (data2D == null || !data2D.hasData()) {
             error = message("InvalidData");
             return false;
         }
@@ -278,11 +277,11 @@ public class ControlData2DRowExpression extends TreeNodesController {
         if (script == null || script.isBlank()) {
             return true;
         }
-        if (calculator.validateExpression(script, allPages)) {
+        if (calculator.validateExpression(data2D, script, allPages)) {
             TableStringValues.add(interfaceName + "Histories", script.trim());
             return true;
         } else {
-            error = calculator.error;
+            error = calculator.getError();
             return false;
         }
     }

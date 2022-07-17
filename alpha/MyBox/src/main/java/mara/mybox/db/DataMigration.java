@@ -165,6 +165,7 @@ public class DataMigration {
             statement.executeUpdate("ALTER TABLE Data2D_Style DROP COLUMN moreConditions");
             statement.executeUpdate("ALTER TABLE Data2D_Style ADD COLUMN columnFilter VARCHAR(" + StringMaxLength + ")");
             statement.executeUpdate("ALTER TABLE Data2D_Style ADD COLUMN abnoramlValues Boolean");
+            statement.executeUpdate("ALTER TABLE Data2D_Style ADD COLUMN title VARCHAR(" + StringMaxLength + ")");
 
         } catch (Exception e) {
             MyBoxLog.error(e);

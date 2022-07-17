@@ -17,69 +17,35 @@ import static mara.mybox.value.Languages.message;
  */
 public class ExpressionCalculator {
 
-    public final Object expressionLock = new Object();
+    public final Object lock = new Object();
     public WebEngine webEngine;
     public FindReplaceString findReplace;
-    public String expression, expressionResult, error;
-    public Data2D data2D;
-    public boolean stopped;
-    public SingletonTask task;
+    public String expression, result, error;
+    public boolean serviceRunning;
 
     public ExpressionCalculator() {
         init();
     }
 
     private ExpressionCalculator init() {
-        stopService();
-        data2D = null;
+        stop();
         return this;
     }
-
-    public ExpressionCalculator reset() {
-        init();
-        if (findReplace != null) {
-            findReplace.reset();
-        }
-        return this;
-    }
-
-    public ExpressionCalculator reset(Data2D data2D) {
-        reset();
-        this.data2D = data2D;
-        return this;
-    }
-
-    public ExpressionCalculator cloneEnv(ExpressionCalculator calculator) {
-        reset();
-        if (calculator != null) {
-            webEngine = calculator.webEngine;
-            findReplace = calculator.findReplace;
-            if (findReplace != null) {
-                findReplace.reset();
-            }
-            data2D = calculator.data2D;
-            task = calculator.task;
-        }
-        return this;
-    }
-
 
     /*
         calculate
      */
-    public boolean calculateExpression() {
+    public boolean calculate() {
         try {
             error = null;
-            expressionResult = null;
+            result = null;
             if (expression == null || expression.isBlank()) {
                 return true;
             }
-            if (webEngine == null) {
-                webEngine = new WebView().getEngine();
-            }
+            webEngine = getWebEngine();
             Object o = webEngine.executeScript(expression);
             if (o != null) {
-                expressionResult = o.toString();
+                result = o.toString();
             }
             return true;
         } catch (Exception e) {
@@ -88,78 +54,19 @@ public class ExpressionCalculator {
         }
     }
 
-    public boolean calculateExpression(String expression) {
-        this.expression = expression;
-        return calculateExpression();
-    }
-
-    public boolean calculateTableRowExpression(String script, List<String> tableRow, long tableRowNumber) {
+    public boolean calculate(String expression) {
         try {
-            if (task == null || task.isQuit()) {
-                return calculateExpression(tableRowExpression(script, tableRow, tableRowNumber));
+            if (Platform.isFxApplicationThread()) {
+                this.expression = expression;
+                return calculate();
             }
-            synchronized (expressionLock) {
-                this.expression = tableRowExpression(script, tableRow, tableRowNumber);
-                expressionLock.notify();
-                expressionLock.wait();
+            start();
+            synchronized (lock) {
+                this.expression = expression;
+                lock.notify();
+                lock.wait();
             }
-        } catch (Exception e) {
-            handleError(e);
-            return false;
-        }
-        return true;
-    }
-
-    public boolean calculateDataRowExpression(String script, List<String> dataRow, long dataRowNumber) {
-        try {
-            if (task == null || task.isQuit()) {
-                return calculateExpression(dataRowExpression(script, dataRow, dataRowNumber));
-            }
-            synchronized (expressionLock) {
-                this.expression = dataRowExpression(script, dataRow, dataRowNumber);
-                expressionLock.notify();
-                expressionLock.wait();
-            }
-        } catch (Exception e) {
-            handleError(e);
-            return false;
-        }
-        return true;
-    }
-
-    public boolean calculateDataColumnExpression(String script, String value) {
-        try {
-            if (task == null || task.isQuit()) {
-                return calculateExpression(dataColumnExpression(script, value));
-            }
-            synchronized (expressionLock) {
-                this.expression = dataColumnExpression(script, value);
-                expressionLock.notify();
-                expressionLock.wait();
-            }
-        } catch (Exception e) {
-            handleError(e);
-            return false;
-        }
-        return true;
-    }
-
-    public boolean validateExpression(String script, boolean allPages) {
-        try {
-            handleError(null);
-            if (script == null || script.isBlank()) {
-                return true;
-            }
-            List<String> row = new ArrayList<>();
-            for (int i = 0; i < data2D.columnsNumber(); i++) {
-                row.add("0");
-            }
-            if (allPages) {
-                return calculateExpression(dataRowExpression(script, row, 1));
-            } else {
-                row.add(0, "1");
-                return calculateTableRowExpression(script, row, 0);
-            }
+            return true;
         } catch (Exception e) {
             handleError(e);
             return false;
@@ -168,17 +75,58 @@ public class ExpressionCalculator {
 
     public void handleError(Exception e) {
         error = e == null ? null : e.toString();
-        if (data2D != null) {
-            data2D.setError(error);
-        }
-        if (task != null) {
-            task.setError(error);
-        }
         if (e != null) {
-            MyBoxLog.debug(error);
+            MyBoxLog.console(error);
         }
     }
 
+    /*
+        service
+     */
+    public void start() {
+        try {
+            if (serviceRunning || Platform.isFxApplicationThread()) {
+                return;
+            }
+            stop();
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        serviceRunning = true;
+                        while (serviceRunning) {
+                            synchronized (lock) {
+                                calculate();
+                                expression = null;
+                                lock.notify();
+                                lock.wait();
+                            }
+                        }
+                    } catch (Exception e) {
+                        handleError(e);
+                    }
+                    stop();
+                }
+            });
+            synchronized (lock) {
+                expression = null;
+                lock.wait();
+            }
+        } catch (Exception e) {
+            handleError(e);
+            stop();
+        }
+    }
+
+    public void stop() {
+        serviceRunning = false;
+        synchronized (lock) {
+            expression = null;
+            lock.notify();
+        }
+        result = null;
+        error = null;
+    }
 
     /*
         expression
@@ -189,11 +137,7 @@ public class ExpressionCalculator {
                 return script;
             }
             String filledScript = script;
-            if (findReplace == null) {
-                findReplace = FindReplaceString.create().setOperation(FindReplaceString.Operation.ReplaceAll)
-                        .setIsRegex(false).setCaseInsensitive(false).setMultiline(false);
-            }
-            filledScript = findReplace.replaceStringAll(filledScript, name, value);
+            filledScript = getFindReplace().replaceStringAll(filledScript, name, value);
             return filledScript;
         } catch (Exception e) {
             handleError(e);
@@ -201,29 +145,25 @@ public class ExpressionCalculator {
         }
     }
 
-    public String dataColumnExpression(String script, String value) {
+    public String dataColumnExpression(Data2D data2D, String script, String value) {
         return valueExpression(script, ColumnFilter.placehold(), value);
     }
 
     /*
          "dataRowNumber" is 1-based
      */
-    public String dataRowExpression(String script, List<String> dataRow, long dataRowNumber) {
+    public String dataRowExpression(Data2D data2D, String script, List<String> dataRow, long dataRowNumber) {
         try {
             if (script == null || script.isBlank()
                     || dataRow == null || dataRow.isEmpty()
                     || data2D == null || !data2D.isValid()) {
                 return script;
             }
-
             String filledScript = script;
             if (filledScript.contains("#{" + message("TableRowNumber") + "}")) {
                 filledScript = message("NoTableRowNumberWhenAllPages");
             } else {
-                if (findReplace == null) {
-                    findReplace = FindReplaceString.create().setOperation(FindReplaceString.Operation.ReplaceAll)
-                            .setIsRegex(false).setCaseInsensitive(false).setMultiline(false);
-                }
+                findReplace = getFindReplace();
                 List<String> names = data2D.columnNames();
                 for (int i = 0; i < names.size(); i++) {
                     filledScript = findReplace.replaceStringAll(filledScript, "#{" + names.get(i) + "}", dataRow.get(i));
@@ -241,7 +181,7 @@ public class ExpressionCalculator {
         first value of "tableRow" should be "dataRowNumber" 
         "tableRowNumber" is 0-based while "dataRowNumber" is 1-based
      */
-    public String tableRowExpression(String script, List<String> tableRow, long tableRowNumber) {
+    public String tableRowExpression(Data2D data2D, String script, List<String> tableRow, long tableRowNumber) {
         try {
             if (script == null || script.isBlank()
                     || tableRow == null || tableRow.isEmpty()
@@ -250,10 +190,7 @@ public class ExpressionCalculator {
             }
             String filledScript = script;
             List<String> names = data2D.columnNames();
-            if (findReplace == null) {
-                findReplace = FindReplaceString.create().setOperation(FindReplaceString.Operation.ReplaceAll)
-                        .setIsRegex(false).setCaseInsensitive(false).setMultiline(false);
-            }
+            findReplace = getFindReplace();
             for (int i = 0; i < names.size(); i++) {
                 filledScript = findReplace.replaceStringAll(filledScript, "#{" + names.get(i) + "}", tableRow.get(i + 1));
             }
@@ -265,59 +202,6 @@ public class ExpressionCalculator {
             handleError(e);
             return null;
         }
-    }
-
-    /*
-        task
-     */
-    public void startService(SingletonTask inTask) {
-        try {
-            stopService();
-            task = inTask;
-            if (task == null || task.isQuit()) {
-                return;
-            }
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        stopped = false;
-                        while (!stopped && data2D != null && task != null && !task.isQuit()) {
-                            synchronized (expressionLock) {
-                                calculateExpression();
-                                expression = null;
-                                expressionLock.notify();
-                                expressionLock.wait();
-                            }
-                        }
-                    } catch (Exception e) {
-                        error = e.toString();
-                        if (task != null) {
-                            task.setError(error);
-                        }
-                        MyBoxLog.debug(e);
-                    }
-                    stopService();
-                }
-            });
-            synchronized (expressionLock) {
-                expression = null;
-                expressionLock.wait();
-            }
-        } catch (Exception e) {
-            handleError(e);
-        }
-    }
-
-    public void stopService() {
-        stopped = true;
-        task = null;
-        synchronized (expressionLock) {
-            expression = null;
-            expressionLock.notify();
-        }
-        expressionResult = null;
-        error = null;
     }
 
     /*
@@ -333,30 +217,71 @@ public class ExpressionCalculator {
         return this;
     }
 
-    public ExpressionCalculator setData2D(Data2D data2D) {
-        this.data2D = data2D;
-        return this;
-    }
-
     public ExpressionCalculator setExpression(String expression) {
         this.expression = expression;
-        return this;
-    }
-
-    public ExpressionCalculator setTask(SingletonTask task) {
-        this.task = task;
         return this;
     }
 
     /*
         get
      */
-    public String getExpressionResult() {
-        return expressionResult;
+    public WebEngine getWebEngine() {
+        if (webEngine == null) {
+            webEngine = new WebView().getEngine();
+        }
+        return webEngine;
+    }
+
+    public FindReplaceString getFindReplace() {
+        if (findReplace == null) {
+            findReplace = FindReplaceString.create().setOperation(FindReplaceString.Operation.ReplaceAll)
+                    .setIsRegex(false).setCaseInsensitive(false).setMultiline(false);
+        }
+        return findReplace;
+    }
+
+    public String getResult() {
+        return result;
     }
 
     public String getError() {
         return error;
+    }
+
+    public boolean calculateTableRowExpression(Data2D data2D,
+            String script, List<String> tableRow, long tableRowNumber) {
+        return calculate(tableRowExpression(data2D, script, tableRow, tableRowNumber));
+    }
+
+    public boolean calculateDataRowExpression(Data2D data2D,
+            String script, List<String> dataRow, long dataRowNumber) {
+        return calculate(dataRowExpression(data2D, script, dataRow, dataRowNumber));
+    }
+
+    public boolean calculateDataColumnExpression(Data2D data2D, String script, String value) {
+        return calculate(dataColumnExpression(data2D, script, value));
+    }
+
+    public boolean validateExpression(Data2D data2D, String script, boolean allPages) {
+        try {
+            handleError(null);
+            if (script == null || script.isBlank()) {
+                return true;
+            }
+            List<String> row = new ArrayList<>();
+            for (int i = 0; i < data2D.columnsNumber(); i++) {
+                row.add("0");
+            }
+            if (allPages) {
+                return calculate(dataRowExpression(data2D, script, row, 1));
+            } else {
+                row.add(0, "1");
+                return calculateTableRowExpression(data2D, script, row, 0);
+            }
+        } catch (Exception e) {
+            handleError(e);
+            return false;
+        }
     }
 
 }

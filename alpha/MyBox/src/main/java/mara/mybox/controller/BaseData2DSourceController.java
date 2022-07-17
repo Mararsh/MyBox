@@ -40,7 +40,6 @@ public class BaseData2DSourceController extends ControlData2DLoad {
     @FXML
     protected ControlData2DRowFilter rowFilterController;
 
-
     /*
         controls
      */
@@ -387,11 +386,11 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                 return true;
             }
             RowFilter rowFilter = data2D.rowFilter;
-            rowFilter.setPassedNumber(0);
+            rowFilter.start(null, data2D);
             List<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
             if (currentPageRadio.isSelected() || selected == null || selected.isEmpty()) {
                 for (int i = 0; i < tableData.size(); i++) {
-                    if (!rowFilter.filterTableRow(tableData.get(i), i)) {
+                    if (!rowFilter.filterTableRow(data2D, tableData.get(i), i)) {
                         continue;
                     }
                     if (rowFilter.reachMaxPassed()) {
@@ -401,7 +400,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                 }
             } else {
                 for (int i : selected) {
-                    if (!rowFilter.filterTableRow(tableData.get(i), i)) {
+                    if (!rowFilter.filterTableRow(data2D, tableData.get(i), i)) {
                         continue;
                     }
                     if (rowFilter.reachMaxPassed()) {

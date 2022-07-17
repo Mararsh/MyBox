@@ -21,8 +21,6 @@ import static mara.mybox.value.Languages.message;
  */
 public class Data2DSetValuesController extends BaseData2DHandleController {
 
-    protected ExpressionCalculator calculator;
-
     @FXML
     protected ControlData2DSetValue valueController;
 
@@ -37,8 +35,6 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
 
             idExclude(true);
             valueController.setParameter(this);
-
-            calculator = valueController.expressionController.calculator;
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -94,10 +90,10 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                             && tableController.dataController.backupController.isBack()) {
                         tableController.dataController.backupController.addBackup(task, data2D.getFile());
                     }
-                    data2D.setTask(task);
-                    data2D.startExpressionService(task);
-                    ok = data2D.setValue(checkedColsIndices, valueController.value, valueController.errorContinueCheck.isSelected());
-                    data2D.stopFilterService();
+                    data2D.startTask(task, rowFilterController.rowFilter);
+                    ok = data2D.setValue(valueController.expressionController.calculator,
+                            checkedColsIndices, valueController.value, valueController.errorContinueCheck.isSelected());
+                    data2D.stopFilter();
                     return ok;
                 } catch (Exception e) {
                     error = e.toString();
@@ -116,9 +112,9 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopFilterService();
-                data2D.setTask(null);
+                data2D.stopTask();
                 task = null;
+                valueController.expressionController.calculator.stop();
             }
 
         };
@@ -168,11 +164,10 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             @Override
             protected boolean handle() {
                 try {
-
-                    data2D.setTask(task);
-                    data2D.startExpressionService(task);
-                    ok = data2D.setValue(checkedColsIndices, valueController.value, valueController.errorContinueCheck.isSelected());
-                    data2D.stopFilterService();
+                    data2D.startTask(task, rowFilterController.rowFilter);
+                    ok = data2D.setValue(valueController.expressionController.calculator,
+                            checkedColsIndices, valueController.value, valueController.errorContinueCheck.isSelected());
+                    data2D.stopFilter();
                     return ok;
                 } catch (Exception e) {
                     error = e.toString();
@@ -191,8 +186,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopFilterService();
-                data2D.setTask(null);
+                data2D.stopTask();
                 task = null;
             }
 
@@ -232,13 +226,14 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
         try {
             Random random = new Random();
             String script = valueController.expressionController.scriptInput.getText();
+            ExpressionCalculator calculator = valueController.expressionController.calculator;
             for (int row : checkedRowsIndices) {
                 List<String> values = tableController.tableData.get(row);
                 String v = valueController.value;
                 if (valueController.blankRadio.isSelected()) {
                     v = "";
                 } else if (valueController.expressionRadio.isSelected()) {
-                    if (!data2D.calculateTableRowExpression(script, values, row)) {
+                    if (!calculator.calculateTableRowExpression(data2D, script, values, row)) {
                         if (valueController.errorContinueCheck.isSelected()) {
                             continue;
                         } else {
@@ -248,7 +243,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                             return false;
                         }
                     }
-                    v = data2D.getExpressionResult();
+                    v = calculator.getResult();
                 }
                 for (int col : checkedColsIndices) {
                     if (valueController.randomRadio.isSelected()) {

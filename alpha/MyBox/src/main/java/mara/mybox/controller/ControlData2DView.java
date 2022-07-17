@@ -110,8 +110,7 @@ public class ControlData2DView extends BaseController {
     public void setData(Data2D data) {
         try {
             data2D = data;
-            styleFilter.reset(data2D);
-            styleFilter.setWebEngine(htmlController.webEngine);
+            styleFilter.setData2D(data2D);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

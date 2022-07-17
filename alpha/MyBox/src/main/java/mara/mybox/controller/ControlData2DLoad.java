@@ -143,10 +143,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             }
             data2D.setLoadController(this);
 
-            if (dataController != null) {
-                styleFilter.webEngine = dataController.viewController.htmlController.webEngine;
-            }
-            styleFilter.reset(data2D);
+            styleFilter.setData2D(data2D);
 
             validateData();
 
@@ -191,7 +188,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             @Override
             protected boolean handle() {
                 try ( Connection conn = DerbyBase.getConnection()) {
-                    data2D.setTask(task);
+                    data2D.startTask(task, null);
                     data2D.readDataDefinition(conn);
                     if (isCancelled()) {
                         return false;
@@ -210,7 +207,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.setTask(null);
+                data2D.stopTask();
                 task = null;
                 resetView(false);
                 if (dataController != null) {
@@ -809,7 +806,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
 
     @Override
     public List<List<String>> readPageData(Connection conn) {
-        data2D.setTask(task);
+        data2D.startTask(task, null);
         return data2D.readPageData(conn);
     }
 
@@ -836,7 +833,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     public void postLoadedTableData() {
         super.postLoadedTableData();
         if (data2D != null) {
-            data2D.setTask(null);
+            data2D.stopTask();
         }
     }
 

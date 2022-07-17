@@ -1,19 +1,24 @@
 package mara.mybox.fxml;
 
 import java.util.List;
+import mara.mybox.data2d.Data2D;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
  * @CreateDate 2022-7-7
  * @License Apache License Version 2.0
  */
-public class RowFilter extends ExpressionCalculator {
+public class RowFilter {
 
     public static String ReversedPrefix = "Reversed::";
 
+    public Data2D data2D;
     public String script;
     public long passedNumber, maxPassed;
     public boolean reversed, passed;
+    public SingletonTask task;
+    public ExpressionCalculator calculator;
 
     public RowFilter() {
         init();
@@ -30,6 +35,22 @@ public class RowFilter extends ExpressionCalculator {
         maxPassed = -1;
         reversed = false;
         passed = false;
+        calculator = new ExpressionCalculator();
+    }
+
+    public void start(SingletonTask task, Data2D data2D) {
+        passedNumber = 0;
+        passed = false;
+        this.task = task;
+        this.data2D = data2D;
+        calculator.start();
+    }
+
+    public void stop() {
+        passedNumber = 0;
+        passed = false;
+        task = null;
+        calculator.stop();
     }
 
     public static RowFilter create() {
@@ -62,13 +83,6 @@ public class RowFilter extends ExpressionCalculator {
         return rowFilterString;
     }
 
-    @Override
-    public void stopService() {
-        super.stopService();
-        passedNumber = 0;
-        passed = false;
-    }
-
     public boolean needFilter() {
         return (script != null && !script.isBlank())
                 || maxPassed > 0;
@@ -82,11 +96,11 @@ public class RowFilter extends ExpressionCalculator {
         passed = false;
         if (calculateSuccess) {
             if (reversed) {
-                if ("false".equals(expressionResult)) {
+                if ("false".equals(calculator.getResult())) {
                     passed = true;
                 }
             } else {
-                if ("true".equals(expressionResult)) {
+                if ("true".equals(calculator.getResult())) {
                     passed = true;
                 }
             }
@@ -94,11 +108,11 @@ public class RowFilter extends ExpressionCalculator {
         if (passed) {
             passedNumber++;
         }
+        handleError(calculator.getError());
         return passed;
     }
 
-    public boolean filterTableRow(List<String> tableRow, long tableRowIndex) {
-        error = null;
+    public boolean filterTableRow(Data2D data2D, List<String> tableRow, long tableRowIndex) {
         if (tableRow == null) {
             passed = false;
             return false;
@@ -108,13 +122,13 @@ public class RowFilter extends ExpressionCalculator {
             passedNumber++;
             return true;
         }
-        return readResult(calculateTableRowExpression(script, tableRow, tableRowIndex));
+        return readResult(calculator.calculateTableRowExpression(data2D, script, tableRow, tableRowIndex));
     }
 
-    public boolean filterDataRow(List<String> dataRow, long dataRowIndex) {
+    public boolean filterDataRow(Data2D data2D, List<String> dataRow, long dataRowIndex) {
         try {
-            error = null;
-            if (dataRow == null) {
+            handleError(null);
+            if (dataRow == null || data2D == null) {
                 passed = false;
                 return false;
             }
@@ -123,21 +137,57 @@ public class RowFilter extends ExpressionCalculator {
                 passedNumber++;
                 return true;
             }
-            return readResult(calculateDataRowExpression(script, dataRow, dataRowIndex));
+            return readResult(calculator.calculateDataRowExpression(data2D, script, dataRow, dataRowIndex));
         } catch (Exception e) {
-            handleError(e);
+            passed = false;
+            MyBoxLog.error(e);
+            return false;
         }
-        return passed;
+    }
+
+    public String getError() {
+        return calculator.getError();
+    }
+
+    public String getResult() {
+        return calculator.getResult();
+    }
+
+    public void handleError(String error) {
+        if (task != null) {
+            task.setError(error);
+        }
+        if (error != null) {
+            MyBoxLog.console(error);
+        }
     }
 
     /*
         get/set
      */
+    public Data2D getData2D() {
+        return data2D;
+    }
+
+    public RowFilter setData2D(Data2D data2D) {
+        this.data2D = data2D;
+        return this;
+    }
+
+    public SingletonTask getTask() {
+        return task;
+    }
+
+    public RowFilter setTask(SingletonTask task) {
+        this.task = task;
+        return this;
+    }
+
     public String getScript() {
         return script;
     }
 
-    public ExpressionCalculator setScript(String script) {
+    public RowFilter setScript(String script) {
         this.script = script;
         return this;
     }

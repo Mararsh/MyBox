@@ -169,7 +169,7 @@ public class ControlData2DInput extends BaseController {
                             delimiterName = ",";
                         }
                         dataFileText.setDelimiter(delimiterName);
-                        dataFileText.setTask(task);
+                        dataFileText.startTask(task, null);
                         List<String> names = dataFileText.readColumnNames();
                         if (isCancelled()) {
                             return false;
@@ -242,7 +242,7 @@ public class ControlData2DInput extends BaseController {
 
                 @Override
                 protected void finalAction() {
-                    dataFileText.setTask(null);
+                    dataFileText.stopTask();
                     task = null;
                     if (validateTable != null && !validateTable.isEmpty()) {
                         validateTable.htmlTable();

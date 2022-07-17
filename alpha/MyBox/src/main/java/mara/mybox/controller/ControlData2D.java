@@ -449,9 +449,9 @@ public class ControlData2D extends BaseController {
                     if (backupController != null && backupController.isBack() && !data2D.isTmpData()) {
                         backupController.addBackup(task, data2D.getFile());
                     }
-                    data2D.setTask(task);
+                    data2D.startTask(task, null);
                     data2D.savePageData(targetData);
-                    data2D.setTask(task);
+                    data2D.startTask(task, null);
                     data2D.countSize();
                     Data2D.saveAttributes(data2D, targetData);
                     data2D.cloneAll(targetData);
@@ -469,7 +469,7 @@ public class ControlData2D extends BaseController {
 
             @Override
             protected void finalAction() {
-                data2D.setTask(null);
+                data2D.stopTask();
                 task = null;
 
             }
@@ -490,9 +490,9 @@ public class ControlData2D extends BaseController {
             @Override
             protected boolean handle() {
                 try {
-                    data2D.setTask(task);
+                    data2D.startTask(task, null);
                     data2D.savePageData(targetData);
-                    data2D.setTask(task);
+                    data2D.startTask(task, null);
                     data2D.countSize();
                     Data2D.saveAttributes(data2D, targetData);
                     return true;
@@ -519,8 +519,8 @@ public class ControlData2D extends BaseController {
 
             @Override
             protected void finalAction() {
-                data2D.setTask(null);
-                targetData.setTask(null);
+                data2D.stopTask();
+                targetData.stopTask();
                 task = null;
             }
         };

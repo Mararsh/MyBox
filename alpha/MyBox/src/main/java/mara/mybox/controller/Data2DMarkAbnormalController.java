@@ -28,7 +28,7 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
     @FXML
     protected CheckBox abnormalCheck, sizeCheck;
     @FXML
-    protected TextField fromInput, toInput, sequenceInput;
+    protected TextField titleInput, fromInput, toInput, sequenceInput;
     @FXML
     protected FlowPane columnsPane;
     @FXML
@@ -118,6 +118,7 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
             updatedStyle = new Data2DStyle();
         }
         try {
+            updatedStyle.setTitle(titleInput.getText());
             String sv = fromInput.getText();
             if (sv == null || sv.isBlank()) {
                 updatedStyle.setRowStart(-1);
@@ -167,6 +168,7 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
         currentStyle = new Data2DStyle();
         updatedStyle = currentStyle;
         isSettingValues = true;
+        titleInput.clear();
         fromInput.clear();
         toInput.clear();
         selectNoneColumn();
@@ -193,6 +195,7 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
         recoverButton.setDisable(updatedStyle.getD2sid() >= 0);
 
         isSettingValues = true;
+        titleInput.setText(style.getTitle());
         // For display, indices are 1-based and included
         // For internal, indices are 0-based and excluded
         fromInput.setText(updatedStyle.getRowStart() < 0 ? "" : (updatedStyle.getRowStart() + 1) + "");

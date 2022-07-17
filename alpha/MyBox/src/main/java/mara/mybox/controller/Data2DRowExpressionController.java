@@ -98,8 +98,9 @@ public class Data2DRowExpressionController extends BaseData2DHandleController {
             for (int i = 0; i < checkedRowsIndices.size(); i++) {
                 int rowIndex = checkedRowsIndices.get(i);
                 List<String> checkedRow = outputData.get(i);
-                if (data2D.calculateTableRowExpression(script, tableController.tableData.get(rowIndex), rowIndex)) {
-                    checkedRow.add(data2D.getExpressionResult());
+                if (expressionController.calculator.calculateTableRowExpression(data2D,
+                        script, tableController.tableData.get(rowIndex), rowIndex)) {
+                    checkedRow.add(expressionController.calculator.getResult());
                 } else {
                     if (errorContinueCheck.isSelected()) {
                         checkedRow.add(null);
@@ -135,7 +136,8 @@ public class Data2DRowExpressionController extends BaseData2DHandleController {
 
     @Override
     public DataFileCSV generatedFile() {
-        return data2D.rowExpression(expressionController.scriptInput.getText().trim(),
+        return data2D.rowExpression(expressionController.calculator,
+                expressionController.scriptInput.getText().trim(),
                 nameInput.getText().trim(), errorContinueCheck.isSelected(),
                 checkedColsIndices, rowNumberCheck.isSelected(), colNameCheck.isSelected());
     }

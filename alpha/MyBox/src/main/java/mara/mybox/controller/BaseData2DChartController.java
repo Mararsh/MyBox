@@ -190,10 +190,9 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             @Override
             protected boolean handle() {
                 try {
-                    data2D.setTask(task);
-                    data2D.startFilterService(task);
+                    data2D.startTask(task, rowFilterController.rowFilter);
                     readData();
-                    data2D.stopFilterService();
+                    data2D.stopFilter();
                     return true;
                 } catch (Exception e) {
                     MyBoxLog.error(e);
@@ -214,8 +213,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopFilterService();
-                data2D.setTask(null);
+                data2D.stopTask();
                 task = null;
             }
 

@@ -22,6 +22,7 @@ import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DoubleTools;
@@ -404,7 +405,7 @@ public class DataTable extends Data2D {
     }
 
     @Override
-    public boolean setValue(List<Integer> cols, String value, boolean errorContinue) {
+    public boolean setValue(ExpressionCalculator calculator, List<Integer> cols, String value, boolean errorContinue) {
         if (cols == null || cols.isEmpty()) {
             return false;
         }
@@ -460,6 +461,7 @@ public class DataTable extends Data2D {
                 conn.setAutoCommit(false);
                 rowIndex = 0;
                 int count = 0;
+                startFilter();
                 while (results.next() && task != null && !task.isCancelled()) {
                     Data2DRow row = tableData2D.readData(results);
                     List<String> rowValues = new ArrayList<>();
@@ -473,7 +475,8 @@ public class DataTable extends Data2D {
                         continue;
                     }
                     if (script != null) {
-                        calculateDataRowExpression(script, rowValues, rowIndex);
+                        calculator.calculateDataRowExpression(this, script, rowValues, rowIndex);
+                        error = calculator.getError();
                         if (error != null) {
                             if (errorContinue) {
                                 continue;
@@ -495,7 +498,7 @@ public class DataTable extends Data2D {
                             } else if (isRandomNn) {
                                 v = random(random, c, true);
                             } else if (script != null) {
-                                v = getExpressionResult();
+                                v = calculator.getResult();
                             } else {
                                 v = value;
                             }
@@ -856,7 +859,9 @@ public class DataTable extends Data2D {
                 sData[c] = colStatistic;
                 if (selections.median) {
                     Object m = percentile(conn, column, 50);
-                    if (column.isNumberType()) {
+                    if (m == null) {
+                        colStatistic.modeValue = null;
+                    } else if (column.isNumberType()) {
                         colStatistic.modeValue = DoubleTools.format(Double.valueOf(m + ""), scale);
                     } else {
                         colStatistic.modeValue = column.toString(m);

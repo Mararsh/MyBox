@@ -1,7 +1,6 @@
 package mara.mybox.fxml;
 
 import mara.mybox.db.data.Data2DColumn;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 
@@ -192,7 +191,7 @@ public class ColumnFilter extends RowFilter {
     // return true if the value satisfies one of conditions
     public boolean filter(Data2DColumn column, String value) {
         try {
-            error = null;
+            handleError(null);
             passed = false;
             if (!work) {
                 passed = true;
@@ -259,8 +258,7 @@ public class ColumnFilter extends RowFilter {
                 return filterScript(value);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            error = e.toString();
+            handleError(e.toString());
         }
         passed = false;
         return false;
@@ -268,14 +266,14 @@ public class ColumnFilter extends RowFilter {
 
     private boolean filterScript(String value) {
         try {
-            error = null;
+            handleError(null);
             if (script == null || script.isBlank()) {
                 passed = true;
                 return true;
             }
-            return readResult(calculateDataColumnExpression(script, value));
+            return readResult(calculator.calculateDataColumnExpression(data2D, script, value));
         } catch (Exception e) {
-            handleError(e);
+            handleError(e.toString());
             passed = false;
             return passed;
         }

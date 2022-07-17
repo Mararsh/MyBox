@@ -13,6 +13,7 @@ import mara.mybox.data2d.scan.Data2DReader;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppValues;
@@ -209,7 +210,8 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
     }
 
-    public DataFileCSV rowExpression(String script, String name, boolean errorContinue,
+    public DataFileCSV rowExpression(ExpressionCalculator calculator,
+            String script, String name, boolean errorContinue,
             List<Integer> cols, boolean includeRowNumber, boolean includeColName) {
         if (cols == null || cols.isEmpty()) {
             return null;
@@ -236,8 +238,9 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             }
             reader = Data2DReader.create(this)
                     .setCsvPrinter(csvPrinter).setCols(cols).setIncludeRowNumber(includeRowNumber)
-                    .setScript(script).setName(name)
+                    .setScript(script).setName(name).setCalculator(calculator)
                     .setReaderTask(task).start(Data2DReader.Operation.RowExpression);
+            calculator.stop();
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());

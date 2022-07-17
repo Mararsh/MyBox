@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Random;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
@@ -305,7 +306,7 @@ public class DataFileText extends DataFile {
     }
 
     @Override
-    public boolean setValue(List<Integer> cols, String value, boolean errorContinue) {
+    public boolean setValue(ExpressionCalculator calculator, List<Integer> cols, String value, boolean errorContinue) {
         if (file == null || !file.exists() || file.length() == 0
                 || cols == null || cols.isEmpty()) {
             return false;
@@ -336,6 +337,7 @@ public class DataFileText extends DataFile {
             Random random = new Random();
             rowIndex = 0;
             boolean needSetValue;
+            startFilter();
             while ((line = reader.readLine()) != null && task != null && !task.isCancelled()) {
                 List<String> record = parseFileLine(line);
                 if (record == null || record.isEmpty()) {
@@ -344,7 +346,8 @@ public class DataFileText extends DataFile {
                 filterDataRow(record, ++rowIndex);
                 needSetValue = filterPassed() && !filterReachMaxPassed();
                 if (needSetValue && script != null) {
-                    calculateDataRowExpression(script, record, rowIndex);
+                    calculator.calculateDataRowExpression(this, script, record, rowIndex);
+                    error = calculator.getError();
                     if (error != null) {
                         if (errorContinue) {
                             continue;
@@ -364,7 +367,7 @@ public class DataFileText extends DataFile {
                         } else if (isRandomNn) {
                             row.add(random(random, i, true));
                         } else if (script != null) {
-                            row.add(getExpressionResult());
+                            row.add(calculator.getResult());
                         } else {
                             row.add(value);
                         }

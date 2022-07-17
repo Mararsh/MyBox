@@ -18,7 +18,7 @@ public class Data2DStyle extends BaseData {
     protected Data2DDefinition data2DDefinition;
     protected long d2sid, d2id;
     protected long rowStart, rowEnd; // 0-based, exlcuded
-    protected String columns, rowFilterString, columnFilterString,
+    protected String title, columns, rowFilterString, columnFilterString,
             fontColor, bgColor, fontSize, moreStyle;
     protected boolean abnoramlValues, bold;
     protected float sequence;
@@ -28,6 +28,7 @@ public class Data2DStyle extends BaseData {
     private void init() {
         d2sid = -1;
         d2id = -1;
+        title = null;
         rowStart = -1;
         rowEnd = -1;
         columns = null;
@@ -67,6 +68,7 @@ public class Data2DStyle extends BaseData {
             data2DDefinition = style.data2DDefinition;
             d2sid = style.d2sid;
             d2id = style.d2id;
+            title = style.title;
             rowStart = style.rowStart;
             rowEnd = style.rowEnd;
             columns = style.columns;
@@ -80,6 +82,7 @@ public class Data2DStyle extends BaseData {
             moreStyle = style.moreStyle;
             bold = style.bold;
             sequence = style.sequence;
+            abnoramlValues = style.abnoramlValues;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -128,6 +131,9 @@ public class Data2DStyle extends BaseData {
                     return true;
                 case "d2id":
                     data.setD2id(value == null ? -1 : (long) value);
+                    return true;
+                case "title":
+                    data.setTitle(value == null ? null : (String) value);
                     return true;
                 case "rowStart":
                     data.setRowStart(value == null ? -1 : (long) value);
@@ -182,6 +188,8 @@ public class Data2DStyle extends BaseData {
                     return data.getD2sid();
                 case "d2id":
                     return data.getD2id();
+                case "title":
+                    return data.getTitle();
                 case "rowStart":
                     return data.getRowStart();
                 case "rowEnd":
@@ -291,14 +299,13 @@ public class Data2DStyle extends BaseData {
             if (calculator == null || tableRow == null) {
                 return false;
             }
+
             if (rowFilter != null) {
-                rowFilter.cloneEnv(calculator);
-                if (!rowFilter.filterTableRow(tableRow, tableRowIndex)) {
+                if (!rowFilter.filterTableRow(calculator.data2D, tableRow, tableRowIndex)) {
                     return false;
                 }
             }
             if (columnFilter != null) {
-                columnFilter.cloneEnv(calculator);
                 if (!columnFilter.filter(calculator.data2D.getColumns().get(colIndex), tableRow.get(colIndex + 1))) {
                     return false;
                 }
@@ -329,6 +336,15 @@ public class Data2DStyle extends BaseData {
 
     public Data2DStyle setD2id(long d2id) {
         this.d2id = d2id;
+        return this;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public Data2DStyle setTitle(String title) {
+        this.title = title;
         return this;
     }
 

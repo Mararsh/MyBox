@@ -50,9 +50,9 @@ public class DataManufactureSaveController extends BaseChildController {
                 try {
                     if (tableController.data2D.isMutiplePages()) {
                         if (tableController.data2D.isTableChanged()) {
-                            tableController.data2D.setTask(task);
+                            tableController.data2D.startTask(task, null);
                             csvFile = ((DataFileCSV) (tableController.data2D)).savePageAs();
-                            tableController.data2D.setTask(null);
+                            tableController.data2D.stopTask();
                         } else {
                             csvFile = (DataFileCSV) tableController.data2D;
                         }
@@ -79,7 +79,7 @@ public class DataManufactureSaveController extends BaseChildController {
 
             @Override
             protected void finalAction() {
-                tableController.data2D.setTask(null);
+                tableController.data2D.stopTask();
                 task = null;
             }
         };

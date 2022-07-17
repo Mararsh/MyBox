@@ -50,24 +50,23 @@ public class Data2DConvertToDataBaseTask extends Data2DTableCreateController {
     @Override
     public boolean doTask() {
         try ( Connection conn = DerbyBase.getConnection()) {
-            convertController.data2D.startFilterService(task);
             attributesController.columnIndices = convertController.checkedColsIndices;
             if (!attributesController.createTable(conn)) {
                 return false;
             }
             if (convertController.importCheck.isSelected()) {
                 if (convertController.isAllPages() && convertController.data2D.isMutiplePages()) {
+                    attributesController.data2D.startTask(task, convertController.rowFilterController.rowFilter);
                     attributesController.task = task;
                     attributesController.importAllData(conn);
+                    attributesController.data2D.stopFilter();
                 } else {
                     attributesController.importData(conn, convertController.checkedRowsIndices);
                 }
             }
-            convertController.data2D.stopFilterService();
             return true;
         } catch (Exception e) {
             updateLogs(e.toString());
-            convertController.data2D.stopFilterService();
             return false;
         }
 
@@ -90,7 +89,6 @@ public class Data2DConvertToDataBaseTask extends Data2DTableCreateController {
             convertController.dataVBox.setDisable(false);
             convertController.filterVBox.setDisable(false);
             convertController.attributesBox.setDisable(false);
-            convertController.data2D.stopFilterService();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

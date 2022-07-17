@@ -107,7 +107,7 @@ public class DataTableQueryEditor extends TreeNodeEditor {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                dataTable.setTask(null);
+                dataTable.stopTask();
                 task = null;
             }
 

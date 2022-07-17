@@ -116,27 +116,27 @@ public class Data2DSpliceController extends BaseData2DController {
             protected boolean handle() {
                 try {
                     DataFileCSV csvA, csvB;
-                    dataAController.data2D.setTask(this);
+                    dataAController.data2D.startTask(this, dataAController.rowFilterController.rowFilter);
                     if (dataAController.isAllPages()) {
                         csvA = dataAController.data2D.copy(dataAController.checkedColsIndices, false, true);
                     } else {
                         csvA = DataFileCSV.save(task, dataAController.checkedColumns,
                                 dataAController.selectedData(false));
                     }
-                    dataAController.data2D.setTask(null);
+                    dataAController.data2D.stopTask();
                     if (csvA == null) {
                         error = message("InvalidData") + ": " + message("DataA");
                         return false;
                     }
 
-                    dataBController.data2D.setTask(this);
+                    dataBController.data2D.startTask(this, dataBController.rowFilterController.rowFilter);
                     if (dataBController.isAllPages()) {
                         csvB = dataBController.data2D.copy(dataBController.checkedColsIndices, false, true);
                     } else {
                         csvB = DataFileCSV.save(task, dataBController.checkedColumns,
                                 dataBController.selectedData(false));
                     }
-                    dataBController.data2D.setTask(null);
+                    dataBController.data2D.stopTask();
                     if (csvB == null) {
                         error = message("InvalidData") + ": " + message("DataB");
                         return false;
@@ -162,8 +162,8 @@ public class Data2DSpliceController extends BaseData2DController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                dataAController.data2D.setTask(null);
-                dataBController.data2D.setTask(null);
+                dataAController.data2D.stopTask();
+                dataBController.data2D.stopTask();
                 task = null;
             }
 

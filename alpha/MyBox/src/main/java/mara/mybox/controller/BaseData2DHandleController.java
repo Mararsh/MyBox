@@ -257,14 +257,9 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
 
             @Override
             protected boolean handle() {
-                data2D.setTask(task);
-                if (myController instanceof Data2DRowExpressionController) {
-                    data2D.startExpressionService(task);
-                } else {
-                    data2D.startFilterService(task);
-                }
+                data2D.startTask(task, rowFilterController.rowFilter);
                 csvFile = generatedFile();
-                data2D.stopFilterService();
+                data2D.stopFilter();
                 return csvFile != null;
             }
 
@@ -277,8 +272,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopFilterService();
-                data2D.setTask(null);
+                data2D.stopTask();
                 task = null;
             }
 
@@ -297,10 +291,9 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             @Override
             protected boolean handle() {
                 try {
-                    data2D.setTask(task);
-                    data2D.startFilterService(task);
+                    data2D.startTask(task, rowFilterController.rowFilter);
                     ok = handleRows();
-                    data2D.stopFilterService();
+                    data2D.stopFilter();
                     return ok;
                 } catch (Exception e) {
                     error = e.toString();
@@ -320,8 +313,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.setTask(null);
-                data2D.stopFilterService();
+                data2D.stopTask();
                 task = null;
                 if (targetController != null) {
                     targetController.refreshControls();

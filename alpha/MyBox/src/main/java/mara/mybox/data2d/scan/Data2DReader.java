@@ -21,6 +21,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.fxml.RowFilter;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DoubleTools;
@@ -52,6 +53,7 @@ public abstract class Data2DReader {
     protected double[] colValues;
     protected Connection conn;
     protected RowFilter rowFilter;
+    protected ExpressionCalculator calculator;
     protected DataTable writerTable;
     protected TableData2D writerTableData2D;
     protected DoubleStatistic[] statisticData;
@@ -165,7 +167,8 @@ public abstract class Data2DReader {
                 }
                 break;
             case RowExpression:
-                if (cols == null || cols.isEmpty() || csvPrinter == null || script == null || name == null) {
+                if (cols == null || cols.isEmpty() || csvPrinter == null
+                        || calculator == null || script == null || name == null) {
                     failed = true;
                     return null;
                 }
@@ -323,6 +326,7 @@ public abstract class Data2DReader {
             scale = data2D.getScale();
         }
         record = new ArrayList<>();
+        data2D.startFilter();
         scanData();
         afterScanned();
         return this;
@@ -579,10 +583,8 @@ public abstract class Data2DReader {
             int len = record.size();
             for (int col : cols) {
                 if (col >= 0 && col < len) {
-                    Data2DColumn sourceColumn = data2D.getColumns().get(col);
-                    Object value = sourceColumn.fromString(record.get(col));
                     Data2DRow data2DRow = writerTableData2D.newRow();
-                    data2DRow.setColumnValue("data", value);
+                    data2DRow.setColumnValue("data", record.get(col));
                     writerTableData2D.insertData(conn, data2DRow);
                     if (++count % DerbyBase.BatchSize == 0) {
                         conn.commit();
@@ -631,8 +633,8 @@ public abstract class Data2DReader {
             if (includeRowNumber) {
                 row.add(0, (rowIndex + 1) + "");
             }
-            if (data2D.calculateDataRowExpression(script, record, rowIndex + 1)) {
-                row.add(data2D.getExpressionResult());
+            if (calculator.calculateDataRowExpression(data2D, script, record, rowIndex + 1)) {
+                row.add(calculator.getResult());
             } else {
                 if (errorContinue) {
                     row.add(null);
@@ -1120,6 +1122,7 @@ public abstract class Data2DReader {
 
     public void afterScanned() {
         try {
+            data2D.stopFilter();
             switch (operation) {
                 case StatisticColumns:
                     if (scanPass == 1) {
@@ -1346,6 +1349,11 @@ public abstract class Data2DReader {
 
     public Data2DReader setName(String name) {
         this.name = name;
+        return this;
+    }
+
+    public Data2DReader setCalculator(ExpressionCalculator calculator) {
+        this.calculator = calculator;
         return this;
     }
 

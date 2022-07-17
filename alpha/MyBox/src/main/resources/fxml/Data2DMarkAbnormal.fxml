@@ -103,17 +103,38 @@ License:    Apache License Version 2.0
                                         </Button>
                                     </children>
                                 </HBox>
-                                <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                    <children>
-                                        <Label text="%Sequence" />
-                                        <TextField fx:id="sequenceInput" prefWidth="100.0" />
-                                        <Label fx:id="idLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
-                                        <CheckBox fx:id="abnormalCheck" mnemonicParsing="false" text="%ThisRuleDefinesAbnormal" />
-                                    </children>
-                                </HBox>
                                 <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0" />
                                 <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                                     <tabs>
+                              <Tab fx:id="baseTab" text="%Base">
+                                 <content>
+                                    <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                                       <content>
+                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                             <padding>
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                             </padding>
+                                             <children>
+                                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                            <children>
+                                                                <Label text="%Sequence" />
+                                                                <TextField fx:id="sequenceInput" prefWidth="150.0" />
+                                                                <Label fx:id="idLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
+                                                            </children>
+                                                        </HBox>
+                                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                   <children>
+                                                      <Label text="%Title" />
+                                                      <TextField fx:id="titleInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                   </children>
+                                                </HBox>
+                                                          <CheckBox fx:id="abnormalCheck" mnemonicParsing="false" text="%ThisRuleDefinesAbnormal" />
+                                             </children>
+                                          </VBox>
+                                       </content>
+                                    </ScrollPane>
+                                 </content>
+                              </Tab>
                                         <Tab fx:id="filterTab" text="%Data">
                                             <content>
                                                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">

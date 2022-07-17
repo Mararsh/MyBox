@@ -200,7 +200,7 @@ public class DataFileExcelController extends BaseData2DFileController {
 
                 @Override
                 protected void finalAction() {
-                    dataFileExcel.setTask(null);
+                    dataFileExcel.stopTask();
                     task = null;
                 }
 
@@ -245,7 +245,7 @@ public class DataFileExcelController extends BaseData2DFileController {
 
                 @Override
                 protected void finalAction() {
-                    dataFileExcel.setTask(null);
+                    dataFileExcel.stopTask();
                     task = null;
                 }
 

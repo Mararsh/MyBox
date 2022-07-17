@@ -5,6 +5,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.RowFilter;
 import static mara.mybox.value.Languages.message;
@@ -27,12 +28,13 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
 
     public ControlData2DRowFilter() {
         TipsLabelKey = "RowFilterTips";
+
     }
 
     @Override
     public void initCalculator() {
         rowFilter = new RowFilter();
-        calculator = rowFilter;
+        calculator = rowFilter.calculator;
     }
 
     public void setParameters(BaseController parent, ControlData2DEditTable tableController) {
@@ -68,13 +70,16 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
                 maxData = -1;
             }
 
-            if (tableController != null) {
-                rowFilter.setWebEngine(tableController.dataController.viewController.htmlController.webEngine);
-            }
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @Override
+    public void setData2D(Data2D data2D) {
+        this.data2D = data2D;
+        rowFilter.data2D = data2D;
+        data2D.rowFilter = rowFilter;
     }
 
     public void load(RowFilter rowFilter) {

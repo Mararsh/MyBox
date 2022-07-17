@@ -71,10 +71,9 @@ public class Data2DDeleteController extends BaseData2DHandleController {
                             && tableController.dataController.backupController.isBack()) {
                         tableController.dataController.backupController.addBackup(task, data2D.getFile());
                     }
-                    data2D.setTask(task);
-                    data2D.startFilterService(task);
+                    data2D.startTask(task, rowFilterController.rowFilter);
                     ok = data2D.delete(errorContinueCheck.isSelected());
-                    data2D.stopFilterService();
+                    data2D.stopFilter();
                     return ok;
                 } catch (Exception e) {
                     error = e.toString();
@@ -94,8 +93,7 @@ public class Data2DDeleteController extends BaseData2DHandleController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopFilterService();
-                data2D.setTask(null);
+                data2D.stopTask();
                 task = null;
             }
 

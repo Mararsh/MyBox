@@ -55,16 +55,7 @@ public class ControlData2DColumnFilter extends ControlData2DRowExpression {
             largerSelector.getItems().addAll(values);
             lessSelector.getItems().addAll(values);
 
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void initCalculator() {
-        try {
             columnFilter = new ColumnFilter();
-            calculator = columnFilter;
 
             conditionsBox.disableProperty().bind(noneRadio.selectedProperty());
 
@@ -76,10 +67,6 @@ public class ControlData2DColumnFilter extends ControlData2DRowExpression {
     public void setParameters(BaseController parent, ControlData2DEditTable tableController) {
         try {
             baseName = parent.baseName;
-
-            if (tableController != null) {
-                columnFilter.setWebEngine(tableController.dataController.viewController.htmlController.webEngine);
-            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
