@@ -91,8 +91,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                         tableController.dataController.backupController.addBackup(task, data2D.getFile());
                     }
                     data2D.startTask(task, rowFilterController.rowFilter);
-                    ok = data2D.setValue(valueController.expressionController.calculator,
-                            checkedColsIndices, valueController.value, valueController.errorContinueCheck.isSelected());
+                    ok = data2D.setValue(checkedColsIndices, valueController.value, valueController.errorContinueCheck.isSelected());
                     data2D.stopFilter();
                     return ok;
                 } catch (Exception e) {
@@ -165,8 +164,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             protected boolean handle() {
                 try {
                     data2D.startTask(task, rowFilterController.rowFilter);
-                    ok = data2D.setValue(valueController.expressionController.calculator,
-                            checkedColsIndices, valueController.value, valueController.errorContinueCheck.isSelected());
+                    ok = data2D.setValue(checkedColsIndices, valueController.value, valueController.errorContinueCheck.isSelected());
                     data2D.stopFilter();
                     return ok;
                 } catch (Exception e) {

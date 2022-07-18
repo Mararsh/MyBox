@@ -1,7 +1,7 @@
 package mara.mybox.fxml;
 
+import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.db.data.Data2DColumn;
-import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -25,7 +25,7 @@ public class ColumnFilter extends RowFilter {
     public static String Median = "MyBox-median";
 
     public boolean work, empty, zero, negative, positive, number, nonNumeric,
-            equal, larger, less, columnExpression;
+            equal, larger, less, compareString, columnExpression;
     public String largerValue, lessValue, equalValue;
 
     public ColumnFilter() {
@@ -33,10 +33,10 @@ public class ColumnFilter extends RowFilter {
     }
 
     private void init() {
-        work = number = true;
-        largerValue = lessValue = equalValue = null;
-        empty = zero = negative = positive = equal = larger = less = columnExpression
+        work = empty = zero = negative = positive = number = number
+                = equal = larger = less = compareString = columnExpression
                 = reversed = passed = false;
+        largerValue = lessValue = equalValue = null;
         script = null;
     }
 
@@ -71,6 +71,8 @@ public class ColumnFilter extends RowFilter {
                     number = true;
                 } else if ("nonNumeric".equalsIgnoreCase(v)) {
                     nonNumeric = true;
+                } else if ("compareString".equalsIgnoreCase(v)) {
+                    compareString = true;
                 } else if (v.startsWith(EqualToPrefix)) {
                     equal = true;
                     equalValue = v.substring(EqualToPrefix.length());
@@ -90,8 +92,6 @@ public class ColumnFilter extends RowFilter {
                     reversed = false;
                 }
             }
-        } else {
-            work = false;
         }
         return this;
     }
@@ -119,6 +119,9 @@ public class ColumnFilter extends RowFilter {
         }
         if (nonNumeric) {
             columnFilterString += "nonNumeric" + ValueSeperator;
+        }
+        if (compareString) {
+            columnFilterString += "compareString" + ValueSeperator;
         }
         if (equal && equalValue != null && !equalValue.isBlank()) {
             columnFilterString += EqualToPrefix + equalValue + ValueSeperator;
@@ -193,66 +196,85 @@ public class ColumnFilter extends RowFilter {
         try {
             handleError(null);
             passed = false;
+            if (column == null) {
+                handleError(message("InvalidData"));
+                return false;
+            }
             if (!work) {
                 passed = true;
                 return true;
             }
+            if (empty && (value == null || value.isBlank())) {
+                passed = true;
+                return true;
+            }
+            double numberValue = Double.NaN;
+            try {
+                numberValue = Double.valueOf(value);
+            } catch (Exception e) {
+            }
+            if (numberValue != Double.NaN) {
+                if (number) {
+                    passed = true;
+                    return true;
+                }
+                if (zero && numberValue == 0) {
+                    passed = true;
+                    return true;
+                }
+                if (positive && numberValue > 0) {
+                    passed = true;
+                    return true;
+                }
+                if (negative && numberValue < 0) {
+                    passed = true;
+                    return true;
+                }
+            } else {
+                if (nonNumeric) {
+                    passed = true;
+                    return true;
+                }
+            }
+            DoubleStatistic statistic = column.getDoubleStatistic();
             if (equal) {
-                if (equalValue != null && !equalValue.isBlank()) {
-                    if (equalValue.equals(value)) {
+                if (compareString) {
+                    if (compareString(equalValue, statistic, value) == 0) {
                         passed = true;
                         return true;
                     }
                 } else {
-                    if (value != null && !value.isBlank()) {
+                    if (compareNumber(equalValue, statistic, numberValue) == 0) {
                         passed = true;
                         return true;
                     }
                 }
             }
-            double number = AppValues.InvalidDouble;
-            try {
-                number = Double.valueOf(value);
-            } catch (Exception e) {
+            if (larger) {
+                if (compareString) {
+                    if (compareString(largerValue, statistic, value) == 1) {
+                        passed = true;
+                        return true;
+                    }
+                } else {
+                    if (compareNumber(largerValue, statistic, numberValue) == 1) {
+                        passed = true;
+                        return true;
+                    }
+                }
             }
-            if (number == AppValues.InvalidDouble) {
-                if (empty) {
-                    passed = true;
-                    return true;
-                }
-                if (!column.isNumberType()) {
-                    if (largerValue != null && largerValue.compareTo(value) < 0) {
+            if (less) {
+                if (compareString) {
+                    if (compareString(lessValue, statistic, value) == -1) {
                         passed = true;
                         return true;
                     }
-                    if (lessValue != null && lessValue.compareTo(value) > 0) {
+                } else {
+                    if (compareNumber(lessValue, statistic, numberValue) == -1) {
                         passed = true;
                         return true;
                     }
                 }
-            } else {
-                if (zero && number == 0) {
-                    passed = true;
-                    return true;
-                }
-                if (positive && number > 0) {
-                    passed = true;
-                    return true;
-                }
-                if (negative && number < 0) {
-                    passed = true;
-                    return true;
-                }
-//                if (largerValue != null && largerThanNumber != AppValues.InvalidDouble
-//                        && number > largerThanNumber) {
-//                    passed = true;
-//                    return true;
-//                }
-//                if (lessValue != null && lessThanNumber != AppValues.InvalidDouble
-//                        && number < lessThanNumber) {
-//                    passed = true;
-//                    return true;
-//                }
             }
             if (columnExpression) {
                 return filterScript(value);
@@ -262,6 +284,109 @@ public class ColumnFilter extends RowFilter {
         }
         passed = false;
         return false;
+    }
+
+    public int compareString(String name, DoubleStatistic statistic, String value) {
+        if (name == null || value == null) {
+            return -5;
+        }
+        if (ColumnFilter.Q1.equals(name)) {
+            if (statistic != null && statistic.lowerQuartileValue != null) {
+                return value.compareTo(statistic.lowerQuartileValue + "");
+            }
+        } else if (ColumnFilter.Q3.equals(name)) {
+            if (statistic != null && statistic.upperQuartileValue != null) {
+                return value.compareTo(statistic.upperQuartileValue + "");
+            }
+        } else if (ColumnFilter.E1.equals(name)) {
+            if (statistic != null && statistic.lowerExtremeOutlierLine != Double.NaN) {
+                return value.compareTo(statistic.lowerExtremeOutlierLine + "");
+            }
+        } else if (ColumnFilter.E2.equals(name)) {
+            if (statistic != null && statistic.lowerMildOutlierLine != Double.NaN) {
+                return value.compareTo(statistic.lowerMildOutlierLine + "");
+            }
+        } else if (ColumnFilter.E3.equals(name)) {
+            if (statistic != null && statistic.upperMildOutlierLine != Double.NaN) {
+                return value.compareTo(statistic.upperMildOutlierLine + "");
+            }
+        } else if (ColumnFilter.E4.equals(name)) {
+            if (statistic != null && statistic.upperExtremeOutlierLine != Double.NaN) {
+                return value.compareTo(statistic.upperExtremeOutlierLine + "");
+            }
+        } else if (ColumnFilter.Mode.equals(name)) {
+            if (statistic != null && statistic.modeValue != null) {
+                return value.compareTo(statistic.modeValue + "");
+            }
+        } else if (ColumnFilter.Median.equals(name)) {
+            if (statistic != null && statistic.medianValue != null) {
+                return value.compareTo(statistic.medianValue + "");
+            }
+        } else {
+            return value.compareTo(name + "");
+        }
+        return -4;
+    }
+
+    public int compareNumber(double v1, double v2) {
+        if (v1 == Double.NaN || v2 == Double.NaN) {
+            return -5;
+        }
+        if (v1 == v2) {
+            return 0;
+        } else if (v1 > v2) {
+            return 1;
+        } else {
+            return -1;
+        }
+    }
+
+    public int compareNumber(String name, DoubleStatistic statistic, double value) {
+        if (name == null || value == Double.NaN) {
+            return -5;
+        }
+        if (ColumnFilter.Q1.equals(name)) {
+            if (statistic != null && statistic.lowerQuartile != Double.NaN) {
+                return compareNumber(value, statistic.lowerQuartile);
+            }
+        } else if (ColumnFilter.Q3.equals(name)) {
+            if (statistic != null && statistic.upperQuartile != Double.NaN) {
+                return compareNumber(value, statistic.upperQuartile);
+            }
+        } else if (ColumnFilter.E1.equals(name)) {
+            if (statistic != null && statistic.lowerExtremeOutlierLine != Double.NaN) {
+                return compareNumber(value, statistic.lowerExtremeOutlierLine);
+            }
+        } else if (ColumnFilter.E2.equals(name)) {
+            if (statistic != null && statistic.lowerMildOutlierLine != Double.NaN) {
+                return compareNumber(value, statistic.lowerMildOutlierLine);
+            }
+        } else if (ColumnFilter.E3.equals(name)) {
+            if (statistic != null && statistic.upperMildOutlierLine != Double.NaN) {
+                return compareNumber(value, statistic.upperMildOutlierLine);
+            }
+        } else if (ColumnFilter.E4.equals(name)) {
+            if (statistic != null && statistic.upperExtremeOutlierLine != Double.NaN) {
+                return compareNumber(value, statistic.upperExtremeOutlierLine);
+            }
+        } else if (ColumnFilter.Mode.equals(name)) {
+            if (statistic != null && statistic.modeValue != null) {
+                try {
+                    return compareNumber(value, Double.valueOf(statistic.modeValue + ""));
+                } catch (Exception ex) {
+                }
+            }
+        } else if (ColumnFilter.Median.equals(name)) {
+            if (statistic != null && statistic.median != Double.NaN) {
+                return compareNumber(value, statistic.median);
+            }
+        } else {
+            try {
+                return compareNumber(value, Double.valueOf(name + ""));
+            } catch (Exception ex) {
+            }
+        }
+        return -4;
     }
 
     private boolean filterScript(String value) {
@@ -396,6 +521,15 @@ public class ColumnFilter extends RowFilter {
 
     public ColumnFilter setNonNumeric(boolean nonNumeric) {
         this.nonNumeric = nonNumeric;
+        return this;
+    }
+
+    public boolean isCompareString() {
+        return compareString;
+    }
+
+    public ColumnFilter setCompareString(boolean compareString) {
+        this.compareString = compareString;
         return this;
     }
 

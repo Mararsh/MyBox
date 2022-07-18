@@ -5,6 +5,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import mara.mybox.db.data.Data2DColumn;
@@ -25,6 +26,8 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
 
     protected Data2DStyle updatedStyle;
 
+    @FXML
+    protected Tab baseTab, dataTab;
     @FXML
     protected CheckBox abnormalCheck, sizeCheck;
     @FXML
@@ -270,36 +273,60 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
         }
     }
 
+    public boolean pickValues() {
+        try {
+            checkInputs();
+            if (UserConfig.badStyle().equals(sequenceInput.getStyle())) {
+                popError(message("InvalidParameters"));
+                tabPane.getSelectionModel().select(baseTab);
+                return false;
+            }
+            if (UserConfig.badStyle().equals(fromInput.getStyle())
+                    || UserConfig.badStyle().equals(toInput.getStyle())) {
+                popError(message("InvalidParameters"));
+                tabPane.getSelectionModel().select(dataTab);
+                return false;
+            }
+            checkStyle();
+            updatedStyle.setD2id(tableController.data2D.getD2did());
+            String columns = "";
+            boolean allColumns = true;
+            for (Node node : columnsPane.getChildren()) {
+                CheckBox cb = (CheckBox) node;
+                if (cb.isSelected()) {
+                    if (columns.isBlank()) {
+                        columns = cb.getText();
+                    } else {
+                        columns += Data2DStyle.ColumnSeparator + cb.getText();
+                    }
+                } else {
+                    allColumns = false;
+                }
+            }
+            if (allColumns) {
+                columns = null;
+            }
+            updatedStyle.setColumns(columns);
+            updatedStyle.setRowFilter(rowFilterController.pickValues());
+            updatedStyle.setColumnFilter(columnFilterController.pickValues());
+            updatedStyle.setAbnoramlValues(abnormalCheck.isSelected());
+            return true;
+        } catch (Exception e) {
+            error = e.toString();
+            return false;
+        }
+    }
+
     @FXML
     @Override
     public void saveAction() {
+        if (!pickValues()) {
+            return;
+        }
         task = new SingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
                 try {
-                    checkStyle();
-                    updatedStyle.setD2id(tableController.data2D.getD2did());
-                    String columns = "";
-                    boolean allColumns = true;
-                    for (Node node : columnsPane.getChildren()) {
-                        CheckBox cb = (CheckBox) node;
-                        if (cb.isSelected()) {
-                            if (columns.isBlank()) {
-                                columns = cb.getText();
-                            } else {
-                                columns += Data2DStyle.ColumnSeparator + cb.getText();
-                            }
-                        } else {
-                            allColumns = false;
-                        }
-                    }
-                    if (allColumns) {
-                        columns = null;
-                    }
-                    updatedStyle.setColumns(columns);
-                    updatedStyle.setRowFilter(rowFilterController.pickValues());
-                    updatedStyle.setColumnFilter(columnFilterController.pickValues());
-                    updatedStyle.setAbnoramlValues(abnormalCheck.isSelected());
                     return listController.tableData2DStyle.writeData(updatedStyle) != null;
                 } catch (Exception e) {
                     error = e.toString();

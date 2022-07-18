@@ -55,7 +55,7 @@ License:    Apache License Version 2.0
                                                 <Image url="@../buttons/Red/iconTips.png" />
                                             </image>
                                         </ImageView>
-                                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                        <Label fx:id="idLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                         <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
                                             <graphic>
                                                 <ImageView fx:id="leftPaneControl1" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -119,7 +119,6 @@ License:    Apache License Version 2.0
                                                             <children>
                                                                 <Label text="%Sequence" />
                                                                 <TextField fx:id="sequenceInput" prefWidth="150.0" />
-                                                                <Label fx:id="idLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
                                                             </children>
                                                         </HBox>
                                                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
@@ -135,7 +134,7 @@ License:    Apache License Version 2.0
                                     </ScrollPane>
                                  </content>
                               </Tab>
-                                        <Tab fx:id="filterTab" text="%Data">
+                                        <Tab fx:id="dataTab" text="%Data">
                                             <content>
                                                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                                                     <content>

@@ -22,7 +22,6 @@ import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DoubleTools;
@@ -405,7 +404,7 @@ public class DataTable extends Data2D {
     }
 
     @Override
-    public boolean setValue(ExpressionCalculator calculator, List<Integer> cols, String value, boolean errorContinue) {
+    public boolean setValue(List<Integer> cols, String value, boolean errorContinue) {
         if (cols == null || cols.isEmpty()) {
             return false;
         }
@@ -475,8 +474,8 @@ public class DataTable extends Data2D {
                         continue;
                     }
                     if (script != null) {
-                        calculator.calculateDataRowExpression(this, script, rowValues, rowIndex);
-                        error = calculator.getError();
+                        calculateDataRowExpression(script, rowValues, rowIndex);
+                        error = expressionError();
                         if (error != null) {
                             if (errorContinue) {
                                 continue;
@@ -498,7 +497,7 @@ public class DataTable extends Data2D {
                             } else if (isRandomNn) {
                                 v = random(random, c, true);
                             } else if (script != null) {
-                                v = calculator.getResult();
+                                v = expressionResult();
                             } else {
                                 v = value;
                             }
@@ -858,13 +857,11 @@ public class DataTable extends Data2D {
                 }
                 sData[c] = colStatistic;
                 if (selections.median) {
-                    Object m = percentile(conn, column, 50);
-                    if (m == null) {
-                        colStatistic.modeValue = null;
-                    } else if (column.isNumberType()) {
-                        colStatistic.modeValue = DoubleTools.format(Double.valueOf(m + ""), scale);
-                    } else {
-                        colStatistic.modeValue = column.toString(m);
+                    colStatistic.medianValue = percentile(conn, column, 50);
+                    try {
+                        colStatistic.median = Double.valueOf(colStatistic.medianValue + "");
+                    } catch (Exception ex) {
+                        colStatistic.median = Double.NaN;
                     }
                 }
                 Object q1 = null, q3 = null;

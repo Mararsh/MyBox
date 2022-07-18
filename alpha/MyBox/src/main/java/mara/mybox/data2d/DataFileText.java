@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Random;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
@@ -306,7 +305,7 @@ public class DataFileText extends DataFile {
     }
 
     @Override
-    public boolean setValue(ExpressionCalculator calculator, List<Integer> cols, String value, boolean errorContinue) {
+    public boolean setValue(List<Integer> cols, String value, boolean errorContinue) {
         if (file == null || !file.exists() || file.length() == 0
                 || cols == null || cols.isEmpty()) {
             return false;
@@ -346,8 +345,8 @@ public class DataFileText extends DataFile {
                 filterDataRow(record, ++rowIndex);
                 needSetValue = filterPassed() && !filterReachMaxPassed();
                 if (needSetValue && script != null) {
-                    calculator.calculateDataRowExpression(this, script, record, rowIndex);
-                    error = calculator.getError();
+                    calculateDataRowExpression(script, record, rowIndex);
+                    error = expressionError();
                     if (error != null) {
                         if (errorContinue) {
                             continue;
@@ -367,7 +366,7 @@ public class DataFileText extends DataFile {
                         } else if (isRandomNn) {
                             row.add(random(random, i, true));
                         } else if (script != null) {
-                            row.add(calculator.getResult());
+                            row.add(expressionResult());
                         } else {
                             row.add(value);
                         }

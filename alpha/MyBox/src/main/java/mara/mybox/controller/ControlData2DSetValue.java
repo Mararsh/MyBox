@@ -110,6 +110,7 @@ public class ControlData2DSetValue extends BaseController {
     public void setParameter(BaseData2DHandleController handleController) {
         try {
             this.handleController = handleController;
+            expressionController.calculator = handleController.rowFilterController.calculator;
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

@@ -1132,6 +1132,9 @@ public abstract class Data2DReader {
                                 if (statisticCalculation.isGeometricMean()) {
                                     statisticData[c].geometricMean = Math.pow(statisticData[c].geometricMean, 1d / statisticData[c].count);
                                 }
+                            } else {
+                                statisticData[c].mean = Double.NaN;
+                                statisticData[c].geometricMean = Double.NaN;
                             }
                             if (statisticCalculation.isSkewness()) {
                                 statisticData[c].skewness = skewnessList.get(c).getResult();
@@ -1148,6 +1151,11 @@ public abstract class Data2DReader {
                                 if (statisticCalculation.isSampleStandardDeviation()) {
                                     statisticData[c].sampleStandardDeviation = Math.sqrt(statisticData[c].sampleVariance);
                                 }
+                            } else {
+                                statisticData[c].populationVariance = Double.NaN;
+                                statisticData[c].sampleVariance = Double.NaN;
+                                statisticData[c].populationStandardDeviation = Double.NaN;
+                                statisticData[c].sampleStandardDeviation = Double.NaN;
                             }
                         }
                     }
@@ -1159,6 +1167,9 @@ public abstract class Data2DReader {
                             if (statisticCalculation.isGeometricMean()) {
                                 statisticAll.geometricMean = Math.pow(statisticAll.geometricMean, 1d / statisticAll.count);
                             }
+                        } else {
+                            statisticAll.mean = Double.NaN;
+                            statisticAll.geometricMean = Double.NaN;
                         }
                         if (statisticCalculation.isSkewness()) {
                             statisticAll.skewness = skewnessAll.getResult();
@@ -1172,6 +1183,11 @@ public abstract class Data2DReader {
                             }
                             if (statisticCalculation.isSampleStandardDeviation()) {
                                 statisticAll.sampleStandardDeviation = Math.sqrt(statisticAll.sampleVariance);
+                            } else {
+                                statisticAll.populationVariance = Double.NaN;
+                                statisticAll.sampleVariance = Double.NaN;
+                                statisticAll.populationStandardDeviation = Double.NaN;
+                                statisticAll.sampleStandardDeviation = Double.NaN;
                             }
                         }
                     }

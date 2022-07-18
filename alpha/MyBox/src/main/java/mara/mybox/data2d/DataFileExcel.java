@@ -11,7 +11,6 @@ import java.util.Random;
 import mara.mybox.data2d.scan.Data2DReader;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -458,7 +457,7 @@ public class DataFileExcel extends DataFile {
     }
 
     @Override
-    public boolean setValue(ExpressionCalculator calculator, List<Integer> cols, String value, boolean errorContinue) {
+    public boolean setValue(List<Integer> cols, String value, boolean errorContinue) {
         if (file == null || !file.exists() || file.length() == 0
                 || cols == null || cols.isEmpty()) {
             return false;
@@ -528,8 +527,8 @@ public class DataFileExcel extends DataFile {
                     filterDataRow(values, ++rowIndex);
                     needSetValue = filterPassed() && !filterReachMaxPassed();
                     if (needSetValue && script != null) {
-                        calculator.calculateDataRowExpression(this, script, values, rowIndex);
-                        error = calculator.getError();
+                        calculateDataRowExpression(script, values, rowIndex);
+                        error = expressionError();
                         if (error != null) {
                             if (errorContinue) {
                                 continue;
@@ -549,7 +548,7 @@ public class DataFileExcel extends DataFile {
                             } else if (isRandomNn) {
                                 v = random(random, c, true);
                             } else if (script != null) {
-                                v = calculator.getResult();
+                                v = expressionResult();
                             } else {
                                 v = value;
                             }

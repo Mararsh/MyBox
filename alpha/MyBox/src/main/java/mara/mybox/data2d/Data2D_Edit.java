@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import mara.mybox.calculation.DescriptiveStatistic;
+import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.data2d.scan.Data2DReader;
 import mara.mybox.data2d.scan.Data2DReader.Operation;
 import mara.mybox.db.DerbyBase;
@@ -19,7 +20,6 @@ import mara.mybox.db.table.TableData2DStyle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.ColumnFilter;
-import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.Languages.message;
 
@@ -38,7 +38,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
 
     public abstract boolean savePageData(Data2D targetData);
 
-    public abstract boolean setValue(ExpressionCalculator calculator, List<Integer> cols, String value, boolean errorContinue);
+    public abstract boolean setValue(List<Integer> cols, String value, boolean errorContinue);
 
     public abstract boolean delete(boolean errorContinue);
 
@@ -221,6 +221,17 @@ public abstract class Data2D_Edit extends Data2D_Data {
         countAbnormalLines();
     }
 
+    public void countSize() {
+        try {
+            rowsNumber = dataSize + (tableRowsNumber() - (endRowOfCurrentPage - startRowOfCurrentPage));
+            colsNumber = tableColsNumber();
+            if (colsNumber <= 0) {
+                hasHeader = false;
+            }
+        } catch (Exception e) {
+        }
+    }
+
     public void countAbnormalLines() {
         resetStatistic();
         if (styles == null || styles.isEmpty()) {
@@ -246,24 +257,11 @@ public abstract class Data2D_Edit extends Data2D_Data {
                 if (columnFilter == null) {
                     continue;
                 }
-                String largerThan = columnFilter.getLargerValue();
-                if (ColumnFilter.Q3.equals(largerThan)) {
-                    calculation.setUpperQuartile(true);
-                } else if (ColumnFilter.E3.equals(largerThan)) {
-                    calculation.setUpperMildOutlierLine(true);
-                } else if (ColumnFilter.E4.equals(largerThan)) {
-                    calculation.setUpperExtremeOutlierLine(true);
-                }
-                String lessThan = columnFilter.getLargerValue();
-                if (ColumnFilter.Q1.equals(lessThan)) {
-                    calculation.setLowerQuartile(true);
-                } else if (ColumnFilter.E2.equals(largerThan)) {
-                    calculation.setLowerMildOutlierLine(true);
-                } else if (ColumnFilter.E1.equals(largerThan)) {
-                    calculation.setLowerExtremeOutlierLine(true);
-                }
+                checkStatistic(calculation, columnFilter.getEqualValue());
+                checkStatistic(calculation, columnFilter.getLargerValue());
+                checkStatistic(calculation, columnFilter.getLargerValue());
             }
-            if (colNames.isEmpty()) {
+            if (colNames.isEmpty() || !calculation.needStored()) {
                 return;
             }
             List<Integer> colIndices = new ArrayList<>();
@@ -275,14 +273,14 @@ public abstract class Data2D_Edit extends Data2D_Data {
                 return;
             }
             tmpTable.setTask(task);
-            calculation.setData2D(tmpTable)
-                    .setColsIndices(tmpTable.columnIndices().subList(1, tmpTable.columnsNumber()));
-            calculation.statisticAllByColumns();
-            for (Data2DColumn tmpColumn : tmpTable.getColumns()) {
-                Data2DColumn column = columnByName(tmpTable.sourceColumnName(tmpColumn.getColumnName()));
-                if (column != null) {
-                    column.setDoubleStatistic(tmpColumn.getDoubleStatistic());
-                }
+            List<Integer> tmpColIndices = tmpTable.columnIndices().subList(1, tmpTable.columnsNumber());
+            DoubleStatistic[] statisticData = tmpTable.statisticByColumnsForStored(tmpColIndices, calculation);
+            if (statisticData == null) {
+                return;
+            }
+            for (int i = 0; i < colNames.size(); i++) {
+                Data2DColumn column = columnByName(colNames.get(i));
+                column.setDoubleStatistic(statisticData[i]);
             }
             tmpTable.drop();
         } catch (Exception e) {
@@ -293,14 +291,26 @@ public abstract class Data2D_Edit extends Data2D_Data {
         }
     }
 
-    public void countSize() {
-        try {
-            rowsNumber = dataSize + (tableRowsNumber() - (endRowOfCurrentPage - startRowOfCurrentPage));
-            colsNumber = tableColsNumber();
-            if (colsNumber <= 0) {
-                hasHeader = false;
-            }
-        } catch (Exception e) {
+    public void checkStatistic(DescriptiveStatistic calculation, String name) {
+        if (calculation == null || name == null || name.isBlank()) {
+            return;
+        }
+        if (ColumnFilter.Q1.equals(name)) {
+            calculation.setLowerQuartile(true);
+        } else if (ColumnFilter.Q3.equals(name)) {
+            calculation.setUpperQuartile(true);
+        } else if (ColumnFilter.E1.equals(name)) {
+            calculation.setLowerExtremeOutlierLine(true);
+        } else if (ColumnFilter.E2.equals(name)) {
+            calculation.setLowerMildOutlierLine(true);
+        } else if (ColumnFilter.E3.equals(name)) {
+            calculation.setUpperMildOutlierLine(true);
+        } else if (ColumnFilter.E4.equals(name)) {
+            calculation.setUpperExtremeOutlierLine(true);
+        } else if (ColumnFilter.Mode.equals(name)) {
+            calculation.setMode(true);
+        } else if (ColumnFilter.Median.equals(name)) {
+            calculation.setMedian(true);
         }
     }
 

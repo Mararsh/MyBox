@@ -21,13 +21,14 @@ public class ControlData2DAbnormalList extends BaseSysTableController<Data2DStyl
     @FXML
     protected TableColumn<Data2DStyle, Long> sidColumn, fromColumn, toColumn;
     @FXML
-    protected TableColumn<Data2DStyle, String> columnsColumn, rowFilterColumn, columnFilterColumn;
+    protected TableColumn<Data2DStyle, String> titleColumn, columnsColumn, rowFilterColumn, columnFilterColumn;
 
     @Override
     protected void initColumns() {
         try {
             super.initColumns();
             sidColumn.setCellValueFactory(new PropertyValueFactory<>("d2sid"));
+            titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
             fromColumn.setCellValueFactory(new PropertyValueFactory<>("from"));
             toColumn.setCellValueFactory(new PropertyValueFactory<>("to"));
             columnsColumn.setCellValueFactory(new PropertyValueFactory<>("columns"));

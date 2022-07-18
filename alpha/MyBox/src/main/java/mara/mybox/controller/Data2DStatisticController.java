@@ -473,7 +473,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                         if (tmpTable == null) {
                             return false;
                         }
-                        tmpTable.startTask(task, rowFilterController.rowFilter);
+                        tmpTable.startTask(task, null);
                         calculation.setData2D(tmpTable)
                                 .setColsIndices(tmpTable.columnIndices().subList(1, tmpTable.columnsNumber()))
                                 .setColsNames(tmpTable.columnNames().subList(1, tmpTable.columnsNumber()));
@@ -530,7 +530,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                         if (dataTable == null) {
                             return false;
                         }
-                        dataTable.startTask(task, rowFilterController.rowFilter);
+                        dataTable.startTask(task, null);
                         calculation.setTask(task);
                         calculation.setData2D(dataTable)
                                 .setColsIndices(dataTable.columnIndices().subList(1, 2))

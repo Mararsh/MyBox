@@ -116,6 +116,28 @@ public abstract class Data2D extends Data2D_Operations {
         return rowFilter != null && rowFilter.reachMaxPassed();
     }
 
+    public boolean calculateDataRowExpression(String script, List<String> dataRow, long dataRowNumber) {
+        error = null;
+        if (rowFilter == null) {
+            return true;
+        }
+        return rowFilter.calculator.calculate(rowFilter.calculator.dataRowExpression(this, script, dataRow, dataRowNumber));
+    }
+
+    public String expressionError() {
+        if (rowFilter == null) {
+            return null;
+        }
+        return rowFilter.getError();
+    }
+
+    public String expressionResult() {
+        if (rowFilter == null) {
+            return null;
+        }
+        return rowFilter.getResult();
+    }
+
     /*
         style
      */
