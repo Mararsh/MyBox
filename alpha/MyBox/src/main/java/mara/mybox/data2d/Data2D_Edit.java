@@ -268,7 +268,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
             for (String name : colNames) {
                 colIndices.add(colOrder(name));
             }
-            DataTable tmpTable = ((Data2D) this).toTmpTable(task, colIndices, false);
+            DataTable tmpTable = ((Data2D) this).toTmpTable(task, colIndices, false, true);
             if (tmpTable == null) {
                 return;
             }

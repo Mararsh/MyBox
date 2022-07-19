@@ -80,6 +80,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
                     colStatistic = new DoubleStatistic();
                     column.setDoubleStatistic(colStatistic);
                 }
+                colStatistic.invalidAs = selections.invalidAs;
                 sData[c] = colStatistic;
             }
             Data2DReader reader = Data2DReader.create(this)
@@ -448,7 +449,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
         for (int c = 0; c < colLen; c++) {
             double d = sData[c].maximum - sData[c].minimum;
-            sData[c].vTmp = (to - from) / (d == 0 ? AppValues.TinyDouble : d);
+            sData[c].dTmp = (to - from) / (d == 0 ? AppValues.TinyDouble : d);
         }
         File csvFile = tmpCSV("normalizeMinMax");
         int tcolsNumber = 0;
@@ -636,7 +637,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return null;
         }
         double d = sData.maximum - sData.minimum;
-        sData.vTmp = (to - from) / (d == 0 ? AppValues.TinyDouble : d);
+        sData.dTmp = (to - from) / (d == 0 ? AppValues.TinyDouble : d);
         File csvFile = tmpCSV("normalizeMinMax");
         int tcolsNumber = 0;
         try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {

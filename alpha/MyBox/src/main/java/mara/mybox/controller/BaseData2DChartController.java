@@ -134,19 +134,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         if (valueColumnSelector != null) {
             selectedValue = valueColumnSelector.getSelectionModel().getSelectedItem();
         }
-        if (ok) {
-            noticeMemory();
-        }
         return ok;
-    }
-
-    public void noticeMemory() {
-        if (isSettingValues) {
-            return;
-        }
-        if (isAllPages()) {
-            infoLabel.setText(message("AllRowsLoadComments"));
-        }
     }
 
     public boolean initData() {

@@ -382,13 +382,11 @@ public class BaseData2DSourceController extends ControlData2DLoad {
     private boolean checkedRows() {
         try {
             checkedRowsIndices = new ArrayList<>();
-            if (allPagesRadio.isSelected()) {
-                return true;
-            }
             RowFilter rowFilter = data2D.rowFilter;
             rowFilter.start(null, data2D);
             List<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
-            if (currentPageRadio.isSelected() || selected == null || selected.isEmpty()) {
+            if (allPagesRadio.isSelected() || currentPageRadio.isSelected()
+                    || selected == null || selected.isEmpty()) {
                 for (int i = 0; i < tableData.size(); i++) {
                     if (!rowFilter.filterTableRow(data2D, tableData.get(i), i)) {
                         continue;

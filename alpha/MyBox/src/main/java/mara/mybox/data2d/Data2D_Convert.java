@@ -92,9 +92,9 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         }
     }
 
-    public DataTable toTmpTable(SingletonTask task, List<Integer> cols, boolean includeRowNumber) {
+    public DataTable toTmpTable(SingletonTask task, List<Integer> cols, boolean includeRowNumber, boolean forStatistic) {
         try ( Connection conn = DerbyBase.getConnection()) {
-            DataTable dataTable = createTmpTable(task, conn, tmpTableName(shortName()), cols, includeRowNumber);
+            DataTable dataTable = createTmpTable(task, conn, tmpTableName(shortName()), cols, includeRowNumber, forStatistic);
             writeTableData(task, conn, dataTable, cols, includeRowNumber);
             return dataTable;
         } catch (Exception e) {
@@ -107,7 +107,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
     }
 
     public DataTable createTmpTable(SingletonTask task, Connection conn,
-            String targetName, List<Integer> cols, boolean includeRowNumber) {
+            String targetName, List<Integer> cols, boolean includeRowNumber, boolean forStatistic) {
         try {
             if (conn == null || cols == null || cols.isEmpty()) {
                 return null;
@@ -126,6 +126,9 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                 if (cols.contains(i)) {
                     Data2DColumn column = columns.get(i).cloneAll();
                     column.setD2cid(-1).setD2id(-1);
+                    if (forStatistic) {
+                        column.setType(ColumnDefinition.ColumnType.Double);
+                    }
                     sourceColumns.add(column);
                 }
             }
@@ -180,7 +183,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         return writeTableData(task, conn, dataTable, null, false);
     }
 
-    public DataTable singleColumn(SingletonTask task, List<Integer> cols) {
+    public DataTable singleColumn(SingletonTask task, List<Integer> cols, boolean asDouble) {
         try ( Connection conn = DerbyBase.getConnection()) {
             if (columns == null || columns.isEmpty()) {
                 readColumns(conn);
@@ -189,7 +192,12 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                 return null;
             }
             List<Data2DColumn> sourceColumns = new ArrayList<>();
-            Data2DColumn column = new Data2DColumn("data", ColumnDefinition.ColumnType.String);
+            Data2DColumn column;
+            if (asDouble) {
+                column = new Data2DColumn("data", ColumnDefinition.ColumnType.Double);
+            } else {
+                column = new Data2DColumn("data", ColumnDefinition.ColumnType.String);
+            }
             column.setD2cid(-1).setD2id(-1);
             sourceColumns.add(column);
             DataTable dataTable = createTable(task, conn, tmpTableName(), sourceColumns, null, true);

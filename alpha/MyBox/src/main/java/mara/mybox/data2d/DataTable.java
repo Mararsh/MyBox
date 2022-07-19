@@ -855,6 +855,7 @@ public class DataTable extends Data2D {
                     colStatistic = new DoubleStatistic();
                     column.setDoubleStatistic(colStatistic);
                 }
+                colStatistic.invalidAs = selections.invalidAs;
                 sData[c] = colStatistic;
                 if (selections.median) {
                     colStatistic.medianValue = percentile(conn, column, 50);

@@ -139,7 +139,7 @@ public class Data2DSortController extends BaseData2DHandleController {
     @Override
     public DataFileCSV generatedFile() {
         try {
-            DataTable tmpTable = data2D.toTmpTable(task, colsIndices, showRowNumber());
+            DataTable tmpTable = data2D.toTmpTable(task, colsIndices, showRowNumber(), false);
             if (tmpTable == null) {
                 return null;
             }

@@ -329,7 +329,7 @@ public class ColumnFilter extends RowFilter {
     }
 
     public int compareNumber(double v1, double v2) {
-        if (v1 == Double.NaN || v2 == Double.NaN) {
+        if (Double.isNaN(v1) || Double.isNaN(v2)) {
             return -5;
         }
         if (v1 == v2) {
@@ -342,7 +342,7 @@ public class ColumnFilter extends RowFilter {
     }
 
     public int compareNumber(String name, DoubleStatistic statistic, double value) {
-        if (name == null || value == Double.NaN) {
+        if (name == null || Double.isNaN(value)) {
             return -5;
         }
         if (ColumnFilter.Q1.equals(name)) {

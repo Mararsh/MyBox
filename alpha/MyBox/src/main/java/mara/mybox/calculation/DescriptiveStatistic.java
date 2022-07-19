@@ -26,6 +26,7 @@ public class DescriptiveStatistic {
             minimum, maximum, median, upperQuartile, lowerQuartile, mode,
             upperMildOutlierLine, upperExtremeOutlierLine, lowerMildOutlierLine, lowerExtremeOutlierLine;
     public int scale;
+    public double invalidAs = 0;
 
     protected BaseData2DHandleController handleController;
     protected SingletonTask<Void> task;
@@ -1153,8 +1154,18 @@ public class DescriptiveStatistic {
         return categoryName;
     }
 
-    public void setCategoryName(String categoryName) {
+    public DescriptiveStatistic setCategoryName(String categoryName) {
         this.categoryName = categoryName;
+        return this;
+    }
+
+    public double getInvalidAs() {
+        return invalidAs;
+    }
+
+    public DescriptiveStatistic setInvalidAs(double invalidAs) {
+        this.invalidAs = invalidAs;
+        return this;
     }
 
 }

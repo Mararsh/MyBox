@@ -333,9 +333,9 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
                 }
             }
             count += invalid.size();
-            for (Data2DDefinition d : invalid) {
-                deleteUserTable(conn, d.getSheet());
-            }
+//            for (Data2DDefinition d : invalid) {
+//                deleteUserTable(conn, d.getSheet());
+//            }
 
             conn.setAutoCommit(true);
         } catch (Exception e) {

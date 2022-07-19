@@ -121,7 +121,7 @@ public class Data2DTransposeController extends BaseData2DHandleController {
     @Override
     public DataFileCSV generatedFile() {
         try {
-            DataTable tmpTable = data2D.toTmpTable(task, checkedColsIndices, showRowNumber());
+            DataTable tmpTable = data2D.toTmpTable(task, checkedColsIndices, showRowNumber(), false);
             if (tmpTable == null) {
                 return null;
             }

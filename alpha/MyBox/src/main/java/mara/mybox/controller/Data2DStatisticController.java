@@ -7,6 +7,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
@@ -46,6 +47,8 @@ public class Data2DStatisticController extends BaseData2DHandleController {
     protected FlowPane categoryColumnsPane;
     @FXML
     protected ComboBox<String> categoryColumnSelector;
+    @FXML
+    protected RadioButton skipNonnumericRadio, zeroNonnumericRadio;
 
     public Data2DStatisticController() {
         baseTitle = message("DescriptiveStatistics");
@@ -345,7 +348,13 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 .setLowerExtremeOutlierLine(LowerExtremeOutlierLineCheck.isSelected())
                 .setLowerMildOutlierLine(LowerMildOutlierLineCheck.isSelected())
                 .setMode(modeCheck.isSelected())
-                .setScale(scale);
+                .setScale(scale)
+                .setInvalidAs(skipNonnumericRadio.isSelected() ? Double.NaN : 0)
+                .setHandleController(this)
+                .setData2D(data2D)
+                .setColsIndices(checkedColsIndices)
+                .setColsNames(checkedColsNames)
+                .setCategoryName(categorysCol >= 0 ? selectedCategory : null);
         switch (objectType) {
             case Rows:
                 calculation.setStatisticObject(StatisticObject.Rows);
@@ -357,10 +366,6 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 calculation.setStatisticObject(StatisticObject.Columns);
                 break;
         }
-        calculation.setHandleController(this).setData2D(data2D)
-                .setColsIndices(checkedColsIndices)
-                .setColsNames(checkedColsNames)
-                .setCategoryName(categorysCol >= 0 ? selectedCategory : null);
         return ok;
     }
 
@@ -469,7 +474,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                     data2D.startTask(task, rowFilterController.rowFilter);
                     calculation.setTask(task);
                     if (calculation.needStored()) {
-                        DataTable tmpTable = data2D.toTmpTable(task, checkedColsIndices, false);
+                        DataTable tmpTable = data2D.toTmpTable(task, checkedColsIndices, false, true);
                         if (tmpTable == null) {
                             return false;
                         }
@@ -526,7 +531,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                     data2D.startTask(task, rowFilterController.rowFilter);
                     calculation.setTask(task);
                     if (calculation.needStored()) {
-                        DataTable dataTable = data2D.singleColumn(task, checkedColsIndices);
+                        DataTable dataTable = data2D.singleColumn(task, checkedColsIndices, true);
                         if (dataTable == null) {
                             return false;
                         }

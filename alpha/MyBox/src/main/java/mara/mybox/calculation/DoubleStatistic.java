@@ -19,24 +19,40 @@ import org.apache.commons.math3.stat.descriptive.rank.Percentile;
  */
 public class DoubleStatistic {
 
-    public static double InvalidAs = 0;
-
     public String name;
-    public long count;
-    public double sum, mean, geometricMean, sumSquares,
+    public long count, invalidCount;
+    public double invalidAs, sum, mean, geometricMean, sumSquares,
             populationVariance, sampleVariance, populationStandardDeviation, sampleStandardDeviation, skewness,
             minimum, maximum, median, upperQuartile, lowerQuartile,
             upperMildOutlierLine, upperExtremeOutlierLine, lowerMildOutlierLine, lowerExtremeOutlierLine,
-            vTmp;
+            dTmp;
     public Object modeValue, minimumValue, maximumValue, medianValue, upperQuartileValue, lowerQuartileValue;
     public DescriptiveStatistic options;
-    public double[] doubles;
+    private double[] doubles;
 
     public DoubleStatistic() {
         init();
     }
 
-    public final void init() {
+    public DoubleStatistic(double[] values) {
+        initOptions(null);
+        calculate(values);
+    }
+
+    public DoubleStatistic(double[] values, DescriptiveStatistic inOptions) {
+        initOptions(inOptions);
+        calculate(values);
+    }
+
+    public DoubleStatistic(String[] values, DescriptiveStatistic inOptions) {
+        initOptions(inOptions);
+        if (options.isMode()) {
+            modeValue = modeObject(values);
+        }
+        calculate(toDoubleArray(values));
+    }
+
+    private void init() {
         count = 0;
         sum = 0;
         mean = 0;
@@ -57,31 +73,28 @@ public class DoubleStatistic {
         lowerMildOutlierLine = Double.NaN;
         lowerExtremeOutlierLine = Double.NaN;
         modeValue = null;
-        vTmp = 0;
+        dTmp = 0;
+        invalidAs = 0;
+        invalidCount = 0;
+        options = null;
+        doubles = null;
     }
 
-    public DoubleStatistic(double[] values) {
-        calculate(values, DescriptiveStatistic.all(true));
-    }
-
-    public DoubleStatistic(double[] values, DescriptiveStatistic options) {
-        calculate(values, options);
-    }
-
-    public DoubleStatistic(String[] values, DescriptiveStatistic options) {
-        if (options != null && options.isMode()) {
-            modeValue = modeObject(values);
+    private void initOptions(DescriptiveStatistic inOptions) {
+        init();
+        if (inOptions == null) {
+            options = DescriptiveStatistic.all(true);
+        } else {
+            options = inOptions;
         }
-        calculate(toDouble(values), options);
+        invalidAs = options.invalidAs;
     }
 
-    public final void calculate(double[] values, DescriptiveStatistic options) {
+    private void calculate(double[] values) {
         try {
-            init();
-            if (values == null || options == null) {
+            if (values == null) {
                 return;
             }
-            this.options = options;
             doubles = values;
             calculateBase();
             calculateVariance();
@@ -101,12 +114,19 @@ public class DoubleStatistic {
                 return;
             }
             sum = 0;
-            count = doubles.length;
-            if (count == 0) {
+            count = 0;
+            invalidCount = 0;
+            double total = doubles.length;
+            if (total == 0) {
                 return;
             }
-            for (int i = 0; i < count; ++i) {
+            for (int i = 0; i < total; ++i) {
                 double v = doubles[i];
+                if (Double.isNaN(v)) {
+                    invalidCount++;
+                    continue;
+                }
+                count++;
                 sum += v;
                 if (options.isMaximum() && v > maximum) {
                     maximum = v;
@@ -121,9 +141,27 @@ public class DoubleStatistic {
                     sumSquares += v * v;
                 }
             }
-            mean = sum / count;
-            if (options.isGeometricMean()) {
-                geometricMean = Math.pow(geometricMean, 1d / count);
+            if (count == 0) {
+                mean = Double.NaN;
+                sum = Double.NaN;
+                geometricMean = Double.NaN;
+                sumSquares = Double.NaN;
+            } else {
+                mean = sum / count;
+                if (options.isGeometricMean()) {
+                    geometricMean = Math.pow(geometricMean, 1d / count);
+                }
+                if (invalidCount > 0) {
+                    double[] valid = new double[(int) count];
+                    int index = 0;
+                    for (int i = 0; i < doubles.length; i++) {
+                        double v = doubles[i];
+                        if (!Double.isNaN(v)) {
+                            valid[index++] = v;
+                        }
+                    }
+                    doubles = valid;
+                }
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -138,14 +176,14 @@ public class DoubleStatistic {
             if (!options.needVariance()) {
                 return;
             }
-            vTmp = 0;
+            dTmp = 0;
             for (int i = 0; i < count; ++i) {
                 double p = doubles[i] - mean;
                 double p2 = p * p;
-                vTmp += p2;
+                dTmp += p2;
             }
-            populationVariance = vTmp / count;
-            sampleVariance = count == 1 ? Double.NaN : vTmp / (count - 1);
+            populationVariance = dTmp / count;
+            sampleVariance = count < 2 ? Double.NaN : dTmp / (count - 1);
             if (options.populationStandardDeviation) {
                 populationStandardDeviation = Math.sqrt(populationVariance);
             }
@@ -298,25 +336,28 @@ public class DoubleStatistic {
         return list;
     }
 
-    /*
-        static methods
-     */
-    public static double[] toDouble(String[] strings) {
+    public double toDouble(String string) {
+        try {
+            return Double.valueOf(string.replaceAll(",", ""));
+        } catch (Exception e) {
+            return invalidAs;
+        }
+    }
+
+    public final double[] toDoubleArray(String[] strings) {
         if (strings == null) {
             return null;
         }
-        double[] doubles = new double[strings.length];
+        doubles = new double[strings.length];
         for (int i = 0; i < strings.length; i++) {
-            String s = strings[i];
-            try {
-                doubles[i] = Double.parseDouble(s.replaceAll(",", ""));
-            } catch (Exception e) {
-                doubles[i] = InvalidAs;
-            }
+            doubles[i] = toDouble(strings[i]);
         }
         return doubles;
     }
 
+    /*
+        static methods
+     */
     public static double sum(double[] values) {
         if (values == null || values.length == 0) {
             return AppValues.InvalidDouble;
@@ -364,16 +405,16 @@ public class DoubleStatistic {
     public static double mode(double[] values) {
         try {
             if (values == null || values.length == 0) {
-                return AppValues.InvalidDouble;
+                return Double.NaN;
             }
             Object[] objects = new Object[values.length];
             for (int i = 0; i < values.length; i++) {
                 objects[i] = values[i];
             }
             Object mode = modeObject(objects);
-            return mode != null ? (double) mode : AppValues.InvalidDouble;
+            return mode != null ? (double) mode : Double.NaN;
         } catch (Exception e) {
-            return AppValues.InvalidDouble;
+            return Double.NaN;
         }
     }
 
@@ -669,12 +710,12 @@ public class DoubleStatistic {
         this.lowerQuartileValue = lowerQuartileValue;
     }
 
-    public double getvTmp() {
-        return vTmp;
+    public double getdTmp() {
+        return dTmp;
     }
 
-    public void setvTmp(double vTmp) {
-        this.vTmp = vTmp;
+    public void setdTmp(double dTmp) {
+        this.dTmp = dTmp;
     }
 
     public DescriptiveStatistic getOptions() {
@@ -686,12 +727,26 @@ public class DoubleStatistic {
         return this;
     }
 
-    public double[] getDoubles() {
-        return doubles;
-    }
-
     public DoubleStatistic setValues(double[] values) {
         this.doubles = values;
+        return this;
+    }
+
+    public long getInvalidCount() {
+        return invalidCount;
+    }
+
+    public DoubleStatistic setInvalidCount(long invalidCount) {
+        this.invalidCount = invalidCount;
+        return this;
+    }
+
+    public double getInvalidAs() {
+        return invalidAs;
+    }
+
+    public DoubleStatistic setInvalidAs(double invalidAs) {
+        this.invalidAs = invalidAs;
         return this;
     }
 
