@@ -9,6 +9,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.data.ColumnDefinition;
@@ -17,6 +18,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -25,7 +27,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class Data2DSortController extends BaseData2DHandleController {
 
-    protected int orderCol;
+    protected int orderCol, maxData = -1;
     protected List<Integer> colsIndices;
     protected List<String> colsNames;
     protected String orderName;
@@ -34,9 +36,46 @@ public class Data2DSortController extends BaseData2DHandleController {
     protected ComboBox<String> colSelector;
     @FXML
     protected CheckBox descendCheck;
+    @FXML
+    protected TextField maxInput;
 
     public Data2DSortController() {
         baseTitle = message("Sort");
+    }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            maxData = UserConfig.getInt(baseName + "MaxDataNumber", -1);
+            if (maxData > 0) {
+                maxInput.setText(maxData + "");
+            }
+            maxInput.setStyle(null);
+            maxInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    String maxs = maxInput.getText();
+                    if (maxs == null || maxs.isBlank()) {
+                        maxData = -1;
+                        maxInput.setStyle(null);
+                        UserConfig.setLong(baseName + "MaxDataNumber", -1);
+                    } else {
+                        try {
+                            maxData = Integer.valueOf(maxs);
+                            maxInput.setStyle(null);
+                            UserConfig.setLong(baseName + "MaxDataNumber", maxData);
+                        } catch (Exception e) {
+                            maxInput.setStyle(UserConfig.badStyle());
+                        }
+                    }
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @Override
@@ -123,6 +162,9 @@ public class Data2DSortController extends BaseData2DHandleController {
                     return desc ? -c : c;
                 }
             });
+            if (maxData > 0 && outputData.size() > maxData) {
+                outputData = outputData.subList(0, maxData);
+            }
             if (showColNames()) {
                 outputData.add(0, colsNames);
             }
@@ -143,7 +185,7 @@ public class Data2DSortController extends BaseData2DHandleController {
             if (tmpTable == null) {
                 return null;
             }
-            DataFileCSV csvData = tmpTable.sort(task, tmpTable.mappedColumnName(orderName), descendCheck.isSelected());
+            DataFileCSV csvData = tmpTable.sort(task, tmpTable.mappedColumnName(orderName), descendCheck.isSelected(), maxData);
             tmpTable.drop();
             return csvData;
         } catch (Exception e) {

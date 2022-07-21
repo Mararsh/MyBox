@@ -50,8 +50,6 @@ public class ControlData2DAbnormalList extends BaseSysTableController<Data2DStyl
             tableName = tableDefinition.getTableName();
             idColumn = tableDefinition.getIdColumn();
 
-            sourceChanged();
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -59,7 +57,7 @@ public class ControlData2DAbnormalList extends BaseSysTableController<Data2DStyl
 
     public void sourceChanged() {
         try {
-            if (tableController == null) {
+            if (tableController == null || tableController.data2D == null) {
                 return;
             }
             queryConditions = "  d2id = " + tableController.data2D.getD2did() + " AND abnoramlValues = true";

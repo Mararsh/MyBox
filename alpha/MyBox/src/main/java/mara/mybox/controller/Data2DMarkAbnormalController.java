@@ -84,9 +84,10 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
     @Override
     public void setParameters(ControlData2DEditTable tableController) {
         try {
-            super.setParameters(tableController);
             rowFilterController.setParameters(this, tableController);
             columnFilterController.setParameters(this, tableController);
+
+            super.setParameters(tableController);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

@@ -315,7 +315,6 @@ public class BaseDataAdaptor {
         if (data == null || name == null) {
             return false;
         }
-        MyBoxLog.console(data.getClass() + "  " + name + " " + value);
         if (data instanceof GeographyCode) {
             return GeographyCode.setValue((GeographyCode) data, name, value);
 

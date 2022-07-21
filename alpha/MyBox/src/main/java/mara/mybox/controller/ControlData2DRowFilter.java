@@ -111,7 +111,7 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
             return false;
         }
         if (maxInput != null && UserConfig.badStyle().equals(maxInput.getStyle())) {
-            error = message("InvalidParameter") + ": " + message("MaxDataTake");
+            error = message("InvalidParameter") + ": " + message("MaxSourceDataTake");
             return false;
         }
         pickValues();

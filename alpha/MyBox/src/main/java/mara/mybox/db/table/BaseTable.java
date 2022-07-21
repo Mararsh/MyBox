@@ -22,7 +22,11 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.HtmlStyles;
+import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.tools.LongTools;
+import mara.mybox.value.AppValues;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
@@ -137,26 +141,34 @@ public abstract class BaseTable<D> {
                 case Double:
                     double d;
                     if (value == null) {
+                        d = Double.NaN;
+                    } else {
+                        d = (double) value;
+                    }
+                    if (DoubleTools.invalidDouble(d)) {
                         if (notNull) {
-                            statement.setDouble(index, (double) column.defaultValue());
+                            statement.setDouble(index, AppValues.InvalidDouble);
                         } else {
                             statement.setNull(index, Types.DOUBLE);
                         }
                     } else {
-                        d = (double) value;
                         statement.setDouble(index, d);
                     }
                     break;
                 case Float:
                     float f;
                     if (value == null) {
+                        f = Float.NaN;
+                    } else {
+                        f = (float) value;
+                    }
+                    if (FloatTools.invalidFloat(f)) {
                         if (notNull) {
-                            statement.setFloat(index, (float) column.defaultValue());
+                            statement.setDouble(index, AppValues.InvalidFloat);
                         } else {
                             statement.setNull(index, Types.FLOAT);
                         }
                     } else {
-                        f = (float) value;
                         statement.setFloat(index, f);
                     }
                     break;
@@ -165,28 +177,38 @@ public abstract class BaseTable<D> {
                     long l;
                     if (value == null) {
                         if (column.isAuto()) {
-                            statement.setLong(index, -1);
-                        } else if (notNull) {
-                            statement.setLong(index, (long) column.defaultValue());
+                            l = -1;
+                        } else {
+                            l = AppValues.InvalidLong;
+                        }
+                    } else {
+                        l = (long) value;
+                    }
+                    if (LongTools.invalidLong(l)) {
+                        if (notNull) {
+                            statement.setDouble(index, AppValues.InvalidLong);
                         } else {
                             statement.setNull(index, Types.BIGINT);
                         }
                     } else {
-                        l = (long) value;
                         statement.setLong(index, l);
                     }
                     break;
                 case Integer:
-                    int ii;
+                    int i;
                     if (value == null) {
+                        i = AppValues.InvalidInteger;
+                    } else {
+                        i = (int) value;
+                    }
+                    if (i == AppValues.InvalidInteger) {
                         if (notNull) {
-                            statement.setInt(index, (int) column.defaultValue());
+                            statement.setDouble(index, AppValues.InvalidInteger);
                         } else {
                             statement.setNull(index, Types.INTEGER);
                         }
                     } else {
-                        ii = (int) value;
-                        statement.setInt(index, ii);
+                        statement.setInt(index, i);
                     }
                     break;
                 case Boolean:
@@ -204,13 +226,17 @@ public abstract class BaseTable<D> {
                 case Short:
                     short s;
                     if (value == null) {
+                        s = AppValues.InvalidShort;
+                    } else {
+                        s = (short) value;
+                    }
+                    if (s == AppValues.InvalidShort) {
                         if (notNull) {
-                            statement.setShort(index, (short) column.defaultValue());
+                            statement.setShort(index, AppValues.InvalidShort);
                         } else {
                             statement.setNull(index, Types.SMALLINT);
                         }
                     } else {
-                        s = (short) value;
                         statement.setShort(index, s);
                     }
                     break;
@@ -651,26 +677,31 @@ public abstract class BaseTable<D> {
     }
 
     public int conditionSize(Connection conn, String condition) {
-        if (conn == null) {
-            return 0;
-        }
-        String c = "";
-        if (condition != null && !condition.isBlank()) {
-            if (!condition.trim().startsWith("ORDER BY")) {
-                c = " WHERE " + condition;
+        try {
+            if (conn == null || conn.isClosed()) {
+                return 0;
             }
-        }
-        String sql = sizeStatement() + c;
-        int size = 0;
-        try ( PreparedStatement sizeQuery = conn.prepareStatement(sql);
-                 ResultSet results = sizeQuery.executeQuery()) {
-            if (results != null && results.next()) {
-                size = results.getInt(1);
+            String c = "";
+            if (condition != null && !condition.isBlank()) {
+                if (!condition.trim().startsWith("ORDER BY")) {
+                    c = " WHERE " + condition;
+                }
             }
+            String sql = sizeStatement() + c;
+            int size = 0;
+            try ( PreparedStatement sizeQuery = conn.prepareStatement(sql);
+                     ResultSet results = sizeQuery.executeQuery()) {
+                if (results != null && results.next()) {
+                    size = results.getInt(1);
+                }
+            } catch (Exception e) {
+                MyBoxLog.debug(e, sql);
+            }
+            return size;
         } catch (Exception e) {
-            MyBoxLog.debug(e, sql);
+            MyBoxLog.debug(e, tableName);
+            return -1;
         }
-        return size;
     }
 
     public boolean isEmpty() {

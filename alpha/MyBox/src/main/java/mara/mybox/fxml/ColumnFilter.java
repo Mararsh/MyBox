@@ -2,6 +2,7 @@ package mara.mybox.fxml;
 
 import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -213,7 +214,7 @@ public class ColumnFilter extends RowFilter {
                 numberValue = Double.valueOf(value);
             } catch (Exception e) {
             }
-            if (numberValue != Double.NaN) {
+            if (!DoubleTools.invalidDouble(numberValue)) {
                 if (number) {
                     passed = true;
                     return true;
@@ -299,19 +300,19 @@ public class ColumnFilter extends RowFilter {
                 return value.compareTo(statistic.upperQuartileValue + "");
             }
         } else if (ColumnFilter.E1.equals(name)) {
-            if (statistic != null && statistic.lowerExtremeOutlierLine != Double.NaN) {
+            if (statistic != null && !DoubleTools.invalidDouble(statistic.lowerExtremeOutlierLine)) {
                 return value.compareTo(statistic.lowerExtremeOutlierLine + "");
             }
         } else if (ColumnFilter.E2.equals(name)) {
-            if (statistic != null && statistic.lowerMildOutlierLine != Double.NaN) {
+            if (statistic != null && !DoubleTools.invalidDouble(statistic.lowerMildOutlierLine)) {
                 return value.compareTo(statistic.lowerMildOutlierLine + "");
             }
         } else if (ColumnFilter.E3.equals(name)) {
-            if (statistic != null && statistic.upperMildOutlierLine != Double.NaN) {
+            if (statistic != null && !DoubleTools.invalidDouble(statistic.upperMildOutlierLine)) {
                 return value.compareTo(statistic.upperMildOutlierLine + "");
             }
         } else if (ColumnFilter.E4.equals(name)) {
-            if (statistic != null && statistic.upperExtremeOutlierLine != Double.NaN) {
+            if (statistic != null && !DoubleTools.invalidDouble(statistic.upperExtremeOutlierLine)) {
                 return value.compareTo(statistic.upperExtremeOutlierLine + "");
             }
         } else if (ColumnFilter.Mode.equals(name)) {
@@ -346,27 +347,27 @@ public class ColumnFilter extends RowFilter {
             return -5;
         }
         if (ColumnFilter.Q1.equals(name)) {
-            if (statistic != null && statistic.lowerQuartile != Double.NaN) {
+            if (statistic != null && !DoubleTools.invalidDouble(statistic.lowerQuartile)) {
                 return compareNumber(value, statistic.lowerQuartile);
             }
         } else if (ColumnFilter.Q3.equals(name)) {
-            if (statistic != null && statistic.upperQuartile != Double.NaN) {
+            if (statistic != null && !DoubleTools.invalidDouble(statistic.upperQuartile)) {
                 return compareNumber(value, statistic.upperQuartile);
             }
         } else if (ColumnFilter.E1.equals(name)) {
-            if (statistic != null && statistic.lowerExtremeOutlierLine != Double.NaN) {
+            if (statistic != null && !DoubleTools.invalidDouble(statistic.lowerExtremeOutlierLine)) {
                 return compareNumber(value, statistic.lowerExtremeOutlierLine);
             }
         } else if (ColumnFilter.E2.equals(name)) {
-            if (statistic != null && statistic.lowerMildOutlierLine != Double.NaN) {
+            if (statistic != null && !DoubleTools.invalidDouble(statistic.lowerMildOutlierLine)) {
                 return compareNumber(value, statistic.lowerMildOutlierLine);
             }
         } else if (ColumnFilter.E3.equals(name)) {
-            if (statistic != null && statistic.upperMildOutlierLine != Double.NaN) {
+            if (statistic != null && !DoubleTools.invalidDouble(statistic.upperMildOutlierLine)) {
                 return compareNumber(value, statistic.upperMildOutlierLine);
             }
         } else if (ColumnFilter.E4.equals(name)) {
-            if (statistic != null && statistic.upperExtremeOutlierLine != Double.NaN) {
+            if (statistic != null && !DoubleTools.invalidDouble(statistic.upperExtremeOutlierLine)) {
                 return compareNumber(value, statistic.upperExtremeOutlierLine);
             }
         } else if (ColumnFilter.Mode.equals(name)) {
@@ -377,7 +378,7 @@ public class ColumnFilter extends RowFilter {
                 }
             }
         } else if (ColumnFilter.Median.equals(name)) {
-            if (statistic != null && statistic.median != Double.NaN) {
+            if (statistic != null && !DoubleTools.invalidDouble(statistic.median)) {
                 return compareNumber(value, statistic.median);
             }
         } else {

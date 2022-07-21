@@ -600,17 +600,19 @@ public class DataTable extends Data2D {
     }
 
     // Based on results of "Data2D_Convert.toTmpTable(...)"
-    public DataFileCSV sort(SingletonTask task, String orderName, boolean desc) {
+    public DataFileCSV sort(SingletonTask task, String orderName, boolean desc, int maxData) {
         if (orderName == null || orderName.isBlank() || sourceColumns == null) {
             return null;
         }
         File csvFile = tmpCSV("sort");
+        String sql = "SELECT * FROM " + sheet + " ORDER BY " + orderName + (desc ? " DESC" : "");
+        if (maxData > 0) {
+            sql += " FETCH FIRST " + maxData + " ROWS ONLY";
+        }
         try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile);
                  Connection conn = DerbyBase.getConnection();
-                 PreparedStatement statement = conn.prepareStatement(
-                        "SELECT * FROM " + sheet + " ORDER BY " + orderName + (desc ? " DESC" : ""));
+                 PreparedStatement statement = conn.prepareStatement(sql);
                  ResultSet results = statement.executeQuery()) {
-
             csvPrinter.printRecord(sourceColumnNames());
             rowIndex = 0;
             while (results.next() && task != null && !task.isCancelled()) {
@@ -862,7 +864,7 @@ public class DataTable extends Data2D {
                     try {
                         colStatistic.median = Double.valueOf(colStatistic.medianValue + "");
                     } catch (Exception ex) {
-                        colStatistic.median = Double.NaN;
+                        colStatistic.median = colStatistic.invalidAs;
                     }
                 }
                 Object q1 = null, q3 = null;
@@ -872,7 +874,7 @@ public class DataTable extends Data2D {
                     try {
                         colStatistic.upperQuartile = Double.valueOf(q3 + "");
                     } catch (Exception ex) {
-                        colStatistic.upperQuartile = Double.NaN;
+                        colStatistic.upperQuartile = colStatistic.invalidAs;
                     }
                 }
                 if (selections.lowerQuartile || selections.needOutlier()) {
@@ -881,7 +883,7 @@ public class DataTable extends Data2D {
                     try {
                         colStatistic.lowerQuartile = Double.valueOf(q1 + "");
                     } catch (Exception ex) {
-                        colStatistic.lowerQuartile = Double.NaN;
+                        colStatistic.lowerQuartile = colStatistic.invalidAs;
                     }
                 }
                 if (selections.upperExtremeOutlierLine) {
@@ -890,7 +892,7 @@ public class DataTable extends Data2D {
                         double d3 = Double.valueOf(q3 + "");
                         colStatistic.upperExtremeOutlierLine = d3 + 3 * (d3 - d1);
                     } catch (Exception e) {
-                        colStatistic.upperExtremeOutlierLine = Double.NaN;
+                        colStatistic.upperExtremeOutlierLine = colStatistic.invalidAs;
                     }
                 }
                 if (selections.upperMildOutlierLine) {
@@ -899,7 +901,7 @@ public class DataTable extends Data2D {
                         double d3 = Double.valueOf(q3 + "");
                         colStatistic.upperMildOutlierLine = d3 + 1.5 * (d3 - d1);
                     } catch (Exception e) {
-                        colStatistic.upperMildOutlierLine = Double.NaN;
+                        colStatistic.upperMildOutlierLine = colStatistic.invalidAs;
                     }
                 }
                 if (selections.lowerMildOutlierLine) {
@@ -908,7 +910,7 @@ public class DataTable extends Data2D {
                         double d3 = Double.valueOf(q3 + "");
                         colStatistic.lowerMildOutlierLine = d1 - 1.5 * (d3 - d1);
                     } catch (Exception e) {
-                        colStatistic.lowerMildOutlierLine = Double.NaN;
+                        colStatistic.lowerMildOutlierLine = colStatistic.invalidAs;
                     }
                 }
                 if (selections.lowerExtremeOutlierLine) {
@@ -917,7 +919,7 @@ public class DataTable extends Data2D {
                         double d3 = Double.valueOf(q3 + "");
                         colStatistic.lowerExtremeOutlierLine = d1 - 3 * (d3 - d1);
                     } catch (Exception e) {
-                        colStatistic.lowerExtremeOutlierLine = Double.NaN;
+                        colStatistic.lowerExtremeOutlierLine = colStatistic.invalidAs;
                     }
                 }
                 if (selections.mode) {

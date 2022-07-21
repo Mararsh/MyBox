@@ -338,7 +338,8 @@ public class DoubleStatistic {
 
     public double toDouble(String string) {
         try {
-            return Double.valueOf(string.replaceAll(",", ""));
+            double d = Double.valueOf(string.replaceAll(",", ""));
+            return DoubleTools.invalidDouble(d) ? invalidAs : d;
         } catch (Exception e) {
             return invalidAs;
         }

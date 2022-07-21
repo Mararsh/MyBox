@@ -16,6 +16,7 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.Data2DStyle;
+import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.db.table.TableData2DStyle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
@@ -383,15 +384,16 @@ public abstract class Data2D_Edit extends Data2D_Data {
             long did = d.getD2did();
             d.setModifyTime(new Date());
             d.setColsNumber(inColumns == null ? 0 : inColumns.size());
+            TableData2DDefinition tableData2DDefinition = d.getTableData2DDefinition();
             if (did >= 0) {
-                def = d.getTableData2DDefinition().updateData(conn, d);
+                def = tableData2DDefinition.updateData(conn, d);
             } else {
                 def = d.queryDefinition(conn);
                 if (def == null) {
-                    def = d.getTableData2DDefinition().insertData(conn, d);
+                    def = tableData2DDefinition.insertData(conn, d);
                 } else {
                     d.setD2did(def.getD2did());
-                    def = d.getTableData2DDefinition().updateData(conn, d);
+                    def = tableData2DDefinition.updateData(conn, d);
                 }
             }
             conn.commit();

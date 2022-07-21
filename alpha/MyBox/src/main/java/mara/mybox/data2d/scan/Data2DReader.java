@@ -39,7 +39,7 @@ import org.apache.commons.math3.stat.regression.SimpleRegression;
  * @License Apache License Version 2.0
  */
 public abstract class Data2DReader {
-    
+
     protected Data2D data2D;
     protected File readerFile;
     protected Operation operation;
@@ -68,7 +68,7 @@ public abstract class Data2DReader {
     protected ControlDataConvert convertController;
     protected boolean readerHasHeader, readerStopped, needCheckTask, errorContinue;
     protected SingletonTask readerTask;
-    
+
     public static enum Operation {
         ReadDefinition, ReadTotal, ReadColumnNames, ReadPage,
         ReadCols, ReadRows, Export, WriteTable, Copy, RowExpression, SingleColumn,
@@ -79,17 +79,17 @@ public abstract class Data2DReader {
         NormalizeMinMaxAll, NormalizeSumAll, NormalizeZscoreAll,
         Frequency, SimpleLinearRegression
     }
-    
+
     public abstract void scanData();
-    
+
     public abstract void readColumnNames();
-    
+
     public abstract void readTotal();
-    
+
     public abstract void readPage();
-    
+
     public abstract void readRecords();
-    
+
     public static Data2DReader create(Data2D_Edit data) {
         if (data == null) {
             return null;
@@ -105,12 +105,12 @@ public abstract class Data2DReader {
         }
         return null;
     }
-    
+
     public void init(Data2D data) {
         this.data2D = data;
         readerTask = data2D.getTask();
     }
-    
+
     public Data2DReader start(Operation operation) {
         if (data2D == null || operation == null) {
             failed = true;
@@ -310,7 +310,7 @@ public abstract class Data2DReader {
                 }
                 break;
         }
-        
+
         this.operation = operation;
         readerStopped = false;
         readerHasHeader = data2D.isHasHeader();
@@ -331,7 +331,7 @@ public abstract class Data2DReader {
         afterScanned();
         return this;
     }
-    
+
     public void handleData() {
         try {
             if (operation == null) {
@@ -362,7 +362,7 @@ public abstract class Data2DReader {
             failed = true;
         }
     }
-    
+
     public void handleHeader() {
         try {
             names = new ArrayList<>();
@@ -385,7 +385,7 @@ public abstract class Data2DReader {
             }
         }
     }
-    
+
     public void handlePageRow() {
         List<String> row = new ArrayList<>();
         for (int i = 0; i < Math.min(record.size(), columnsNumber); i++) {
@@ -397,10 +397,9 @@ public abstract class Data2DReader {
         row.add(0, "" + (rowIndex + 1));
         rows.add(row);
     }
-    
+
     public void handleRecord() {
         try {
-            MyBoxLog.console(operation + "     " + record);
             if (!data2D.filterDataRow(record, rowIndex + 1)) {
                 return;
             }
@@ -499,7 +498,7 @@ public abstract class Data2DReader {
             }
         }
     }
-    
+
     public void handleReadCols() {
         try {
             List<String> row = new ArrayList<>();
@@ -520,7 +519,7 @@ public abstract class Data2DReader {
         } catch (Exception e) {
         }
     }
-    
+
     public void handleReadRows() {
         try {
             List<String> row = new ArrayList<>();
@@ -532,7 +531,7 @@ public abstract class Data2DReader {
         } catch (Exception e) {
         }
     }
-    
+
     public void handleExport() {
         try {
             List<String> row = new ArrayList<>();
@@ -550,10 +549,9 @@ public abstract class Data2DReader {
         } catch (Exception e) {
         }
     }
-    
+
     public void handleWriteTable() {
         try {
-            MyBoxLog.console(record);
             Data2DRow data2DRow = writerTableData2D.newRow();
             int len = record.size();
             for (int col : cols) {
@@ -562,7 +560,6 @@ public abstract class Data2DReader {
                     String colName = writerTable.mappedColumnName(sourceColumn.getColumnName());
                     Data2DColumn targetColumn = writerTable.columnByName(colName);
                     data2DRow.setColumnValue(colName, targetColumn.fromString(record.get(col)));
-                    MyBoxLog.console(colName + " " + data2DRow.getColumnValue(colName));
                 }
             }
             if (data2DRow.isEmpty()) {
@@ -579,7 +576,7 @@ public abstract class Data2DReader {
             MyBoxLog.error(e);
         }
     }
-    
+
     public void handleSingleColumn() {
         try {
             int len = record.size();
@@ -601,7 +598,7 @@ public abstract class Data2DReader {
             MyBoxLog.error(e);
         }
     }
-    
+
     public void handleCopy() {
         try {
             List<String> row = new ArrayList<>();
@@ -622,7 +619,7 @@ public abstract class Data2DReader {
         } catch (Exception e) {
         }
     }
-    
+
     public void handleRowExpression() {
         try {
             List<String> row = new ArrayList<>();
@@ -653,7 +650,7 @@ public abstract class Data2DReader {
         } catch (Exception e) {
         }
     }
-    
+
     public void handleStatisticColumns() {
         if (scanPass == 1) {
             handleStatisticColumnsPass1();
@@ -661,20 +658,18 @@ public abstract class Data2DReader {
             handleStatisticColumnsPass2();
         }
     }
-    
+
     public void handleStatisticColumnsPass1() {
         try {
-            MyBoxLog.console(record);
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
                 if (i < 0 || i >= record.size()) {
                     continue;
                 }
                 double v = statisticData[c].toDouble(record.get(i));
-//                MyBoxLog.console(statisticData[c].invalidAs + "  " + record.get(i) + "  " + v);
-                if (Double.isNaN(v)) {
+                if (DoubleTools.invalidDouble(v)) {
                     statisticData[c].invalidCount++;
-                    return;
+                    continue;
                 } else {
                     statisticData[c].count++;
                 }
@@ -700,10 +695,10 @@ public abstract class Data2DReader {
                 }
             }
         } catch (Exception e) {
-            
+
         }
     }
-    
+
     public void handleStatisticColumnsPass2() {
         try {
             for (int c = 0; c < colsLen; c++) {
@@ -715,7 +710,7 @@ public abstract class Data2DReader {
                     continue;
                 }
                 double v = statisticData[c].toDouble(record.get(i));
-                if (v != Double.NaN) {
+                if (!DoubleTools.invalidDouble(v)) {
                     v = v - statisticData[c].mean;
                     statisticData[c].dTmp += v * v;
                 }
@@ -723,7 +718,7 @@ public abstract class Data2DReader {
         } catch (Exception e) {
         }
     }
-    
+
     public void handleStatisticAll() {
         if (scanPass == 1) {
             handleStatisticAllPass1();
@@ -731,7 +726,7 @@ public abstract class Data2DReader {
             handleStatisticAllPass2();
         }
     }
-    
+
     public void handleStatisticAllPass1() {
         try {
             for (int c = 0; c < colsLen; c++) {
@@ -740,9 +735,9 @@ public abstract class Data2DReader {
                     continue;
                 }
                 double v = statisticData[c].toDouble(record.get(i));
-                if (Double.isNaN(v)) {
+                if (DoubleTools.invalidDouble(v)) {
                     statisticAll.invalidCount++;
-                    return;
+                    continue;
                 } else {
                     statisticAll.count++;
                 }
@@ -764,10 +759,10 @@ public abstract class Data2DReader {
                 }
             }
         } catch (Exception e) {
-            
+
         }
     }
-    
+
     public void handleStatisticAllPass2() {
         try {
             for (int c = 0; c < colsLen; c++) {
@@ -779,7 +774,7 @@ public abstract class Data2DReader {
                     continue;
                 }
                 double v = statisticAll.toDouble(record.get(i));
-                if (v != Double.NaN) {
+                if (!DoubleTools.invalidDouble(v)) {
                     v = v - statisticAll.mean;
                     statisticAll.dTmp += v * v;
                 }
@@ -787,7 +782,7 @@ public abstract class Data2DReader {
         } catch (Exception e) {
         }
     }
-    
+
     public void handleStatisticRows() {
         try {
             List<String> row = new ArrayList<>();
@@ -813,7 +808,7 @@ public abstract class Data2DReader {
         } catch (Exception e) {
         }
     }
-    
+
     public void handlePecentageColumnsSum() {
         try {
             for (int c = 0; c < colsLen; c++) {
@@ -833,7 +828,7 @@ public abstract class Data2DReader {
         } catch (Exception e) {
         }
     }
-    
+
     public void handlePercentageColumns() {
         try {
             List<String> row = new ArrayList<>();
@@ -865,7 +860,7 @@ public abstract class Data2DReader {
         } catch (Exception e) {
         }
     }
-    
+
     public void handlePecentageAllSum() {
         try {
             for (int c = 0; c < colsLen; c++) {
@@ -885,7 +880,7 @@ public abstract class Data2DReader {
         } catch (Exception e) {
         }
     }
-    
+
     public void handlePercentageAll() {
         try {
             List<String> row = new ArrayList<>();
@@ -916,7 +911,7 @@ public abstract class Data2DReader {
         } catch (Exception e) {
         }
     }
-    
+
     public void handlePercentageRows() {
         try {
             List<String> row = new ArrayList<>();
@@ -962,14 +957,14 @@ public abstract class Data2DReader {
         } catch (Exception e) {
         }
     }
-    
+
     public void handleFrequency() {
         try {
             frequency.addValue(record.get(colIndex));
         } catch (Exception e) {
         }
     }
-    
+
     public void handleNormalizeMinMaxColumns() {
         try {
             List<String> row = new ArrayList<>();
@@ -990,7 +985,7 @@ public abstract class Data2DReader {
         } catch (Exception e) {
         }
     }
-    
+
     public void handleNormalizeSumColumns() {
         try {
             List<String> row = new ArrayList<>();
@@ -1011,7 +1006,7 @@ public abstract class Data2DReader {
         } catch (Exception e) {
         }
     }
-    
+
     public void handleNormalizeZscoreColumns() {
         try {
             List<String> row = new ArrayList<>();
@@ -1036,7 +1031,7 @@ public abstract class Data2DReader {
         } catch (Exception e) {
         }
     }
-    
+
     public void handleNormalizeMinMaxAll() {
         try {
             List<String> row = new ArrayList<>();
@@ -1057,7 +1052,7 @@ public abstract class Data2DReader {
         } catch (Exception e) {
         }
     }
-    
+
     public void handleNormalizeSumAll() {
         try {
             List<String> row = new ArrayList<>();
@@ -1078,7 +1073,7 @@ public abstract class Data2DReader {
         } catch (Exception e) {
         }
     }
-    
+
     public void handleNormalizeZscoreAll() {
         try {
             List<String> row = new ArrayList<>();
@@ -1103,7 +1098,7 @@ public abstract class Data2DReader {
         } catch (Exception e) {
         }
     }
-    
+
     public void handleNormalizeRows(Normalization.Algorithm a) {
         try {
             List<String> row = new ArrayList<>();
@@ -1132,7 +1127,7 @@ public abstract class Data2DReader {
         } catch (Exception e) {
         }
     }
-    
+
     public void handleSimpleLinearRegression() {
         try {
             double x = data2D.doubleValue(record.get(cols.get(0)));
@@ -1143,7 +1138,7 @@ public abstract class Data2DReader {
             MyBoxLog.console(e);
         }
     }
-    
+
     public void afterScanned() {
         try {
             data2D.stopFilter();
@@ -1152,13 +1147,13 @@ public abstract class Data2DReader {
                     if (scanPass == 1) {
                         for (int c = 0; c < colsLen; c++) {
                             if (statisticData[c].count > 0) {
-                                if (statisticData[c].sum != Double.NaN) {
+                                if (!DoubleTools.invalidDouble(statisticData[c].sum)) {
                                     statisticData[c].mean = statisticData[c].sum / statisticData[c].count;
                                 } else {
                                     statisticData[c].mean = Double.NaN;
                                 }
                                 if (statisticCalculation.isGeometricMean()) {
-                                    if (statisticData[c].geometricMean != Double.NaN) {
+                                    if (!DoubleTools.invalidDouble(statisticData[c].geometricMean)) {
                                         statisticData[c].geometricMean = Math.pow(statisticData[c].geometricMean, 1d / statisticData[c].count);
                                     } else {
                                         statisticData[c].geometricMean = Double.NaN;
@@ -1174,7 +1169,7 @@ public abstract class Data2DReader {
                         }
                     } else if (scanPass == 2) {
                         for (int c = 0; c < colsLen; c++) {
-                            if (statisticData[c].count > 0 && statisticData[c].dTmp != Double.NaN) {
+                            if (statisticData[c].count > 0 && !DoubleTools.invalidDouble(statisticData[c].dTmp)) {
                                 statisticData[c].populationVariance = statisticData[c].dTmp / statisticData[c].count;
                                 statisticData[c].sampleVariance = statisticData[c].dTmp / (statisticData[c].count - 1);
                                 if (statisticCalculation.isPopulationStandardDeviation()) {
@@ -1195,13 +1190,13 @@ public abstract class Data2DReader {
                 case StatisticAll:
                     if (scanPass == 1) {
                         if (statisticAll.count > 0) {
-                            if (statisticAll.sum != Double.NaN) {
+                            if (!DoubleTools.invalidDouble(statisticAll.sum)) {
                                 statisticAll.mean = statisticAll.sum / statisticAll.count;
                             } else {
                                 statisticAll.mean = Double.NaN;
                             }
                             if (statisticCalculation.isGeometricMean()) {
-                                if (statisticAll.geometricMean != Double.NaN) {
+                                if (!DoubleTools.invalidDouble(statisticAll.geometricMean)) {
                                     statisticAll.geometricMean = Math.pow(statisticAll.geometricMean, 1d / statisticAll.count);
                                 } else {
                                     statisticAll.geometricMean = Double.NaN;
@@ -1215,7 +1210,7 @@ public abstract class Data2DReader {
                             statisticAll.skewness = skewnessAll.getResult();
                         }
                     } else if (scanPass == 2) {
-                        if (statisticAll.count > 0 && statisticAll.dTmp != Double.NaN) {
+                        if (statisticAll.count > 0 && !DoubleTools.invalidDouble(statisticAll.dTmp)) {
                             statisticAll.populationVariance = statisticAll.dTmp / statisticAll.count;
                             statisticAll.sampleVariance = statisticAll.dTmp / (statisticAll.count - 1);
                             if (statisticCalculation.isPopulationStandardDeviation()) {
@@ -1262,7 +1257,7 @@ public abstract class Data2DReader {
             }
         }
     }
-    
+
     public boolean readerStopped() {
         return readerStopped || (needCheckTask && (readerTask == null || readerTask.isCancelled()));
     }
@@ -1273,88 +1268,88 @@ public abstract class Data2DReader {
     public boolean isFailed() {
         return failed;
     }
-    
+
     public List<String> getNames() {
         return names;
     }
-    
+
     public List<List<String>> getRows() {
         return rows;
     }
-    
+
     public long getRowIndex() {
         return rowIndex;
     }
-    
+
     public double[] getColValues() {
         return colValues;
     }
-    
+
     public Data2DReader setReaderData(Data2D readerData) {
         this.data2D = readerData;
         return this;
     }
-    
+
     public Data2DReader setReaderHasHeader(boolean readerHasHeader) {
         this.readerHasHeader = readerHasHeader;
         return this;
     }
-    
+
     public Data2DReader setReaderCanceled(boolean readerStopped) {
         this.readerStopped = readerStopped;
         return this;
     }
-    
+
     public Data2DReader setNeedCheckTask(boolean needCheckTask) {
         this.needCheckTask = needCheckTask;
         return this;
     }
-    
+
     public Data2DReader setReaderTask(SingletonTask readerTask) {
         this.readerTask = readerTask;
         return this;
     }
-    
+
     public Data2DReader setNames(List<String> names) {
         this.names = names;
         return this;
     }
-    
+
     public Data2DReader setCols(List<Integer> cols) {
         this.cols = cols;
         return this;
     }
-    
+
     public Data2DReader setIncludeRowNumber(boolean includeRowNumber) {
         this.includeRowNumber = includeRowNumber;
         return this;
     }
-    
+
     public Data2DReader setIncludeColName(boolean includeColName) {
         this.includeColName = includeColName;
         return this;
     }
-    
+
     public Data2DReader setWithValues(boolean withValues) {
         this.withValues = withValues;
         return this;
     }
-    
+
     public Data2DReader setFrom(double from) {
         this.from = from;
         return this;
     }
-    
+
     public Data2DReader setTo(double to) {
         this.to = to;
         return this;
     }
-    
+
     public Data2DReader setConvertController(ControlDataConvert convertController) {
         this.convertController = convertController;
         return this;
     }
-    
+
     public Data2DReader setDataTable(DataTable dataTable) {
         this.writerTable = dataTable;
         if (dataTable != null) {
@@ -1362,131 +1357,131 @@ public abstract class Data2DReader {
         }
         return this;
     }
-    
+
     public Data2DReader setConn(Connection conn) {
         this.conn = conn;
         return this;
     }
-    
+
     public Data2DReader setStatisticData(DoubleStatistic[] statisticData) {
         this.statisticData = statisticData;
         return this;
     }
-    
+
     public Data2DReader setCsvPrinter(CSVPrinter csvPrinter) {
         this.csvPrinter = csvPrinter;
         return this;
     }
-    
+
     public Data2DReader setColValues(double[] colsSum) {
         this.colValues = colsSum;
         return this;
     }
-    
+
     public Data2DReader setSumAbs(boolean sumAbs) {
         this.sumAbs = sumAbs;
         return this;
     }
-    
+
     public Data2DReader setStatisticSelection(DescriptiveStatistic statisticSelection) {
         this.statisticCalculation = statisticSelection;
         return this;
     }
-    
+
     public Data2DReader setScanPass(int scanPass) {
         this.scanPass = scanPass;
         return this;
     }
-    
+
     public Data2DReader setScript(String script) {
         this.script = script;
         return this;
     }
-    
+
     public Data2DReader setName(String name) {
         this.name = name;
         return this;
     }
-    
+
     public Data2DReader setCalculator(ExpressionCalculator calculator) {
         this.calculator = calculator;
         return this;
     }
-    
+
     public Data2DReader setErrorContinue(boolean errorContinue) {
         this.errorContinue = errorContinue;
         return this;
     }
-    
+
     public long getCount() {
         return count;
     }
-    
+
     public void setCount(long count) {
         this.count = count;
     }
-    
+
     public int getColIndex() {
         return colIndex;
     }
-    
+
     public Data2DReader setCol(int col) {
         this.colIndex = col;
         return this;
     }
-    
+
     public Frequency getFrequency() {
         return frequency;
     }
-    
+
     public Data2DReader setFrequency(Frequency frequency) {
         this.frequency = frequency;
         return this;
     }
-    
+
     public DoubleStatistic getStatisticAll() {
         return statisticAll;
     }
-    
+
     public Data2DReader setStatisticAll(DoubleStatistic statisticAll) {
         this.statisticAll = statisticAll;
         return this;
     }
-    
+
     public double gettValue() {
         return tValue;
     }
-    
+
     public Data2DReader setValue(double value) {
         this.tValue = value;
         return this;
     }
-    
+
     public int getScale() {
         return scale;
     }
-    
+
     public Data2DReader setScale(int scale) {
         this.scale = scale;
         return this;
     }
-    
+
     public String getCategoryName() {
         return categoryName;
     }
-    
+
     public Data2DReader setCategoryName(String categoryName) {
         this.categoryName = categoryName;
         return null;
     }
-    
+
     public SimpleRegression getSimpleRegression() {
         return simpleRegression;
     }
-    
+
     public Data2DReader setSimpleRegression(SimpleLinearRegression simpleRegression) {
         this.simpleRegression = simpleRegression;
         return this;
     }
-    
+
 }

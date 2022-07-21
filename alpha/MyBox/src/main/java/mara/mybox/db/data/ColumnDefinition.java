@@ -20,7 +20,9 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.IntTools;
+import mara.mybox.tools.LongTools;
 import mara.mybox.tools.StringTools;
+import mara.mybox.value.AppValues;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
@@ -335,27 +337,6 @@ public class ColumnDefinition extends BaseData {
                 || type == ColumnType.Integer || type == ColumnType.Long || type == ColumnType.Short;
     }
 
-    // works on java 17 while not work on java 16
-//    public String random(Random random, int maxRandom, short scale) {
-//        if (random == null) {
-//            random = new Random();
-//        }
-//        switch (type) {
-//            case Double:
-//                return DoubleTools.format(DoubleTools.random(random, maxRandom), scale);
-//            case Float:
-//                return FloatTools.format(random.nextFloat(maxRandom), scale);
-//            case Integer:
-//                return StringTools.format(random.nextInt(maxRandom));
-//            case Long:
-//                return StringTools.format(random.nextLong(maxRandom));
-//            case Short:
-//                return StringTools.format((short) random.nextInt(maxRandom));
-//            default:
-//                return (char) ('a' + random.nextInt(25)) + "";
-//        }
-//    }
-    // works on java 16
     public String random(Random random, int maxRandom, short scale, boolean nonNegative) {
         if (random == null) {
             random = new Random();
@@ -368,7 +349,7 @@ public class ColumnDefinition extends BaseData {
             case Integer:
                 return StringTools.format(IntTools.random(random, maxRandom, nonNegative));
             case Long:
-                return StringTools.format((long) FloatTools.random(random, maxRandom, nonNegative));
+                return StringTools.format(LongTools.random(random, maxRandom, nonNegative));
             case Short:
                 return StringTools.format((short) IntTools.random(random, maxRandom, nonNegative));
             case Boolean:
@@ -402,6 +383,8 @@ public class ColumnDefinition extends BaseData {
         }
     }
 
+    // results.getDouble/getFloat/getInt/getShort returned is 0 if the value is SQL NULL.
+    // But we need distinct zero and null.
     public Object value(ResultSet results) {
         try {
             if (results == null || type == null || columnName == null) {
@@ -419,18 +402,51 @@ public class ColumnDefinition extends BaseData {
                 case Image:
                     return results.getString(savedName);
                 case Double:
-                    return results.getDouble(savedName);
+                    double d;
+                    try {
+                        d = Double.valueOf(results.getObject(savedName).toString());
+                        if (d == AppValues.InvalidDouble) {
+                            d = Double.NaN;
+                        }
+                    } catch (Exception e) {
+                        d = Double.NaN;
+                    }
+                    return d;
                 case Float:
-                    return results.getFloat(savedName);
+                    float f;
+                    try {
+                        f = Float.valueOf(results.getObject(savedName).toString());
+                    } catch (Exception e) {
+                        f = Float.NaN;
+                    }
+                    return f;
                 case Long:
                 case Era:
-                    return results.getLong(savedName);
+                    long l;
+                    try {
+                        l = Long.valueOf(results.getObject(savedName).toString());
+                    } catch (Exception e) {
+                        l = AppValues.InvalidLong;
+                    }
+                    return l;
                 case Integer:
-                    return results.getInt(savedName);
+                    int i;
+                    try {
+                        i = Integer.valueOf(results.getObject(savedName).toString());
+                    } catch (Exception e) {
+                        i = AppValues.InvalidInteger;
+                    }
+                    return i;
+                case Short:
+                    short s;
+                    try {
+                        s = Short.valueOf(results.getObject(savedName).toString());
+                    } catch (Exception e) {
+                        s = AppValues.InvalidShort;
+                    }
+                    return s;
                 case Boolean:
                     return results.getBoolean(savedName);
-                case Short:
-                    return results.getShort(savedName);
                 case Datetime:
                     return results.getTimestamp(savedName);
                 case Date:

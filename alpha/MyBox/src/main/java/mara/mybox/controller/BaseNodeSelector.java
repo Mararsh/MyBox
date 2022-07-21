@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -48,6 +49,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
     protected boolean expandAll, manageMode, nodeExecutable;
     protected int serialStartLevel = 1;
     protected String defauleClickAction = "PopMenu";
+    protected final SimpleBooleanProperty loadedNotify;
 
     @FXML
     protected TreeView<P> treeView;
@@ -122,6 +124,15 @@ public abstract class BaseNodeSelector<P> extends BaseController {
     protected abstract void treeView(Connection conn, P node, int indent, String parentNumber, StringBuilder s);
 
     public abstract TreeManageController openManager();
+
+    public BaseNodeSelector() {
+        loadedNotify = new SimpleBooleanProperty(false);
+    }
+
+    public void notifyLoaded() {
+        loadedNotify.set(!loadedNotify.get());
+    }
+
 
     /*
         Common methods may need not changed
@@ -263,6 +274,13 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                         }
                     }
                 }
+
+                @Override
+                protected void finalAction() {
+                    super.finalAction();
+                    notifyLoaded();
+                }
+
             };
             start(task);
         }

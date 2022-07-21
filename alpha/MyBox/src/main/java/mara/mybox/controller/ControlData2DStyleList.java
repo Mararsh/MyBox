@@ -43,7 +43,7 @@ public class ControlData2DStyleList extends ControlData2DAbnormalList {
     @Override
     public void sourceChanged() {
         try {
-            if (tableController == null) {
+            if (tableController == null || tableController.data2D == null) {
                 return;
             }
             queryConditions = "  d2id = " + tableController.data2D.getD2did();

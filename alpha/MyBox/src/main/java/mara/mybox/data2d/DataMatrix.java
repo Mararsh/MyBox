@@ -135,7 +135,7 @@ public class DataMatrix extends Data2D {
 
     public String toString(double d) {
         if (DoubleTools.invalidDouble(d)) {
-            return "0";
+            return Double.NaN + "";
         } else {
             return DoubleTools.format(d, scale);
         }

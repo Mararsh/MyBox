@@ -145,6 +145,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return null;
         }
         DoubleStatistic sData = new DoubleStatistic();
+        sData.invalidAs = selections.invalidAs;
         Data2DReader reader = Data2DReader.create(this)
                 .setStatisticAll(sData).setCols(cols)
                 .setScanPass(1).setStatisticSelection(selections)

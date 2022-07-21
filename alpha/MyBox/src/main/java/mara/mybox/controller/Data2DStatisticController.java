@@ -272,6 +272,12 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                         }
                     });
 
+            if (UserConfig.getBoolean(baseName + "SkipNonnumeric", true)) {
+                skipNonnumericRadio.fire();
+            } else {
+                zeroNonnumericRadio.fire();
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -366,6 +372,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 calculation.setStatisticObject(StatisticObject.Columns);
                 break;
         }
+        UserConfig.setBoolean(baseName + "SkipNonnumeric", skipNonnumericRadio.isSelected());
         return ok;
     }
 
