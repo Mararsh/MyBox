@@ -489,13 +489,13 @@ public class TreeNodeEditor extends TreeTagsController {
     }
 
     public void markTags() {
-        if (task != null) {
-            task.cancel();
+        if (backgroundTask != null) {
+            backgroundTask.cancel();
         }
         if (tableData.isEmpty() || currentNode == null) {
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        backgroundTask = new SingletonTask<Void>(this) {
             private List<String> nodeTags;
 
             @Override
@@ -523,7 +523,7 @@ public class TreeNodeEditor extends TreeTagsController {
             }
 
         };
-        start(task);
+        start(backgroundTask);
     }
 
     @FXML

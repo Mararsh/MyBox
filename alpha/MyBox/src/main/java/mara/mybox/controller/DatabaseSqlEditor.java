@@ -11,7 +11,6 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -29,7 +28,6 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -212,8 +210,7 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
 
     protected void tableNames(Event event) {
         try {
-            Point2D everntCoord = LocateTools.getScreenCoordinate(event);
-            MenuController controller = MenuController.open(this, valueInput, everntCoord.getX(), everntCoord.getY());
+            MenuController controller = MenuController.open(this, valueInput, event);
 
             List<Node> topButtons = new ArrayList<>();
             topButtons.add(new Label(message("TableName")));
@@ -273,8 +270,7 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
 
     protected void tableDefinition(Event event) {
         try {
-            Point2D everntCoord = LocateTools.getScreenCoordinate(event);
-            MenuController controller = MenuController.open(this, valueInput, everntCoord.getX(), everntCoord.getY());
+            MenuController controller = MenuController.open(this, valueInput, event);
 
             List<Node> topButtons = new ArrayList<>();
             topButtons.add(new Label(message("TableDefinition")));

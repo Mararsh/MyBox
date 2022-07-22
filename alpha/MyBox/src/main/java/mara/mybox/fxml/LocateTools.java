@@ -20,6 +20,8 @@ import mara.mybox.tools.SystemTools;
  */
 public class LocateTools {
 
+    public static final int PopOffsetY = 30;
+
     public static void locateRight(Stage stage) {
         Rectangle2D screen = NodeTools.getScreen();
         stage.setX(screen.getWidth() - stage.getWidth());

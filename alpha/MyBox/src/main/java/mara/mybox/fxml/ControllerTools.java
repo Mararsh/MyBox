@@ -430,7 +430,7 @@ public class ControllerTools {
             table.newNameValueRow("Version", AppValues.AppVersion);
             table.newNameValueRow("Date", AppValues.AppVersionDate);
             table.newNameValueRow("License", Languages.message("FreeOpenSource"));
-            table.newLinkRow("", "http://www.apache.org/licenses/LICENSE-2.0");
+            table.newLinkRow("", "https://www.apache.org/licenses/LICENSE-2.0");
             table.newLinkRow("MainPage", "https://github.com/Mararsh/MyBox");
             table.newLinkRow("Mirror", "https://sourceforge.net/projects/mara-mybox/files/");
             table.newLinkRow("LatestRelease", "https://github.com/Mararsh/MyBox/releases");

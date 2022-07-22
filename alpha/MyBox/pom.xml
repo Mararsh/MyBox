@@ -4,7 +4,7 @@
 
     <groupId>mara</groupId>
     <artifactId>MyBox</artifactId>
-    <version>6.5.6</version>
+    <version>6.5.7</version>
     <packaging>jar</packaging>
     <name>MyBox</name>
     <properties>
@@ -150,7 +150,7 @@
         <dependency>
             <groupId>net.sourceforge.tess4j</groupId>
             <artifactId>tess4j</artifactId>
-            <version>5.2.1</version>
+            <version>4.4.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.zxing</groupId>

@@ -106,7 +106,11 @@ public class WebFavoriteEditor extends TreeNodeEditor {
     @FXML
     @Override
     public void goAction() {
-        WebBrowserController.oneOpen(valueInput.getText(), true);
+        String address = valueInput.getText();
+        if (address == null || address.isBlank()) {
+            return;
+        }
+        WebBrowserController.oneOpen(address, true);
     }
 
 }

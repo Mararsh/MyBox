@@ -16,7 +16,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
@@ -537,8 +536,7 @@ public class PopTools {
             String name, boolean alwaysClear, boolean checkPop) {
         try {
             int max = UserConfig.getInt(name + "MaxSaved", 20);
-            Point2D everntCoord = LocateTools.getScreenCoordinate(event);
-            MenuController controller = MenuController.open(parent, input, everntCoord.getX(), everntCoord.getY());
+            MenuController controller = MenuController.open(parent, input, event);
 
             List<Node> setButtons = new ArrayList<>();
             Button clearInputButton = new Button(message("ClearInputArea"));
@@ -645,7 +643,7 @@ public class PopTools {
             controller.addFlowPane(buttons);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -828,8 +826,7 @@ public class PopTools {
     public static void popSqlExamples(BaseController parent, TextInputControl input,
             String tableName, boolean onlyQuery, Event event) {
         try {
-            Point2D everntCoord = LocateTools.getScreenCoordinate(event);
-            MenuController controller = MenuController.open(parent, input, everntCoord.getX(), everntCoord.getY());
+            MenuController controller = MenuController.open(parent, input, event);
 
             boolean isTextArea = input instanceof TextArea;
 

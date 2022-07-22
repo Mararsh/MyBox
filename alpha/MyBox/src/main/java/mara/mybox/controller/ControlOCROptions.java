@@ -454,10 +454,8 @@ public class ControlOCROptions extends BaseController {
             table.newLinkRow("Home", "https://github.com/tesseract-ocr/tesseract");
             table.newLinkRow("Installation", "https://tesseract-ocr.github.io/tessdoc/Home.html");
             table.newLinkRow("InstallationOnWindows", "https://github.com/UB-Mannheim/tesseract/wiki");
-            table.newLinkRow("HomeBrew on Mac for Chinese", "https://www.jianshu.com/p/6a0fff005f20");
             table.newLinkRow("DataFiles", "https://tesseract-ocr.github.io/tessdoc/Data-Files.html");
             table.newLinkRow("Documents", "https://github.com/tesseract-ocr/tessdoc");
-            table.newLinkRow("Parameters", "https://github.com/tesseract-ocr/tessdoc/blob/master/ControlParams.md");
             table.newLinkRow("ImproveQuality", "https://tesseract-ocr.github.io/tessdoc/ImproveQuality.html");
 
             File htmFile = HtmlWriteTools.writeHtml(table.html());

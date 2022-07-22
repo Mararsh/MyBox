@@ -8,7 +8,6 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -19,7 +18,6 @@ import jdk.jshell.JShell;
 import jdk.jshell.SourceCodeAnalysis;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.HtmlStyles;
@@ -109,9 +107,12 @@ public class JShellEditor extends TreeNodeEditor {
             }
 
             @Override
+            protected void whenSucceeded() {
+            }
+
+            @Override
             protected void finalAction() {
                 cancelAction();
-                editNode(null);
             }
         };
         start(task);
@@ -213,9 +214,7 @@ public class JShellEditor extends TreeNodeEditor {
 
     protected void syntaxMenu(Event event) {
         try {
-            Point2D everntCoord = LocateTools.getScreenCoordinate(event);
-            MenuController controller = MenuController.open(jShellController, valueInput,
-                    everntCoord.getX(), everntCoord.getY() + 20);
+            MenuController controller = MenuController.open(jShellController, valueInput, event);
             controller.setTitleLabel(message("Syntax"));
 
             List<Node> topButtons = new ArrayList<>();

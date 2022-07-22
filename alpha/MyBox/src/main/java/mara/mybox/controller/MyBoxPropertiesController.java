@@ -49,8 +49,6 @@ public class MyBoxPropertiesController extends HtmlTableController {
             addData(message("JvmName"), System.getProperty("java.vm.name"));
             addData(message("JvmInfo"), System.getProperty("java.vm.info"));
             addData(message("JavaHome"), System.getProperty("java.home"));
-            addData(message("ClassPaths"), System.getProperty("java.class.path"));
-            addData(message("LibraryPaths"), System.getProperty("java.library.path"));
             addData(message("JavaIOTmpdir"), System.getProperty("java.io.tmpdir"));
             addData(message("JavafxRuntimeVersion"), System.getProperty("javafx.runtime.version"));
 
@@ -88,6 +86,9 @@ public class MyBoxPropertiesController extends HtmlTableController {
             addData(message("OSName"), System.getProperty("os.name"));
             addData(message("OSVersion"), System.getProperty("os.version"));
             addData(message("OSArch"), System.getProperty("os.arch"));
+
+            addData(message("ClassPaths"), System.getProperty("java.class.path"));
+            addData(message("LibraryPaths"), System.getProperty("java.library.path"));
 
             String envString = "";
             Map<String, String> env = System.getenv();

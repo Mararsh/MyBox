@@ -48,7 +48,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
     protected P ignoreNode = null;
     protected boolean expandAll, manageMode, nodeExecutable;
     protected int serialStartLevel = 1;
-    protected String defauleClickAction = "PopMenu";
+    protected String defaultClickAction = "PopMenu";
     protected final SimpleBooleanProperty loadedNotify;
 
     @FXML
@@ -335,7 +335,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         if (item == null) {
             return;
         }
-        String clickAction = UserConfig.getString(baseName + "TreeWhenClickNode", defauleClickAction);
+        String clickAction = UserConfig.getString(baseName + "TreeWhenClickNode", defaultClickAction);
         if (null == clickAction) {
             popFunctionsMenu(null, item);
         } else {
@@ -437,7 +437,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         if (manageMode) {
             Menu clickMenu = new Menu(message("WhenClickNode"));
             ToggleGroup clickGroup = new ToggleGroup();
-            String currentClick = UserConfig.getString(baseName + "TreeWhenClickNode", defauleClickAction);
+            String currentClick = UserConfig.getString(baseName + "TreeWhenClickNode", defaultClickAction);
 
             RadioMenuItem clickPopMenu = new RadioMenuItem(message("PopMenu"), StyleTools.getIconImage("iconMenu.png"));
             clickPopMenu.setSelected(currentClick == null || "PopMenu".equals(currentClick));

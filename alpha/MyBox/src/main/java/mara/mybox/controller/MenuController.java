@@ -2,7 +2,9 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -15,6 +17,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -189,6 +192,11 @@ public class MenuController extends BaseChildController {
     /*
         static methods
      */
+    public static MenuController open(BaseController parent, Node node, Event event) {
+        Point2D everntCoord = LocateTools.getScreenCoordinate(event);
+        return open(parent, node, everntCoord.getX(), everntCoord.getY() + LocateTools.PopOffsetY);
+    }
+
     public static MenuController open(BaseController parent, Node node, double x, double y) {
         try {
             if (parent == null) {

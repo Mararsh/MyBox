@@ -671,13 +671,23 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
 
     public void pasteNode(TreeNode node) {
         if (node == null) {
-            popError(message("NoData"));
             return;
         }
-        nodeController.pasteText(node.getValue());
+        String v = node.getValue();
+        if (v == null || v.isBlank()) {
+            return;
+        }
+        nodeController.pasteText(v);
     }
 
     public void executeNode(TreeNode node) {
+        if (node == null) {
+            return;
+        }
+        String v = node.getValue();
+        if (v == null || v.isBlank()) {
+            return;
+        }
         editNode(node);
         if (nodeController.startButton != null) {
             nodeController.startAction();

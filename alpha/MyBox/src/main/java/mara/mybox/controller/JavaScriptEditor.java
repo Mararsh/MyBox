@@ -7,7 +7,6 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -17,7 +16,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -90,7 +88,6 @@ public class JavaScriptEditor extends TreeNodeEditor {
             outputs += "<div class=\"valueBox\">" + HtmlWriteTools.stringToHtml(ret) + "</div><br><br>";
             String html = HtmlWriteTools.html(null, HtmlStyles.DefaultStyle, "<body>" + outputs + "</body>");
             jsController.outputController.loadContents(html);
-            popDone();
             TableStringValues.add("JavaScriptHistories", script.trim());
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -111,8 +108,7 @@ public class JavaScriptEditor extends TreeNodeEditor {
 
     protected void examplesMenu(Event event) {
         try {
-            Point2D everntCoord = LocateTools.getScreenCoordinate(event);
-            MenuController controller = MenuController.open(this, valueInput, everntCoord.getX(), everntCoord.getY() + 20);
+            MenuController controller = MenuController.open(this, valueInput, event);
 
             controller.setTitleLabel(message("Examples"));
 

@@ -69,7 +69,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
 
     @FXML
     public void derbyHelp() {
-        openLink("http://db.apache.org/derby/docs/10.15/ref/index.html");
+        openLink("https://db.apache.org/derby/docs/10.15/ref/index.html");
     }
 
     @FXML

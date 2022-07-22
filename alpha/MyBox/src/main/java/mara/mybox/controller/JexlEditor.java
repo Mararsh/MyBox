@@ -7,7 +7,6 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -18,7 +17,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -129,9 +127,7 @@ public class JexlEditor extends JShellEditor {
 
     protected void jexlScriptExamples(Event event) {
         try {
-            Point2D everntCoord = LocateTools.getScreenCoordinate(event);
-            MenuController controller = MenuController.open(this, valueInput,
-                    everntCoord.getX(), everntCoord.getY() + 20);
+            MenuController controller = MenuController.open(this, valueInput, event);
             controller.setTitleLabel(message("Syntax"));
 
             List<Node> topButtons = new ArrayList<>();
@@ -413,9 +409,7 @@ public class JexlEditor extends JShellEditor {
 
     protected void jexlContextExamples(Event event) {
         try {
-            Point2D everntCoord = LocateTools.getScreenCoordinate(event);
-            MenuController controller = MenuController.open(this, moreInput,
-                    everntCoord.getX(), everntCoord.getY() + 20);
+            MenuController controller = MenuController.open(this, moreInput, event);
             controller.setTitleLabel(message("Syntax"));
 
             List<Node> topButtons = new ArrayList<>();
