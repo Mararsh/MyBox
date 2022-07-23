@@ -5,7 +5,6 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -55,7 +54,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
     protected int threshold, rotate, tesseractVersion;
     protected ImageContrast.ContrastAlgorithm contrastAlgorithm;
     protected BufferedImage lastImage;
-    protected ITesseract OCRinstance;
+    protected Tesseract OCRinstance;
     protected List<File> textFiles;
     protected Process process;
     protected File configFile;
@@ -209,13 +208,13 @@ public class ImageOCRBatchController extends BaseBatchImageController {
             if (ocrOptionsController.embedRadio.isSelected()) {
                 OCRinstance = new Tesseract();
                 // https://stackoverflow.com/questions/58286373/tess4j-pdf-to-tiff-to-tesseract-warning-invalid-resolution-0-dpi-using-70/58296472#58296472
-                OCRinstance.setTessVariable("user_defined_dpi", "96");
-                OCRinstance.setTessVariable("debug_file", "/dev/null");
+                OCRinstance.setVariable("user_defined_dpi", "96");
+                OCRinstance.setVariable("debug_file", "/dev/null");
                 OCRinstance.setPageSegMode(ocrOptionsController.psm);
                 Map<String, String> p = ocrOptionsController.checkParameters();
                 if (p != null && !p.isEmpty()) {
                     for (String key : p.keySet()) {
-                        OCRinstance.setTessVariable(key, p.get(key));
+                        OCRinstance.setVariable(key, p.get(key));
                     }
                 }
                 String path = UserConfig.getString(OCRTools.TessDataPath, null);
@@ -430,7 +429,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                     + FileNameTools.prefix(targetFile.getName());
             String tmpPrefix = TmpFileTools.getTempFile().getAbsolutePath();
 
-            OCRinstance.createDocumentsWithResults​(lastImage, null,
+            OCRinstance.createDocumentsWithResults​(lastImage, tmpPrefix,
                     tmpPrefix, formats, TessPageIteratorLevel.RIL_SYMBOL);
             File tmpTextFile = new File(tmpPrefix + ".txt");
             if (!tmpTextFile.exists()) {
@@ -544,7 +543,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
             ProcessBuilder pb = new ProcessBuilder(parameters).redirectErrorStream(true);
             process = pb.start();
             String outputs = "", line;
-            try ( BufferedReader inReader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            try ( BufferedReader inReader = process.inputReader(Charset.forName("UTF-8"))) {
                 while ((line = inReader.readLine()) != null) {
                     outputs += line + "\n";
                 }

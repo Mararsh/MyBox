@@ -9,6 +9,7 @@ import com.sun.management.OperatingSystemMXBean;
 import java.awt.DisplayMode;
 import java.awt.GraphicsEnvironment;
 import java.lang.management.ManagementFactory;
+import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.Map;
 import javafx.geometry.Rectangle2D;
@@ -80,9 +81,11 @@ public class MyBoxPropertiesController extends HtmlTableController {
             addData("WebView", WebViewTools.userAgent());
 
             addData(message("FileEncoding"), System.getProperty("file.encoding"));
-            addData(message("FileSeparator"), System.getProperty("file.separator"));
+            addData(message("NativeEncoding"), System.getProperty("native.encoding"));
+            addData(message("DefaultCharset"), Charset.defaultCharset().name());
             addData(message("UserCountry"), System.getProperty("user.country"));
             addData(message("UserLanguage"), System.getProperty("user.language"));
+            addData(message("FileSeparator"), System.getProperty("file.separator"));
             addData(message("OSName"), System.getProperty("os.name"));
             addData(message("OSVersion"), System.getProperty("os.version"));
             addData(message("OSArch"), System.getProperty("os.arch"));

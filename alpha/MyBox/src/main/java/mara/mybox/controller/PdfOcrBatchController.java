@@ -4,7 +4,6 @@ import com.recognition.software.jdeskew.ImageDeskew;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -578,7 +577,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
             ProcessBuilder pb = new ProcessBuilder(parameters).redirectErrorStream(true);
             process = pb.start();
             String outputs = "", line;
-            try ( BufferedReader inReader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            try ( BufferedReader inReader = process.inputReader(Charset.forName("UTF-8"))) {
                 while ((line = inReader.readLine()) != null) {
                     outputs += line + "\n";
                 }

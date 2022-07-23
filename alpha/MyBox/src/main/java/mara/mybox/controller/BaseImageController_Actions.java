@@ -10,6 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -67,16 +68,6 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                 checkSelect();
             }
 
-            if (handleSelectCheck != null) {
-                handleSelectCheck.setSelected(UserConfig.getBoolean(baseName + "HandleSelectArea", true));
-                handleSelectCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(baseName + "HandleSelectArea", handleSelectCheck.isSelected());
-                    }
-                });
-            }
-
             if (pickColorCheck != null) {
                 pickColorCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
@@ -119,7 +110,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
 
     public Image imageToHandle() {
         Image selected = null;
-        if (handleSelectCheck == null || handleSelectCheck.isSelected()) {
+        if (UserConfig.getBoolean(baseName + "HandleSelectArea", true)) {
             selected = scopeImage();
         }
         if (selected == null) {
@@ -360,6 +351,20 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             popMenu.setAutoHide(true);
 
             MenuItem menu;
+
+            if (selectAreaCheck != null) {
+                CheckMenuItem handleSelectCheck = new CheckMenuItem(message("ImageHandleSelectedArea"), StyleTools.getIconImage("iconRectangle.png"));
+                handleSelectCheck.setSelected(UserConfig.getBoolean(baseName + "HandleSelectArea", true));
+                handleSelectCheck.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        UserConfig.setBoolean(baseName + "HandleSelectArea", handleSelectCheck.isSelected());
+                    }
+                });
+                popMenu.getItems().add(handleSelectCheck);
+                popMenu.getItems().add(new SeparatorMenuItem());
+            }
+
             menu = new MenuItem(message("CopyToSystemClipboard"), StyleTools.getIconImage("iconCopySystem.png"));
             menu.setOnAction((ActionEvent event) -> {
                 copyToSystemClipboard();

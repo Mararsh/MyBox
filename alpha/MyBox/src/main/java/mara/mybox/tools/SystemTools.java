@@ -3,7 +3,6 @@ package mara.mybox.tools;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -95,6 +94,14 @@ public class SystemTools {
         }
     }
 
+    public static Charset ConsoleCharset() {
+        try {
+            return Charset.forName(System.getProperty("native.encoding"));
+        } catch (Exception e) {
+            return Charset.defaultCharset();
+        }
+    }
+
     public static String run(String cmd) {
         try {
             if (cmd == null || cmd.isBlank()) {
@@ -105,8 +112,7 @@ public class SystemTools {
             ProcessBuilder pb = new ProcessBuilder(p).redirectErrorStream(true);
             final Process process = pb.start();
             StringBuilder s = new StringBuilder();
-            try ( BufferedReader inReader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream(), Charset.defaultCharset()))) {
+            try ( BufferedReader inReader = process.inputReader()) {
                 String line;
                 while ((line = inReader.readLine()) != null) {
                     s.append(line).append("\n");

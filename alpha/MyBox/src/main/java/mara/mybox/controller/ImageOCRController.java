@@ -4,7 +4,6 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -271,7 +270,7 @@ public class ImageOCRController extends ImageViewerController {
                     ProcessBuilder pb = new ProcessBuilder(parameters).redirectErrorStream(true);
                     long startTime = new Date().getTime();
                     process = pb.start();
-                    try ( BufferedReader inReader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                    try ( BufferedReader inReader = process.inputReader(Charset.forName("UTF-8"))) {
                         String line;
                         while ((line = inReader.readLine()) != null) {
                             outputs += line + "\n";
@@ -348,8 +347,8 @@ public class ImageOCRController extends ImageViewerController {
             return;
         }
         synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
+            if (task != null) {
+                task.cancel();
             }
             task = new SingletonTask<Void>(this) {
 
@@ -360,15 +359,15 @@ public class ImageOCRController extends ImageViewerController {
                 @Override
                 protected boolean handle() {
                     try {
-                        ITesseract instance = new Tesseract();
+                        Tesseract instance = new Tesseract();
                         // https://stackoverflow.com/questions/58286373/tess4j-pdf-to-tiff-to-tesseract-warning-invalid-resolution-0-dpi-using-70/58296472#58296472
-                        instance.setTessVariable("user_defined_dpi", "96");
-                        instance.setTessVariable("debug_file", "/dev/null");
+                        instance.setVariable("user_defined_dpi", "96");
+                        instance.setVariable("debug_file", "/dev/null");
                         instance.setPageSegMode(ocrOptionsController.psm);
                         Map<String, String> p = ocrOptionsController.checkParameters();
                         if (p != null && !p.isEmpty()) {
                             for (String key : p.keySet()) {
-                                instance.setTessVariable(key, p.get(key));
+                                instance.setVariable(key, p.get(key));
                             }
                         }
                         instance.setDatapath(ocrOptionsController.dataPathController.file.getAbsolutePath());
@@ -393,7 +392,8 @@ public class ImageOCRController extends ImageViewerController {
                         File tmpFile = File.createTempFile("MyboxOCR", "");
                         String tmp = File.createTempFile("MyboxOCR", "").getAbsolutePath();
                         FileDeleteTools.delete(tmpFile);
-                        instance.createDocumentsWithResults​(bufferedImage, null,
+
+                        instance.createDocumentsWithResults​(bufferedImage, tmp,
                                 tmp, formats, ITessAPI.TessPageIteratorLevel.RIL_SYMBOL);
                         File txtFile = new File(tmp + ".txt");
                         texts = TextFileTools.readTexts(txtFile);

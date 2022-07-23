@@ -1,8 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.BufferedWriter;
-import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -84,8 +82,7 @@ public class RunSystemCommandController extends RunCommandController {
     public void plusAction() {
         try {
             if (process != null && process.isAlive()) {
-                try ( BufferedWriter writer = new BufferedWriter(
-                        new OutputStreamWriter(process.getOutputStream(), Charset.defaultCharset()));) {
+                try ( BufferedWriter writer = process.outputWriter()) {
                     writer.append(cmdInput.getText());
                 } catch (Exception e) {
                     popError(e.toString());

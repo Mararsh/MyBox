@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,6 +12,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
+import mara.mybox.tools.SystemTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -25,6 +25,11 @@ public class RunCommandController extends HtmlPopController {
 
     protected Process process;
     protected String outputs = "";
+    protected Charset charset;
+
+    public RunCommandController() {
+        charset = SystemTools.ConsoleCharset();
+    }
 
     @Override
     public void setStageStatus() {
@@ -58,8 +63,7 @@ public class RunCommandController extends HtmlPopController {
                         ProcessBuilder pb = new ProcessBuilder(p).redirectErrorStream(true);
                         process = pb.start();
                         running();
-                        try ( BufferedReader inReader = new BufferedReader(
-                                new InputStreamReader(process.getInputStream(), Charset.defaultCharset()))) {
+                        try ( BufferedReader inReader = process.inputReader(charset)) {
                             String line;
                             while ((line = inReader.readLine()) != null) {
                                 output(HtmlWriteTools.stringToHtml(line) + "<br>");
@@ -118,7 +122,7 @@ public class RunCommandController extends HtmlPopController {
     protected void output(String msg) {
         Platform.runLater(() -> {
             outputs += msg;
-            String html = HtmlWriteTools.html(null, "<body>" + outputs + "</body>");
+            String html = HtmlWriteTools.html(null, charset.name(), null, "<body>" + outputs + "</body>");
             loadContents(html);
         });
 
@@ -126,7 +130,7 @@ public class RunCommandController extends HtmlPopController {
 
     protected void setStatus(String msg) {
         Platform.runLater(() -> {
-            String html = HtmlWriteTools.html(null, "<body>" + outputs + "<br><hr>\n" + msg + "</body>");
+            String html = HtmlWriteTools.html(null, charset.name(), null, "<body>" + outputs + "<br><hr>\n" + msg + "</body>");
             loadContents(html);
         });
     }

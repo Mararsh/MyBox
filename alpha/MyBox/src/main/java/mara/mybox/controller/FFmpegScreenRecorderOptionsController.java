@@ -4,7 +4,6 @@ import java.awt.DisplayMode;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -199,8 +198,8 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
             ).redirectErrorStream(true);
             audioDevice = null;
             final Process process = pb.start();
-            try ( BufferedReader inReader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream(), Charset.forName("UTF-8")))) {
+
+            try ( BufferedReader inReader = process.inputReader(Charset.forName("UTF-8"))) {
                 String line;
                 boolean audioNext = false;
                 while ((line = inReader.readLine()) != null) {
@@ -248,8 +247,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
             ).redirectErrorStream(true);
             macVideo = macAudio = -1;
             final Process process = pb.start();
-            try ( BufferedReader inReader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream(), Charset.forName("UTF-8")))) {
+            try ( BufferedReader inReader = process.inputReader(Charset.forName("UTF-8"))) {
                 String line;
                 while ((line = inReader.readLine()) != null) {
                     try {
