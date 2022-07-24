@@ -266,7 +266,9 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
                 outputData = selectedData(dataColsIndices, true);
                 regress(outputData);
             }
-
+            if (outputData == null) {
+                return;
+            }
             intercept = interceptCheck.isSelected() ? simpleRegression.getIntercept() : 0;
             slope = simpleRegression.getSlope();
             rSquare = simpleRegression.getRSquare();
@@ -279,7 +281,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
             outputColumns.add(new Data2DColumn(selectedValue + "_" + message("FittedValue"), ColumnDefinition.ColumnType.Double));
             for (int i = 0; i < outputData.size(); i++) {
                 List<String> rowData = outputData.get(i);
-                double x = data2D.doubleValue(rowData.get(1));
+                double x = DoubleTools.toDouble(rowData.get(1), invalidAs);
                 rowData.add(DoubleTools.format(intercept + slope * x, scale));
             }
 
@@ -315,8 +317,8 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
             for (int i = 0; i < outputData.size(); i++) {
                 List<String> rowData = outputData.get(i);
                 List<String> residualRow = new ArrayList<>();
-                double x = data2D.doubleValue(rowData.get(1));
-                double y = data2D.doubleValue(rowData.get(2));
+                double x = DoubleTools.toDouble(rowData.get(1), invalidAs);
+                double y = DoubleTools.toDouble(rowData.get(2), invalidAs);
                 double predict = intercept + slope * x;
                 double residual = y - predict;
                 residualRow.add(rowData.get(0));
@@ -354,8 +356,8 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
         for (List<String> row : data) {
             try {
                 long index = Long.parseLong(row.get(0));
-                double x = data2D.doubleValue(row.get(1));
-                double y = data2D.doubleValue(row.get(2));
+                double x = DoubleTools.toDouble(row.get(1), invalidAs);
+                double y = DoubleTools.toDouble(row.get(2), invalidAs);
                 List<String> resultRow = simpleRegression.addData(index, x, y);
                 regressionData.add(resultRow);
             } catch (Exception e) {

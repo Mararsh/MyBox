@@ -529,6 +529,7 @@ public class ImageSplitController extends BaseImagesListController {
                 }
             }
             imageInfos.clear();
+            sizeLabel.setText("");
             if (rows == null || cols == null
                     || rows.size() < 2 || cols.size() < 2
                     || (rows.size() == 2 && cols.size() == 2)) {

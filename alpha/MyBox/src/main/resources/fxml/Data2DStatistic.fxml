@@ -268,7 +268,7 @@ License:    Apache License Version 2.0
                                           <ComboBox fx:id="scaleSelector" editable="true" prefWidth="120.0" />
                                        </children>
                                     </HBox>
-                                    <FlowPane fx:id="categoryColumnsPane1" hgap="2.0" layoutX="15.0" layoutY="36.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+                                    <FlowPane hgap="2.0" layoutX="15.0" layoutY="36.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
                                        <children>
                                           <Label text="%ToNonnumeric" />
                                           <RadioButton fx:id="skipNonnumericRadio" mnemonicParsing="false" selected="true" text="%Skip">

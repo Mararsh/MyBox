@@ -7,6 +7,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -47,7 +48,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
             for (int r = 0; r < rowsNumber; r++) {
                 List<String> tableRow = outputData.get(r);
                 for (int c = 0; c < colsNumber; c++) {
-                    double d = data2D.doubleValue(tableRow.get(c + 1));
+                    double d = DoubleTools.toDouble(tableRow.get(c + 1), invalidAs);
                     data[r][c] = d;
                     if (d > 0) {
                         allNeg = false;

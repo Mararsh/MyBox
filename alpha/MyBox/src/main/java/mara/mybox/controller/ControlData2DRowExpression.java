@@ -56,9 +56,7 @@ public class ControlData2DRowExpression extends TreeNodesController {
 
             tableTreeNode = new TableTreeNode();
             tableTreeNodeTag = new TableTreeNodeTag();
-            if (!loadExamples()) {
-                loadTree(null);
-            }
+            loadTree(null);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

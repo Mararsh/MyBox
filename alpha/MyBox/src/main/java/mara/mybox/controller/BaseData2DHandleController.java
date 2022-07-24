@@ -35,6 +35,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
     protected List<Data2DColumn> outputColumns;
     protected int scale, defaultScale = 2;
     protected ObjectType objectType;
+    protected double invalidAs;
 
     @FXML
     protected Tab dataTab;
@@ -49,7 +50,8 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
     @FXML
     protected ToggleGroup objectGroup;
     @FXML
-    protected RadioButton columnsRadio, rowsRadio, allRadio;
+    protected RadioButton columnsRadio, rowsRadio, allRadio,
+            skipNonnumericRadio, zeroNonnumericRadio;
     @FXML
     protected ImageView tableTipsView;
 
@@ -93,6 +95,14 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                         scaleChanged();
                     }
                 });
+            }
+
+            if (skipNonnumericRadio != null) {
+                if (UserConfig.getBoolean(baseName + "SkipNonnumeric", true)) {
+                    skipNonnumericRadio.fire();
+                } else {
+                    zeroNonnumericRadio.fire();
+                }
             }
 
         } catch (Exception e) {
@@ -207,6 +217,11 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         }
         if (infoLabel != null) {
             infoLabel.setText("");
+        }
+        if (skipNonnumericRadio != null) {
+            invalidAs = skipNonnumericRadio.isSelected() ? Double.NaN : 0;
+        } else {
+            invalidAs = 0;
         }
         if (!checkSelections()) {
             if (infoLabel != null) {

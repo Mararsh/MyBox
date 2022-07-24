@@ -35,7 +35,7 @@ public class Data2DPercentageController extends BaseData2DHandleController {
     @FXML
     protected ToggleGroup negativeGroup;
     @FXML
-    protected RadioButton zeroRadio, absRadio;
+    protected RadioButton negativeSkipRadio, negativeZeroRadio, negativeAbsRadio;
 
     public Data2DPercentageController() {
         baseTitle = message("ValuePercentage");
@@ -54,15 +54,24 @@ public class Data2DPercentageController extends BaseData2DHandleController {
                 }
             });
 
-            if (UserConfig.getBoolean(baseName + "NegativeAsZero", true)) {
-                zeroRadio.fire();
+            String toNegative = UserConfig.getString(baseName + "ToNegative", "skip");
+            if ("zero".equals(toNegative)) {
+                negativeZeroRadio.fire();
+            } else if ("abs".equals(toNegative)) {
+                negativeAbsRadio.fire();
             } else {
-                absRadio.fire();
+                negativeSkipRadio.fire();
             }
             negativeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    UserConfig.setBoolean(baseName + "NegativeAsZero", zeroRadio.isSelected());
+                    if (negativeZeroRadio.isSelected()) {
+                        UserConfig.setString(baseName + "ToNegative", "zero");
+                    } else if (negativeAbsRadio.isSelected()) {
+                        UserConfig.setString(baseName + "ToNegative", "abs");
+                    } else {
+                        UserConfig.setString(baseName + "ToNegative", "skip");
+                    }
                 }
             });
 
@@ -222,9 +231,10 @@ public class Data2DPercentageController extends BaseData2DHandleController {
             for (int r : checkedRowsIndices) {
                 List<String> tableRow = tableController.tableData.get(r);
                 for (int c = 0; c < colsLen; c++) {
-                    double d = data2D.doubleValue(tableRow.get(colIndices.get(c) + 1));
-                    if (d < 0) {
-                        if (!zeroRadio.isSelected()) {
+                    double d = DoubleTools.toDouble(tableRow.get(colIndices.get(c) + 1), invalidAs);
+                    if (DoubleTools.invalidDouble(d)) {
+                    } else if (d < 0) {
+                        if (negativeAbsRadio.isSelected()) {
                             sum[c] += Math.abs(d);
                         }
                     } else if (d > 0) {
@@ -247,15 +257,24 @@ public class Data2DPercentageController extends BaseData2DHandleController {
                 row = new ArrayList<>();
                 row.add(message("Row") + (r + 1));
                 for (int c = 0; c < colsLen; c++) {
-                    double d = data2D.doubleValue(tableRow.get(colIndices.get(c) + 1));
+                    double d = DoubleTools.toDouble(tableRow.get(colIndices.get(c) + 1), invalidAs);
                     if (valuesCheck.isSelected()) {
-                        row.add(DoubleTools.format(d, scale));
+                        if (DoubleTools.invalidDouble(d)) {
+                            row.add(Double.NaN + "");
+                        } else {
+                            row.add(DoubleTools.format(d, scale));
+                        }
                     }
-                    if (sum[c] == 0) {
+                    if (DoubleTools.invalidDouble(d)) {
+                        row.add(Double.NaN + "");
+                    } else if (sum[c] == 0) {
                         row.add("0");
                     } else {
                         if (d < 0) {
-                            if (!zeroRadio.isSelected()) {
+                            if (negativeSkipRadio.isSelected()) {
+                                row.add(Double.NaN + "");
+                                continue;
+                            } else if (negativeAbsRadio.isSelected()) {
                                 d = Math.abs(d);
                             } else {
                                 d = 0;
@@ -286,9 +305,10 @@ public class Data2DPercentageController extends BaseData2DHandleController {
                 row.add(message("Row") + (r + 1));
                 List<String> tableRow = tableController.tableData.get(r);
                 for (int c : colIndices) {
-                    double d = data2D.doubleValue(tableRow.get(c + 1));
-                    if (d < 0) {
-                        if (!zeroRadio.isSelected()) {
+                    double d = DoubleTools.toDouble(tableRow.get(c + 1), invalidAs);
+                    if (DoubleTools.invalidDouble(d)) {
+                    } else if (d < 0) {
+                        if (negativeAbsRadio.isSelected()) {
                             sum += Math.abs(d);
                         }
                     } else if (d > 0) {
@@ -297,15 +317,24 @@ public class Data2DPercentageController extends BaseData2DHandleController {
                 }
                 row.add(DoubleTools.format(sum, scale));
                 for (int c : colIndices) {
-                    double d = data2D.doubleValue(tableRow.get(c + 1));
+                    double d = DoubleTools.toDouble(tableRow.get(c + 1), invalidAs);
                     if (valuesCheck.isSelected()) {
-                        row.add(DoubleTools.format(d, scale));
+                        if (DoubleTools.invalidDouble(d)) {
+                            row.add(Double.NaN + "");
+                        } else {
+                            row.add(DoubleTools.format(d, scale));
+                        }
                     }
-                    if (sum == 0) {
+                    if (DoubleTools.invalidDouble(d)) {
+                        row.add(Double.NaN + "");
+                    } else if (sum == 0) {
                         row.add("0");
                     } else {
                         if (d < 0) {
-                            if (!zeroRadio.isSelected()) {
+                            if (negativeSkipRadio.isSelected()) {
+                                row.add(Double.NaN + "");
+                                continue;
+                            } else if (negativeAbsRadio.isSelected()) {
                                 d = Math.abs(d);
                             } else {
                                 d = 0;
@@ -333,9 +362,10 @@ public class Data2DPercentageController extends BaseData2DHandleController {
             for (int r : checkedRowsIndices) {
                 List<String> tableRow = tableController.tableData.get(r);
                 for (int c : colIndices) {
-                    double d = data2D.doubleValue(tableRow.get(c + 1));
-                    if (d < 0) {
-                        if (!zeroRadio.isSelected()) {
+                    double d = DoubleTools.toDouble(tableRow.get(c + 1), invalidAs);
+                    if (DoubleTools.invalidDouble(d)) {
+                    } else if (d < 0) {
+                        if (negativeAbsRadio.isSelected()) {
                             sum += Math.abs(d);
                         }
                     } else if (d > 0) {
@@ -362,15 +392,24 @@ public class Data2DPercentageController extends BaseData2DHandleController {
                 row = new ArrayList<>();
                 row.add(message("Row") + (r + 1) + "");
                 for (int c : colIndices) {
-                    double d = data2D.doubleValue(tableRow.get(c + 1));
+                    double d = DoubleTools.toDouble(tableRow.get(c + 1), invalidAs);
                     if (valuesCheck.isSelected()) {
-                        row.add(DoubleTools.format(d, scale));
+                        if (DoubleTools.invalidDouble(d)) {
+                            row.add(Double.NaN + "");
+                        } else {
+                            row.add(DoubleTools.format(d, scale));
+                        }
                     }
-                    if (sum == 0) {
+                    if (DoubleTools.invalidDouble(d)) {
+                        row.add(Double.NaN + "");
+                    } else if (sum == 0) {
                         row.add("0");
                     } else {
                         if (d < 0) {
-                            if (!zeroRadio.isSelected()) {
+                            if (negativeSkipRadio.isSelected()) {
+                                row.add(Double.NaN + "");
+                                continue;
+                            } else if (negativeAbsRadio.isSelected()) {
                                 d = Math.abs(d);
                             } else {
                                 d = 0;
@@ -393,16 +432,24 @@ public class Data2DPercentageController extends BaseData2DHandleController {
 
     @Override
     public DataFileCSV generatedFile() {
+        String toNegative;
+        if (negativeSkipRadio.isSelected()) {
+            toNegative = "skip";
+        } else if (negativeAbsRadio.isSelected()) {
+            toNegative = "abs";
+        } else {
+            toNegative = "zero";
+        }
         switch (objectType) {
             case Rows:
                 return data2D.percentageRows(handledNames, checkedColsIndices,
-                        valuesCheck.isSelected(), !zeroRadio.isSelected(), scale);
+                        scale, valuesCheck.isSelected(), toNegative, invalidAs);
             case All:
                 return data2D.percentageAll(handledNames, checkedColsIndices,
-                        valuesCheck.isSelected(), !zeroRadio.isSelected(), scale);
+                        scale, valuesCheck.isSelected(), toNegative, invalidAs);
             default:
                 return data2D.percentageColumns(handledNames, checkedColsIndices,
-                        valuesCheck.isSelected(), !zeroRadio.isSelected(), scale);
+                        scale, valuesCheck.isSelected(), toNegative, invalidAs);
         }
     }
 

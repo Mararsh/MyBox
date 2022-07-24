@@ -49,7 +49,7 @@ public abstract class Data2DReader {
     protected List<List<String>> rows = new ArrayList<>();
     protected List<Integer> cols;
     protected boolean includeRowNumber, includeColName, withValues, failed, sumAbs;
-    protected double from, to, tValue;
+    protected double from, to, tValue, invalidAs = 0;
     protected double[] colValues;
     protected Connection conn;
     protected RowFilter rowFilter;
@@ -59,7 +59,7 @@ public abstract class Data2DReader {
     protected DoubleStatistic[] statisticData;
     protected List<Skewness> skewnessList;
     protected DoubleStatistic statisticAll;
-    protected String categoryName, script, name;
+    protected String categoryName, script, name, toNegative;
     protected Skewness skewnessAll;
     protected DescriptiveStatistic statisticCalculation;
     protected Frequency frequency;
@@ -734,7 +734,7 @@ public abstract class Data2DReader {
                 if (i < 0 || i >= record.size()) {
                     continue;
                 }
-                double v = statisticData[c].toDouble(record.get(i));
+                double v = statisticAll.toDouble(record.get(i));
                 if (DoubleTools.invalidDouble(v)) {
                     statisticAll.invalidCount++;
                     continue;
@@ -816,13 +816,14 @@ public abstract class Data2DReader {
                 if (i < 0 || i >= record.size()) {
                     continue;
                 }
-                double v = data2D.doubleValue(record.get(i));
-                if (v < 0) {
-                    if (sumAbs) {
-                        colValues[c] += Math.abs(v);
+                double d = DoubleTools.toDouble(record.get(i), invalidAs);
+                if (DoubleTools.invalidDouble(d)) {
+                } else if (d < 0) {
+                    if ("abs".equals(toNegative)) {
+                        colValues[c] += Math.abs(d);
                     }
-                } else if (v > 0) {
-                    colValues[c] += v;
+                } else if (d > 0) {
+                    colValues[c] += d;
                 }
             }
         } catch (Exception e) {
@@ -835,25 +836,34 @@ public abstract class Data2DReader {
             row.add(message("Row") + (rowIndex + 1));
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
-                double v = 0;
+                double d;
                 if (i >= 0 && i < record.size()) {
-                    v = data2D.doubleValue(record.get(i));
+                    d = DoubleTools.toDouble(record.get(i), invalidAs);
+                } else {
+                    d = invalidAs;
                 }
                 if (withValues) {
-                    row.add(DoubleTools.scale(v, scale) + "");
-                }
-                if (v < 0) {
-                    if (sumAbs) {
-                        v = Math.abs(v);
+                    if (DoubleTools.invalidDouble(d)) {
+                        row.add(Double.NaN + "");
                     } else {
-                        v = 0;
+                        row.add(DoubleTools.format(d, scale));
                     }
                 }
                 double s = colValues[c];
-                if (s == 0) {
-                    row.add("0");
+                if (DoubleTools.invalidDouble(d) || s == 0) {
+                    row.add(Double.NaN + "");
                 } else {
-                    row.add(DoubleTools.percentage(v, s, scale));
+                    if (d < 0) {
+                        if ("skip".equals(toNegative)) {
+                            row.add(Double.NaN + "");
+                            continue;
+                        } else if ("abs".equals(toNegative)) {
+                            d = Math.abs(d);
+                        } else {
+                            d = 0;
+                        }
+                    }
+                    row.add(DoubleTools.percentage(d, s, scale));
                 }
             }
             csvPrinter.printRecord(row);
@@ -868,13 +878,14 @@ public abstract class Data2DReader {
                 if (i < 0 || i >= record.size()) {
                     continue;
                 }
-                double v = data2D.doubleValue(record.get(i));
-                if (v < 0) {
-                    if (sumAbs) {
-                        tValue += Math.abs(v);
+                double d = DoubleTools.toDouble(record.get(i), invalidAs);
+                if (DoubleTools.invalidDouble(d)) {
+                } else if (d < 0) {
+                    if ("abs".equals(toNegative)) {
+                        tValue += Math.abs(d);
                     }
-                } else if (v > 0) {
-                    tValue += v;
+                } else if (d > 0) {
+                    tValue += d;
                 }
             }
         } catch (Exception e) {
@@ -887,24 +898,33 @@ public abstract class Data2DReader {
             row.add(message("Row") + (rowIndex + 1));
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
-                double v = 0;
+                double d;
                 if (i >= 0 && i < record.size()) {
-                    v = data2D.doubleValue(record.get(i));
+                    d = DoubleTools.toDouble(record.get(i), invalidAs);
+                } else {
+                    d = invalidAs;
                 }
                 if (withValues) {
-                    row.add(DoubleTools.scale(v, scale) + "");
-                }
-                if (v < 0) {
-                    if (sumAbs) {
-                        v = Math.abs(v);
+                    if (DoubleTools.invalidDouble(d)) {
+                        row.add(Double.NaN + "");
                     } else {
-                        v = 0;
+                        row.add(DoubleTools.format(d, scale));
                     }
                 }
-                if (tValue == 0) {
-                    row.add("0");
+                if (DoubleTools.invalidDouble(d) || tValue == 0) {
+                    row.add(Double.NaN + "");
                 } else {
-                    row.add(DoubleTools.percentage(v, tValue, scale));
+                    if (d < 0) {
+                        if ("skip".equals(toNegative)) {
+                            row.add(Double.NaN + "");
+                            continue;
+                        } else if ("abs".equals(toNegative)) {
+                            d = Math.abs(d);
+                        } else {
+                            d = 0;
+                        }
+                    }
+                    row.add(DoubleTools.percentage(d, tValue, scale));
                 }
             }
             csvPrinter.printRecord(row);
@@ -920,37 +940,45 @@ public abstract class Data2DReader {
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
                 if (i >= 0 && i < record.size()) {
-                    double v = data2D.doubleValue(record.get(i));
-                    if (v < 0) {
-                        if (sumAbs) {
-                            sum += Math.abs(v);
+                    double d = DoubleTools.toDouble(record.get(i), invalidAs);
+                    if (DoubleTools.invalidDouble(d)) {
+                    } else if (d < 0) {
+                        if ("abs".equals(toNegative)) {
+                            sum += Math.abs(d);
                         }
-                    } else if (v > 0) {
-                        sum += v;
+                    } else if (d > 0) {
+                        sum += d;
                     }
                 }
             }
             row.add(DoubleTools.scale(sum, scale) + "");
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
-                double v = 0;
+                double d = 0;
                 if (i >= 0 && i < record.size()) {
-                    v = data2D.doubleValue(record.get(i));
+                    d = DoubleTools.toDouble(record.get(i), invalidAs);
                 }
                 if (withValues) {
-                    row.add(DoubleTools.scale(v, scale) + "");
-                }
-                if (v < 0) {
-                    if (sumAbs) {
-                        v = Math.abs(v);
+                    if (DoubleTools.invalidDouble(d)) {
+                        row.add(Double.NaN + "");
                     } else {
-                        v = 0;
+                        row.add(DoubleTools.format(d, scale));
                     }
                 }
-                if (sum == 0) {
-                    row.add("0");
+                if (DoubleTools.invalidDouble(d) || sum == 0) {
+                    row.add(Double.NaN + "");
                 } else {
-                    row.add(DoubleTools.percentage(v, sum, scale));
+                    if (d < 0) {
+                        if ("skip".equals(toNegative)) {
+                            row.add(Double.NaN + "");
+                            continue;
+                        } else if ("abs".equals(toNegative)) {
+                            d = Math.abs(d);
+                        } else {
+                            d = 0;
+                        }
+                    }
+                    row.add(DoubleTools.percentage(d, sum, scale));
                 }
             }
             csvPrinter.printRecord(row);
@@ -976,9 +1004,13 @@ public abstract class Data2DReader {
                 if (i < 0 || i >= record.size()) {
                     row.add(null);
                 } else {
-                    double v = data2D.doubleValue(record.get(i));
-                    v = from + statisticData[c].dTmp * (v - statisticData[c].minimum);
-                    row.add(DoubleTools.scale(v, scale) + "");
+                    double v = statisticData[c].toDouble(record.get(i));
+                    if (DoubleTools.invalidDouble(v)) {
+                        row.add(Double.NaN + "");
+                    } else {
+                        v = from + statisticData[c].dTmp * (v - statisticData[c].minimum);
+                        row.add(DoubleTools.scale(v, scale) + "");
+                    }
                 }
             }
             csvPrinter.printRecord(row);
@@ -997,9 +1029,13 @@ public abstract class Data2DReader {
                 if (i < 0 || i >= record.size()) {
                     row.add(null);
                 } else {
-                    double v = data2D.doubleValue(record.get(i));
-                    v = v * colValues[c];
-                    row.add(DoubleTools.scale(v, scale) + "");
+                    double v = DoubleTools.toDouble(record.get(i), invalidAs);
+                    if (DoubleTools.invalidDouble(v)) {
+                        row.add(Double.NaN + "");
+                    } else {
+                        v = v * colValues[c];
+                        row.add(DoubleTools.scale(v, scale) + "");
+                    }
                 }
             }
             csvPrinter.printRecord(row);
@@ -1018,13 +1054,17 @@ public abstract class Data2DReader {
                 if (i < 0 || i >= record.size()) {
                     row.add(null);
                 } else {
-                    double v = data2D.doubleValue(record.get(i));
-                    double k = statisticData[c].getPopulationStandardDeviation();
-                    if (k == 0) {
-                        k = AppValues.TinyDouble;
+                    double v = statisticData[c].toDouble(record.get(i));
+                    if (DoubleTools.invalidDouble(v)) {
+                        row.add(Double.NaN + "");
+                    } else {
+                        double k = statisticData[c].getPopulationStandardDeviation();
+                        if (k == 0) {
+                            k = AppValues.TinyDouble;
+                        }
+                        v = (v - statisticData[c].mean) / k;
+                        row.add(DoubleTools.scale(v, scale) + "");
                     }
-                    v = (v - statisticData[c].mean) / k;
-                    row.add(DoubleTools.scale(v, scale) + "");
                 }
             }
             csvPrinter.printRecord(row);
@@ -1043,9 +1083,13 @@ public abstract class Data2DReader {
                 if (i < 0 || i >= record.size()) {
                     row.add(null);
                 } else {
-                    double v = data2D.doubleValue(record.get(i));
-                    v = from + statisticAll.dTmp * (v - statisticAll.minimum);
-                    row.add(DoubleTools.scale(v, scale) + "");
+                    double v = statisticAll.toDouble(record.get(i));
+                    if (DoubleTools.invalidDouble(v)) {
+                        row.add(Double.NaN + "");
+                    } else {
+                        v = from + statisticAll.dTmp * (v - statisticAll.minimum);
+                        row.add(DoubleTools.scale(v, scale) + "");
+                    }
                 }
             }
             csvPrinter.printRecord(row);
@@ -1064,9 +1108,13 @@ public abstract class Data2DReader {
                 if (i < 0 || i >= record.size()) {
                     row.add(null);
                 } else {
-                    double v = data2D.doubleValue(record.get(i));
-                    v = v * tValue;
-                    row.add(DoubleTools.scale(v, scale) + "");
+                    double v = DoubleTools.toDouble(record.get(i), invalidAs);
+                    if (DoubleTools.invalidDouble(v)) {
+                        row.add(Double.NaN + "");
+                    } else {
+                        v = v * tValue;
+                        row.add(DoubleTools.scale(v, scale) + "");
+                    }
                 }
             }
             csvPrinter.printRecord(row);
@@ -1085,13 +1133,17 @@ public abstract class Data2DReader {
                 if (i < 0 || i >= record.size()) {
                     row.add(null);
                 } else {
-                    double v = data2D.doubleValue(record.get(i));
-                    double k = statisticAll.getPopulationStandardDeviation();
-                    if (k == 0) {
-                        k = AppValues.TinyDouble;
+                    double v = statisticAll.toDouble(record.get(i));
+                    if (DoubleTools.invalidDouble(v)) {
+                        row.add(Double.NaN + "");
+                    } else {
+                        double k = statisticAll.getPopulationStandardDeviation();
+                        if (k == 0) {
+                            k = AppValues.TinyDouble;
+                        }
+                        v = (v - statisticAll.mean) / k;
+                        row.add(DoubleTools.scale(v, scale) + "");
                     }
-                    v = (v - statisticAll.mean) / k;
-                    row.add(DoubleTools.scale(v, scale) + "");
                 }
             }
             csvPrinter.printRecord(row);
@@ -1111,17 +1163,22 @@ public abstract class Data2DReader {
                 if (i < 0 || i >= record.size()) {
                     values[c] = 0;
                 } else {
-                    values[c] = data2D.doubleValue(record.get(i));
+                    values[c] = DoubleTools.toDouble(record.get(i), invalidAs);
                 }
             }
             values = Normalization.create()
-                    .setA(a).setFrom(from).setTo(to).setSourceVector(values)
+                    .setA(a).setFrom(from).setTo(to).setInvalidAs(invalidAs)
+                    .setSourceVector(values)
                     .calculate();
             if (values == null) {
                 return;
             }
             for (double d : values) {
-                row.add(DoubleTools.scale(d, scale) + "");
+                if (DoubleTools.invalidDouble(d)) {
+                    row.add(Double.NaN + "");
+                } else {
+                    row.add(DoubleTools.scale(d, scale) + "");
+                }
             }
             csvPrinter.printRecord(row);
         } catch (Exception e) {
@@ -1130,8 +1187,8 @@ public abstract class Data2DReader {
 
     public void handleSimpleLinearRegression() {
         try {
-            double x = data2D.doubleValue(record.get(cols.get(0)));
-            double y = data2D.doubleValue(record.get(cols.get(1)));
+            double x = DoubleTools.toDouble(record.get(cols.get(0)), invalidAs);
+            double y = DoubleTools.toDouble(record.get(cols.get(1)), invalidAs);
             List<String> row = simpleRegression.addData(rowIndex, x, y);
             csvPrinter.printRecord(row);
         } catch (Exception e) {
@@ -1383,6 +1440,11 @@ public abstract class Data2DReader {
         return this;
     }
 
+    public Data2DReader setToNegative(String toNegative) {
+        this.toNegative = toNegative;
+        return this;
+    }
+
     public Data2DReader setStatisticSelection(DescriptiveStatistic statisticSelection) {
         this.statisticCalculation = statisticSelection;
         return this;
@@ -1463,6 +1525,15 @@ public abstract class Data2DReader {
 
     public Data2DReader setScale(int scale) {
         this.scale = scale;
+        return this;
+    }
+
+    public double getInvalidAs() {
+        return invalidAs;
+    }
+
+    public Data2DReader setInvalidAs(double invalidAs) {
+        this.invalidAs = invalidAs;
         return this;
     }
 

@@ -264,12 +264,14 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
     }
 
-    public DataFileCSV percentageColumns(List<String> names, List<Integer> cols, boolean withValues, boolean abs, int scale) {
+    public DataFileCSV percentageColumns(List<String> names, List<Integer> cols,
+            int scale, boolean withValues, String toNegative, double invalidAs) {
         if (cols == null || cols.isEmpty()) {
             return null;
         }
         Data2DReader reader = Data2DReader.create(this)
-                .setCols(cols).setSumAbs(abs).setScanPass(1).setScale(scale)
+                .setCols(cols).setToNegative(toNegative).setInvalidAs(invalidAs)
+                .setScanPass(1).setScale(scale)
                 .setReaderTask(task).start(Data2DReader.Operation.PercentageColumns);
         if (reader == null) {
             return null;
@@ -290,7 +292,8 @@ public abstract class Data2D_Operations extends Data2D_Convert {
 
             reader = Data2DReader.create(this)
                     .setCsvPrinter(csvPrinter).setColValues(colsSum).setCols(cols)
-                    .setWithValues(withValues).setSumAbs(abs).setScanPass(2).setScale(scale)
+                    .setWithValues(withValues).setToNegative(toNegative).setInvalidAs(invalidAs)
+                    .setScanPass(2).setScale(scale)
                     .setReaderTask(task).start(Data2DReader.Operation.PercentageColumns);
 
         } catch (Exception e) {
@@ -311,12 +314,14 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
     }
 
-    public DataFileCSV percentageAll(List<String> names, List<Integer> cols, boolean withValues, boolean abs, int scale) {
+    public DataFileCSV percentageAll(List<String> names, List<Integer> cols,
+            int scale, boolean withValues, String toNegative, double invalidAs) {
         if (cols == null || cols.isEmpty()) {
             return null;
         }
         Data2DReader reader = Data2DReader.create(this)
-                .setCols(cols).setSumAbs(abs).setScanPass(1).setScale(scale)
+                .setCols(cols).setToNegative(toNegative).setInvalidAs(invalidAs)
+                .setScanPass(1).setScale(scale)
                 .setReaderTask(task).start(Data2DReader.Operation.PercentageAll);
         if (reader == null) {
             return null;
@@ -341,7 +346,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
 
             reader = Data2DReader.create(this)
                     .setCsvPrinter(csvPrinter).setCols(cols)
-                    .setWithValues(withValues).setSumAbs(abs)
+                    .setWithValues(withValues).setToNegative(toNegative).setInvalidAs(invalidAs)
                     .setValue(sum).setScanPass(2).setScale(scale)
                     .setReaderTask(task).start(Data2DReader.Operation.PercentageAll);
 
@@ -363,7 +368,8 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
     }
 
-    public DataFileCSV percentageRows(List<String> names, List<Integer> cols, boolean withValues, boolean abs, int scale) {
+    public DataFileCSV percentageRows(List<String> names, List<Integer> cols,
+            int scale, boolean withValues, String toNegative, double invalidAs) {
         if (cols == null || cols.isEmpty()) {
             return null;
         }
@@ -372,8 +378,8 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             csvPrinter.printRecord(names);
             reader = Data2DReader.create(this)
-                    .setCsvPrinter(csvPrinter).setCols(cols)
-                    .setWithValues(withValues).setSumAbs(abs).setScale(scale)
+                    .setCsvPrinter(csvPrinter).setCols(cols).setScale(scale)
+                    .setWithValues(withValues).setToNegative(toNegative).setInvalidAs(invalidAs)
                     .setReaderTask(task).start(Data2DReader.Operation.PercentageRows);
 
         } catch (Exception e) {
@@ -431,7 +437,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
     }
 
     public DataFileCSV normalizeMinMaxColumns(List<Integer> cols, double from, double to,
-            boolean rowNumber, boolean colName, int scale) {
+            boolean rowNumber, boolean colName, int scale, double invalidAs) {
         if (cols == null || cols.isEmpty()) {
             return null;
         }
@@ -439,6 +445,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         DoubleStatistic[] sData = new DoubleStatistic[colLen];
         for (int c = 0; c < colLen; c++) {
             sData[c] = new DoubleStatistic();
+            sData[c].invalidAs = invalidAs;
         }
         DescriptiveStatistic selections = DescriptiveStatistic.all(false)
                 .setSum(true).setMaximum(true).setMinimum(true);
@@ -471,7 +478,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
 
             reader = Data2DReader.create(this)
                     .setStatisticData(sData).setCols(cols).setCsvPrinter(csvPrinter)
-                    .setIncludeRowNumber(rowNumber).setFrom(from).setScale(scale)
+                    .setIncludeRowNumber(rowNumber).setFrom(from).setScale(scale).setInvalidAs(invalidAs)
                     .setReaderTask(task).start(Data2DReader.Operation.NormalizeMinMaxColumns);
 
         } catch (Exception e) {
@@ -492,7 +499,8 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
     }
 
-    public DataFileCSV normalizeSumColumns(List<Integer> cols, boolean rowNumber, boolean colName, int scale) {
+    public DataFileCSV normalizeSumColumns(List<Integer> cols,
+            boolean rowNumber, boolean colName, int scale, double invalidAs) {
         if (cols == null || cols.isEmpty()) {
             return null;
         }
@@ -500,6 +508,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         DoubleStatistic[] sData = new DoubleStatistic[colLen];
         for (int c = 0; c < colLen; c++) {
             sData[c] = new DoubleStatistic();
+            sData[c].invalidAs = invalidAs;
         }
         DescriptiveStatistic selections = DescriptiveStatistic.all(false);
         Data2DReader reader = Data2DReader.create(this).setCols(cols).setSumAbs(true)
@@ -536,7 +545,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
 
             reader = Data2DReader.create(this)
                     .setColValues(colValues).setCols(cols).setCsvPrinter(csvPrinter)
-                    .setIncludeRowNumber(rowNumber).setScale(scale)
+                    .setIncludeRowNumber(rowNumber).setScale(scale).setInvalidAs(invalidAs)
                     .setReaderTask(task).start(Data2DReader.Operation.NormalizeSumColumns);
 
         } catch (Exception e) {
@@ -557,7 +566,8 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
     }
 
-    public DataFileCSV normalizeZscoreColumns(List<Integer> cols, boolean rowNumber, boolean colName, int scale) {
+    public DataFileCSV normalizeZscoreColumns(List<Integer> cols,
+            boolean rowNumber, boolean colName, int scale, double invalidAs) {
         if (cols == null || cols.isEmpty()) {
             return null;
         }
@@ -566,6 +576,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         DoubleStatistic[] sData = new DoubleStatistic[colLen];
         for (int c = 0; c < colLen; c++) {
             sData[c] = new DoubleStatistic();
+            sData[c].invalidAs = invalidAs;
         }
         DescriptiveStatistic selections = DescriptiveStatistic.all(false)
                 .setPopulationStandardDeviation(true);
@@ -601,7 +612,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
 
             reader = Data2DReader.create(this)
                     .setStatisticData(sData).setCols(cols).setCsvPrinter(csvPrinter)
-                    .setIncludeRowNumber(rowNumber).setScale(scale)
+                    .setIncludeRowNumber(rowNumber).setScale(scale).setInvalidAs(invalidAs)
                     .setReaderTask(task).start(Data2DReader.Operation.NormalizeZscoreColumns);
 
         } catch (Exception e) {
@@ -623,11 +634,12 @@ public abstract class Data2D_Operations extends Data2D_Convert {
     }
 
     public DataFileCSV normalizeMinMaxAll(List<Integer> cols, double from, double to,
-            boolean rowNumber, boolean colName, int scale) {
+            boolean rowNumber, boolean colName, int scale, double invalidAs) {
         if (cols == null || cols.isEmpty()) {
             return null;
         }
         DoubleStatistic sData = new DoubleStatistic();
+        sData.invalidAs = invalidAs;
         DescriptiveStatistic selections = DescriptiveStatistic.all(false)
                 .setSum(true).setMaximum(true).setMinimum(true);
         Data2DReader reader = Data2DReader.create(this)
@@ -658,7 +670,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
 
             reader = Data2DReader.create(this)
                     .setStatisticAll(sData).setCols(cols).setCsvPrinter(csvPrinter)
-                    .setIncludeRowNumber(rowNumber).setFrom(from).setScale(scale)
+                    .setIncludeRowNumber(rowNumber).setFrom(from).setScale(scale).setInvalidAs(invalidAs)
                     .setReaderTask(task).start(Data2DReader.Operation.NormalizeMinMaxAll);
 
         } catch (Exception e) {
@@ -679,11 +691,13 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
     }
 
-    public DataFileCSV normalizeSumAll(List<Integer> cols, boolean rowNumber, boolean colName, int scale) {
+    public DataFileCSV normalizeSumAll(List<Integer> cols,
+            boolean rowNumber, boolean colName, int scale, double invalidAs) {
         if (cols == null || cols.isEmpty()) {
             return null;
         }
         DoubleStatistic sData = new DoubleStatistic();
+        sData.invalidAs = invalidAs;
         DescriptiveStatistic selections = DescriptiveStatistic.all(false);
         Data2DReader reader = Data2DReader.create(this).setCols(cols).setSumAbs(true)
                 .setStatisticAll(sData).setStatisticSelection(selections)
@@ -717,7 +731,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
 
             reader = Data2DReader.create(this)
                     .setValue(k).setCols(cols).setCsvPrinter(csvPrinter)
-                    .setIncludeRowNumber(rowNumber).setScale(scale)
+                    .setIncludeRowNumber(rowNumber).setScale(scale).setInvalidAs(invalidAs)
                     .setReaderTask(task).start(Data2DReader.Operation.NormalizeSumAll);
 
         } catch (Exception e) {
@@ -738,12 +752,14 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
     }
 
-    public DataFileCSV normalizeZscoreAll(List<Integer> cols, boolean rowNumber, boolean colName, int scale) {
+    public DataFileCSV normalizeZscoreAll(List<Integer> cols,
+            boolean rowNumber, boolean colName, int scale, double invalidAs) {
         if (cols == null || cols.isEmpty()) {
             return null;
         }
         int tcolsNumber = 0;
         DoubleStatistic sData = new DoubleStatistic();
+        sData.invalidAs = invalidAs;
         DescriptiveStatistic selections = DescriptiveStatistic.all(false)
                 .setPopulationStandardDeviation(true);
         Data2DReader reader = Data2DReader.create(this).setCols(cols)
@@ -778,7 +794,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
 
             reader = Data2DReader.create(this)
                     .setStatisticAll(sData).setCols(cols).setCsvPrinter(csvPrinter)
-                    .setIncludeRowNumber(rowNumber).setScale(scale)
+                    .setIncludeRowNumber(rowNumber).setScale(scale).setInvalidAs(invalidAs)
                     .setReaderTask(task).start(Data2DReader.Operation.NormalizeZscoreAll);
 
         } catch (Exception e) {
@@ -800,7 +816,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
     }
 
     public DataFileCSV normalizeRows(Normalization.Algorithm a, List<Integer> cols,
-            double from, double to, boolean rowNumber, boolean colName, int scale) {
+            double from, double to, boolean rowNumber, boolean colName, int scale, double invalidAs) {
         if (cols == null || cols.isEmpty()) {
             return null;
         }
@@ -824,7 +840,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
 
             reader = Data2DReader.create(this)
                     .setCols(cols).setCsvPrinter(csvPrinter)
-                    .setIncludeRowNumber(rowNumber).setScale(scale)
+                    .setIncludeRowNumber(rowNumber).setScale(scale).setInvalidAs(invalidAs)
                     .setFrom(from).setTo(to)
                     .setReaderTask(task);
             switch (a) {

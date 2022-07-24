@@ -337,12 +337,7 @@ public class DoubleStatistic {
     }
 
     public double toDouble(String string) {
-        try {
-            double d = Double.valueOf(string.replaceAll(",", ""));
-            return DoubleTools.invalidDouble(d) ? invalidAs : d;
-        } catch (Exception e) {
-            return invalidAs;
-        }
+        return DoubleTools.toDouble(string, invalidAs);
     }
 
     public final double[] toDoubleArray(String[] strings) {
@@ -351,7 +346,7 @@ public class DoubleStatistic {
         }
         doubles = new double[strings.length];
         for (int i = 0; i < strings.length; i++) {
-            doubles[i] = toDouble(strings[i]);
+            doubles[i] = DoubleTools.toDouble(strings[i], invalidAs);
         }
         return doubles;
     }

@@ -34,9 +34,9 @@ import mara.mybox.value.UserConfig;
 public class TreeNodeEditor extends TreeTagsController {
 
     protected boolean nodeChanged;
-//    protected SimpleBooleanProperty changeNotify, savedNotify;
     protected String defaultExt;
     protected TreeNode parentNode;
+    protected SingletonTask tagsTask;
 
     @FXML
     protected Tab valueTab, attributesTab;
@@ -489,13 +489,13 @@ public class TreeNodeEditor extends TreeTagsController {
     }
 
     public void markTags() {
-        if (backgroundTask != null) {
-            backgroundTask.cancel();
-        }
         if (tableData.isEmpty() || currentNode == null) {
             return;
         }
-        backgroundTask = new SingletonTask<Void>(this) {
+        if (tagsTask != null) {
+            tagsTask.cancel();
+        }
+        tagsTask = new SingletonTask<Void>(this) {
             private List<String> nodeTags;
 
             @Override
@@ -517,13 +517,8 @@ public class TreeNodeEditor extends TreeTagsController {
                 }
             }
 
-            @Override
-            protected void finalAction() {
-                thisPane.setDisable(false);
-            }
-
         };
-        start(backgroundTask);
+        start(tagsTask);
     }
 
     @FXML
@@ -535,6 +530,17 @@ public class TreeNodeEditor extends TreeTagsController {
     @FXML
     public void selectParent() {
         TreeNodeParentController.open(this);
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            if (tagsTask != null) {
+                tagsTask.cancel();
+            }
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
 }

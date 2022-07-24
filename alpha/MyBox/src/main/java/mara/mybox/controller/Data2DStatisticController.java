@@ -1,13 +1,11 @@
 package mara.mybox.controller;
 
-import java.util.Arrays;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
@@ -47,8 +45,6 @@ public class Data2DStatisticController extends BaseData2DHandleController {
     protected FlowPane categoryColumnsPane;
     @FXML
     protected ComboBox<String> categoryColumnSelector;
-    @FXML
-    protected RadioButton skipNonnumericRadio, zeroNonnumericRadio;
 
     public Data2DStatisticController() {
         baseTitle = message("DescriptiveStatistics");
@@ -248,36 +244,6 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 }
             });
 
-            scale = (short) UserConfig.getInt(baseName + "Scale", 2);
-            if (scale < 0) {
-                scale = 2;
-            }
-            scaleSelector.getItems().addAll(
-                    Arrays.asList("2", "1", "0", "3", "4", "5", "6", "7", "8", "10", "12", "15")
-            );
-            scaleSelector.setValue(scale + "");
-            scaleSelector.getSelectionModel().selectedItemProperty().addListener(
-                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        try {
-                            int v = Integer.parseInt(scaleSelector.getValue());
-                            if (v >= 0 && v <= 15) {
-                                scale = (short) v;
-                                UserConfig.setInt(baseName + "Scale", v);
-                                scaleSelector.getEditor().setStyle(null);
-                            } else {
-                                scaleSelector.getEditor().setStyle(UserConfig.badStyle());
-                            }
-                        } catch (Exception e) {
-                            scaleSelector.getEditor().setStyle(UserConfig.badStyle());
-                        }
-                    });
-
-            if (UserConfig.getBoolean(baseName + "SkipNonnumeric", true)) {
-                skipNonnumericRadio.fire();
-            } else {
-                zeroNonnumericRadio.fire();
-            }
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -355,7 +321,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 .setLowerMildOutlierLine(LowerMildOutlierLineCheck.isSelected())
                 .setMode(modeCheck.isSelected())
                 .setScale(scale)
-                .setInvalidAs(skipNonnumericRadio.isSelected() ? Double.NaN : 0)
+                .setInvalidAs(invalidAs)
                 .setHandleController(this)
                 .setData2D(data2D)
                 .setColsIndices(checkedColsIndices)

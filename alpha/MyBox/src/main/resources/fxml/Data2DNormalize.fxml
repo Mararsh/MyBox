@@ -201,6 +201,17 @@ License:    Apache License Version 2.0
                                           <ComboBox fx:id="scaleSelector" editable="true" prefWidth="120.0" />
                                        </children>
                                     </HBox>
+                                    <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+                                       <children>
+                                          <Label text="%ToNonnumeric" />
+                                          <RadioButton fx:id="skipNonnumericRadio" mnemonicParsing="false" selected="true" text="%Skip">
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="nonnumericGroup" />
+                                             </toggleGroup>
+                                          </RadioButton>
+                                          <RadioButton fx:id="zeroNonnumericRadio" mnemonicParsing="false" text="%CountAsZero" toggleGroup="$nonnumericGroup" />
+                                       </children>
+                                    </FlowPane>
                                  </children>
                               </VBox>
                                 <VBox fx:id="targetBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
