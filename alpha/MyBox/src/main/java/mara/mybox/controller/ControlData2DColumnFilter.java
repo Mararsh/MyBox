@@ -20,32 +20,35 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class ControlData2DColumnFilter extends ControlData2DRowExpression {
-    
+
     protected ColumnFilter columnFilter;
-    
+
     @FXML
     protected CheckBox emptyCheck, zeroCheck, negativeCheck, positiveCheck,
             numberCheck, nonNumbericCheck, equalCheck, largerCheck, lessCheck, expressionCheck;
     @FXML
-    protected RadioButton noneRadio, workRadio, compareNumberRadio, compareStringRadio, trueRadio, falseRadio;
+    protected RadioButton noneRadio, workRadio, compareNumberRadio, compareStringRadio, trueRadio, othersRadio;
     @FXML
     protected ComboBox<String> equalSelector, largerSelector, lessSelector;
     @FXML
     protected VBox conditionsBox;
-    
+
     public ControlData2DColumnFilter() {
         TipsLabelKey = "ColumnFilterTips";
     }
-    
+
     @Override
     public void initControls() {
         try {
             super.initControls();
-            
+
             List<String> values = new ArrayList<>();
+            values.add(message("MinimumQ0"));
             values.add(message("LowerQuartile"));
             values.add(message("Median"));
+            values.add(message("Mean"));
             values.add(message("UpperQuartile"));
+            values.add(message("MaximumQ4"));
             values.add(message("LowerExtremeOutlierLine"));
             values.add(message("LowerMildOutlierLine"));
             values.add(message("UpperMildOutlierLine"));
@@ -54,25 +57,25 @@ public class ControlData2DColumnFilter extends ControlData2DRowExpression {
             equalSelector.getItems().addAll(values);
             largerSelector.getItems().addAll(values);
             lessSelector.getItems().addAll(values);
-            
+
             columnFilter = new ColumnFilter();
-            
+
             conditionsBox.disableProperty().bind(noneRadio.selectedProperty());
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     public void setParameters(BaseController parent, ControlData2DEditTable tableController) {
         try {
             baseName = parent.baseName;
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     public void load(ColumnFilter columnFilter) {
         if (columnFilter == null || !columnFilter.isWork()) {
             noneRadio.fire();
@@ -114,13 +117,13 @@ public class ControlData2DColumnFilter extends ControlData2DRowExpression {
             expressionCheck.setSelected(columnFilter.isColumnExpression());
             scriptInput.setText(columnFilter.getScript());
             if (columnFilter.reversed) {
-                falseRadio.fire();
+                othersRadio.fire();
             } else {
                 trueRadio.fire();
             }
         }
     }
-    
+
     public ColumnFilter pickValues() {
         if (!workRadio.isSelected()) {
             return null;
@@ -154,13 +157,13 @@ public class ControlData2DColumnFilter extends ControlData2DRowExpression {
         }
         if (expressionCheck.isSelected()) {
             columnFilter.setScript(scriptInput.getText());
-            columnFilter.setReversed(falseRadio.isSelected());
+            columnFilter.setReversed(othersRadio.isSelected());
         } else {
             columnFilter.setScript(null);
         }
         return columnFilter;
     }
-    
+
     @Override
     protected void scriptExampleButtons(MenuController controller) {
         try {
@@ -169,14 +172,14 @@ public class ControlData2DColumnFilter extends ControlData2DRowExpression {
             names.add(placehold);
             PopTools.addButtonsPane(controller, scriptInput, names);
             controller.addNode(new Separator());
-            
+
             PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
                     placehold + " == 100",
                     placehold + " != 6",
                     placehold + " >= 0 && " + placehold + " <= 100 ",
                     placehold + " < 0 || " + placehold + " > 100 "
             ));
-            
+
             PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
                     "'" + placehold + "'.search(/Hello/ig) >= 0",
                     "'" + placehold + "'.length > 0",
@@ -186,10 +189,10 @@ public class ControlData2DColumnFilter extends ControlData2DRowExpression {
                     "var array = [ 'A', 'B', 'C', 'D' ];\n"
                     + "array.includes('" + placehold + "')"
             ));
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
 }

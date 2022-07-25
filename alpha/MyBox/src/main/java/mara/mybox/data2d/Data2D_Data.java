@@ -100,16 +100,6 @@ public abstract class Data2D_Data extends Data2D_Attributes {
 //        return (char) ('a' + random.nextInt(25)) + "";
     }
 
-//    public double doubleValue(String v) {
-//        try {
-//            if (v == null || v.isBlank()) {
-//                return 0;
-//            }
-//            return Double.parseDouble(v.replaceAll(",", ""));
-//        } catch (Exception e) {
-//            return 0;
-//        }
-//    }
 
     /*
         table data

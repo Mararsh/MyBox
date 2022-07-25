@@ -71,6 +71,15 @@ public class DescriptiveStatistic {
                 .setLowerExtremeOutlierLine(select);
     }
 
+    public boolean need() {
+        return needNonStored() || needStored();
+    }
+
+    public boolean needNonStored() {
+        return minimum || maximum || mean || sum || count || skewness
+                || geometricMean || sumSquares || needVariance();
+    }
+
     public boolean needVariance() {
         return populationVariance || sampleVariance || populationStandardDeviation || sampleStandardDeviation;
     }

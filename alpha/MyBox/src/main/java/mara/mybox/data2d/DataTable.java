@@ -846,7 +846,6 @@ public class DataTable extends Data2D {
         if (cols == null || cols.isEmpty() || selections == null) {
             return null;
         }
-
         try ( Connection conn = DerbyBase.getConnection()) {
             int colLen = cols.size();
             DoubleStatistic[] sData = new DoubleStatistic[colLen];

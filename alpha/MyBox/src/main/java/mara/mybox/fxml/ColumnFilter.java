@@ -16,6 +16,9 @@ public class ColumnFilter extends RowFilter {
     public static String EqualToPrefix = "EqualTo::";
     public static String LargerThanPrefix = "LargerThan::";
     public static String LessThanPrefix = "LessThan::";
+    public static String Max = "MyBox-max";
+    public static String Min = "MyBox-min";
+    public static String Mean = "MyBox-mean";
     public static String Q1 = "MyBox-q1";
     public static String Q3 = "MyBox-q3";
     public static String E1 = "MyBox-e1";
@@ -146,7 +149,13 @@ public class ColumnFilter extends RowFilter {
         if (value == null) {
             return null;
         }
-        if (Q1.equals(value)) {
+        if (Max.equals(value)) {
+            return message("MaximumQ4");
+        } else if (Min.equals(value)) {
+            return message("MinimumQ0");
+        } else if (Mean.equals(value)) {
+            return message("Mean");
+        } else if (Q1.equals(value)) {
             return message("LowerQuartile");
         } else if (Q3.equals(value)) {
             return message("UpperQuartile");
@@ -171,7 +180,13 @@ public class ColumnFilter extends RowFilter {
         if (name == null) {
             return null;
         }
-        if (message("LowerQuartile").equals(name)) {
+        if (message("MaximumQ4").equals(name)) {
+            return Max;
+        } else if (message("MinimumQ0").equals(name)) {
+            return Min;
+        } else if (message("Mean").equals(name)) {
+            return Mean;
+        } else if (message("LowerQuartile").equals(name)) {
             return Q1;
         } else if (message("UpperQuartile").equals(name)) {
             return Q3;
@@ -291,13 +306,41 @@ public class ColumnFilter extends RowFilter {
         if (name == null || value == null) {
             return -5;
         }
-        if (ColumnFilter.Q1.equals(name)) {
-            if (statistic != null && statistic.lowerQuartileValue != null) {
-                return value.compareTo(statistic.lowerQuartileValue + "");
+        if (Max.equals(name)) {
+            if (statistic != null) {
+                if (statistic.maximumValue != null) {
+                    return value.compareTo(statistic.maximumValue + "");
+                } else if (!DoubleTools.invalidDouble(statistic.maximum)) {
+                    return value.compareTo(statistic.maximum + "");
+                }
+            }
+        } else if (Min.equals(name)) {
+            if (statistic != null) {
+                if (statistic.minimumValue != null) {
+                    return value.compareTo(statistic.minimumValue + "");
+                } else if (!DoubleTools.invalidDouble(statistic.minimum)) {
+                    return value.compareTo(statistic.minimum + "");
+                }
+            }
+        } else if (Mean.equals(name)) {
+            if (statistic != null && !DoubleTools.invalidDouble(statistic.mean)) {
+                return value.compareTo(statistic.mean + "");
+            }
+        } else if (ColumnFilter.Q1.equals(name)) {
+            if (statistic != null) {
+                if (statistic.lowerQuartileValue != null) {
+                    return value.compareTo(statistic.lowerQuartileValue + "");
+                } else if (!DoubleTools.invalidDouble(statistic.lowerQuartile)) {
+                    return value.compareTo(statistic.lowerQuartile + "");
+                }
             }
         } else if (ColumnFilter.Q3.equals(name)) {
-            if (statistic != null && statistic.upperQuartileValue != null) {
-                return value.compareTo(statistic.upperQuartileValue + "");
+            if (statistic != null) {
+                if (statistic.upperQuartileValue != null) {
+                    return value.compareTo(statistic.upperQuartileValue + "");
+                } else if (!DoubleTools.invalidDouble(statistic.upperQuartile)) {
+                    return value.compareTo(statistic.upperQuartile + "");
+                }
             }
         } else if (ColumnFilter.E1.equals(name)) {
             if (statistic != null && !DoubleTools.invalidDouble(statistic.lowerExtremeOutlierLine)) {
@@ -320,8 +363,12 @@ public class ColumnFilter extends RowFilter {
                 return value.compareTo(statistic.modeValue + "");
             }
         } else if (ColumnFilter.Median.equals(name)) {
-            if (statistic != null && statistic.medianValue != null) {
-                return value.compareTo(statistic.medianValue + "");
+            if (statistic != null) {
+                if (statistic.medianValue != null) {
+                    return value.compareTo(statistic.medianValue + "");
+                } else if (!DoubleTools.invalidDouble(statistic.median)) {
+                    return value.compareTo(statistic.median + "");
+                }
             }
         } else {
             return value.compareTo(name + "");
@@ -346,7 +393,19 @@ public class ColumnFilter extends RowFilter {
         if (name == null || Double.isNaN(value)) {
             return -5;
         }
-        if (ColumnFilter.Q1.equals(name)) {
+        if (Max.equals(name)) {
+            if (statistic != null && !DoubleTools.invalidDouble(statistic.maximum)) {
+                return compareNumber(value, statistic.maximum);
+            }
+        } else if (Min.equals(name)) {
+            if (statistic != null && !DoubleTools.invalidDouble(statistic.minimum)) {
+                return compareNumber(value, statistic.minimum);
+            }
+        } else if (Mean.equals(name)) {
+            if (statistic != null && !DoubleTools.invalidDouble(statistic.mean)) {
+                return compareNumber(value, statistic.mean);
+            }
+        } else if (ColumnFilter.Q1.equals(name)) {
             if (statistic != null && !DoubleTools.invalidDouble(statistic.lowerQuartile)) {
                 return compareNumber(value, statistic.lowerQuartile);
             }

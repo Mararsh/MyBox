@@ -313,7 +313,7 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
             updatedStyle.setAbnoramlValues(abnormalCheck.isSelected());
             return true;
         } catch (Exception e) {
-            error = e.toString();
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -331,6 +331,7 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
                     return listController.tableData2DStyle.writeData(updatedStyle) != null;
                 } catch (Exception e) {
                     error = e.toString();
+                    MyBoxLog.console(e);
                     return false;
                 }
             }

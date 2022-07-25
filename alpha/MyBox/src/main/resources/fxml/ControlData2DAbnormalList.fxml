@@ -28,6 +28,7 @@ License:    Apache License Version 2.0
                           </graphic>
                       </TableColumn>
                       <TableColumn fx:id="sidColumn" prefWidth="60.0" text="%ID" />
+            <TableColumn fx:id="titleColumn" prefWidth="150.0" text="%Title" />
                       <TableColumn fx:id="fromColumn" prefWidth="60.0" text="%From" />
                       <TableColumn fx:id="toColumn" prefWidth="70.0" text="%To" />
                       <TableColumn fx:id="columnsColumn" prefWidth="120.0" text="%Columns" />

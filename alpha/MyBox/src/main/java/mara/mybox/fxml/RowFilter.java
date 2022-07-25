@@ -96,13 +96,9 @@ public class RowFilter {
         passed = false;
         if (calculateSuccess) {
             if (reversed) {
-                if ("false".equals(calculator.getResult())) {
-                    passed = true;
-                }
+                passed = !"true".equals(calculator.getResult());
             } else {
-                if ("true".equals(calculator.getResult())) {
-                    passed = true;
-                }
+                passed = "true".equals(calculator.getResult());
             }
         }
         if (passed) {

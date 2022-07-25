@@ -30,19 +30,19 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public abstract class Data2D_Edit extends Data2D_Data {
-    
+
     public abstract Data2DDefinition queryDefinition(Connection conn);
-    
+
     public abstract void applyOptions();
-    
+
     public abstract List<String> readColumnNames();
-    
+
     public abstract boolean savePageData(Data2D targetData);
-    
+
     public abstract boolean setValue(List<Integer> cols, String value, boolean errorContinue);
-    
+
     public abstract boolean delete(boolean errorContinue);
-    
+
     public abstract long clearData();
 
     /*
@@ -51,7 +51,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
     public boolean checkForLoad() {
         return true;
     }
-    
+
     public long readDataDefinition(Connection conn) {
         if (isTmpData()) {
             checkForLoad();
@@ -84,7 +84,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
         }
         return d2did;
     }
-    
+
     public boolean readColumns(Connection conn) {
         try {
             columns = null;
@@ -154,7 +154,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
             return false;
         }
     }
-    
+
     public long readTotal() {
         dataSize = 0;
         Data2DReader reader = Data2DReader.create(this)
@@ -173,7 +173,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
         }
         return dataSize;
     }
-    
+
     public List<List<String>> readPageData(Connection conn) {
         if (!isColumnsValid()) {
             startRowOfCurrentPage = endRowOfCurrentPage = 0;
@@ -197,7 +197,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
         readPageStyles(conn, rows);
         return rows;
     }
-    
+
     public void readPageStyles(Connection conn, List<List<String>> rows) {
         styles = new ArrayList<>();
         if (d2did < 0 || startRowOfCurrentPage >= endRowOfCurrentPage) {
@@ -221,7 +221,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
         }
         countAbnormalLines();
     }
-    
+
     public void countSize() {
         try {
             rowsNumber = dataSize + (tableRowsNumber() - (endRowOfCurrentPage - startRowOfCurrentPage));
@@ -232,7 +232,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
         } catch (Exception e) {
         }
     }
-    
+
     public void countAbnormalLines() {
         resetStatistic();
         if (styles == null || styles.isEmpty()) {
@@ -261,9 +261,9 @@ public abstract class Data2D_Edit extends Data2D_Data {
                 }
                 checkStatistic(calculation, columnFilter.getEqualValue());
                 checkStatistic(calculation, columnFilter.getLargerValue());
-                checkStatistic(calculation, columnFilter.getLargerValue());
+                checkStatistic(calculation, columnFilter.getLessValue());
             }
-            if (colNames.isEmpty() || !calculation.needStored()) {
+            if (colNames.isEmpty() || !calculation.need()) {
                 return;
             }
             List<Integer> colIndices = new ArrayList<>();
@@ -276,7 +276,13 @@ public abstract class Data2D_Edit extends Data2D_Data {
             }
             tmpTable.setTask(task);
             List<Integer> tmpColIndices = tmpTable.columnIndices().subList(1, tmpTable.columnsNumber());
-            DoubleStatistic[] statisticData = tmpTable.statisticByColumnsForStored(tmpColIndices, calculation);
+            DoubleStatistic[] statisticData = null;
+            if (calculation.needNonStored()) {
+                statisticData = tmpTable.statisticByColumnsWithoutStored(tmpColIndices, calculation);
+            }
+            if (calculation.needStored()) {
+                statisticData = tmpTable.statisticByColumnsForStored(tmpColIndices, calculation);
+            }
             if (statisticData == null) {
                 return;
             }
@@ -292,12 +298,18 @@ public abstract class Data2D_Edit extends Data2D_Data {
             }
         }
     }
-    
+
     public void checkStatistic(DescriptiveStatistic calculation, String name) {
         if (calculation == null || name == null || name.isBlank()) {
             return;
         }
-        if (ColumnFilter.Q1.equals(name)) {
+        if (ColumnFilter.Max.equals(name)) {
+            calculation.setMaximum(true);
+        } else if (ColumnFilter.Min.equals(name)) {
+            calculation.setMinimum(true);
+        } else if (ColumnFilter.Mean.equals(name)) {
+            calculation.setMean(true);
+        } else if (ColumnFilter.Q1.equals(name)) {
             calculation.setLowerQuartile(true);
         } else if (ColumnFilter.Q3.equals(name)) {
             calculation.setUpperQuartile(true);
@@ -329,7 +341,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
         }
         return true;
     }
-    
+
     public boolean saveAttributes() {
         try ( Connection conn = DerbyBase.getConnection()) {
             return saveAttributes(conn, (Data2D) this, columns);
@@ -341,7 +353,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
             return false;
         }
     }
-    
+
     public static boolean saveAttributes(Data2D source, Data2D target) {
         try ( Connection conn = DerbyBase.getConnection()) {
             target.cloneAttributes(source);
@@ -357,7 +369,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
             return false;
         }
     }
-    
+
     public static boolean saveAttributes(Data2D d, List<Data2DColumn> cols) {
         if (d == null) {
             return false;
@@ -372,7 +384,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
             return false;
         }
     }
-    
+
     public static boolean saveAttributes(Connection conn, Data2D d, List<Data2DColumn> inColumns) {
         if (d == null) {
             return false;
@@ -443,5 +455,5 @@ public abstract class Data2D_Edit extends Data2D_Data {
             return false;
         }
     }
-    
+
 }

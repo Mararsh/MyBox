@@ -22,7 +22,7 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
     protected RowFilter rowFilter;
 
     @FXML
-    protected RadioButton trueRadio, falseRadio;
+    protected RadioButton trueRadio, othersRadio;
     @FXML
     protected TextField maxInput;
 
@@ -89,7 +89,7 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
         } else {
             scriptInput.setText(rowFilter.script);
             if (rowFilter.reversed) {
-                falseRadio.fire();
+                othersRadio.fire();
             } else {
                 trueRadio.fire();
             }
@@ -97,7 +97,7 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
     }
 
     public RowFilter pickValues() {
-        rowFilter.setReversed(!trueRadio.isSelected())
+        rowFilter.setReversed(othersRadio.isSelected())
                 .setMaxPassed(maxData).setPassedNumber(0)
                 .setScript(scriptInput.getText())
                 .setData2D(data2D);
