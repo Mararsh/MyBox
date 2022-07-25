@@ -244,7 +244,8 @@ public class DataFileCSV extends DataFileText {
                     } catch (Exception e) {  // skip  bad lines
                     }
                 }
-                boolean isRandom = false, isRandomNn = false, isBlank = false;
+                boolean isRandom = false, isRandomNn = false, isBlank = false, isMean = false,
+                        isMedian = false, isMode = false;
                 String script = null;
                 if (value != null) {
                     if ("MyBox##blank".equals(value)) {
@@ -255,6 +256,12 @@ public class DataFileCSV extends DataFileText {
                         isRandomNn = true;
                     } else if (value.startsWith("MyBox##Expression##")) {
                         script = value.substring("MyBox##Expression##".length());
+                    } else if (value.startsWith("MyBox##columnMean")) {
+                        isMean = true;
+                    } else if (value.startsWith("MyBox##columnMode")) {
+                        isMode = true;
+                    } else if (value.startsWith("MyBox##columnMedian")) {
+                        isMedian = true;
                     }
                 }
                 final Random random = new Random();
@@ -290,6 +297,12 @@ public class DataFileCSV extends DataFileText {
                                     row.add(random(random, i, false));
                                 } else if (isRandomNn) {
                                     row.add(random(random, i, true));
+                                } else if (isMean) {
+                                    row.add(column(i).getDoubleStatistic().mean + "");
+                                } else if (isMode) {
+                                    row.add(column(i).getDoubleStatistic().modeValue + "");
+                                } else if (isMedian) {
+                                    row.add(column(i).getDoubleStatistic().median + "");
                                 } else if (script != null) {
                                     row.add(expressionResult());
                                 } else {

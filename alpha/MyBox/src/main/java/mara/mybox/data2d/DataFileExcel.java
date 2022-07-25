@@ -497,7 +497,8 @@ public class DataFileExcel extends DataFile {
                     while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
                     }
                 }
-                boolean isRandom = false, isRandomNn = false, isBlank = false;
+                boolean isRandom = false, isRandomNn = false, isBlank = false, isMean = false,
+                        isMedian = false, isMode = false;
                 String script = null;
                 if (value != null) {
                     if ("MyBox##blank".equals(value)) {
@@ -508,6 +509,12 @@ public class DataFileExcel extends DataFile {
                         isRandomNn = true;
                     } else if (value.startsWith("MyBox##Expression##")) {
                         script = value.substring("MyBox##Expression##".length());
+                    } else if (value.startsWith("MyBox##columnMean")) {
+                        isMean = true;
+                    } else if (value.startsWith("MyBox##columnMode")) {
+                        isMode = true;
+                    } else if (value.startsWith("MyBox##columnMedian")) {
+                        isMedian = true;
                     }
                 }
                 Random random = new Random();
@@ -547,6 +554,12 @@ public class DataFileExcel extends DataFile {
                                 v = random(random, c, false);
                             } else if (isRandomNn) {
                                 v = random(random, c, true);
+                            } else if (isMean) {
+                                v = column(c).getDoubleStatistic().mean + "";
+                            } else if (isMode) {
+                                v = column(c).getDoubleStatistic().modeValue + "";
+                            } else if (isMedian) {
+                                v = column(c).getDoubleStatistic().median + "";
                             } else if (script != null) {
                                 v = expressionResult();
                             } else {

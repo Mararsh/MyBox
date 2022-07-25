@@ -408,7 +408,8 @@ public class DataTable extends Data2D {
         if (cols == null || cols.isEmpty()) {
             return false;
         }
-        boolean isRandom = false, isRandomNn = false, isBlank = false;
+        boolean isRandom = false, isRandomNn = false, isBlank = false, isMean = false,
+                isMedian = false, isMode = false;
         String script = null;
         if (value != null) {
             if ("MyBox##blank".equals(value)) {
@@ -419,6 +420,12 @@ public class DataTable extends Data2D {
                 isRandomNn = true;
             } else if (value.startsWith("MyBox##Expression##")) {
                 script = value.substring("MyBox##Expression##".length());
+            } else if (value.startsWith("MyBox##columnMean")) {
+                isMean = true;
+            } else if (value.startsWith("MyBox##columnMode")) {
+                isMode = true;
+            } else if (value.startsWith("MyBox##columnMedian")) {
+                isMedian = true;
             }
         }
         if (!isRandom && !isRandomNn && script == null && !needFilter()) {
@@ -496,6 +503,12 @@ public class DataTable extends Data2D {
                                 v = random(random, c, false);
                             } else if (isRandomNn) {
                                 v = random(random, c, true);
+                            } else if (isMean) {
+                                v = column(c).getDoubleStatistic().mean + "";
+                            } else if (isMode) {
+                                v = column(c).getDoubleStatistic().modeValue + "";
+                            } else if (isMedian) {
+                                v = column(c).getDoubleStatistic().median + "";
                             } else if (script != null) {
                                 v = expressionResult();
                             } else {
@@ -842,6 +855,7 @@ public class DataTable extends Data2D {
         return percentile;
     }
 
+    @Override
     public DoubleStatistic[] statisticByColumnsForStored(List<Integer> cols, DescriptiveStatistic selections) {
         if (cols == null || cols.isEmpty() || selections == null) {
             return null;

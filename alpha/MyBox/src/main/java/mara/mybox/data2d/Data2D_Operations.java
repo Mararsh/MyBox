@@ -110,6 +110,37 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
     }
 
+    // percentile or mode
+    public DoubleStatistic[] statisticByColumnsForStored(List<Integer> cols, DescriptiveStatistic selections) {
+        try {
+            if (cols == null || cols.isEmpty() || selections == null) {
+                return null;
+            }
+            DataTable tmpTable = ((Data2D) this).toTmpTable(task, cols, false, true);
+            if (tmpTable == null) {
+                return null;
+            }
+            tmpTable.setTask(task);
+            List<Integer> tmpColIndices = tmpTable.columnIndices().subList(1, tmpTable.columnsNumber());
+            DoubleStatistic[] statisticData = tmpTable.statisticByColumnsForStored(tmpColIndices, selections);
+            if (statisticData == null) {
+                return null;
+            }
+            for (int i = 0; i < cols.size(); i++) {
+                Data2DColumn column = this.column(cols.get(i));
+                column.setDoubleStatistic(statisticData[i]);
+            }
+            tmpTable.drop();
+            return statisticData;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
     public DataFileCSV statisticByRows(List<String> names, List<Integer> cols, DescriptiveStatistic selections) {
         if (names == null || names.isEmpty() || cols == null || cols.isEmpty()) {
             return null;

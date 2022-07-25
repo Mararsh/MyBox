@@ -320,7 +320,8 @@ public class DataFileText extends DataFile {
                 TextFileTools.writeLine(writer, names, delimiter);
             }
             String line;
-            boolean isRandom = false, isRandomNn = false, isBlank = false;
+            boolean isRandom = false, isRandomNn = false, isBlank = false, isMean = false,
+                    isMedian = false, isMode = false;
             String script = null;
             if (value != null) {
                 if ("MyBox##blank".equals(value)) {
@@ -331,6 +332,12 @@ public class DataFileText extends DataFile {
                     isRandomNn = true;
                 } else if (value.startsWith("MyBox##Expression##")) {
                     script = value.substring("MyBox##Expression##".length());
+                } else if (value.startsWith("MyBox##columnMean")) {
+                    isMean = true;
+                } else if (value.startsWith("MyBox##columnMode")) {
+                    isMode = true;
+                } else if (value.startsWith("MyBox##columnMedian")) {
+                    isMedian = true;
                 }
             }
             Random random = new Random();
@@ -365,6 +372,12 @@ public class DataFileText extends DataFile {
                             row.add(random(random, i, false));
                         } else if (isRandomNn) {
                             row.add(random(random, i, true));
+                        } else if (isMean) {
+                            row.add(column(i).getDoubleStatistic().mean + "");
+                        } else if (isMode) {
+                            row.add(column(i).getDoubleStatistic().modeValue + "");
+                        } else if (isMedian) {
+                            row.add(column(i).getDoubleStatistic().median + "");
                         } else if (script != null) {
                             row.add(expressionResult());
                         } else {

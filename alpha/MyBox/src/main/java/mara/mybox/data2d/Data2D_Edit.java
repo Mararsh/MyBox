@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import mara.mybox.calculation.DescriptiveStatistic;
-import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.data2d.scan.Data2DReader;
 import mara.mybox.data2d.scan.Data2DReader.Operation;
 import mara.mybox.db.DerbyBase;
@@ -259,9 +258,9 @@ public abstract class Data2D_Edit extends Data2D_Data {
                 if (columnFilter == null) {
                     continue;
                 }
-                checkStatistic(calculation, columnFilter.getEqualValue());
-                checkStatistic(calculation, columnFilter.getLargerValue());
-                checkStatistic(calculation, columnFilter.getLessValue());
+                columnFilter.checkStatistic(calculation, columnFilter.getEqualValue());
+                columnFilter.checkStatistic(calculation, columnFilter.getLargerValue());
+                columnFilter.checkStatistic(calculation, columnFilter.getLessValue());
             }
             if (colNames.isEmpty() || !calculation.need()) {
                 return;
@@ -270,61 +269,17 @@ public abstract class Data2D_Edit extends Data2D_Data {
             for (String name : colNames) {
                 colIndices.add(colOrder(name));
             }
-            DataTable tmpTable = ((Data2D) this).toTmpTable(task, colIndices, false, true);
-            if (tmpTable == null) {
-                return;
-            }
-            tmpTable.setTask(task);
-            List<Integer> tmpColIndices = tmpTable.columnIndices().subList(1, tmpTable.columnsNumber());
-            DoubleStatistic[] statisticData = null;
             if (calculation.needNonStored()) {
-                statisticData = tmpTable.statisticByColumnsWithoutStored(tmpColIndices, calculation);
+                ((Data2D) this).statisticByColumnsWithoutStored(colIndices, calculation);
             }
             if (calculation.needStored()) {
-                statisticData = tmpTable.statisticByColumnsForStored(tmpColIndices, calculation);
+                ((Data2D) this).statisticByColumnsForStored(colIndices, calculation);
             }
-            if (statisticData == null) {
-                return;
-            }
-            for (int i = 0; i < colNames.size(); i++) {
-                Data2DColumn column = columnByName(colNames.get(i));
-                column.setDoubleStatistic(statisticData[i]);
-            }
-            tmpTable.drop();
         } catch (Exception e) {
             MyBoxLog.error(e);
             if (task != null) {
                 task.setError(e.toString());
             }
-        }
-    }
-
-    public void checkStatistic(DescriptiveStatistic calculation, String name) {
-        if (calculation == null || name == null || name.isBlank()) {
-            return;
-        }
-        if (ColumnFilter.Max.equals(name)) {
-            calculation.setMaximum(true);
-        } else if (ColumnFilter.Min.equals(name)) {
-            calculation.setMinimum(true);
-        } else if (ColumnFilter.Mean.equals(name)) {
-            calculation.setMean(true);
-        } else if (ColumnFilter.Q1.equals(name)) {
-            calculation.setLowerQuartile(true);
-        } else if (ColumnFilter.Q3.equals(name)) {
-            calculation.setUpperQuartile(true);
-        } else if (ColumnFilter.E1.equals(name)) {
-            calculation.setLowerExtremeOutlierLine(true);
-        } else if (ColumnFilter.E2.equals(name)) {
-            calculation.setLowerMildOutlierLine(true);
-        } else if (ColumnFilter.E3.equals(name)) {
-            calculation.setUpperMildOutlierLine(true);
-        } else if (ColumnFilter.E4.equals(name)) {
-            calculation.setUpperExtremeOutlierLine(true);
-        } else if (ColumnFilter.Mode.equals(name)) {
-            calculation.setMode(true);
-        } else if (ColumnFilter.Median.equals(name)) {
-            calculation.setMedian(true);
         }
     }
 
