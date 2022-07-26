@@ -27,7 +27,7 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
     protected Data2DStyle updatedStyle;
 
     @FXML
-    protected Tab baseTab, dataTab;
+    protected Tab baseTab, dataTab, rowFilterTab, columnFilterTab, styleTab;
     @FXML
     protected CheckBox abnormalCheck, sizeCheck;
     @FXML
@@ -100,15 +100,15 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
             if (tableController == null) {
                 return;
             }
-            super.sourceChanged();
-
-            rowFilterController.setData2D(tableController.data2D);
-            columnFilterController.setData2D(tableController.data2D);
+            rowFilterController.setData2D(tableController.data2D.cloneAll());
+            columnFilterController.setData2D(tableController.data2D.cloneAll());
 
             columnsPane.getChildren().clear();
             for (Data2DColumn column : tableController.data2D.getColumns()) {
                 columnsPane.getChildren().add(new CheckBox(column.getColumnName()));
             }
+            super.sourceChanged();
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -205,6 +205,7 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
         fromInput.setText(updatedStyle.getRowStart() < 0 ? "" : (updatedStyle.getRowStart() + 1) + "");
         toInput.setText(updatedStyle.getRowEnd() < 0 ? "" : updatedStyle.getRowEnd() + "");
         String scolumns = updatedStyle.getColumns();
+        MyBoxLog.console("columns:  " + scolumns);
         selectNoneColumn();
         if (scolumns != null && !scolumns.isBlank()) {
             String[] ns = scolumns.split(Data2DStyle.ColumnSeparator);
@@ -288,6 +289,16 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
                 tabPane.getSelectionModel().select(dataTab);
                 return false;
             }
+            if (!rowFilterController.checkExpression(false)) {
+                popError(rowFilterController.error);
+                tabPane.getSelectionModel().select(rowFilterTab);
+                return false;
+            }
+            if (!columnFilterController.checkFilter()) {
+                popError(columnFilterController.error);
+                tabPane.getSelectionModel().select(columnFilterTab);
+                return false;
+            }
             checkStyle();
             updatedStyle.setD2id(tableController.data2D.getD2did());
             String columns = "";
@@ -307,9 +318,11 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
             if (allColumns) {
                 columns = null;
             }
+            MyBoxLog.console("columns:  " + columns);
             updatedStyle.setColumns(columns);
-            updatedStyle.setRowFilter(rowFilterController.pickValues());
-            updatedStyle.setColumnFilter(columnFilterController.pickValues());
+
+            updatedStyle.setRowFilter(rowFilterController.rowFilter);
+            updatedStyle.setColumnFilter(columnFilterController.columnFilter);
             updatedStyle.setAbnoramlValues(abnormalCheck.isSelected());
             return true;
         } catch (Exception e) {

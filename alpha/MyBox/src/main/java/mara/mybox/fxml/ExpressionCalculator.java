@@ -284,4 +284,17 @@ public class ExpressionCalculator {
         }
     }
 
+    public boolean validateDataColumnExpression(Data2D data2D, String script) {
+        try {
+            handleError(null);
+            if (script == null || script.isBlank()) {
+                return true;
+            }
+            return calculate(dataColumnExpression(data2D, script, "0"));
+        } catch (Exception e) {
+            handleError(e);
+            return false;
+        }
+    }
+
 }

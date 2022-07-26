@@ -197,7 +197,7 @@ License:    Apache License Version 2.0
                                                 </ScrollPane>
                                             </content>
                                         </Tab>
-                                        <Tab fx:id="filterTab1" text="%RowFilter"> 
+                                        <Tab fx:id="rowFilterTab" text="%RowFilter"> 
                                             <content>
                                                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                                                     <content>
@@ -213,7 +213,7 @@ License:    Apache License Version 2.0
                                                 </ScrollPane>
                                             </content>
                                         </Tab>
-                                        <Tab text="%ColumnFilter">
+                                        <Tab fx:id="columnFilterTab" text="%ColumnFilter">
                                             <content>
                                                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                                                     <content>
@@ -229,7 +229,7 @@ License:    Apache License Version 2.0
                                                 </ScrollPane>
                                             </content>
                                         </Tab>
-                                        <Tab text="%Style">
+                                        <Tab fx:id="styleTab" text="%Style">
                                             <content>
                                                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                                                     <content>

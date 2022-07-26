@@ -9,6 +9,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.VBox;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ColumnFilter;
 import mara.mybox.fxml.PopTools;
@@ -57,8 +58,6 @@ public class ControlData2DColumnFilter extends ControlData2DRowExpression {
             equalSelector.getItems().addAll(values);
             largerSelector.getItems().addAll(values);
             lessSelector.getItems().addAll(values);
-
-            columnFilter = new ColumnFilter();
 
             conditionsBox.disableProperty().bind(noneRadio.selectedProperty());
 
@@ -125,10 +124,12 @@ public class ControlData2DColumnFilter extends ControlData2DRowExpression {
     }
 
     public ColumnFilter pickValues() {
-        if (!workRadio.isSelected()) {
+        if (noneRadio.isSelected()) {
+            columnFilter = null;
             return null;
         }
-        columnFilter.setWork(workRadio.isSelected())
+        columnFilter = ColumnFilter.create()
+                .setWork(workRadio.isSelected())
                 .setEmpty(emptyCheck.isSelected())
                 .setZero(zeroCheck.isSelected())
                 .setPositive(positiveCheck.isSelected())
@@ -193,6 +194,26 @@ public class ControlData2DColumnFilter extends ControlData2DRowExpression {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    public boolean checkFilter() {
+        error = null;
+        columnFilter = null;
+        pickValues();
+        if (expressionCheck.isSelected()) {
+            String script = scriptInput.getText();
+            if (script == null || script.isBlank()) {
+                return true;
+            }
+            if (calculator.validateDataColumnExpression(data2D, script)) {
+                TableStringValues.add(interfaceName + "Histories", script.trim());
+                return true;
+            } else {
+                error = calculator.getError();
+                return false;
+            }
+        }
+        return true;
     }
 
 }

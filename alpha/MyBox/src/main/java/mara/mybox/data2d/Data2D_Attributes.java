@@ -55,7 +55,11 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         tableChanged = false;
         options = null;
         styles = null;
+        rowFilter = null;
         error = null;
+        loadController = null;
+        task = null;
+        backgroundTask = null;
     }
 
     public void resetData() {
@@ -106,6 +110,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
             startRowOfCurrentPage = d.startRowOfCurrentPage;
             endRowOfCurrentPage = d.endRowOfCurrentPage;
             tableChanged = d.tableChanged;
+            rowFilter = d.rowFilter;
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
