@@ -68,7 +68,8 @@ public class FileTools {
 
     public static boolean rename(File sourceFile, File targetFile, boolean noEmpty) {
         try {
-            if (sourceFile == null || !sourceFile.exists() || targetFile == null) {
+            if (sourceFile == null || !sourceFile.exists()
+                    || targetFile == null || sourceFile.equals(targetFile)) {
                 return false;
             }
             if (noEmpty && sourceFile.length() == 0) {

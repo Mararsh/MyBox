@@ -1,24 +1,28 @@
 # [ReadMe in English](https://github.com/Mararsh/MyBox/tree/master/en)  ![ReadMe](https://mararsh.github.io/MyBox/iconGo.png)
 
 # MyBox：简易工具集
-这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。
+这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。          
+
+警告：这些功能未经过完整的和严谨的测试，未暴露的软件错误可能会造成功能失效或文件/数据丢失。
 
 ## 新内容
-2022-6-11 版本6.5.6          
+2022-7-28 版本6.5.7          
 
-* 数据：所有数据处理均可设置行过滤条件(JavaScript代码的布尔表达式) ；横向/纵向拼接两个数据；“赋值”可以设置为行表达式；按行过滤条件删除数据；“设置风格”可增删改规则。              
-* 计算：管理和编辑JavaScript代码；管理和编辑JEXL(Java Expression Language)代码；JShell可设置类路径、可弹出代码完成建议(CTRL+1)、完善示例。                
-* 数据图：参数可在弹出窗口中设置(F12)。                         
-* 解决：一些fxml文件包含本地文件路径；点击表头应按数据类型排序；在文本菜单中点击“替换”按钮弹出错误；对所有页或数据库表无法计算描述性统计。        
+* 数据：行过滤可设置最多源数据行数；“设置风格”可列过滤；“赋值”可为列平均/中位数/众数；新计算“行表达式”；统计/百分比/归一化时对于非数字可选忽略或取值为零；
+   排序时可设置最多结果行数。              
+* 算法：统计/排序/转置不再有内存限制；以生产者-消费者模式计算表达式。                
+* 界面：一些按钮可设置是否在鼠标经过时弹出菜单；改进一些界面以免控件拥挤；。                         
+* 解决：“文件重命名”在未匹配情况下会删除源文件；转换/计算数据库表数据时有错；读取系统粘贴板会残留临时文件，持续监听可能造成磁盘空间被占尽；图片OCR失效；
+添加/提取透明通道失效。        
  
-[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.6)             
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.7)             
    
 
 ## 下载与运行
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases)目录下（点击此项目主页的`releases`页签）。       
 
 ### 源码
-[MyBox-6.5.6-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-src.zip)   41M（大约值）       
+[MyBox-6.5.7-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.7/MyBox-6.5.7-src.zip)   41M（大约值）       
 
 关于源码的结构、编辑、和构建，请参考[开发指南](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-DevGuide-2.1-zh.pdf) 和
 [打包步骤](https://mararsh.github.io/MyBox/pack_steps.html)       
@@ -29,9 +33,9 @@
 
 | 平台 | 链接 | 大小（大约值） | 启动文件 |
 | --- | --- | --- |  --- |
-| win10 x64 | [MyBox-6.5.6-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-win10-x64.zip)  | 210MB | MyBox.exe |
-| CentOS 7 x64 | [MyBox-6.5.6-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-CentOS7-x64.tar.gz)  | 242MB  | bin/MyBox  |
-| mac x64| [MyBox-6.5.6-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-mac.dmg)  | 220MB  |  MyBox-6.5.6.app   |
+| win10 x64 | [MyBox-6.5.7-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.7/MyBox-6.5.7-win10-x64.zip)  | 210MB | MyBox.exe |
+| CentOS 7 x64 | [MyBox-6.5.7-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.7/MyBox-6.5.7-CentOS7-x64.tar.gz)  | 242MB  | bin/MyBox  |
+| mac x64| [MyBox-6.5.7-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.7/MyBox-6.5.7-mac.dmg)  | 220MB  |  MyBox-6.5.7.app   |
 
 双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。        
   
@@ -41,14 +45,14 @@
 
 | 平台 | 链接 | 大小（大约值） | 运行需要 |
 | --- | --- | --- |  --- |
-| win | [MyBox-6.5.6-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-win-jar.zip)  | 144MB | Java 18或更高版本 |
-| linux | [MyBox-6.5.6-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-linux-jar.zip)  | 175MB  | Java 18或更高版本 |
-| mac | [MyBox-6.5.6-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-mac-jar.zip)  |  147MB  | Java 18或更高版本 |
+| win | [MyBox-6.5.7-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.7/MyBox-6.5.7-win-jar.zip)  | 144MB | Java 18或更高版本 |
+| linux | [MyBox-6.5.7-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.7/MyBox-6.5.7-linux-jar.zip)  | 175MB  | Java 18或更高版本 |
+| mac | [MyBox-6.5.7-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.7/MyBox-6.5.7-mac-jar.zip)  |  147MB  | Java 18或更高版本 |
 
 执行以下命令来启动程序：       
-<PRE><CODE>     java   -jar   MyBox-6.5.6.jar</CODE></PRE>       
+<PRE><CODE>     java   -jar   MyBox-6.5.7.jar</CODE></PRE>       
 程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：       
-<PRE><CODE>     java   -jar   MyBox-6.5.6.jar   /tmp/a1.jpg</CODE></PRE>       
+<PRE><CODE>     java   -jar   MyBox-6.5.7.jar   /tmp/a1.jpg</CODE></PRE>       
 
 ### 其它下载地址       
 从云盘下载：  [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)       
@@ -68,9 +72,9 @@
 
 | 平台 | MyBox配置文件的目录 |
 | --- | --- |
-| win | `C:\用户\用户名\mybox\MyBox_v6.5.6.ini`  |
-| linux | `/home/用户名/mybox/MyBox_v6.5.6.ini` |
-| mac | `/Users/用户名/mybox/MyBox_v6.5.6.ini` |       
+| win | `C:\用户\用户名\mybox\MyBox_v6.5.7.ini`  |
+| linux | `/home/用户名/mybox/MyBox_v6.5.7.ini` |
+| mac | `/Users/用户名/mybox/MyBox_v6.5.7.ini` |       
 
 可以临时改变配置文件：在命令行启动jar包时设置参数"config=\"配置文件名\""。       
 利用“设置”功能也可以修改配置参数。       
@@ -89,8 +93,8 @@
 # 文档       
 | 文档名 | 版本 | 修改时间  | 链接 |       
 | --- | --- | --- | --- |
-| 开发日志 | 6.5.6 | 2022-6-11 | [html](#devLog) |
-| 快捷键 | 6.5.6 |  2022-6-11 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
+| 开发日志 | 6.5.7 | 2022-7-28 | [html](#devLog) |
+| 快捷键 | 6.5.7 |  2022-6-11 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
 | 打包步骤 | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps.html) |
 | 开发指南 | 2.1 |  2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf) |
 | 用户手册-综述 |  5.0 |  2019-4-19 | [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-UserGuide-5.0-Overview-zh.pdf) |
@@ -166,7 +170,7 @@ MyBox基于以下开放资源：
 
 
 # 当前版本       
-当前是版本6.5.6，已实现的特点概述如下:      
+当前是版本6.5.7，已实现的特点概述如下:      
   
 * [跨平台](#cross-platform)
 * [国际化](#international)
