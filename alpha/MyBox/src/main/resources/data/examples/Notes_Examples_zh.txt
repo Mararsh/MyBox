@@ -382,6 +382,13 @@ Tags:喜欢;;;0x0d3928ff;;;待补充;;;0xfff2dfff
     <li>BigDecimal比double慢很多。大多数情况下double的精度够用。</li>
     <li>若是判断数字范围，应当用 if (abs(x - 7.3) &lt; TOLERANCE) 而不是 if (x == 7.3)。</li>
     <li>final static常量必须在编译时刻可以确定。</li>
+    <li>JDBC读取数值时，若数据库值为null，则ResultSet.getDouble/getFloat/getInt/getShort返回0。如果需要区分空值和零，则需用ResultSet.getObject。
+        <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.sql/java/sql/ResultSet.html#getDouble(java.lang.String)">ResultSet.html#getDouble</a>
+    </li>
+    <li>从Java18开始，Charset.defaultCharset()总是UTF-8。这会影响到ProcessBuilder的命令和结果的解析。
+        <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Process.html#inputReader()">Process</a> 
+        <a href="https://bugs.openjdk.org/browse/JDK-8266075">JDK-8266075</a>
+     </li>
 </ol>
 
 ##MyBox#

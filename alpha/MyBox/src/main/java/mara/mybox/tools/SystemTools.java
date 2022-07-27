@@ -94,6 +94,8 @@ public class SystemTools {
         }
     }
 
+    // https://bugs.openjdk.org/browse/JDK-8266075
+    // https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Process.html#inputReader()
     public static Charset ConsoleCharset() {
         try {
             return Charset.forName(System.getProperty("native.encoding"));

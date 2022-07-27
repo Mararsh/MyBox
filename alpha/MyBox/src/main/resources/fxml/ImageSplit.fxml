@@ -351,7 +351,7 @@ License:    Apache License Version 2.0
                                        <content>
                                           <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                                              <content>
-                                                            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                                 <children>
                                                                     <FlowPane hgap="2.0" vgap="2.0" VBox.vgrow="NEVER">
                                                                         <children>
@@ -408,7 +408,7 @@ License:    Apache License Version 2.0
                                                                             <FlowPane fx:id="splitCustomized1Pane" hgap="2.0" prefWrapLength="200.0" vgap="2.0" VBox.vgrow="NEVER">
                                                                                 <children>
                                                                                     <Label text="%SplittingRows" />
-                                                                                    <TextField fx:id="customizedRowsInput" prefWidth="200.0" promptText="%SplitByComma" />
+                                                                                    <TextField fx:id="customizedRowsInput" maxWidth="1.7976931348623157E308" promptText="%SplitByComma" />
                                                                                     <Button fx:id="clearRowsButton" mnemonicParsing="false" onAction="#clearRows">
                                                                                         <graphic>
                                                                                             <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -418,12 +418,21 @@ License:    Apache License Version 2.0
                                                                                             </ImageView>
                                                                                         </graphic>
                                                                                     </Button>
+                                                                  <Button fx:id="goRowsButton" layoutX="250.0" layoutY="10.0" mnemonicParsing="false" onAction="#goRows">
+                                                                     <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                           <image>
+                                                                              <Image url="@../buttons/Red/iconGo.png" />
+                                                                           </image>
+                                                                        </ImageView>
+                                                                     </graphic>
+                                                                  </Button>
                                                                                 </children>
                                                                             </FlowPane>
                                                                             <FlowPane fx:id="splitCustomized2Pane" hgap="2.0" vgap="2.0">
                                                                                 <children>
                                                                                     <Label text="%SplittingColumns" />
-                                                                                    <TextField fx:id="customizedColsInput" prefWidth="200.0" promptText="%SplitByComma" />
+                                                                                    <TextField fx:id="customizedColsInput" maxWidth="1.7976931348623157E308" promptText="%SplitByComma" />
                                                                                     <Button fx:id="clearColsButton" mnemonicParsing="false" onAction="#clearCols">
                                                                                         <graphic>
                                                                                             <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -433,6 +442,15 @@ License:    Apache License Version 2.0
                                                                                             </ImageView>
                                                                                         </graphic>
                                                                                     </Button>
+                                                                  <Button fx:id="goColsButton" mnemonicParsing="false" onAction="#goCols">
+                                                                     <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                           <image>
+                                                                              <Image url="@../buttons/Red/iconGo.png" />
+                                                                           </image>
+                                                                        </ImageView>
+                                                                     </graphic>
+                                                                  </Button>
                                                                                 </children>
                                                                             </FlowPane>
                                                                             <HBox alignment="CENTER_LEFT" spacing="2.0">
@@ -454,7 +472,7 @@ License:    Apache License Version 2.0
                                                                     <Label fx:id="sizeLabel" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text=" " wrapText="true" VBox.vgrow="NEVER" />
                                                                 </children>
                                                    <padding>
-                                                      <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                                    </padding>
                                                             </VBox>
                                              </content>

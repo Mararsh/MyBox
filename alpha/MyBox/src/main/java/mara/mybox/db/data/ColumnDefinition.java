@@ -385,6 +385,7 @@ public class ColumnDefinition extends BaseData {
 
     // results.getDouble/getFloat/getInt/getShort returned is 0 if the value is SQL NULL.
     // But we need distinct zero and null.
+    // https://docs.oracle.com/en/java/javase/18/docs/api/java.sql/java/sql/ResultSet.html#getDouble(java.lang.String)
     public Object value(ResultSet results) {
         try {
             if (results == null || type == null || columnName == null) {

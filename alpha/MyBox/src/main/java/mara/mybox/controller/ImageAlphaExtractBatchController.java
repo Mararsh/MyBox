@@ -24,7 +24,6 @@ public class ImageAlphaExtractBatchController extends BaseImageManufactureBatchC
         baseTitle = Languages.message("ImageAlphaExtract");
 
         operationType = VisitHistory.OperationType.Alpha;
-        TipsLabelKey = "ImageAlphaExtractTips";
 
         sourceExtensionFilter = FileFilters.AlphaImageExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
