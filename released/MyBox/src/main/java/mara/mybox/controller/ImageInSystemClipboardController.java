@@ -7,7 +7,6 @@ import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -20,10 +19,10 @@ import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ImageClipboardMonitor;
 import mara.mybox.fxml.ImageClipboardTools;
-import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.AppVariables.imageClipboardMonitor;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -38,12 +37,11 @@ public class ImageInSystemClipboardController extends ImageViewerController {
 
     private int scaledWidth;
     private String filePrefix;
-    private Clipboard clipboard;
 
     @FXML
     protected ControlPathInput targetPathInputController;
     @FXML
-    protected Button openPathButton, clearBoardButton;
+    protected Button openFolderButton, clearBoardButton;
     @FXML
     protected CheckBox saveCheck, copyCheck;
     @FXML
@@ -60,8 +58,6 @@ public class ImageInSystemClipboardController extends ImageViewerController {
     public void initControls() {
         try {
             super.initControls();
-
-            clipboard = Clipboard.getSystemClipboard();
 
             saveCheck.setSelected(ImageClipboardTools.isSave());
             saveCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -154,7 +150,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
                 }
             });
 
-            openPathButton.disableProperty().bind(targetPathInputController.valid.not());
+            openFolderButton.disableProperty().bind(targetPathInputController.valid.not());
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -173,7 +169,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeStyleTools.setTooltip(clearButton, new Tooltip(message("DeleteSysTemporaryPathFiles")));
+            NodeStyleTools.setTooltip(clearButton, new Tooltip(message("DeleteJavaIOTemporaryPathFiles")));
             NodeStyleTools.setTooltip(clearBoardButton, new Tooltip(message("ClearSystemClipboard")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -181,13 +177,13 @@ public class ImageInSystemClipboardController extends ImageViewerController {
     }
 
     @FXML
-    protected void openTargetPath(ActionEvent event) {
+    public void openFolder() {
         view(targetPathInputController.file);
     }
 
     @FXML
     public void clearTmp() {
-        WindowTools.openStage(Fxmls.FilesDeleteSysTempFxml);
+        WindowTools.openStage(Fxmls.FilesDeleteJavaTempFxml);
     }
 
     public void startMonitor() {
@@ -283,6 +279,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
 
     @FXML
     public void refreshAction() {
+        Clipboard clipboard = Clipboard.getSystemClipboard();
         if (!clipboard.hasImage()) {
             popError(message("NoImageInClipboard"));
             return;
@@ -305,7 +302,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
     @FXML
     @Override
     public void clearAction() {
-        clipboard.clear();
+        Clipboard.getSystemClipboard().clear();
         loadImage(null);
     }
 

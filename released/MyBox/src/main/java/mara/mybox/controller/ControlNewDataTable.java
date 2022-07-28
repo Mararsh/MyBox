@@ -10,7 +10,6 @@ import javafx.scene.control.ToggleGroup;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
@@ -45,15 +44,27 @@ public class ControlNewDataTable extends BaseController {
         TipsLabelKey = message("SqlIdentifierComments");
     }
 
-    public void setParameters(BaseTaskController taskController, Data2D data2D) {
+    public void setParameters(BaseTaskController taskController) {
         try {
             this.taskController = taskController;
-            this.data2D = data2D;
-
-            dataTable = new DataTable();
-            tableData2D = new TableData2D();
 
             columnsController.setParent(this);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void setParameters(BaseTaskController taskController, Data2D data2D) {
+        setParameters(taskController);
+        setData(data2D);
+    }
+
+    public void setData(Data2D data2D) {
+        try {
+            this.data2D = data2D;
+            nameInput.setText(data2D.shortName());
+            columnsController.setValues(data2D.columnNames());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -91,13 +102,24 @@ public class ControlNewDataTable extends BaseController {
                 return false;
             }
             String tableName = DerbyBase.fixedIdentifier(nameInput.getText().trim());
+            if ((data2D instanceof DataTable) && tableName.equals(data2D.getSheet())) {
+                alertError(message("CannotConvertToItself") + ": " + tableName);
+                return false;
+            }
+            if (tableData2D == null) {
+                tableData2D = new TableData2D();
+            }
             if (tableData2D.exist(conn, tableName)) {
                 if (onlySQL) {
-                    alertWarning(message("AlreadyExisted"));
+                    alertWarning(message("AlreadyExisted") + ": " + tableName);
                     return true;
                 } else {
-                    if (PopTools.askSure(this, message("AlreadyExisted"), message("SureReplaceExistedDatabaseTable"))) {
-                        return dataTable.getTableData2DDefinition().deleteUserTable(conn, tableName) >= 0;
+                    if (PopTools.askSure(this, message("AlreadyExisted") + ": " + tableName,
+                            message("SureReplaceExistedDatabaseTable"))) {
+                        if (dataTable == null) {
+                            dataTable = new DataTable();
+                        }
+                        return dataTable.drop(conn, tableName) >= 0;
                     } else {
                         return false;
                     }
@@ -112,31 +134,21 @@ public class ControlNewDataTable extends BaseController {
 
     public boolean makeTable() {
         try {
-            tableData2D.reset();
-            String tableName = DerbyBase.fixedIdentifier(nameInput.getText().trim());
-            tableData2D.setTableName(tableName);
-            List<String> keys = new ArrayList<>();
-            String idname = null;
+            List<Data2DColumn> sourceColumns = new ArrayList<>();
+            for (int index : columnIndices) {
+                sourceColumns.add(data2D.getColumns().get(index));
+            }
+            List<String> keys;
             if (autoRadio.isSelected()) {
-                idname = tableName.replace("\"", "") + "_id";
-                Data2DColumn idcolumn = new Data2DColumn(idname, ColumnDefinition.ColumnType.Long);
-                idcolumn.setAuto(true).setIsPrimaryKey(true).setNotNull(true).setEditable(false);
-                tableData2D.addColumn(idcolumn);
+                keys = null;
             } else {
                 keys = columnsController.checkedValues();
             }
-            for (int index : columnIndices) {
-                Data2DColumn dataColumn = data2D.getColumns().get(index);
-                ColumnDefinition dbColumn = new ColumnDefinition();
-                dbColumn.cloneFrom(dataColumn);
-                String columeName = DerbyBase.fixedIdentifier(dataColumn.getColumnName());
-                if (columeName.equalsIgnoreCase(idname)) {
-                    columeName += index;
-                }
-                dbColumn.setColumnName(columeName);
-                dbColumn.setIsPrimaryKey(keys.contains(dataColumn.getColumnName()));
-                tableData2D.addColumn(dbColumn);
+            dataTable = Data2D.makeTable(nameInput.getText().trim(), sourceColumns, keys);
+            if (dataTable == null) {
+                return false;
             }
+            tableData2D = dataTable.getTableData2D();
             return true;
         } catch (Exception e) {
             if (task == null) {
@@ -151,10 +163,10 @@ public class ControlNewDataTable extends BaseController {
 
     public boolean createTable(Connection conn) {
         try {
-            dataTable.resetData();
             if (!makeTable()) {
                 return false;
             }
+            tableData2D = dataTable.getTableData2D();
             String sql = tableData2D.createTableStatement();
             taskController.updateLogs(sql);
             if (conn.createStatement().executeUpdate(sql) >= 0) {
@@ -163,16 +175,7 @@ public class ControlNewDataTable extends BaseController {
                 taskController.updateLogs(message("Failed"));
                 return false;
             }
-            List<ColumnDefinition> dbColumns = tableData2D.getColumns();
-            List<Data2DColumn> dataColumns = new ArrayList<>();
-            if (dbColumns != null) {
-                for (ColumnDefinition dbColumn : dbColumns) {
-                    Data2DColumn dataColumn = new Data2DColumn();
-                    dataColumn.cloneFrom(dbColumn);
-                    dataColumns.add(dataColumn);
-                }
-            }
-            dataTable.recordTable(conn, tableData2D.getTableName(), dataColumns);
+            dataTable.recordTable(conn, tableData2D.getTableName(), dataTable.getColumns());
             taskController.updateLogs(message("Record"));
             return true;
         } catch (Exception e) {
@@ -210,10 +213,16 @@ public class ControlNewDataTable extends BaseController {
         try {
             Data2DRow data2DRow = tableData2D.newRow();
             for (int col : columnIndices) {
-                Data2DColumn column = data2D.getColumns().get(col);
-                String name = column.getColumnName();
-                Object value = column.fromString(pageRow.get(col + 1));
+                Data2DColumn sourceColumn = data2D.getColumns().get(col);
+                Object value = sourceColumn.fromString(pageRow.get(col + 1));
                 if (value != null) {
+                    String name = sourceColumn.getColumnName();
+                    if (dataTable.getColumnsMap() != null) {
+                        String tableColumnName = dataTable.getColumnsMap().get(name);
+                        if (tableColumnName != null) {
+                            name = tableColumnName;
+                        }
+                    }
                     data2DRow.setColumnValue(name, value);
                 }
             }
@@ -229,9 +238,7 @@ public class ControlNewDataTable extends BaseController {
 
     public boolean importAllData(Connection conn) {
         try {
-            dataTable.setTask(task);
-            count = data2D.writeTable(conn, tableData2D, columnIndices);
-            dataTable.setTask(null);
+            count = data2D.writeTableData(task, conn, dataTable, columnIndices, false);
             taskController.updateLogs(message("Imported") + ": " + count);
             setRowsNumber(conn);
             return count >= 0;

@@ -169,7 +169,7 @@ public class ControlData2DInput extends BaseController {
                             delimiterName = ",";
                         }
                         dataFileText.setDelimiter(delimiterName);
-                        dataFileText.setTask(task);
+                        dataFileText.startTask(task, null);
                         List<String> names = dataFileText.readColumnNames();
                         if (isCancelled()) {
                             return false;
@@ -204,7 +204,7 @@ public class ControlData2DInput extends BaseController {
                         if (dataFileText.isColumnsValid()) {
                             columnNames = new ArrayList<>();
                             for (int i = 0; i < dataFileText.columnsNumber(); i++) {
-                                columnNames.add(dataFileText.colName(i));
+                                columnNames.add(dataFileText.columnName(i));
                             }
                             tcols = new ArrayList<>();
                             tcols.add(message("SourceRowNumber"));
@@ -242,7 +242,7 @@ public class ControlData2DInput extends BaseController {
 
                 @Override
                 protected void finalAction() {
-                    dataFileText.setTask(null);
+                    dataFileText.stopTask();
                     task = null;
                     if (validateTable != null && !validateTable.isEmpty()) {
                         validateTable.htmlTable();

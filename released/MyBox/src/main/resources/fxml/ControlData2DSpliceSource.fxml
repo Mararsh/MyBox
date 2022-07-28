@@ -54,7 +54,7 @@ License:    Apache License Version 2.0
                 </Button>
             </children>
         </HBox>
-      <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" tabClosingPolicy="UNAVAILABLE">
+      <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
          <tabs>
             <Tab fx:id="dataTab" text="%Data">
                <content>
@@ -186,7 +186,7 @@ License:    Apache License Version 2.0
                      <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                            <children>
-                              <fx:include fx:id="filter" source="ControlData2DRowFilter.fxml" />
+                              <fx:include fx:id="rowFilter" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DRowFilter.fxml" VBox.vgrow="ALWAYS" />
                            </children>
                         </VBox>
                      </content>

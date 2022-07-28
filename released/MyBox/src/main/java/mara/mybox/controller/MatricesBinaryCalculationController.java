@@ -9,7 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.Tab;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
@@ -17,9 +17,9 @@ import javafx.stage.Window;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataMatrix;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleMatrixTools;
 import mara.mybox.value.Fxmls;
@@ -38,6 +38,8 @@ public class MatricesBinaryCalculationController extends BaseController {
     @FXML
     protected ControlMatrixTable listController;
     @FXML
+    protected Tab dataATab, dataBTab, resultTab;
+    @FXML
     protected ControlData2D dataAController, dataBController, resultController;
     @FXML
     protected ToggleGroup opGroup;
@@ -48,8 +50,6 @@ public class MatricesBinaryCalculationController extends BaseController {
     protected Label matrixLabel, resultLabel, checkLabel;
     @FXML
     protected Button matrixAButton, matrixBButton, calculateButton;
-    @FXML
-    protected TitledPane matrixAPane, matrixBPane;
 
     public MatricesBinaryCalculationController() {
         baseTitle = message("MatricesBinaryCalculation");
@@ -64,26 +64,12 @@ public class MatricesBinaryCalculationController extends BaseController {
             dataAController.setDataType(null, Data2D.Type.Matrix);
             dataAMatrix = (DataMatrix) dataAController.data2D;
             dataAController.createAction();
-            dataAController.statusNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                    matrixAPane.setText(message("MatrixA")
-                            + (dataAMatrix.getDataName() == null ? "" : (" - " + dataAMatrix.getDataName())));
-                }
-            });
 
             dataBController.setDataType(null, Data2D.Type.Matrix);
             dataBMatrix = (DataMatrix) dataBController.data2D;
             dataBController.createAction();
-            dataBController.statusNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                    matrixBPane.setText(message("MatrixB")
-                            + (dataBMatrix.getDataName() == null ? "" : (" - " + dataBMatrix.getDataName())));
-                }
-            });
 
-            listController.setParameters(dataAController, dataBController);
+            listController.setParameters(this);
 
             resultController.setDataType(null, Data2D.Type.Matrix);
             resultMatrix = (DataMatrix) resultController.data2D;
@@ -101,6 +87,7 @@ public class MatricesBinaryCalculationController extends BaseController {
             dataAController.statusNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
+                    tabPane.getSelectionModel().select(dataATab);
                     checkMatrices();
                 }
             });
@@ -108,6 +95,7 @@ public class MatricesBinaryCalculationController extends BaseController {
             dataBController.statusNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
+                    tabPane.getSelectionModel().select(dataBTab);
                     checkMatrices();
                 }
             });
@@ -259,9 +247,7 @@ public class MatricesBinaryCalculationController extends BaseController {
                     String op = ((RadioButton) opGroup.getSelectedToggle()).getText();
                     resultLabel.setText(op + "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(cost));
                     resultController.loadMatrix(result);
-//                    if (resultController.autoNameCheck.isSelected()) {
-//                        resultController.nameInput.setText(op);
-//                    }
+                    tabPane.getSelectionModel().select(resultTab);
                 }
 
             };

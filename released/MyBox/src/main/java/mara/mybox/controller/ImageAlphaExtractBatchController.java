@@ -24,7 +24,6 @@ public class ImageAlphaExtractBatchController extends BaseImageManufactureBatchC
         baseTitle = Languages.message("ImageAlphaExtract");
 
         operationType = VisitHistory.OperationType.Alpha;
-        TipsLabelKey = "ImageAlphaExtractTips";
 
         sourceExtensionFilter = FileFilters.AlphaImageExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
@@ -58,14 +57,14 @@ public class ImageAlphaExtractBatchController extends BaseImageManufactureBatchC
             if (targets == null) {
                 return Languages.message("Failed");
             }
-            String prefix = FileNameTools.prefix(target.getName());
-            String alphaFileName = prefix + "_noAlpha." + targetFileSuffix;
-            ImageFileWriters.writeImageFile(targets[0], attributes, alphaFileName);
-            targetFileGenerated(new File(alphaFileName));
-
-            String noAlphaFileName = prefix + "_alpha.png";
-            ImageFileWriters.writeImageFile(targets[1], "png", noAlphaFileName);
+            String prefix = target.getParent() + File.separator + FileNameTools.prefix(target.getName());
+            String noAlphaFileName = prefix + "_noAlpha." + targetFileSuffix;
+            ImageFileWriters.writeImageFile(targets[0], attributes, noAlphaFileName);
             targetFileGenerated(new File(noAlphaFileName));
+
+            String alphaFileName = prefix + "_alpha.png";
+            ImageFileWriters.writeImageFile(targets[1], "png", alphaFileName);
+            targetFileGenerated(new File(alphaFileName));
 
             return Languages.message("Successful");
         } catch (Exception e) {

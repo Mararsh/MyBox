@@ -7,22 +7,31 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.DataInternalTable;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -164,22 +173,149 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
 
     @FXML
     protected void popExamplesMenu(MouseEvent mouseEvent) {
-        PopTools.popSqlExamples(this, valueInput, null, false, mouseEvent);
+        if (UserConfig.getBoolean("SqlExamplesPopWhenMouseHovering", true)) {
+            PopTools.popSqlExamples(this, valueInput, null, false, mouseEvent);
+        }
+    }
+
+    @FXML
+    protected void showExamplesMenu(ActionEvent event) {
+        PopTools.popSqlExamples(this, valueInput, null, false, event);
     }
 
     @FXML
     protected void popHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, valueInput, mouseEvent, "SQLHistories" + (internal ? "Internal" : ""));
+        String name = "SQLHistories" + (internal ? "Internal" : "");
+        if (UserConfig.getBoolean(name + "PopWhenMouseHovering", true)) {
+            PopTools.popStringValues(this, valueInput, mouseEvent, name, false, true);
+        }
     }
 
     @FXML
-    protected void popTableNames(MouseEvent mouseEvent) {
-        PopTools.popTableNames(this, valueInput, mouseEvent, internal);
+    protected void showHistories(ActionEvent event) {
+        PopTools.popStringValues(this, valueInput, event, "SQLHistories" + (internal ? "Internal" : ""), false, true);
     }
 
     @FXML
-    protected void popTableDefinition(MouseEvent mouseEvent) {
-        PopTools.popTableDefinition(this, valueInput, mouseEvent, internal);
+    protected void popTableNames(MouseEvent event) {
+        if (UserConfig.getBoolean("TableNamesPopWhenMouseHovering" + (internal ? "Internal" : ""), false)) {
+            tableNames(event);
+        }
+    }
+
+    @FXML
+    protected void showTableNames(ActionEvent event) {
+        tableNames(event);
+    }
+
+    protected void tableNames(Event event) {
+        try {
+            MenuController controller = MenuController.open(this, valueInput, event);
+
+            List<Node> topButtons = new ArrayList<>();
+            topButtons.add(new Label(message("TableName")));
+
+            CheckBox popCheck = new CheckBox();
+            popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
+            String pname = "TableNamesPopWhenMouseHovering" + (internal ? "Internal" : "");
+            popCheck.setSelected(UserConfig.getBoolean(pname, false));
+            popCheck.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(pname, popCheck.isSelected());
+                }
+            });
+            topButtons.add(popCheck);
+
+            controller.addFlowPane(topButtons);
+            controller.addNode(new Separator());
+
+            List<String> names;
+            if (internal) {
+                names = DataInternalTable.InternalTables;
+            } else {
+                names = DataTable.userTables();
+            }
+            List<Node> valueButtons = new ArrayList<>();
+            for (String name : names) {
+                Button button = new Button(name);
+                button.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        valueInput.replaceText(valueInput.getSelection(), name);
+                        controller.getThisPane().requestFocus();
+                        valueInput.requestFocus();
+                    }
+                });
+                valueButtons.add(button);
+            }
+            controller.addFlowPane(valueButtons);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    protected void popTableDefinition(MouseEvent event) {
+        if (UserConfig.getBoolean("TableDefinitionPopWhenMouseHovering", false)) {
+            tableDefinition(event);
+        }
+    }
+
+    @FXML
+    protected void showTableDefinition(ActionEvent event) {
+        tableDefinition(event);
+    }
+
+    protected void tableDefinition(Event event) {
+        try {
+            MenuController controller = MenuController.open(this, valueInput, event);
+
+            List<Node> topButtons = new ArrayList<>();
+            topButtons.add(new Label(message("TableDefinition")));
+
+            CheckBox popCheck = new CheckBox();
+            popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
+            popCheck.setSelected(UserConfig.getBoolean("TableDefinitionPopWhenMouseHovering", false));
+            popCheck.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("TableDefinitionPopWhenMouseHovering", popCheck.isSelected());
+                }
+            });
+            topButtons.add(popCheck);
+
+            controller.addFlowPane(topButtons);
+            controller.addNode(new Separator());
+
+            List<String> names;
+            if (internal) {
+                names = DataInternalTable.InternalTables;
+            } else {
+                names = DataTable.userTables();
+            }
+            List<Node> valueButtons = new ArrayList<>();
+            for (String name : names) {
+                Button button = new Button(name);
+                button.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        String html = TableData2D.tableDefinition(name);
+                        if (html != null) {
+                            HtmlPopController.openHtml(myController, html);
+                        } else {
+                            popError(message("NotFound"));
+                        }
+                    }
+                });
+                valueButtons.add(button);
+            }
+            controller.addFlowPane(valueButtons);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     public void setInternal(boolean internal) {

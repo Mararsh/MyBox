@@ -364,9 +364,12 @@ Tags:Need supplementary;;;0xfff2dfff;;;Like;;;0x0d3928ff
     <li>Always consider out of memory when read/write file or data.</li>
     <li>Notice charset when read/write text file.</li>
     <li>Notice charset when convert between bytes and string.</li>
+    <li>Condition to determine whether reach end of file should be "len &gt; 0". If use "len != -1", endless loop may happen if zero byte is read.</li>
+    <li>Call "System.gc()" before delete/move/rename file, to avoid failure due to cache.</li>
     <li>When class has many parameters, do not write many constructors to initialized different sets of parameters. Better coding is static creator and chain assignment by return “this” in all “set” methods.</li>
     <li>Anonymous class is very useful for scenario like lots of duplicated codes with only difference that  several methods have difference implements.</li>
     <li>Generic is very useful for scenario like lots of duplicated codes with only differernce of data type.</li>
+    <li>Define as less instance variables/methods as possible in class if it generates lots of instance. </li>
     <li>As less float-point calculations as possible in loop. If can, change float-point calculations as integer calculations.</li>
     <li>When listen data changing, need judge whether change trully happens, and avoid too frequently manufactures by setting minimum threshold of changing.</li>
     <li>Reboot application when change JVM parameters or need clean env in simple way.</li>
@@ -374,10 +377,18 @@ Tags:Need supplementary;;;0xfff2dfff;;;Like;;;0x0d3928ff
     <li>Generally, index in user interface starts from 1, while index in codes data starts from 0.</li>
     <li>Generally, range(start-end) in user interface includes end, while range(start-end) in codes data excludes end.</li>
     <li>Double.MIN_VALUE is the minimum positive double(almost zero). -Double.MAX_VALUE is the minimum double.</li>
-    <li>When handle money, store integer number for each unit.</li>
+    <li>When handle money, store integer numbers for each unit.</li>
     <li>BigDecimal is much slower than double. Double is enough for most situations.</li>
-    <li>To determine value's broken, write if (abs(x - 7.3) &lt; TOLERANCE) instead of if (x == 7.3).</li></ol>
+    <li>To determine value's broken, write if (abs(x - 7.3) &lt; TOLERANCE) instead of if (x == 7.3).</li>
     <li>Value of final static constant should be determined at compling time.</li>
+    <li>When JDBC read numbers, if SQL value is null, ResultSet.getDouble/getFloat/getInt/getShort returns 0. Use ResultSet.getObject instead if need distinct zero and null.
+       <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.sql/java/sql/ResultSet.html#getDouble(java.lang.String)">ResultSet.html#getDouble</a>
+    </li>
+    <li>From Java18, Charset.defaultCharset() is always UTF-8. This will affect commands and results of ProcessBuilder. 
+        <a href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Process.html#inputReader()">Process</a> 
+        <a href="https://bugs.openjdk.org/browse/JDK-8266075">JDK-8266075</a>
+     </li>
+</ol>
 
 ##MyBox#
 Notebook > Notebook > Note Examples > Coding

@@ -4,13 +4,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data2d.Data2D;
@@ -19,8 +22,12 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -30,7 +37,7 @@ import static mara.mybox.value.Languages.message;
 public class ControlData2DRowExpression extends TreeNodesController {
 
     protected Data2D data2D;
-    protected String hisName;
+    public ExpressionCalculator calculator;
 
     @FXML
     protected TextArea scriptInput;
@@ -39,22 +46,34 @@ public class ControlData2DRowExpression extends TreeNodesController {
         baseTitle = "JavaScript";
         category = TreeNode.JavaScript;
         TipsLabelKey = "RowExpressionTips";
-        hisName = "RowExpressionHistories";
     }
 
-    public void setParamters(Data2D data2D) {
+    @Override
+    public void initControls() {
         try {
-            this.data2D = data2D;
+            super.initControls();
+            initCalculator();
+
             tableTreeNode = new TableTreeNode();
             tableTreeNodeTag = new TableTreeNodeTag();
-            if (!loadExamples()) {
-                loadTree(null);
-            }
+            loadTree(null);
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
+    public void initCalculator() {
+        calculator = new ExpressionCalculator();
+    }
+
+    public void setData2D(Data2D data2D) {
+        this.data2D = data2D;
+    }
+
+    /*
+        tree
+     */
     @Override
     protected void doubleClicked(TreeItem<TreeNode> item) {
         editNode(item);
@@ -82,6 +101,9 @@ public class ControlData2DRowExpression extends TreeNodesController {
         JavaScriptController.open(scriptInput.getText());
     }
 
+    /*
+        script
+     */
     @FXML
     public void clearScript() {
         scriptInput.clear();
@@ -89,13 +111,25 @@ public class ControlData2DRowExpression extends TreeNodesController {
 
     @FXML
     protected void popScriptExamples(MouseEvent mouseEvent) {
+        if (UserConfig.getBoolean(interfaceName + "ExamplesPopWhenMouseHovering", true)) {
+            scriptExamples(mouseEvent);
+        }
+    }
+
+    @FXML
+    protected void showScriptExamples(ActionEvent event) {
+        scriptExamples(event);
+    }
+
+    protected void scriptExamples(Event event) {
         try {
-            MenuController controller = MenuController.open(this, scriptInput,
-                    mouseEvent.getScreenX(), mouseEvent.getScreenY() + 20);
+            MenuController controller = MenuController.open(this, scriptInput, event);
             controller.setTitleLabel(message("Examples"));
 
             List<Node> topButtons = new ArrayList<>();
-            Button newLineButton = new Button(message("Newline"));
+            Button newLineButton = new Button();
+            newLineButton.setGraphic(StyleTools.getIconImage("iconTurnOver.png"));
+            NodeStyleTools.setTooltip(newLineButton, new Tooltip(message("Newline")));
             newLineButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -104,7 +138,10 @@ public class ControlData2DRowExpression extends TreeNodesController {
                 }
             });
             topButtons.add(newLineButton);
-            Button clearInputButton = new Button(message("ClearInputArea"));
+
+            Button clearInputButton = new Button();
+            clearInputButton.setGraphic(StyleTools.getIconImage("iconClear.png"));
+            NodeStyleTools.setTooltip(clearInputButton, new Tooltip(message("ClearInputArea")));
             clearInputButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -112,44 +149,23 @@ public class ControlData2DRowExpression extends TreeNodesController {
                 }
             });
             topButtons.add(clearInputButton);
+
+            CheckBox popCheck = new CheckBox();
+            popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
+            popCheck.setSelected(UserConfig.getBoolean(interfaceName + "ExamplesPopWhenMouseHovering", true));
+            popCheck.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(interfaceName + "ExamplesPopWhenMouseHovering", popCheck.isSelected());
+                }
+            });
+            topButtons.add(popCheck);
+
             controller.addFlowPane(topButtons);
 
-            List<String> colnames = data2D.columnNames();
-            List<String> names = new ArrayList<>();
-            names.add(message("TableRowNumber"));
-            names.add(message("DataRowNumber"));
-            names.addAll(colnames);
-            for (int i = 0; i < names.size(); i++) {
-                names.set(i, "#{" + names.get(i) + "}");
-            }
-            PopTools.addButtonsPane(controller, scriptInput, names);
-            controller.addNode(new Separator());
+            scriptExampleButtons(controller);
 
-            if (!colnames.isEmpty()) {
-                String col1 = colnames.get(0);
-                PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
-                        "#{" + message("DataRowNumber") + "} % 2 == 0",
-                        "#{" + message("DataRowNumber") + "} % 2 == 1",
-                        "#{" + message("DataRowNumber") + "} >= 9",
-                        "#{" + message("TableRowNumber") + "} % 2 == 0",
-                        "#{" + message("TableRowNumber") + "} % 2 == 1",
-                        "#{" + message("TableRowNumber") + "} == 1",
-                        "#{" + col1 + "} == 0",
-                        "Math.abs(#{" + col1 + "}) >= 0",
-                        "#{" + col1 + "} < 0 || #{" + col1 + "} > 100 ",
-                        "#{" + col1 + "} != 6"
-                ));
-
-                PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
-                        "'#{" + col1 + "}'.search(/Hello/ig) >= 0",
-                        "'#{" + col1 + "}'.length > 0",
-                        "'#{" + col1 + "}'.indexOf('Hello') == 3",
-                        "'#{" + col1 + "}'.startsWith('Hello')",
-                        "'#{" + col1 + "}'.endsWith('Hello')",
-                        "var array = [ 'A', 'B', 'C', 'D' ];\n"
-                        + "array.includes('#{" + col1 + "}')"
-                ));
-            }
             PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
                     " '' == ", " == ", " '' != ", " != ",
                     " === ", " !== ", " true ", " false ", " null ", " undefined ",
@@ -189,20 +205,77 @@ public class ControlData2DRowExpression extends TreeNodesController {
         }
     }
 
+    protected void scriptExampleButtons(MenuController controller) {
+        try {
+            List<String> colnames = data2D.columnNames();
+            List<String> names = new ArrayList<>();
+            names.add(message("TableRowNumber"));
+            names.add(message("DataRowNumber"));
+            names.addAll(colnames);
+            for (int i = 0; i < names.size(); i++) {
+                names.set(i, "#{" + names.get(i) + "}");
+            }
+            PopTools.addButtonsPane(controller, scriptInput, names);
+            controller.addNode(new Separator());
+
+            if (!colnames.isEmpty()) {
+                String col1 = colnames.get(0);
+                PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
+                        "#{" + message("DataRowNumber") + "} % 2 == 0",
+                        "#{" + message("DataRowNumber") + "} % 2 == 1",
+                        "#{" + message("DataRowNumber") + "} >= 9",
+                        "#{" + message("TableRowNumber") + "} % 2 == 0",
+                        "#{" + message("TableRowNumber") + "} % 2 == 1",
+                        "#{" + message("TableRowNumber") + "} == 1",
+                        "#{" + col1 + "} == 0",
+                        "Math.abs(#{" + col1 + "}) >= 0",
+                        "#{" + col1 + "} < 0 || #{" + col1 + "} > 100 ",
+                        "#{" + col1 + "} != 6"
+                ));
+
+                PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
+                        "'#{" + col1 + "}'.search(/Hello/ig) >= 0",
+                        "'#{" + col1 + "}'.length > 0",
+                        "'#{" + col1 + "}'.indexOf('Hello') == 3",
+                        "'#{" + col1 + "}'.startsWith('Hello')",
+                        "'#{" + col1 + "}'.endsWith('Hello')",
+                        "var array = [ 'A', 'B', 'C', 'D' ];\n"
+                        + "array.includes('#{" + col1 + "}')"
+                ));
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     @FXML
-    protected void popScriptHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, scriptInput, mouseEvent, hisName);
+    protected void popScriptHistories(MouseEvent event) {
+        if (UserConfig.getBoolean(interfaceName + "HistoriesPopWhenMouseHovering", true)) {
+            PopTools.popStringValues(this, scriptInput, event, interfaceName + "Histories", false, true);
+        }
+    }
+
+    @FXML
+    protected void showScriptHistories(ActionEvent event) {
+        PopTools.popStringValues(this, scriptInput, event, interfaceName + "Histories", false, true);
     }
 
     public boolean checkExpression(boolean allPages) {
+        error = null;
+        if (data2D == null || !data2D.hasData()) {
+            error = message("InvalidData");
+            return false;
+        }
         String script = scriptInput.getText();
         if (script == null || script.isBlank()) {
             return true;
         }
-        if (data2D.validateExpression(script, allPages)) {
-            TableStringValues.add(hisName, script.trim());
+        if (calculator.validateExpression(data2D, script, allPages)) {
+            TableStringValues.add(interfaceName + "Histories", script.trim());
             return true;
         } else {
+            error = calculator.getError();
             return false;
         }
     }

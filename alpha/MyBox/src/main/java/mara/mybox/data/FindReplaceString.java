@@ -258,11 +258,11 @@ public class FindReplaceString {
         return findReplace.getOutputString();
     }
 
-    public static String replace(String string, String find, String replace) {
-        return replaceAll(string, find, replace, 0, false, false, true);
+    public static String replaceFirst(String string, String find, String replace) {
+        return replaceFirst(string, find, replace, 0, false, false, true);
     }
 
-    public static String replace(String string, String find, String replace, int from,
+    public static String replaceFirst(String string, String find, String replace, int from,
             boolean isRegex, boolean caseInsensitive, boolean multiline) {
         FindReplaceString stringFind = create()
                 .setOperation(Operation.ReplaceFirst)

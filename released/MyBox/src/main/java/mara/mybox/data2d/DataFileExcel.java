@@ -11,17 +11,13 @@ import java.util.Random;
 import mara.mybox.data2d.scan.Data2DReader;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileDeleteTools;
-import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
 import mara.mybox.tools.TmpFileTools;
 import static mara.mybox.value.Languages.message;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -501,8 +497,9 @@ public class DataFileExcel extends DataFile {
                     while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
                     }
                 }
-                boolean isRandom = false, isRandomNn = false, isBlank = false;
-                String expression = null;
+                boolean isRandom = false, isRandomNn = false, isBlank = false, isMean = false,
+                        isMedian = false, isMode = false;
+                String script = null;
                 if (value != null) {
                     if ("MyBox##blank".equals(value)) {
                         isBlank = true;
@@ -511,11 +508,19 @@ public class DataFileExcel extends DataFile {
                     } else if ("MyBox##randomNn".equals(value)) {
                         isRandomNn = true;
                     } else if (value.startsWith("MyBox##Expression##")) {
-                        expression = value.substring("MyBox##Expression##".length());
+                        script = value.substring("MyBox##Expression##".length());
+                    } else if (value.startsWith("MyBox##columnMean")) {
+                        isMean = true;
+                    } else if (value.startsWith("MyBox##columnMode")) {
+                        isMode = true;
+                    } else if (value.startsWith("MyBox##columnMedian")) {
+                        isMedian = true;
                     }
                 }
                 Random random = new Random();
                 rowIndex = 0;
+                boolean needSetValue;
+                startFilter();
                 while (iterator.hasNext() && task != null && !task.isCancelled()) {
                     Row sourceRow = iterator.next();
                     if (sourceRow == null) {
@@ -526,26 +531,37 @@ public class DataFileExcel extends DataFile {
                     for (int c = sourceRow.getFirstCellNum(); c < sourceRow.getLastCellNum(); c++) {
                         values.add(MicrosoftDocumentTools.cellString(sourceRow.getCell(c)));
                     }
-                    filterAndCalculate(values, ++rowIndex, expression);
-                    if (expression != null && error != null) {
-                        if (errorContinue) {
-                            continue;
-                        } else {
-                            task.setError(error);
-                            return false;
+                    filterDataRow(values, ++rowIndex);
+                    needSetValue = filterPassed() && !filterReachMaxPassed();
+                    if (needSetValue && script != null) {
+                        calculateDataRowExpression(script, values, rowIndex);
+                        error = expressionError();
+                        if (error != null) {
+                            if (errorContinue) {
+                                continue;
+                            } else {
+                                task.setError(error);
+                                return false;
+                            }
                         }
                     }
                     for (int c = sourceRow.getFirstCellNum(); c < sourceRow.getLastCellNum(); c++) {
                         String v;
-                        if (filterPassed && cols.contains(c)) {
+                        if (needSetValue && cols.contains(c)) {
                             if (isBlank) {
                                 v = "";
                             } else if (isRandom) {
                                 v = random(random, c, false);
                             } else if (isRandomNn) {
                                 v = random(random, c, true);
-                            } else if (expression != null) {
-                                v = expressionResult;
+                            } else if (isMean) {
+                                v = column(c).getDoubleStatistic().mean + "";
+                            } else if (isMode) {
+                                v = column(c).getDoubleStatistic().modeValue + "";
+                            } else if (isMedian) {
+                                v = column(c).getDoubleStatistic().median + "";
+                            } else if (script != null) {
+                                v = expressionResult();
                             } else {
                                 v = value;
                             }
@@ -612,7 +628,7 @@ public class DataFileExcel extends DataFile {
                     while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
                     }
                 }
-                if (rowFilter != null && !rowFilter.isBlank()) {
+                if (needFilter()) {
                     rowIndex = 0;
                     while (iterator.hasNext() && task != null && !task.isCancelled()) {
                         Row sourceRow = iterator.next();
@@ -624,7 +640,7 @@ public class DataFileExcel extends DataFile {
                         for (int c = sourceRow.getFirstCellNum(); c < sourceRow.getLastCellNum(); c++) {
                             values.add(MicrosoftDocumentTools.cellString(sourceRow.getCell(c)));
                         }
-                        filterInTask(values, ++rowIndex);
+                        filterDataRow(values, ++rowIndex);
                         if (error != null) {
                             if (errorContinue) {
                                 continue;
@@ -633,7 +649,7 @@ public class DataFileExcel extends DataFile {
                                 return false;
                             }
                         }
-                        if (filterPassed) {
+                        if (filterPassed() && !filterReachMaxPassed()) {
                             continue;
                         }
                         for (int c = sourceRow.getFirstCellNum(); c < sourceRow.getLastCellNum(); c++) {
@@ -657,80 +673,6 @@ public class DataFileExcel extends DataFile {
             return false;
         }
         return FileTools.rename(tmpFile, file, false);
-    }
-
-    public static DataFileExcel toExcel(SingletonTask task, DataFileCSV csvData) {
-        if (task == null || csvData == null) {
-            return null;
-        }
-        File csvFile = csvData.getFile();
-        if (csvFile == null || !csvFile.exists() || csvFile.length() == 0) {
-            return null;
-        }
-        File excelFile = new File(FileNameTools.replaceSuffix(csvFile.getAbsolutePath(), "xlsx"));
-        boolean targetHasHeader = false;
-        int tcolsNumber = 0, trowsNumber = 0;
-        String targetSheetName = message("Sheet") + "1";
-        File validFile = FileTools.removeBOM(csvFile);
-        try ( CSVParser parser = CSVParser.parse(validFile, csvData.getCharset(), csvData.cvsFormat());
-                 Workbook targetBook = new XSSFWorkbook()) {
-            Sheet targetSheet = targetBook.createSheet(targetSheetName);
-            int targetRowIndex = 0;
-            Iterator<CSVRecord> iterator = parser.iterator();
-            if (iterator != null) {
-                if (csvData.isHasHeader()) {
-                    try {
-                        List<String> names = parser.getHeaderNames();
-                        if (names != null) {
-                            Row targetRow = targetSheet.createRow(targetRowIndex++);
-                            for (int col = 0; col < names.size(); col++) {
-                                Cell targetCell = targetRow.createCell(col, CellType.STRING);
-                                targetCell.setCellValue(names.get(col));
-                            }
-                            tcolsNumber = names.size();
-                            targetHasHeader = true;
-                        }
-                    } catch (Exception e) {  // skip  bad lines
-                        MyBoxLog.error(e);
-                    }
-                }
-                while (iterator.hasNext() && task != null && !task.isCancelled()) {
-                    try {
-                        CSVRecord record = iterator.next();
-                        if (record != null) {
-                            Row targetRow = targetSheet.createRow(targetRowIndex++);
-                            for (int col = 0; col < record.size(); col++) {
-                                Cell targetCell = targetRow.createCell(col, CellType.STRING);
-                                targetCell.setCellValue(record.get(col));
-                            }
-                            trowsNumber++;
-                        }
-                    } catch (Exception e) {  // skip  bad lines
-                        MyBoxLog.error(e);
-                    }
-                }
-                try ( FileOutputStream fileOut = new FileOutputStream(excelFile)) {
-                    targetBook.write(fileOut);
-                }
-                targetBook.close();
-            }
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return null;
-        }
-        if (excelFile != null && excelFile.exists()) {
-            DataFileExcel targetData = new DataFileExcel();
-            targetData.setFile(excelFile).setSheet(targetSheetName)
-                    .setHasHeader(targetHasHeader)
-                    .setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
-            Data2D.saveAttributes(csvData, targetData);
-            return targetData;
-        } else {
-            return null;
-        }
     }
 
     @Override

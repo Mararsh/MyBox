@@ -21,7 +21,6 @@ public class TextClipboardMonitor extends Timer {
     public final static int DefaultInterval = 200;
     protected Date startTime = null;
     protected int number;
-    protected final Clipboard clipboard = Clipboard.getSystemClipboard();
     protected final TableTextClipboard tableTextClipboard = new TableTextClipboard();
     protected String lastString = "";
     protected Connection conn = null;
@@ -59,19 +58,19 @@ public class TextClipboardMonitor extends Timer {
                 @Override
                 public synchronized void run() {
                     try {
-                        if (!clipboard.hasString()) {
-                            return;
-                        }
                         controller = TextInSystemClipboardController.running();
                         if (!TextClipboardTools.isCopy() && controller == null) {
                             TextClipboardTools.stopTextClipboardMonitor();
+                            return;
+                        }
+                        Clipboard clipboard = Clipboard.getSystemClipboard();
+                        if (!clipboard.hasString()) {
                             return;
                         }
                         String clip = clipboard.getString();
                         if (clip == null || clip.isEmpty() || clip.equals(lastString)) {
                             return;
                         }
-
                         lastString = clip;
                         number++;
                         if (TextClipboardTools.isCopy()) {

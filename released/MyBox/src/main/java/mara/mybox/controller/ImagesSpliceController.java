@@ -85,7 +85,7 @@ public class ImagesSpliceController extends ImageViewerController {
 
             tableData.addListener((ListChangeListener.Change<? extends ImageInformation> change) -> {
                 if (!tableController.hasSampled()) {
-                    combineImages();
+                    okAction();
                 }
             });
 
@@ -110,7 +110,6 @@ public class ImagesSpliceController extends ImageViewerController {
                         if (columnsValue > 0) {
                             imageCombine.setColumnsValue(columnsValue);
                             UserConfig.setString(baseName + "Columns", columnsValue + "");
-                            combineImages();
                             ValidationTools.setEditorNormal(columnsBox);
                         } else {
                             imageCombine.setColumnsValue(-1);
@@ -136,7 +135,6 @@ public class ImagesSpliceController extends ImageViewerController {
                             imageCombine.setIntervalValue(intervalValue);
                             UserConfig.setString(baseName + "Interval", intervalValue + "");
                             ValidationTools.setEditorNormal(intervalBox);
-                            combineImages();
                         } else {
                             ValidationTools.setEditorBadStyle(intervalBox);
                         }
@@ -159,7 +157,6 @@ public class ImagesSpliceController extends ImageViewerController {
                             imageCombine.setMarginsValue(MarginsValue);
                             UserConfig.setString(baseName + "Margin", MarginsValue + "");
                             ValidationTools.setEditorNormal(MarginsBox);
-                            combineImages();
                         } else {
                             ValidationTools.setEditorBadStyle(MarginsBox);
                         }
@@ -178,7 +175,6 @@ public class ImagesSpliceController extends ImageViewerController {
                 public void changed(ObservableValue<? extends Paint> observable,
                         Paint oldValue, Paint newValue) {
                     imageCombine.setBgColor((Color) newValue);
-                    combineImages();
                 }
             });
 
@@ -199,7 +195,6 @@ public class ImagesSpliceController extends ImageViewerController {
                         columnsBox.setDisable(false);
                         UserConfig.setString(baseName + "ArrayType", "ColumnsNumber");
                     }
-                    combineImages();
                 }
             });
             String arraySelect = UserConfig.getString(baseName + "ArrayType", "SingleColumn");
@@ -274,15 +269,12 @@ public class ImagesSpliceController extends ImageViewerController {
                     if (Languages.message("KeepSize").equals(selected.getText())) {
                         imageCombine.setSizeType(CombineSizeType.KeepSize);
                         UserConfig.setString(baseName + "SizeType", "KeepSize");
-                        combineImages();
                     } else if (Languages.message("AlignAsBigger").equals(selected.getText())) {
                         imageCombine.setSizeType(CombineSizeType.AlignAsBigger);
                         UserConfig.setString(baseName + "SizeType", "AlignAsBigger");
-                        combineImages();
                     } else if (Languages.message("AlignAsSmaller").equals(selected.getText())) {
                         imageCombine.setSizeType(CombineSizeType.AlignAsSmaller);
                         UserConfig.setString(baseName + "SizeType", "AlignAsSmaller");
-                        combineImages();
                     } else if (Languages.message("EachWidth").equals(selected.getText())) {
                         imageCombine.setSizeType(CombineSizeType.EachWidth);
                         eachWidthInput.setDisable(false);
@@ -343,7 +335,6 @@ public class ImagesSpliceController extends ImageViewerController {
                 imageCombine.setEachWidthValue(eachWidthValue);
                 eachWidthInput.setStyle(null);
                 UserConfig.setString(baseName + "EachWidth", eachWidthValue + "");
-                combineImages();
             } else {
                 imageCombine.setEachWidthValue(-1);
                 eachWidthInput.setStyle(UserConfig.badStyle());
@@ -361,7 +352,6 @@ public class ImagesSpliceController extends ImageViewerController {
                 imageCombine.setEachHeightValue(eachHeightValue);
                 eachHeightInput.setStyle(null);
                 UserConfig.setString(baseName + "EachHeight", eachHeightValue + "");
-                combineImages();
             } else {
                 imageCombine.setEachHeightValue(-1);
                 eachHeightInput.setStyle(UserConfig.badStyle());
@@ -379,7 +369,6 @@ public class ImagesSpliceController extends ImageViewerController {
                 imageCombine.setTotalWidthValue(totalWidthValue);
                 totalWidthInput.setStyle(null);
                 UserConfig.setString(baseName + "TotalWidth", totalWidthValue + "");
-                combineImages();
             } else {
                 imageCombine.setTotalWidthValue(-1);
                 totalWidthInput.setStyle(UserConfig.badStyle());
@@ -397,7 +386,6 @@ public class ImagesSpliceController extends ImageViewerController {
                 imageCombine.setTotalHeightValue(totalHeightValue);
                 totalHeightInput.setStyle(null);
                 UserConfig.setString(baseName + "TotalHeight", totalHeightValue + "");
-                combineImages();
             } else {
                 imageCombine.setTotalHeightValue(-1);
                 totalHeightInput.setStyle(UserConfig.badStyle());
@@ -420,11 +408,8 @@ public class ImagesSpliceController extends ImageViewerController {
     }
 
     @FXML
-    protected void newWindow(ActionEvent event) {
-        ControllerTools.openImageViewer(image);
-    }
-
-    private void combineImages() {
+    @Override
+    public void okAction() {
         if (tableData == null || tableData.isEmpty()
                 || totalWidthInput.getStyle().equals(UserConfig.badStyle())
                 || totalHeightInput.getStyle().equals(UserConfig.badStyle())
@@ -466,7 +451,6 @@ public class ImagesSpliceController extends ImageViewerController {
             };
             start(task);
         }
-
     }
 
     private Image combineImagesColumns(List<ImageInformation> imageInfos) {
@@ -494,6 +478,11 @@ public class ImagesSpliceController extends ImageViewerController {
             MyBoxLog.error(e.toString());
             return null;
         }
+    }
+
+    @FXML
+    protected void newWindow(ActionEvent event) {
+        ControllerTools.openImageViewer(image);
     }
 
     @FXML

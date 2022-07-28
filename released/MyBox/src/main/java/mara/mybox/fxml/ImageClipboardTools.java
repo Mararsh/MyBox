@@ -33,7 +33,7 @@ public class ImageClipboardTools {
 
     public static void startImageClipboardMonitor(int interval, ImageAttributes attributes, String filePrefix) {
         if (imageClipboardMonitor != null) {
-            imageClipboardMonitor.cancel();
+            imageClipboardMonitor.stop();
             imageClipboardMonitor = null;
         }
         imageClipboardMonitor = new ImageClipboardMonitor().start(interval, attributes, filePrefix);
@@ -87,7 +87,6 @@ public class ImageClipboardTools {
     public static void setSave(boolean value) {
         UserConfig.setBoolean("SaveImageInSystemClipboard", value);
     }
-
 
     /*
         Image in System Clipboard

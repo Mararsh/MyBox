@@ -2,8 +2,10 @@ package mara.mybox.controller;
 
 import java.util.List;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -13,6 +15,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.DataTable;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
@@ -21,6 +24,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -144,6 +148,13 @@ public abstract class BaseData2DController extends BaseController {
         loadController.loadCSVData(csvData);
     }
 
+    public void loadTableData(DataTable dataTable) {
+        if (dataTable == null || loadController == null || !checkBeforeNextAction()) {
+            return;
+        }
+        loadController.loadTableData(dataTable);
+    }
+
     public void loadData(List<Data2DColumn> cols, List<List<String>> data) {
         if (loadController == null || !checkBeforeNextAction()) {
             return;
@@ -203,6 +214,18 @@ public abstract class BaseData2DController extends BaseController {
 
     @FXML
     protected void popExamplesMenu(MouseEvent mouseEvent) {
+        if (UserConfig.getBoolean("Data2DExamplesPopWhenMouseHovering", true)) {
+            examplesMenu(mouseEvent);
+        }
+    }
+
+    @FXML
+    protected void showExamplesMenu(ActionEvent event) {
+        examplesMenu(event);
+    }
+
+    @FXML
+    protected void examplesMenu(Event event) {
         try {
             if (popMenu != null && popMenu.isShowing()) {
                 popMenu.hide();
@@ -214,6 +237,18 @@ public abstract class BaseData2DController extends BaseController {
 
             popMenu.getItems().addAll(dataController.examplesMenu());
 
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            CheckMenuItem pMenu = new CheckMenuItem(message("PopWhenMouseHovering"), StyleTools.getIconImage("iconPop.png"));
+            pMenu.setSelected(UserConfig.getBoolean("Data2DExamplesPopWhenMouseHovering", true));
+            pMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("Data2DExamplesPopWhenMouseHovering", pMenu.isSelected());
+                }
+            });
+            popMenu.getItems().add(pMenu);
+
             MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
@@ -224,7 +259,7 @@ public abstract class BaseData2DController extends BaseController {
             });
             popMenu.getItems().add(menu);
 
-            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateBelow((Region) event.getSource(), popMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

@@ -330,12 +330,12 @@ public class ColorPalettePopupController extends BaseChildController {
 
             items.add(new SeparatorMenuItem());
 
-            CheckMenuItem checkMenu = new CheckMenuItem(message("PopColorSetWhenMousePassing"));
-            checkMenu.setSelected(UserConfig.getBoolean("PopColorSetWhenMousePassing", true));
+            CheckMenuItem checkMenu = new CheckMenuItem(message("PopColorSetWhenMouseHovering"));
+            checkMenu.setSelected(UserConfig.getBoolean("PopColorSetWhenMouseHovering", true));
             checkMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("PopColorSetWhenMousePassing", checkMenu.isSelected());
+                    UserConfig.setBoolean("PopColorSetWhenMouseHovering", checkMenu.isSelected());
                 }
             });
             items.add(checkMenu);

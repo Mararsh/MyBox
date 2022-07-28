@@ -41,16 +41,6 @@ License:    Apache License Version 2.0
                                     <children>
                                         <VBox fx:id="dataBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS">
                                             <children>
-                                                <HBox alignment="CENTER_LEFT" spacing="2.0">
-                                                    <children>
-                                                        <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconTips.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                        <Label fx:id="dataLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
-                                                    </children>
-                                                </HBox>
                                                 <FlowPane fx:id="rowsPane" hgap="2.0" vgap="2.0">
                                                     <children>
                                                         <Label text="%Rows" />
@@ -63,29 +53,35 @@ License:    Apache License Version 2.0
                                                         <RadioButton fx:id="allPagesRadio" layoutX="43.0" layoutY="10.0" mnemonicParsing="false" text="%AllPages" toggleGroup="$rowsGroup" />
                                                     </children>
                                                 </FlowPane>
-                                                <FlowPane fx:id="columnsPane" hgap="2.0" vgap="2.0">
-                                                    <children>
-                                                        <Label text="%Columns" />
-                                                        <Button fx:id="selectAllColumnsButton" mnemonicParsing="false" onAction="#selectAllColumns">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/Red/iconSelectAll.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                        <Button fx:id="selectNoneColumnsButton" mnemonicParsing="false" onAction="#selectNoneColumn">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/Red/iconSelectNone.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                    </children>
-                                                </FlowPane>
+                                    <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                       <children>
+                                          <Label text="%Columns" />
+                                          <Button fx:id="selectAllColumnsButton" mnemonicParsing="false" onAction="#selectAllColumns">
+                                             <graphic>
+                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/Red/iconSelectAll.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                          <Button fx:id="selectNoneColumnsButton" mnemonicParsing="false" onAction="#selectNoneColumn">
+                                             <graphic>
+                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/Red/iconSelectNone.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                          <Label fx:id="dataLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
+                                          <ImageView fx:id="tableTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconTipsRight.png" />
+                                             </image>
+                                          </ImageView>
+                                       </children>
+                                    </HBox>
                                                 <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                                                     <columns>
                                                         <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308" prefWidth="-1.0">
@@ -182,7 +178,7 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox fx:id="filterVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                     <children>
-                                        <fx:include fx:id="filter" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DRowFilter.fxml" VBox.vgrow="ALWAYS" />
+                                        <fx:include fx:id="rowFilter" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DRowFilter.fxml" VBox.vgrow="ALWAYS" />
                                     </children>
                                 </VBox>
                             </content>

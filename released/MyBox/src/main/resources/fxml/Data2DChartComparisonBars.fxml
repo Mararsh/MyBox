@@ -51,7 +51,7 @@ License:    Apache License Version 2.0
                                                       </RadioButton>
                                                       <RadioButton fx:id="selectedRadio" mnemonicParsing="false" text="%Selected" toggleGroup="$rowsGroup" />
                                                       <RadioButton fx:id="allPagesRadio" mnemonicParsing="false" text="%AllPages" toggleGroup="$rowsGroup" />
-                                                      <Label maxWidth="1.7976931348623157E308" text="Label" HBox.hgrow="ALWAYS" />
+                                                      <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                       <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                          <image>
                                                             <Image url="@../buttons/Red/iconDoubleRight.png" />
@@ -177,7 +177,7 @@ License:    Apache License Version 2.0
                                                     <content>
                                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                                             <children>
-                                                                <fx:include fx:id="filter" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DRowFilter.fxml" VBox.vgrow="ALWAYS" />
+                                                                <fx:include fx:id="rowFilter" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DRowFilter.fxml" VBox.vgrow="ALWAYS" />
                                                             </children>
                                                         </VBox>
                                                     </content>

@@ -4,6 +4,7 @@ import java.util.List;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.text.Text;
@@ -180,6 +181,13 @@ public class XYChartMaker<X, Y> extends XYChartOptions<X, Y> {
     public boolean makeLineChart() {
         try {
             lineChart = new LabeledLineChart(xAxis, yAxis).setMaker(this);
+            if (sort == Sort.X) {
+                lineChart.setAxisSortingPolicy​(LineChart.SortingPolicy.X_AXIS);
+            } else if (sort == Sort.X) {
+                lineChart.setAxisSortingPolicy​(LineChart.SortingPolicy.Y_AXIS);
+            } else {
+                lineChart.setAxisSortingPolicy​(LineChart.SortingPolicy.NONE);
+            }
             xyChart = lineChart;
             return true;
         } catch (Exception e) {
@@ -474,23 +482,23 @@ public class XYChartMaker<X, Y> extends XYChartOptions<X, Y> {
             String categoryName, category, number, extra, categoryDis, numberDis, extraDis;
             if (isXY) {
                 categoryName = xyChart.getXAxis().getLabel();
-                category = item.getXValue().toString();
+                category = item.getXValue() == null ? "" : item.getXValue().toString();
                 if (categoryIsNumbers) {
                     categoryDis = DoubleTools.format(ChartTools.realValue(xCoordinate, Double.valueOf(category)), scale);
                 } else {
                     categoryDis = category;
                 }
-                number = item.getYValue().toString();
+                number = item.getYValue() == null ? "" : item.getYValue().toString();
                 numberDis = DoubleTools.format(ChartTools.realValue(yCoordinate, Double.valueOf(number)), scale);
             } else {
                 categoryName = xyChart.getYAxis().getLabel();
-                category = item.getYValue().toString();
+                category = item.getYValue() == null ? "" : item.getYValue().toString();
                 if (categoryIsNumbers) {
                     categoryDis = DoubleTools.format(ChartTools.realValue(yCoordinate, Double.valueOf(category)), scale);
                 } else {
                     categoryDis = category;
                 }
-                number = item.getXValue().toString();
+                number = item.getXValue() == null ? "" : item.getXValue().toString();
                 numberDis = DoubleTools.format(ChartTools.realValue(xCoordinate, Double.valueOf(number)), scale);
             }
 

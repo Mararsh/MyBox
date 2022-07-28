@@ -91,6 +91,23 @@ public class FxImageTools {
         }
     }
 
+    public static Image clone(Image srcImage) {
+        if (srcImage == null) {
+            return srcImage;
+        }
+        double w = srcImage.getWidth();
+        double h = srcImage.getHeight();
+        PixelReader pixelReader = srcImage.getPixelReader();
+        WritableImage newImage = new WritableImage((int) w, (int) h);
+        PixelWriter pixelWriter = newImage.getPixelWriter();
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                pixelWriter.setColor(x, y, pixelReader.getColor(x, y));
+            }
+        }
+        return newImage;
+    }
+
     // This way may be more quicker than comparing digests
     public static boolean sameImage(Image imageA, Image imageB) {
         try {

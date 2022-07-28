@@ -182,7 +182,6 @@ public class Fxmls {
 
     public static final String TableAddRowsFxml = "/fxml/TableAddRows.fxml";
     public static final String Data2DSetValuesFxml = "/fxml/Data2DSetValues.fxml";
-    public static final String Data2DSetStylesFxml = "/fxml/Data2DSetStyles.fxml";
     public static final String Data2DCopyFxml = "/fxml/Data2DCopy.fxml";
     public static final String Data2DLoadContentInSystemClipboardFxml = "/fxml/Data2DLoadContentInSystemClipboard.fxml";
     public static final String Data2DPasteContentInSystemClipboardFxml = "/fxml/Data2DPasteContentInSystemClipboard.fxml";
@@ -190,6 +189,7 @@ public class Fxmls {
     public static final String Data2DDeleteFxml = "/fxml/Data2DDelete.fxml";
     public static final String Data2DExportFxml = "/fxml/Data2DExport.fxml";
     public static final String Data2DTransposeFxml = "/fxml/Data2DTranspose.fxml";
+    public static final String Data2DRowExpressionFxml = "/fxml/Data2DRowExpression.fxml";
     public static final String Data2DStatisticFxml = "/fxml/Data2DStatistic.fxml";
     public static final String Data2DPercentageFxml = "/fxml/Data2DPercentage.fxml";
     public static final String Data2DSortFxml = "/fxml/Data2DSort.fxml";
@@ -207,6 +207,8 @@ public class Fxmls {
     public static final String Data2DSimpleLinearRegressionFxml = "/fxml/Data2DSimpleLinearRegression.fxml";
     public static final String Data2DChartXYOptionsFxml = "/fxml/Data2DChartXYOptions.fxml";
     public static final String Data2DChartPieOptionsFxml = "/fxml/Data2DChartPieOptions.fxml";
+    public static final String Data2DMarkAbnormalFxml = "/fxml/Data2DMarkAbnormal.fxml";
+    public static final String Data2DDeleteAbnormalFxml = "/fxml/Data2DDeleteAbnormal.fxml";
 
     public static final String JShellFxml = "/fxml/JShell.fxml";
     public static final String JexlFxml = "/fxml/Jexl.fxml";
@@ -275,7 +277,7 @@ public class Fxmls {
     public static final String DirectorySynchronizeFxml = "/fxml/DirectorySynchronize.fxml";
     public static final String FilesArrangementFxml = "/fxml/FilesArrange.fxml";
     public static final String FilesDeleteEmptyDirFxml = "/fxml/FilesDeleteEmptyDir.fxml";
-    public static final String FilesDeleteSysTempFxml = "/fxml/FilesDeleteSysTemp.fxml";
+    public static final String FilesDeleteJavaTempFxml = "/fxml/FilesDeleteJavaTemp.fxml";
     public static final String FilesDeleteNestedDirFxml = "/fxml/FilesDeleteNestedDir.fxml";
     public static final String FileCutFxml = "/fxml/FileCut.fxml";
     public static final String FileRenameFxml = "/fxml/FileRename.fxml";

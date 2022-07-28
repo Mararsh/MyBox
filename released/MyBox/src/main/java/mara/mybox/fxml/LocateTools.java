@@ -2,12 +2,11 @@ package mara.mybox.fxml;
 
 import java.awt.Point;
 import java.awt.Robot;
-import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.PopupWindow;
@@ -20,6 +19,8 @@ import mara.mybox.tools.SystemTools;
  * @License Apache License Version 2.0
  */
 public class LocateTools {
+
+    public static final int PopOffsetY = 30;
 
     public static void locateRight(Stage stage) {
         Rectangle2D screen = NodeTools.getScreen();
@@ -201,9 +202,9 @@ public class LocateTools {
         return localToScreen.getY();
     }
 
-    public static Point2D getScreenCoordinate(ActionEvent event) {
-        Button button = (Button) (event.getTarget());
-        return button.localToScreen(0, 0);
+    public static Point2D getScreenCoordinate(Event event) {
+        Region region = (Region) (event.getTarget());
+        return region.localToScreen(0, 0);
     }
 
 }

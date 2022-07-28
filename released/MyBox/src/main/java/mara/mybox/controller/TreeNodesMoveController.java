@@ -23,21 +23,21 @@ public class TreeNodesMoveController extends TreeNodesController {
     }
 
     public void setParameters(TreeManageController treeController) {
-        this.treeController = treeController;
+        this.manageController = treeController;
         setCaller(treeController.nodesController);
     }
 
     @FXML
     @Override
     public void okAction() {
-        if (treeController == null || !treeController.getMyStage().isShowing()) {
+        if (manageController == null || !manageController.getMyStage().isShowing()) {
             return;
         }
         synchronized (this) {
-            List<TreeNode> nodes = treeController.tableView.getSelectionModel().getSelectedItems();
+            List<TreeNode> nodes = manageController.tableView.getSelectionModel().getSelectedItems();
             if (nodes == null || nodes.isEmpty()) {
                 alertError(message("NoData"));
-                treeController.getMyStage().requestFocus();
+                manageController.getMyStage().requestFocus();
                 return;
             }
             TreeItem<TreeNode> targetItem = treeView.getSelectionModel().getSelectedItem();
@@ -49,7 +49,7 @@ public class TreeNodesMoveController extends TreeNodesController {
             if (targetNode == null) {
                 return;
             }
-            if (equal(targetNode, treeController.loadedParent)) {
+            if (equal(targetNode, manageController.loadedParent)) {
                 alertError(message("TargetShouldDifferentWithSource"));
                 return;
             }
@@ -77,8 +77,8 @@ public class TreeNodesMoveController extends TreeNodesController {
 
                 @Override
                 protected void whenSucceeded() {
-                    treeController.popInformation(message("Moved") + ": " + count);
-                    treeController.nodesMoved(targetNode, nodes);
+                    manageController.popInformation(message("Moved") + ": " + count);
+                    manageController.nodesMoved(targetNode, nodes);
                     closeStage();
                 }
             };

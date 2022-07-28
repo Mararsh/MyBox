@@ -34,7 +34,7 @@ public abstract class MainMenuController_File extends MainMenuController_Image {
 
     @FXML
     protected void openDeleteSysTempPath(ActionEvent event) {
-        loadScene(Fxmls.FilesDeleteSysTempFxml);
+        loadScene(Fxmls.FilesDeleteJavaTempFxml);
     }
 
     @FXML

@@ -20,13 +20,13 @@ public class TreeNode extends BaseData {
     public static final String MorePrefix = "MyBoxTreeNodeMore:";
     public static final String TagsSeparater = ";;;";
     public static final String Root = "Root";
-    public static final String WebFavorite = "WebFavorite";
-    public static final String Notebook = "Notebook";
-    public static final String JShellCode = "JShellCode";
-    public static final String SQL = "SQL";
-    public static final String JavaScript = "JavaScript";
     public static final String InformationInTree = "InformationInTree";
+    public static final String Notebook = "Notebook";
+    public static final String WebFavorite = "WebFavorite";
+    public static final String SQL = "SQL";
+    public static final String JShellCode = "JShellCode";
     public static final String JEXL = "JEXLCode";
+    public static final String JavaScript = "JavaScript";
 
     protected long nodeid, parentid;
     protected String category, title, value, more, serialNumber;

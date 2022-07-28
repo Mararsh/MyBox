@@ -68,7 +68,8 @@ public class FileTools {
 
     public static boolean rename(File sourceFile, File targetFile, boolean noEmpty) {
         try {
-            if (sourceFile == null || !sourceFile.exists() || targetFile == null) {
+            if (sourceFile == null || !sourceFile.exists() || !sourceFile.isFile()
+                    || targetFile == null || sourceFile.equals(targetFile)) {
                 return false;
             }
             if (noEmpty && sourceFile.length() == 0) {
@@ -83,8 +84,7 @@ public class FileTools {
 //                    StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            MyBoxLog.error(sourceFile + "    " + targetFile);
+            MyBoxLog.error(e, sourceFile + "    " + targetFile);
             return false;
         }
     }
@@ -194,6 +194,10 @@ public class FileTools {
             return null;
         }
         return tmpFile;
+    }
+
+    public static File javaIOTmpPath() {
+        return new File(System.getProperty("java.io.tmpdir"));
     }
 
 }

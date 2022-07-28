@@ -169,7 +169,7 @@ License:    Apache License Version 2.0
                      <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                            <children>
-                              <fx:include fx:id="filter" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DRowFilter.fxml" VBox.vgrow="ALWAYS" />
+                              <fx:include fx:id="rowFilter" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DRowFilter.fxml" VBox.vgrow="ALWAYS" />
                            </children>
                         </VBox>
                      </content>
@@ -201,23 +201,35 @@ License:    Apache License Version 2.0
                               <VBox spacing="10.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                  <children>
                                         <CheckBox fx:id="valuesCheck" mnemonicParsing="false" text="%DataValues" />
-                                    <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
-                                       <children>
-                                          <Label text="%CountAbsoluteAs" />
-                                          <RadioButton fx:id="zeroRadio" layoutX="116.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Zero">
-                                             <toggleGroup>
-                                                <ToggleGroup fx:id="negativeGroup" />
-                                             </toggleGroup>
-                                          </RadioButton>
-                                          <RadioButton fx:id="absRadio" mnemonicParsing="false" text="%AbsoluteValue" toggleGroup="$negativeGroup" />
-                                       </children>
-                                    </FlowPane>
                                     <HBox alignment="CENTER_LEFT" spacing="2.0">
                                        <children>
                                           <Label minHeight="-Infinity" text="%DecimalScale" wrapText="true" />
                                           <ComboBox fx:id="scaleSelector" editable="true" prefWidth="120.0" />
                                        </children>
                                     </HBox>
+                                    <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
+                                       <children>
+                                          <Label text="%ToNegative" />
+                                          <RadioButton fx:id="negativeSkipRadio" mnemonicParsing="false" selected="true" text="%Skip">
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="negativeGroup" />
+                                             </toggleGroup>
+                                          </RadioButton>
+                                          <RadioButton fx:id="negativeZeroRadio" layoutX="116.0" layoutY="10.0" mnemonicParsing="false" text="%CountAsZero" toggleGroup="$negativeGroup" />
+                                          <RadioButton fx:id="negativeAbsRadio" mnemonicParsing="false" text="%AbsoluteValue" toggleGroup="$negativeGroup" />
+                                       </children>
+                                    </FlowPane>
+                                    <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+                                       <children>
+                                          <Label text="%ToNonnumeric" />
+                                          <RadioButton fx:id="skipNonnumericRadio" mnemonicParsing="false" selected="true" text="%Skip">
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="nonnumericGroup" />
+                                             </toggleGroup>
+                                          </RadioButton>
+                                          <RadioButton fx:id="zeroNonnumericRadio" mnemonicParsing="false" text="%CountAsZero" toggleGroup="$nonnumericGroup" />
+                                       </children>
+                                    </FlowPane>
                                  </children>
                               </VBox>
                                 <VBox fx:id="targetBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">

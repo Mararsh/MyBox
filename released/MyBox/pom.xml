@@ -4,7 +4,7 @@
 
     <groupId>mara</groupId>
     <artifactId>MyBox</artifactId>
-    <version>6.5.6</version>
+    <version>6.5.7</version>
     <packaging>jar</packaging>
     <name>MyBox</name>
     <properties>
@@ -64,47 +64,47 @@
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derby</artifactId>
-            <version>10.15.2.0</version>
+            <version>10.16.1.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derbynet</artifactId>
-            <version>10.15.2.0</version>
+            <version>10.16.1.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derbyclient</artifactId>
-            <version>10.15.2.0</version>
+            <version>10.16.1.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derbyLocale_zh_CN</artifactId>
-            <version>10.15.2.0</version>
+            <version>10.16.1.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derbyLocale_zh_TW</artifactId>
-            <version>10.15.2.0</version>
+            <version>10.16.1.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derbyLocale_es</artifactId>
-            <version>10.15.2.0</version>
+            <version>10.16.1.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derbyoptionaltools</artifactId>
-            <version>10.15.2.0</version>
+            <version>10.16.1.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derbyshared</artifactId>
-            <version>10.15.2.0</version>
+            <version>10.16.1.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derbytools</artifactId>
-            <version>10.15.2.0</version>
+            <version>10.16.1.1</version>
         </dependency>
         <dependency>
             <groupId>com.github.jai-imageio</groupId>
@@ -150,7 +150,7 @@
         <dependency>
             <groupId>net.sourceforge.tess4j</groupId>
             <artifactId>tess4j</artifactId>
-            <version>5.2.1</version>
+            <version>5.3.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.zxing</groupId>

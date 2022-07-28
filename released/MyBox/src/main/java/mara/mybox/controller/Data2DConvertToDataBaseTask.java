@@ -24,7 +24,7 @@ public class Data2DConvertToDataBaseTask extends Data2DTableCreateController {
             logsTab = convertController.logsTab;
             attributesTab = convertController.attributesTab;
 
-            attributesController.setParameters(this, convertController.data2D);
+            attributesController.setParameters(this);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -56,8 +56,10 @@ public class Data2DConvertToDataBaseTask extends Data2DTableCreateController {
             }
             if (convertController.importCheck.isSelected()) {
                 if (convertController.isAllPages() && convertController.data2D.isMutiplePages()) {
+                    attributesController.data2D.startTask(task, convertController.rowFilterController.rowFilter);
                     attributesController.task = task;
                     attributesController.importAllData(conn);
+                    attributesController.data2D.stopFilter();
                 } else {
                     attributesController.importData(conn, convertController.checkedRowsIndices);
                 }

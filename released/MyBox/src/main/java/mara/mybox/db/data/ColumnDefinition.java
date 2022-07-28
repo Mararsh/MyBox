@@ -10,8 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import javafx.scene.paint.Color;
+import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.data.Era;
-import mara.mybox.db.table.BaseTable;
+import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
@@ -19,7 +20,9 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.IntTools;
+import mara.mybox.tools.LongTools;
 import mara.mybox.tools.StringTools;
+import mara.mybox.value.AppValues;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
@@ -41,6 +44,7 @@ public class ColumnDefinition extends BaseData {
     protected Object value;
     protected Number maxValue, minValue;
     protected Map<Object, String> data;  // value, displayString
+    protected DoubleStatistic doubleStatistic;
 
     public static enum ColumnType {
         String, Boolean, Text,
@@ -74,9 +78,13 @@ public class ColumnDefinition extends BaseData {
         maxValue = null;
         minValue = null;
         color = FxColorTools.randomColor();
+        defaultValue = null;
         referName = null;
         referTable = null;
         referColumn = null;
+        label = null;
+        doubleStatistic = null;
+        data = null;
     }
 
     public ColumnDefinition() {
@@ -143,6 +151,7 @@ public class ColumnDefinition extends BaseData {
             maxValue = c.maxValue;
             minValue = c.minValue;
             columnValues = c.columnValues;
+            doubleStatistic = c.doubleStatistic;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -328,27 +337,6 @@ public class ColumnDefinition extends BaseData {
                 || type == ColumnType.Integer || type == ColumnType.Long || type == ColumnType.Short;
     }
 
-    // works on java 17 while not work on java 16
-//    public String random(Random random, int maxRandom, short scale) {
-//        if (random == null) {
-//            random = new Random();
-//        }
-//        switch (type) {
-//            case Double:
-//                return DoubleTools.format(DoubleTools.random(random, maxRandom), scale);
-//            case Float:
-//                return FloatTools.format(random.nextFloat(maxRandom), scale);
-//            case Integer:
-//                return StringTools.format(random.nextInt(maxRandom));
-//            case Long:
-//                return StringTools.format(random.nextLong(maxRandom));
-//            case Short:
-//                return StringTools.format((short) random.nextInt(maxRandom));
-//            default:
-//                return (char) ('a' + random.nextInt(25)) + "";
-//        }
-//    }
-    // works on java 16
     public String random(Random random, int maxRandom, short scale, boolean nonNegative) {
         if (random == null) {
             random = new Random();
@@ -361,7 +349,7 @@ public class ColumnDefinition extends BaseData {
             case Integer:
                 return StringTools.format(IntTools.random(random, maxRandom, nonNegative));
             case Long:
-                return StringTools.format((long) FloatTools.random(random, maxRandom, nonNegative));
+                return StringTools.format(LongTools.random(random, maxRandom, nonNegative));
             case Short:
                 return StringTools.format((short) IntTools.random(random, maxRandom, nonNegative));
             case Boolean:
@@ -395,12 +383,18 @@ public class ColumnDefinition extends BaseData {
         }
     }
 
+    // results.getDouble/getFloat/getInt/getShort returned is 0 if the value is SQL NULL.
+    // But we need distinct zero and null.
+    // https://docs.oracle.com/en/java/javase/18/docs/api/java.sql/java/sql/ResultSet.html#getDouble(java.lang.String)
     public Object value(ResultSet results) {
         try {
             if (results == null || type == null || columnName == null) {
                 return null;
             }
-            String savedName = BaseTable.savedName(columnName);
+            String savedName = DerbyBase.savedName(columnName);
+            if (results.findColumn(savedName) < 0) {
+                return null;
+            }
             switch (type) {
                 case String:
                 case Text:
@@ -409,18 +403,51 @@ public class ColumnDefinition extends BaseData {
                 case Image:
                     return results.getString(savedName);
                 case Double:
-                    return results.getDouble(savedName);
+                    double d;
+                    try {
+                        d = Double.valueOf(results.getObject(savedName).toString());
+                        if (d == AppValues.InvalidDouble) {
+                            d = Double.NaN;
+                        }
+                    } catch (Exception e) {
+                        d = Double.NaN;
+                    }
+                    return d;
                 case Float:
-                    return results.getFloat(savedName);
+                    float f;
+                    try {
+                        f = Float.valueOf(results.getObject(savedName).toString());
+                    } catch (Exception e) {
+                        f = Float.NaN;
+                    }
+                    return f;
                 case Long:
                 case Era:
-                    return results.getLong(savedName);
+                    long l;
+                    try {
+                        l = Long.valueOf(results.getObject(savedName).toString());
+                    } catch (Exception e) {
+                        l = AppValues.InvalidLong;
+                    }
+                    return l;
                 case Integer:
-                    return results.getInt(savedName);
+                    int i;
+                    try {
+                        i = Integer.valueOf(results.getObject(savedName).toString());
+                    } catch (Exception e) {
+                        i = AppValues.InvalidInteger;
+                    }
+                    return i;
+                case Short:
+                    short s;
+                    try {
+                        s = Short.valueOf(results.getObject(savedName).toString());
+                    } catch (Exception e) {
+                        s = AppValues.InvalidShort;
+                    }
+                    return s;
                 case Boolean:
                     return results.getBoolean(savedName);
-                case Short:
-                    return results.getShort(savedName);
                 case Datetime:
                     return results.getTimestamp(savedName);
                 case Date:
@@ -953,6 +980,15 @@ public class ColumnDefinition extends BaseData {
 
     public void setColor(Color color) {
         this.color = color;
+    }
+
+    public DoubleStatistic getDoubleStatistic() {
+        return doubleStatistic;
+    }
+
+    public ColumnDefinition setDoubleStatistic(DoubleStatistic doubleStatistic) {
+        this.doubleStatistic = doubleStatistic;
+        return this;
     }
 
 }

@@ -7,10 +7,14 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
+import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -20,19 +24,19 @@ import mara.mybox.value.Languages;
 public class DocumentController extends BaseController {
 
     @FXML
-    protected Button overviewButton, pdfButton, imageButton, networkButton, desktopButton, devButton;
+    protected Button overviewButton, PDFButton, imageButton, networkButton, desktopButton, devButton;
     @FXML
     protected Label label;
 
     public DocumentController() {
-        baseTitle = Languages.message("Documents");
+        baseTitle = message("Documents");
     }
 
     @Override
     public void initControls() {
         try {
             super.initControls();
-            label.setText(MessageFormat.format(Languages.message("DocumentComments"), AppPaths.getDownloadsPath()));
+            label.setText(MessageFormat.format(message("DocumentComments"), AppPaths.getDownloadsPath()));
             checkStatus();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -51,7 +55,7 @@ public class DocumentController extends BaseController {
 
         fileName = "MyBox-UserGuide-" + userGuideVersion + "-PdfTools-" + lang + ".pdf";
         file = new File(docPath + fileName);
-        setButton(pdfButton, file, webPath + fileName);
+        setButton(PDFButton, file, webPath + fileName);
 
         fileName = "MyBox-UserGuide-" + userGuideVersion + "-ImageTools-" + lang + ".pdf";
         file = new File(docPath + fileName);
@@ -74,7 +78,9 @@ public class DocumentController extends BaseController {
     protected void setButton(Button button, File file, String address) {
         try {
             if (file.exists()) {
-                button.setText(Languages.message("Open"));
+                button.setText("");
+                button.setGraphic(StyleTools.getIconImage("iconView.png"));
+                NodeStyleTools.setTooltip(button, new Tooltip(message("View")));
                 button.setDisable(false);
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
@@ -83,7 +89,9 @@ public class DocumentController extends BaseController {
                     }
                 });
             } else {
-                button.setText(Languages.message("Download"));
+                button.setText("");
+                button.setGraphic(StyleTools.getIconImage("iconDownload.png"));
+                NodeStyleTools.setTooltip(button, new Tooltip(message("Download")));
                 button.setDisable(false);
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
@@ -95,6 +103,11 @@ public class DocumentController extends BaseController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @FXML
+    public void openFolder() {
+        view(AppPaths.getDownloadsPath());
     }
 
 }

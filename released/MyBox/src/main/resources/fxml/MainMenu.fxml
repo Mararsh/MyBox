@@ -298,7 +298,7 @@ License:    Apache License Version 2.0
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <Menu mnemonicParsing="false" text="%FilesDelete">
                                     <items>
-                                        <MenuItem mnemonicParsing="false" onAction="#openDeleteSysTempPath" text="%DeleteSysTemporaryPathFiles" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openDeleteSysTempPath" text="%DeleteJavaIOTemporaryPathFiles" />
                                         <MenuItem mnemonicParsing="false" onAction="#openDeleteEmptyDirectories" text="%DeleteEmptyDirectories" />
                                         <MenuItem mnemonicParsing="false" onAction="#openFilesDelete" text="%FilesDelete" />
                                         <MenuItem mnemonicParsing="false" onAction="#openDeleteNestedDirectories" text="%DeleteNestedDirectories" />
@@ -354,8 +354,8 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#settingsAction" text="%SettingsDot" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
 
-                                <CheckMenuItem fx:id="popColorSetCheck" mnemonicParsing="false" onAction="#popColorSetAction" text="%PopColorSetWhenMousePassing" />
-                                <CheckMenuItem fx:id="controlPanesCheck" mnemonicParsing="false" onAction="#controlPanesAction" text="%ShowHidePanesWhenMousePassed" />
+                                <CheckMenuItem fx:id="popColorSetCheck" mnemonicParsing="false" onAction="#popColorSetAction" text="%PopColorSetWhenMouseHovering" />
+                                <CheckMenuItem fx:id="controlPanesCheck" mnemonicParsing="false" onAction="#controlPanesAction" text="%ShowHidePanesWhenMouseHovering" />
                                 <CheckMenuItem fx:id="popRecentCheck" mnemonicParsing="false" onAction="#popRecentAction" text="%PopRecentFiles" />
                                 <CheckMenuItem fx:id="closeCurrentCheck" mnemonicParsing="false" onAction="#closeCurrentAction" text="%CloseCurrentWhenOpenTool" />
                                 <CheckMenuItem fx:id="recordWindowsSizeLocationCheck" mnemonicParsing="false" onAction="#RecordWindowsSizeLocationAction" text="%RecordWindowsSizeLocation" />

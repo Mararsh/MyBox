@@ -8,7 +8,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -83,9 +82,9 @@ public abstract class MyBoxController_File extends MyBoxController_Image {
             loadScene(Fxmls.FilesDeleteEmptyDirFxml);
         });
 
-        MenuItem DeleteSysTemporaryPathFiles = new MenuItem(Languages.message("DeleteSysTemporaryPathFiles"));
-        DeleteSysTemporaryPathFiles.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.FilesDeleteSysTempFxml);
+        MenuItem DeleteJavaTemporaryPathFiles = new MenuItem(Languages.message("DeleteJavaIOTemporaryPathFiles"));
+        DeleteJavaTemporaryPathFiles.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.FilesDeleteJavaTempFxml);
         });
 
         MenuItem DeleteNestedDirectories = new MenuItem(Languages.message("DeleteNestedDirectories"));
@@ -95,7 +94,7 @@ public abstract class MyBoxController_File extends MyBoxController_Image {
 
         Menu fileDeleteMenu = new Menu(Languages.message("FilesDelete"));
         fileDeleteMenu.getItems().addAll(
-                DeleteSysTemporaryPathFiles, DeleteEmptyDirectories, filesDelete, DeleteNestedDirectories
+                DeleteJavaTemporaryPathFiles, DeleteEmptyDirectories, filesDelete, DeleteNestedDirectories
         );
 
         MenuItem filesArchiveCompress = new MenuItem(Languages.message("FilesArchiveCompress"));

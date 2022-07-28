@@ -10,13 +10,21 @@ import static mara.mybox.value.Languages.message;
 /**
  * @Author Mara
  * @CreateDate 2018-6-11 17:43:53
- * @Description
  * @License Apache License Version 2.0
  */
 public class DoubleTools {
 
     public static boolean invalidDouble(double value) {
-        return Double.isNaN(value) || value == Double.MAX_VALUE || value == AppValues.InvalidDouble;
+        return Double.isNaN(value) || value == AppValues.InvalidDouble;
+    }
+
+    public static double toDouble(String string, double invalidAs) {
+        try {
+            double d = Double.valueOf(string.replaceAll(",", ""));
+            return invalidDouble(d) ? invalidAs : d;
+        } catch (Exception e) {
+            return invalidAs;
+        }
     }
 
     public static String percentage(double data, double total) {

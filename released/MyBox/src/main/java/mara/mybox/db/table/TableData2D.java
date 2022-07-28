@@ -22,6 +22,7 @@ public class TableData2D extends BaseTable<Data2DRow> {
         return data2DRow;
     }
 
+
     /*
         static
      */

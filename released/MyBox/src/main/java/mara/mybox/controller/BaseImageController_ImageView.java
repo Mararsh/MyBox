@@ -26,9 +26,9 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.value.AppVariables.sceneFontSize;
@@ -73,7 +73,7 @@ public abstract class BaseImageController_ImageView extends BaseController {
             rotateLeftButton, rotateRightButton, turnOverButton;
     @FXML
     protected CheckBox pickColorCheck, rulerXCheck, gridCheck, coordinateCheck, contextMenuCheck,
-            selectAreaCheck, handleSelectCheck;
+            selectAreaCheck;
     @FXML
     protected ComboBox<String> zoomStepSelector, loadWidthBox;
     @FXML

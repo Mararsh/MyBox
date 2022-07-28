@@ -4,13 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
-import javafx.application.Platform;
-import javafx.scene.web.WebView;
-import mara.mybox.data.FindReplaceString;
+import mara.mybox.calculation.DescriptiveStatistic;
 import mara.mybox.data2d.scan.Data2DReader;
 import mara.mybox.data2d.scan.Data2DReader.Operation;
 import mara.mybox.db.DerbyBase;
@@ -18,9 +15,11 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.Data2DStyle;
+import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.db.table.TableData2DStyle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.ColumnFilter;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.Languages.message;
 
@@ -117,7 +116,6 @@ public abstract class Data2D_Edit extends Data2D_Data {
             }
             if (columns != null && !columns.isEmpty()) {
                 Random random = new Random();
-                List<String> names = new ArrayList<>();
                 for (int i = 0; i < columns.size(); i++) {
                     Data2DColumn column = columns.get(i);
                     column.setD2id(d2did);
@@ -132,7 +130,6 @@ public abstract class Data2D_Edit extends Data2D_Data {
                     if (isMatrix()) {
                         column.setType(ColumnDefinition.ColumnType.Double);
                     }
-                    names.add(column.getColumnName());
                 }
                 colsNumber = columns.size();
                 if (d2did >= 0) {
@@ -205,7 +202,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
         if (d2did < 0 || startRowOfCurrentPage >= endRowOfCurrentPage) {
             return;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(TableData2DStyle.QueryStyles);) {
+        try ( PreparedStatement statement = conn.prepareStatement(TableData2DStyle.QueryStyles)) {
             statement.setLong(1, d2did);
             try ( ResultSet results = statement.executeQuery()) {
                 while (results.next()) {
@@ -217,7 +214,11 @@ public abstract class Data2D_Edit extends Data2D_Data {
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            }
         }
+        countAbnormalLines();
     }
 
     public void countSize() {
@@ -228,6 +229,57 @@ public abstract class Data2D_Edit extends Data2D_Data {
                 hasHeader = false;
             }
         } catch (Exception e) {
+        }
+    }
+
+    public void countAbnormalLines() {
+        resetStatistic();
+        if (styles == null || styles.isEmpty()) {
+            return;
+        }
+        try {
+            List<String> colNames = new ArrayList<>();
+            DescriptiveStatistic calculation = new DescriptiveStatistic()
+                    .setStatisticObject(DescriptiveStatistic.StatisticObject.Columns)
+                    .setInvalidAs(Double.NaN);
+            for (Data2DStyle style : styles) {
+                String scolumns = style.getColumns();
+                if (scolumns != null && !scolumns.isBlank()) {
+                    String[] ns = scolumns.split(Data2DStyle.ColumnSeparator);
+                    for (String s : ns) {
+                        if (!colNames.contains(s)) {
+                            colNames.add(s);
+                        }
+                    }
+                } else {
+                    colNames = this.columnNames();
+                }
+                ColumnFilter columnFilter = style.getColumnFilter();
+                if (columnFilter == null) {
+                    continue;
+                }
+                columnFilter.checkStatistic(calculation, columnFilter.getEqualValue());
+                columnFilter.checkStatistic(calculation, columnFilter.getLargerValue());
+                columnFilter.checkStatistic(calculation, columnFilter.getLessValue());
+            }
+            if (colNames.isEmpty() || !calculation.need()) {
+                return;
+            }
+            List<Integer> colIndices = new ArrayList<>();
+            for (String name : colNames) {
+                colIndices.add(colOrder(name));
+            }
+            if (calculation.needNonStored()) {
+                ((Data2D) this).statisticByColumnsWithoutStored(colIndices, calculation);
+            }
+            if (calculation.needStored()) {
+                ((Data2D) this).statisticByColumnsForStored(colIndices, calculation);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            }
         }
     }
 
@@ -247,7 +299,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
 
     public boolean saveAttributes() {
         try ( Connection conn = DerbyBase.getConnection()) {
-            return saveColumns(conn, (Data2D) this, columns);
+            return saveAttributes(conn, (Data2D) this, columns);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -260,7 +312,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
     public static boolean saveAttributes(Data2D source, Data2D target) {
         try ( Connection conn = DerbyBase.getConnection()) {
             target.cloneAttributes(source);
-            if (!saveColumns(conn, target, source.getColumns())) {
+            if (!saveAttributes(conn, target, source.getColumns())) {
                 return false;
             }
             return target.getTableData2DStyle().copyStyles(conn, source.getD2did(), target.getD2did()) >= 0;
@@ -273,12 +325,12 @@ public abstract class Data2D_Edit extends Data2D_Data {
         }
     }
 
-    public static boolean saveColumns(Data2D d, List<Data2DColumn> cols) {
+    public static boolean saveAttributes(Data2D d, List<Data2DColumn> cols) {
         if (d == null) {
             return false;
         }
         try ( Connection conn = DerbyBase.getConnection()) {
-            return saveColumns(conn, d, cols);
+            return saveAttributes(conn, d, cols);
         } catch (Exception e) {
             if (d.getTask() != null) {
                 d.getTask().setError(e.toString());
@@ -288,7 +340,7 @@ public abstract class Data2D_Edit extends Data2D_Data {
         }
     }
 
-    public static boolean saveColumns(Connection conn, Data2D d, List<Data2DColumn> inColumns) {
+    public static boolean saveAttributes(Connection conn, Data2D d, List<Data2DColumn> inColumns) {
         if (d == null) {
             return false;
         }
@@ -300,15 +352,16 @@ public abstract class Data2D_Edit extends Data2D_Data {
             long did = d.getD2did();
             d.setModifyTime(new Date());
             d.setColsNumber(inColumns == null ? 0 : inColumns.size());
+            TableData2DDefinition tableData2DDefinition = d.getTableData2DDefinition();
             if (did >= 0) {
-                def = d.getTableData2DDefinition().updateData(conn, d);
+                def = tableData2DDefinition.updateData(conn, d);
             } else {
                 def = d.queryDefinition(conn);
                 if (def == null) {
-                    def = d.getTableData2DDefinition().insertData(conn, d);
+                    def = tableData2DDefinition.insertData(conn, d);
                 } else {
                     d.setD2did(def.getD2did());
-                    def = d.getTableData2DDefinition().updateData(conn, d);
+                    def = tableData2DDefinition.updateData(conn, d);
                 }
             }
             conn.commit();
@@ -355,221 +408,6 @@ public abstract class Data2D_Edit extends Data2D_Data {
             }
             MyBoxLog.error(e);
             return false;
-        }
-    }
-
-    /*
-        filter
-        first value of "tableRow" should be "dataRowNumber" 
-        "tableRowNumber" is 0-based while "dataRowNumber" is 1-based
-     */
-    public String rowExpression(String script, List<String> tableRow, int tableRowNumber) {
-        try {
-            if (script == null || script.isBlank()
-                    || tableRow == null || tableRow.isEmpty()
-                    || columns == null || columns.isEmpty()) {
-                return script;
-            }
-            if (findReplace == null) {
-                findReplace = FindReplaceString.create().setOperation(FindReplaceString.Operation.ReplaceAll)
-                        .setIsRegex(false).setCaseInsensitive(false).setMultiline(false);
-            }
-            String filledScript = script;
-            for (int i = 0; i < columns.size(); i++) {
-                filledScript = findReplace.replaceStringAll(filledScript, "#{" + columns.get(i).getColumnName() + "}", tableRow.get(i + 1));
-            }
-            filledScript = findReplace.replaceStringAll(filledScript, "#{" + message("DataRowNumber") + "}", tableRow.get(0) + "");
-            filledScript = findReplace.replaceStringAll(filledScript, "#{" + message("TableRowNumber") + "}",
-                    tableRowNumber >= 0 ? (tableRowNumber + 1) + "" : message("NoTableRowNumberWhenAllPages"));
-            return filledScript;
-        } catch (Exception e) {
-            error = e.toString();
-            return null;
-        }
-    }
-
-    public boolean calculateExpression(String script, List<String> tableRow, int tableRowNumber) {
-        return calculateExpression(rowExpression(script, tableRow, tableRowNumber));
-    }
-
-    public boolean calculateExpression(String script) {
-        try {
-            error = null;
-            expressionResult = null;
-            if (script == null || script.isBlank()) {
-                return true;
-            }
-            if (webEngine == null) {
-                webEngine = new WebView().getEngine();
-            }
-            Object o = webEngine.executeScript(script);
-            if (o != null) {
-                expressionResult = o.toString();
-            }
-            return true;
-        } catch (Exception e) {
-            error = e.toString();
-            return false;
-        }
-    }
-
-    public boolean filter(List<String> tableRow, int tableRowIndex) {
-        if (rowFilter == null || rowFilter.isBlank()) {
-            filterPassed = true;
-            return true;
-        }
-        filterPassed = calculateExpression(rowFilter, tableRow, tableRowIndex)
-                && "true".equals(expressionResult);
-        if (filterReversed) {
-            filterPassed = !filterPassed;
-        }
-        return filterPassed;
-    }
-
-    public boolean filterAndCalculate(List<String> dataRow, long dataRowIndex, final String script) {
-        try {
-            error = null;
-            filterPassed = false;
-            if (dataRow == null) {
-                return false;
-            }
-            if (rowFilter == null || rowFilter.isBlank()) {
-                filterPassed = true;
-                if (script == null) {
-                    return true;
-                }
-            }
-            Platform.runLater(() -> {
-                synchronized (lock) {
-                    try {
-                        List<String> values = new ArrayList<>();
-                        values.add(dataRowIndex + "");
-                        values.addAll(dataRow);
-                        filterPassed = filter(values, -1);
-                        if (filterPassed && script != null) {
-                            calculateExpression(script, values, -1);
-                        }
-                    } catch (Exception e) {
-                        error = e.toString();
-                    }
-                    lock.notify();
-                }
-            });
-            synchronized (lock) {
-                lock.wait();
-            }
-        } catch (Exception e) {
-            error = e.toString();
-        }
-        return filterPassed;
-    }
-
-    public boolean filterInTask(List<String> dataRow, long dataRowIndex) {
-        return filterInTask(dataRow, dataRowIndex, -1);
-    }
-
-    public boolean filterInTask(List<String> dataRow, long dataRowIndex, int tableRowNumber) {
-        try {
-            error = null;
-            filterPassed = false;
-            if (dataRow == null) {
-                return false;
-            }
-            if (rowFilter == null || rowFilter.isBlank()) {
-                filterPassed = true;
-                return true;
-            }
-            List<String> tableRow = new ArrayList<>();
-            tableRow.add(dataRowIndex + "");
-            tableRow.addAll(dataRow);
-            Platform.runLater(() -> {
-                synchronized (lock) {
-                    try {
-                        filterPassed = filter(tableRow, tableRowNumber);
-                    } catch (Exception e) {
-                        error = e.toString();
-                    }
-                    lock.notify();
-                }
-            });
-            synchronized (lock) {
-                lock.wait();
-            }
-        } catch (Exception e) {
-            error = e.toString();
-        }
-        return filterPassed;
-    }
-
-    public boolean validateExpression(String script, boolean allPages) {
-        try {
-            error = null;
-            expressionResult = null;
-            if (script == null || script.isBlank()) {
-                return true;
-            }
-            List<String> tableRow = new ArrayList<>();
-            tableRow.add("1");
-            for (int i = 0; i < columns.size(); i++) {
-                tableRow.add("0");
-            }
-            return calculateExpression(rowExpression(script, tableRow, allPages ? -1 : 0));
-        } catch (Exception e) {
-            error = e.toString();
-            return false;
-        }
-    }
-
-    public String cellStyle(int tableRowIndex, String colName) {
-        try {
-            if (styles == null || styles.isEmpty() || colName == null || colName.isBlank()) {
-                return null;
-            }
-            List<String> tableRow = tableViewRow(tableRowIndex);
-            if (tableRow == null || tableRow.size() < 1) {
-                return null;
-            }
-            String cellStyle = null;
-            long dataRowIndex = Long.parseLong(tableRow.get(0)) - 1;
-            for (Data2DStyle style : styles) {
-                String names = style.getColumns();
-                if (names != null && !names.isBlank()) {
-                    String[] cols = names.split(Data2DStyle.ColumnSeparator);
-                    if (cols != null && cols.length > 0) {
-                        if (!(Arrays.asList(cols).contains(colName))) {
-                            continue;
-                        }
-                    }
-                }
-                long rowStart = style.getRowStart();
-                if (dataRowIndex < rowStart) {
-                    continue;
-                }
-                if (rowStart >= 0) {
-                    long rowEnd = style.getRowEnd();
-                    if (rowEnd >= 0 && dataRowIndex >= rowEnd) {
-                        continue;
-                    }
-                }
-                rowFilter = style.getMoreConditions();
-                if (filter(tableRow, tableRowIndex)) {
-                    String styleValue = style.finalStyle();
-                    if (styleValue == null || styleValue.isBlank()) {
-                        cellStyle = null;
-                    } else if (cellStyle == null) {
-                        cellStyle = style.finalStyle();
-                    } else {
-                        if (!cellStyle.trim().endsWith(";")) {
-                            cellStyle += ";";
-                        }
-                        cellStyle += style.finalStyle();
-                    }
-                }
-            }
-            return cellStyle;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
         }
     }
 

@@ -25,53 +25,53 @@ License:    Apache License Version 2.0
     <center>
         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
             <children>
-                      <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
-                          <children>
-                  <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconTips.png" />
-                     </image>
-                  </ImageView>
-                              <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                  <Button fx:id="examplesButton" mnemonicParsing="false" onMouseEntered="#popExamplesMenu">
-                     <graphic>
-                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/Red/iconExamples.png" />
-                           </image>
+                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
+                    <children>
+                        <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconTips.png" />
+                            </image>
                         </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button fx:id="loadContentInSystemClipboard2Button" mnemonicParsing="false" onAction="#loadContentInSystemClipboard">
-                     <graphic>
-                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/iconImageSystem.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button fx:id="createDataButton" mnemonicParsing="false" onAction="#createAction">
-                     <graphic>
-                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/Red/iconAdd.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                              <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
-                                  <graphic>
-                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                          <image>
-                                              <Image url="@../buttons/Red/iconSave.png" />
-                                          </image>
-                                      </ImageView>
-                                  </graphic>
-                              </Button>
-                          </children>
-                      </HBox>
-                      <fx:include fx:id="data" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2D.fxml" VBox.vgrow="ALWAYS" />
+                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="examplesButton" mnemonicParsing="false" onMouseEntered="#popExamplesMenu" onAction="#showExamplesMenu">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconExamples.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="loadContentInSystemClipboard2Button" mnemonicParsing="false" onAction="#loadContentInSystemClipboard">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconImageSystem.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="createDataButton" mnemonicParsing="false" onAction="#createAction">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconAdd.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconSave.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                    </children>
+                </HBox>
+                <fx:include fx:id="data" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2D.fxml" VBox.vgrow="ALWAYS" />
             </children>
         </VBox>
     </center>

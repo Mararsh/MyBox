@@ -22,14 +22,14 @@ public class TreeNodeParentController extends TreeNodesController {
 
     public void setParamters(TreeNodeEditor nodeController) {
         this.nodeController = nodeController;
-        this.treeController = nodeController.treeController;
-        setCaller(treeController.nodesController);
+        this.manageController = nodeController.treeController;
+        setCaller(manageController.nodesController);
     }
 
     @FXML
     @Override
     public void okAction() {
-        if (treeController == null || !treeController.getMyStage().isShowing()) {
+        if (manageController == null || !manageController.getMyStage().isShowing()) {
             close();
             return;
         }

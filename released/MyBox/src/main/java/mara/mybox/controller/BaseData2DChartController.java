@@ -134,19 +134,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         if (valueColumnSelector != null) {
             selectedValue = valueColumnSelector.getSelectionModel().getSelectedItem();
         }
-        if (ok) {
-            noticeMemory();
-        }
         return ok;
-    }
-
-    public void noticeMemory() {
-        if (isSettingValues) {
-            return;
-        }
-        if (isAllPages()) {
-            infoLabel.setText(message("AllRowsLoadComments"));
-        }
     }
 
     public boolean initData() {
@@ -190,8 +178,9 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             @Override
             protected boolean handle() {
                 try {
-                    data2D.setTask(task);
+                    data2D.startTask(task, rowFilterController.rowFilter);
                     readData();
+                    data2D.stopFilter();
                     return true;
                 } catch (Exception e) {
                     MyBoxLog.error(e);
@@ -207,6 +196,13 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                     return;
                 }
                 outputData();
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                data2D.stopTask();
+                task = null;
             }
 
         };

@@ -23,8 +23,10 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.FileTools;
 import mara.mybox.tools.IntTools;
 import static mara.mybox.value.Languages.message;
+import org.apache.commons.io.FileUtils;
 
 /**
  * @Author Mara
@@ -37,7 +39,7 @@ public class ImageClipboardMonitor extends Timer {
     protected ImageAttributes attributes;
     protected Date startTime = null;
     protected int recordNumber, savedNumber, copiedNumber;
-    protected final Clipboard clipboard = Clipboard.getSystemClipboard();
+//    protected final Clipboard clipboard = Clipboard.getSystemClipboard();
     protected TableImageClipboard tableImageClipboard = new TableImageClipboard();
     private String filePrefix;
     private Image lastImage = null;
@@ -68,9 +70,12 @@ public class ImageClipboardMonitor extends Timer {
             ControlImagesClipboard.updateClipboardsStatus();
         });
         MyBoxLog.debug("Image Clipboard Monitor stopped.");
+        clearTmpClips();
     }
 
     class MonitorTask extends TimerTask {
+
+        private Image clip;
 
         @Override
         public void run() {
@@ -80,16 +85,18 @@ public class ImageClipboardMonitor extends Timer {
                 @Override
                 public synchronized void run() {
                     try {
-                        if (!clipboard.hasImage()) {
-                            return;
-                        }
+                        clearTmpClips();
                         controller = ImageInSystemClipboardController.running();
                         if (controller == null && !ImageClipboardTools.isCopy()
                                 && (!ImageClipboardTools.isSave() || filePrefix == null || attributes == null)) {
                             ImageClipboardTools.stopImageClipboardMonitor();
                             return;
                         }
-                        Image clip = clipboard.getImage();
+                        Clipboard clipboard = Clipboard.getSystemClipboard();
+                        if (!clipboard.hasImage()) {
+                            return;
+                        }
+                        clip = clipboard.getImage();
                         if (clip == null || FxImageTools.sameImage(lastImage, clip)) {
                             return;
                         }
@@ -115,6 +122,27 @@ public class ImageClipboardMonitor extends Timer {
                     }
                 }
             });
+        }
+    }
+
+    public static void clearTmpClips() {
+        try {
+            System.gc();
+            File path = FileTools.javaIOTmpPath();
+            File[] files = path.listFiles();
+            if (files == null) {
+                return;
+            }
+            for (File file : files) {
+                try {
+                    if (file.isFile() && file.getName().endsWith(".TMP")) {
+                        FileUtils.deleteQuietly(file);
+                    }
+                } catch (Exception e) {
+                }
+            }
+        } catch (Exception e) {
+//            MyBoxLog.debug(e.toString());
         }
     }
 

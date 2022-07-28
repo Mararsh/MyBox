@@ -205,7 +205,6 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
         fromInput.setText(updatedStyle.getRowStart() < 0 ? "" : (updatedStyle.getRowStart() + 1) + "");
         toInput.setText(updatedStyle.getRowEnd() < 0 ? "" : updatedStyle.getRowEnd() + "");
         String scolumns = updatedStyle.getColumns();
-        MyBoxLog.console("columns:  " + scolumns);
         selectNoneColumn();
         if (scolumns != null && !scolumns.isBlank()) {
             String[] ns = scolumns.split(Data2DStyle.ColumnSeparator);
@@ -318,7 +317,6 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
             if (allColumns) {
                 columns = null;
             }
-            MyBoxLog.console("columns:  " + columns);
             updatedStyle.setColumns(columns);
 
             updatedStyle.setRowFilter(rowFilterController.rowFilter);

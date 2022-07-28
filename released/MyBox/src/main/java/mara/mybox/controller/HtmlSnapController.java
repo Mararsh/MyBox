@@ -72,7 +72,7 @@ public class HtmlSnapController extends WebAddressController {
         try {
             super.initControls();
 
-            delay = UserConfig.getInt(baseName + "Delay", 2000);
+            delay = UserConfig.getInt(baseName + "Delay", 2);
             if (delay <= 0) {
                 delay = 2000;
             }

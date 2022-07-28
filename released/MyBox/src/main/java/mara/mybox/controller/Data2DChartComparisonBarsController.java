@@ -11,6 +11,7 @@ import mara.mybox.calculation.Normalization;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -120,8 +121,8 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
             double[] data = new double[2 * rowsNumber];
             for (int r = 0; r < rowsNumber; r++) {
                 List<String> tableRow = outputData.get(r);
-                data[r] = data2D.doubleValue(tableRow.get(1));
-                data[r + rowsNumber] = data2D.doubleValue(tableRow.get(2));
+                data[r] = DoubleTools.toDouble(tableRow.get(1), invalidAs);
+                data[r + rowsNumber] = DoubleTools.toDouble(tableRow.get(2), invalidAs);
             }
             normalization = Normalization.create().setSourceVector(data);
             if (absoluateRadio.isSelected()) {

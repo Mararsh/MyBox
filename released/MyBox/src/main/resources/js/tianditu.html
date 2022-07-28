@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="http://api.tianditu.gov.cn/api?v=4.0&tk=0ddeb917def62b4691500526cc30a9b1" type="text/javascript"></script>
+        <script src="http://api.tianditu.gov.cn/api?v=4.0&tk=0ddeb917def62b4691500526cc30a9b1" ></script>
         <title>Map</title>
         <style>
             html,
@@ -17,7 +17,7 @@
     </head>
     <body onLoad="initMap()">
         <div id="mapcontainer"></div>
-        <script  type="text/javascript">
+        <script >
             var map, infoWindow, mapTitle;
             var zoomControl, scaleControl, symbolsControl, mapTypeControl;
             var style = "default";
@@ -32,13 +32,14 @@
                 map = new T.Map('mapcontainer', {
                     projection: "EPSG:900913"
                 });
+                map.centerAndZoom(new T.LngLat(116.40769, 39.89945), 11);
 
                 map.enableScrollWheelZoom();
                 map.enableDoubleClickZoom();
                 map.enableInertia();
                 map.enableKeyboard();
                 map.setMinZoom(1);
-                map.setMaxZoom(18);
+                map.enableDrag();
 
                 zoomControl = new T.Control.Zoom();
                 scaleControl = new T.Control.Scale();
@@ -50,7 +51,6 @@
                 map.addEventListener("mousemove", mouseMove);
                 map.addEventListener("zoomend", zoomChanged);
 
-                map.centerAndZoom(new T.LngLat(116.40769, 39.89945), 11);
                 var layers = map.getLayers();
                 if (layers && layers.length > 0) {
                     layers[layers.length - 1].addEventListener("load", mapLoaded);
@@ -80,25 +80,30 @@
 
             function mapLoaded() {
                 alert("Loaded");
+                map.enableDrag();
             }
 
             function mapClicked(e) {
                 var text = 'click:' + e.lnglat.getLng() + ',' + e.lnglat.getLat();
                 alert(text);
+                map.enableDrag();
             }
 
             function mouseMove(e) {
                 var text = 'move:' + e.lnglat.getLng() + ',' + e.lnglat.getLat();
                 alert(text);
+                map.enableDrag();
             }
 
             function zoomChanged(e) {
                 alert("zoomSize:" + map.getZoom());
+                map.enableDrag();
             }
 
 
             function setCenter(longtitude, latitude) {
                 map.centerAndZoom(new T.LngLat(longtitude, latitude), map.getZoom());
+                map.enableDrag();
             }
 
             function setZoom(size) {
@@ -131,6 +136,7 @@
 
             function clearMap() {
                 map.clearOverLays();
+                map.enableDrag();
             }
 
 
@@ -200,6 +206,7 @@
                     markerLabel.setBackgroundColor("transparent");
                     map.addOverLay(markerLabel);
                 }
+                map.enableDrag();
 
             }
 

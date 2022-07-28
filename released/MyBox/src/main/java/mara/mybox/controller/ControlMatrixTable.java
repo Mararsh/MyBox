@@ -10,7 +10,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
-import mara.mybox.data2d.DataMatrix;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
@@ -26,8 +25,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition> {
 
-    protected ControlData2D dataAController, dataBController;
-    protected DataMatrix dataAMatrix, dataBMatrix;
+    protected MatricesBinaryCalculationController manageController;
 
     @FXML
     protected TableColumn<Data2DDefinition, Long> d2didColumn;
@@ -43,16 +41,12 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
     public ControlMatrixTable() {
     }
 
-    public void setParameters(ControlData2D dataAController, ControlData2D dataBController) {
+    public void setParameters(MatricesBinaryCalculationController manageController) {
         try {
-            this.dataAController = dataAController;
-            dataAMatrix = (DataMatrix) dataAController.data2D;
+            this.manageController = manageController;
 
-            this.dataBController = dataBController;
-            dataBMatrix = (DataMatrix) dataBController.data2D;
-
-            tableDefinition = dataAController.tableData2DDefinition;
-            queryConditions = "data_type=" + dataAMatrix.type();
+            tableDefinition = manageController.dataAMatrix.tableData2DDefinition;
+            queryConditions = "data_type=" + manageController.dataAMatrix.type();
 
             loadTableData();
 
@@ -107,7 +101,8 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
             if (selected == null) {
                 return;
             }
-            dataAController.loadDef(selected);
+            manageController.dataAController.loadDef(selected);
+            manageController.tabPane.getSelectionModel().select(manageController.dataATab);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -120,7 +115,8 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
             if (selected == null) {
                 return;
             }
-            dataBController.loadDef(selected);
+            manageController.dataBController.loadDef(selected);
+            manageController.tabPane.getSelectionModel().select(manageController.dataBTab);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -153,7 +149,7 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
                 @Override
                 protected boolean handle() {
                     selected.setDataName(newName);
-                    def = dataAController.tableData2DDefinition.updateData(selected);
+                    def = manageController.dataAMatrix.tableData2DDefinition.updateData(selected);
                     return def != null;
                 }
 
@@ -161,13 +157,13 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
                 protected void whenSucceeded() {
                     popSuccessful();
                     tableData.set(index, def);
-                    if (def.getD2did() == dataAMatrix.getD2did()) {
-                        dataAMatrix.setDataName(newName);
-                        dataAController.attributesController.updateDataName();
+                    if (def.getD2did() == manageController.dataAMatrix.getD2did()) {
+                        manageController.dataAMatrix.setDataName(newName);
+                        manageController.dataAController.attributesController.updateDataName();
                     }
-                    if (def.getD2did() == dataBMatrix.getD2did()) {
-                        dataBMatrix.setDataName(newName);
-                        dataBController.attributesController.updateDataName();
+                    if (def.getD2did() == manageController.dataBMatrix.getD2did()) {
+                        manageController.dataBMatrix.setDataName(newName);
+                        manageController.dataBController.attributesController.updateDataName();
                     }
                 }
 

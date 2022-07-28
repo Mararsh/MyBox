@@ -10,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
@@ -42,6 +43,8 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
     protected double number, resultValue;
     protected double[][] result;
 
+    @FXML
+    protected Tab resultTab;
     @FXML
     protected ToggleGroup opGroup;
     @FXML
@@ -340,7 +343,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                             result = DoubleMatrixTools.complementMinor(dataMatrix.toArray(), row - 1, column - 1);
 
                         } else if (message("Normalize").equals(op)) {
-                            result = normalizeController.calculate(dataMatrix.toArray());
+                            result = normalizeController.calculate(dataMatrix.toArray(), Double.NaN);
 
                         } else if (message("MultiplyNumber").equals(op)) {
                             result = DoubleMatrixTools.multiply(dataMatrix.toArray(), number);
@@ -389,6 +392,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                         resultArea.setText(resultValue + "");
                     }
                     refreshStyle(resultBox);
+                    tabPane.getSelectionModel().select(resultTab);
                 }
 
             };

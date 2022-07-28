@@ -1,13 +1,11 @@
 package mara.mybox.calculation;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import mara.mybox.controller.BaseData2DHandleController;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataTable;
-import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -28,6 +26,7 @@ public class DescriptiveStatistic {
             minimum, maximum, median, upperQuartile, lowerQuartile, mode,
             upperMildOutlierLine, upperExtremeOutlierLine, lowerMildOutlierLine, lowerExtremeOutlierLine;
     public int scale;
+    public double invalidAs = 0;
 
     protected BaseData2DHandleController handleController;
     protected SingletonTask<Void> task;
@@ -70,6 +69,15 @@ public class DescriptiveStatistic {
                 .setUpperExtremeOutlierLine(select)
                 .setLowerMildOutlierLine(select)
                 .setLowerExtremeOutlierLine(select);
+    }
+
+    public boolean need() {
+        return needNonStored() || needStored();
+    }
+
+    public boolean needNonStored() {
+        return minimum || maximum || mean || sum || count || skewness
+                || geometricMean || sumSquares || needVariance();
     }
 
     public boolean needVariance() {
@@ -481,35 +489,7 @@ public class DescriptiveStatistic {
             return false;
         }
         statisticByColumnsWriteWithoutStored(statistic);
-        if (medianRow != null) {
-            medianRow.add(DoubleTools.format(statistic.getMedian(), scale));
-        }
-        if (modeRow != null) {
-            try {
-                modeRow.add(DoubleTools.format((double) statistic.getMode(), scale));
-            } catch (Exception e) {
-                modeRow.add(statistic.getMode().toString());
-            }
-        }
-        if (lowerQuartileRow != null) {
-            lowerQuartileRow.add(DoubleTools.format(statistic.getLowerQuartile(), scale));
-        }
-
-        if (upperQuartileRow != null) {
-            upperQuartileRow.add(DoubleTools.format(statistic.getUpperQuartile(), scale));
-        }
-        if (upperExtremeOutlierLineRow != null) {
-            upperExtremeOutlierLineRow.add(DoubleTools.format(statistic.getUpperExtremeOutlierLine(), scale));
-        }
-        if (upperMildOutlierLineRow != null) {
-            upperMildOutlierLineRow.add(DoubleTools.format(statistic.getUpperMildOutlierLine(), scale));
-        }
-        if (lowerMildOutlierLineRow != null) {
-            lowerMildOutlierLineRow.add(DoubleTools.format(statistic.getLowerMildOutlierLine(), scale));
-        }
-        if (lowerExtremeOutlierLineRow != null) {
-            lowerExtremeOutlierLineRow.add(DoubleTools.format(statistic.getLowerExtremeOutlierLine(), scale));
-        }
+        statisticByColumnsWriteStored(statistic);
         return true;
     }
 
@@ -552,6 +532,74 @@ public class DescriptiveStatistic {
         }
         if (maximumRow != null) {
             maximumRow.add(DoubleTools.format(statistic.getMaximum(), scale));
+        }
+        return true;
+    }
+
+    public boolean statisticByColumnsWriteStored(DoubleStatistic statistic) {
+        if (statistic == null) {
+            return false;
+        }
+        if (medianRow != null) {
+            Object v = statistic.getMedianValue();
+            try {
+                medianRow.add(DoubleTools.format((double) v, scale));
+            } catch (Exception e) {
+                try {
+                    medianRow.add(v.toString());
+                } catch (Exception ex) {
+                    medianRow.add("");
+                }
+            }
+        }
+        if (modeRow != null) {
+            Object v = statistic.getModeValue();
+            try {
+                modeRow.add(DoubleTools.format((double) v, scale));
+            } catch (Exception e) {
+                try {
+                    modeRow.add(v.toString());
+                } catch (Exception ex) {
+                    modeRow.add("");
+                }
+            }
+        }
+        if (lowerQuartileRow != null) {
+            Object v = statistic.getLowerQuartileValue();
+            try {
+                lowerQuartileRow.add(DoubleTools.format((double) v, scale));
+            } catch (Exception e) {
+                try {
+                    lowerQuartileRow.add(v.toString());
+                } catch (Exception ex) {
+                    lowerQuartileRow.add("");
+                }
+            }
+        }
+
+        if (upperQuartileRow != null) {
+            Object v = statistic.getUpperQuartileValue();
+            try {
+                upperQuartileRow.add(DoubleTools.format((double) v, scale));
+            } catch (Exception e) {
+                try {
+                    upperQuartileRow.add(v.toString());
+                } catch (Exception ex) {
+                    upperQuartileRow.add("");
+                }
+            }
+        }
+        if (upperExtremeOutlierLineRow != null) {
+            upperExtremeOutlierLineRow.add(DoubleTools.format((double) statistic.getUpperExtremeOutlierLine(), scale));
+        }
+        if (upperMildOutlierLineRow != null) {
+            upperMildOutlierLineRow.add(DoubleTools.format((double) statistic.getUpperMildOutlierLine(), scale));
+        }
+        if (lowerMildOutlierLineRow != null) {
+            lowerMildOutlierLineRow.add(DoubleTools.format((double) statistic.getLowerMildOutlierLine(), scale));
+        }
+        if (lowerExtremeOutlierLineRow != null) {
+            lowerExtremeOutlierLineRow.add(DoubleTools.format((double) statistic.getLowerExtremeOutlierLine(), scale));
         }
         return true;
     }
@@ -617,7 +665,7 @@ public class DescriptiveStatistic {
     }
 
     public boolean statisticAllByColumnsWithoutStored() {
-        DoubleStatistic[] statisticData = data2D.statisticByColumns(colsIndices, this);
+        DoubleStatistic[] statisticData = data2D.statisticByColumnsWithoutStored(colsIndices, this);
         if (statisticData == null) {
             return false;
         }
@@ -627,87 +675,24 @@ public class DescriptiveStatistic {
         return true;
     }
 
-    public boolean statisticAllByColumnsInDataTable() {
-        if (!statisticAllByColumnsWithoutStored() || !(data2D instanceof DataTable)) {
+    public boolean statisticAllByColumns() {
+        if (!(data2D instanceof DataTable)) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try {
+            DoubleStatistic[] statisticData = data2D.statisticByColumnsWithoutStored(colsIndices, this);
+            if (statisticData == null) {
+                return false;
+            }
             DataTable dataTable = (DataTable) data2D;
+            statisticData = dataTable.statisticByColumnsForStored(colsIndices, this);
+            if (statisticData == null) {
+                return false;
+            }
             for (int c : colsIndices) {
                 Data2DColumn column = data2D.getColumns().get(c);
-                if (medianRow != null) {
-                    Object m = dataTable.percentile(conn, column, 50);
-                    if (column.isNumberType()) {
-                        medianRow.add(DoubleTools.format(Double.valueOf(m + ""), scale));
-                    } else {
-                        medianRow.add(column.toString(m));
-                    }
-                }
-                Object q1 = null, q3 = null;
-                if (upperQuartileRow != null || needOutlier()) {
-                    q3 = dataTable.percentile(conn, column, 75);
-                    if (upperQuartileRow != null) {
-                        if (column.isNumberType()) {
-                            upperQuartileRow.add(DoubleTools.format(Double.valueOf(q3 + ""), scale));
-                        } else {
-                            upperQuartileRow.add(column.toString(q3));
-                        }
-                    }
-                }
-                if (lowerQuartileRow != null || needOutlier()) {
-                    q1 = dataTable.percentile(conn, column, 25);
-                    if (lowerQuartileRow != null) {
-                        if (column.isNumberType()) {
-                            lowerQuartileRow.add(DoubleTools.format(Double.valueOf(q1 + ""), scale));
-                        } else {
-                            lowerQuartileRow.add(column.toString(q1));
-                        }
-                    }
-                }
-                if (upperExtremeOutlierLineRow != null) {
-                    try {
-                        double d1 = Double.valueOf(q1 + "");
-                        double d3 = Double.valueOf(q3 + "");
-                        upperExtremeOutlierLineRow.add(DoubleTools.format(d3 + 3 * (d3 - d1), scale));
-                    } catch (Exception e) {
-                        upperExtremeOutlierLineRow.add(Double.NaN + "");
-                    }
-                }
-                if (upperMildOutlierLineRow != null) {
-                    try {
-                        double d1 = Double.valueOf(q1 + "");
-                        double d3 = Double.valueOf(q3 + "");
-                        upperMildOutlierLineRow.add(DoubleTools.format(d3 + 1.5 * (d3 - d1), scale));
-                    } catch (Exception e) {
-                        upperMildOutlierLineRow.add(Double.NaN + "");
-                    }
-                }
-                if (lowerMildOutlierLineRow != null) {
-                    try {
-                        double d1 = Double.valueOf(q1 + "");
-                        double d3 = Double.valueOf(q3 + "");
-                        lowerMildOutlierLineRow.add(DoubleTools.format(d1 - 1.5 * (d3 - d1), scale));
-                    } catch (Exception e) {
-                        lowerMildOutlierLineRow.add(Double.NaN + "");
-                    }
-                }
-                if (lowerExtremeOutlierLineRow != null) {
-                    try {
-                        double d1 = Double.valueOf(q1 + "");
-                        double d3 = Double.valueOf(q3 + "");
-                        lowerExtremeOutlierLineRow.add(DoubleTools.format(d1 - 3 * (d3 - d1), scale));
-                    } catch (Exception e) {
-                        lowerExtremeOutlierLineRow.add(Double.NaN + "");
-                    }
-                }
-                if (modeRow != null) {
-                    Object m = dataTable.mode(conn, column.getColumnName());
-                    if (column.isNumberType()) {
-                        modeRow.add(DoubleTools.format(Double.valueOf(m + ""), scale));
-                    } else {
-                        modeRow.add(column.toString(m));
-                    }
-                }
+                DoubleStatistic colStatistic = column.getDoubleStatistic();
+                statisticByColumnsWrite(colStatistic);
             }
             return true;
         } catch (Exception e) {
@@ -1178,8 +1163,18 @@ public class DescriptiveStatistic {
         return categoryName;
     }
 
-    public void setCategoryName(String categoryName) {
+    public DescriptiveStatistic setCategoryName(String categoryName) {
         this.categoryName = categoryName;
+        return this;
+    }
+
+    public double getInvalidAs() {
+        return invalidAs;
+    }
+
+    public DescriptiveStatistic setInvalidAs(double invalidAs) {
+        this.invalidAs = invalidAs;
+        return this;
     }
 
 }

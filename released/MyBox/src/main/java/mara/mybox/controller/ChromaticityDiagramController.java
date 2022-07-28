@@ -44,9 +44,9 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.ControllerTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import static mara.mybox.tools.DoubleTools.scale;
 import mara.mybox.tools.FileNameTools;
@@ -80,7 +80,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
     @FXML
     protected CheckBox cdProPhotoCheck, cdColorMatchCheck, cdNTSCCheck, cdPALCheck, cdAppleCheck, cdAdobeCheck,
             cdSRGBCheck, cdECICheck, cdCIECheck, cdSMPTECCheck, degree2Check, degree10Check,
-            waveCheck, whitePointsCheck, gridCheck, calculateCheck, inputCheck;
+            waveCheck, whitePointsCheck, cdGridCheck, calculateCheck, inputCheck;
     @FXML
     protected TextArea sourceInputArea, sourceDataArea;
     @FXML
@@ -184,7 +184,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
                     displayChromaticityDiagram();
                 }
             });
-            gridCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            cdGridCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov,
                         Boolean old_val, Boolean new_val) {
@@ -865,7 +865,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
                         selections.put(DataType.Calculate, calculateCheck.isSelected());
                         selections.put(DataType.Wave, waveCheck.isSelected());
                         selections.put(DataType.WhitePoints, whitePointsCheck.isSelected());
-                        selections.put(DataType.Grid, gridCheck.isSelected());
+                        selections.put(DataType.Grid, cdGridCheck.isSelected());
                         selections.put(DataType.CIELines, cdCIECheck.isSelected());
                         selections.put(DataType.ECILines, cdECICheck.isSelected());
                         selections.put(DataType.sRGBLines, cdSRGBCheck.isSelected());

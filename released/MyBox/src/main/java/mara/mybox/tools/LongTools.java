@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
+import mara.mybox.value.AppValues;
 
 /**
  * @Author Mara
@@ -13,18 +14,17 @@ import java.util.Random;
  */
 public class LongTools {
 
-    // works on java 17 while not work on java 16
-//    public static long random(long max) {
-//        Random r = new Random();
-//        return r.nextLong(max);  // works in java 17 
-//    }
-    // works on java 16
-    public static long random(Random r, int max) {
+    public static boolean invalidLong(long value) {
+        return value == AppValues.InvalidLong;
+    }
+
+    public static long random(Random r, int max, boolean nonNegative) {
         if (r == null) {
             r = new Random();
         }
-        long l = r.nextInt(max);
-        return l;
+        int sign = nonNegative ? 1 : r.nextInt(2);
+        long l = r.nextLong(max);
+        return sign == 1 ? l : -l;
     }
 
     public static long[] sortArray(long[] numbers) {

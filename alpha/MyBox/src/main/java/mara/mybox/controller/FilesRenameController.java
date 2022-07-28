@@ -14,10 +14,13 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.FileInformation;
+import mara.mybox.data.FindReplaceString;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileSortTools;
@@ -47,14 +50,14 @@ public class FilesRenameController extends BaseBatchFileController {
     protected FlowPane suffixPane, prefixPane, extensionPane;
     @FXML
     protected CheckBox fillZeroCheck, originalCheck, stringCheck, accumCheck,
-            suffixCheck, descentCheck, recountCheck;
+            suffixCheck, descentCheck, recountCheck, regexCheck;
     @FXML
     protected TextField oldStringInput, newStringInput, newExtInput,
             prefixInput, suffixInput, stringInput;
     @FXML
     protected ToggleGroup sortGroup, renameGroup;
     @FXML
-    protected RadioButton targetReplaceRadio, targetSkipRadio;
+    protected RadioButton targetReplaceRadio, targetSkipRadio, replaceAllRadio;
 
     public static enum RenameType {
         ReplaceSubString, AppendSuffix, AppendPrefix, AddSequenceNumber,
@@ -240,31 +243,30 @@ public class FilesRenameController extends BaseBatchFileController {
         if (file == null || !file.exists() || !file.isFile()) {
             return null;
         }
-        String newName = makeNewFilename(file);
         try {
-            if (newName != null) {
-                File newFile = new File(newName);
-                if (file.equals(newFile)) {
+            String newName = makeNewFilename(file);
+            if (newName == null || newName.isBlank()) {
+                return null;
+            }
+            File newFile = new File(newName);
+            if (file.equals(newFile)) {
+                return null;
+            }
+            if (newFile.isFile() && newFile.exists()) {
+                if (targetSkipRadio.isSelected()) {
                     return null;
                 }
-                if (newFile.isFile() && newFile.exists()) {
-                    if (targetSkipRadio.isSelected()) {
-                        return null;
-                    }
-                    FileDeleteTools.delete(newFile);
-                }
-                if (FileTools.rename(file, newFile)) {
-                    newName = newFile.getAbsolutePath();
-                    targetFileGenerated(newFile);
-                    return newName;
-                } else {
-                    return null;
-                }
+                FileDeleteTools.delete(newFile);
+            }
+            if (FileTools.rename(file, newFile)) {
+                newName = newFile.getAbsolutePath();
+                targetFileGenerated(newFile);
+                return newName;
             } else {
                 return null;
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            updateLogs(e.toString(), true);
             return null;
         }
     }
@@ -279,7 +281,19 @@ public class FilesRenameController extends BaseBatchFileController {
             String newName = null;
             switch (renameType) {
                 case ReplaceSubString:
-                    newName = currentName.replaceAll(oldStringInput.getText(), FileNameTools.filter(newStringInput.getText()));
+                    if (regexCheck.isSelected()) {
+                        if (replaceAllRadio.isSelected()) {
+                            newName = currentName.replaceAll(oldStringInput.getText(), FileNameTools.filter(newStringInput.getText()));
+                        } else {
+                            newName = currentName.replaceFirst(oldStringInput.getText(), FileNameTools.filter(newStringInput.getText()));
+                        }
+                    } else {
+                        if (replaceAllRadio.isSelected()) {
+                            newName = FindReplaceString.replaceAll(currentName, oldStringInput.getText(), FileNameTools.filter(newStringInput.getText()));
+                        } else {
+                            newName = FindReplaceString.replaceFirst(currentName, oldStringInput.getText(), FileNameTools.filter(newStringInput.getText()));
+                        }
+                    }
                     break;
                 case AppendPrefix:
                     newName = FileNameTools.filter(prefixInput.getText()) + currentName;
@@ -312,7 +326,7 @@ public class FilesRenameController extends BaseBatchFileController {
             }
             return filePath + newName;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            updateLogs(e.toString(), true);
             return null;
         }
     }
@@ -384,6 +398,11 @@ public class FilesRenameController extends BaseBatchFileController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @FXML
+    public void popRegexExample(MouseEvent mouseEvent) {
+        PopTools.popRegexExample(this, oldStringInput, mouseEvent);
     }
 
 }

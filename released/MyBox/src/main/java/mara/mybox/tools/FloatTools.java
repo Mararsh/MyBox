@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
+import mara.mybox.value.AppValues;
 
 /**
  * @Author Mara
@@ -13,6 +14,10 @@ import java.util.Random;
  * @License Apache License Version 2.0
  */
 public class FloatTools {
+
+    public static boolean invalidFloat(float value) {
+        return Float.isNaN(value) || value == AppValues.InvalidFloat;
+    }
 
     public static String percentage(float data, float total) {
         try {
@@ -73,20 +78,13 @@ public class FloatTools {
         return d;
     }
 
-    // works on java 17 while not work on java 16
-//    public static float random(float max) {
-//        Random r = new Random();
-//        return r.nextFloat(max);
-//    }
-    // works on java 16
     public static float random(Random r, int max, boolean nonNegative) {
         if (r == null) {
             r = new Random();
         }
         int sign = nonNegative ? 1 : r.nextInt(2);
-        float f = r.nextFloat();
-        int i = max > 0 ? r.nextInt(max) : 0;
-        return sign == 1 ? i + f : -(i + f);
+        float f = r.nextFloat(max);
+        return sign == 1 ? f : -f;
     }
 
     public static float[] sortArray(float[] numbers) {

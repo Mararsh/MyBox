@@ -51,7 +51,9 @@ public abstract class BaseImageManufactureBatchController extends BaseBatchImage
     @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
-            browseButton.setDisable(targetFiles == null || targetFiles.isEmpty());
+            if (browseButton != null) {
+                browseButton.setDisable(targetFiles == null || targetFiles.isEmpty());
+            }
 
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
@@ -69,7 +71,9 @@ public abstract class BaseImageManufactureBatchController extends BaseBatchImage
             ImageFileWriters.writeImageFile(targetImage, attributes, target.getAbsolutePath());
 
             targetFileGenerated(target);
-            browseButton.setDisable(false);
+            if (browseButton != null) {
+                browseButton.setDisable(false);
+            }
             return Languages.message("Successful");
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

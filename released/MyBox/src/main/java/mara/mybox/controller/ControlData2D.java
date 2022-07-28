@@ -6,11 +6,13 @@ import java.util.List;
 import java.util.Optional;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -39,6 +41,7 @@ import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -92,16 +95,6 @@ public class ControlData2D extends BaseController {
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-            StyleTools.setIconTooltips(functionsButton, "iconFunction.png", "");
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -456,9 +449,9 @@ public class ControlData2D extends BaseController {
                     if (backupController != null && backupController.isBack() && !data2D.isTmpData()) {
                         backupController.addBackup(task, data2D.getFile());
                     }
-                    data2D.setTask(task);
+                    data2D.startTask(task, null);
                     data2D.savePageData(targetData);
-                    data2D.setTask(task);
+                    data2D.startTask(task, null);
                     data2D.countSize();
                     Data2D.saveAttributes(data2D, targetData);
                     data2D.cloneAll(targetData);
@@ -476,7 +469,7 @@ public class ControlData2D extends BaseController {
 
             @Override
             protected void finalAction() {
-                data2D.setTask(null);
+                data2D.stopTask();
                 task = null;
 
             }
@@ -497,9 +490,9 @@ public class ControlData2D extends BaseController {
             @Override
             protected boolean handle() {
                 try {
-                    data2D.setTask(task);
+                    data2D.startTask(task, null);
                     data2D.savePageData(targetData);
-                    data2D.setTask(task);
+                    data2D.startTask(task, null);
                     data2D.countSize();
                     Data2D.saveAttributes(data2D, targetData);
                     return true;
@@ -526,8 +519,8 @@ public class ControlData2D extends BaseController {
 
             @Override
             protected void finalAction() {
-                data2D.setTask(null);
-                targetData.setTask(null);
+                data2D.stopTask();
+                targetData.stopTask();
                 task = null;
             }
         };
@@ -640,6 +633,17 @@ public class ControlData2D extends BaseController {
      */
     @FXML
     public void popFunctionsMenu(MouseEvent mouseEvent) {
+        if (UserConfig.getBoolean(interfaceName + "FunctionsPopWhenMouseHovering", true)) {
+            functionsMenu(mouseEvent);
+        }
+    }
+
+    @FXML
+    public void showFunctionsMenu(ActionEvent event) {
+        functionsMenu(event);
+    }
+
+    public void functionsMenu(Event menuEvent) {
         try {
             setData(tableController.data2D);
 
@@ -692,18 +696,11 @@ public class ControlData2D extends BaseController {
             menu.setDisable(empty);
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("SetStyles"), StyleTools.getIconImage("iconColor.png"));
+            menu = new MenuItem(message("MarkAbnormalValues"), StyleTools.getIconImage("iconColor.png"));
             menu.setOnAction((ActionEvent event) -> {
-                Data2DSetStylesController.open(tableController);
+                Data2DMarkAbnormalController.open(tableController);
             });
             menu.setDisable(empty || data2D.isTmpData());
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("CopyFilterQuery"), StyleTools.getIconImage("iconCopy.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                tableController.copyAction();
-            });
-            menu.setDisable(empty);
             popMenu.getItems().add(menu);
 
             menu = new MenuItem(message("PasteContentInSystemClipboard"), StyleTools.getIconImage("iconPasteSystem.png"));
@@ -732,6 +729,13 @@ public class ControlData2D extends BaseController {
             Menu trimMenu = new Menu(message("Trim"), StyleTools.getIconImage("iconClean.png"));
             popMenu.getItems().add(trimMenu);
 
+            menu = new MenuItem(message("CopyFilterQuery"), StyleTools.getIconImage("iconCopy.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                tableController.copyAction();
+            });
+            menu.setDisable(empty);
+            trimMenu.getItems().add(menu);
+
             menu = new MenuItem(message("Sort"), StyleTools.getIconImage("iconSort.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DSortController.open(tableController);
@@ -753,8 +757,21 @@ public class ControlData2D extends BaseController {
             menu.setDisable(empty);
             trimMenu.getItems().add(menu);
 
+//            menu = new MenuItem(message("DeleteAbnormalRows"), StyleTools.getIconImage("iconWrong.png"));
+//            menu.setOnAction((ActionEvent event) -> {
+//                Data2DDeleteAbnormalController.open(tableController);
+//            });
+//            menu.setDisable(empty);
+//            trimMenu.getItems().add(menu);
             Menu calMenu = new Menu(message("Calculation"), StyleTools.getIconImage("iconCalculator.png"));
             popMenu.getItems().add(calMenu);
+
+            menu = new MenuItem(message("RowExpression"), StyleTools.getIconImage("iconCalculate.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DRowExpressionController.open(tableController);
+            });
+            menu.setDisable(empty);
+            calMenu.getItems().add(menu);
 
             menu = new MenuItem(message("DescriptiveStatistics"), StyleTools.getIconImage("iconStatistic.png"));
             menu.setOnAction((ActionEvent event) -> {
@@ -866,6 +883,16 @@ public class ControlData2D extends BaseController {
                 popMenu.getItems().add(examplesMenu);
             }
 
+            CheckMenuItem passPop = new CheckMenuItem(message("PopWhenMouseHovering"));
+            passPop.setSelected(UserConfig.getBoolean(interfaceName + "FunctionsPopWhenMouseHovering", true));
+            passPop.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(interfaceName + "FunctionsPopWhenMouseHovering", passPop.isSelected());
+                }
+            });
+            popMenu.getItems().add(passPop);
+
             popMenu.getItems().add(new SeparatorMenuItem());
             menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
@@ -877,7 +904,7 @@ public class ControlData2D extends BaseController {
             });
             popMenu.getItems().add(menu);
 
-            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateBelow((Region) menuEvent.getSource(), popMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

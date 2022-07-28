@@ -244,8 +244,9 @@ public class DataFileCSV extends DataFileText {
                     } catch (Exception e) {  // skip  bad lines
                     }
                 }
-                boolean isRandom = false, isRandomNn = false, isBlank = false;
-                String expression = null;
+                boolean isRandom = false, isRandomNn = false, isBlank = false, isMean = false,
+                        isMedian = false, isMode = false;
+                String script = null;
                 if (value != null) {
                     if ("MyBox##blank".equals(value)) {
                         isBlank = true;
@@ -254,37 +255,56 @@ public class DataFileCSV extends DataFileText {
                     } else if ("MyBox##randomNn".equals(value)) {
                         isRandomNn = true;
                     } else if (value.startsWith("MyBox##Expression##")) {
-                        expression = value.substring("MyBox##Expression##".length());
+                        script = value.substring("MyBox##Expression##".length());
+                    } else if (value.startsWith("MyBox##columnMean")) {
+                        isMean = true;
+                    } else if (value.startsWith("MyBox##columnMode")) {
+                        isMode = true;
+                    } else if (value.startsWith("MyBox##columnMedian")) {
+                        isMedian = true;
                     }
                 }
                 final Random random = new Random();
                 rowIndex = 0;
+                boolean needSetValue;
                 while (iterator.hasNext() && task != null && !task.isCancelled()) {
                     try {
                         CSVRecord record = iterator.next();
                         if (record == null) {
                             continue;
                         }
-                        filterAndCalculate(record.toList(), ++rowIndex, expression);
-                        if (expression != null && error != null) {
-                            if (errorContinue) {
-                                continue;
-                            } else {
-                                task.setError(error);
-                                return false;
+                        List<String> values = record.toList();
+                        filterDataRow(values, ++rowIndex);
+                        needSetValue = filterPassed() && !filterReachMaxPassed();
+                        if (needSetValue && script != null) {
+                            calculateDataRowExpression(script, values, rowIndex);
+                            error = expressionError();
+                            if (error != null) {
+                                if (errorContinue) {
+                                    continue;
+                                } else {
+                                    task.setError(error);
+                                    return false;
+                                }
                             }
                         }
                         List<String> row = new ArrayList<>();
                         for (int i = 0; i < columns.size(); i++) {
-                            if (filterPassed && cols.contains(i)) {
+                            if (needSetValue && cols.contains(i)) {
                                 if (isBlank) {
                                     row.add("");
                                 } else if (isRandom) {
                                     row.add(random(random, i, false));
                                 } else if (isRandomNn) {
                                     row.add(random(random, i, true));
-                                } else if (expression != null) {
-                                    row.add(expressionResult);
+                                } else if (isMean) {
+                                    row.add(column(i).getDoubleStatistic().mean + "");
+                                } else if (isMode) {
+                                    row.add(column(i).getDoubleStatistic().modeValue + "");
+                                } else if (isMedian) {
+                                    row.add(column(i).getDoubleStatistic().median + "");
+                                } else if (script != null) {
+                                    row.add(expressionResult());
                                 } else {
                                     row.add(value);
                                 }
@@ -327,7 +347,7 @@ public class DataFileCSV extends DataFileText {
                     } catch (Exception e) {  // skip  bad lines
                     }
                 }
-                if (rowFilter != null && !rowFilter.isBlank()) {
+                if (needFilter()) {
                     rowIndex = 0;
                     while (iterator.hasNext() && task != null && !task.isCancelled()) {
                         try {
@@ -335,7 +355,7 @@ public class DataFileCSV extends DataFileText {
                             if (record == null) {
                                 continue;
                             }
-                            filterInTask(record.toList(), ++rowIndex);
+                            filterDataRow(record.toList(), ++rowIndex);
                             if (error != null) {
                                 if (errorContinue) {
                                     continue;
@@ -344,7 +364,7 @@ public class DataFileCSV extends DataFileText {
                                     return false;
                                 }
                             }
-                            if (filterPassed) {
+                            if (filterPassed() && !filterReachMaxPassed()) {
                                 continue;
                             }
                             List<String> row = new ArrayList<>();
@@ -504,7 +524,7 @@ public class DataFileCSV extends DataFileText {
                     .setColsNumber(targetColumns.size())
                     .setRowsNumber(data.size());
             dataFileCSV.saveAttributes();
-            dataFileCSV.setTask(null);
+            dataFileCSV.stopTask();
             return dataFileCSV;
         } catch (Exception e) {
             if (task != null) {
@@ -515,24 +535,45 @@ public class DataFileCSV extends DataFileText {
         }
     }
 
-    public static void open(BaseController controller, DataFileCSV csvFile, String target) {
+    public static void openCSV(BaseController controller, DataFileCSV csvFile, String target) {
         if (csvFile == null || target == null) {
             return;
         }
         if ("csv".equals(target)) {
-            DataFileCSVController.loadData(csvFile);
+            DataFileCSVController.loadCSV(csvFile);
         } else if ("excel".equals(target)) {
-            DataFileExcelController.loadData(csvFile);
+            DataFileExcelController.loadCSV(csvFile);
         } else if ("texts".equals(target)) {
-            DataFileTextController.loadData(csvFile);
+            DataFileTextController.loadCSV(csvFile);
         } else if ("matrix".equals(target)) {
-            MatricesManageController.loadData(csvFile);
+            MatricesManageController.loadCSV(csvFile);
         } else if ("systemClipboard".equals(target)) {
             TextClipboardTools.copyToSystemClipboard(controller, TextFileTools.readTexts(csvFile.getFile()));
         } else if ("myBoxClipboard".equals(target)) {
-            DataInMyBoxClipboardController.loadData(csvFile);
+            DataInMyBoxClipboardController.loadCSV(csvFile);
         } else if ("table".equals(target)) {
-            DataTablesController.loadData(csvFile);
+            DataTablesController.loadCSV(csvFile);
+        }
+    }
+
+    public static void openDataTable(BaseController controller, DataTable dataTable, String target) {
+        if (dataTable == null || target == null) {
+            return;
+        }
+        if ("csv".equals(target)) {
+            DataFileCSVController.loadTable(dataTable);
+        } else if ("excel".equals(target)) {
+            DataFileExcelController.loadTable(dataTable);
+        } else if ("texts".equals(target)) {
+            DataFileTextController.loadTable(dataTable);
+        } else if ("matrix".equals(target)) {
+            MatricesManageController.loadTable(dataTable);
+        } else if ("systemClipboard".equals(target)) {
+            TextClipboardTools.copyToSystemClipboard(controller, DataTable.toString(null, dataTable));
+        } else if ("myBoxClipboard".equals(target)) {
+            DataInMyBoxClipboardController.loadTable(dataTable);
+        } else if ("table".equals(target)) {
+            DataTablesController.loadTable(dataTable);
         }
     }
 

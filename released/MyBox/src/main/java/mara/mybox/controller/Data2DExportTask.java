@@ -58,7 +58,7 @@ public class Data2DExportTask extends BaseTaskController {
             exportController.filterVBox.setDisable(false);
             exportController.formatVBox.setDisable(false);
             exportController.targetVBox.setDisable(false);
-            exportController.data2D.setTask(null);
+            exportController.data2D.stopTask();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

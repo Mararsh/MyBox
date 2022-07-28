@@ -5,7 +5,6 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.image.ImageView;
 import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
@@ -22,10 +21,6 @@ public class MenuImageViewController extends MenuImageBaseController {
 
     protected ImageView imageView;
     protected ImageViewerController imageViewerController;
-    protected ChangeListener<Boolean> selectListener;
-
-    @FXML
-    protected CheckBox handleSelectCheck;
 
     public void setParameters(ImageViewerController imageViewerController, double x, double y) {
         try {
@@ -39,37 +34,6 @@ public class MenuImageViewController extends MenuImageBaseController {
                         cropButton.setDisable(!newValue);
                     }
                 });
-            }
-
-            if (handleSelectCheck != null) {
-                if (imageController.handleSelectCheck == null) {
-                    nodesBox.getChildren().remove(handleSelectCheck);
-                } else {
-                    handleSelectCheck.setSelected(imageController.handleSelectCheck.isSelected());
-                    handleSelectCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                        @Override
-                        public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                            if (isSettingValues) {
-                                return;
-                            }
-                            isSettingValues = true;
-                            imageController.handleSelectCheck.setSelected(newValue);
-                            isSettingValues = false;
-                        }
-                    });
-                    selectListener = new ChangeListener<Boolean>() {
-                        @Override
-                        public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                            if (isSettingValues) {
-                                return;
-                            }
-                            isSettingValues = true;
-                            handleSelectCheck.setSelected(newValue);
-                            isSettingValues = false;
-                        }
-                    };
-                    imageController.handleSelectCheck.selectedProperty().addListener(selectListener);
-                }
             }
 
         } catch (Exception e) {
@@ -155,10 +119,6 @@ public class MenuImageViewController extends MenuImageBaseController {
     @Override
     public void cleanPane() {
         try {
-            if (imageController != null) {
-                imageController.handleSelectCheck.selectedProperty().removeListener(selectListener);
-            }
-            selectListener = null;
             imageViewerController = null;
             imageView = null;
         } catch (Exception e) {

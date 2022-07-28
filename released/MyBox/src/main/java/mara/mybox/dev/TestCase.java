@@ -201,7 +201,7 @@ public class TestCase {
             cases.add(new TestCase(index++, message("FilesRename"), Fxmls.FilesRenameFxml));
             cases.add(new TestCase(index++, message("FilesCopy"), Fxmls.FilesCopyFxml));
             cases.add(new TestCase(index++, message("FilesMove"), Fxmls.FilesMoveFxml));
-            cases.add(new TestCase(index++, message("DeleteSysTemporaryPathFiles"), Fxmls.FilesDeleteSysTempFxml));
+            cases.add(new TestCase(index++, message("DeleteJavaIOTemporaryPathFiles"), Fxmls.FilesDeleteJavaTempFxml));
             cases.add(new TestCase(index++, message("DeleteEmptyDirectories"), Fxmls.FilesDeleteEmptyDirFxml));
             cases.add(new TestCase(index++, message("FilesDelete"), Fxmls.FilesDeleteFxml));
             cases.add(new TestCase(index++, message("DeleteNestedDirectories"), Fxmls.FilesDeleteNestedDirFxml));

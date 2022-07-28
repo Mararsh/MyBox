@@ -21,7 +21,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxClipboardController {
 
-    protected ControlData2DSource sourceController;
+    protected BaseData2DSourceController sourceController;
     protected ControlData2DLoad targetTableController;
     protected Data2D dataTarget;
     protected int row, col;
@@ -43,7 +43,7 @@ public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxCli
 
     public void setParameters(ControlData2DLoad target) {
         try {
-            sourceController = (ControlData2DSource) loadController;
+            sourceController = (BaseData2DSourceController) loadController;
 
             this.parentController = target;
             targetTableController = target;

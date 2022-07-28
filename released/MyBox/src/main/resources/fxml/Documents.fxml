@@ -6,22 +6,19 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
-<?import javafx.scene.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.web.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.effect.*?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.collections.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.chart.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.paint.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="thisPane" minHeight="-Infinity" prefWidth="1000.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="mara.mybox.controller.DocumentController">
+<BorderPane fx:id="thisPane" minHeight="-Infinity" prefWidth="1000.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DocumentController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -43,7 +40,7 @@ License:    Apache License Version 2.0
                         <Label maxWidth="1.7976931348623157E308" text="%UserGuideNetworkTools" GridPane.rowIndex="4" />
                         <Label maxWidth="1.7976931348623157E308" text="%DeveloperGuide" GridPane.rowIndex="5" />
                         <Button fx:id="overviewButton" mnemonicParsing="false" text="Button" GridPane.columnIndex="1" />
-                        <Button fx:id="pdfButton" mnemonicParsing="false" text="Button" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Button fx:id="PDFButton" mnemonicParsing="false" text="Button" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <Button fx:id="imageButton" mnemonicParsing="false" text="Button" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <Button fx:id="desktopButton" mnemonicParsing="false" text="Button" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                         <Button fx:id="networkButton" mnemonicParsing="false" text="Button" GridPane.columnIndex="1" GridPane.rowIndex="4" />
@@ -65,13 +62,22 @@ License:    Apache License Version 2.0
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                     </VBox.margin>
                 </GridPane>
-                <HBox minHeight="-Infinity">
+                <HBox alignment="CENTER_LEFT" spacing="2.0">
                     <children>
-                        <Label fx:id="label" text="Label" wrapText="true" HBox.hgrow="NEVER">
+                        <Label fx:id="label" minHeight="-Infinity" text="Label" wrapText="true" HBox.hgrow="NEVER">
                             <VBox.margin>
                                 <Insets bottom="20.0" />
                             </VBox.margin>
                         </Label>
+                  <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#openFolder">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconOpen.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
                     </children>
                     <VBox.margin>
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

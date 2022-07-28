@@ -84,6 +84,18 @@ License:    Apache License Version 2.0
                                                 <ComboBox fx:id="scaleSelector" editable="true" prefWidth="100.0" />
                                             </children>
                                         </HBox>
+                              <FlowPane fx:id="sortPane" hgap="5.0" layoutX="15.0" layoutY="73.0" vgap="5.0" visible="false">
+                                 <children>
+                                    <Label maxWidth="1.7976931348623157E308" text="%Sort" />
+                                    <RadioButton mnemonicParsing="false" selected="true" text="%None">
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="sortGroup" />
+                                       </toggleGroup>
+                                    </RadioButton>
+                                    <RadioButton fx:id="sortVertivalRadio" mnemonicParsing="false" text="%VerticalAxis" toggleGroup="$sortGroup" />
+                                    <RadioButton fx:id="sortHorizontalRadio" mnemonicParsing="false" text="%HorizontalAxis" toggleGroup="$sortGroup" />
+                                 </children>
+                              </FlowPane>
                                     </children>
                                 </VBox>
                             </content>

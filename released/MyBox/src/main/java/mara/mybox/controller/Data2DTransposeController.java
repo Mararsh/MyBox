@@ -5,10 +5,11 @@ import java.util.List;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.DataTable;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -48,91 +49,27 @@ public class Data2DTransposeController extends BaseData2DHandleController {
 
     @Override
     public boolean checkOptions() {
-        if (isSettingValues) {
-            return true;
-        }
         boolean ok = super.checkOptions();
-        if (isAllPages()) {
-            infoLabel.setText(message("AllRowsLoadComments"));
-        }
+        targetController.setNotInTable(isAllPages());
         return ok;
-    }
-
-    @Override
-    public void handleAllTask() {
-        if (targetController == null) {
-            return;
-        }
-        task = new SingletonTask<Void>(this) {
-
-            @Override
-            protected boolean handle() {
-                data2D.setTask(task);
-                outputData = data2D.allRows(checkedColsIndices, showRowNumber());
-                return transpose();
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                if (targetController == null || targetController.inTable()) {
-                    updateTable();
-                } else {
-                    outputExternal();
-                }
-            }
-
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                data2D.setTask(null);
-                task = null;
-            }
-
-        };
-        start(task);
     }
 
     @Override
     public boolean handleRows() {
         try {
-            outputData = selectedData(showRowNumber());
+            boolean showRowNumber = showRowNumber();
+            outputData = selectedData(showRowNumber);
             if (outputData == null) {
                 return false;
             }
-            return transpose();
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e.toString());
-            return false;
-        }
-    }
-
-    public boolean transpose() {
-        try {
-            outputColumns = null;
-            if (outputData == null) {
-                return false;
-            }
-
-            if (showColNames()) {
-                List<String> names = checkedColsNames;
-                if (showRowNumber()) {
-                    names.add(0, message("SourceRowNumber"));
-                }
-                outputData.add(0, names);
-            }
+            boolean showColNames = showColNames();
             int rowsNumber = outputData.size(), columnsNumber = outputData.get(0).size();
-
+            outputColumns = new ArrayList<>();
+            int nameIndex = showRowNumber ? 1 : 0;
+            List<String> names = new ArrayList<>();
             if (firstCheck.isSelected()) {
-                outputColumns = new ArrayList<>();
-                if (showRowNumber()) {
-                    outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
-                }
-                List<String> names = new ArrayList<>();
                 for (int c = 0; c < rowsNumber; ++c) {
-                    String name = outputData.get(c).get(0);
+                    String name = outputData.get(c).get(nameIndex);
                     if (name == null || name.isBlank()) {
                         name = message("Columns") + (c + 1);
                     }
@@ -140,15 +77,39 @@ public class Data2DTransposeController extends BaseData2DHandleController {
                         name += "m";
                     }
                     names.add(name);
-                    outputColumns.add(new Data2DColumn(name, ColumnDefinition.ColumnType.String));
                 }
+            } else {
+                for (int c = 1; c <= rowsNumber; c++) {
+                    names.add(message("Column") + c);
+                }
+            }
+            if (showColNames) {
+                String name = message("ColumnName");
+                while (names.contains(name)) {
+                    name += "m";
+                }
+                names.add(0, name);
+            }
+            for (int c = 0; c < names.size(); c++) {
+                outputColumns.add(new Data2DColumn(names.get(c), ColumnDefinition.ColumnType.String));
             }
 
             List<List<String>> transposed = new ArrayList<>();
-            for (int r = 0; r < columnsNumber; ++r) {
+            for (int c = 0; c < columnsNumber; ++c) {
                 List<String> row = new ArrayList<>();
-                for (int c = 0; c < rowsNumber; ++c) {
-                    row.add(outputData.get(c).get(r));
+                if (showColNames) {
+                    if (showRowNumber) {
+                        if (c == 0) {
+                            row.add(message("SourceRowNumber"));
+                        } else {
+                            row.add(checkedColsNames.get(c - 1));
+                        }
+                    } else {
+                        row.add(checkedColsNames.get(c));
+                    }
+                }
+                for (int r = 0; r < rowsNumber; ++r) {
+                    row.add(outputData.get(r).get(c));
                 }
                 transposed.add(row);
             }
@@ -161,6 +122,25 @@ public class Data2DTransposeController extends BaseData2DHandleController {
             }
             MyBoxLog.error(e.toString());
             return false;
+        }
+    }
+
+    @Override
+    public DataFileCSV generatedFile() {
+        try {
+            DataTable tmpTable = data2D.toTmpTable(task, checkedColsIndices, showRowNumber(), false);
+            if (tmpTable == null) {
+                return null;
+            }
+            DataFileCSV csvData = tmpTable.transpose(task, showColNames(), firstCheck.isSelected());
+            tmpTable.drop();
+            return csvData;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return null;
         }
     }
 

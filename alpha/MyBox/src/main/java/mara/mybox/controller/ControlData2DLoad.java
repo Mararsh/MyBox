@@ -552,7 +552,9 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
 
     public void notifyStatus() {
         updateStatus();
-        statusNotify.set(!statusNotify.get());
+        if (statusNotify != null) {
+            statusNotify.set(!statusNotify.get());
+        }
         if (dataController != null) {
             dataController.notifyStatus();
         }

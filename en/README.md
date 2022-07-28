@@ -3,28 +3,27 @@
 # MyBox: Set of Easy Tools
 This is desktop application based on JavaFx to provide simple and easy functions. It's free and open sources.
 
+## What's New          
+2022-7-28 v6.5.7          
 
-## What's New        
-2022-6-11 v6.5.6          
-
-* Data. All data operations can have row filter which is boolean expression in JavaScript. Splice two data vertically or horizontally. 
-"Set Values" can be row expression. Delete data by row filter. Manage rules of "Set Styles".              
-* Calculation. Manage and edit JavaScript codes. Manage and edit JEXL(Java Expression Language) codes. 
-In JShell, class paths can be added, code completion suggestions can be popped(CTRL+1), and examples are better.                                
-* Chart. Parameters can be set in popped window(F12).                         
-* Solved. Some fxml files include local paths. Data should be sorted as type when click table header. 
-Error popped when click "Replace" in text menu. Wrong when statistic to all pages or database.                    
-
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.6)             
-                   
-
+* Data. Maximum rows number to taken in row filter. Column filter for "Set Styles". Set as median/mean/mode of column for "Set Values".
+ New calculation "Row Expression". Option about whether skip or count as zero to non-numeric for Statistic/Percentage/Normalization. 
+ Maximum rows numbers of results for Sort.                       
+* Performance. No memory limitation for Statistic/Sort/Transpose. Avoid switching to Fx thread frequently in non-Fx thread when calculate expression.                
+* Interface. Option about whether pop menu when mouse hovering some buttons. Improve some interfaces to avoid messed controls.                         
+* Solved. "Rename Files" deletes source files when not match(!! Sorry). Wrong when convert/calculate data in database tables. 
+Temporary files are kept when read image in System Clipboard and disk spaces may be eaten up when monitor(!! Sorry). 
+Image OCR fails. Add/Extract alpha channel in images fail.        
+ 
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.7)             
+  
 ## Download and Execution
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. 
 You can find them by clicking `releases` tab in main page of this project.        
 
 
 ### Source Codes
-[MyBox-6.5.6-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-src.zip)   41M(approximation)        
+[MyBox-6.5.7-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.7/MyBox-6.5.7-src.zip)   41M(approximation)        
 
 About structure, editing, and building of source codes, please refer to [Developement Guide](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-DevGuide-2.1-en.pdf) and
 [Packing Steps](https://mararsh.github.io/MyBox/pack_steps_en.html)        
@@ -35,9 +34,9 @@ Self-contain packages include all files and need not java env nor installation.
 
 | Platform | Link | Size(approximation)  | Launcher |        
 | --- | --- | ---  | ---  |
-| win10 x64 | [MyBox-6.5.6-win-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-win10-x64.zip)  | 210MB | MyBox.exe |
-| CentOS 7 x64 | [MyBox-6.5.6-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-CentOS7-x64.tar.gz)  | 242MB  | bin/MyBox  |
-| mac | [MyBox-6.5.6-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-mac.dmg)  | 220MB  |  MyBox-6.5.6.app   |        
+| win10 x64 | [MyBox-6.5.7-win-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.7/MyBox-6.5.7-win10-x64.zip)  | 210MB | MyBox.exe |
+| CentOS 7 x64 | [MyBox-6.5.7-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.7/MyBox-6.5.7-CentOS7-x64.tar.gz)  | 242MB  | bin/MyBox  |
+| mac | [MyBox-6.5.7-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.7/MyBox-6.5.7-mac.dmg)  | 220MB  |  MyBox-6.5.7.app   |        
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.        
 
@@ -46,16 +45,16 @@ When JRE or JDK([Oracle jdk](https://www.oracle.com/technetwork/java/javase/down
    
 | Platform | Link | Size(approximation)  | Requirements |        
 | --- | --- | ---  | ---  |
-| win | [MyBox-6.5.6-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-win-jar.zip)  | 144MB | Java 18 or higher |
-| linux | [MyBox-6.5.6-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-linux-jar.zip)  | 175MB  | Java 18 or higher |
-| mac | [MyBox-6.5.6-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.6/MyBox-6.5.6-mac-jar.zip)  |  147MB  | Java 18 or higher |        
+| win | [MyBox-6.5.7-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.7/MyBox-6.5.7-win-jar.zip)  | 144MB | Java 18 or higher |
+| linux | [MyBox-6.5.7-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.7/MyBox-6.5.7-linux-jar.zip)  | 175MB  | Java 18 or higher |
+| mac | [MyBox-6.5.7-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.7/MyBox-6.5.7-mac-jar.zip)  |  147MB  | Java 18 or higher |        
 
 
 Run following command to launch this program with Jar package:        
-<PRE><CODE>     java   -jar   MyBox-6.5.6.jar</CODE></PRE>        
+<PRE><CODE>     java   -jar   MyBox-6.5.7.jar</CODE></PRE>        
 
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:        
-<PRE><CODE>     java   -jar   MyBox-6.5.6.jar   /tmp/a1.jpg</CODE></PRE>        
+<PRE><CODE>     java   -jar   MyBox-6.5.7.jar   /tmp/a1.jpg</CODE></PRE>        
 
 ### Other addresses to download
 Download from cloud storage: [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)               
@@ -76,9 +75,9 @@ Configuration file is under "User Home":
 
 | Platform | Path of MyBox Configuration File |        
 | --- | --- |
-| win | `C:\users\UserName\mybox\MyBox_v6.5.6.ini`  |
-| linux | `/home/UserName/mybox/MyBox_v6.5.6.ini` |
-| mac | `/Users/UserName/mybox/MyBox_v6.5.6.ini` |        
+| win | `C:\users\UserName\mybox\MyBox_v6.5.7.ini`  |
+| linux | `/home/UserName/mybox/MyBox_v6.5.7.ini` |
+| mac | `/Users/UserName/mybox/MyBox_v6.5.7.ini` |        
 
 Add parameter "config=\"FilePath\"" when run jar to change configuration file temporarily.        
 Function "Settings" can be used to change configuration values.        
@@ -98,8 +97,8 @@ Function "Settings" can be used to change configuration values.
 # Documents        
 | Name | Version | Time | Link |        
 | --- | --- | --- |  --- |
-| Development Logs | 6.5.6 | 2022-6-11 | [html](#devLog) |
-| Shortcuts | 6.5.6 | 2022-6-11 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
+| Development Logs | 6.5.7 | 2022-7-28 | [html](#devLog) |
+| Shortcuts | 6.5.7 | 2022-6-11 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
 | Packing Steps | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps_en.html) |
 | Development Guide | 2.1 | 2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) |
 | User Guide - Overview | 5.0 | 2019-4-19 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-UserGuide-5.0-Overview-en.pdf) |
@@ -174,7 +173,7 @@ MyBox is based on following open sources:
 | JEXL | Calculation | https://commons.apache.org/proper/commons-jexl |
 
 # Current Version        
-Current version is 6.5.6. Its features are mentioned below in summary:          
+Current version is 6.5.7. Its features are mentioned below in summary:          
 
 *  [Cross Platforms](#Cross-platform)         
 *  [Internationalized](#Internationalized)         
@@ -213,6 +212,7 @@ Current version is 6.5.6. Its features are mentioned below in summary:
 *  [Data Tools](#dataTools)         
     -  [Edit Data](#editData)     
     -  [Row Filter](#rowFilter)
+    -  [Column Filter](#columnFilter)
     -  [Manufacture Data](#manufactureData)
     -  [Trim Data](#trimData)
     -  [Calculate Data](#calculateData)
@@ -862,7 +862,7 @@ JavaScript expression can be condition to filter data when manufacture/trim/calc
                 #{TableRowNumber}              
                 #{DataRowNumber}                            
                 #{<column_name>}                     
-	- Hovering "Example" button to pop the list of all valid placeholders.              
+	- Click "Example" button to pop the list of all valid placeholders.              
 	- To save the script, click "Edit" button.              
 3. When MyBox evaluates the expression:              
 	- Placeholders are replaced with actual values of each data row .              
@@ -873,7 +873,7 @@ JavaScript expression can be condition to filter data when manufacture/trim/calc
 | expression | meaning |    
 | --- | --- |    
 | #{DataRowNumber} % 2 == 0  |  data row number is even |    
-| #{TableRowNumber}  % 2 == 0 | even rows in current page |    
+| #{TableRowNumber}  % 2 == 1 | odd rows in current page |    
 | Math.abs(#{v1}) >= 0 | value of column "v1" is number |    
 | #{v1}) > 0 | value of column "v1" is larger than zero |    
 | #{v1} - #{v2}  < 100 | difference between values of "v1" and "v2" is less than 100  |    
@@ -882,7 +882,30 @@ JavaScript expression can be condition to filter data when manufacture/trim/calc
 | '#{v1}'.startsWith('Hello')  | value of column "v1" starts with "Hello" |    
 | var array = [ 'A', 'B', 'C'];array.includes('#{v1}') | value of column "v1" is one of  "A", "B", "C" |             
      
-![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataRowFilter-en.jpg)                  
+![Snap-dataRowFilter](https://mararsh.github.io/MyBox/snap-dataRowFilter-en.jpg)                  
+
+
+### Column Filter<a id="columnFilter" />            
+Column filter is used to determine whether take data cells:              
+
+1. Pick some of following conditions: 
+	- Whether the column value is: "Empy", "Zero",  "Negative",  "Positive",  "Number",  "Non-numeric"
+	- Compare the column value with(equal to, larger than, or less than):
+ 		- minimum,  lower quartile, median, mean,  upper quartile, maximum, outlier lines, mode, or inputted value                       
+ 		- Options: compare as strings, or compare as numbers                       
+	- Whether the column value satisfies "Column Expression":
+ 		- It is JavaScript codes which boolean value("true" or "false") finally.
+ 		- If the script is blank, then not filter(Satisfy condition).
+ 		- It can include only one placeholder: #{ColumnValue}       
+ 		- To save the script, click "Edit" button.
+ 		- When MyBox evaluates the expression:
+ 			- Placeholders are replaced with actual values of data cell.
+ 			- '#{ColumnValue} ' is handled as string while #{ColumnValue} is handled as number.
+2. The picked conditions are calcuated for each involved "Column Value".                    
+    Example, when "Empty" is picked, then each cell of filtered data are verified whether its value is empty.
+3. Column filter returns true(The data cell is taken) when one of picked conditions is true.                   
+            
+![Snap-dataColumnFilter](https://mararsh.github.io/MyBox/snap-dataColumnFilter.jpg)          
 
 ### Manufacture Data<a id="manufactureData" />       
 
@@ -892,6 +915,9 @@ JavaScript expression can be condition to filter data when manufacture/trim/calc
 	- Select columns. If no column is selected, then all columns are taken.             
 	- Set row filter.             
 2. Set values of selected data as following: 0, 1, blank, random, random of non-negative, or inputted value.
+	- Constant：0, 1, blank, or inputted value
+	- random, random of non-negative
+	- Statistic value: median, mean, mode
 3. When selected data are sqaure, whose rows number equals to columns number, they can be set as following: 
 gaussian distribution, identify matrix, upper triangular matrix, lower triangular matrix.             
 4. Set values of selected data as row expression:                       
@@ -903,7 +929,7 @@ gaussian distribution, identify matrix, upper triangular matrix, lower triangula
  		 		#{TableRowNumber}             
  		 		#{DataRowNumber}             
  		 		#{<column_name>}                    
- 		- Hovering "Example" button to pop the list of all valid placeholders.
+ 		- Click "Example" button to pop the list of all valid placeholders.
  		- To save the script, click "Edit" button.
 	- When MyBox evaluates the expression:
  		- Placeholders are replaced with actual values of each data row .
@@ -914,7 +940,7 @@ gaussian distribution, identify matrix, upper triangular matrix, lower triangula
 | expression | meaning |    
 | --- | --- |    
 | #{DataRowNumber} % 2 == 0  |  data row number is even |    
-| #{TableRowNumber}  % 2 == 0 | even rows in current page |    
+| #{TableRowNumber}  % 2 == 1 | odd rows in current page |    
 | Math.abs(#{v1}) + Math.PI * Math.sqrt(#{v2}) | calculation |    
 | '#{v1}'.replace(/hello/ig, 'Hello') | replace all "hello"(case-insensitive) as "Hello" in column "v1" |    
 | '#{v1}'.toLowerCase() | lower case of value of column "v1" |    
@@ -924,25 +950,28 @@ gaussian distribution, identify matrix, upper triangular matrix, lower triangula
 
 ![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataSetValues-en.jpg)                  
 
-#### Set styles   
+#### Set styles  / Mark Abnormal Values
 1. Add/Edit/Delete styles.
 2. Define conditions to determine which data cells to apply the style:
-       - Set range of data rows
-       - Select column names.
-       - Input row filter.
-       - Notice, data of a row number may be changed when some rows are added or deleted. 
+       - Range of data rows
+       - Column names.
+       - Row filter.              
+         Notice, data of a row number may be changed when some rows are added or deleted. 
          Example, when insert 2 rows before "row 6", original "row 12" becomes "row 14" while current "row 12" was "row 10". 
          So "row number" is not right way to locate a specific data row while rows number is changing. 
          A way to refer sepcial rows is the expression composed of column values.
+       - Column filter           
 3. Define style values:
-       - Sequence.
        - Font color, font size, background color, bold, etc.
        - More values in format of JavaFx CSS.
-4. Styles are applied to data one by one in order of their sequence values.
+4. Define title and sequence number of the style.
+5. Set whether the style marks abnormal values.
+6. All styles are applied to the data one by one in order of their sequence number.
 
-![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataStyles-en.jpg)                  
 
-#### Copy
+![Snap-dataStyles](https://mararsh.github.io/MyBox/snap-dataStyles-en.jpg)                  
+
+#### Copy/Filter/Query
 1. Select data:             
 	- Rows can be: current page, selected rows, or all pages.             
 	- Select columns. If no column is selected, then all columns are taken.             
@@ -953,7 +982,6 @@ gaussian distribution, identify matrix, upper triangular matrix, lower triangula
 #### Delete  
 1. Select data:             
 	- Rows can be: current page, selected rows, or all pages.             
-	- Select columns. If no column is selected, then all columns are taken.             
 	- Set row filter. 
 2. Option: Whether continue when error.
 3. If handle all pages of data file, then auto-backup before delete.            
@@ -966,7 +994,7 @@ gaussian distribution, identify matrix, upper triangular matrix, lower triangula
 2. Target file formats include csv, text, excel, xml, json, html, pdf. Options can be set.
 3. Exported data can splitted in multiples files as maximum line. 
 
-![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataExport-en.jpg)                  
+![Snap-dataExport](https://mararsh.github.io/MyBox/snap-dataExport-en.jpg)                  
 
 #### Convert as database table:
 1. Select data:             
@@ -976,7 +1004,7 @@ gaussian distribution, identify matrix, upper triangular matrix, lower triangula
 2. Create auto-increment column as primary key, or select columns as primary keys.
 3. Option: Whether import data.
 
-![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataConvertDB-en.jpg)                      
+![Snap-dataConvertDB](https://mararsh.github.io/MyBox/snap-dataConvertDB-en.jpg)                      
 
 ### Trim Data<a id="trimData" />       
 #### Sort     
@@ -987,13 +1015,10 @@ gaussian distribution, identify matrix, upper triangular matrix, lower triangula
 2. Calcuate:
 	- Select the column to sort and whether descending.
 	- Data type of column affects sorting results.
+	- Maximum rows number of results can be set.
 3. Target can be following: new csv/excel/text file, matrix, system clipboard, MyBox clipboard, database table.
 4. When rows are current page or selected ones, target can be defined location in table to insert/append/replace.                    
-5. When all of following are satisifed, sorting need concern memory limitation:   
-	- Handle all data rows(all pages)
-	- One of following:
- 		- Row filter is not blank.
- 		- Data is not database table.
+
 
 #### Transpose     
 1. Select data:             
@@ -1001,9 +1026,8 @@ gaussian distribution, identify matrix, upper triangular matrix, lower triangula
 	- Select columns. If no column is selected, then all columns are taken.             
 	- Set row filter. 
 2. Calcuate: Options to set first column as column names.
-3. Target can be following: new csv/excel/text file, matrix, system clipboard, MyBox clipboard, database table,
-or defined location in table to insert/append/replace.                              
-4. When handle all data rows(all pages), transpose need concern memory limitation.
+3. Target can be following: new csv/excel/text file, matrix, system clipboard, MyBox clipboard, database table.
+4. When rows are current page or selected ones, target can be defined location in table to insert/append/replace.                    
 
 #### Normalization   
 1. Select data:             
@@ -1013,10 +1037,11 @@ or defined location in table to insert/append/replace.
 2. Calcuate: 
 	- Accroding to: Columns/rows/all.
 	- Algorithms: MinMax(Range can be set), sum(L1), ZScore(L2).
+	- To non-numeric, skip or count as zero.
 3. Target can be following: new csv/excel/text file, matrix, system clipboard, MyBox clipboard, database table.
 4. When rows are current page or selected ones, target can be defined location in table to insert/append/replace.                    
      
-![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataNormalize-en.jpg)         
+![Snap-dataNormalize](https://mararsh.github.io/MyBox/snap-dataNormalize-en.jpg)         
 
 ### Calculate Data<a id="calculateData" />        
 
@@ -1033,18 +1058,11 @@ or defined location in table to insert/append/replace.
           upper extreme outlier line(E4), upper mild outlier line(E3), lower mild outlier line(E2), lower extreme outlier line(E1), mode                            
 	- Accroding to: Columns/rows/all.
 	- Set decimal scale.
+	- To non-numeric, skip or count as zero.
 3. Target can be following: new csv/excel/text file, matrix, system clipboard, MyBox clipboard, database table,
 or defined location in table to insert/append/replace. 
-4. When all of following are satisifed, statistic need concern memory limitation:   
-	- Handle all data rows(all pages)
-	- Calculate one of following: median, upper mild outlier line, lower mild outlier line, extreme outlier lines, mode. 
-	- One of following:  
- 		- According to all.
- 		- According to columns, and one of following:
- 			-  Row filter is not blank.             
- 			-  Data is not database table.             
-   
-![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataStatistic-en.jpg)             
+         
+![Snap-dataStatistic](https://mararsh.github.io/MyBox/snap-dataStatistic-en.jpg)             
 
 #### Simple Linear Regression             
 This tool is based on Apache Commons Math.                  
@@ -1084,7 +1102,7 @@ The regression does not store data, so calculation itself has not memory limitat
 	- Set random color to points and lines.
 	- Display residual chart's data in table.
 
-![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataSimpleRegression-en.jpg)            
+![Snap-dataSimpleRegression](https://mararsh.github.io/MyBox/snap-dataSimpleRegression-en.jpg)            
 
 
 #### Frequency Distributions             
@@ -1111,6 +1129,7 @@ The regression does not store data, so calculation itself has not memory limitat
 	- Accroding to: Columns/rows/all.
 	- Select how to treat negative values: zero or absoluate value.
 	- Set decimal scale.
+	- To non-numeric, skip or count as zero.
 3. Target can be following: new csv/excel/text file, matrix, system clipboard, MyBox clipboard, database table.
 4. When rows are current page or selected ones, target can be defined location in table to insert/append/replace.                    
    
@@ -1153,7 +1172,7 @@ The regression does not store data, so calculation itself has not memory limitat
        - "Category" column is always counted as strings.
 10. Display data of XY chart in table.      
      
-![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataChartXY-en.jpg)            
+![Snap-dataChartXY](https://mararsh.github.io/MyBox/snap-dataChartXY-en.jpg)            
 
 #### Pie Chart             
 1. Select data:             
@@ -1168,7 +1187,7 @@ The regression does not store data, so calculation itself has not memory limitat
 	- When display all data rows(all pages), need concern memory limitation.
 3. Display data of pie chart in table.        
 
-![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataChartPie-en.jpg)            
+![Snap-dataChartPie](https://mararsh.github.io/MyBox/snap-dataChartPie-en.jpg)            
 
 #### Box-and-whisker Chart             
 1. Box-and-whisker chart represents data distribution:               
@@ -1196,7 +1215,7 @@ The regression does not store data, so calculation itself has not memory limitat
 	- Random colors.
 4. Display data of pie chart in table.        
 
-![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataChartBox-en.jpg)            
+![Snap-dataChartBox](https://mararsh.github.io/MyBox/snap-dataChartBox-en.jpg)            
    
 #### Self Comparison Bars Chart   
 1. Self comparison bars show difference between data and reference values.               
@@ -1225,7 +1244,7 @@ The regression does not store data, so calculation itself has not memory limitat
 5. Edit data in chart.
 6. Edit html of chart.      		-     
 
-![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataChartSelfComparison-en.jpg)            
+![Snap-dataChartSelfComparison](https://mararsh.github.io/MyBox/snap-dataChartSelfComparison-en.jpg)            
     
 #### Comparison Bars Chart          
 1. Comparison bars show difference between two series of data.                 
@@ -1254,7 +1273,7 @@ The regression does not store data, so calculation itself has not memory limitat
 5. Edit data in chart.
 6. Edit html of chart.    	-     
 
-![Snap-dataChart](https://mararsh.github.io/MyBox/snap-dataChartComparison-en.jpg)            
+![Snap-dataChartComparison](https://mararsh.github.io/MyBox/snap-dataChartComparison-en.jpg)            
  
 ### Manage Data<a id="manageData" />          
 This tool manages following objects:            
@@ -1289,7 +1308,7 @@ This tool manages following objects:
 	- Rows/Columns number by: Data A, Data B, longer, shorter.
 4. Target can be following: new csv/excel/text file, matrix, system clipboard, MyBox clipboard, database table.
 
-![Snap-manageData](https://mararsh.github.io/MyBox/snap-dataSplice-en.jpg)        
+![Snap-dataSplice](https://mararsh.github.io/MyBox/snap-dataSplice-en.jpg)        
 
 ### Data File<a id="dataFiles" />
 1. Edit data file:
@@ -1305,7 +1324,7 @@ This tool manages following objects:
 	- Split files as maximum lines.
 3. Merge csv/excel/text data files.             
 
-![Snap-dataEdit](https://mararsh.github.io/MyBox/snap-dataFile-en.jpg)              
+![Snap-dataFile](https://mararsh.github.io/MyBox/snap-dataFile-en.jpg)              
 
 ### Data in System Clipboard<a id="dataInMyBoxClipboard" />                          
 1. Select rows and columns to copy.
@@ -1329,7 +1348,7 @@ This tool manages following objects:
 3. Unary matrix calculation: Transpose, Row Echelon Form, Reduced Row Echelon Form, Determinant By Elimination, Determinant By Complement Minor, Inverse Matrix By Elimination, Inverse Matrix By Adjoint, Matrix Rank, Adjoint Matrix, Complement Minor, Normalize, Multiply Number, Divide By Number, Power.
 4. Binary matrices calculation: Plus, Minus, Hadamard Product, Kronecker Product, Horizontally Merge, Vertically Merge.
 
-![Snap-dataInMC](https://mararsh.github.io/MyBox/snap-dataMatrix-en.jpg)           
+![Snap-dataMatrix](https://mararsh.github.io/MyBox/snap-dataMatrix-en.jpg)           
 
 ### Database Tables<a id="dataTables" />
 1. Table name and column names should satisfy "Limitations of SQL identifier":
@@ -1356,7 +1375,7 @@ This tool manages following objects:
       - Invalid characters are converted as underscore characters.
       - If it does not start with a letter, character "a" is added in front of it.            
 
-![Snap-dataInMC](https://mararsh.github.io/MyBox/snap-dataTables-en.jpg)         
+![Snap-dataTables](https://mararsh.github.io/MyBox/snap-dataTables-en.jpg)         
 
 ### Database SQL<a id="dbSQL" />
 1. Provide examples of SQL statements.
@@ -1366,7 +1385,7 @@ This tool manages following objects:
 5. SQL codes can be organized as information of tree.
 6. Can load or save as external files.       
 
-![Snap-dataInMC](https://mararsh.github.io/MyBox/snap-dbSQL-en.jpg)          
+![Snap-dbSQL](https://mararsh.github.io/MyBox/snap-dbSQL-en.jpg)          
 
 
 ### JShell(Java interactive coding tool)<a id="JShell" />              
@@ -1422,14 +1441,14 @@ This tool helps to run JEXL in GUI:
 6. If all variables and paramters have valid values, result is shown in right pane.
 7. JEXL codes are organized in tree. Examples are provided.        
 
-![snap-JShell](https://mararsh.github.io/MyBox/snap-JEXL-en.jpg)            
+![snap-JEXL](https://mararsh.github.io/MyBox/snap-JEXL-en.jpg)            
                     
 
 ### Javascript<a id="Javascript" />             
 This tool helps to edit, run, save Javascript codes.                                
 Javascript codes are organized in tree. Examples are provided.                 
 
-![snap-JShell](https://mararsh.github.io/MyBox/snap-Javascript-en.jpg)            
+![snap-Javascript](https://mararsh.github.io/MyBox/snap-Javascript-en.jpg)            
 
 
 ### Common Data Management<a id="dataManage" />
@@ -2094,6 +2113,19 @@ Decoding does reverse conversion.
 5. About
 
 # Development Logs <a id="devLog"></a>           
+2022-7-28 v6.5.7          
+
+* Data. Maximum rows number to taken in row filter. Column filter for "Set Styles". Set as median/mean/mode of column for "Set Values".
+ New calculation "Row Expression". Option about whether skip or count as zero to non-numeric for Statistic/Percentage/Normalization. 
+ Maximum rows numbers of results for Sort.                       
+* Performance. No memory limitation for Statistic/Sort/Transpose. Avoid switching to Fx thread frequently in non-Fx thread when calculate expression.                
+* Interface. Option about whether pop menu when mouse hovering some buttons. Improve some interfaces to avoid messed controls.                         
+* Solved. "Rename Files" deletes source files when not match(!! Sorry). Wrong when convert/calculate data in database tables. 
+Temporary files are kept when read image in System Clipboard and disk spaces may be eaten up when monitor(!! Sorry). 
+Image OCR fails. Add/Extract alpha channel in images fail.        
+ 
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.7)             
+
 2022-6-11 v6.5.6          
 
 * Data. All data operations can have row filter which is boolean expression in JavaScript. Splice two data vertically or horizontally. 

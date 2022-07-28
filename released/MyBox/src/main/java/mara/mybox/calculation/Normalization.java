@@ -2,6 +2,7 @@ package mara.mybox.calculation;
 
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleMatrixTools;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppValues;
 
 /**
@@ -11,7 +12,7 @@ import mara.mybox.value.AppValues;
  */
 public class Normalization {
 
-    protected double from, to, max, min, sum, mean, variance, width, maxAbs;
+    protected double from, to, max, min, sum, mean, variance, width, maxAbs, invalidAs;
     protected Algorithm a;
     protected double[] sourceVector, resultVector;
     protected double[][] sourceMatrix, resultMatrix;
@@ -33,6 +34,7 @@ public class Normalization {
         a = Algorithm.MinMax;
         sourceVector = null;
         sourceMatrix = null;
+        invalidAs = Double.NaN;
     }
 
     private void resetResults() {
@@ -53,6 +55,7 @@ public class Normalization {
             n.variance = variance;
             n.width = width;
             n.maxAbs = maxAbs;
+            n.invalidAs = invalidAs;
             return n;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -99,13 +102,24 @@ public class Normalization {
             }
             min = Double.MAX_VALUE;
             max = -Double.MAX_VALUE;
+            boolean skip = DoubleTools.invalidDouble(invalidAs);
             for (double d : sourceVector) {
+                if (DoubleTools.invalidDouble(d)) {
+                    if (skip) {
+                        continue;
+                    } else {
+                        d = invalidAs;
+                    }
+                }
                 if (d > max) {
                     max = d;
                 }
                 if (d < min) {
                     min = d;
                 }
+            }
+            if (min == Double.MAX_VALUE) {
+                return false;
             }
             double k = max - min;
             if (k == 0) {
@@ -114,7 +128,16 @@ public class Normalization {
             k = (to - from) / k;
             resultVector = new double[len];
             for (int i = 0; i < len; i++) {
-                resultVector[i] = from + k * (sourceVector[i] - min);
+                double d = sourceVector[i];
+                if (DoubleTools.invalidDouble(d)) {
+                    if (skip) {
+                        resultVector[i] = Double.NaN;
+                        continue;
+                    } else {
+                        d = invalidAs;
+                    }
+                }
+                resultVector[i] = from + k * (d - min);
             }
             return true;
         } catch (Exception e) {
@@ -134,12 +157,27 @@ public class Normalization {
                 return false;
             }
             sum = 0;
+            boolean skip = DoubleTools.invalidDouble(invalidAs);
             for (double d : sourceVector) {
+                if (DoubleTools.invalidDouble(d)) {
+                    if (skip) {
+                        continue;
+                    } else {
+                        d = invalidAs;
+                    }
+                }
                 sum += d;
             }
             mean = sum / len;
             variance = 0;
             for (double d : sourceVector) {
+                if (DoubleTools.invalidDouble(d)) {
+                    if (skip) {
+                        continue;
+                    } else {
+                        d = invalidAs;
+                    }
+                }
                 double v = d - mean;
                 variance += v * v;
             }
@@ -149,7 +187,16 @@ public class Normalization {
             }
             resultVector = new double[len];
             for (int i = 0; i < len; i++) {
-                resultVector[i] = (sourceVector[i] - mean) / variance;
+                double d = sourceVector[i];
+                if (DoubleTools.invalidDouble(d)) {
+                    if (skip) {
+                        resultVector[i] = Double.NaN;
+                        continue;
+                    } else {
+                        d = invalidAs;
+                    }
+                }
+                resultVector[i] = (d - mean) / variance;
             }
             return true;
         } catch (Exception e) {
@@ -169,7 +216,15 @@ public class Normalization {
                 return false;
             }
             sum = 0;
+            boolean skip = DoubleTools.invalidDouble(invalidAs);
             for (double d : sourceVector) {
+                if (DoubleTools.invalidDouble(d)) {
+                    if (skip) {
+                        continue;
+                    } else {
+                        d = invalidAs;
+                    }
+                }
                 sum += Math.abs(d);
             }
             if (sum == 0) {
@@ -177,7 +232,16 @@ public class Normalization {
             }
             resultVector = new double[len];
             for (int i = 0; i < len; i++) {
-                resultVector[i] = sourceVector[i] / sum;
+                double d = sourceVector[i];
+                if (DoubleTools.invalidDouble(d)) {
+                    if (skip) {
+                        resultVector[i] = Double.NaN;
+                        continue;
+                    } else {
+                        d = invalidAs;
+                    }
+                }
+                resultVector[i] = d / sum;
             }
             return true;
         } catch (Exception e) {
@@ -197,7 +261,15 @@ public class Normalization {
                 return false;
             }
             maxAbs = 0;
+            boolean skip = DoubleTools.invalidDouble(invalidAs);
             for (double d : sourceVector) {
+                if (DoubleTools.invalidDouble(d)) {
+                    if (skip) {
+                        continue;
+                    } else {
+                        d = invalidAs;
+                    }
+                }
                 double abs = Math.abs(d);
                 if (abs > maxAbs) {
                     maxAbs = abs;
@@ -205,10 +277,19 @@ public class Normalization {
             }
             resultVector = new double[len];
             for (int i = 0; i < len; i++) {
+                double d = sourceVector[i];
+                if (DoubleTools.invalidDouble(d)) {
+                    if (skip) {
+                        resultVector[i] = Double.NaN;
+                        continue;
+                    } else {
+                        d = invalidAs;
+                    }
+                }
                 if (maxAbs == 0 || width == 0) {
                     resultVector[i] = 0;
                 } else {
-                    resultVector[i] = width * sourceVector[i] / maxAbs;
+                    resultVector[i] = width * d / maxAbs;
                 }
             }
             return true;
@@ -321,6 +402,15 @@ public class Normalization {
 
     public Normalization setWidth(double width) {
         this.width = width;
+        return this;
+    }
+
+    public double getInvalidAs() {
+        return invalidAs;
+    }
+
+    public Normalization setInvalidAs(double invalidAs) {
+        this.invalidAs = invalidAs;
         return this;
     }
 

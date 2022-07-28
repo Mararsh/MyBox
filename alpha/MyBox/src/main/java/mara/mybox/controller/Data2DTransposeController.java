@@ -48,6 +48,13 @@ public class Data2DTransposeController extends BaseData2DHandleController {
     }
 
     @Override
+    public boolean checkOptions() {
+        boolean ok = super.checkOptions();
+        targetController.setNotInTable(isAllPages());
+        return ok;
+    }
+
+    @Override
     public boolean handleRows() {
         try {
             boolean showRowNumber = showRowNumber();

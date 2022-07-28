@@ -56,7 +56,7 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </CheckBox>               
-                        <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction" onMouseEntered="#popSaveAs">
+                        <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>

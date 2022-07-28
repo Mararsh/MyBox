@@ -20,6 +20,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.calculation.DescriptiveStatistic;
+import mara.mybox.data2d.DataTable;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -387,55 +388,94 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
     @Override
     public void readData() {
         try {
-            if (isAllPages()) {
-                outputData = data2D.allRows(dataColsIndices, rowsRadio.isSelected() && categorysCol < 0);
-            } else {
-                outputData = selectedData(dataColsIndices, rowsRadio.isSelected() && categorysCol < 0);
-            }
-            if (outputData == null) {
-                return;
-            }
+            boolean ok;
             calculation.setTask(task);
-            if (!calculation.statisticData(outputData)) {
-                calculation.setTask(null);
+            if (isAllPages()) {
+                ok = handlePages();
+            } else {
+                ok = handleSelected();
+            }
+            calculation.setTask(null);
+            if (!ok) {
                 outputData = null;
                 return;
             }
-
-            calculation.setTask(null);
             outputColumns = calculation.getOutputColumns();
             outputData = calculation.getOutputData();
-            if (!rowsRadio.isSelected()) {
-                List<List<String>> transposed = new ArrayList<>();
-                for (int r = 1; r < outputColumns.size(); ++r) {
-                    List<String> row = new ArrayList<>();
-                    row.add(outputColumns.get(r).getColumnName());
-                    for (int c = 0; c < outputData.size(); ++c) {
-                        row.add(outputData.get(c).get(r));
-                    }
-                    transposed.add(row);
-                }
-                outputColumns = new ArrayList<>();
-                outputColumns.add(new Data2DColumn(categoryName(), ColumnDefinition.ColumnType.String));
-                String prefix = (allRadio.isSelected() ? message("All") : message("Column")) + "-";
-                outputColumns.add(new Data2DColumn(prefix + message("Mean"), ColumnDefinition.ColumnType.Double));
-                outputColumns.add(new Data2DColumn(prefix + message("MinimumQ0"), ColumnDefinition.ColumnType.Double));
-                outputColumns.add(new Data2DColumn(prefix + message("LowerQuartile"), ColumnDefinition.ColumnType.Double));
-                outputColumns.add(new Data2DColumn(prefix + message("Median"), ColumnDefinition.ColumnType.Double));
-                outputColumns.add(new Data2DColumn(prefix + message("UpperQuartile"), ColumnDefinition.ColumnType.Double));
-                outputColumns.add(new Data2DColumn(prefix + message("MaximumQ4"), ColumnDefinition.ColumnType.Double));
-                outputColumns.add(new Data2DColumn(prefix + message("UpperExtremeOutlierLine"), ColumnDefinition.ColumnType.Double));
-                outputColumns.add(new Data2DColumn(prefix + message("UpperMildOutlierLine"), ColumnDefinition.ColumnType.Double));
-                outputColumns.add(new Data2DColumn(prefix + message("LowerMildOutlierLine"), ColumnDefinition.ColumnType.Double));
-                outputColumns.add(new Data2DColumn(prefix + message("LowerExtremeOutlierLine"), ColumnDefinition.ColumnType.Double));
-                outputData = transposed;
+            if (rowsRadio.isSelected()) {
+                return;
             }
 
+            List<List<String>> transposed = new ArrayList<>();
+            for (int r = 1; r < outputColumns.size(); ++r) {
+                List<String> row = new ArrayList<>();
+                row.add(outputColumns.get(r).getColumnName());
+                for (int c = 0; c < outputData.size(); ++c) {
+                    row.add(outputData.get(c).get(r));
+                }
+                transposed.add(row);
+            }
+            outputColumns = new ArrayList<>();
+            outputColumns.add(new Data2DColumn(categoryName(), ColumnDefinition.ColumnType.String));
+            String prefix = (allRadio.isSelected() ? message("All") : message("Column")) + "-";
+            outputColumns.add(new Data2DColumn(prefix + message("Mean"), ColumnDefinition.ColumnType.Double));
+            outputColumns.add(new Data2DColumn(prefix + message("MinimumQ0"), ColumnDefinition.ColumnType.Double));
+            outputColumns.add(new Data2DColumn(prefix + message("LowerQuartile"), ColumnDefinition.ColumnType.Double));
+            outputColumns.add(new Data2DColumn(prefix + message("Median"), ColumnDefinition.ColumnType.Double));
+            outputColumns.add(new Data2DColumn(prefix + message("UpperQuartile"), ColumnDefinition.ColumnType.Double));
+            outputColumns.add(new Data2DColumn(prefix + message("MaximumQ4"), ColumnDefinition.ColumnType.Double));
+            outputColumns.add(new Data2DColumn(prefix + message("UpperExtremeOutlierLine"), ColumnDefinition.ColumnType.Double));
+            outputColumns.add(new Data2DColumn(prefix + message("UpperMildOutlierLine"), ColumnDefinition.ColumnType.Double));
+            outputColumns.add(new Data2DColumn(prefix + message("LowerMildOutlierLine"), ColumnDefinition.ColumnType.Double));
+            outputColumns.add(new Data2DColumn(prefix + message("LowerExtremeOutlierLine"), ColumnDefinition.ColumnType.Double));
+            outputData = transposed;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
             }
             outputData = null;
+        }
+    }
+
+    public boolean handleSelected() {
+        try {
+            outputData = selectedData(dataColsIndices, rowsRadio.isSelected() && categorysCol < 0);
+            if (outputData == null) {
+                return false;
+            }
+            return calculation.statisticData(outputData);
+        } catch (Exception e) {
+            error = e.toString();
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            return false;
+        }
+    }
+
+    public boolean handlePages() {
+        try {
+            data2D.startTask(task, rowFilterController.rowFilter);
+            DataTable tmpTable = data2D.toTmpTable(task, dataColsIndices, false, true);
+            if (tmpTable == null) {
+                outputData = null;
+                return false;
+            }
+            tmpTable.startTask(task, null);
+            calculation.setData2D(tmpTable)
+                    .setColsIndices(tmpTable.columnIndices().subList(1, tmpTable.columnsNumber()))
+                    .setColsNames(tmpTable.columnNames().subList(1, tmpTable.columnsNumber()));
+            boolean ok = calculation.statisticAllByColumns();
+            tmpTable.stopFilter();
+            tmpTable.drop();
+            data2D.stopFilter();
+            return ok;
+        } catch (Exception e) {
+            error = e.toString();
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            return false;
         }
     }
 

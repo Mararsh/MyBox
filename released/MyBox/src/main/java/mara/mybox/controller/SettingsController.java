@@ -215,7 +215,7 @@ public class SettingsController extends BaseController {
 
             splitPaneSensitiveCheck.setSelected(UserConfig.getBoolean("ControlSplitPanesSensitive", false));
             mousePassControlPanesCheck.setSelected(UserConfig.getBoolean("MousePassControlPanes", true));
-            popColorSetCheck.setSelected(UserConfig.getBoolean("PopColorSetWhenMousePassing", true));
+            popColorSetCheck.setSelected(UserConfig.getBoolean("PopColorSetWhenMouseHovering", true));
 
             checkLanguage();
             checkPdfMem();
@@ -524,7 +524,7 @@ public class SettingsController extends BaseController {
 
     @FXML
     protected void popColorSet() {
-        UserConfig.setBoolean("PopColorSetWhenMousePassing", popColorSetCheck.isSelected());
+        UserConfig.setBoolean("PopColorSetWhenMouseHovering", popColorSetCheck.isSelected());
     }
 
     @FXML

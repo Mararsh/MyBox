@@ -33,7 +33,7 @@ import org.apache.commons.csv.CSVRecord;
 public class Data2DSpliceController extends BaseData2DController {
 
     @FXML
-    protected ControlData2DSource dataAController, dataBController;
+    protected BaseData2DSourceController dataAController, dataBController;
     @FXML
     protected RadioButton horizontalRadio, aRadio, bRadio, longerRadio, shorterRadio;
     @FXML
@@ -90,15 +90,19 @@ public class Data2DSpliceController extends BaseData2DController {
     @Override
     public void okAction() {
         if (dataAController.data2D == null || !dataAController.data2D.hasData()) {
-            popError(message("NoData") + ": " + message("DataA"));
+            popError(message("DataA") + ": " + message("NoData"));
+            return;
+        } else if (!dataAController.checkSelections()) {
+            popError(message("DataA") + ": "
+                    + (dataAController.error != null ? dataAController.error : message("SelectToHanle")));
             return;
         }
         if (dataBController.data2D == null || !dataBController.data2D.hasData()) {
-            popError(message("NoData") + ": " + message("DataB"));
+            popError(message("DataB") + ": " + message("NoData"));
             return;
-        }
-        if (!dataAController.checkSelections() || !dataBController.checkSelections()) {
-            popError(message("SelectToHanle"));
+        } else if (!dataBController.checkSelections()) {
+            popError(message("DataB") + ": "
+                    + (dataBController.error != null ? dataBController.error : message("SelectToHanle")));
             return;
         }
         if (task != null) {
@@ -112,27 +116,27 @@ public class Data2DSpliceController extends BaseData2DController {
             protected boolean handle() {
                 try {
                     DataFileCSV csvA, csvB;
-                    dataAController.data2D.setTask(this);
+                    dataAController.data2D.startTask(this, dataAController.rowFilterController.rowFilter);
                     if (dataAController.isAllPages()) {
                         csvA = dataAController.data2D.copy(dataAController.checkedColsIndices, false, true);
                     } else {
                         csvA = DataFileCSV.save(task, dataAController.checkedColumns,
                                 dataAController.selectedData(false));
                     }
-                    dataAController.data2D.setTask(null);
+                    dataAController.data2D.stopTask();
                     if (csvA == null) {
                         error = message("InvalidData") + ": " + message("DataA");
                         return false;
                     }
 
-                    dataBController.data2D.setTask(this);
+                    dataBController.data2D.startTask(this, dataBController.rowFilterController.rowFilter);
                     if (dataBController.isAllPages()) {
                         csvB = dataBController.data2D.copy(dataBController.checkedColsIndices, false, true);
                     } else {
                         csvB = DataFileCSV.save(task, dataBController.checkedColumns,
                                 dataBController.selectedData(false));
                     }
-                    dataBController.data2D.setTask(null);
+                    dataBController.data2D.stopTask();
                     if (csvB == null) {
                         error = message("InvalidData") + ": " + message("DataB");
                         return false;
@@ -152,14 +156,14 @@ public class Data2DSpliceController extends BaseData2DController {
 
             @Override
             protected void whenSucceeded() {
-                DataFileCSV.open(myController, targetCSV, targetController.target);
+                DataFileCSV.openCSV(myController, targetCSV, targetController.target);
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
-                dataAController.data2D.setTask(null);
-                dataBController.data2D.setTask(null);
+                dataAController.data2D.stopTask();
+                dataBController.data2D.stopTask();
                 task = null;
             }
 

@@ -266,7 +266,7 @@ public class HtmlWriteTools {
                 String newHead;
                 Charset headCharset = HtmlReadTools.charsetInHead(head);
                 if (headCharset != null) {
-                    newHead = FindReplaceString.replace(head, headCharset.name(), name, 0, false, true, false);
+                    newHead = FindReplaceString.replaceFirst(head, headCharset.name(), name, 0, false, true, false);
                 } else {
                     newHead = head + "\n<meta http-equiv=\"Content-Type\" content=\"text/html;charset=" + name + "\"/>";
                 }

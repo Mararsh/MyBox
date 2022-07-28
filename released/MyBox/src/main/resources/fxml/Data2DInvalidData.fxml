@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DRowExpressionController">
+    <children>
+        <HBox alignment="CENTER" VBox.vgrow="NEVER">
+            <children>
+                <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%InvalidData" textAlignment="CENTER" VBox.vgrow="NEVER" />
+            </children>
+        </HBox>
+        <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+            <tabs>
+                <Tab fx:id="dataTab" text="%Data">
+                    <content>
+                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                            <content>
+                                <VBox fx:id="dataBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                    <children>
+                                        <FlowPane fx:id="rowsPane" hgap="2.0" vgap="2.0">
+                                            <children>
+                                                <Label text="%Rows" />
+                                                <RadioButton fx:id="currentPageRadio" layoutX="138.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%CurrentPage">
+                                                    <toggleGroup>
+                                                        <ToggleGroup fx:id="rowsGroup" />
+                                                    </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton fx:id="selectedRadio" mnemonicParsing="false" text="%Selected" toggleGroup="$rowsGroup" />
+                                                <RadioButton fx:id="allPagesRadio" layoutX="43.0" layoutY="10.0" mnemonicParsing="false" text="%AllPages" toggleGroup="$rowsGroup" />
+                                            </children>
+                                        </FlowPane>
+                                        <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                            <children>
+                                                <Label text="%Columns" />
+                                                <Button fx:id="selectAllColumnsButton" mnemonicParsing="false" onAction="#selectAllColumns">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconSelectAll.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="selectNoneColumnsButton" mnemonicParsing="false" onAction="#selectNoneColumn">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconSelectNone.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Label fx:id="dataLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
+                                                <ImageView fx:id="tableTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconTipsRight.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </children>
+                                        </HBox>
+                                        <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                                            <columns>
+                                                <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308" prefWidth="-1.0">
+                                                    <graphic>
+                                                        <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
+                                                    </graphic>
+                                                </TableColumn>
+                                                <TableColumn fx:id="dataRowColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="-1.0" text="%DataRow" />
+                                            </columns>
+                                        </TableView>
+                                        <FlowPane fx:id="paginationPane" alignment="CENTER_RIGHT" hgap="2.0" vgap="2.0">
+                                            <children>
+                                                <Label fx:id="selectedLabel" minHeight="-Infinity" wrapText="true">
+                                                    <FlowPane.margin>
+                                                        <Insets right="20.0" />
+                                                    </FlowPane.margin>
+                                                </Label>
+                                                <Label fx:id="dataSizeLabel" minHeight="-Infinity" wrapText="true">
+                                                    <FlowPane.margin>
+                                                        <Insets right="20.0" />
+                                                    </FlowPane.margin>
+                                                </Label>
+                                                <Label text="%PageSize" />
+                                                <ComboBox fx:id="pageSizeSelector" editable="true" prefWidth="80.0" />
+                                                <Label text="%Page" />
+                                                <ComboBox fx:id="pageSelector" editable="true" prefWidth="80.0" />
+                                                <Label fx:id="pageLabel" />
+                                                <Button fx:id="goPageButton" mnemonicParsing="false" onAction="#goPage">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconGo.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="pageFirstButton" mnemonicParsing="false" onAction="#pageFirstAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconFirst.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="pageLastButton" mnemonicParsing="false" onAction="#pageLastAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconLast.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="pagePreviousButton" mnemonicParsing="false" onAction="#pagePreviousAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconPrevious.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="pageNextButton" mnemonicParsing="false" onAction="#pageNextAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconNext.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                            </children>
+                                        </FlowPane>
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </padding>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+                    </content>
+                </Tab>
+                <Tab fx:id="filterTab" text="%RowFilter">
+                    <content>
+                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                            <content>
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                    <children>
+                                        <fx:include fx:id="rowFilter" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DRowFilter.fxml" VBox.vgrow="ALWAYS" />
+                                    </children>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+                    </content>
+                </Tab>
+                <Tab text="%Conditions">
+                    <content>
+                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                            <content>
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                    <padding>
+                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                    </padding>
+                                    <children>
+                                        <FlowPane hgap="2.0" vgap="2.0">
+                                            <children>
+                                                <CheckBox fx:id="emptyCheck" mnemonicParsing="false" text="%EmptyValue" />
+                                            </children>
+                                        </FlowPane>
+                                        <FlowPane hgap="2.0" layoutX="15.0" layoutY="15.0" vgap="2.0">
+                                            <children>
+                                                <CheckBox fx:id="equalCheck" mnemonicParsing="false" text="==">
+                                                    <FlowPane.margin>
+                                                        <Insets />
+                                                    </FlowPane.margin>
+                                                </CheckBox>
+                                                <TextField fx:id="equalInput" prefWidth="60.0" />
+                                                <CheckBox fx:id="notEqualCheck" mnemonicParsing="false" text="!=">
+                                                    <FlowPane.margin>
+                                                        <Insets left="20.0" />
+                                                    </FlowPane.margin>
+                                                </CheckBox>
+                                                <TextField fx:id="notEqualInput" prefWidth="60.0" />
+                                                <CheckBox fx:id="greaterCheck" mnemonicParsing="false" text="&gt;">
+                                                    <FlowPane.margin>
+                                                        <Insets left="20.0" />
+                                                    </FlowPane.margin>
+                                                </CheckBox>
+                                                <TextField fx:id="greaterInput" prefWidth="60.0" />
+                                                <CheckBox fx:id="greaterEqualCheck" mnemonicParsing="false" text="&gt;=">
+                                                    <FlowPane.margin>
+                                                        <Insets left="20.0" />
+                                                    </FlowPane.margin>
+                                                </CheckBox>
+                                                <TextField fx:id="greaterEqualInput" prefWidth="60.0" />
+                                                <CheckBox fx:id="lessCheck" mnemonicParsing="false" text="&lt;">
+                                                    <FlowPane.margin>
+                                                        <Insets left="20.0" />
+                                                    </FlowPane.margin>
+                                                </CheckBox>
+                                                <TextField fx:id="lessInput" prefWidth="60.0" />
+                                                <CheckBox fx:id="lessEqualCheck" mnemonicParsing="false" text="&lt;=">
+                                                    <FlowPane.margin>
+                                                        <Insets left="20.0" />
+                                                    </FlowPane.margin>
+                                                </CheckBox>
+                                                <TextField fx:id="lessEqualInput" prefWidth="60.0" />
+                                            </children>
+                                        </FlowPane>
+                                        <VBox spacing="5.0">
+                                            <children>
+                                                <Label text="%Outside" />
+                                                <FlowPane hgap="2.0" vgap="2.0">
+                                                    <children>
+                                                        <CheckBox fx:id="e4Check" mnemonicParsing="false" text="%UpperExtremeOutlierLine" />
+                                                        <CheckBox fx:id="e3Check" mnemonicParsing="false" text="%UpperMildOutlierLine" />
+                                                        <CheckBox fx:id="e2Check" mnemonicParsing="false" text="%LowerMildOutlierLine" />
+                                                        <CheckBox fx:id="e1Check" mnemonicParsing="false" text="%LowerExtremeOutlierLine" />
+                                                    </children>
+                                                </FlowPane>
+                                                <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+                                                    <children>
+                                                        <CheckBox fx:id="q1Check" mnemonicParsing="false" text="%LowerQuartile" />
+                                                        <CheckBox fx:id="q3Check" mnemonicParsing="false" text="%UpperQuartile" />
+                                                        <CheckBox fx:id="percentileCheck" mnemonicParsing="false" text="%Percentile">
+                                                            <FlowPane.margin>
+                                                                <Insets left="20.0" />
+                                                            </FlowPane.margin>
+                                                        </CheckBox>
+                                                        <TextField fx:id="percentileInput" prefWidth="60.0" />
+                                                    </children>
+                                                </FlowPane>
+                                            </children>
+                                            <VBox.margin>
+                                                <Insets top="10.0" />
+                                            </VBox.margin>
+                                        </VBox>
+                                    </children>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+                    </content>
+                </Tab>
+                <Tab text="%Handle">
+                    <content>
+                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                            <content>
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                    <padding>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                    </padding>
+                                    <children>
+                                        <FlowPane hgap="5.0" vgap="5.0">
+                                            <children>
+                                                <RadioButton mnemonicParsing="false" selected="true" text="%SetValues">
+                                                    <toggleGroup>
+                                                        <ToggleGroup fx:id="handleGroup" />
+                                                    </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton mnemonicParsing="false" text="%DeleteRows" toggleGroup="$handleGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%SetStyles" toggleGroup="$handleGroup" />
+                                            </children>
+                                        </FlowPane>
+                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                            <content>
+                                                <VBox fx:id="handleBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                                    <children>
+                                                        <fx:include fx:id="value" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DSetValue.fxml" VBox.vgrow="ALWAYS" />
+                                                        <fx:include fx:id="edit" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DStyle.fxml" VBox.vgrow="ALWAYS" />
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </ScrollPane>
+                                    </children>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+        <HBox alignment="CENTER_LEFT" spacing="5.0">
+            <children>
+                <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" />
+                <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconCancel.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconOK.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </children>
+        </HBox>
+    </children>
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+    </padding>
+</VBox>

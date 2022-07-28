@@ -1,10 +1,21 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
@@ -12,7 +23,10 @@ import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
+import static mara.mybox.fxml.PopTools.addButtonsPane;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -85,13 +99,13 @@ public class DataTableQueryEditor extends TreeNodeEditor {
             @Override
             protected void whenSucceeded() {
                 popDone();
-                DataFileCSV.open(myController, dataCSV, targetController.target);
+                DataFileCSV.openCSV(myController, dataCSV, targetController.target);
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
-                dataTable.setTask(null);
+                dataTable.stopTask();
                 task = null;
             }
 
@@ -101,14 +115,32 @@ public class DataTableQueryEditor extends TreeNodeEditor {
 
     @FXML
     protected void popExamplesMenu(MouseEvent mouseEvent) {
+        if (UserConfig.getBoolean("SqlExamplesPopWhenMouseHovering", true)) {
+            examplesMenu(mouseEvent);
+        }
+    }
+
+    @FXML
+    protected void showExamplesMenu(ActionEvent event) {
+        examplesMenu(event);
+    }
+
+    protected void examplesMenu(Event event) {
         PopTools.popSqlExamples(this, valueInput,
                 dataTable != null ? dataTable.getSheet() : null,
-                true, mouseEvent);
+                true, event);
     }
 
     @FXML
     protected void popHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, valueInput, mouseEvent, "DataTableQueryHistories");
+        if (UserConfig.getBoolean("DataTableQueryHistoriesPopWhenMouseHovering", true)) {
+            PopTools.popStringValues(this, valueInput, mouseEvent, "DataTableQueryHistories", false, true);
+        }
+    }
+
+    @FXML
+    protected void showHistories(ActionEvent event) {
+        PopTools.popStringValues(this, valueInput, event, "DataTableQueryHistories", false, true);
     }
 
     @FXML
@@ -126,11 +158,87 @@ public class DataTableQueryEditor extends TreeNodeEditor {
     }
 
     @FXML
-    protected void popColumnNames(MouseEvent mouseEvent) {
-        if (dataTable == null) {
-            return;
+    protected void popColumnNames(MouseEvent event) {
+        if (UserConfig.getBoolean("DataTableQueryPopWhenMouseHovering", true)) {
+            columnNames(event);
         }
-        PopTools.popStringValues(this, valueInput, mouseEvent, dataTable.columnNames());
+    }
+
+    @FXML
+    protected void showColumnNames(ActionEvent event) {
+        columnNames(event);
+    }
+
+    protected void columnNames(Event event) {
+        try {
+            if (dataTable == null) {
+                return;
+            }
+            List<String> values = dataTable.columnNames();
+            if (values == null || values.isEmpty()) {
+                return;
+            }
+            MenuController controller = MenuController.open(this, valueInput, event);
+
+            boolean isTextArea = valueInput instanceof TextArea;
+
+            List<Node> topButtons = new ArrayList<>();
+            if (isTextArea) {
+                Button newLineButton = new Button();
+                newLineButton.setGraphic(StyleTools.getIconImage("iconTurnOver.png"));
+                NodeStyleTools.setTooltip(newLineButton, new Tooltip(message("Newline")));
+                newLineButton.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        valueInput.replaceText(valueInput.getSelection(), "\n");
+                        controller.getThisPane().requestFocus();
+                        valueInput.requestFocus();
+                    }
+                });
+                topButtons.add(newLineButton);
+            }
+            Button cButton = new Button();
+            cButton.setGraphic(StyleTools.getIconImage("iconClear.png"));
+            NodeStyleTools.setTooltip(cButton, new Tooltip(message("ClearInputArea")));
+            cButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    valueInput.clear();
+                    controller.getThisPane().requestFocus();
+                    valueInput.requestFocus();
+                }
+            });
+            topButtons.add(cButton);
+
+            CheckBox popCheck = new CheckBox();
+            popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
+            popCheck.setSelected(UserConfig.getBoolean("DataTableQueryPopWhenMouseHovering", true));
+            popCheck.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("DataTableQueryPopWhenMouseHovering", popCheck.isSelected());
+                }
+            });
+            topButtons.add(popCheck);
+
+            controller.addFlowPane(topButtons);
+            controller.addNode(new Separator());
+
+            addButtonsPane(controller, valueInput, values, true);
+
+            Hyperlink link = new Hyperlink("Derby Reference Manual");
+            link.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    openLink("https://db.apache.org/derby/docs/10.15/ref/index.html");
+                }
+            });
+            controller.addNode(link);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
 }

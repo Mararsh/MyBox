@@ -2,7 +2,7 @@ package mara.mybox.controller;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -361,7 +361,7 @@ public class ControlOCROptions extends BaseController {
             ));
             ProcessBuilder pb = new ProcessBuilder(parameters).redirectErrorStream(true);
             Process process = pb.start();
-            try ( BufferedReader inReader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            try ( BufferedReader inReader = process.inputReader(Charset.forName("UTF-8"))) {
                 String line;
                 while ((line = inReader.readLine()) != null) {
                     if (line.contains("tesseract v4.") || line.contains("tesseract 4.")) {
@@ -454,10 +454,8 @@ public class ControlOCROptions extends BaseController {
             table.newLinkRow("Home", "https://github.com/tesseract-ocr/tesseract");
             table.newLinkRow("Installation", "https://tesseract-ocr.github.io/tessdoc/Home.html");
             table.newLinkRow("InstallationOnWindows", "https://github.com/UB-Mannheim/tesseract/wiki");
-            table.newLinkRow("HomeBrew on Mac for Chinese", "https://www.jianshu.com/p/6a0fff005f20");
             table.newLinkRow("DataFiles", "https://tesseract-ocr.github.io/tessdoc/Data-Files.html");
             table.newLinkRow("Documents", "https://github.com/tesseract-ocr/tessdoc");
-            table.newLinkRow("Parameters", "https://github.com/tesseract-ocr/tessdoc/blob/master/ControlParams.md");
             table.newLinkRow("ImproveQuality", "https://tesseract-ocr.github.io/tessdoc/ImproveQuality.html");
 
             File htmFile = HtmlWriteTools.writeHtml(table.html());

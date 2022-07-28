@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -126,7 +125,7 @@ public abstract class PdfViewController_OCR extends BaseFileImagesViewController
                     ProcessBuilder pb = new ProcessBuilder(parameters).redirectErrorStream(true);
                     long start = new Date().getTime();
                     process = pb.start();
-                    try ( BufferedReader inReader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                    try ( BufferedReader inReader = process.inputReader(Charset.forName("UTF-8"))) {
                         String line;
                         while ((line = inReader.readLine()) != null) {
                             outputs += line + "\n";
@@ -203,13 +202,13 @@ public abstract class PdfViewController_OCR extends BaseFileImagesViewController
                 protected boolean handle() {
                     try {
                         ITesseract instance = new Tesseract();
-                        instance.setTessVariable("user_defined_dpi", "96");
-                        instance.setTessVariable("debug_file", "/dev/null");
+                        instance.setVariable("user_defined_dpi", "96");
+                        instance.setVariable("debug_file", "/dev/null");
                         instance.setPageSegMode(ocrOptionsController.psm);
                         Map<String, String> p = ocrOptionsController.checkParameters();
                         if (p != null && !p.isEmpty()) {
                             for (String key : p.keySet()) {
-                                instance.setTessVariable(key, p.get(key));
+                                instance.setVariable(key, p.get(key));
                             }
                         }
                         instance.setDatapath(ocrOptionsController.dataPathController.file.getAbsolutePath());

@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Random;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.FileCopyTools;
-import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
@@ -322,8 +320,9 @@ public class DataFileText extends DataFile {
                 TextFileTools.writeLine(writer, names, delimiter);
             }
             String line;
-            boolean isRandom = false, isRandomNn = false, isBlank = false;
-            String expression = null;
+            boolean isRandom = false, isRandomNn = false, isBlank = false, isMean = false,
+                    isMedian = false, isMode = false;
+            String script = null;
             if (value != null) {
                 if ("MyBox##blank".equals(value)) {
                     isBlank = true;
@@ -332,36 +331,55 @@ public class DataFileText extends DataFile {
                 } else if ("MyBox##randomNn".equals(value)) {
                     isRandomNn = true;
                 } else if (value.startsWith("MyBox##Expression##")) {
-                    expression = value.substring("MyBox##Expression##".length());
+                    script = value.substring("MyBox##Expression##".length());
+                } else if (value.startsWith("MyBox##columnMean")) {
+                    isMean = true;
+                } else if (value.startsWith("MyBox##columnMode")) {
+                    isMode = true;
+                } else if (value.startsWith("MyBox##columnMedian")) {
+                    isMedian = true;
                 }
             }
             Random random = new Random();
             rowIndex = 0;
+            boolean needSetValue;
+            startFilter();
             while ((line = reader.readLine()) != null && task != null && !task.isCancelled()) {
                 List<String> record = parseFileLine(line);
                 if (record == null || record.isEmpty()) {
                     continue;
                 }
-                filterAndCalculate(record, ++rowIndex, expression);
-                if (expression != null && error != null) {
-                    if (errorContinue) {
-                        continue;
-                    } else {
-                        task.setError(error);
-                        return false;
+                filterDataRow(record, ++rowIndex);
+                needSetValue = filterPassed() && !filterReachMaxPassed();
+                if (needSetValue && script != null) {
+                    calculateDataRowExpression(script, record, rowIndex);
+                    error = expressionError();
+                    if (error != null) {
+                        if (errorContinue) {
+                            continue;
+                        } else {
+                            task.setError(error);
+                            return false;
+                        }
                     }
                 }
                 List<String> row = new ArrayList<>();
                 for (int i = 0; i < columns.size(); i++) {
-                    if (filterPassed && cols.contains(i)) {
+                    if (needSetValue && cols.contains(i)) {
                         if (isBlank) {
                             row.add("");
                         } else if (isRandom) {
                             row.add(random(random, i, false));
                         } else if (isRandomNn) {
                             row.add(random(random, i, true));
-                        } else if (expression != null) {
-                            row.add(expressionResult);
+                        } else if (isMean) {
+                            row.add(column(i).getDoubleStatistic().mean + "");
+                        } else if (isMode) {
+                            row.add(column(i).getDoubleStatistic().modeValue + "");
+                        } else if (isMedian) {
+                            row.add(column(i).getDoubleStatistic().median + "");
+                        } else if (script != null) {
+                            row.add(expressionResult());
                         } else {
                             row.add(value);
                         }
@@ -397,7 +415,7 @@ public class DataFileText extends DataFile {
                 readValidLine(reader);
                 TextFileTools.writeLine(writer, names, delimiter);
             }
-            if (rowFilter != null && !rowFilter.isBlank()) {
+            if (needFilter()) {
                 String line;
                 rowIndex = 0;
                 while ((line = reader.readLine()) != null && task != null && !task.isCancelled()) {
@@ -405,7 +423,7 @@ public class DataFileText extends DataFile {
                     if (record == null || record.isEmpty()) {
                         continue;
                     }
-                    filterInTask(record, ++rowIndex);
+                    filterDataRow(record, ++rowIndex);
                     if (error != null) {
                         if (errorContinue) {
                             continue;
@@ -414,7 +432,7 @@ public class DataFileText extends DataFile {
                             return false;
                         }
                     }
-                    if (filterPassed) {
+                    if (filterPassed() && !filterReachMaxPassed()) {
                         continue;
                     }
                     List<String> row = new ArrayList<>();
@@ -436,25 +454,6 @@ public class DataFileText extends DataFile {
             return false;
         }
         return FileTools.rename(tmpFile, file, false);
-    }
-
-    public static DataFileText toText(DataFileCSV csvData) {
-        if (csvData == null) {
-            return null;
-        }
-        File csvFile = csvData.getFile();
-        if (csvFile == null || !csvFile.exists() || csvFile.length() == 0) {
-            return null;
-        }
-        File txtFile = new File(FileNameTools.replaceSuffix(csvFile.getAbsolutePath(), "txt"));
-        if (FileCopyTools.copyFile(csvFile, txtFile)) {
-            DataFileText targetData = new DataFileText();
-            targetData.cloneAll(csvData);
-            targetData.setType(Type.Texts).setFile(txtFile);
-            return targetData;
-        } else {
-            return null;
-        }
     }
 
     @Override

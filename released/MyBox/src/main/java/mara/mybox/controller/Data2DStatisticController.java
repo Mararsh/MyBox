@@ -1,20 +1,17 @@
 package mara.mybox.controller;
 
-import java.util.Arrays;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.calculation.DescriptiveStatistic;
 import mara.mybox.calculation.DescriptiveStatistic.StatisticObject;
 import mara.mybox.calculation.DoubleStatistic;
-import mara.mybox.data2d.Data2D_Operations.ObjectType;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.dev.MyBoxLog;
@@ -42,8 +39,6 @@ public class Data2DStatisticController extends BaseData2DHandleController {
             maximumCheck, minimumCheck, medianCheck, upperQuartileCheck, lowerQuartileCheck,
             UpperMildOutlierLineCheck, UpperExtremeOutlierLineCheck, LowerMildOutlierLineCheck, LowerExtremeOutlierLineCheck,
             modeCheck;
-    @FXML
-    protected Label memoryNoticeLabel;
     @FXML
     protected VBox operationBox, dataOptionsBox;
     @FXML
@@ -96,7 +91,6 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "Count", countCheck.isSelected());
-                    checkMemoryLabel();
                 }
             });
 
@@ -105,7 +99,6 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "Summation", summationCheck.isSelected());
-                    checkMemoryLabel();
                 }
             });
 
@@ -114,7 +107,6 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "Mean", meanCheck.isSelected());
-                    checkMemoryLabel();
                 }
             });
 
@@ -123,7 +115,6 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "GeometricMean", geometricMeanCheck.isSelected());
-                    checkMemoryLabel();
                 }
             });
 
@@ -132,7 +123,6 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "SumOfSquares", sumOfSquaresCheck.isSelected());
-                    checkMemoryLabel();
                 }
             });
 
@@ -141,7 +131,6 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "PopulationVariance", populationVarianceCheck.isSelected());
-                    checkMemoryLabel();
                 }
             });
 
@@ -150,7 +139,6 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "SampleVariance", sampleVarianceCheck.isSelected());
-                    checkMemoryLabel();
                 }
             });
 
@@ -159,7 +147,6 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "PopulationStandardDeviation", populationStandardDeviationCheck.isSelected());
-                    checkMemoryLabel();
                 }
             });
 
@@ -168,7 +155,6 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "SampleStandardDeviation", sampleStandardDeviationCheck.isSelected());
-                    checkMemoryLabel();
                 }
             });
 
@@ -177,7 +163,6 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "Skewness", skewnessCheck.isSelected());
-                    checkMemoryLabel();
                 }
             });
 
@@ -186,7 +171,6 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "Maximum", maximumCheck.isSelected());
-                    checkMemoryLabel();
                 }
             });
 
@@ -195,7 +179,6 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "Minimum", minimumCheck.isSelected());
-                    checkMemoryLabel();
                 }
             });
 
@@ -204,7 +187,6 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "Mode", modeCheck.isSelected());
-                    checkMemoryLabel();
                 }
             });
 
@@ -213,7 +195,6 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "Median", medianCheck.isSelected());
-                    checkMemoryLabel();
                 }
             });
 
@@ -222,7 +203,6 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "UpperQuartile", upperQuartileCheck.isSelected());
-                    checkMemoryLabel();
                 }
             });
 
@@ -231,7 +211,6 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "LowerQuartile", lowerQuartileCheck.isSelected());
-                    checkMemoryLabel();
                 }
             });
 
@@ -240,7 +219,6 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "UpperMildOutlierLine", UpperMildOutlierLineCheck.isSelected());
-                    checkMemoryLabel();
                 }
             });
 
@@ -249,7 +227,6 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "UpperExtremeOutlierLine", UpperExtremeOutlierLineCheck.isSelected());
-                    checkMemoryLabel();
                 }
             });
             LowerMildOutlierLineCheck.setSelected(UserConfig.getBoolean(baseName + "LowerMildOutlierLine", true));
@@ -257,7 +234,6 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "LowerMildOutlierLine", LowerMildOutlierLineCheck.isSelected());
-                    checkMemoryLabel();
                 }
             });
             LowerExtremeOutlierLineCheck.setSelected(UserConfig.getBoolean(baseName + "LowerExtremeOutlierLine", true));
@@ -265,33 +241,8 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "LowerExtremeOutlierLine", LowerExtremeOutlierLineCheck.isSelected());
-                    checkMemoryLabel();
                 }
             });
-
-            scale = (short) UserConfig.getInt(baseName + "Scale", 2);
-            if (scale < 0) {
-                scale = 2;
-            }
-            scaleSelector.getItems().addAll(
-                    Arrays.asList("2", "1", "0", "3", "4", "5", "6", "7", "8", "10", "12", "15")
-            );
-            scaleSelector.setValue(scale + "");
-            scaleSelector.getSelectionModel().selectedItemProperty().addListener(
-                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        try {
-                            int v = Integer.parseInt(scaleSelector.getValue());
-                            if (v >= 0 && v <= 15) {
-                                scale = (short) v;
-                                UserConfig.setInt(baseName + "Scale", v);
-                                scaleSelector.getEditor().setStyle(null);
-                            } else {
-                                scaleSelector.getEditor().setStyle(UserConfig.badStyle());
-                            }
-                        } catch (Exception e) {
-                            scaleSelector.getEditor().setStyle(UserConfig.badStyle());
-                        }
-                    });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -336,13 +287,11 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 dataOptionsBox.getChildren().remove(categoryColumnsPane);
             }
         }
-        checkMemoryLabel();
     }
 
     @Override
     public boolean checkOptions() {
         boolean ok = super.checkOptions();
-
         categorysCol = -1;
         if (rowsRadio.isSelected()) {
             selectedCategory = categoryColumnSelector.getSelectionModel().getSelectedItem();
@@ -371,7 +320,13 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 .setLowerExtremeOutlierLine(LowerExtremeOutlierLineCheck.isSelected())
                 .setLowerMildOutlierLine(LowerMildOutlierLineCheck.isSelected())
                 .setMode(modeCheck.isSelected())
-                .setScale(scale);
+                .setScale(scale)
+                .setInvalidAs(invalidAs)
+                .setHandleController(this)
+                .setData2D(data2D)
+                .setColsIndices(checkedColsIndices)
+                .setColsNames(checkedColsNames)
+                .setCategoryName(categorysCol >= 0 ? selectedCategory : null);
         switch (objectType) {
             case Rows:
                 calculation.setStatisticObject(StatisticObject.Rows);
@@ -383,32 +338,8 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                 calculation.setStatisticObject(StatisticObject.Columns);
                 break;
         }
-        calculation.setHandleController(this).setData2D(data2D)
-                .setColsIndices(checkedColsIndices)
-                .setColsNames(checkedColsNames)
-                .setCategoryName(categorysCol >= 0 ? selectedCategory : null);
-        checkMemoryLabel();
+        UserConfig.setBoolean(baseName + "SkipNonnumeric", skipNonnumericRadio.isSelected());
         return ok;
-    }
-
-    public void checkMemoryLabel() {
-        if (isSettingValues) {
-            return;
-        }
-        if (isAllPages() && objectType != ObjectType.Rows
-                && (medianCheck.isSelected() || upperQuartileCheck.isSelected()
-                || lowerQuartileCheck.isSelected() || modeCheck.isSelected()
-                || UpperExtremeOutlierLineCheck.isSelected() || UpperMildOutlierLineCheck.isSelected()
-                || LowerExtremeOutlierLineCheck.isSelected() || LowerMildOutlierLineCheck.isSelected())
-                && (hasRowFilter() || !data2D.isTable() || allRadio.isSelected())) {
-            if (!operationBox.getChildren().contains(memoryNoticeLabel)) {
-                operationBox.getChildren().add(memoryNoticeLabel);
-            }
-        } else {
-            if (operationBox.getChildren().contains(memoryNoticeLabel)) {
-                operationBox.getChildren().remove(memoryNoticeLabel);
-            }
-        }
     }
 
     @FXML
@@ -436,7 +367,6 @@ public class Data2DStatisticController extends BaseData2DHandleController {
         LowerMildOutlierLineCheck.setSelected(true);
         LowerExtremeOutlierLineCheck.setSelected(true);
         isSettingValues = false;
-        checkMemoryLabel();
     }
 
     @FXML
@@ -464,7 +394,6 @@ public class Data2DStatisticController extends BaseData2DHandleController {
         LowerMildOutlierLineCheck.setSelected(false);
         LowerExtremeOutlierLineCheck.setSelected(false);
         isSettingValues = false;
-        checkMemoryLabel();
     }
 
     @FXML
@@ -474,6 +403,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
             if (!checkOptions() || !calculation.prepare()) {
                 return;
             }
+            data2D.resetStatistic();
             if (isAllPages()) {
                 switch (objectType) {
                     case Rows:
@@ -514,17 +444,25 @@ public class Data2DStatisticController extends BaseData2DHandleController {
             @Override
             protected boolean handle() {
                 try {
-                    data2D.setTask(task);
+                    data2D.startTask(task, rowFilterController.rowFilter);
                     calculation.setTask(task);
                     if (calculation.needStored()) {
-                        if ((data2D instanceof DataTable) && !hasRowFilter()) {
-                            return calculation.statisticAllByColumnsInDataTable();
-                        } else {
-                            return calculation.statisticData(data2D.allRows(checkedColsIndices, false));
+                        DataTable tmpTable = data2D.toTmpTable(task, checkedColsIndices, false, true);
+                        if (tmpTable == null) {
+                            return false;
                         }
+                        tmpTable.startTask(task, null);
+                        calculation.setData2D(tmpTable)
+                                .setColsIndices(tmpTable.columnIndices().subList(1, tmpTable.columnsNumber()))
+                                .setColsNames(tmpTable.columnNames().subList(1, tmpTable.columnsNumber()));
+                        ok = calculation.statisticAllByColumns();
+                        tmpTable.stopFilter();
+                        tmpTable.drop();
                     } else {
-                        return calculation.statisticAllByColumnsWithoutStored();
+                        ok = calculation.statisticAllByColumnsWithoutStored();
                     }
+                    data2D.stopFilter();
+                    return ok;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -545,7 +483,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.setTask(null);
+                data2D.stopTask();
                 calculation.setTask(null);
                 task = null;
                 if (targetController != null) {
@@ -563,16 +501,28 @@ public class Data2DStatisticController extends BaseData2DHandleController {
             @Override
             protected boolean handle() {
                 try {
-                    data2D.setTask(task);
+                    data2D.startTask(task, rowFilterController.rowFilter);
                     calculation.setTask(task);
                     if (calculation.needStored()) {
-                        return calculation.statisticData(data2D.allRows(checkedColsIndices, false));
+                        DataTable dataTable = data2D.singleColumn(task, checkedColsIndices, true);
+                        if (dataTable == null) {
+                            return false;
+                        }
+                        dataTable.startTask(task, null);
+                        calculation.setTask(task);
+                        calculation.setData2D(dataTable)
+                                .setColsIndices(dataTable.columnIndices().subList(1, 2))
+                                .setColsNames(dataTable.columnNames().subList(1, 2));
+                        ok = calculation.statisticAllByColumns();
+                        dataTable.stopFilter();
+                        return ok;
                     } else {
-                        DoubleStatistic statisticData = data2D.statisticByAll(checkedColsIndices, calculation);
+                        DoubleStatistic statisticData = data2D.statisticByAllWithoutStored(checkedColsIndices, calculation);
                         if (statisticData == null) {
                             return false;
                         }
                         calculation.statisticByColumnsWrite(statisticData);
+                        data2D.stopFilter();
                         return true;
                     }
                 } catch (Exception e) {
@@ -595,7 +545,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.setTask(null);
+                data2D.stopTask();
                 calculation.setTask(null);
                 task = null;
                 if (targetController != null) {

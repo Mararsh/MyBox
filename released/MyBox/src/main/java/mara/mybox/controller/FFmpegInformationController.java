@@ -1,7 +1,7 @@
 package mara.mybox.controller;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -235,8 +235,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                         pb.redirectErrorStream(true);
                         final Process process = pb.start();
 
-                        try ( BufferedReader inReader = new BufferedReader(
-                                new InputStreamReader(process.getInputStream()))) {
+                        try ( BufferedReader inReader = process.inputReader(Charset.forName("UTF-8"))) {
                             String line;
                             int count = 0;
                             boolean versionEnd = false;
@@ -323,8 +322,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                         ProcessBuilder pb = new ProcessBuilder(command)
                                 .redirectErrorStream(true);
                         final Process process = pb.start();
-                        try ( BufferedReader inReader = new BufferedReader(
-                                new InputStreamReader(process.getInputStream()))) {
+                        try ( BufferedReader inReader = process.inputReader(Charset.forName("UTF-8"))) {
                             String line;
                             int count = 0;
                             while ((line = inReader.readLine()) != null) {
@@ -413,8 +411,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                         pb.redirectErrorStream(true);
                         final Process process = pb.start();
 
-                        try ( BufferedReader inReader = new BufferedReader(
-                                new InputStreamReader(process.getInputStream()))) {
+                        try ( BufferedReader inReader = process.inputReader(Charset.forName("UTF-8"))) {
                             String line;
                             int count = 0;
                             while ((line = inReader.readLine()) != null) {
@@ -502,8 +499,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                         pb.redirectErrorStream(true);
                         final Process process = pb.start();
 
-                        try ( BufferedReader inReader = new BufferedReader(
-                                new InputStreamReader(process.getInputStream()))) {
+                        try ( BufferedReader inReader = process.inputReader(Charset.forName("UTF-8"))) {
                             String line;
                             output = new StringBuilder();
                             while ((line = inReader.readLine()) != null) {
@@ -547,7 +543,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                 || (codecsTask != null && !codecsTask.isQuit())
                 || (queryTask != null && !queryTask.isQuit())
                 || (filtersTask != null && !filtersTask.isQuit())) {
-            if (!PopTools.askSure(this,getMyStage().getTitle(), message("TaskRunning"))) {
+            if (!PopTools.askSure(this, getMyStage().getTitle(), message("TaskRunning"))) {
                 return false;
             }
             if (formatsTask != null) {

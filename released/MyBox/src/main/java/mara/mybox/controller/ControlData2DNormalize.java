@@ -20,9 +20,9 @@ import static mara.mybox.value.UserConfig.badStyle;
  * @License Apache License Version 2.0
  */
 public class ControlData2DNormalize extends BaseController {
-
+    
     protected double from, to;
-
+    
     @FXML
     protected ToggleGroup objectGroup, algorithmGroup;
     @FXML
@@ -33,12 +33,12 @@ public class ControlData2DNormalize extends BaseController {
     protected FlowPane rangePane;
     @FXML
     protected Label rangeLabel;
-
+    
     @Override
     public void initControls() {
         try {
             super.initControls();
-
+            
             try {
                 from = Double.parseDouble(UserConfig.getString(baseName + "From", "0"));
             } catch (Exception e) {
@@ -69,7 +69,7 @@ public class ControlData2DNormalize extends BaseController {
                     }
                 }
             });
-
+            
             toInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -89,33 +89,34 @@ public class ControlData2DNormalize extends BaseController {
                 }
             });
             rangeLabel.setText("(" + from + "," + to + ")");
-
+            
             rangePane.visibleProperty().bind(minmaxRadio.selectedProperty());
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-
+    
     @FXML
     public void range01() {
         fromInput.setText("0");
         toInput.setText("1");
     }
-
+    
     @FXML
     public void range11() {
         fromInput.setText("-1");
         toInput.setText("1");
     }
-
-    public double[][] calculate(double[][] matrix) {
+    
+    public double[][] calculate(double[][] matrix, double invalidAs) {
         try {
             if (matrix == null || matrix.length == 0) {
                 return matrix;
             }
             Normalization n = Normalization.create()
                     .setFrom(from).setTo(to)
+                    .setInvalidAs(invalidAs)
                     .setSourceMatrix(matrix);
             if (sumRadio.isSelected()) {
                 n.setA(Algorithm.Sum);
@@ -137,5 +138,5 @@ public class ControlData2DNormalize extends BaseController {
             return null;
         }
     }
-
+    
 }

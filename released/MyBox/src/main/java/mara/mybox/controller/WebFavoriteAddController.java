@@ -30,7 +30,7 @@ public class WebFavoriteAddController extends TreeNodesController {
             super.afterSceneLoaded();
 
             super.setManager(null, false);
-            treeController = null;
+            manageController = null;
             tableTreeNode = new TableTreeNode();
             category = TreeNode.WebFavorite;
 

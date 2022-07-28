@@ -128,19 +128,6 @@ public class ImageSplitController extends BaseImagesListController {
                 }
             });
 
-            customizedRowsInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    checkCustomValues();
-                }
-            });
-            customizedColsInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    checkCustomValues();
-                }
-            });
-
             okButton.disableProperty().bind(rowsInput.styleProperty().isEqualTo(UserConfig.badStyle())
                     .or(colsInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
@@ -514,8 +501,18 @@ public class ImageSplitController extends BaseImagesListController {
     }
 
     @FXML
+    protected void goRows() {
+        checkCustomValues();
+    }
+
+    @FXML
     protected void clearCols() {
         customizedColsInput.setText("");
+    }
+
+    @FXML
+    protected void goCols() {
+        checkCustomValues();
     }
 
     protected void indicateSplit() {
@@ -529,6 +526,7 @@ public class ImageSplitController extends BaseImagesListController {
                 }
             }
             imageInfos.clear();
+            sizeLabel.setText("");
             if (rows == null || cols == null
                     || rows.size() < 2 || cols.size() < 2
                     || (rows.size() == 2 && cols.size() == 2)) {
@@ -663,6 +661,8 @@ public class ImageSplitController extends BaseImagesListController {
                 customizedRowsInput.setText(str + "," + y);
             }
 
+            checkCustomValues();
+
         } else if (event.getButton() == MouseButton.SECONDARY) {
             int x = (int) Math.round(p.getX() / widthRatio());
             String str = customizedColsInput.getText().trim();
@@ -671,6 +671,7 @@ public class ImageSplitController extends BaseImagesListController {
             } else {
                 customizedColsInput.setText(str + "," + x);
             }
+            checkCustomValues();
         }
     }
 

@@ -1,16 +1,12 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -18,10 +14,13 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.FileInformation;
+import mara.mybox.data.FindReplaceString;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileSortTools;
@@ -39,14 +38,11 @@ import mara.mybox.value.UserConfig;
  */
 public class FilesRenameController extends BaseBatchFileController {
 
-    protected FilesRenameTableController filesController;
     protected List<String> targetDatas;
     protected int currentAccum, digit, startNumber;
     protected RenameType renameType;
 
     protected List<File> includeFiles;
-    protected Map<String, String> currentNewNames;
-    protected Map<String, Map<String, String>> newNames;
 
     @FXML
     protected VBox renameOptionsBox, numberBox, replaceBox;
@@ -54,14 +50,14 @@ public class FilesRenameController extends BaseBatchFileController {
     protected FlowPane suffixPane, prefixPane, extensionPane;
     @FXML
     protected CheckBox fillZeroCheck, originalCheck, stringCheck, accumCheck,
-            suffixCheck, descentCheck, recountCheck;
+            suffixCheck, descentCheck, recountCheck, regexCheck;
     @FXML
     protected TextField oldStringInput, newStringInput, newExtInput,
             prefixInput, suffixInput, stringInput;
     @FXML
     protected ToggleGroup sortGroup, renameGroup;
     @FXML
-    protected RadioButton targetReplaceRadio, targetSkipRadio;
+    protected RadioButton targetReplaceRadio, targetSkipRadio, replaceAllRadio;
 
     public static enum RenameType {
         ReplaceSubString, AppendSuffix, AppendPrefix, AddSequenceNumber,
@@ -70,18 +66,6 @@ public class FilesRenameController extends BaseBatchFileController {
 
     public FilesRenameController() {
         baseTitle = message("FilesRename");
-    }
-
-    @Override
-    public void initControls() {
-        try {
-            super.initControls();
-
-            filesController = (FilesRenameTableController) tableController;
-
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
     }
 
     @Override
@@ -186,8 +170,6 @@ public class FilesRenameController extends BaseBatchFileController {
             case ChangeExtension:
 
         }
-
-        newNames = new HashMap<>();
         return super.makeMoreParameters();
 
     }
@@ -247,14 +229,13 @@ public class FilesRenameController extends BaseBatchFileController {
 
     @Override
     public String handleFile(File srcFile, File targetPath) {
-        FileInformation d = tableController.row(currentParameters.currentIndex);
+        FileInformation f = tableController.row(currentParameters.currentIndex);
         String newName = renameFile(srcFile);
         if (newName != null) {
-            d.setData(new File(newName).getAbsolutePath());
+            f.setFile(new File(newName));
             return message("Successful");
         } else {
-            d.setData("");
-            return message("Failed");
+            return message("Skipped");
         }
     }
 
@@ -262,38 +243,92 @@ public class FilesRenameController extends BaseBatchFileController {
         if (file == null || !file.exists() || !file.isFile()) {
             return null;
         }
-        String newName = makeNewFilename(file);
         try {
-            if (newName != null) {
-                File newFile = new File(newName);
-                if (newFile.exists()) {
-                    if (targetSkipRadio.isSelected()) {
-                        return null;
-                    }
-                    FileDeleteTools.delete(newFile);
-                }
-                if (FileTools.rename(file, newFile)) {
-                    newName = newFile.getAbsolutePath();
-                    targetFileGenerated(newFile);
-                    return newName;
-                } else {
+            String newName = makeNewFilename(file);
+            if (newName == null || newName.isBlank()) {
+                return null;
+            }
+            File newFile = new File(newName);
+            if (file.equals(newFile)) {
+                return null;
+            }
+            if (newFile.isFile() && newFile.exists()) {
+                if (targetSkipRadio.isSelected()) {
                     return null;
                 }
+                FileDeleteTools.delete(newFile);
+            }
+            if (FileTools.rename(file, newFile)) {
+                newName = newFile.getAbsolutePath();
+                targetFileGenerated(newFile);
+                return newName;
             } else {
                 return null;
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            updateLogs(e.toString(), true);
             return null;
         }
     }
 
-    @Override
-    public String handleDirectory(File dir) {
-        currentNewNames = new HashMap<>();
-        String result = super.handleDirectory(dir);
-        newNames.put(dir.getAbsolutePath(), currentNewNames);
-        return result;
+    protected String makeNewFilename(File file) {
+        try {
+            if (file == null || !file.exists() || !file.isFile()) {
+                return null;
+            }
+            String filePath = file.getParent() + File.separator;
+            String currentName = file.getName();
+            String newName = null;
+            switch (renameType) {
+                case ReplaceSubString:
+                    if (regexCheck.isSelected()) {
+                        if (replaceAllRadio.isSelected()) {
+                            newName = currentName.replaceAll(oldStringInput.getText(), FileNameTools.filter(newStringInput.getText()));
+                        } else {
+                            newName = currentName.replaceFirst(oldStringInput.getText(), FileNameTools.filter(newStringInput.getText()));
+                        }
+                    } else {
+                        if (replaceAllRadio.isSelected()) {
+                            newName = FindReplaceString.replaceAll(currentName, oldStringInput.getText(), FileNameTools.filter(newStringInput.getText()));
+                        } else {
+                            newName = FindReplaceString.replaceFirst(currentName, oldStringInput.getText(), FileNameTools.filter(newStringInput.getText()));
+                        }
+                    }
+                    break;
+                case AppendPrefix:
+                    newName = FileNameTools.filter(prefixInput.getText()) + currentName;
+                    break;
+                case AppendSuffix:
+                    newName = FileNameTools.append(currentName, FileNameTools.filter(suffixInput.getText()));
+                    break;
+                case AddSequenceNumber:
+                    newName = "";
+                    if (originalCheck.isSelected()) {
+                        newName += FileNameTools.prefix(currentName);
+                    }
+                    if (stringCheck.isSelected()) {
+                        newName += FileNameTools.filter(stringInput.getText());
+                    }
+                    String pageNumber = currentAccum + "";
+                    if (fillZeroCheck.isSelected()) {
+                        pageNumber = StringTools.fillLeftZero(currentAccum, digit);
+                    }
+                    newName += pageNumber;
+                    currentAccum++;
+                    newName += "." + FileNameTools.suffix(currentName);
+                    break;
+                case ChangeExtension:
+                    newName = FileNameTools.replaceSuffix(currentName, FileNameTools.filter(newExtInput.getText()));
+                    break;
+            }
+            if (newName == null || newName.isBlank()) {
+                return null;
+            }
+            return filePath + newName;
+        } catch (Exception e) {
+            updateLogs(e.toString(), true);
+            return null;
+        }
     }
 
     @Override
@@ -327,11 +362,9 @@ public class FilesRenameController extends BaseBatchFileController {
                     if (!match(file)) {
                         continue;
                     }
-                    String originalName = file.getAbsolutePath();
                     String newName = renameFile(file);
                     if (newName != null) {
                         dirFilesHandled++;
-                        currentNewNames.put(newName, originalName);
                     }
                 } else if (file.isDirectory() && sourceCheckSubdir) {
                     handleDirectory(file, null);
@@ -345,200 +378,8 @@ public class FilesRenameController extends BaseBatchFileController {
     }
 
     @Override
-    public void donePost() {
-        super.donePost();
-        filesController.setButtonsAfterRenamed();
-        tableView.refresh();
-    }
-
-    @Override
     public void viewTarget(File file) {
         openTarget(null);
-    }
-
-    protected String makeNewFilename(File file) {
-        try {
-            if (file == null || !file.exists() || !file.isFile()) {
-                return null;
-            }
-            String filePath = file.getParent() + File.separator;
-            String newName;
-            switch (renameType) {
-                case ReplaceSubString:
-                    newName = file.getName().replaceAll(oldStringInput.getText(), FileNameTools.filter(newStringInput.getText()));
-                    break;
-                case AppendPrefix:
-                    newName = FileNameTools.filter(prefixInput.getText()) + file.getName();
-                    break;
-                case AppendSuffix:
-                    newName = FileNameTools.append(file.getName(), FileNameTools.filter(suffixInput.getText()));
-                    break;
-                case AddSequenceNumber:
-                    newName = "";
-                    if (originalCheck.isSelected()) {
-                        newName += FileNameTools.prefix(file.getName());
-                    }
-                    if (stringCheck.isSelected()) {
-                        newName += FileNameTools.filter(stringInput.getText());
-                    }
-                    String pageNumber = currentAccum + "";
-                    if (fillZeroCheck.isSelected()) {
-                        pageNumber = StringTools.fillLeftZero(currentAccum, digit);
-                    }
-                    newName += pageNumber;
-                    currentAccum++;
-                    newName += "." + FileNameTools.suffix(file.getName());
-                    break;
-                case ChangeExtension:
-                    newName = FileNameTools.replaceSuffix(file.getName(), FileNameTools.filter(newExtInput.getText()));
-                    break;
-                default:
-                    return null;
-            }
-
-            return filePath + newName;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
-    }
-
-    protected void recoveryAllAction() {
-        if (tableData == null || tableData.isEmpty()) {
-            return;
-        }
-
-        for (FileInformation f : tableData) {
-            String originalName = f.getFile().getAbsolutePath();
-            if (message("File").equals(f.getFileType())) {
-                String newName = f.getData();
-                if (newName == null || newName.trim().isEmpty()) {
-                    continue;
-                }
-                File newFile = new File(newName);
-                if (newFile.exists()) {
-                    File oldFile = new File(originalName);
-                    if (oldFile.exists()) {
-                        if (targetSkipRadio.isSelected()) {
-                            f.setHandled(message("FailRecovered"));
-                            continue;
-                        } else {
-                            FileDeleteTools.delete(oldFile);
-                        }
-                    }
-                    if (FileTools.rename(newFile, oldFile)) {
-                        f.setHandled(message("Recovered"));
-                        f.setFile(oldFile);
-                    } else {
-                        f.setHandled(message("FailRecovered"));
-                    }
-                }
-                f.setData("");
-            } else if (message("Directory").equals(f.getFileType())) {
-                currentNewNames = newNames.get(originalName);
-                if (currentNewNames == null) {
-                    continue;
-                }
-                int recovered = 0;
-                for (String name : currentNewNames.keySet()) {
-                    String originalFileName = currentNewNames.get(name);
-                    File file = new File(name);
-                    if (!file.exists()) {
-                        continue;
-                    }
-                    File oldFile = new File(originalFileName);
-                    if (FileTools.rename(file, oldFile)) {
-                        recovered++;
-                    }
-                }
-                f.setHandled(MessageFormat.format(message("DirRecoverSummary"),
-                        currentNewNames.size(), recovered));
-                newNames.remove(originalName);
-            }
-        }
-
-    }
-
-    protected void recoverySelectedAction() {
-        ObservableList<FileInformation> selected = tableView.getSelectionModel().getSelectedItems();
-        if (selected == null || selected.isEmpty()) {
-            return;
-        }
-        for (FileInformation f : selected) {
-            String originalName = f.getFile().getAbsolutePath();
-            if (message("File").equals(f.getFileType())) {
-                String newName = f.getData();
-                if (newName == null || newName.trim().isEmpty()) {
-                    continue;
-                }
-                File newFile = new File(newName);
-                if (newFile.exists()) {
-                    File oldFile = new File(originalName);
-                    if (oldFile.exists()) {
-                        if (targetSkipRadio.isSelected()) {
-                            f.setHandled(message("FailRecovered"));
-                            continue;
-                        } else {
-                            FileDeleteTools.delete(oldFile);
-                        }
-                    }
-                    if (FileTools.rename(newFile, oldFile)) {
-                        f.setHandled(message("Recovered"));
-                        f.setFile(oldFile);
-                    } else {
-                        f.setHandled(message("FailRecovered"));
-                    }
-                }
-                f.setData("");
-            } else if (message("Directory").equals(f.getFileType())) {
-                currentNewNames = newNames.get(originalName);
-                if (currentNewNames == null) {
-                    continue;
-                }
-                int recovered = 0;
-                for (String newName : currentNewNames.keySet()) {
-                    String originalFileName = currentNewNames.get(newName);
-                    File file = new File(newName);
-                    if (!file.exists()) {
-                        continue;
-                    }
-                    File oldFile = new File(originalFileName);
-                    if (oldFile.exists()) {
-                        if (targetSkipRadio.isSelected()) {
-                            f.setHandled(message("FailRecovered"));
-                            continue;
-                        } else {
-                            FileDeleteTools.delete(oldFile);
-                        }
-                    }
-                    if (FileTools.rename(file, oldFile)) {
-                        recovered++;
-                    }
-                }
-                f.setHandled(MessageFormat.format(message("DirRecoverSummary"),
-                        currentNewNames.size(), recovered));
-                newNames.remove(originalName);
-            }
-        }
-
-    }
-
-    @Override
-    public void okAction() {
-        if (tableData == null || tableData.isEmpty()) {
-            return;
-        }
-        if (newNames != null) {
-            newNames.clear();
-        }
-        for (FileInformation f : tableData) {
-            f.setHandled("");
-            String newName = f.getData();
-            if (newName != null && !newName.isEmpty()) {
-                f.setFile(new File(newName));
-                f.setData("");
-            }
-        }
     }
 
     @Override
@@ -557,6 +398,11 @@ public class FilesRenameController extends BaseBatchFileController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @FXML
+    public void popRegexExample(MouseEvent mouseEvent) {
+        PopTools.popRegexExample(this, oldStringInput, mouseEvent);
     }
 
 }

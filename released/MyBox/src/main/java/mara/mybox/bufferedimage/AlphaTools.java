@@ -95,14 +95,20 @@ public class AlphaTools {
             Color color;
             Color newColor;
             int pixel;
+            int alphaPixel = ColorConvertTools.alphaColor().getRGB();
             for (int j = 0; j < height; ++j) {
                 for (int i = 0; i < width; ++i) {
                     pixel = source.getRGB(i, j);
-                    color = new Color(pixel, true);
-                    newColor = new Color(color.getRed(), color.getGreen(), color.getBlue());
-                    noAlphaImage.setRGB(i, j, newColor.getRGB());
-                    newColor = new Color(0, 0, 0, color.getAlpha());
-                    alphaImage.setRGB(i, j, newColor.getRGB());
+                    if (pixel == 0) {
+                        noAlphaImage.setRGB(i, j, alphaPixel);
+                        alphaImage.setRGB(i, j, 0);
+                    } else {
+                        color = new Color(pixel, true);
+                        newColor = new Color(color.getRed(), color.getGreen(), color.getBlue());
+                        noAlphaImage.setRGB(i, j, newColor.getRGB());
+                        newColor = new Color(0, 0, 0, color.getAlpha());
+                        alphaImage.setRGB(i, j, newColor.getRGB());
+                    }
                 }
             }
             bfs[0] = noAlphaImage;

@@ -217,9 +217,10 @@ public class BaseDataAdaptor {
         } else if (data instanceof Data2DStyle) {
             return Data2DStyle.valid((Data2DStyle) data);
 
+        } else {
+            return true;
         }
 
-        return false;
     }
 
     public static Object getColumnValue(BaseData data, String name) {
@@ -304,9 +305,10 @@ public class BaseDataAdaptor {
         } else if (data instanceof Data2DStyle) {
             return Data2DStyle.getValue((Data2DStyle) data, name);
 
+        } else {
+            return data.getColumnValue(name);
         }
 
-        return null;
     }
 
     public static boolean setColumnValue(BaseData data, String name, Object value) {
@@ -385,8 +387,10 @@ public class BaseDataAdaptor {
         } else if (data instanceof Data2DStyle) {
             return Data2DStyle.setValue((Data2DStyle) data, name, value);
 
+        } else {
+            return data.setColumnValue(name, value);
         }
-        return false;
+
     }
 
     public static String displayData(BaseTable table, BaseData data, List<String> columns, boolean isHtml) {

@@ -2,9 +2,7 @@ package mara.mybox.data2d;
 
 import java.util.List;
 import java.util.Map;
-import javafx.scene.web.WebEngine;
 import mara.mybox.controller.ControlData2DLoad;
-import mara.mybox.data.FindReplaceString;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.Data2DStyle;
@@ -12,6 +10,7 @@ import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.db.table.TableData2DStyle;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.RowFilter;
 import mara.mybox.fxml.SingletonTask;
 
 /**
@@ -21,23 +20,20 @@ import mara.mybox.fxml.SingletonTask;
  */
 public abstract class Data2D_Attributes extends Data2DDefinition {
 
-    protected TableData2DDefinition tableData2DDefinition;
-    protected TableData2DColumn tableData2DColumn;
-    protected TableData2DStyle tableData2DStyle;
-    protected List<Data2DColumn> columns, savedColumns;
-    protected Map<String, Object> options;
-    protected int pageSize, newColumnIndex;
-    protected long dataSize, pagesNumber;
-    protected long currentPage, startRowOfCurrentPage, endRowOfCurrentPage;   // 0-based, excluded end
-    protected List<Data2DStyle> styles;
-    protected ControlData2DLoad loadController;
-    protected boolean tableChanged, filterReversed, filterPassed;
-    protected SingletonTask task, backgroundTask;
-    protected String error, rowFilter;
-    protected final Object lock = new Object();
-    public WebEngine webEngine;
-    public FindReplaceString findReplace;
-    public String expressionResult;
+    public TableData2DDefinition tableData2DDefinition;
+    public TableData2DColumn tableData2DColumn;
+    public TableData2DStyle tableData2DStyle;
+    public List<Data2DColumn> columns, savedColumns;
+    public Map<String, Object> options;
+    public int pageSize, newColumnIndex;
+    public long dataSize, pagesNumber;
+    public long currentPage, startRowOfCurrentPage, endRowOfCurrentPage;   // 0-based, excluded end
+    public List<Data2DStyle> styles;
+    public RowFilter rowFilter;
+    public ControlData2DLoad loadController;
+    public boolean tableChanged;
+    public SingletonTask task, backgroundTask;
+    public String error;
 
     public Data2D_Attributes() {
         tableData2DDefinition = new TableData2DDefinition();
@@ -59,11 +55,11 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         tableChanged = false;
         options = null;
         styles = null;
-        error = null;
         rowFilter = null;
-        webEngine = null;
-        findReplace = null;
-        expressionResult = null;
+        error = null;
+        loadController = null;
+        task = null;
+        backgroundTask = null;
     }
 
     public void resetData() {
@@ -89,8 +85,6 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
             backgroundTask = d.backgroundTask;
             error = d.error;
             options = d.options;
-            webEngine = d.webEngine;
-            findReplace = d.findReplace;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -117,7 +111,6 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
             endRowOfCurrentPage = d.endRowOfCurrentPage;
             tableChanged = d.tableChanged;
             rowFilter = d.rowFilter;
-            expressionResult = d.expressionResult;
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -247,48 +240,16 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         return styles;
     }
 
-    public void setStyles(List<Data2DStyle> styles) {
-        this.styles = styles;
-    }
-
-    public String getRowFilter() {
+    public RowFilter getRowFilter() {
         return rowFilter;
     }
 
-    public void setRowFilter(String rowFilter) {
+    public void setRowFilter(RowFilter rowFilter) {
         this.rowFilter = rowFilter;
     }
 
-    public boolean isFilterReversed() {
-        return filterReversed;
-    }
-
-    public void setFilterReversed(boolean filterReversed) {
-        this.filterReversed = filterReversed;
-    }
-
-    public WebEngine getWebEngine() {
-        return webEngine;
-    }
-
-    public void setWebEngine(WebEngine webEngine) {
-        this.webEngine = webEngine;
-    }
-
-    public FindReplaceString getFindReplace() {
-        return findReplace;
-    }
-
-    public void setFindReplace(FindReplaceString findReplace) {
-        this.findReplace = findReplace;
-    }
-
-    public String getExpressionResult() {
-        return expressionResult;
-    }
-
-    public void setExpressionResult(String expressionResult) {
-        this.expressionResult = expressionResult;
+    public void setStyles(List<Data2DStyle> styles) {
+        this.styles = styles;
     }
 
     public SingletonTask getTask() {

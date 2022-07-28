@@ -23,8 +23,13 @@ public class BaseData implements Cloneable {
     }
 
     public boolean setColumnValue(String column, Object value) {
-        columnValues.put(column, value);
-        return true;
+        try {
+            columnValues.put(column, value);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return false;
+        }
     }
 
     public Object getColumnValue(String column) {

@@ -29,13 +29,16 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-9-4
  * @License Apache License Version 2.0
  */
-public abstract class BaseData2DHandleController extends ControlData2DSource {
+public abstract class BaseData2DHandleController extends BaseData2DSourceController {
 
     protected List<List<String>> outputData;
     protected List<Data2DColumn> outputColumns;
     protected int scale, defaultScale = 2;
     protected ObjectType objectType;
+    protected double invalidAs;
 
+    @FXML
+    protected Tab dataTab;
     @FXML
     protected ControlData2DTarget targetController;
     @FXML
@@ -47,7 +50,8 @@ public abstract class BaseData2DHandleController extends ControlData2DSource {
     @FXML
     protected ToggleGroup objectGroup;
     @FXML
-    protected RadioButton columnsRadio, rowsRadio, allRadio;
+    protected RadioButton columnsRadio, rowsRadio, allRadio,
+            skipNonnumericRadio, zeroNonnumericRadio;
     @FXML
     protected ImageView tableTipsView;
 
@@ -73,6 +77,7 @@ public abstract class BaseData2DHandleController extends ControlData2DSource {
                         objectChanged();
                     }
                 });
+                objectChanged();
             }
 
             scale = (short) UserConfig.getInt(baseName + "Scale", defaultScale);
@@ -90,6 +95,14 @@ public abstract class BaseData2DHandleController extends ControlData2DSource {
                         scaleChanged();
                     }
                 });
+            }
+
+            if (skipNonnumericRadio != null) {
+                if (UserConfig.getBoolean(baseName + "SkipNonnumeric", true)) {
+                    skipNonnumericRadio.fire();
+                } else {
+                    zeroNonnumericRadio.fire();
+                }
             }
 
         } catch (Exception e) {
@@ -160,13 +173,6 @@ public abstract class BaseData2DHandleController extends ControlData2DSource {
                 }
             });
 
-            filterController.scriptInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    checkOptions();
-                }
-            });
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -209,19 +215,17 @@ public abstract class BaseData2DHandleController extends ControlData2DSource {
         if (isSettingValues) {
             return true;
         }
-        if (data2D == null) {
-            okButton.setDisable(true);
-            return false;
-        }
         if (infoLabel != null) {
             infoLabel.setText("");
         }
+        if (skipNonnumericRadio != null) {
+            invalidAs = skipNonnumericRadio.isSelected() ? Double.NaN : 0;
+        } else {
+            invalidAs = 0;
+        }
         if (!checkSelections()) {
-            if (data2D.getError() != null) {
-                infoLabel.setText(message("Invalid") + ": " + message("RowFilter") + "\n"
-                        + data2D.getError());
-            } else if (infoLabel != null) {
-                infoLabel.setText(message("SelectToHandle"));
+            if (infoLabel != null) {
+                infoLabel.setText(error != null ? error : message("SelectToHandle"));
             }
             okButton.setDisable(true);
             return false;
@@ -268,44 +272,44 @@ public abstract class BaseData2DHandleController extends ControlData2DSource {
 
             @Override
             protected boolean handle() {
-                data2D.setTask(task);
+                data2D.startTask(task, rowFilterController.rowFilter);
                 csvFile = generatedFile();
-                if (csvFile == null) {
-                    return false;
-                }
-                csvFile.setColumns(outputColumns);
+                data2D.stopFilter();
                 return csvFile != null;
             }
 
             @Override
             protected void whenSucceeded() {
                 popDone();
-                DataFileCSV.open(myController, csvFile, targetController.target);
+                DataFileCSV.openCSV(myController, csvFile, targetController.target);
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.setTask(null);
+                data2D.stopTask();
                 task = null;
             }
 
         };
         start(task);
+
     }
 
     public DataFileCSV generatedFile() {
         return null;
     }
 
-    public synchronized void handleRowsTask() {
+    public void handleRowsTask() {
         task = new SingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
                 try {
-                    data2D.setTask(task);
-                    return handleRows();
+                    data2D.startTask(task, rowFilterController.rowFilter);
+                    ok = handleRows();
+                    data2D.stopFilter();
+                    return ok;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -324,7 +328,7 @@ public abstract class BaseData2DHandleController extends ControlData2DSource {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.setTask(null);
+                data2D.stopTask();
                 task = null;
                 if (targetController != null) {
                     targetController.refreshControls();
@@ -405,6 +409,7 @@ public abstract class BaseData2DHandleController extends ControlData2DSource {
             tableController.tableView.refresh();
             tableController.isSettingValues = false;
             tableController.tableChanged(true);
+            tableController.requestMouse();
             popDone();
             return true;
         } catch (Exception e) {
@@ -437,8 +442,10 @@ public abstract class BaseData2DHandleController extends ControlData2DSource {
                 DataFileTextController.open(outputColumns, outputData);
                 break;
             case "matrix":
-                MatricesManageController controller = MatricesManageController.oneOpen();
-                controller.dataController.loadTmpData(outputColumns, outputData);
+                MatricesManageController.open(outputColumns, outputData);
+                break;
+            case "table":
+                DataTablesController.open(outputColumns, outputData);
                 break;
         }
         popDone();

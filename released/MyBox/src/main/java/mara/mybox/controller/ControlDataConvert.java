@@ -632,7 +632,7 @@ public class ControlDataConvert extends BaseController {
                         .setDataName(csvFile.getName())
                         .setColsNumber(columns.size())
                         .setRowsNumber(dataRowIndex);
-                Data2D.saveColumns(conn, d, columns);
+                Data2D.saveAttributes(conn, d, columns);
                 conn.commit();
             }
 
@@ -649,7 +649,7 @@ public class ControlDataConvert extends BaseController {
                         .setDataName(textFile.getName())
                         .setColsNumber(columns.size())
                         .setRowsNumber(dataRowIndex);
-                Data2D.saveColumns(conn, d, columns);
+                Data2D.saveAttributes(conn, d, columns);
                 conn.commit();
             }
 
@@ -704,7 +704,7 @@ public class ControlDataConvert extends BaseController {
                         .setDataName(xlsxFile.getName())
                         .setColsNumber(columns.size())
                         .setRowsNumber(dataRowIndex);
-                Data2D.saveColumns(conn, d, columns);
+                Data2D.saveAttributes(conn, d, columns);
                 conn.commit();
             }
 
@@ -721,7 +721,7 @@ public class ControlDataConvert extends BaseController {
                         .setDataName(dataRowIndex + "x" + columns.size())
                         .setColsNumber(columns.size())
                         .setRowsNumber(dataRowIndex);
-                Data2D.saveColumns(conn, d, columns);
+                Data2D.saveAttributes(conn, d, columns);
                 DataInMyBoxClipboardController.update();
                 conn.commit();
             }

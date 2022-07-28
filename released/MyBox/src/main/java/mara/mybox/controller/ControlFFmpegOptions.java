@@ -4,7 +4,7 @@ import com.github.kokorin.jaffree.ffprobe.FFprobeResult;
 import com.github.kokorin.jaffree.ffprobe.Stream;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,8 +22,8 @@ import javafx.scene.layout.VBox;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.Fxmls;
@@ -219,8 +219,7 @@ public class ControlFFmpegOptions extends BaseController {
                         commons = new ArrayList();
                         List<String> commonNames = new ArrayList();
                         commonNames.addAll(Arrays.asList("mp4", "mp3", "aiff", "au", "avi", "flv", "mov", "wav", "m4v", "hls", "rtsp"));
-                        try ( BufferedReader inReader = new BufferedReader(
-                                new InputStreamReader(process.getInputStream()))) {
+                        try ( BufferedReader inReader = process.inputReader(Charset.forName("UTF-8"))) {
                             String line;
                             int count = 0;
                             while ((line = inReader.readLine()) != null) {
@@ -336,8 +335,7 @@ public class ControlFFmpegOptions extends BaseController {
                         videoCommons = new ArrayList();
                         List<String> commonVideoNames = new ArrayList();
                         commonVideoNames.addAll(Arrays.asList("flv", "x264", "x265", "libvpx", "h264"));
-                        try ( BufferedReader inReader = new BufferedReader(
-                                new InputStreamReader(process.getInputStream()))) {
+                        try ( BufferedReader inReader = process.inputReader(Charset.forName("UTF-8"))) {
                             String line;
                             int count = 0;
                             while ((line = inReader.readLine()) != null) {

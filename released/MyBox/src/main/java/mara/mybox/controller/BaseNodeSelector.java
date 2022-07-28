@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -45,9 +46,10 @@ public abstract class BaseNodeSelector<P> extends BaseController {
     protected static final int AutoExpandThreshold = 1000;
     protected static final String nodeSeparator = " > ";
     protected P ignoreNode = null;
-    protected boolean expandAll, manageMode;
+    protected boolean expandAll, manageMode, nodeExecutable;
     protected int serialStartLevel = 1;
-    protected String defauleClickAction = "PopMenu";
+    protected String defaultClickAction = "PopMenu";
+    protected final SimpleBooleanProperty loadedNotify;
 
     @FXML
     protected TreeView<P> treeView;
@@ -103,6 +105,8 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
     protected abstract void pasteNode(TreeItem<P> item);
 
+    protected abstract void executeNode(TreeItem<P> item);
+
     protected abstract void exportNode(TreeItem<P> item);
 
     protected abstract void importAction();
@@ -120,6 +124,15 @@ public abstract class BaseNodeSelector<P> extends BaseController {
     protected abstract void treeView(Connection conn, P node, int indent, String parentNumber, StringBuilder s);
 
     public abstract TreeManageController openManager();
+
+    public BaseNodeSelector() {
+        loadedNotify = new SimpleBooleanProperty(false);
+    }
+
+    public void notifyLoaded() {
+        loadedNotify.set(!loadedNotify.get());
+    }
+
 
     /*
         Common methods may need not changed
@@ -261,6 +274,13 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                         }
                     }
                 }
+
+                @Override
+                protected void finalAction() {
+                    super.finalAction();
+                    notifyLoaded();
+                }
+
             };
             start(task);
         }
@@ -315,7 +335,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         if (item == null) {
             return;
         }
-        String clickAction = UserConfig.getString("TreeWhenClickNode", defauleClickAction);
+        String clickAction = UserConfig.getString(baseName + "TreeWhenClickNode", defaultClickAction);
         if (null == clickAction) {
             popFunctionsMenu(null, item);
         } else {
@@ -331,6 +351,11 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                 case "Paste":
                     if (manageMode) {
                         pasteNode(item);
+                    }
+                    break;
+                case "Execute":
+                    if (manageMode) {
+                        executeNode(item);
                     }
                     break;
                 case "LoadChildren":
@@ -412,14 +437,14 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         if (manageMode) {
             Menu clickMenu = new Menu(message("WhenClickNode"));
             ToggleGroup clickGroup = new ToggleGroup();
-            String currentClick = UserConfig.getString("TreeWhenClickNode", defauleClickAction);
+            String currentClick = UserConfig.getString(baseName + "TreeWhenClickNode", defaultClickAction);
 
             RadioMenuItem clickPopMenu = new RadioMenuItem(message("PopMenu"), StyleTools.getIconImage("iconMenu.png"));
             clickPopMenu.setSelected(currentClick == null || "PopMenu".equals(currentClick));
             clickPopMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setString("TreeWhenClickNode", "PopMenu");
+                    UserConfig.setString(baseName + "TreeWhenClickNode", "PopMenu");
                 }
             });
             clickPopMenu.setToggleGroup(clickGroup);
@@ -429,7 +454,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             editNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setString("TreeWhenClickNode", "Edit");
+                    UserConfig.setString(baseName + "TreeWhenClickNode", "Edit");
                 }
             });
             editNodeMenu.setToggleGroup(clickGroup);
@@ -439,17 +464,32 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             pasteNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setString("TreeWhenClickNode", "Paste");
+                    UserConfig.setString(baseName + "TreeWhenClickNode", "Paste");
                 }
             });
             pasteNodeMenu.setToggleGroup(clickGroup);
+
+            clickMenu.getItems().addAll(clickPopMenu, editNodeMenu, pasteNodeMenu);
+
+            if (nodeExecutable) {
+                RadioMenuItem executeNodeMenu = new RadioMenuItem(message("Execute"), StyleTools.getIconImage("iconGo.png"));
+                executeNodeMenu.setSelected("Execute".equals(currentClick));
+                executeNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        UserConfig.setString(baseName + "TreeWhenClickNode", "Execute");
+                    }
+                });
+                executeNodeMenu.setToggleGroup(clickGroup);
+                clickMenu.getItems().add(executeNodeMenu);
+            }
 
             RadioMenuItem loadChildrenMenu = new RadioMenuItem(message("LoadChildren"), StyleTools.getIconImage("iconList.png"));
             loadChildrenMenu.setSelected("LoadChildren".equals(currentClick));
             loadChildrenMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setString("TreeWhenClickNode", "LoadChildren");
+                    UserConfig.setString(baseName + "TreeWhenClickNode", "LoadChildren");
                 }
             });
             loadChildrenMenu.setToggleGroup(clickGroup);
@@ -459,12 +499,12 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             loadDescendantsMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setString("TreeWhenClickNode", "LoadDescendants");
+                    UserConfig.setString(baseName + "TreeWhenClickNode", "LoadDescendants");
                 }
             });
             loadDescendantsMenu.setToggleGroup(clickGroup);
 
-            clickMenu.getItems().addAll(clickPopMenu, editNodeMenu, pasteNodeMenu, loadChildrenMenu, loadDescendantsMenu);
+            clickMenu.getItems().addAll(loadChildrenMenu, loadDescendantsMenu);
 
             items.add(clickMenu);
 

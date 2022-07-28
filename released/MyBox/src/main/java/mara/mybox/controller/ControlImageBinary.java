@@ -123,6 +123,10 @@ public class ControlImageBinary extends BaseController {
             if (!(parentController instanceof BaseImageController)) {
                 return;
             }
+            if (imageView == null || imageView.getImage() == null) {
+                popError(message("NoData"));
+                return;
+            }
             int v = ImageBinary.calculateThreshold(((BaseImageController) parentController).imageView.getImage());
             thresholdInput.setText(v + "");
         } catch (Exception e) {

@@ -7,6 +7,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import mara.mybox.data2d.Data2D;
@@ -40,6 +41,8 @@ public class ControlData2DAttributes extends BaseController {
         Loaded, Modified, Applied
     }
 
+    @FXML
+    protected Label nameLabel;
     @FXML
     protected TextArea infoArea;
     @FXML
@@ -182,7 +185,8 @@ public class ControlData2DAttributes extends BaseController {
             infoArea.setVisible(true);
             String info = "";
             if (!data2D.isTmpData()) {
-                info = message("FileSize") + ": " + FileTools.showFileSize(data2D.getFile().length()) + "\n"
+                info = message("File") + ": " + data2D.getFile() + "\n"
+                        + message("FileSize") + ": " + FileTools.showFileSize(data2D.getFile().length()) + "\n"
                         + message("FileModifyTime") + ": " + DateTools.datetimeToString(data2D.getFile().lastModified()) + "\n";
                 if (data2D.isExcel()) {
                     DataFileExcel e = (DataFileExcel) data2D;
@@ -216,6 +220,8 @@ public class ControlData2DAttributes extends BaseController {
             infoArea.setVisible(false);
             infoArea.clear();
         }
+
+        nameLabel.setText(data2D.displayName());
 
         updateNotify.set(updateNotify.get());
     }

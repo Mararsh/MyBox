@@ -56,7 +56,7 @@ public abstract class BaseController_Attributes {
     protected Timer popupTimer, timer;
     protected Popup popup;
     protected ContextMenu popMenu;
-    protected String targetFileSuffix;
+    protected String error, targetFileSuffix;
     protected boolean isSettingValues, isPop;
     protected File sourceFile, sourcePath, targetPath, targetFile;
     protected SaveAsType saveAsType;

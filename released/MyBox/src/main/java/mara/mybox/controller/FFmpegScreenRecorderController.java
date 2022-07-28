@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -43,7 +42,7 @@ import mara.mybox.value.UserConfig;
 public class FFmpegScreenRecorderController extends BaseTaskController {
 
     protected String os;
-    protected Process recorder;
+    protected Process process;
     protected SimpleBooleanProperty stopping;
 
     @FXML
@@ -451,10 +450,10 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
             ProcessBuilder pb = new ProcessBuilder(parameters)
                     .redirectErrorStream(true);
             FileDeleteTools.delete(targetFile);
-            recorder = pb.start();
+            process = pb.start();
             String cmd = makeCommand(parameters);
             updateLogs(cmd);
-            updateLogs("PID:" + recorder.pid());
+            updateLogs("PID:" + process.pid());
             if (optionsController.durationController.value > 0) {
                 updateLogs(Languages.message("Duration") + ": " + optionsController.durationController.value + " " + Languages.message("Seconds"));
             }
@@ -463,8 +462,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
                 timer = null;
             }
             boolean started = false, recording;
-            try ( BufferedReader inReader = new BufferedReader(
-                    new InputStreamReader(recorder.getInputStream(), Charset.forName("UTF-8")))) {
+            try ( BufferedReader inReader = process.inputReader(Charset.forName("UTF-8"))) {
                 String line;
                 long startTime = new Date().getTime();
                 while ((line = inReader.readLine()) != null) {
@@ -485,15 +483,15 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
                         updateLogs(line + "\n");
                     }
                     if (!started && (new Date().getTime() - startTime > 15000)) {  // terminal process if too long blocking
-                        recorder.destroyForcibly();
+                        process.destroyForcibly();
                         break;
                     }
                 }
             }
-            recorder.waitFor();
-            if (recorder != null) {
-                recorder.destroy();
-                recorder = null;
+            process.waitFor();
+            if (process != null) {
+                process.destroy();
+                process = null;
             }
             stopping.set(false);
             if (optionsController.miaoCheck.isSelected()) {
@@ -518,7 +516,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
 
     @Override
     public void cancelAction() {
-        if (recorder == null) {
+        if (process == null) {
             stopping.set(false);
             return;
         }
@@ -526,9 +524,9 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
             return;
         }
         stopping.set(true);
-        if (recorder != null) {
+        if (process != null) {
             try ( BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(recorder.getOutputStream(), Charset.forName("UTF-8")));) {
+                    new OutputStreamWriter(process.getOutputStream(), Charset.forName("UTF-8")));) {
                 writer.append('q');
             } catch (Exception e) {
                 MyBoxLog.error(e.toString());

@@ -8,7 +8,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
@@ -31,15 +30,12 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
     protected String freName;
     protected List<Integer> colsIndices;
     protected List<String> colsNames;
-    protected ChangeListener<Boolean> tableStatusListener;
     protected Frequency frequency;
 
     @FXML
     protected ComboBox<String> colSelector;
     @FXML
     protected CheckBox caseInsensitiveCheck;
-    @FXML
-    protected Label memoryNoticeLabel;
 
     public Data2DFrequencyController() {
         baseTitle = message("FrequencyDistributions");
@@ -99,11 +95,6 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
     public boolean checkOptions() {
         boolean ok = super.checkOptions();
         targetController.setNotInTable(isAllPages());
-        if (!data2D.isTable() && isAllPages()) {
-            memoryNoticeLabel.setVisible(true);
-        } else {
-            memoryNoticeLabel.setVisible(false);
-        }
         ok = ok && prepareRows();
         okButton.setDisable(!ok);
         return ok;

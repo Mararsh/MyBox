@@ -5,11 +5,14 @@ import java.util.Arrays;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import jdk.jshell.JShell;
 import jdk.jshell.SourceCodeAnalysis;
@@ -18,11 +21,13 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.HtmlStyles;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.JShellTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -102,9 +107,12 @@ public class JShellEditor extends TreeNodeEditor {
             }
 
             @Override
+            protected void whenSucceeded() {
+            }
+
+            @Override
             protected void finalAction() {
                 cancelAction();
-                editNode(null);
             }
         };
         start(task);
@@ -194,13 +202,25 @@ public class JShellEditor extends TreeNodeEditor {
     // https://stackoverflow.com/questions/53867043/what-are-the-limits-to-jshell?r=SearchResults
     @FXML
     protected void popSyntaxMenu(MouseEvent mouseEvent) {
+        if (UserConfig.getBoolean(interfaceName + "SyntaxPopWhenMouseHovering", true)) {
+            syntaxMenu(mouseEvent);
+        }
+    }
+
+    @FXML
+    protected void showSyntaxMenu(ActionEvent event) {
+        syntaxMenu(event);
+    }
+
+    protected void syntaxMenu(Event event) {
         try {
-            MenuController controller = MenuController.open(jShellController, valueInput,
-                    mouseEvent.getScreenX(), mouseEvent.getScreenY() + 20);
+            MenuController controller = MenuController.open(jShellController, valueInput, event);
             controller.setTitleLabel(message("Syntax"));
 
             List<Node> topButtons = new ArrayList<>();
-            Button newLineButton = new Button(message("Newline"));
+            Button newLineButton = new Button();
+            newLineButton.setGraphic(StyleTools.getIconImage("iconTurnOver.png"));
+            NodeStyleTools.setTooltip(newLineButton, new Tooltip(message("Newline")));
             newLineButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -209,7 +229,10 @@ public class JShellEditor extends TreeNodeEditor {
                 }
             });
             topButtons.add(newLineButton);
-            Button clearInputButton = new Button(message("ClearInputArea"));
+
+            Button clearInputButton = new Button();
+            clearInputButton.setGraphic(StyleTools.getIconImage("iconClear.png"));
+            NodeStyleTools.setTooltip(clearInputButton, new Tooltip(message("ClearInputArea")));
             clearInputButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -217,6 +240,19 @@ public class JShellEditor extends TreeNodeEditor {
                 }
             });
             topButtons.add(clearInputButton);
+
+            CheckBox popCheck = new CheckBox();
+            popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
+            popCheck.setSelected(UserConfig.getBoolean(interfaceName + "SyntaxPopWhenMouseHovering", true));
+            popCheck.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(interfaceName + "SyntaxPopWhenMouseHovering", popCheck.isSelected());
+                }
+            });
+            topButtons.add(popCheck);
+
             controller.addFlowPane(topButtons);
 
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
@@ -281,7 +317,14 @@ public class JShellEditor extends TreeNodeEditor {
 
     @FXML
     protected void popHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, valueInput, mouseEvent, "JShellHistories");
+        if (UserConfig.getBoolean("JShellHistoriesPopWhenMouseHovering", true)) {
+            PopTools.popStringValues(this, valueInput, mouseEvent, "JShellHistories", false, true);
+        }
+    }
+
+    @FXML
+    protected void showHistories(ActionEvent event) {
+        PopTools.popStringValues(this, valueInput, event, "JShellHistories", false, true);
     }
 
     @FXML
