@@ -3,6 +3,7 @@ package mara.mybox.db.data;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -315,8 +316,9 @@ public class ColumnDefinition extends BaseData {
                         return -1;
                     }
                 case Date:
-                    long e1 = new Date(value1).getTime();
-                    long e2 = new Date(value2).getTime();
+                    SimpleDateFormat df = new SimpleDateFormat();
+                    long e1 = df.parse(value1).getTime();
+                    long e2 = df.parse(value2).getTime();
                     if (e1 == e2) {
                         return 0;
                     } else if (e1 > e2) {

@@ -11,9 +11,9 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
+import mara.mybox.data2d.DataFilter;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.RowFilter;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -38,7 +38,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
     @FXML
     protected VBox dataBox;
     @FXML
-    protected ControlData2DRowFilter rowFilterController;
+    protected ControlData2DFilter rowFilterController;
 
     /*
         controls
@@ -382,26 +382,26 @@ public class BaseData2DSourceController extends ControlData2DLoad {
     private boolean checkedRows() {
         try {
             checkedRowsIndices = new ArrayList<>();
-            RowFilter rowFilter = data2D.rowFilter;
-            rowFilter.start(null, data2D);
+            DataFilter filter = data2D.filter;
+            filter.start(null, data2D);
             List<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
             if (allPagesRadio.isSelected() || currentPageRadio.isSelected()
                     || selected == null || selected.isEmpty()) {
                 for (int i = 0; i < tableData.size(); i++) {
-                    if (!rowFilter.filterTableRow(data2D, tableData.get(i), i)) {
+                    if (!filter.filterTableRow(data2D, tableData.get(i), i)) {
                         continue;
                     }
-                    if (rowFilter.reachMaxPassed()) {
+                    if (filter.reachMaxPassed()) {
                         break;
                     }
                     checkedRowsIndices.add(i);
                 }
             } else {
                 for (int i : selected) {
-                    if (!rowFilter.filterTableRow(data2D, tableData.get(i), i)) {
+                    if (!filter.filterTableRow(data2D, tableData.get(i), i)) {
                         continue;
                     }
-                    if (rowFilter.reachMaxPassed()) {
+                    if (filter.reachMaxPassed()) {
                         break;
                     }
                     checkedRowsIndices.add(i);

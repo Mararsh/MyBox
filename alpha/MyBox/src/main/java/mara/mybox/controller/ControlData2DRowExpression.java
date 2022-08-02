@@ -3,6 +3,8 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -11,7 +13,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Separator;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
@@ -41,6 +43,8 @@ public class ControlData2DRowExpression extends TreeNodesController {
 
     @FXML
     protected TextArea scriptInput;
+    @FXML
+    protected ListView placeholdersList;
 
     public ControlData2DRowExpression() {
         baseTitle = "JavaScript";
@@ -58,6 +62,16 @@ public class ControlData2DRowExpression extends TreeNodesController {
             tableTreeNodeTag = new TableTreeNodeTag();
             loadTree(null);
 
+            placeholdersList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
+                    if (newV == null || newV.isBlank()) {
+                        return;
+                    }
+                    scriptInput.replaceText(scriptInput.getSelection(), newV);
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -68,7 +82,54 @@ public class ControlData2DRowExpression extends TreeNodesController {
     }
 
     public void setData2D(Data2D data2D) {
-        this.data2D = data2D;
+        try {
+            this.data2D = data2D;
+            placeholdersList.getItems().clear();
+            if (data2D == null || !data2D.isValid()) {
+                return;
+            }
+            List<String> colnames = data2D.columnNames();
+            for (int i = 0; i < colnames.size(); i++) {
+                placeholdersList.getItems().add("#{" + colnames.get(i) + "}");
+            }
+            placeholdersList.getItems().add("#{" + message("TableRowNumber") + "}");
+            placeholdersList.getItems().add("#{" + message("DataRowNumber") + "}");
+            for (int i = 0; i < colnames.size(); i++) {
+                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("Mean") + "}");
+            }
+            for (int i = 0; i < colnames.size(); i++) {
+                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("Median") + "}");
+            }
+            for (int i = 0; i < colnames.size(); i++) {
+                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("Mode") + "}");
+            }
+            for (int i = 0; i < colnames.size(); i++) {
+                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("MinimumQ0") + "}");
+            }
+            for (int i = 0; i < colnames.size(); i++) {
+                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("LowerQuartile") + "}");
+            }
+            for (int i = 0; i < colnames.size(); i++) {
+                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("UpperQuartile") + "}");
+            }
+            for (int i = 0; i < colnames.size(); i++) {
+                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("MaximumQ4") + "}");
+            }
+            for (int i = 0; i < colnames.size(); i++) {
+                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("LowerExtremeOutlierLine") + "}");
+            }
+            for (int i = 0; i < colnames.size(); i++) {
+                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("LowerMildOutlierLine") + "}");
+            }
+            for (int i = 0; i < colnames.size(); i++) {
+                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("UpperMildOutlierLine") + "}");
+            }
+            for (int i = 0; i < colnames.size(); i++) {
+                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("UpperExtremeOutlierLine") + "}");
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     /*
@@ -99,6 +160,11 @@ public class ControlData2DRowExpression extends TreeNodesController {
     @FXML
     public void editAction() {
         JavaScriptController.open(scriptInput.getText());
+    }
+
+    @FXML
+    public void dataAction() {
+        JavaScriptController.open("");
     }
 
     /*
@@ -207,43 +273,32 @@ public class ControlData2DRowExpression extends TreeNodesController {
 
     protected void scriptExampleButtons(MenuController controller) {
         try {
-            List<String> colnames = data2D.columnNames();
-            List<String> names = new ArrayList<>();
-            names.add(message("TableRowNumber"));
-            names.add(message("DataRowNumber"));
-            names.addAll(colnames);
-            for (int i = 0; i < names.size(); i++) {
-                names.set(i, "#{" + names.get(i) + "}");
+            if (data2D == null || !data2D.isValid()) {
+                return;
             }
-            PopTools.addButtonsPane(controller, scriptInput, names);
-            controller.addNode(new Separator());
+            String col1 = data2D.columnNames().get(0);
+            PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
+                    "#{" + message("DataRowNumber") + "} % 2 == 0",
+                    "#{" + message("DataRowNumber") + "} % 2 == 1",
+                    "#{" + message("DataRowNumber") + "} >= 9",
+                    "#{" + message("TableRowNumber") + "} % 2 == 0",
+                    "#{" + message("TableRowNumber") + "} % 2 == 1",
+                    "#{" + message("TableRowNumber") + "} == 1",
+                    "#{" + col1 + "} == 0",
+                    "Math.abs(#{" + col1 + "}) >= 0",
+                    "#{" + col1 + "} < 0 || #{" + col1 + "} > 100 ",
+                    "#{" + col1 + "} != 6"
+            ));
 
-            if (!colnames.isEmpty()) {
-                String col1 = colnames.get(0);
-                PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
-                        "#{" + message("DataRowNumber") + "} % 2 == 0",
-                        "#{" + message("DataRowNumber") + "} % 2 == 1",
-                        "#{" + message("DataRowNumber") + "} >= 9",
-                        "#{" + message("TableRowNumber") + "} % 2 == 0",
-                        "#{" + message("TableRowNumber") + "} % 2 == 1",
-                        "#{" + message("TableRowNumber") + "} == 1",
-                        "#{" + col1 + "} == 0",
-                        "Math.abs(#{" + col1 + "}) >= 0",
-                        "#{" + col1 + "} < 0 || #{" + col1 + "} > 100 ",
-                        "#{" + col1 + "} != 6"
-                ));
-
-                PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
-                        "'#{" + col1 + "}'.search(/Hello/ig) >= 0",
-                        "'#{" + col1 + "}'.length > 0",
-                        "'#{" + col1 + "}'.indexOf('Hello') == 3",
-                        "'#{" + col1 + "}'.startsWith('Hello')",
-                        "'#{" + col1 + "}'.endsWith('Hello')",
-                        "var array = [ 'A', 'B', 'C', 'D' ];\n"
-                        + "array.includes('#{" + col1 + "}')"
-                ));
-            }
-
+            PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
+                    "'#{" + col1 + "}'.search(/Hello/ig) >= 0",
+                    "'#{" + col1 + "}'.length > 0",
+                    "'#{" + col1 + "}'.indexOf('Hello') == 3",
+                    "'#{" + col1 + "}'.startsWith('Hello')",
+                    "'#{" + col1 + "}'.endsWith('Hello')",
+                    "var array = [ 'A', 'B', 'C', 'D' ];\n"
+                    + "array.includes('#{" + col1 + "}')"
+            ));
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

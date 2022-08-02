@@ -71,7 +71,7 @@ public class Data2DDeleteController extends BaseData2DHandleController {
                             && tableController.dataController.backupController.isBack()) {
                         tableController.dataController.backupController.addBackup(task, data2D.getFile());
                     }
-                    data2D.startTask(task, rowFilterController.rowFilter);
+                    data2D.startTask(task, rowFilterController.filter);
                     ok = data2D.delete(errorContinueCheck.isSelected());
                     data2D.stopFilter();
                     return ok;

@@ -6,8 +6,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.DataFilter;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.RowFilter;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -16,25 +16,25 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-6-1
  * @License Apache License Version 2.0
  */
-public class ControlData2DRowFilter extends ControlData2DRowExpression {
+public class ControlData2DFilter extends ControlData2DRowExpression {
 
     protected long maxData = -1;
-    protected RowFilter rowFilter;
+    protected DataFilter filter;
 
     @FXML
     protected RadioButton trueRadio, othersRadio;
     @FXML
     protected TextField maxInput;
 
-    public ControlData2DRowFilter() {
+    public ControlData2DFilter() {
         TipsLabelKey = "RowFilterTips";
 
     }
 
     @Override
     public void initCalculator() {
-        rowFilter = new RowFilter();
-        calculator = rowFilter.calculator;
+        filter = new DataFilter();
+        calculator = filter.calculator;
     }
 
     public void setParameters(BaseController parent, ControlData2DEditTable tableController) {
@@ -77,18 +77,17 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
 
     @Override
     public void setData2D(Data2D data2D) {
-        this.data2D = data2D;
-        rowFilter.data2D = data2D;
-        data2D.rowFilter = rowFilter;
+        super.setData2D(data2D);
+        data2D.filter = filter;
     }
 
-    public void load(RowFilter rowFilter) {
-        if (rowFilter == null) {
+    public void load(String script, boolean reversed) {
+        if (script == null || script.isBlank()) {
             scriptInput.clear();
             trueRadio.fire();
         } else {
-            scriptInput.setText(rowFilter.script);
-            if (rowFilter.reversed) {
+            scriptInput.setText(script);
+            if (reversed) {
                 othersRadio.fire();
             } else {
                 trueRadio.fire();
@@ -96,13 +95,12 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
         }
     }
 
-    public RowFilter pickValues() {
-        rowFilter.setReversed(othersRadio.isSelected())
+    public DataFilter pickValues() {
+        filter.setReversed(othersRadio.isSelected())
                 .setMaxPassed(maxData).setPassedNumber(0)
-                .setScript(scriptInput.getText())
-                .setData2D(data2D);
-        data2D.setRowFilter(rowFilter);
-        return rowFilter;
+                .setScript(scriptInput.getText());
+        data2D.setFilter(filter);
+        return filter;
     }
 
     @Override

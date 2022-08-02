@@ -7,7 +7,9 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -35,7 +37,7 @@ public class ExpressionCalculator {
     /*
         calculate
      */
-    public boolean calculate() {
+    private boolean executeScript() {
         try {
             error = null;
             result = null;
@@ -49,7 +51,7 @@ public class ExpressionCalculator {
             }
             return true;
         } catch (Exception e) {
-            handleError(e);
+            handleError(e.toString());
             return false;
         }
     }
@@ -58,7 +60,7 @@ public class ExpressionCalculator {
         try {
             if (Platform.isFxApplicationThread()) {
                 this.expression = expression;
-                return calculate();
+                return executeScript();
             }
             start();
             synchronized (lock) {
@@ -68,15 +70,15 @@ public class ExpressionCalculator {
             }
             return true;
         } catch (Exception e) {
-            handleError(e);
+            handleError(e.toString());
             return false;
         }
     }
 
-    public void handleError(Exception e) {
-        error = e == null ? null : e.toString();
+    public void handleError(String e) {
+        error = e;
         if (e != null) {
-            MyBoxLog.console(error);
+            MyBoxLog.console(error + "\n" + expression);
         }
     }
 
@@ -96,14 +98,14 @@ public class ExpressionCalculator {
                         serviceRunning = true;
                         while (serviceRunning) {
                             synchronized (lock) {
-                                calculate();
+                                executeScript();
                                 expression = null;
                                 lock.notify();
                                 lock.wait();
                             }
                         }
                     } catch (Exception e) {
-                        handleError(e);
+                        handleError(e.toString());
                     }
                     stop();
                 }
@@ -113,7 +115,7 @@ public class ExpressionCalculator {
                 lock.wait();
             }
         } catch (Exception e) {
-            handleError(e);
+            handleError(e.toString());
             stop();
         }
     }
@@ -131,25 +133,7 @@ public class ExpressionCalculator {
     /*
         expression
      */
-    public String valueExpression(String script, String name, String value) {
-        try {
-            if (script == null || script.isBlank()) {
-                return script;
-            }
-            String filledScript = script;
-            filledScript = getFindReplace().replaceStringAll(filledScript, name, value);
-            return filledScript;
-        } catch (Exception e) {
-            handleError(e);
-            return null;
-        }
-    }
-
-    public String dataColumnExpression(Data2D data2D, String script, String value) {
-        return valueExpression(script, ColumnFilter.placehold(), value);
-    }
-
-    /*
+ /*
          "dataRowNumber" is 1-based
      */
     public String dataRowExpression(Data2D data2D, String script, List<String> dataRow, long dataRowNumber) {
@@ -159,7 +143,11 @@ public class ExpressionCalculator {
                     || data2D == null || !data2D.isValid()) {
                 return script;
             }
-            String filledScript = script;
+            findReplace = getFindReplace();
+            String filledScript = replaceStatistic(data2D, script);
+            if (filledScript == null) {
+                return null;
+            }
             if (filledScript.contains("#{" + message("TableRowNumber") + "}")) {
                 filledScript = message("NoTableRowNumberWhenAllPages");
             } else {
@@ -172,7 +160,7 @@ public class ExpressionCalculator {
             }
             return filledScript;
         } catch (Exception e) {
-            handleError(e);
+            handleError(e.toString());
             return null;
         }
     }
@@ -188,18 +176,117 @@ public class ExpressionCalculator {
                     || data2D == null || !data2D.isValid()) {
                 return script;
             }
-            String filledScript = script;
-            List<String> names = data2D.columnNames();
             findReplace = getFindReplace();
-            for (int i = 0; i < names.size(); i++) {
-                filledScript = findReplace.replaceStringAll(filledScript, "#{" + names.get(i) + "}", tableRow.get(i + 1));
+            String filledScript = replaceStatistic(data2D, script);
+            if (filledScript == null) {
+                return null;
+            }
+            for (int i = 0; i < data2D.columnsNumber(); i++) {
+                Data2DColumn column = data2D.getColumns().get(i);
+                String name = column.getColumnName();
+                filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "}", tableRow.get(i + 1));
             }
             filledScript = findReplace.replaceStringAll(filledScript, "#{" + message("DataRowNumber") + "}", tableRow.get(0) + "");
             filledScript = findReplace.replaceStringAll(filledScript, "#{" + message("TableRowNumber") + "}",
                     tableRowNumber >= 0 ? (tableRowNumber + 1) + "" : message("NoTableRowNumberWhenAllPages"));
             return filledScript;
         } catch (Exception e) {
-            handleError(e);
+            handleError(e.toString());
+            return null;
+        }
+    }
+
+    public String replaceStatistic(Data2D data2D, String script) {
+        try {
+            if (data2D == null || !data2D.isValid() || script == null || script.isBlank()) {
+                return script;
+            }
+            String filledScript = script;
+            findReplace = getFindReplace();
+            for (int i = 0; i < data2D.columnsNumber(); i++) {
+                Data2DColumn column = data2D.columns.get(i);
+                String name = column.getColumnName();
+                if (filledScript.contains("#{" + name + "-" + message("Mean") + "}")) {
+                    if (column.getDoubleStatistic() == null || DoubleTools.invalidDouble(column.getDoubleStatistic().mean)) {
+                        return null;
+                    }
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("Mean") + "}",
+                            column.getDoubleStatistic().mean + "");
+                }
+                if (filledScript.contains("#{" + name + "-" + message("Median") + "}")) {
+                    if (column.getDoubleStatistic() == null || DoubleTools.invalidDouble(column.getDoubleStatistic().median)) {
+                        return null;
+                    }
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("Median") + "}",
+                            column.getDoubleStatistic().median + "");
+                }
+                if (filledScript.contains("#{" + name + "-" + message("Mode") + "}")) {
+                    if (column.getDoubleStatistic() == null || column.getDoubleStatistic().modeValue != null) {
+                        return null;
+                    }
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("Mode") + "}",
+                            column.getDoubleStatistic().modeValue.toString());
+                }
+                if (filledScript.contains("#{" + name + "-" + message("MinimumQ0") + "}")) {
+                    if (column.getDoubleStatistic() == null || DoubleTools.invalidDouble(column.getDoubleStatistic().minimum)) {
+                        return null;
+                    }
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("MinimumQ0") + "}",
+                            column.getDoubleStatistic().minimum + "");
+                }
+                if (filledScript.contains("#{" + name + "-" + message("LowerQuartile") + "}")) {
+                    if (column.getDoubleStatistic() == null || DoubleTools.invalidDouble(column.getDoubleStatistic().lowerQuartile)) {
+                        return null;
+                    }
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("LowerQuartile") + "}",
+                            column.getDoubleStatistic().lowerQuartile + "");
+                }
+                if (filledScript.contains("#{" + name + "-" + message("UpperQuartile") + "}")) {
+                    if (column.getDoubleStatistic() == null || DoubleTools.invalidDouble(column.getDoubleStatistic().upperQuartile)) {
+                        return null;
+                    }
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("UpperQuartile") + "}",
+                            column.getDoubleStatistic().upperQuartile + "");
+                }
+                if (filledScript.contains("#{" + name + "-" + message("MaximumQ4") + "}")) {
+                    if (column.getDoubleStatistic() == null || DoubleTools.invalidDouble(column.getDoubleStatistic().maximum)) {
+                        return null;
+                    }
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("MaximumQ4") + "}",
+                            column.getDoubleStatistic().maximum + "");
+                }
+                if (filledScript.contains("#{" + name + "-" + message("LowerExtremeOutlierLine") + "}")) {
+                    if (column.getDoubleStatistic() == null || DoubleTools.invalidDouble(column.getDoubleStatistic().lowerExtremeOutlierLine)) {
+                        return null;
+                    }
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("LowerExtremeOutlierLine") + "}",
+                            column.getDoubleStatistic().lowerExtremeOutlierLine + "");
+                }
+                if (filledScript.contains("#{" + name + "-" + message("LowerMildOutlierLine") + "}")) {
+                    if (column.getDoubleStatistic() == null || DoubleTools.invalidDouble(column.getDoubleStatistic().lowerMildOutlierLine)) {
+                        return null;
+                    }
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("LowerMildOutlierLine") + "}",
+                            column.getDoubleStatistic().lowerMildOutlierLine + "");
+                }
+                if (filledScript.contains("#{" + name + "-" + message("UpperMildOutlierLine") + "}")) {
+                    if (column.getDoubleStatistic() == null || DoubleTools.invalidDouble(column.getDoubleStatistic().upperMildOutlierLine)) {
+                        return null;
+                    }
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("UpperMildOutlierLine") + "}",
+                            column.getDoubleStatistic().upperMildOutlierLine + "");
+                }
+                if (filledScript.contains("#{" + name + "-" + message("UpperExtremeOutlierLine") + "}")) {
+                    if (column.getDoubleStatistic() == null || DoubleTools.invalidDouble(column.getDoubleStatistic().upperExtremeOutlierLine)) {
+                        return null;
+                    }
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("UpperExtremeOutlierLine") + "}",
+                            column.getDoubleStatistic().upperExtremeOutlierLine + "");
+                }
+            }
+            return filledScript;
+        } catch (Exception e) {
+            handleError(e.toString());
             return null;
         }
     }
@@ -250,16 +337,22 @@ public class ExpressionCalculator {
 
     public boolean calculateTableRowExpression(Data2D data2D,
             String script, List<String> tableRow, long tableRowNumber) {
-        return calculate(tableRowExpression(data2D, script, tableRow, tableRowNumber));
+        expression = tableRowExpression(data2D, script, tableRow, tableRowNumber);
+        if (expression == null || expression.isBlank()) {
+            handleError(message("InvalidExpression"));
+            return false;
+        }
+        return calculate(expression);
     }
 
     public boolean calculateDataRowExpression(Data2D data2D,
             String script, List<String> dataRow, long dataRowNumber) {
-        return calculate(dataRowExpression(data2D, script, dataRow, dataRowNumber));
-    }
-
-    public boolean calculateDataColumnExpression(Data2D data2D, String script, String value) {
-        return calculate(dataColumnExpression(data2D, script, value));
+        expression = dataRowExpression(data2D, script, dataRow, dataRowNumber);
+        if (expression == null || expression.isBlank()) {
+            handleError(message("InvalidExpression"));
+            return false;
+        }
+        return calculate(expression);
     }
 
     public boolean validateExpression(Data2D data2D, String script, boolean allPages) {
@@ -273,26 +366,13 @@ public class ExpressionCalculator {
                 row.add("0");
             }
             if (allPages) {
-                return calculate(dataRowExpression(data2D, script, row, 1));
+                return calculateDataRowExpression(data2D, script, row, 1);
             } else {
                 row.add(0, "1");
                 return calculateTableRowExpression(data2D, script, row, 0);
             }
         } catch (Exception e) {
-            handleError(e);
-            return false;
-        }
-    }
-
-    public boolean validateDataColumnExpression(Data2D data2D, String script) {
-        try {
-            handleError(null);
-            if (script == null || script.isBlank()) {
-                return true;
-            }
-            return calculate(dataColumnExpression(data2D, script, "0"));
-        } catch (Exception e) {
-            handleError(e);
+            handleError(e.toString());
             return false;
         }
     }

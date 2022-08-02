@@ -39,7 +39,7 @@
                 map.enableInertia();
                 map.enableKeyboard();
                 map.setMinZoom(1);
-                map.enableDrag();
+                map.setMaxZoom(18);
 
                 zoomControl = new T.Control.Zoom();
                 scaleControl = new T.Control.Scale();
@@ -80,30 +80,25 @@
 
             function mapLoaded() {
                 alert("Loaded");
-                map.enableDrag();
             }
 
             function mapClicked(e) {
                 var text = 'click:' + e.lnglat.getLng() + ',' + e.lnglat.getLat();
                 alert(text);
-                map.enableDrag();
             }
 
             function mouseMove(e) {
                 var text = 'move:' + e.lnglat.getLng() + ',' + e.lnglat.getLat();
                 alert(text);
-                map.enableDrag();
             }
 
             function zoomChanged(e) {
                 alert("zoomSize:" + map.getZoom());
-                map.enableDrag();
             }
 
 
             function setCenter(longtitude, latitude) {
                 map.centerAndZoom(new T.LngLat(longtitude, latitude), map.getZoom());
-                map.enableDrag();
             }
 
             function setZoom(size) {
@@ -136,7 +131,6 @@
 
             function clearMap() {
                 map.clearOverLays();
-                map.enableDrag();
             }
 
 
@@ -206,7 +200,6 @@
                     markerLabel.setBackgroundColor("transparent");
                     map.addOverLay(markerLabel);
                 }
-                map.enableDrag();
 
             }
 

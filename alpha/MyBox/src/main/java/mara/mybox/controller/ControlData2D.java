@@ -696,9 +696,9 @@ public class ControlData2D extends BaseController {
             menu.setDisable(empty);
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("MarkAbnormalValues"), StyleTools.getIconImage("iconColor.png"));
+            menu = new MenuItem(message("SetStyles"), StyleTools.getIconImage("iconColor.png"));
             menu.setOnAction((ActionEvent event) -> {
-                Data2DMarkAbnormalController.open(tableController);
+                Data2DSetStylesController.open(tableController);
             });
             menu.setDisable(empty || data2D.isTmpData());
             popMenu.getItems().add(menu);

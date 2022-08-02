@@ -117,7 +117,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                             return false;
                         }
                     }
-                    data2D.startTask(task, rowFilterController.rowFilter);
+                    data2D.startTask(task, rowFilterController.filter);
                     ok = data2D.setValue(checkedColsIndices, valueController.value, valueController.errorContinueCheck.isSelected());
                     data2D.stopFilter();
                     return ok;

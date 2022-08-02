@@ -19,7 +19,6 @@ import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.db.table.TableData2DStyle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.ColumnFilter;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.Languages.message;
 
@@ -254,13 +253,13 @@ public abstract class Data2D_Edit extends Data2D_Data {
                 } else {
                     colNames = this.columnNames();
                 }
-                ColumnFilter columnFilter = style.getColumnFilter();
-                if (columnFilter == null) {
-                    continue;
-                }
-                columnFilter.checkStatistic(calculation, columnFilter.getEqualValue());
-                columnFilter.checkStatistic(calculation, columnFilter.getLargerValue());
-                columnFilter.checkStatistic(calculation, columnFilter.getLessValue());
+//                ColumnFilter columnFilter = style.getColumnFilter();
+//                if (columnFilter == null) {
+//                    continue;
+//                }
+//                columnFilter.checkStatistic(calculation, columnFilter.getEqualValue());
+//                columnFilter.checkStatistic(calculation, columnFilter.getLargerValue());
+//                columnFilter.checkStatistic(calculation, columnFilter.getLessValue());
             }
             if (colNames.isEmpty() || !calculation.need()) {
                 return;

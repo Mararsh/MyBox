@@ -272,7 +272,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
 
             @Override
             protected boolean handle() {
-                data2D.startTask(task, rowFilterController.rowFilter);
+                data2D.startTask(task, rowFilterController.filter);
                 csvFile = generatedFile();
                 data2D.stopFilter();
                 return csvFile != null;
@@ -306,7 +306,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             @Override
             protected boolean handle() {
                 try {
-                    data2D.startTask(task, rowFilterController.rowFilter);
+                    data2D.startTask(task, rowFilterController.filter);
                     ok = handleRows();
                     data2D.stopFilter();
                     return ok;

@@ -26,7 +26,7 @@ import org.apache.commons.math3.stat.Frequency;
  * @CreateDate 2022-2-25
  * @License Apache License Version 2.0
  */
-public abstract class Data2D_Operations extends Data2D_Convert {
+public abstract class Data2D_Operations extends Data2D_Filter {
 
     public static enum ObjectType {
         Columns, Rows, All

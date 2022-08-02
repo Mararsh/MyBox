@@ -1,30 +1,28 @@
-package mara.mybox.fxml;
+package mara.mybox.data2d;
 
 import java.util.List;
-import mara.mybox.data2d.Data2D;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ExpressionCalculator;
+import mara.mybox.fxml.SingletonTask;
 
 /**
  * @Author Mara
  * @CreateDate 2022-7-7
  * @License Apache License Version 2.0
  */
-public class RowFilter {
+public class DataFilter {
 
-    public static String ReversedPrefix = "Reversed::";
-
-    public Data2D data2D;
     public String script;
     public long passedNumber, maxPassed;
     public boolean reversed, passed;
     public SingletonTask task;
     public ExpressionCalculator calculator;
 
-    public RowFilter() {
+    public DataFilter() {
         init();
     }
 
-    public RowFilter(String script, boolean reversed) {
+    public DataFilter(String script, boolean reversed) {
         init();
         this.script = script;
         this.reversed = reversed;
@@ -42,7 +40,6 @@ public class RowFilter {
         passedNumber = 0;
         passed = false;
         this.task = task;
-        this.data2D = data2D;
         calculator.start();
     }
 
@@ -53,34 +50,8 @@ public class RowFilter {
         calculator.stop();
     }
 
-    public static RowFilter create() {
-        return new RowFilter();
-    }
-
-    public RowFilter fromString(String rowFilterString) {
-        if (rowFilterString == null || rowFilterString.isBlank()) {
-            script = null;
-        } else {
-            if (rowFilterString.startsWith(ReversedPrefix)) {
-                script = rowFilterString.substring(ReversedPrefix.length());
-                reversed = true;
-            } else {
-                script = rowFilterString;
-                reversed = false;
-            }
-        }
-        return this;
-    }
-
-    @Override
-    public String toString() {
-        String rowFilterString;
-        if (script == null) {
-            rowFilterString = null;
-        } else {
-            rowFilterString = (reversed ? ReversedPrefix : "") + script;
-        }
-        return rowFilterString;
+    public static DataFilter create() {
+        return new DataFilter();
     }
 
     public boolean needFilter() {
@@ -154,27 +125,18 @@ public class RowFilter {
             task.setError(error);
         }
         if (error != null) {
-            MyBoxLog.console(error);
+            MyBoxLog.error(error + "\n" + script);
         }
     }
 
     /*
         get/set
      */
-    public Data2D getData2D() {
-        return data2D;
-    }
-
-    public RowFilter setData2D(Data2D data2D) {
-        this.data2D = data2D;
-        return this;
-    }
-
     public SingletonTask getTask() {
         return task;
     }
 
-    public RowFilter setTask(SingletonTask task) {
+    public DataFilter setTask(SingletonTask task) {
         this.task = task;
         return this;
     }
@@ -183,7 +145,7 @@ public class RowFilter {
         return script;
     }
 
-    public RowFilter setScript(String script) {
+    public DataFilter setScript(String script) {
         this.script = script;
         return this;
     }
@@ -192,7 +154,7 @@ public class RowFilter {
         return passedNumber;
     }
 
-    public RowFilter setPassedNumber(long passedNumber) {
+    public DataFilter setPassedNumber(long passedNumber) {
         this.passedNumber = passedNumber;
         return this;
     }
@@ -201,7 +163,7 @@ public class RowFilter {
         return maxPassed;
     }
 
-    public RowFilter setMaxPassed(long maxPassed) {
+    public DataFilter setMaxPassed(long maxPassed) {
         this.maxPassed = maxPassed;
         return this;
     }
@@ -210,7 +172,7 @@ public class RowFilter {
         return reversed;
     }
 
-    public RowFilter setReversed(boolean reversed) {
+    public DataFilter setReversed(boolean reversed) {
         this.reversed = reversed;
         return this;
     }
@@ -219,7 +181,7 @@ public class RowFilter {
         return passed;
     }
 
-    public RowFilter setPassed(boolean passed) {
+    public DataFilter setPassed(boolean passed) {
         this.passed = passed;
         return this;
     }

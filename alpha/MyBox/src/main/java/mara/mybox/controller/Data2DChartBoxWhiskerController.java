@@ -455,7 +455,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
 
     public boolean handlePages() {
         try {
-            data2D.startTask(task, rowFilterController.rowFilter);
+            data2D.startTask(task, rowFilterController.filter);
             DataTable tmpTable = data2D.toTmpTable(task, dataColsIndices, false, true);
             if (tmpTable == null) {
                 outputData = null;

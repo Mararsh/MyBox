@@ -178,7 +178,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             @Override
             protected boolean handle() {
                 try {
-                    data2D.startTask(task, rowFilterController.rowFilter);
+                    data2D.startTask(task, rowFilterController.filter);
                     readData();
                     data2D.stopFilter();
                     return true;

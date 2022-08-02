@@ -5,9 +5,11 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
+import mara.mybox.data2d.DataFilter;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DStyle;
 import mara.mybox.dev.MyBoxLog;
@@ -22,10 +24,18 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-4-7
  * @License Apache License Version 2.0
  */
-public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
+public class Data2DSetStylesController extends BaseController {
 
+    protected ControlData2DEditTable tableController;
+    protected Data2DStyle currentStyle;
+    protected ChangeListener<Boolean> tableStatusListener;
+    protected DataFilter filter;
     protected Data2DStyle updatedStyle;
 
+    @FXML
+    protected ControlData2DStyleList listController;
+    @FXML
+    protected Label idLabel;
     @FXML
     protected Tab baseTab, dataTab, rowFilterTab, columnFilterTab, styleTab;
     @FXML
@@ -35,15 +45,25 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
     @FXML
     protected FlowPane columnsPane;
     @FXML
-    protected ControlData2DRowFilter rowFilterController;
-    @FXML
-    protected ControlData2DColumnFilter columnFilterController;
+    protected ControlData2DFilter filterController;
     @FXML
     protected ControlData2DStyle editController;
 
-    public Data2DMarkAbnormalController() {
-        baseTitle = message("MarkAbnormalValues");
-        TipsLabelKey = "MarkAbnormalValuesTips";
+    public Data2DSetStylesController() {
+        baseTitle = message("SetStyles");
+        TipsLabelKey = "SetStylesTips";
+    }
+
+    @Override
+    public void initValues() {
+        try {
+            super.initValues();
+
+            rightPaneControl = listController.rightPaneControl;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @Override
@@ -81,33 +101,43 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
         }
     }
 
-    @Override
     public void setParameters(ControlData2DEditTable tableController) {
         try {
-            rowFilterController.setParameters(this, tableController);
-            columnFilterController.setParameters(this, tableController);
+            this.tableController = tableController;
+            listController.setParameters(this);
 
-            super.setParameters(tableController);
+            tableStatusListener = new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    sourceChanged();
+                }
+            };
+            tableController.statusNotify.addListener(tableStatusListener);
+
+            filterController.setParameters(this, tableController);
+
+            sourceChanged();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    @Override
     public void sourceChanged() {
         try {
             if (tableController == null) {
                 return;
             }
-            rowFilterController.setData2D(tableController.data2D.cloneAll());
-            columnFilterController.setData2D(tableController.data2D.cloneAll());
+            getMyStage().setTitle(baseTitle + " - " + tableController.data2D.displayName());
+
+            listController.sourceChanged();
+            filterController.setData2D(tableController.data2D.cloneAll());
 
             columnsPane.getChildren().clear();
             for (Data2DColumn column : tableController.data2D.getColumns()) {
                 columnsPane.getChildren().add(new CheckBox(column.getColumnName()));
             }
-            super.sourceChanged();
+            loadStyle(currentStyle);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -167,7 +197,6 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
         editController.checkStyle(updatedStyle);
     }
 
-    @Override
     public void loadNull() {
         currentStyle = new Data2DStyle();
         updatedStyle = currentStyle;
@@ -176,8 +205,7 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
         fromInput.clear();
         toInput.clear();
         selectNoneColumn();
-        rowFilterController.load(null);
-        columnFilterController.load(null);
+        filterController.load(null, false);
         editController.loadNull(currentStyle);
         sequenceInput.setText((listController.dataSize + 1) + "");
         abnormalCheck.setSelected(false);
@@ -187,7 +215,6 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
         recoverButton.setDisable(true);
     }
 
-    @Override
     public void loadStyle(Data2DStyle style) {
         if (style == null || tableController == null || tableController.data2D == null
                 || style.getD2id() != tableController.data2D.getD2did()) {
@@ -218,8 +245,7 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
                 }
             }
         }
-        rowFilterController.load(updatedStyle.getRowFilter());
-        columnFilterController.load(updatedStyle.getColumnFilter());
+        filterController.load(updatedStyle.getFilter(), updatedStyle.isFilterReversed());
 
         sequenceInput.setText(updatedStyle.getSequence() + "");
         abnormalCheck.setSelected(updatedStyle.isAbnoramlValues());
@@ -227,6 +253,14 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
         editController.editStyle(updatedStyle);
         isSettingValues = false;
         checkStyle();
+    }
+
+    public void reloadDataPage() {
+        if (tableController == null || !tableController.checkBeforeNextAction()) {
+            return;
+        }
+        tableController.dataController.goPage();
+        tableController.requestMouse();
     }
 
     @FXML
@@ -288,14 +322,9 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
                 tabPane.getSelectionModel().select(dataTab);
                 return false;
             }
-            if (!rowFilterController.checkExpression(false)) {
-                popError(rowFilterController.error);
+            if (!filterController.checkExpression(false)) {
+                popError(filterController.error);
                 tabPane.getSelectionModel().select(rowFilterTab);
-                return false;
-            }
-            if (!columnFilterController.checkFilter()) {
-                popError(columnFilterController.error);
-                tabPane.getSelectionModel().select(columnFilterTab);
                 return false;
             }
             checkStyle();
@@ -319,8 +348,8 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
             }
             updatedStyle.setColumns(columns);
 
-            updatedStyle.setRowFilter(rowFilterController.rowFilter);
-            updatedStyle.setColumnFilter(columnFilterController.columnFilter);
+            updatedStyle.setFilter(filterController.filter.getScript());
+            updatedStyle.setFilterReversed(filterController.filter.isReversed());
             updatedStyle.setAbnoramlValues(abnormalCheck.isSelected());
             return true;
         } catch (Exception e) {
@@ -358,13 +387,35 @@ public class Data2DMarkAbnormalController extends BaseData2DAbnormalController {
         start(task);
     }
 
+    @FXML
+    public void dataAction() {
+        Data2DSetStylesController.open(tableController);
+    }
+
+    @FXML
+    @Override
+    public void cancelAction() {
+        close();
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            tableController.statusNotify.removeListener(tableStatusListener);
+            tableStatusListener = null;
+            tableController = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
+    }
+
     /*
         static
      */
-    public static Data2DMarkAbnormalController open(ControlData2DEditTable tableController) {
+    public static Data2DSetStylesController open(ControlData2DEditTable tableController) {
         try {
-            Data2DMarkAbnormalController controller = (Data2DMarkAbnormalController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DMarkAbnormalFxml, false);
+            Data2DSetStylesController controller = (Data2DSetStylesController) WindowTools.openChildStage(
+                    tableController.getMyWindow(), Fxmls.Data2DSetStylesFxml, false);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;
