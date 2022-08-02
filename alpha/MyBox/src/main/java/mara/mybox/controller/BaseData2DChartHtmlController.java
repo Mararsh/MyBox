@@ -172,7 +172,7 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
             @Override
             protected boolean handle() {
                 try {
-                    data2D.startTask(task, rowFilterController.filter);
+                    data2D.startTask(task, filterController.filter);
                     readData();
                     data2D.stopFilter();
                     html = handleData();

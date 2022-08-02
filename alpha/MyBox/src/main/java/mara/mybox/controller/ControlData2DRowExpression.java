@@ -91,42 +91,20 @@ public class ControlData2DRowExpression extends TreeNodesController {
             List<String> colnames = data2D.columnNames();
             for (int i = 0; i < colnames.size(); i++) {
                 placeholdersList.getItems().add("#{" + colnames.get(i) + "}");
+                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("Mean") + "}");
+                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("Median") + "}");
+                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("Mode") + "}");
+                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("MinimumQ0") + "}");
+                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("LowerQuartile") + "}");
+                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("UpperQuartile") + "}");
+                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("MaximumQ4") + "}");
+                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("LowerExtremeOutlierLine") + "}");
+                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("LowerMildOutlierLine") + "}");
+                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("UpperMildOutlierLine") + "}");
+                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("UpperExtremeOutlierLine") + "}");
             }
             placeholdersList.getItems().add("#{" + message("TableRowNumber") + "}");
             placeholdersList.getItems().add("#{" + message("DataRowNumber") + "}");
-            for (int i = 0; i < colnames.size(); i++) {
-                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("Mean") + "}");
-            }
-            for (int i = 0; i < colnames.size(); i++) {
-                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("Median") + "}");
-            }
-            for (int i = 0; i < colnames.size(); i++) {
-                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("Mode") + "}");
-            }
-            for (int i = 0; i < colnames.size(); i++) {
-                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("MinimumQ0") + "}");
-            }
-            for (int i = 0; i < colnames.size(); i++) {
-                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("LowerQuartile") + "}");
-            }
-            for (int i = 0; i < colnames.size(); i++) {
-                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("UpperQuartile") + "}");
-            }
-            for (int i = 0; i < colnames.size(); i++) {
-                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("MaximumQ4") + "}");
-            }
-            for (int i = 0; i < colnames.size(); i++) {
-                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("LowerExtremeOutlierLine") + "}");
-            }
-            for (int i = 0; i < colnames.size(); i++) {
-                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("LowerMildOutlierLine") + "}");
-            }
-            for (int i = 0; i < colnames.size(); i++) {
-                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("UpperMildOutlierLine") + "}");
-            }
-            for (int i = 0; i < colnames.size(); i++) {
-                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("UpperExtremeOutlierLine") + "}");
-            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

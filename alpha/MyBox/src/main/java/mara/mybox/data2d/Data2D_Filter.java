@@ -15,11 +15,11 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-7-31
  * @License Apache License Version 2.0
  */
-public abstract class Data2D_Filter extends Data2D_Convert {
+public abstract class Data2D_Filter extends Data2D_Data {
 
-    public void startTask(SingletonTask task, DataFilter rowFilter) {
+    public void startTask(SingletonTask task, DataFilter filter) {
         this.task = task;
-        this.filter = rowFilter;
+        this.filter = filter;
         startFilter();
     }
 
@@ -36,7 +36,26 @@ public abstract class Data2D_Filter extends Data2D_Convert {
         if (filter == null) {
             return;
         }
-        filter.start(task, (Data2D) this);
+        try {
+            resetStatistic();
+            DescriptiveStatistic calculation = new DescriptiveStatistic()
+                    .setStatisticObject(DescriptiveStatistic.StatisticObject.Columns)
+                    .setInvalidAs(Double.NaN);
+            List<Integer> colIndices = new ArrayList<>();
+            checkStatistic(filter.getScript(), calculation, colIndices);
+            if (calculation.needNonStored()) {
+                ((Data2D) this).statisticByColumnsWithoutStored(colIndices, calculation);
+            }
+            if (calculation.needStored()) {
+                ((Data2D) this).statisticByColumnsForStored(colIndices, calculation);
+            }
+            filter.start(task, (Data2D) this);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            }
+        }
     }
 
     public void stopFilter() {
@@ -103,25 +122,14 @@ public abstract class Data2D_Filter extends Data2D_Convert {
         return filter.getResult();
     }
 
-    /*
-        statistic values
-     */
-    public void countStatistic() {
+    public void checkStatistic(String script, DescriptiveStatistic calculation, List<Integer> colIndices) {
         try {
-            resetStatistic();
-            if (filter == null || filter.calculator == null || !isValid()) {
-                return;
-            }
-            String script = filter.script;
-            if (script == null || script.isBlank()) {
+            if (script == null || script.isBlank() || calculation == null || colIndices == null) {
                 return;
             }
             for (int i = 0; i < columnsNumber(); i++) {
                 Data2DColumn column = columns.get(i);
                 String name = column.getColumnName();
-                DescriptiveStatistic calculation = new DescriptiveStatistic()
-                        .setStatisticObject(DescriptiveStatistic.StatisticObject.Columns)
-                        .setInvalidAs(Double.NaN);
                 if (script.contains("#{" + name + "-" + message("Mean") + "}")) {
                     calculation.setMean(true);
                 }
@@ -158,13 +166,9 @@ public abstract class Data2D_Filter extends Data2D_Convert {
                 if (!calculation.need()) {
                     continue;
                 }
-                List<Integer> colIndices = new ArrayList<>();
-                colIndices.add(colOrder(name));
-                if (calculation.needNonStored()) {
-                    ((Data2D) this).statisticByColumnsWithoutStored(colIndices, calculation);
-                }
-                if (calculation.needStored()) {
-                    ((Data2D) this).statisticByColumnsForStored(colIndices, calculation);
+                int col = colOrder(name);
+                if (!colIndices.contains(col)) {
+                    colIndices.add(col);
                 }
             }
         } catch (Exception e) {
@@ -175,9 +179,6 @@ public abstract class Data2D_Filter extends Data2D_Convert {
         }
     }
 
-    /*
-        style
-     */
     public String cellStyle(DataFilter styleFilter, int tableRowIndex, String colName) {
         try {
             if (styleFilter == null || styles == null || styles.isEmpty() || colName == null || colName.isBlank()) {

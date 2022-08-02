@@ -37,7 +37,7 @@ public class Data2DSetStylesController extends BaseController {
     @FXML
     protected Label idLabel;
     @FXML
-    protected Tab baseTab, dataTab, rowFilterTab, columnFilterTab, styleTab;
+    protected Tab baseTab, dataTab, filterTab, styleTab;
     @FXML
     protected CheckBox abnormalCheck, sizeCheck;
     @FXML
@@ -324,7 +324,7 @@ public class Data2DSetStylesController extends BaseController {
             }
             if (!filterController.checkExpression(false)) {
                 popError(filterController.error);
-                tabPane.getSelectionModel().select(rowFilterTab);
+                tabPane.getSelectionModel().select(filterTab);
                 return false;
             }
             checkStyle();

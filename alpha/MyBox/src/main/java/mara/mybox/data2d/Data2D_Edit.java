@@ -27,7 +27,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-2-25
  * @License Apache License Version 2.0
  */
-public abstract class Data2D_Edit extends Data2D_Data {
+public abstract class Data2D_Edit extends Data2D_Filter {
 
     public abstract Data2DDefinition queryDefinition(Connection conn);
 
@@ -217,56 +217,14 @@ public abstract class Data2D_Edit extends Data2D_Data {
                 task.setError(e.toString());
             }
         }
-        countAbnormalLines();
-    }
-
-    public void countSize() {
         try {
-            rowsNumber = dataSize + (tableRowsNumber() - (endRowOfCurrentPage - startRowOfCurrentPage));
-            colsNumber = tableColsNumber();
-            if (colsNumber <= 0) {
-                hasHeader = false;
-            }
-        } catch (Exception e) {
-        }
-    }
-
-    public void countAbnormalLines() {
-        resetStatistic();
-        if (styles == null || styles.isEmpty()) {
-            return;
-        }
-        try {
-            List<String> colNames = new ArrayList<>();
+            resetStatistic();
             DescriptiveStatistic calculation = new DescriptiveStatistic()
                     .setStatisticObject(DescriptiveStatistic.StatisticObject.Columns)
                     .setInvalidAs(Double.NaN);
-            for (Data2DStyle style : styles) {
-                String scolumns = style.getColumns();
-                if (scolumns != null && !scolumns.isBlank()) {
-                    String[] ns = scolumns.split(Data2DStyle.ColumnSeparator);
-                    for (String s : ns) {
-                        if (!colNames.contains(s)) {
-                            colNames.add(s);
-                        }
-                    }
-                } else {
-                    colNames = this.columnNames();
-                }
-//                ColumnFilter columnFilter = style.getColumnFilter();
-//                if (columnFilter == null) {
-//                    continue;
-//                }
-//                columnFilter.checkStatistic(calculation, columnFilter.getEqualValue());
-//                columnFilter.checkStatistic(calculation, columnFilter.getLargerValue());
-//                columnFilter.checkStatistic(calculation, columnFilter.getLessValue());
-            }
-            if (colNames.isEmpty() || !calculation.need()) {
-                return;
-            }
             List<Integer> colIndices = new ArrayList<>();
-            for (String name : colNames) {
-                colIndices.add(colOrder(name));
+            for (Data2DStyle style : styles) {
+                checkStatistic(style.getFilter(), calculation, colIndices);
             }
             if (calculation.needNonStored()) {
                 ((Data2D) this).statisticByColumnsWithoutStored(colIndices, calculation);
@@ -279,6 +237,17 @@ public abstract class Data2D_Edit extends Data2D_Data {
             if (task != null) {
                 task.setError(e.toString());
             }
+        }
+    }
+
+    public void countSize() {
+        try {
+            rowsNumber = dataSize + (tableRowsNumber() - (endRowOfCurrentPage - startRowOfCurrentPage));
+            colsNumber = tableColsNumber();
+            if (colsNumber <= 0) {
+                hasHeader = false;
+            }
+        } catch (Exception e) {
         }
     }
 

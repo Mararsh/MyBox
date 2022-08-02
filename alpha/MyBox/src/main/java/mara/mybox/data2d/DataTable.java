@@ -937,6 +937,11 @@ public class DataTable extends Data2D {
                 }
                 if (selections.mode) {
                     colStatistic.modeValue = mode(conn, column.getColumnName());
+                    try {
+                        colStatistic.mode = Double.valueOf(colStatistic.modeValue + "");
+                    } catch (Exception ex) {
+                        colStatistic.mode = colStatistic.invalidAs;
+                    }
                 }
             }
             return sData;

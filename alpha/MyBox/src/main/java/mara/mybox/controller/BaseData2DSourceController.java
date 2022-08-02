@@ -38,7 +38,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
     @FXML
     protected VBox dataBox;
     @FXML
-    protected ControlData2DFilter rowFilterController;
+    protected ControlData2DFilter filterController;
 
     /*
         controls
@@ -83,7 +83,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
             this.parentController = parent;
             this.tableController = tableController;
 
-            rowFilterController.setParameters(this, tableController);
+            filterController.setParameters(this, tableController);
 
             tableLoadListener = new ChangeListener<Boolean>() {
                 @Override
@@ -137,7 +137,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
             pagesNumber = tableController.pagesNumber;
             dataSize = tableController.dataSize;
             dataSizeLoaded = true;
-            rowFilterController.setData2D(data2D);
+            filterController.setData2D(data2D);
             isSettingValues = false;
             refreshControls();
             notifyLoaded();
@@ -253,8 +253,8 @@ public class BaseData2DSourceController extends ControlData2DLoad {
             error = message("InvalidData");
             return false;
         }
-        if (!rowFilterController.checkExpression(isAllPages())) {
-            error = rowFilterController.error;
+        if (!filterController.checkExpression(isAllPages())) {
+            error = filterController.error;
             return false;
         } else {
             return true;
@@ -272,7 +272,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
     }
 
     public boolean hasRowFilter() {
-        String script = rowFilterController.scriptInput.getText();
+        String script = filterController.scriptInput.getText();
         return script != null && !script.isBlank();
     }
 

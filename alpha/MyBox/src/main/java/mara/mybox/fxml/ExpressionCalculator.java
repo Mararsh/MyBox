@@ -78,7 +78,7 @@ public class ExpressionCalculator {
     public void handleError(String e) {
         error = e;
         if (e != null) {
-            MyBoxLog.console(error + "\n" + expression);
+            MyBoxLog.debug(error + "\n" + expression);
         }
     }
 
@@ -196,6 +196,7 @@ public class ExpressionCalculator {
         }
     }
 
+    // referred statistic should have been calculated
     public String replaceStatistic(Data2D data2D, String script) {
         try {
             if (data2D == null || !data2D.isValid() || script == null || script.isBlank()) {
@@ -221,7 +222,7 @@ public class ExpressionCalculator {
                             column.getDoubleStatistic().median + "");
                 }
                 if (filledScript.contains("#{" + name + "-" + message("Mode") + "}")) {
-                    if (column.getDoubleStatistic() == null || column.getDoubleStatistic().modeValue != null) {
+                    if (column.getDoubleStatistic() == null || column.getDoubleStatistic().modeValue == null) {
                         return null;
                     }
                     filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("Mode") + "}",
@@ -365,15 +366,67 @@ public class ExpressionCalculator {
             for (int i = 0; i < data2D.columnsNumber(); i++) {
                 row.add("0");
             }
+            String filledScript = replaceDummyStatistic(data2D, script);
             if (allPages) {
-                return calculateDataRowExpression(data2D, script, row, 1);
+                return calculateDataRowExpression(data2D, filledScript, row, 1);
             } else {
                 row.add(0, "1");
-                return calculateTableRowExpression(data2D, script, row, 0);
+                return calculateTableRowExpression(data2D, filledScript, row, 0);
             }
         } catch (Exception e) {
             handleError(e.toString());
             return false;
+        }
+    }
+
+    public String replaceDummyStatistic(Data2D data2D, String script) {
+        try {
+            if (data2D == null || !data2D.isValid() || script == null || script.isBlank()) {
+                return script;
+            }
+            String filledScript = script;
+            findReplace = getFindReplace();
+            for (int i = 0; i < data2D.columnsNumber(); i++) {
+                Data2DColumn column = data2D.columns.get(i);
+                String name = column.getColumnName();
+                if (filledScript.contains("#{" + name + "-" + message("Mean") + "}")) {
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("Mean") + "}", "1");
+                }
+                if (filledScript.contains("#{" + name + "-" + message("Median") + "}")) {
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("Median") + "}", "1");
+                }
+                if (filledScript.contains("#{" + name + "-" + message("Mode") + "}")) {
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("Mode") + "}", "1");
+                }
+                if (filledScript.contains("#{" + name + "-" + message("MinimumQ0") + "}")) {
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("MinimumQ0") + "}", "1");
+                }
+                if (filledScript.contains("#{" + name + "-" + message("LowerQuartile") + "}")) {
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("LowerQuartile") + "}", "1");
+                }
+                if (filledScript.contains("#{" + name + "-" + message("UpperQuartile") + "}")) {
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("UpperQuartile") + "}", "1");
+                }
+                if (filledScript.contains("#{" + name + "-" + message("MaximumQ4") + "}")) {
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("MaximumQ4") + "}", "1");
+                }
+                if (filledScript.contains("#{" + name + "-" + message("LowerExtremeOutlierLine") + "}")) {
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("LowerExtremeOutlierLine") + "}", "1");
+                }
+                if (filledScript.contains("#{" + name + "-" + message("LowerMildOutlierLine") + "}")) {
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("LowerMildOutlierLine") + "}", "1");
+                }
+                if (filledScript.contains("#{" + name + "-" + message("UpperMildOutlierLine") + "}")) {
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("UpperMildOutlierLine") + "}", "1");
+                }
+                if (filledScript.contains("#{" + name + "-" + message("UpperExtremeOutlierLine") + "}")) {
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("UpperExtremeOutlierLine") + "}", "1");
+                }
+            }
+            return filledScript;
+        } catch (Exception e) {
+            handleError(e.toString());
+            return null;
         }
     }
 

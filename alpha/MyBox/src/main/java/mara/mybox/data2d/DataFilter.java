@@ -125,7 +125,7 @@ public class DataFilter {
             task.setError(error);
         }
         if (error != null) {
-            MyBoxLog.error(error + "\n" + script);
+            MyBoxLog.debug(error + "\n" + script);
         }
     }
 
