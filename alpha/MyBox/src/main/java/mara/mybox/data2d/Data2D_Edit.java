@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
-import mara.mybox.calculation.DescriptiveStatistic;
 import mara.mybox.data2d.scan.Data2DReader;
 import mara.mybox.data2d.scan.Data2DReader.Operation;
 import mara.mybox.db.DerbyBase;
@@ -192,11 +191,11 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         if (rows != null) {
             endRowOfCurrentPage = startRowOfCurrentPage + rows.size();
         }
-        readPageStyles(conn, rows);
+        readPageStyles(conn);
         return rows;
     }
 
-    public void readPageStyles(Connection conn, List<List<String>> rows) {
+    public void readPageStyles(Connection conn) {
         styles = new ArrayList<>();
         if (d2did < 0 || startRowOfCurrentPage >= endRowOfCurrentPage) {
             return;
@@ -218,19 +217,15 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             }
         }
         try {
-            resetStatistic();
-            DescriptiveStatistic calculation = new DescriptiveStatistic()
-                    .setStatisticObject(DescriptiveStatistic.StatisticObject.Columns)
-                    .setInvalidAs(Double.NaN);
-            List<Integer> colIndices = new ArrayList<>();
-            for (Data2DStyle style : styles) {
-                checkStatistic(style.getFilter(), calculation, colIndices);
+            List<String> scripts = new ArrayList<>();
+            for (int i = 0; i < styles.size(); i++) {
+                Data2DStyle style = styles.get(i);
+                scripts.add(style.getFilter());
             }
-            if (calculation.needNonStored()) {
-                ((Data2D) this).statisticByColumnsWithoutStored(colIndices, calculation);
-            }
-            if (calculation.needStored()) {
-                ((Data2D) this).statisticByColumnsForStored(colIndices, calculation);
+            scripts = calculateScriptsStatistic(scripts);
+            for (int i = 0; i < styles.size(); i++) {
+                Data2DStyle style = styles.get(i);
+                style.setFilter(scripts.get(i));
             }
         } catch (Exception e) {
             MyBoxLog.error(e);

@@ -115,8 +115,10 @@ public class Data2DExportController extends BaseData2DHandleController {
     public boolean export() {
         try {
             convertController.setExport(targetPath, checkedColumns, filePrefix, targetPathController.isSkip());
+            data2D.startTask(taskController.task, filterController.filter);
             if (!isAllPages() || !data2D.isMutiplePages()) {
-                for (Integer row : checkedRowsIndices) {
+                filteredRowsIndices = filteredRowsIndices();
+                for (Integer row : filteredRowsIndices) {
                     List<String> dataRow = tableData.get(row);
                     List<String> exportRow = new ArrayList<>();
                     for (Integer col : checkedColsIndices) {
@@ -126,10 +128,9 @@ public class Data2DExportController extends BaseData2DHandleController {
                 }
 
             } else {
-                data2D.startTask(taskController.task, filterController.filter);
                 data2D.export(convertController, checkedColsIndices);
-                data2D.stopTask();
             }
+            data2D.stopTask();
 
             convertController.closeWriters();
             return true;

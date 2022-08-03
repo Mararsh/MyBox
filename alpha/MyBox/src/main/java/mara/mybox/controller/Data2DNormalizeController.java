@@ -34,15 +34,15 @@ public class Data2DNormalizeController extends BaseData2DHandleController {
     @Override
     public boolean handleRows() {
         try {
-            if (checkedRowsIndices == null || checkedRowsIndices.isEmpty()
+            if (filteredRowsIndices == null || filteredRowsIndices.isEmpty()
                     || checkedColsIndices == null || checkedColsIndices.isEmpty()) {
                 return false;
             }
-            int rowsNumber = checkedRowsIndices.size();
+            int rowsNumber = filteredRowsIndices.size();
             int colsNumber = checkedColsIndices.size();
             double[][] matrix = new double[rowsNumber][colsNumber];
             for (int r = 0; r < rowsNumber; r++) {
-                int row = checkedRowsIndices.get(r);
+                int row = filteredRowsIndices.get(r);
                 List<String> tableRow = tableController.tableData.get(row);
                 for (int c = 0; c < colsNumber; c++) {
                     int col = checkedColsIndices.get(c);
@@ -57,7 +57,7 @@ public class Data2DNormalizeController extends BaseData2DHandleController {
             for (int r = 0; r < rowsNumber; r++) {
                 List<String> row = new ArrayList<>();
                 if (showRowNumber()) {
-                    row.add(message("Row") + (checkedRowsIndices.get(r) + 1) + "");
+                    row.add(message("Row") + (filteredRowsIndices.get(r) + 1) + "");
                 }
                 for (int c = 0; c < colsNumber; c++) {
                     row.add(DoubleTools.format(matrix[r][c], scale));

@@ -135,11 +135,10 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
         }
     }
 
-    @FXML
     @Override
-    public void okAction() {
+    protected void startOperation() {
         try {
-            if (!checkOptions() || !prepareRows()) {
+            if (!prepareRows()) {
                 return;
             }
             frequency = caseInsensitiveCheck.isSelected()
@@ -159,7 +158,7 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
     public boolean handleRows() {
         try {
             outputData = new ArrayList<>();
-            for (int r : checkedRowsIndices) {
+            for (int r : filteredRowsIndices) {
                 List<String> tableRow = tableController.tableData.get(r);
                 String d = tableRow.get(freCol + 1);
                 frequency.addValue(d);

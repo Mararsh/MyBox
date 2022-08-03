@@ -348,7 +348,7 @@ public class Data2DSetStylesController extends BaseController {
             }
             updatedStyle.setColumns(columns);
 
-            updatedStyle.setFilter(filterController.filter.getScript());
+            updatedStyle.setFilter(filterController.filter.getSourceScript());
             updatedStyle.setFilterReversed(filterController.filter.isReversed());
             updatedStyle.setAbnoramlValues(abnormalCheck.isSelected());
             return true;

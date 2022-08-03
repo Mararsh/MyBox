@@ -12,7 +12,7 @@ import mara.mybox.fxml.SingletonTask;
  */
 public class DataFilter {
 
-    public String script;
+    private String sourceScript, filledScript;
     public long passedNumber, maxPassed;
     public boolean reversed, passed;
     public SingletonTask task;
@@ -24,7 +24,8 @@ public class DataFilter {
 
     public DataFilter(String script, boolean reversed) {
         init();
-        this.script = script;
+        sourceScript = script;
+        filledScript = script;
         this.reversed = reversed;
     }
 
@@ -54,9 +55,12 @@ public class DataFilter {
         return new DataFilter();
     }
 
+    public boolean scriptEmpty() {
+        return sourceScript == null || sourceScript.isBlank();
+    }
+
     public boolean needFilter() {
-        return (script != null && !script.isBlank())
-                || maxPassed > 0;
+        return !scriptEmpty() || maxPassed > 0;
     }
 
     public boolean reachMaxPassed() {
@@ -84,12 +88,12 @@ public class DataFilter {
             passed = false;
             return false;
         }
-        if (script == null || script.isBlank()) {
+        if (sourceScript == null || sourceScript.isBlank()) {
             passed = true;
             passedNumber++;
             return true;
         }
-        return readResult(calculator.calculateTableRowExpression(data2D, script, tableRow, tableRowIndex));
+        return readResult(calculator.calculateTableRowExpression(data2D, filledScript, tableRow, tableRowIndex));
     }
 
     public boolean filterDataRow(Data2D data2D, List<String> dataRow, long dataRowIndex) {
@@ -99,12 +103,12 @@ public class DataFilter {
                 passed = false;
                 return false;
             }
-            if (script == null || script.isBlank()) {
+            if (sourceScript == null || sourceScript.isBlank()) {
                 passed = true;
                 passedNumber++;
                 return true;
             }
-            return readResult(calculator.calculateDataRowExpression(data2D, script, dataRow, dataRowIndex));
+            return readResult(calculator.calculateDataRowExpression(data2D, filledScript, dataRow, dataRowIndex));
         } catch (Exception e) {
             passed = false;
             MyBoxLog.error(e);
@@ -125,7 +129,7 @@ public class DataFilter {
             task.setError(error);
         }
         if (error != null) {
-            MyBoxLog.debug(error + "\n" + script);
+            MyBoxLog.debug(error + "\n" + sourceScript);
         }
     }
 
@@ -141,12 +145,22 @@ public class DataFilter {
         return this;
     }
 
-    public String getScript() {
-        return script;
+    public String getSourceScript() {
+        return sourceScript;
     }
 
-    public DataFilter setScript(String script) {
-        this.script = script;
+    public DataFilter setSourceScript(String sourceScript) {
+        this.sourceScript = sourceScript;
+        this.filledScript = sourceScript;
+        return this;
+    }
+
+    public String getFilledScript() {
+        return filledScript;
+    }
+
+    public DataFilter setFilledScript(String filledScript) {
+        this.filledScript = filledScript;
         return this;
     }
 

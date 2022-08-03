@@ -373,11 +373,11 @@ public class DataFileText extends DataFile {
                         } else if (isRandomNn) {
                             row.add(random(random, i, true));
                         } else if (isMean) {
-                            row.add(column(i).getDoubleStatistic().mean + "");
+                            row.add(column(i).getTargetStatistic().mean + "");
                         } else if (isMode) {
-                            row.add(column(i).getDoubleStatistic().modeValue + "");
+                            row.add(column(i).getTargetStatistic().modeValue + "");
                         } else if (isMedian) {
-                            row.add(column(i).getDoubleStatistic().median + "");
+                            row.add(column(i).getTargetStatistic().median + "");
                         } else if (script != null) {
                             row.add(expressionResult());
                         } else {

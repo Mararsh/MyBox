@@ -555,11 +555,11 @@ public class DataFileExcel extends DataFile {
                             } else if (isRandomNn) {
                                 v = random(random, c, true);
                             } else if (isMean) {
-                                v = column(c).getDoubleStatistic().mean + "";
+                                v = column(c).getTargetStatistic().mean + "";
                             } else if (isMode) {
-                                v = column(c).getDoubleStatistic().modeValue + "";
+                                v = column(c).getTargetStatistic().modeValue + "";
                             } else if (isMedian) {
-                                v = column(c).getDoubleStatistic().median + "";
+                                v = column(c).getTargetStatistic().median + "";
                             } else if (script != null) {
                                 v = expressionResult();
                             } else {

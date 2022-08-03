@@ -4,10 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import mara.mybox.calculation.DescriptiveStatistic;
+import mara.mybox.calculation.DoubleStatistic;
+import mara.mybox.data.FindReplaceString;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DStyle;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -28,6 +32,14 @@ public abstract class Data2D_Filter extends Data2D_Data {
         stopFilter();
     }
 
+    public String filterScipt() {
+        return filter == null ? null : filter.getFilledScript();
+    }
+
+    public boolean filterEmpty() {
+        return filter == null || filter.scriptEmpty();
+    }
+
     public boolean needFilter() {
         return filter != null && filter.needFilter();
     }
@@ -36,26 +48,7 @@ public abstract class Data2D_Filter extends Data2D_Data {
         if (filter == null) {
             return;
         }
-        try {
-            resetStatistic();
-            DescriptiveStatistic calculation = new DescriptiveStatistic()
-                    .setStatisticObject(DescriptiveStatistic.StatisticObject.Columns)
-                    .setInvalidAs(Double.NaN);
-            List<Integer> colIndices = new ArrayList<>();
-            checkStatistic(filter.getScript(), calculation, colIndices);
-            if (calculation.needNonStored()) {
-                ((Data2D) this).statisticByColumnsWithoutStored(colIndices, calculation);
-            }
-            if (calculation.needStored()) {
-                ((Data2D) this).statisticByColumnsForStored(colIndices, calculation);
-            }
-            filter.start(task, (Data2D) this);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
-        }
+        filter.start(task, (Data2D) this);
     }
 
     public void stopFilter() {
@@ -122,7 +115,79 @@ public abstract class Data2D_Filter extends Data2D_Data {
         return filter.getResult();
     }
 
-    public void checkStatistic(String script, DescriptiveStatistic calculation, List<Integer> colIndices) {
+    public boolean fillFilterStatistic() {
+        if (filter == null || filter.scriptEmpty()) {
+            return true;
+        }
+        String filled = calculateScriptStatistic(filter.getSourceScript());
+        if (filled == null || filled.isBlank()) {
+            return false;
+        }
+        filter.setFilledScript(filled);
+        return true;
+    }
+
+    public String calculateScriptStatistic(String script) {
+        if (script == null || script.isBlank()) {
+            return script;
+        }
+        List<String> scripts = new ArrayList<>();
+        scripts.add(script);
+        scripts = calculateScriptsStatistic(scripts);
+        if (scripts == null || scripts.isEmpty()) {
+            return null;
+        }
+        return scripts.get(0);
+    }
+
+    public List<String> calculateScriptsStatistic(List<String> scripts) {
+        try {
+            if (scripts == null || scripts.isEmpty()) {
+                return scripts;
+            }
+            Data2D filter2D = ((Data2D) this).cloneAll();
+            filter2D.resetTargetStatistic();
+            filter2D.startTask(task, null);
+            DescriptiveStatistic calculation = new DescriptiveStatistic()
+                    .setStatisticObject(DescriptiveStatistic.StatisticObject.Columns)
+                    .setInvalidAs(Double.NaN);
+            List<Integer> colIndices = new ArrayList<>();
+            for (String script : scripts) {
+                checkFilterStatistic(script, calculation, colIndices);
+            }
+            if (!calculation.need()) {
+                return scripts;
+            }
+            if (calculation.needNonStored()) {
+                filter2D.statisticByColumnsWithoutStored(colIndices, calculation);
+            }
+            if (calculation.needStored()) {
+                filter2D.statisticByColumnsForStored(colIndices, calculation);
+            }
+            for (int i = 0; i < colIndices.size(); i++) {
+                Data2DColumn filterColumn = filter2D.column(colIndices.get(i));
+                Data2DColumn column = column(colIndices.get(i));
+                DoubleStatistic columnStatistic = filterColumn.getTargetStatistic();
+                filterColumn.setSourceStatistic(columnStatistic);
+                column.setSourceStatistic(columnStatistic);
+            }
+            filter2D.stopTask();
+            List<String> filled = new ArrayList<>();
+            FindReplaceString findReplace = ExpressionCalculator.createFindReplace();
+            for (String script : scripts) {
+                filled.add(replaceFilterStatistic(findReplace, script));
+            }
+            return filled;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            return null;
+        }
+    }
+
+    public void checkFilterStatistic(String script, DescriptiveStatistic calculation, List<Integer> colIndices) {
         try {
             if (script == null || script.isBlank() || calculation == null || colIndices == null) {
                 return;
@@ -179,6 +244,103 @@ public abstract class Data2D_Filter extends Data2D_Data {
         }
     }
 
+    public String replaceFilterStatistic(FindReplaceString findReplace, String script) {
+        try {
+            if (!isValid() || script == null || script.isBlank()) {
+                return script;
+            }
+            String filledScript = script;
+            for (int i = 0; i < columnsNumber(); i++) {
+                Data2DColumn column = columns.get(i);
+                String name = column.getColumnName();
+                if (filledScript.contains("#{" + name + "-" + message("Mean") + "}")) {
+                    if (column.getSourceStatistic() == null || DoubleTools.invalidDouble(column.getSourceStatistic().mean)) {
+                        return null;
+                    }
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("Mean") + "}",
+                            column.getSourceStatistic().mean + "");
+                }
+                if (filledScript.contains("#{" + name + "-" + message("Median") + "}")) {
+                    if (column.getSourceStatistic() == null || DoubleTools.invalidDouble(column.getSourceStatistic().median)) {
+                        return null;
+                    }
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("Median") + "}",
+                            column.getSourceStatistic().median + "");
+                }
+                if (filledScript.contains("#{" + name + "-" + message("Mode") + "}")) {
+                    if (column.getSourceStatistic() == null || column.getSourceStatistic().modeValue == null) {
+                        return null;
+                    }
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("Mode") + "}",
+                            column.getSourceStatistic().modeValue.toString());
+                }
+                if (filledScript.contains("#{" + name + "-" + message("MinimumQ0") + "}")) {
+                    if (column.getSourceStatistic() == null || DoubleTools.invalidDouble(column.getSourceStatistic().minimum)) {
+                        return null;
+                    }
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("MinimumQ0") + "}",
+                            column.getSourceStatistic().minimum + "");
+                }
+                if (filledScript.contains("#{" + name + "-" + message("LowerQuartile") + "}")) {
+                    if (column.getSourceStatistic() == null || DoubleTools.invalidDouble(column.getSourceStatistic().lowerQuartile)) {
+                        return null;
+                    }
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("LowerQuartile") + "}",
+                            column.getSourceStatistic().lowerQuartile + "");
+                }
+                if (filledScript.contains("#{" + name + "-" + message("UpperQuartile") + "}")) {
+                    if (column.getSourceStatistic() == null || DoubleTools.invalidDouble(column.getSourceStatistic().upperQuartile)) {
+                        return null;
+                    }
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("UpperQuartile") + "}",
+                            column.getSourceStatistic().upperQuartile + "");
+                }
+                if (filledScript.contains("#{" + name + "-" + message("MaximumQ4") + "}")) {
+                    if (column.getSourceStatistic() == null || DoubleTools.invalidDouble(column.getSourceStatistic().maximum)) {
+                        return null;
+                    }
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("MaximumQ4") + "}",
+                            column.getSourceStatistic().maximum + "");
+                }
+                if (filledScript.contains("#{" + name + "-" + message("LowerExtremeOutlierLine") + "}")) {
+                    if (column.getSourceStatistic() == null || DoubleTools.invalidDouble(column.getSourceStatistic().lowerExtremeOutlierLine)) {
+                        return null;
+                    }
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("LowerExtremeOutlierLine") + "}",
+                            column.getSourceStatistic().lowerExtremeOutlierLine + "");
+                }
+                if (filledScript.contains("#{" + name + "-" + message("LowerMildOutlierLine") + "}")) {
+                    if (column.getSourceStatistic() == null || DoubleTools.invalidDouble(column.getSourceStatistic().lowerMildOutlierLine)) {
+                        return null;
+                    }
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("LowerMildOutlierLine") + "}",
+                            column.getSourceStatistic().lowerMildOutlierLine + "");
+                }
+                if (filledScript.contains("#{" + name + "-" + message("UpperMildOutlierLine") + "}")) {
+                    if (column.getSourceStatistic() == null || DoubleTools.invalidDouble(column.getSourceStatistic().upperMildOutlierLine)) {
+                        return null;
+                    }
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("UpperMildOutlierLine") + "}",
+                            column.getSourceStatistic().upperMildOutlierLine + "");
+                }
+                if (filledScript.contains("#{" + name + "-" + message("UpperExtremeOutlierLine") + "}")) {
+                    if (column.getSourceStatistic() == null || DoubleTools.invalidDouble(column.getSourceStatistic().upperExtremeOutlierLine)) {
+                        return null;
+                    }
+                    filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("UpperExtremeOutlierLine") + "}",
+                            column.getSourceStatistic().upperExtremeOutlierLine + "");
+                }
+            }
+            return filledScript;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            return null;
+        }
+    }
+
     public String cellStyle(DataFilter styleFilter, int tableRowIndex, String colName) {
         try {
             if (styleFilter == null || styles == null || styles.isEmpty() || colName == null || colName.isBlank()) {
@@ -214,7 +376,7 @@ public abstract class Data2D_Filter extends Data2D_Data {
                         continue;
                     }
                 }
-                styleFilter.setScript(style.getFilter()).setReversed(style.isFilterReversed());
+                styleFilter.setSourceScript(style.getFilter()).setReversed(style.isFilterReversed());
                 if (!styleFilter.filterTableRow((Data2D) this, tableRow, tableRowIndex)) {
                     continue;
                 }

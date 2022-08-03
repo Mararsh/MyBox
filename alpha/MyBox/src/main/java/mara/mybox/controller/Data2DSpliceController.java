@@ -116,12 +116,15 @@ public class Data2DSpliceController extends BaseData2DController {
             protected boolean handle() {
                 try {
                     DataFileCSV csvA, csvB;
-                    dataAController.data2D.startTask(this, dataAController.filterController.filter);
+                    dataAController.data2D.startTask(task, dataAController.filterController.filter);
+                    if (!dataAController.data2D.fillFilterStatistic()) {
+                        return false;
+                    }
                     if (dataAController.isAllPages()) {
                         csvA = dataAController.data2D.copy(dataAController.checkedColsIndices, false, true);
                     } else {
                         csvA = DataFileCSV.save(task, dataAController.checkedColumns,
-                                dataAController.selectedData(false));
+                                dataAController.filtered(false));
                     }
                     dataAController.data2D.stopTask();
                     if (csvA == null) {
@@ -129,12 +132,15 @@ public class Data2DSpliceController extends BaseData2DController {
                         return false;
                     }
 
-                    dataBController.data2D.startTask(this, dataBController.filterController.filter);
+                    dataBController.data2D.startTask(task, dataBController.filterController.filter);
+                    if (!dataBController.data2D.fillFilterStatistic()) {
+                        return false;
+                    }
                     if (dataBController.isAllPages()) {
                         csvB = dataBController.data2D.copy(dataBController.checkedColsIndices, false, true);
                     } else {
                         csvB = DataFileCSV.save(task, dataBController.checkedColumns,
-                                dataBController.selectedData(false));
+                                dataBController.filtered(false));
                     }
                     dataBController.data2D.stopTask();
                     if (csvB == null) {

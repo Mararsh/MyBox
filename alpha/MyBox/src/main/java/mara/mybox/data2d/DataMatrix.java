@@ -112,7 +112,7 @@ public class DataMatrix extends Data2D {
         rowsNumber = rows.size();
         dataSize = rowsNumber;
         endRowOfCurrentPage = startRowOfCurrentPage + rowsNumber;
-        readPageStyles(conn, rows);
+        readPageStyles(conn);
         return rows;
     }
 

@@ -439,7 +439,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
 
     public boolean handleSelected() {
         try {
-            outputData = selectedData(dataColsIndices, rowsRadio.isSelected() && categorysCol < 0);
+            outputData = filtered(dataColsIndices, rowsRadio.isSelected() && categorysCol < 0);
             if (outputData == null) {
                 return false;
             }
@@ -455,7 +455,6 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
 
     public boolean handlePages() {
         try {
-            data2D.startTask(task, filterController.filter);
             DataTable tmpTable = data2D.toTmpTable(task, dataColsIndices, false, true);
             if (tmpTable == null) {
                 outputData = null;
@@ -468,7 +467,6 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
             boolean ok = calculation.statisticAllByColumns();
             tmpTable.stopFilter();
             tmpTable.drop();
-            data2D.stopFilter();
             return ok;
         } catch (Exception e) {
             error = e.toString();

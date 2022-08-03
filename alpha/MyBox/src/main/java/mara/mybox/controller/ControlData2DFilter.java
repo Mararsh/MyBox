@@ -98,7 +98,7 @@ public class ControlData2DFilter extends ControlData2DRowExpression {
     public DataFilter pickValues() {
         filter.setReversed(othersRadio.isSelected())
                 .setMaxPassed(maxData).setPassedNumber(0)
-                .setScript(scriptInput.getText());
+                .setSourceScript(scriptInput.getText());
         data2D.setFilter(filter);
         return filter;
     }

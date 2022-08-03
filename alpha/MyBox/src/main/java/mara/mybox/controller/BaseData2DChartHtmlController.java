@@ -156,12 +156,8 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
         return ok;
     }
 
-    @FXML
     @Override
-    public void okAction() {
-        if (!checkOptions() || !initData()) {
-            return;
-        }
+    protected void startOperation() {
         if (task != null) {
             task.cancel();
         }

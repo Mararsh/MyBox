@@ -55,14 +55,14 @@ public class Data2DConvertToDataBaseTask extends Data2DTableCreateController {
                 return false;
             }
             if (convertController.importCheck.isSelected()) {
+                attributesController.data2D.startTask(task, convertController.filterController.filter);
+                attributesController.task = task;
                 if (convertController.isAllPages() && convertController.data2D.isMutiplePages()) {
-                    attributesController.data2D.startTask(task, convertController.filterController.filter);
-                    attributesController.task = task;
                     attributesController.importAllData(conn);
-                    attributesController.data2D.stopFilter();
                 } else {
-                    attributesController.importData(conn, convertController.checkedRowsIndices);
+                    attributesController.importData(conn, convertController.filteredRowsIndices());
                 }
+                attributesController.data2D.stopFilter();
             }
             return true;
         } catch (Exception e) {

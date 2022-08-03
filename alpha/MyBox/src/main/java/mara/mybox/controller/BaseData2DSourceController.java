@@ -25,7 +25,8 @@ import mara.mybox.value.UserConfig;
 public class BaseData2DSourceController extends ControlData2DLoad {
 
     protected ControlData2DEditTable tableController;
-    protected List<Integer> checkedRowsIndices, checkedColsIndices;
+    private List<Integer> selectedRowsIndices;
+    protected List<Integer> filteredRowsIndices, checkedColsIndices;
     protected List<String> checkedColsNames;
     protected List<Data2DColumn> checkedColumns;
     protected boolean idExclude = false, noColumnSelection = false;
@@ -181,7 +182,8 @@ public class BaseData2DSourceController extends ControlData2DLoad {
     @Override
     public void postLoadedTableData() {
         super.postLoadedTableData();
-        restoreSelections();
+        selectRows(selectedRowsIndices);
+        selectCols(checkedColsIndices);
     }
 
     @FXML
@@ -226,7 +228,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
     }
 
     public void restoreSelections() {
-        selectRows(checkedRowsIndices);
+        selectRows(selectedRowsIndices);
         selectCols(checkedColsIndices);
     }
 
@@ -237,7 +239,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
         if (!checkRowFilter() || !checkedRows() || !checkColumns()) {
             return false;
         }
-        if ((allPagesRadio.isSelected() || (checkedRowsIndices != null && !checkedRowsIndices.isEmpty()))
+        if ((allPagesRadio.isSelected() || (selectedRowsIndices != null && !selectedRowsIndices.isEmpty()))
                 && (noColumnSelection || (checkedColsIndices != null && !checkedColsIndices.isEmpty()))) {
             return true;
         } else {
@@ -247,33 +249,14 @@ public class BaseData2DSourceController extends ControlData2DLoad {
 
     }
 
-    public boolean checkRowFilter() {
-        error = null;
-        if (data2D == null || !data2D.hasData()) {
-            error = message("InvalidData");
-            return false;
-        }
-        if (!filterController.checkExpression(isAllPages())) {
-            error = filterController.error;
-            return false;
-        } else {
-            return true;
-        }
-    }
-
     public boolean isAllPages() {
         return allPagesRadio.isSelected();
     }
 
     public boolean isSquare() {
-        return checkedRowsIndices != null && checkedColsIndices != null
-                && !checkedRowsIndices.isEmpty()
-                && checkedRowsIndices.size() == checkedColsIndices.size();
-    }
-
-    public boolean hasRowFilter() {
-        String script = filterController.scriptInput.getText();
-        return script != null && !script.isBlank();
+        return selectedRowsIndices != null && checkedColsIndices != null
+                && !selectedRowsIndices.isEmpty()
+                && selectedRowsIndices.size() == checkedColsIndices.size();
     }
 
     /*
@@ -352,7 +335,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
         }
     }
 
-    public void selectCols(List<Integer> cols) {
+    private void selectCols(List<Integer> cols) {
         try {
             if (noColumnSelection) {
                 return;
@@ -381,30 +364,18 @@ public class BaseData2DSourceController extends ControlData2DLoad {
     // If none selected then select all
     private boolean checkedRows() {
         try {
-            checkedRowsIndices = new ArrayList<>();
+            selectedRowsIndices = new ArrayList<>();
             DataFilter filter = data2D.filter;
             filter.start(null, data2D);
             List<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
             if (allPagesRadio.isSelected() || currentPageRadio.isSelected()
                     || selected == null || selected.isEmpty()) {
                 for (int i = 0; i < tableData.size(); i++) {
-                    if (!filter.filterTableRow(data2D, tableData.get(i), i)) {
-                        continue;
-                    }
-                    if (filter.reachMaxPassed()) {
-                        break;
-                    }
-                    checkedRowsIndices.add(i);
+                    selectedRowsIndices.add(i);
                 }
             } else {
                 for (int i : selected) {
-                    if (!filter.filterTableRow(data2D, tableData.get(i), i)) {
-                        continue;
-                    }
-                    if (filter.reachMaxPassed()) {
-                        break;
-                    }
-                    checkedRowsIndices.add(i);
+                    selectedRowsIndices.add(i);
                 }
             }
             return true;
@@ -415,53 +386,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
         }
     }
 
-    // If none selected then select all
-    public List<List<String>> selectedData(boolean showRowNumber) {
-        return selectedData(checkedColsIndices, showRowNumber);
-    }
-
-    public List<List<String>> selectedData(List<Integer> cols, boolean showRowNumber) {
-        return selectedData(checkedRowsIndices, cols, showRowNumber);
-    }
-
-    public List<List<String>> selectedData(List<Integer> rows, List<Integer> cols, boolean showRowNumber) {
-        try {
-            if (rows == null || rows.isEmpty()
-                    || cols == null || cols.isEmpty()) {
-                return null;
-            }
-            List<List<String>> data = new ArrayList<>();
-            int size = tableData.size();
-            for (int row : rows) {
-                if (row < 0 || row >= size) {
-                    continue;
-                }
-                List<String> tableRow = tableData.get(row);
-                List<String> newRow = new ArrayList<>();
-                if (showRowNumber) {
-                    if (data2D.isTmpData()) {
-                        newRow.add((row + 1) + "");
-                    } else {
-                        newRow.add(tableRow.get(0) + "");
-                    }
-                }
-                for (int col : cols) {
-                    int index = col + 1;
-                    if (index < 0 || index >= tableRow.size()) {
-                        continue;
-                    }
-                    newRow.add(tableRow.get(index));
-                }
-                data.add(newRow);
-            }
-            return data;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
-    }
-
-    public void selectRows(List<Integer> rows) {
+    private void selectRows(List<Integer> rows) {
         try {
             isSettingValues = true;
             if (rows != null && !rows.isEmpty() && rows.size() != tableData.size()) {
@@ -492,6 +417,102 @@ public class BaseData2DSourceController extends ControlData2DLoad {
         } catch (Exception e) {
             error = e.toString();
             MyBoxLog.debug(e);
+            return null;
+        }
+    }
+
+    /*
+        filter
+     */
+    private boolean checkRowFilter() {
+        error = null;
+        if (!filterController.checkExpression(isAllPages())) {
+            error = filterController.error;
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public List<Integer> filteredRowsIndices() {
+        try {
+            DataFilter filter = data2D.filter;
+            if (filter == null || !filter.needFilter()
+                    || selectedRowsIndices == null || selectedRowsIndices.isEmpty()) {
+                return selectedRowsIndices;
+            }
+            filteredRowsIndices = new ArrayList<>();
+            int size = tableData.size();
+            for (int row : selectedRowsIndices) {
+                if (row < 0 || row >= size
+                        || !filter.filterTableRow(data2D, tableData.get(row), row)) {
+                    continue;
+                }
+                if (filter.reachMaxPassed()) {
+                    break;
+                }
+                filteredRowsIndices.add(row);
+            }
+            return filteredRowsIndices;
+        } catch (Exception e) {
+            error = e.toString();
+            MyBoxLog.debug(e);
+            return null;
+        }
+    }
+
+    // If none selected then select all
+    public List<List<String>> filtered(boolean showRowNumber) {
+        return filtered(checkedColsIndices, showRowNumber);
+    }
+
+    public List<List<String>> filtered(List<Integer> cols, boolean showRowNumber) {
+        return filtered(selectedRowsIndices, cols, showRowNumber);
+    }
+
+    public List<List<String>> filtered(List<Integer> rows, List<Integer> cols, boolean showRowNumber) {
+        try {
+            if (rows == null || rows.isEmpty()
+                    || cols == null || cols.isEmpty()) {
+                return null;
+            }
+            List<List<String>> data = new ArrayList<>();
+            int size = tableData.size();
+            DataFilter filter = data2D.filter;
+            filteredRowsIndices = new ArrayList<>();
+            for (int row : rows) {
+                if (row < 0 || row >= size) {
+                    continue;
+                }
+                List<String> tableRow = tableData.get(row);
+                if (!filter.filterTableRow(data2D, tableData.get(row), row)) {
+                    continue;
+                }
+                if (filter.reachMaxPassed()) {
+                    break;
+                }
+
+                List<String> newRow = new ArrayList<>();
+                if (showRowNumber) {
+                    if (data2D.isTmpData()) {
+                        newRow.add((row + 1) + "");
+                    } else {
+                        newRow.add(tableRow.get(0) + "");
+                    }
+                }
+                for (int col : cols) {
+                    int index = col + 1;
+                    if (index < 0 || index >= tableRow.size()) {
+                        continue;
+                    }
+                    newRow.add(tableRow.get(index));
+                }
+                data.add(newRow);
+                filteredRowsIndices.add(row);
+            }
+            return data;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
             return null;
         }
     }

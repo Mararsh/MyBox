@@ -149,30 +149,63 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
 
     @Override
     public void handleRowsTask() {
-        try {
-            tableController.isSettingValues = true;
-            if (valueController.columnMeanRadio.isSelected()) {
-                setColumnStatistic();
-            } else if (valueController.columnMedianRadio.isSelected()) {
-                setColumnStatistic();
-            } else if (valueController.columnModeRadio.isSelected()) {
-                setColumnStatistic();
-            } else if (valueController.gaussianDistributionRadio.isSelected()) {
-                gaussianDistribution();
-            } else if (valueController.identifyRadio.isSelected()) {
-                identifyMatrix();
-            } else if (valueController.upperTriangleRadio.isSelected()) {
-                upperTriangleMatrix();
-            } else if (valueController.lowerTriangleRadio.isSelected()) {
-                lowerTriangleMatrix();
-            } else {
-                setValue();
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try {
+                    data2D.startTask(task, filterController.filter);
+                    filteredRowsIndices = filteredRowsIndices();
+                    ok = handleRows();
+                    data2D.stopFilter();
+                    return ok;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
             }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            popError(message(e.toString()));
-        }
-        tableController.isSettingValues = false;
+
+            @Override
+            protected void whenSucceeded() {
+                try {
+                    tableController.isSettingValues = true;
+                    if (valueController.columnMeanRadio.isSelected()) {
+                        setColumnStatistic();
+                    } else if (valueController.columnMedianRadio.isSelected()) {
+                        setColumnStatistic();
+                    } else if (valueController.columnModeRadio.isSelected()) {
+                        setColumnStatistic();
+                    } else if (valueController.gaussianDistributionRadio.isSelected()) {
+                        gaussianDistribution();
+                    } else if (valueController.identifyRadio.isSelected()) {
+                        identifyMatrix();
+                    } else if (valueController.upperTriangleRadio.isSelected()) {
+                        upperTriangleMatrix();
+                    } else if (valueController.lowerTriangleRadio.isSelected()) {
+                        lowerTriangleMatrix();
+                    } else {
+                        setValue();
+                    }
+                } catch (Exception e) {
+                    MyBoxLog.error(e.toString());
+                    popError(message(e.toString()));
+                }
+                tableController.isSettingValues = false;
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                data2D.stopTask();
+                task = null;
+                if (targetController != null) {
+                    targetController.refreshControls();
+                }
+            }
+
+        };
+        start(task);
+
     }
 
     @Override
@@ -237,7 +270,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                         colData[r] = tableData.get(r).get(col + 1);
                     }
                     DoubleStatistic statistic = new DoubleStatistic(colData, calculation);
-                    data2D.column(col).setDoubleStatistic(statistic);
+                    data2D.column(col).setTargetStatistic(statistic);
                 }
                 applyColumnStatistic();
             }
@@ -250,15 +283,15 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
     public void applyColumnStatistic() {
         try {
             tableController.isSettingValues = true;
-            for (int row : checkedRowsIndices) {
+            for (int row : filteredRowsIndices) {
                 List<String> values = tableController.tableData.get(row);
                 for (int col : checkedColsIndices) {
                     if (valueController.columnMeanRadio.isSelected()) {
-                        values.set(col + 1, data2D.column(col).getDoubleStatistic().mean + "");
+                        values.set(col + 1, data2D.column(col).getTargetStatistic().mean + "");
                     } else if (valueController.columnMedianRadio.isSelected()) {
-                        values.set(col + 1, data2D.column(col).getDoubleStatistic().median + "");
+                        values.set(col + 1, data2D.column(col).getTargetStatistic().median + "");
                     } else if (valueController.columnModeRadio.isSelected()) {
-                        values.set(col + 1, data2D.column(col).getDoubleStatistic().modeValue + "");
+                        values.set(col + 1, data2D.column(col).getTargetStatistic().modeValue + "");
                     }
                 }
                 tableController.tableData.set(row, values);
@@ -275,7 +308,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             Random random = new Random();
             String script = valueController.expressionController.scriptInput.getText();
             ExpressionCalculator calculator = valueController.expressionController.calculator;
-            for (int row : checkedRowsIndices) {
+            for (int row : filteredRowsIndices) {
                 List<String> values = tableController.tableData.get(row);
                 String v = valueController.value;
                 if (valueController.blankRadio.isSelected()) {
@@ -314,9 +347,9 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
 
     public void gaussianDistribution() {
         try {
-            float[][] m = ConvolutionKernel.makeGaussMatrix((int) checkedRowsIndices.size() / 2);
+            float[][] m = ConvolutionKernel.makeGaussMatrix((int) filteredRowsIndices.size() / 2);
             int rowIndex = 0, colIndex;
-            for (int row : checkedRowsIndices) {
+            for (int row : filteredRowsIndices) {
                 List<String> tableRow = tableController.tableData.get(row);
                 colIndex = 0;
                 for (int col : checkedColsIndices) {
@@ -339,7 +372,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
     public void identifyMatrix() {
         try {
             int rowIndex = 0, colIndex;
-            for (int row : checkedRowsIndices) {
+            for (int row : filteredRowsIndices) {
                 List<String> values = tableController.tableData.get(row);
                 colIndex = 0;
                 for (int col : checkedColsIndices) {
@@ -363,7 +396,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
     public void upperTriangleMatrix() {
         try {
             int rowIndex = 0, colIndex;
-            for (int row : checkedRowsIndices) {
+            for (int row : filteredRowsIndices) {
                 List<String> values = tableController.tableData.get(row);
                 colIndex = 0;
                 for (int col : checkedColsIndices) {
@@ -387,7 +420,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
     public void lowerTriangleMatrix() {
         try {
             int rowIndex = 0, colIndex;
-            for (int row : checkedRowsIndices) {
+            for (int row : filteredRowsIndices) {
                 List<String> values = tableController.tableData.get(row);
                 colIndex = 0;
                 for (int col : checkedColsIndices) {

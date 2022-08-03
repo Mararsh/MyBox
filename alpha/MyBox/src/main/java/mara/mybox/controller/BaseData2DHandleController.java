@@ -241,13 +241,53 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         return true;
     }
 
+    public boolean initData() {
+        return true;
+    }
+
     @FXML
     @Override
     public void okAction() {
-        try {
-            if (!checkOptions()) {
-                return;
+        if (!checkOptions() || !initData()) {
+            return;
+        }
+        String script = data2D.filterScipt();
+        if (script == null || script.isBlank()) {
+            startOperation();
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                data2D.setTask(task);
+                ok = data2D.fillFilterStatistic();
+                return ok;
             }
+
+            @Override
+            protected void whenSucceeded() {
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                data2D.setTask(null);
+                task = null;
+                if (ok) {
+                    startOperation();
+                }
+            }
+
+        };
+        start(task);
+    }
+
+    protected void startOperation() {
+        try {
             outputColumns = checkedColumns;
             if (showRowNumber()) {
                 outputColumns.add(0, new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
@@ -265,6 +305,9 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
     public void handleAllTask() {
         if (targetController == null) {
             return;
+        }
+        if (task != null) {
+            task.cancel();
         }
         task = new SingletonTask<Void>(this) {
 
@@ -293,7 +336,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
 
         };
         start(task);
-
     }
 
     public DataFileCSV generatedFile() {
@@ -307,6 +349,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             protected boolean handle() {
                 try {
                     data2D.startTask(task, filterController.filter);
+                    filteredRowsIndices = filteredRowsIndices();
                     ok = handleRows();
                     data2D.stopFilter();
                     return ok;
@@ -349,7 +392,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
 
     public boolean handleRows() {
         try {
-            outputData = selectedData(showRowNumber());
+            outputData = filtered(showRowNumber());
             if (outputData == null) {
                 return false;
             }

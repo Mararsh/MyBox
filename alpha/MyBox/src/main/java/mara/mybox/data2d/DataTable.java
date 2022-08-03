@@ -504,11 +504,11 @@ public class DataTable extends Data2D {
                             } else if (isRandomNn) {
                                 v = random(random, c, true);
                             } else if (isMean) {
-                                v = column(c).getDoubleStatistic().mean + "";
+                                v = column(c).getTargetStatistic().mean + "";
                             } else if (isMode) {
-                                v = column(c).getDoubleStatistic().modeValue + "";
+                                v = column(c).getTargetStatistic().modeValue + "";
                             } else if (isMedian) {
-                                v = column(c).getDoubleStatistic().median + "";
+                                v = column(c).getTargetStatistic().median + "";
                             } else if (script != null) {
                                 v = expressionResult();
                             } else {
@@ -865,10 +865,10 @@ public class DataTable extends Data2D {
             DoubleStatistic[] sData = new DoubleStatistic[colLen];
             for (int c = 0; c < cols.size(); c++) {
                 Data2DColumn column = columns.get(cols.get(c));
-                DoubleStatistic colStatistic = column.getDoubleStatistic();
+                DoubleStatistic colStatistic = column.getTargetStatistic();
                 if (colStatistic == null) {
                     colStatistic = new DoubleStatistic();
-                    column.setDoubleStatistic(colStatistic);
+                    column.setTargetStatistic(colStatistic);
                 }
                 colStatistic.invalidAs = selections.invalidAs;
                 sData[c] = colStatistic;

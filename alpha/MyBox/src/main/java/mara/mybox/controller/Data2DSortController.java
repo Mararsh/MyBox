@@ -148,7 +148,7 @@ public class Data2DSortController extends BaseData2DHandleController {
     @Override
     public boolean handleRows() {
         try {
-            outputData = selectedData(colsIndices, showRowNumber());
+            outputData = filtered(colsIndices, showRowNumber());
             if (outputData == null || outputData.isEmpty()) {
                 return false;
             }

@@ -137,6 +137,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         return ok;
     }
 
+    @Override
     public boolean initData() {
         try {
             dataColsIndices = new ArrayList<>();
@@ -164,12 +165,8 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         return categoryColumnSelector.getSelectionModel().getSelectedItem();
     }
 
-    @FXML
     @Override
-    public void okAction() {
-        if (!checkOptions() || !initData()) {
-            return;
-        }
+    protected void startOperation() {
         if (task != null) {
             task.cancel();
         }
@@ -213,7 +210,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         if (isAllPages()) {
             outputData = data2D.allRows(dataColsIndices, true);
         } else {
-            outputData = selectedData(dataColsIndices, true);
+            outputData = filtered(dataColsIndices, true);
         }
     }
 

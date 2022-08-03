@@ -75,10 +75,10 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             DoubleStatistic[] sData = new DoubleStatistic[colLen];
             for (int c = 0; c < colLen; c++) {
                 Data2DColumn column = columns.get(cols.get(c));
-                DoubleStatistic colStatistic = column.getDoubleStatistic();
+                DoubleStatistic colStatistic = column.getTargetStatistic();
                 if (colStatistic == null) {
                     colStatistic = new DoubleStatistic();
-                    column.setDoubleStatistic(colStatistic);
+                    column.setTargetStatistic(colStatistic);
                 }
                 colStatistic.invalidAs = selections.invalidAs;
                 sData[c] = colStatistic;
@@ -128,7 +128,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             }
             for (int i = 0; i < cols.size(); i++) {
                 Data2DColumn column = this.column(cols.get(i));
-                column.setDoubleStatistic(statisticData[i]);
+                column.setTargetStatistic(statisticData[i]);
             }
             tmpTable.drop();
             return statisticData;
