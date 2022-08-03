@@ -160,9 +160,47 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                 allPagesRadio.setDisable(true);
                 showPaginationPane(false);
             }
+            restoreSelections();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    public void restoreSelections() {
+        try {
+            isSettingValues = true;
+            if (selectedRowsIndices != null && !selectedRowsIndices.isEmpty()
+                    && selectedRowsIndices.size() != tableData.size()) {
+                for (int i = 0; i < tableData.size(); i++) {
+                    if (selectedRowsIndices.contains(i)) {
+                        tableView.getSelectionModel().select(i);
+                    } else {
+                        tableView.getSelectionModel().clearSelection(i);
+                    }
+                }
+            } else {
+                tableView.getSelectionModel().clearSelection();
+            }
+
+            if (!noColumnSelection) {
+                if (checkedColsIndices != null && !checkedColsIndices.isEmpty()
+                        && checkedColsIndices.size() != tableView.getColumns().size() - 2) {
+                    for (int i = 2; i < tableView.getColumns().size(); i++) {
+                        TableColumn tableColumn = tableView.getColumns().get(i);
+                        CheckBox cb = (CheckBox) tableColumn.getGraphic();
+                        int col = data2D.colOrder(cb.getText());
+                        cb.setSelected(col >= 0 && checkedColsIndices.contains(col));
+                    }
+                } else {
+                    selectNoneColumn();
+                }
+            }
+
+            isSettingValues = false;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+
     }
 
     @Override
@@ -177,13 +215,6 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                 dataBox.getChildren().remove(paginationPane);
             }
         }
-    }
-
-    @Override
-    public void postLoadedTableData() {
-        super.postLoadedTableData();
-        selectRows(selectedRowsIndices);
-        selectCols(checkedColsIndices);
     }
 
     @FXML
@@ -225,11 +256,6 @@ public class BaseData2DSourceController extends ControlData2DLoad {
     }
 
     public void columnSelected() {
-    }
-
-    public void restoreSelections() {
-        selectRows(selectedRowsIndices);
-        selectCols(checkedColsIndices);
     }
 
     /*
@@ -335,29 +361,6 @@ public class BaseData2DSourceController extends ControlData2DLoad {
         }
     }
 
-    private void selectCols(List<Integer> cols) {
-        try {
-            if (noColumnSelection) {
-                return;
-            }
-            isSettingValues = true;
-            if (cols != null && !cols.isEmpty() && cols.size() != tableView.getColumns().size() - 2) {
-                for (int i = 2; i < tableView.getColumns().size(); i++) {
-                    TableColumn tableColumn = tableView.getColumns().get(i);
-                    CheckBox cb = (CheckBox) tableColumn.getGraphic();
-                    int col = data2D.colOrder(cb.getText());
-                    cb.setSelected(col >= 0 && cols.contains(col));
-                }
-            } else {
-                selectNoneColumn();
-            }
-            isSettingValues = false;
-            columnSelected();
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
     /*
         rows
      */
@@ -383,27 +386,6 @@ public class BaseData2DSourceController extends ControlData2DLoad {
             error = e.toString();
             MyBoxLog.debug(e);
             return false;
-        }
-    }
-
-    private void selectRows(List<Integer> rows) {
-        try {
-            isSettingValues = true;
-            if (rows != null && !rows.isEmpty() && rows.size() != tableData.size()) {
-                for (int i = 0; i < tableData.size(); i++) {
-                    if (rows.contains(i)) {
-                        tableView.getSelectionModel().select(i);
-                    } else {
-                        tableView.getSelectionModel().clearSelection(i);
-                    }
-                }
-            } else {
-                tableView.getSelectionModel().clearSelection();
-            }
-            isSettingValues = false;
-            notifySelected();
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
         }
     }
 

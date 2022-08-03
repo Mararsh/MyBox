@@ -28,8 +28,7 @@ public class ControlData2DSetValue extends BaseController {
     @FXML
     protected ToggleGroup valueGroup;
     @FXML
-    protected RadioButton zeroRadio, oneRadio, blankRadio, randomRadio, randomNnRadio,
-            expressionRadio, columnMeanRadio, columnModeRadio, columnMedianRadio,
+    protected RadioButton zeroRadio, oneRadio, blankRadio, randomRadio, randomNnRadio, expressionRadio,
             setRadio, gaussianDistributionRadio, identifyRadio, upperTriangleRadio, lowerTriangleRadio;
     @FXML
     protected TextField valueInput;
@@ -76,15 +75,6 @@ public class ControlData2DSetValue extends BaseController {
                     break;
                 case "MyBox##lowerTriangle":
                     lowerTriangleRadio.fire();
-                    break;
-                case "MyBox##columnMean":
-                    columnMeanRadio.fire();
-                    break;
-                case "MyBox##columnMode":
-                    columnModeRadio.fire();
-                    break;
-                case "MyBox##columnMedian":
-                    columnMedianRadio.fire();
                     break;
                 default:
                     if (value.startsWith("MyBox##Expression")) {
@@ -145,14 +135,8 @@ public class ControlData2DSetValue extends BaseController {
                 value = "MyBox##upperTriangle";
             } else if (lowerTriangleRadio.isSelected()) {
                 value = "MyBox##lowerTriangle";
-            } else if (columnMeanRadio.isSelected()) {
-                value = "MyBox##columnMean";
-            } else if (columnModeRadio.isSelected()) {
-                value = "MyBox##columnMode";
-            } else if (columnMedianRadio.isSelected()) {
-                value = "MyBox##columnMedian";
             } else if (expressionRadio.isSelected()) {
-                value = "MyBox##Expression##" + expressionController.scriptInput.getText();
+                value = setExpression(expressionController.scriptInput.getText());
             }
             if (value != null && !value.isBlank()) {
                 UserConfig.setString(baseName + "Value", value);
@@ -229,6 +213,21 @@ public class ControlData2DSetValue extends BaseController {
             }
             return ok;
         }
+    }
+
+    public String expression() {
+        if (value == null) {
+            return null;
+        }
+        if (value.startsWith("MyBox##Expression##")) {
+            return value.substring("MyBox##Expression##".length());
+        }
+        return null;
+    }
+
+    public String setExpression(String exp) {
+        value = "MyBox##Expression##" + exp;
+        return value;
     }
 
 }

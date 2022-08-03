@@ -349,7 +349,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             protected boolean handle() {
                 try {
                     data2D.startTask(task, filterController.filter);
-                    filteredRowsIndices = filteredRowsIndices();
                     ok = handleRows();
                     data2D.stopFilter();
                     return ok;
@@ -361,11 +360,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
 
             @Override
             protected void whenSucceeded() {
-                if (targetController == null || targetController.inTable()) {
-                    updateTable();
-                } else {
-                    outputExternal();
-                }
+                ouputRows();
             }
 
             @Override
@@ -410,6 +405,14 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             }
             MyBoxLog.error(e.toString());
             return false;
+        }
+    }
+
+    public void ouputRows() {
+        if (targetController == null || targetController.inTable()) {
+            updateTable();
+        } else {
+            outputExternal();
         }
     }
 
