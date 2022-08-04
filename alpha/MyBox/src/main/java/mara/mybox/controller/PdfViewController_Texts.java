@@ -67,7 +67,7 @@ public abstract class PdfViewController_Texts extends PdfViewController_OCR {
                 @Override
                 protected void whenSucceeded() {
                     textsArea.setText(texts);
-                    textsLabel.setText(message("Count") + ": " + textsArea.getLength());
+                    textsLabel.setText(message("CharactersNumber") + ": " + textsArea.getLength());
                     textsPage = frameIndex;
                 }
             };

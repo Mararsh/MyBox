@@ -75,14 +75,19 @@ public class Data2DRowExpressionController extends BaseData2DHandleController {
             UserConfig.setString(interfaceName + "Name", name);
             TableStringValues.add(interfaceName + "NameHistories", name);
         }
-        String script = expressionController.scriptInput.getText();
-        if (script == null || script.isBlank()) {
-            popError(message("InvalidParameter") + ": " + message("RowExpression"));
-            ok = false;
-        }
         ok = super.checkOptions() && ok;
         okButton.setDisable(!ok);
         return ok;
+    }
+
+    public String fillExpression() {
+        String script = expressionController.scriptInput.getText();
+        script = data2D.calculateScriptStatistic(script);
+        if (script == null || script.isBlank()) {
+            error = message("Invalid") + ": " + message("RowExpression");
+            return null;
+        }
+        return script;
     }
 
     @Override
@@ -94,7 +99,10 @@ public class Data2DRowExpressionController extends BaseData2DHandleController {
                 error = message("SelectToHandle");
                 return false;
             }
-            String script = expressionController.scriptInput.getText();
+            String script = fillExpression();
+            if (script == null || script.isBlank()) {
+                return false;
+            }
             for (int i = 0; i < filteredRowsIndices.size(); i++) {
                 int rowIndex = filteredRowsIndices.get(i);
                 List<String> checkedRow = outputData.get(i);
@@ -133,9 +141,11 @@ public class Data2DRowExpressionController extends BaseData2DHandleController {
 
     @Override
     public DataFileCSV generatedFile() {
-        return data2D.rowExpression(expressionController.calculator,
-                expressionController.scriptInput.getText().trim(),
-                nameInput.getText().trim(), errorContinueCheck.isSelected(),
+        String script = fillExpression();
+        if (script == null || script.isBlank()) {
+            return null;
+        }
+        return data2D.rowExpression(script, nameInput.getText().trim(), errorContinueCheck.isSelected(),
                 checkedColsIndices, rowNumberCheck.isSelected(), colNameCheck.isSelected());
     }
 

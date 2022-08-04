@@ -82,6 +82,8 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
         }
         task = new SingletonTask<Void>(this) {
 
+            private long count;
+
             @Override
             protected boolean handle() {
                 try {
@@ -91,9 +93,9 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                     }
                     fillExpression();
                     data2D.startTask(task, filterController.filter);
-                    ok = data2D.setValue(checkedColsIndices, valueController.value, valueController.errorContinueCheck.isSelected());
+                    count = data2D.setValue(checkedColsIndices, valueController.value, valueController.errorContinueCheck.isSelected());
                     data2D.stopFilter();
-                    return ok;
+                    return count >= 0;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -106,6 +108,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                 tableController.requestMouse();
                 tableController.popDone();
                 tabPane.getSelectionModel().select(dataTab);
+                alertInformation(message("ChangedRowsNumber") + ": " + count);
             }
 
             @Override
@@ -165,11 +168,11 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
     @Override
     public boolean updateTable() {
         tableController.tableView.refresh();
-        popDone();
         tableController.isSettingValues = false;
         tableController.tableChanged(true);
         tableController.requestMouse();
         tabPane.getSelectionModel().select(dataTab);
+        alertInformation(message("ChangedRowsNumber") + ": " + filteredRowsIndices.size());
         return true;
     }
 
@@ -217,6 +220,14 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
 
     public void gaussianDistribution() {
         try {
+            if (filteredRowsIndices.size() != checkedColsIndices.size()) {
+                popError(message("MatricesCannotCalculateShouldSqure"));
+                return;
+            }
+            if (filteredRowsIndices.size() % 2 == 0) {
+                popError(message("MatricesCannotCalculateShouldOdd"));
+                return;
+            }
             float[][] m = ConvolutionKernel.makeGaussMatrix((int) filteredRowsIndices.size() / 2);
             int rowIndex = 0, colIndex;
             for (int row : filteredRowsIndices) {
@@ -241,6 +252,10 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
 
     public void identifyMatrix() {
         try {
+            if (filteredRowsIndices.size() != checkedColsIndices.size()) {
+                popError(message("MatricesCannotCalculateShouldSqure"));
+                return;
+            }
             int rowIndex = 0, colIndex;
             for (int row : filteredRowsIndices) {
                 List<String> values = tableController.tableData.get(row);
@@ -265,6 +280,10 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
 
     public void upperTriangleMatrix() {
         try {
+            if (filteredRowsIndices.size() != checkedColsIndices.size()) {
+                popError(message("MatricesCannotCalculateShouldSqure"));
+                return;
+            }
             int rowIndex = 0, colIndex;
             for (int row : filteredRowsIndices) {
                 List<String> values = tableController.tableData.get(row);
@@ -289,6 +308,10 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
 
     public void lowerTriangleMatrix() {
         try {
+            if (filteredRowsIndices.size() != checkedColsIndices.size()) {
+                popError(message("MatricesCannotCalculateShouldSqure"));
+                return;
+            }
             int rowIndex = 0, colIndex;
             for (int row : filteredRowsIndices) {
                 List<String> values = tableController.tableData.get(row);

@@ -62,10 +62,11 @@ public class Data2DDeleteController extends BaseData2DHandleController {
                     tableController.isSettingValues = true;
                     tableController.tableData.setAll(data);
                     tableController.isSettingValues = false;
+                    selectedRowsIndices = null;
                     tableController.tableChanged(true);
                     tableController.requestMouse();
                     tabPane.getSelectionModel().select(dataTab);
-                    popDone();
+                    alertInformation(message("DeletedRowsNumber") + ": " + filteredRowsIndices.size());
                 } catch (Exception e) {
                     MyBoxLog.error(e.toString());
                 }
@@ -90,12 +91,18 @@ public class Data2DDeleteController extends BaseData2DHandleController {
         if (!tableController.checkBeforeNextAction()) {
             return;
         }
-        if (isAllPages() && !data2D.needFilter()) {
+        if (!data2D.needFilter()) {
             if (!PopTools.askSure(this, baseTitle, message("SureDeleteAll"))) {
+                return;
+            }
+        } else {
+            if (!PopTools.askSure(this, baseTitle, message("SureDelete"))) {
                 return;
             }
         }
         task = new SingletonTask<Void>(this) {
+
+            private long count;
 
             @Override
             protected boolean handle() {
@@ -105,9 +112,9 @@ public class Data2DDeleteController extends BaseData2DHandleController {
                         tableController.dataController.backupController.addBackup(task, data2D.getFile());
                     }
                     data2D.startTask(task, filterController.filter);
-                    ok = data2D.delete(errorContinueCheck.isSelected());
+                    count = data2D.delete(errorContinueCheck.isSelected());
                     data2D.stopFilter();
-                    return ok;
+                    return count >= 0;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -116,11 +123,12 @@ public class Data2DDeleteController extends BaseData2DHandleController {
 
             @Override
             protected void whenSucceeded() {
-                popDone();
+                selectedRowsIndices = null;
                 tableController.dataSizeLoaded = false;
                 tableController.dataController.goPage();
                 tableController.requestMouse();
                 tabPane.getSelectionModel().select(dataTab);
+                alertInformation(message("DeletedRowsNumber") + ": " + count);
             }
 
             @Override

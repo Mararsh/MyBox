@@ -36,9 +36,9 @@ public abstract class Data2D_Edit extends Data2D_Filter {
 
     public abstract boolean savePageData(Data2D targetData);
 
-    public abstract boolean setValue(List<Integer> cols, String value, boolean errorContinue);
+    public abstract long setValue(List<Integer> cols, String value, boolean errorContinue);
 
-    public abstract boolean delete(boolean errorContinue);
+    public abstract long delete(boolean errorContinue);
 
     public abstract long clearData();
 
@@ -86,6 +86,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         try {
             columns = null;
             List<String> colNames = readColumnNames();
+            Random random = new Random();
             if (colNames == null || colNames.isEmpty()) {
                 hasHeader = false;
                 columns = savedColumns;
@@ -105,15 +106,14 @@ public abstract class Data2D_Edit extends Data2D_Filter {
                     }
                     String vname = (name == null || name.isBlank()) ? message("Column") + (i + 1) : name;
                     while (validNames.contains(vname)) {
-                        vname += "m";
+                        vname += random.nextInt(10);
                     }
-                    validNames.add(vname);
                     column.setColumnName(vname);
+                    validNames.add(vname);
                     columns.add(column);
                 }
             }
             if (columns != null && !columns.isEmpty()) {
-                Random random = new Random();
                 for (int i = 0; i < columns.size(); i++) {
                     Data2DColumn column = columns.get(i);
                     column.setD2id(d2did);

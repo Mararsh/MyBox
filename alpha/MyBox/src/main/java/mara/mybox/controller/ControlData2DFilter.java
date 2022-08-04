@@ -37,7 +37,7 @@ public class ControlData2DFilter extends ControlData2DRowExpression {
         calculator = filter.calculator;
     }
 
-    public void setParameters(BaseController parent, ControlData2DEditTable tableController) {
+    public void setParameters(BaseController parent) {
         try {
             baseName = parent.baseName;
 

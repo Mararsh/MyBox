@@ -236,13 +236,13 @@ public class PptViewController extends BaseFileImagesViewController {
                 protected void whenSucceeded() {
                     setImage(image, percent);
                     notesArea.setText(notes);
-                    notesLabel.setText(message("Count") + ": " + notes.length());
+                    notesLabel.setText(message("CharactersNumber") + ": " + notes.length());
                     slideArea.setText(slideTexts);
-                    slideLabel.setText(message("Count") + ": " + slideTexts.length());
+                    slideLabel.setText(message("CharactersNumber") + ": " + slideTexts.length());
                     masterArea.setText(master);
-                    masterLabel.setText(message("Count") + ": " + master.length());
+                    masterLabel.setText(message("CharactersNumber") + ": " + master.length());
                     commentsArea.setText(comments);
-                    commentsLabel.setText(message("Count") + ": " + comments.length());
+                    commentsLabel.setText(message("CharactersNumber") + ": " + comments.length());
                 }
             };
             start(task, MessageFormat.format(message("LoadingPageNumber"), (frameIndex + 1) + ""));

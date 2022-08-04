@@ -615,7 +615,7 @@ public class HtmlEditorController extends WebAddressController {
     protected void codesChanged(boolean changed) {
         codesChanged = changed;
         codesTab.setText(message("HtmlCodes") + (changed ? " *" : ""));
-        codesLabel.setText(message("Count") + ": " + StringTools.format(codesArea.getLength()));
+        codesLabel.setText(message("CharactersNumber") + ": " + StringTools.format(codesArea.getLength()));
         if (changed) {
             updateFileStatus(true);
         }
@@ -699,7 +699,7 @@ public class HtmlEditorController extends WebAddressController {
         if (c != null && !c.isEmpty()) {
             len = c.length();
         }
-        editorController.setWebViewLabel(message("Count") + ": " + StringTools.format(len));
+        editorController.setWebViewLabel(message("CharactersNumber") + ": " + StringTools.format(len));
         if (changed) {
             updateFileStatus(true);
         }
@@ -752,7 +752,7 @@ public class HtmlEditorController extends WebAddressController {
     protected void markdownChanged(boolean changed) {
         mdChanged = changed;
         markdownTab.setText("Markdown" + (changed ? " *" : ""));
-        markdownLabel.setText(message("Count") + ": " + StringTools.format(markdownArea.getLength()));
+        markdownLabel.setText(message("CharactersNumber") + ": " + StringTools.format(markdownArea.getLength()));
         if (changed) {
             updateFileStatus(true);
         }
@@ -800,7 +800,7 @@ public class HtmlEditorController extends WebAddressController {
 //        MyBoxLog.debug(changed);
         textsChanged = changed;
         textsTab.setText(message("Texts") + (changed ? " *" : ""));
-        textsLabel.setText(message("Count") + ": " + StringTools.format(textsArea.getLength()));
+        textsLabel.setText(message("CharactersNumber") + ": " + StringTools.format(textsArea.getLength()));
         if (changed) {
             updateFileStatus(true);
         }

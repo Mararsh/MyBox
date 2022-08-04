@@ -122,7 +122,7 @@ public class TextInMyBoxClipboardController extends BaseSysTableController<TextC
 
     public void textChanged(String nv) {
         int len = nv == null ? 0 : nv.length();
-        textLabel.setText(Languages.message("Count") + ": " + len);
+        textLabel.setText(Languages.message("CharactersNumber") + ": " + len);
         copyToSystemClipboardButton.setDisable(len == 0);
         copyToMyBoxClipboardButton.setDisable(len == 0);
         editButton.setDisable(len == 0);

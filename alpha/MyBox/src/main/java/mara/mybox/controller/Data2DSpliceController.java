@@ -4,6 +4,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -67,6 +68,9 @@ public class Data2DSpliceController extends BaseData2DController {
     public void initControls() {
         try {
             super.initControls();
+
+            dataAController.setParameters(this);
+            dataBController.setParameters(this);
 
             directionGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -318,8 +322,15 @@ public class Data2DSpliceController extends BaseData2DController {
                  CSVParser parserA = CSVParser.parse(csvA.getFile(), csvA.getCharset(), csvA.cvsFormat());
                  CSVParser parserB = CSVParser.parse(csvB.getFile(), csvB.getCharset(), csvB.cvsFormat())) {
             List<String> row = new ArrayList<>();
+            Random random = new Random();
+            List<String> validNames = new ArrayList<>();
             for (Data2DColumn c : columns) {
-                row.add(c.getColumnName());
+                String name = c.getColumnName();
+                while (validNames.contains(name.toUpperCase())) {
+                    name += random.nextInt(10);
+                }
+                row.add(name);
+                validNames.add(name);
             }
             csvPrinter.printRecord(row);
 

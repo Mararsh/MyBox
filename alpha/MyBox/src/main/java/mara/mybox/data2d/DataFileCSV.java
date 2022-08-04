@@ -227,13 +227,14 @@ public class DataFileCSV extends DataFileText {
     }
 
     @Override
-    public boolean setValue(List<Integer> cols, String value, boolean errorContinue) {
+    public long setValue(List<Integer> cols, String value, boolean errorContinue) {
         if (file == null || !file.exists() || file.length() == 0 || cols == null || cols.isEmpty()) {
-            return false;
+            return -1;
         }
         File tmpFile = TmpFileTools.getTempFile();
         CSVFormat format = cvsFormat();
         File validFile = FileTools.removeBOM(file);
+        long count = 0;
         try ( CSVParser parser = CSVParser.parse(validFile, charset, format);
                  CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, charset), format)) {
             Iterator<CSVRecord> iterator = parser.iterator();
@@ -276,15 +277,18 @@ public class DataFileCSV extends DataFileText {
                         List<String> values = record.toList();
                         filterDataRow(values, ++rowIndex);
                         needSetValue = filterPassed() && !filterReachMaxPassed();
-                        if (needSetValue && script != null) {
-                            calculateDataRowExpression(script, values, rowIndex);
-                            error = expressionError();
-                            if (error != null) {
-                                if (errorContinue) {
-                                    continue;
-                                } else {
-                                    task.setError(error);
-                                    return false;
+                        if (needSetValue) {
+                            count++;
+                            if (script != null) {
+                                calculateDataRowExpression(script, values, rowIndex);
+                                error = expressionError();
+                                if (error != null) {
+                                    if (errorContinue) {
+                                        continue;
+                                    } else {
+                                        task.setError(error);
+                                        return -2;
+                                    }
                                 }
                             }
                         }
@@ -308,6 +312,7 @@ public class DataFileCSV extends DataFileText {
                                 } else {
                                     row.add(value);
                                 }
+
                             } else if (i < record.size()) {
                                 row.add(record.get(i));
                             } else {
@@ -324,19 +329,24 @@ public class DataFileCSV extends DataFileText {
                 task.setError(e.toString());
             }
             MyBoxLog.error(e);
-            return false;
+            return -3;
         }
-        return FileTools.rename(tmpFile, file, false);
+        if (FileTools.rename(tmpFile, file, false)) {
+            return count;
+        } else {
+            return -4;
+        }
     }
 
     @Override
-    public boolean delete(boolean errorContinue) {
+    public long delete(boolean errorContinue) {
         if (file == null || !file.exists() || file.length() == 0) {
-            return false;
+            return -1;
         }
         File tmpFile = TmpFileTools.getTempFile();
         CSVFormat format = cvsFormat();
         File validFile = FileTools.removeBOM(file);
+        long count = 0;
         try ( CSVParser parser = CSVParser.parse(validFile, charset, format);
                  CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, charset), format)) {
             Iterator<CSVRecord> iterator = parser.iterator();
@@ -361,10 +371,11 @@ public class DataFileCSV extends DataFileText {
                                     continue;
                                 } else {
                                     task.setError(error);
-                                    return false;
+                                    return -2;
                                 }
                             }
                             if (filterPassed() && !filterReachMaxPassed()) {
+                                count++;
                                 continue;
                             }
                             List<String> row = new ArrayList<>();
@@ -386,9 +397,13 @@ public class DataFileCSV extends DataFileText {
                 task.setError(e.toString());
             }
             MyBoxLog.error(e);
-            return false;
+            return -3;
         }
-        return FileTools.rename(tmpFile, file, false);
+        if (FileTools.rename(tmpFile, file, false)) {
+            return count;
+        } else {
+            return -4;
+        }
     }
 
     @Override

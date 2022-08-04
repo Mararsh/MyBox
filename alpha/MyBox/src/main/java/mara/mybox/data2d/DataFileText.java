@@ -204,20 +204,20 @@ public class DataFileText extends DataFile {
                 } else {
                     targetTextFile.setHasHeader(false);
                 }
-                long rowIndex = -1;
+                long rIndex = -1;
                 String line;
                 while ((line = reader.readLine()) != null && task != null && !task.isCancelled()) {
                     List<String> row = parseFileLine(line);
                     if (row == null || row.isEmpty()) {
                         continue;
                     }
-                    if (++rowIndex < startRowOfCurrentPage || rowIndex >= endRowOfCurrentPage) {
+                    if (++rIndex < startRowOfCurrentPage || rIndex >= endRowOfCurrentPage) {
                         TextFileTools.writeLine(writer, fileRow(row), tDelimiter);
-                    } else if (rowIndex == startRowOfCurrentPage) {
+                    } else if (rIndex == startRowOfCurrentPage) {
                         writePageData(writer, tDelimiter);
                     }
                 }
-                if (rowIndex < 0) {
+                if (rIndex < 0) {
                     writePageData(writer, tDelimiter);
                 }
                 writer.flush();
@@ -305,13 +305,14 @@ public class DataFileText extends DataFile {
     }
 
     @Override
-    public boolean setValue(List<Integer> cols, String value, boolean errorContinue) {
+    public long setValue(List<Integer> cols, String value, boolean errorContinue) {
         if (file == null || !file.exists() || file.length() == 0
                 || cols == null || cols.isEmpty()) {
-            return false;
+            return -1;
         }
         File tmpFile = TmpFileTools.getTempFile();
         File validFile = FileTools.removeBOM(file);
+        long count = 0;
         try ( BufferedReader reader = new BufferedReader(new FileReader(validFile, charset));
                  BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, charset, false))) {
             List<String> names = columnNames();
@@ -351,15 +352,18 @@ public class DataFileText extends DataFile {
                 }
                 filterDataRow(record, ++rowIndex);
                 needSetValue = filterPassed() && !filterReachMaxPassed();
-                if (needSetValue && script != null) {
-                    calculateDataRowExpression(script, record, rowIndex);
-                    error = expressionError();
-                    if (error != null) {
-                        if (errorContinue) {
-                            continue;
-                        } else {
-                            task.setError(error);
-                            return false;
+                if (needSetValue) {
+                    count++;
+                    if (script != null) {
+                        calculateDataRowExpression(script, record, rowIndex);
+                        error = expressionError();
+                        if (error != null) {
+                            if (errorContinue) {
+                                continue;
+                            } else {
+                                task.setError(error);
+                                return -2;
+                            }
                         }
                     }
                 }
@@ -396,18 +400,23 @@ public class DataFileText extends DataFile {
                 task.setError(e.toString());
             }
             MyBoxLog.error(e);
-            return false;
+            return -3;
         }
-        return FileTools.rename(tmpFile, file, false);
+        if (FileTools.rename(tmpFile, file, false)) {
+            return count;
+        } else {
+            return -4;
+        }
     }
 
     @Override
-    public boolean delete(boolean errorContinue) {
+    public long delete(boolean errorContinue) {
         if (file == null || !file.exists() || file.length() == 0) {
-            return false;
+            return -1;
         }
         File tmpFile = TmpFileTools.getTempFile();
         File validFile = FileTools.removeBOM(file);
+        long count = 0;
         try ( BufferedReader reader = new BufferedReader(new FileReader(validFile, charset));
                  BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, charset, false))) {
             List<String> names = columnNames();
@@ -429,10 +438,11 @@ public class DataFileText extends DataFile {
                             continue;
                         } else {
                             task.setError(error);
-                            return false;
+                            return -2;
                         }
                     }
                     if (filterPassed() && !filterReachMaxPassed()) {
+                        count++;
                         continue;
                     }
                     List<String> row = new ArrayList<>();
@@ -451,9 +461,13 @@ public class DataFileText extends DataFile {
                 task.setError(e.toString());
             }
             MyBoxLog.error(e);
-            return false;
+            return -3;
         }
-        return FileTools.rename(tmpFile, file, false);
+        if (FileTools.rename(tmpFile, file, false)) {
+            return count;
+        } else {
+            return -4;
+        }
     }
 
     @Override

@@ -25,8 +25,7 @@ import mara.mybox.value.UserConfig;
 public class BaseData2DSourceController extends ControlData2DLoad {
 
     protected ControlData2DEditTable tableController;
-    private List<Integer> selectedRowsIndices;
-    protected List<Integer> filteredRowsIndices, checkedColsIndices;
+    protected List<Integer> selectedRowsIndices, filteredRowsIndices, checkedColsIndices;
     protected List<String> checkedColsNames;
     protected List<Data2DColumn> checkedColumns;
     protected boolean idExclude = false, noColumnSelection = false;
@@ -84,7 +83,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
             this.parentController = parent;
             this.tableController = tableController;
 
-            filterController.setParameters(this, tableController);
+            filterController.setParameters(this);
 
             tableLoadListener = new ChangeListener<Boolean>() {
                 @Override
@@ -105,6 +104,24 @@ public class BaseData2DSourceController extends ControlData2DLoad {
             tableView.requestFocus();
 
             sourceChanged();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void setParameters(BaseController parent) {
+        try {
+            this.parentController = parent;
+            loadedNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    filterController.setData2D(data2D);
+                    refreshControls();
+                }
+            });
+
+            filterController.setParameters(this);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

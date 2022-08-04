@@ -182,13 +182,13 @@ public class DataMatrix extends Data2D {
     }
 
     @Override
-    public boolean setValue(List<Integer> cols, String value, boolean errorContinue) {
-        return false;
+    public long setValue(List<Integer> cols, String value, boolean errorContinue) {
+        return -1;
     }
 
     @Override
-    public boolean delete(boolean errorContinue) {
-        return false;
+    public long delete(boolean errorContinue) {
+        return -1;
     }
 
     @Override

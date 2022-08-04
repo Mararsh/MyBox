@@ -168,37 +168,6 @@ public class ControlData2DSetValue extends BaseController {
         if (handleController == null) {
             return true;
         }
-        if (thisPane.getChildren().contains(matrixPane)) {
-            if (handleController.isAllPages()) {
-                matrixPane.setDisable(true);
-                if (gaussianDistributionRadio.isSelected() || identifyRadio.isSelected()
-                        || upperTriangleRadio.isSelected() || lowerTriangleRadio.isSelected()) {
-                    zeroRadio.fire();
-                    return false;
-                }
-            } else {
-                boolean isSquare = handleController.isSquare();
-                boolean canGD = isSquare && handleController.checkedColsIndices.size() % 2 != 0;
-                gaussianDistributionRadio.setDisable(!canGD);
-                identifyRadio.setDisable(!isSquare);
-                upperTriangleRadio.setDisable(!isSquare);
-                lowerTriangleRadio.setDisable(!isSquare);
-                if (!isSquare) {
-                    if (gaussianDistributionRadio.isSelected() || identifyRadio.isSelected()
-                            || upperTriangleRadio.isSelected() || lowerTriangleRadio.isSelected()) {
-                        zeroRadio.fire();
-                        return false;
-                    }
-                }
-                if (!canGD) {
-                    if (gaussianDistributionRadio.isSelected()) {
-                        zeroRadio.fire();
-                        return false;
-                    }
-                }
-                matrixPane.setDisable(false);
-            }
-        }
         checkValue();
         if (value == null) {
             return false;

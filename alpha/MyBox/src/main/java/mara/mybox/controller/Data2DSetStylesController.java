@@ -114,7 +114,7 @@ public class Data2DSetStylesController extends BaseController {
             };
             tableController.statusNotify.addListener(tableStatusListener);
 
-            filterController.setParameters(this, tableController);
+            filterController.setParameters(this);
 
             sourceChanged();
 

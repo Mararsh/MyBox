@@ -135,7 +135,7 @@ public class TextClipboardTools {
                 }
                 if (stringToSystemClipboard(text)) {
                     int len = text.length();
-                    String info = "\n" + message("Count") + ":" + len
+                    String info = "\n" + message("CharactersNumber") + ":" + len
                             + "\n----------------------\n"
                             + (len > 100 ? text.substring(0, 100) + "\n......" : text);
                     if (TextClipboardTools.isMonitoringCopy()) {

@@ -92,7 +92,7 @@ public class MenuTextEditController extends MenuTextBaseController {
             public void run() {
                 IndexRange range = textInput.getSelection();
                 int selection = range != null ? range.getLength() : 0;
-                String info = message("Count") + ": " + StringTools.format(textInput.getLength()) + "  ";
+                String info = message("CharactersNumber") + ": " + StringTools.format(textInput.getLength()) + "  ";
                 if (selection > 0) {
                     info += message("Selection") + ": " + StringTools.format(range.getStart() + 1)
                             + "-" + StringTools.format(range.getEnd()) + "(" + StringTools.format(selection) + ")";

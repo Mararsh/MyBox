@@ -9,6 +9,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.stage.Window;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
@@ -22,8 +23,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxClipboardController {
 
-    protected BaseData2DSourceController sourceController;
-    protected ControlData2DLoad targetTableController;
+    protected ControlData2DEditTable targetTableController;
     protected Data2D dataTarget;
     protected int row, col;
     protected ChangeListener<Boolean> targetStatusListener;
@@ -32,6 +32,8 @@ public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxCli
     protected ComboBox<String> rowSelector, colSelector;
     @FXML
     protected RadioButton replaceRadio, insertRadio, appendRadio;
+    @FXML
+    protected BaseData2DSourceController sourceController;
 
     public Data2DPasteContentInMyBoxClipboardController() {
         baseTitle = message("PasteContentInMyBoxClipboard");
@@ -42,13 +44,25 @@ public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxCli
         setAsPop(baseName);
     }
 
-    public void setParameters(ControlData2DLoad target) {
+    @Override
+    public void initValues() {
         try {
-            sourceController = (BaseData2DSourceController) loadController;
+            loadController = sourceController;
 
+            super.initValues();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void setParameters(ControlData2DEditTable target) {
+        try {
             this.parentController = target;
             targetTableController = target;
-            dataTarget = target.data2D;
+            dataTarget = target.data2D.cloneAll();
+
+            sourceController.setParameters(this);
 
             targetStatusListener = new ChangeListener<Boolean>() {
                 @Override
@@ -57,12 +71,6 @@ public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxCli
                 }
             };
             targetTableController.statusNotify.addListener(targetStatusListener);
-
-            sourceController.loadedNotify.addListener(
-                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        okButton.setDisable(!loadController.data2D.hasData());
-                    });
-            okButton.setDisable(true);
 
             makeControls(0, 0);
 
@@ -102,8 +110,12 @@ public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxCli
     @FXML
     @Override
     public void okAction() {
-        if (!loadController.data2D.hasData()) {
+        if (!sourceController.data2D.hasData()) {
             popError(message("NoData"));
+            return;
+        }
+        if (!sourceController.checkSelections()) {
+            popError(sourceController.error != null ? sourceController.error : message("SelectToHanle"));
             return;
         }
         row = rowSelector.getSelectionModel().getSelectedIndex();
@@ -121,8 +133,21 @@ public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxCli
             protected boolean handle() {
                 try {
                     sourceController.data2D.startTask(task, sourceController.filterController.filter);
-                    data = sourceController.filtered(false);
-                    sourceController.data2D.stopFilter();
+                    if (!sourceController.data2D.fillFilterStatistic()) {
+                        return false;
+                    }
+                    if (sourceController.isAllPages()) {
+                        DataFileCSV csv = sourceController.data2D.copy(sourceController.checkedColsIndices, false, true);
+                        if (csv == null) {
+                            error = message("InvalidData");
+                            return false;
+                        }
+                        data = csv.allRows(false);
+                    } else {
+                        data = sourceController.filtered(false);
+                    }
+                    sourceController.data2D.stopTask();
+
                     if (data == null || data.isEmpty()) {
                         error = message("SelectToHandle");
                         return false;
@@ -172,7 +197,7 @@ public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxCli
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopTask();
+                sourceController.data2D.stopTask();
                 task = null;
             }
 
@@ -231,7 +256,7 @@ public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxCli
         }
     }
 
-    public static Data2DPasteContentInMyBoxClipboardController open(ControlData2DLoad target) {
+    public static Data2DPasteContentInMyBoxClipboardController open(ControlData2DEditTable target) {
         try {
             if (target == null) {
                 return null;

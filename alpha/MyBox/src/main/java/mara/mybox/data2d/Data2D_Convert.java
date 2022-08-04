@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import mara.mybox.data2d.scan.Data2DReader;
 import mara.mybox.data2d.scan.Data2DReader.Operation;
 import mara.mybox.db.DerbyBase;
@@ -240,14 +241,17 @@ public abstract class Data2D_Convert extends Data2D_Edit {
 
             List<Data2DColumn> tableColumns = new ArrayList<>();
             String idname = null;
+            List<String> validNames = new ArrayList<>();
             if (keys == null || keys.isEmpty()) {
                 idname = tableName.replace("\"", "") + "_id";
                 Data2DColumn idcolumn = new Data2DColumn(idname, ColumnDefinition.ColumnType.Long);
                 idcolumn.setAuto(true).setIsPrimaryKey(true).setNotNull(true).setEditable(false);
                 tableColumns.add(idcolumn);
                 tableData2D.addColumn(idcolumn);
+                validNames.add(idname.toUpperCase());
             }
             Map<String, String> columnsMap = new HashMap<>();
+            Random random = new Random();
             for (Data2DColumn sourceColumn : sourceColumns) {
                 Data2DColumn dataColumn = new Data2DColumn();
                 dataColumn.cloneFrom(sourceColumn);
@@ -255,10 +259,11 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                         .setAuto(false).setIsPrimaryKey(false);
                 String sourceColumnName = sourceColumn.getColumnName();
                 String columeName = DerbyBase.fixedIdentifier(sourceColumnName);
-                if (columeName.equalsIgnoreCase(idname)) {
-                    columeName += "m";
+                while (validNames.contains(columeName.toUpperCase())) {
+                    columeName += random.nextInt(10);
                 }
                 dataColumn.setColumnName(columeName);
+                validNames.add(columeName);
                 if (keys != null && !keys.isEmpty()) {
                     dataColumn.setIsPrimaryKey(keys.contains(sourceColumnName));
                 }
