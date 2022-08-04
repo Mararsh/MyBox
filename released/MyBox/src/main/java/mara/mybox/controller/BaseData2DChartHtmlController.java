@@ -156,12 +156,8 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
         return ok;
     }
 
-    @FXML
     @Override
-    public void okAction() {
-        if (!checkOptions() || !initData()) {
-            return;
-        }
+    protected void startOperation() {
         if (task != null) {
             task.cancel();
         }
@@ -172,7 +168,7 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
             @Override
             protected boolean handle() {
                 try {
-                    data2D.startTask(task, rowFilterController.rowFilter);
+                    data2D.startTask(task, filterController.filter);
                     readData();
                     data2D.stopFilter();
                     html = handleData();

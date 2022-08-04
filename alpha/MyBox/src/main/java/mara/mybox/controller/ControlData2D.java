@@ -757,12 +757,6 @@ public class ControlData2D extends BaseController {
             menu.setDisable(empty);
             trimMenu.getItems().add(menu);
 
-//            menu = new MenuItem(message("DeleteAbnormalRows"), StyleTools.getIconImage("iconWrong.png"));
-//            menu.setOnAction((ActionEvent event) -> {
-//                Data2DDeleteAbnormalController.open(tableController);
-//            });
-//            menu.setDisable(empty);
-//            trimMenu.getItems().add(menu);
             Menu calMenu = new Menu(message("Calculation"), StyleTools.getIconImage("iconCalculator.png"));
             popMenu.getItems().add(calMenu);
 

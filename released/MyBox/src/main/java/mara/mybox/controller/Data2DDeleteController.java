@@ -33,46 +33,21 @@ public class Data2DDeleteController extends BaseData2DHandleController {
 
     @Override
     public synchronized void handleRowsTask() {
-        try {
-            tableController.isSettingValues = true;
-            List<List<String>> data = new ArrayList<>();
-            for (int i = 0; i < tableController.tableData.size(); i++) {
-                if (!checkedRowsIndices.contains(i)) {
-                    data.add(tableController.tableData.get(i));
-                }
-            }
-            tableController.tableData.setAll(data);
-            tableController.isSettingValues = false;
-            tableController.tableChanged(true);
-            tableController.requestMouse();
-            tabPane.getSelectionModel().select(dataTab);
-            popDone();
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void handleAllTask() {
-        if (!tableController.checkBeforeNextAction()) {
-            return;
-        }
-        if (isAllPages() && !data2D.needFilter()) {
-            if (!PopTools.askSure(this, baseTitle, message("SureDeleteAll"))) {
-                return;
-            }
-        }
         task = new SingletonTask<Void>(this) {
+
+            List<List<String>> data;
 
             @Override
             protected boolean handle() {
                 try {
-                    if (!data2D.isTmpData() && tableController.dataController.backupController != null
-                            && tableController.dataController.backupController.isBack()) {
-                        tableController.dataController.backupController.addBackup(task, data2D.getFile());
+                    data2D.startTask(task, filterController.filter);
+                    data = new ArrayList<>();
+                    filteredRowsIndices = filteredRowsIndices();
+                    for (int i = 0; i < tableController.tableData.size(); i++) {
+                        if (!filteredRowsIndices.contains(i)) {
+                            data.add(tableController.tableData.get(i));
+                        }
                     }
-                    data2D.startTask(task, rowFilterController.rowFilter);
-                    ok = data2D.delete(errorContinueCheck.isSelected());
                     data2D.stopFilter();
                     return ok;
                 } catch (Exception e) {
@@ -83,11 +58,77 @@ public class Data2DDeleteController extends BaseData2DHandleController {
 
             @Override
             protected void whenSucceeded() {
-                popDone();
+                try {
+                    tableController.isSettingValues = true;
+                    tableController.tableData.setAll(data);
+                    tableController.isSettingValues = false;
+                    selectedRowsIndices = null;
+                    tableController.tableChanged(true);
+                    tableController.requestMouse();
+                    tabPane.getSelectionModel().select(dataTab);
+                    alertInformation(message("DeletedRowsNumber") + ": " + filteredRowsIndices.size());
+                } catch (Exception e) {
+                    MyBoxLog.error(e.toString());
+                }
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                data2D.stopTask();
+                task = null;
+                if (targetController != null) {
+                    targetController.refreshControls();
+                }
+            }
+
+        };
+        start(task);
+    }
+
+    @Override
+    public void handleAllTask() {
+        if (!tableController.checkBeforeNextAction()) {
+            return;
+        }
+        if (!data2D.needFilter()) {
+            if (!PopTools.askSure(this, baseTitle, message("SureDeleteAll"))) {
+                return;
+            }
+        } else {
+            if (!PopTools.askSure(this, baseTitle, message("SureDelete"))) {
+                return;
+            }
+        }
+        task = new SingletonTask<Void>(this) {
+
+            private long count;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    if (!data2D.isTmpData() && tableController.dataController.backupController != null
+                            && tableController.dataController.backupController.isBack()) {
+                        tableController.dataController.backupController.addBackup(task, data2D.getFile());
+                    }
+                    data2D.startTask(task, filterController.filter);
+                    count = data2D.delete(errorContinueCheck.isSelected());
+                    data2D.stopFilter();
+                    return count >= 0;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                selectedRowsIndices = null;
                 tableController.dataSizeLoaded = false;
                 tableController.dataController.goPage();
                 tableController.requestMouse();
                 tabPane.getSelectionModel().select(dataTab);
+                alertInformation(message("DeletedRowsNumber") + ": " + count);
             }
 
             @Override

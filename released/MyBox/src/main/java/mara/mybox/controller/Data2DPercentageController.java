@@ -86,11 +86,10 @@ public class Data2DPercentageController extends BaseData2DHandleController {
         return super.checkOptions();
     }
 
-    @FXML
     @Override
-    public void okAction() {
+    protected void startOperation() {
         try {
-            if (!checkOptions() || !prepare()) {
+            if (!prepare()) {
                 return;
             }
             if (isAllPages()) {
@@ -200,7 +199,7 @@ public class Data2DPercentageController extends BaseData2DHandleController {
     @Override
     public boolean handleRows() {
         try {
-            if (checkedRowsIndices == null || checkedRowsIndices.isEmpty()) {
+            if (filteredRowsIndices == null || filteredRowsIndices.isEmpty()) {
                 if (task != null) {
                     task.setError(message("SelectToHandle"));
                 }
@@ -228,7 +227,7 @@ public class Data2DPercentageController extends BaseData2DHandleController {
             List<Integer> colIndices = checkedColsIndices;
             int colsLen = colIndices.size();
             double[] sum = new double[colsLen];
-            for (int r : checkedRowsIndices) {
+            for (int r : filteredRowsIndices) {
                 List<String> tableRow = tableController.tableData.get(r);
                 for (int c = 0; c < colsLen; c++) {
                     double d = DoubleTools.toDouble(tableRow.get(colIndices.get(c) + 1), invalidAs);
@@ -252,7 +251,7 @@ public class Data2DPercentageController extends BaseData2DHandleController {
                 }
             }
             outputData.add(row);
-            for (int r : checkedRowsIndices) {
+            for (int r : filteredRowsIndices) {
                 List<String> tableRow = tableController.tableData.get(r);
                 row = new ArrayList<>();
                 row.add(message("Row") + (r + 1));
@@ -299,7 +298,7 @@ public class Data2DPercentageController extends BaseData2DHandleController {
         try {
             List<Integer> colIndices = checkedColsIndices;
             outputData = new ArrayList<>();
-            for (int r : checkedRowsIndices) {
+            for (int r : filteredRowsIndices) {
                 double sum = 0d;
                 List<String> row = new ArrayList<>();
                 row.add(message("Row") + (r + 1));
@@ -359,7 +358,7 @@ public class Data2DPercentageController extends BaseData2DHandleController {
         try {
             List<Integer> colIndices = checkedColsIndices;
             double sum = 0d;
-            for (int r : checkedRowsIndices) {
+            for (int r : filteredRowsIndices) {
                 List<String> tableRow = tableController.tableData.get(r);
                 for (int c : colIndices) {
                     double d = DoubleTools.toDouble(tableRow.get(c + 1), invalidAs);
@@ -387,7 +386,7 @@ public class Data2DPercentageController extends BaseData2DHandleController {
                 }
             }
             outputData.add(row);
-            for (int r : checkedRowsIndices) {
+            for (int r : filteredRowsIndices) {
                 List<String> tableRow = tableController.tableData.get(r);
                 row = new ArrayList<>();
                 row.add(message("Row") + (r + 1) + "");

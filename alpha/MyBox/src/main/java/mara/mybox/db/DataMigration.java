@@ -187,6 +187,7 @@ public class DataMigration {
             statement.executeUpdate("ALTER TABLE Data2D_Style DROP COLUMN rowFilter");
             statement.executeUpdate("ALTER TABLE Data2D_Style DROP COLUMN columnFilter");
 
+            FxFileTools.getInternalFile("/js/tianditu.html", "js", "tianditu.html", true);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

@@ -3,6 +3,7 @@ package mara.mybox.db.data;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -44,7 +45,7 @@ public class ColumnDefinition extends BaseData {
     protected Object value;
     protected Number maxValue, minValue;
     protected Map<Object, String> data;  // value, displayString
-    protected DoubleStatistic doubleStatistic;
+    protected DoubleStatistic sourceStatistic, targetStatistic;
 
     public static enum ColumnType {
         String, Boolean, Text,
@@ -83,7 +84,8 @@ public class ColumnDefinition extends BaseData {
         referTable = null;
         referColumn = null;
         label = null;
-        doubleStatistic = null;
+        sourceStatistic = null;
+        targetStatistic = null;
         data = null;
     }
 
@@ -151,7 +153,8 @@ public class ColumnDefinition extends BaseData {
             maxValue = c.maxValue;
             minValue = c.minValue;
             columnValues = c.columnValues;
-            doubleStatistic = c.doubleStatistic;
+            sourceStatistic = c.sourceStatistic;
+            targetStatistic = c.targetStatistic;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -315,8 +318,9 @@ public class ColumnDefinition extends BaseData {
                         return -1;
                     }
                 case Date:
-                    long e1 = new Date(value1).getTime();
-                    long e2 = new Date(value2).getTime();
+                    SimpleDateFormat df = new SimpleDateFormat();
+                    long e1 = df.parse(value1).getTime();
+                    long e2 = df.parse(value2).getTime();
                     if (e1 == e2) {
                         return 0;
                     } else if (e1 > e2) {
@@ -982,12 +986,21 @@ public class ColumnDefinition extends BaseData {
         this.color = color;
     }
 
-    public DoubleStatistic getDoubleStatistic() {
-        return doubleStatistic;
+    public DoubleStatistic getTargetStatistic() {
+        return targetStatistic;
     }
 
-    public ColumnDefinition setDoubleStatistic(DoubleStatistic doubleStatistic) {
-        this.doubleStatistic = doubleStatistic;
+    public ColumnDefinition setTargetStatistic(DoubleStatistic targetStatistic) {
+        this.targetStatistic = targetStatistic;
+        return this;
+    }
+
+    public DoubleStatistic getSourceStatistic() {
+        return sourceStatistic;
+    }
+
+    public ColumnDefinition setSourceStatistic(DoubleStatistic sourceStatistic) {
+        this.sourceStatistic = sourceStatistic;
         return this;
     }
 

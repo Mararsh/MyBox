@@ -260,10 +260,10 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
                     regress(outputData);
                 } else {
                     regressionFile = data2D.simpleLinearRegression(dataColsIndices, simpleRegression);
-                    outputData = selectedData(dataColsIndices, true);
+                    outputData = filtered(dataColsIndices, true);
                 }
             } else {
-                outputData = selectedData(dataColsIndices, true);
+                outputData = filtered(dataColsIndices, true);
                 regress(outputData);
             }
             if (outputData == null) {

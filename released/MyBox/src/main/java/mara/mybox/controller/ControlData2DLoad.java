@@ -25,6 +25,7 @@ import mara.mybox.data2d.DataClipboard;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileExcel;
 import mara.mybox.data2d.DataFileText;
+import mara.mybox.data2d.DataFilter;
 import mara.mybox.data2d.DataMatrix;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
@@ -35,7 +36,6 @@ import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.RowFilter;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.tools.DoubleMatrixTools;
@@ -57,7 +57,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     protected char copyDelimiter = ',';
     protected boolean readOnly, notUpdateTitle;
     protected SimpleBooleanProperty statusNotify;
-    protected RowFilter styleFilter;
+    protected DataFilter styleFilter;
 
     @FXML
     protected TableColumn<List<String>, Integer> dataRowColumn;
@@ -67,7 +67,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     public ControlData2DLoad() {
         statusNotify = new SimpleBooleanProperty(false);
         readOnly = true;
-        styleFilter = new RowFilter();
+        styleFilter = new DataFilter();
     }
 
     @Override
@@ -142,8 +142,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 showPaginationPane(!data2D.isTmpData() && !data2D.isMatrix());
             }
             data2D.setLoadController(this);
-
-            styleFilter.setData2D(data2D);
 
             validateData();
 

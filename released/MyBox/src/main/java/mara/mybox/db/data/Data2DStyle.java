@@ -1,9 +1,6 @@
 package mara.mybox.db.data;
 
-import java.util.List;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ColumnFilter;
-import mara.mybox.fxml.RowFilter;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -18,12 +15,9 @@ public class Data2DStyle extends BaseData {
     protected Data2DDefinition data2DDefinition;
     protected long d2sid, d2id;
     protected long rowStart, rowEnd; // 0-based, exlcuded
-    protected String title, columns, rowFilterString, columnFilterString,
-            fontColor, bgColor, fontSize, moreStyle;
-    protected boolean abnoramlValues, bold;
+    protected String title, columns, filter, fontColor, bgColor, fontSize, moreStyle;
+    protected boolean filterReversed, abnoramlValues, bold;
     protected float sequence;
-    protected RowFilter rowFilter;
-    protected ColumnFilter columnFilter;
 
     private void init() {
         d2sid = -1;
@@ -32,14 +26,12 @@ public class Data2DStyle extends BaseData {
         rowStart = -1;
         rowEnd = -1;
         columns = null;
-        rowFilterString = null;
-        columnFilterString = null;
-        rowFilter = null;
-        columnFilter = null;
+        filter = null;
         fontColor = null;
         bgColor = null;
         fontSize = null;
         moreStyle = null;
+        filterReversed = false;
         abnoramlValues = false;
         bold = false;
         sequence = 0;
@@ -72,10 +64,7 @@ public class Data2DStyle extends BaseData {
             rowStart = style.rowStart;
             rowEnd = style.rowEnd;
             columns = style.columns;
-            rowFilterString = style.rowFilterString;
-            columnFilterString = style.columnFilterString;
-            rowFilter = style.rowFilter;
-            columnFilter = style.columnFilter;
+            filter = style.filter;
             fontColor = style.fontColor;
             bgColor = style.bgColor;
             fontSize = style.fontSize;
@@ -144,11 +133,11 @@ public class Data2DStyle extends BaseData {
                 case "columns":
                     data.setColumns(value == null ? null : (String) value);
                     return true;
-                case "rowFilter":
-                    data.setRowFilterString(value == null ? null : (String) value);
+                case "filter":
+                    data.setFilter(value == null ? null : (String) value);
                     return true;
-                case "columnFilter":
-                    data.setColumnFilterString(value == null ? null : (String) value);
+                case "filterReversed":
+                    data.setFilterReversed(value == null ? false : (boolean) value);
                     return true;
                 case "fontColor":
                     data.setFontColor(value == null ? null : (String) value);
@@ -196,10 +185,10 @@ public class Data2DStyle extends BaseData {
                     return data.getRowEnd();
                 case "columns":
                     return data.getColumns();
-                case "rowFilter":
-                    return data.getRowFilterString();
-                case "columnFilter":
-                    return data.getColumnFilterString();
+                case "filter":
+                    return data.getFilter();
+                case "filterReversed":
+                    return data.isFilterReversed();
                 case "fontColor":
                     return data.getFontColor();
                 case "bgColor":
@@ -232,91 +221,6 @@ public class Data2DStyle extends BaseData {
     public long getTo() {
         return rowEnd;
     }
-
-    /*
-        row filter
-     */
-    public Data2DStyle setRowFilter(String script, boolean reversed) {
-        return setRowFilter(new RowFilter(script, reversed));
-    }
-
-    public Data2DStyle setRowFilter(RowFilter rowFilter) {
-        this.rowFilter = rowFilter;
-        if (rowFilter == null) {
-            rowFilterString = null;
-        } else {
-            rowFilterString = rowFilter.toString();
-        }
-        return this;
-    }
-
-    public RowFilter getRowFilter() {
-        return rowFilter;
-    }
-
-    public Data2DStyle setRowFilterString(String rowFilterString) {
-        this.rowFilterString = rowFilterString;
-        rowFilter = RowFilter.create().fromString(rowFilterString);
-        return this;
-    }
-
-    public String getRowFilterString() {
-        return rowFilterString;
-    }
-
-    /*
-        column filter
-     */
-    public Data2DStyle setColumnFilter(ColumnFilter columnFilter) {
-        this.columnFilter = columnFilter;
-        if (columnFilter == null) {
-            columnFilterString = null;
-        } else {
-            columnFilterString = columnFilter.toString();
-        }
-        return this;
-    }
-
-    public ColumnFilter getColumnFilter() {
-        return columnFilter;
-    }
-
-    public Data2DStyle setColumnFilterString(String columnFilterString) {
-        this.columnFilterString = columnFilterString;
-        columnFilter = ColumnFilter.create().fromString(columnFilterString);
-        return this;
-    }
-
-    public String getColumnFilterString() {
-        return columnFilterString;
-    }
-
-    /*
-        filter cell
-     */
-    public boolean filterCell(RowFilter calculator, List<String> tableRow, long tableRowIndex, int colIndex) {
-        try {
-            if (calculator == null || tableRow == null) {
-                return false;
-            }
-
-            if (rowFilter != null) {
-                if (!rowFilter.filterTableRow(calculator.data2D, tableRow, tableRowIndex)) {
-                    return false;
-                }
-            }
-            if (columnFilter != null) {
-                if (!columnFilter.filter(calculator.data2D.getColumns().get(colIndex), tableRow.get(colIndex + 1))) {
-                    return false;
-                }
-            }
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
 
     /*
         get/set
@@ -444,6 +348,24 @@ public class Data2DStyle extends BaseData {
 
     public Data2DStyle setData2DDefinition(Data2DDefinition data2DDefinition) {
         this.data2DDefinition = data2DDefinition;
+        return this;
+    }
+
+    public String getFilter() {
+        return filter;
+    }
+
+    public Data2DStyle setFilter(String filter) {
+        this.filter = filter;
+        return this;
+    }
+
+    public boolean isFilterReversed() {
+        return filterReversed;
+    }
+
+    public Data2DStyle setFilterReversed(boolean filterReversed) {
+        this.filterReversed = filterReversed;
         return this;
     }
 

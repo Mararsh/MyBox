@@ -146,6 +146,9 @@ public class DataMigration {
                 if (lastVersion < 6005007) {
                     updateIn657(conn);
                 }
+                if (lastVersion < 6005008) {
+                    updateIn658(conn);
+                }
             }
             TableStringValues.add(conn, "InstalledVersions", AppValues.AppVersion);
             conn.setAutoCommit(true);
@@ -153,6 +156,41 @@ public class DataMigration {
             MyBoxLog.debug(e.toString());
         }
         return true;
+    }
+
+    private static void updateIn658(Connection conn) {
+        try ( Statement statement = conn.createStatement()) {
+            MyBoxLog.info("Updating tables in 6.5.8...");
+
+            conn.setAutoCommit(true);
+            statement.executeUpdate("ALTER TABLE Data2D_Style ADD COLUMN filter VARCHAR(" + StringMaxLength + ")");
+            statement.executeUpdate("ALTER TABLE Data2D_Style ADD COLUMN filterReversed Boolean");
+
+            TableData2DStyle tableData2DStyle = new TableData2DStyle();
+            ResultSet query = statement.executeQuery("SELECT * FROM Data2D_Style ORDER BY d2id,sequence,d2sid");
+            while (query.next()) {
+                Data2DStyle style = tableData2DStyle.readData(query);
+                String rowFilter = query.getString("rowFilter");
+                if (rowFilter != null && !rowFilter.isBlank()) {
+                    if (rowFilter.startsWith("Reversed::")) {
+                        style.setFilter(rowFilter.substring("Reversed::".length()));
+                        style.setFilterReversed(true);
+                    } else {
+                        style.setFilter(rowFilter);
+                        style.setFilterReversed(false);
+                    }
+                }
+                // discard data about column filter. Sorry!
+                tableData2DStyle.updateData(conn, style);
+            }
+
+            statement.executeUpdate("ALTER TABLE Data2D_Style DROP COLUMN rowFilter");
+            statement.executeUpdate("ALTER TABLE Data2D_Style DROP COLUMN columnFilter");
+
+            FxFileTools.getInternalFile("/js/tianditu.html", "js", "tianditu.html", true);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     private static void updateIn657(Connection conn) {

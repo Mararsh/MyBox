@@ -472,12 +472,21 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         return toColumns(names);
     }
 
-    public void resetStatistic() {
+    public void resetSourceStatistic() {
         if (!isValid()) {
             return;
         }
         for (Data2DColumn column : columns) {
-            column.setDoubleStatistic(null);
+            column.setSourceStatistic(null);
+        }
+    }
+
+    public void resetTargetStatistic() {
+        if (!isValid()) {
+            return;
+        }
+        for (Data2DColumn column : columns) {
+            column.setTargetStatistic(null);
         }
     }
 

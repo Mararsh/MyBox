@@ -15,14 +15,13 @@ import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileExcel;
 import mara.mybox.data2d.DataFileText;
+import mara.mybox.data2d.DataFilter;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ExpressionCalculator;
-import mara.mybox.fxml.RowFilter;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.StringTools;
@@ -52,8 +51,7 @@ public abstract class Data2DReader {
     protected double from, to, tValue, invalidAs = 0;
     protected double[] colValues;
     protected Connection conn;
-    protected RowFilter rowFilter;
-    protected ExpressionCalculator calculator;
+    protected DataFilter filter;
     protected DataTable writerTable;
     protected TableData2D writerTableData2D;
     protected DoubleStatistic[] statisticData;
@@ -168,7 +166,7 @@ public abstract class Data2DReader {
                 break;
             case RowExpression:
                 if (cols == null || cols.isEmpty() || csvPrinter == null
-                        || calculator == null || script == null || name == null) {
+                        || script == null || name == null) {
                     failed = true;
                     return null;
                 }
@@ -636,8 +634,8 @@ public abstract class Data2DReader {
             if (includeRowNumber) {
                 row.add(0, (rowIndex + 1) + "");
             }
-            if (calculator.calculateDataRowExpression(data2D, script, record, rowIndex + 1)) {
-                row.add(calculator.getResult());
+            if (data2D.calculateDataRowExpression(script, record, rowIndex + 1)) {
+                row.add(data2D.expressionResult());
             } else {
                 if (errorContinue) {
                     row.add(null);
@@ -1462,11 +1460,6 @@ public abstract class Data2DReader {
 
     public Data2DReader setName(String name) {
         this.name = name;
-        return this;
-    }
-
-    public Data2DReader setCalculator(ExpressionCalculator calculator) {
-        this.calculator = calculator;
         return this;
     }
 

@@ -3,8 +3,6 @@ package mara.mybox.controller;
 import java.util.List;
 import java.util.Random;
 import javafx.fxml.FXML;
-import mara.mybox.calculation.DescriptiveStatistic;
-import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ExpressionCalculator;
@@ -20,8 +18,6 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class Data2DSetValuesController extends BaseData2DHandleController {
-
-    protected DescriptiveStatistic calculation;
 
     @FXML
     protected ControlData2DSetValue valueController;
@@ -64,6 +60,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                 allPagesRadio.setDisable(true);
             }
             showPaginationPane(false);
+            restoreSelections();
             checkOptions();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -74,18 +71,6 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
     public boolean checkOptions() {
         boolean ok = super.checkOptions();
         ok = valueController.checkSelection() && ok;
-        calculation = new DescriptiveStatistic()
-                .setScale(4).setInvalidAs(Double.NaN)
-                .setStatisticObject(DescriptiveStatistic.StatisticObject.Columns);
-        if (valueController.columnMeanRadio.isSelected()) {
-            calculation.setMean(true);
-        } else if (valueController.columnMedianRadio.isSelected()) {
-            calculation.setMedian(true);
-        } else if (valueController.columnModeRadio.isSelected()) {
-            calculation.setMode(true);
-        } else {
-            calculation = null;
-        }
         okButton.setDisable(!ok);
         return ok;
     }
@@ -97,6 +82,8 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
         }
         task = new SingletonTask<Void>(this) {
 
+            private long count;
+
             @Override
             protected boolean handle() {
                 try {
@@ -104,23 +91,11 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                             && tableController.dataController.backupController.isBack()) {
                         tableController.dataController.backupController.addBackup(task, data2D.getFile());
                     }
-                    if (calculation != null) {
-                        data2D.startTask(task, null);
-                        DoubleStatistic[] sData = null;
-                        if (calculation.needNonStored()) {
-                            sData = data2D.statisticByColumnsWithoutStored(checkedColsIndices, calculation);
-                        }
-                        if (calculation.needStored()) {
-                            sData = data2D.statisticByColumnsForStored(checkedColsIndices, calculation);
-                        }
-                        if (sData == null) {
-                            return false;
-                        }
-                    }
-                    data2D.startTask(task, rowFilterController.rowFilter);
-                    ok = data2D.setValue(checkedColsIndices, valueController.value, valueController.errorContinueCheck.isSelected());
+                    fillExpression();
+                    data2D.startTask(task, filterController.filter);
+                    count = data2D.setValue(checkedColsIndices, valueController.value, valueController.errorContinueCheck.isSelected());
                     data2D.stopFilter();
-                    return ok;
+                    return count >= 0;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -133,6 +108,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                 tableController.requestMouse();
                 tableController.popDone();
                 tabPane.getSelectionModel().select(dataTab);
+                alertInformation(message("ChangedRowsNumber") + ": " + count);
             }
 
             @Override
@@ -147,17 +123,31 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
         start(task);
     }
 
+    public boolean fillExpression() {
+        if (valueController.expressionRadio.isSelected()) {
+            String filled = data2D.calculateScriptStatistic(valueController.expression());
+            if (filled == null || filled.isBlank()) {
+                error = message("Invalid") + ": " + message("RowExpression");
+                return false;
+            }
+            valueController.setExpression(filled);
+        }
+        return true;
+    }
+
     @Override
-    public void handleRowsTask() {
+    public boolean handleRows() {
+        if (!fillExpression()) {
+            return false;
+        }
+        return super.handleRows();
+    }
+
+    @Override
+    public void ouputRows() {
         try {
             tableController.isSettingValues = true;
-            if (valueController.columnMeanRadio.isSelected()) {
-                setColumnStatistic();
-            } else if (valueController.columnMedianRadio.isSelected()) {
-                setColumnStatistic();
-            } else if (valueController.columnModeRadio.isSelected()) {
-                setColumnStatistic();
-            } else if (valueController.gaussianDistributionRadio.isSelected()) {
+            if (valueController.gaussianDistributionRadio.isSelected()) {
                 gaussianDistribution();
             } else if (valueController.identifyRadio.isSelected()) {
                 identifyMatrix();
@@ -178,104 +168,20 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
     @Override
     public boolean updateTable() {
         tableController.tableView.refresh();
-        popDone();
         tableController.isSettingValues = false;
         tableController.tableChanged(true);
         tableController.requestMouse();
         tabPane.getSelectionModel().select(dataTab);
+        alertInformation(message("ChangedRowsNumber") + ": " + filteredRowsIndices.size());
         return true;
-    }
-
-    public void setColumnStatistic() {
-        try {
-            if (calculation == null) {
-                return;
-            }
-            if (data2D.isMutiplePages()) {
-                if (!tableController.checkBeforeNextAction()) {
-                    return;
-                }
-                task = new SingletonTask<Void>(this) {
-
-                    @Override
-                    protected boolean handle() {
-                        try {
-                            data2D.startTask(task, null);
-                            DoubleStatistic[] sData = null;
-                            if (calculation.needNonStored()) {
-                                sData = data2D.statisticByColumnsWithoutStored(checkedColsIndices, calculation);
-                            }
-                            if (calculation.needStored()) {
-                                sData = data2D.statisticByColumnsForStored(checkedColsIndices, calculation);
-                            }
-                            return sData != null;
-                        } catch (Exception e) {
-                            error = e.toString();
-                            return false;
-                        }
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        applyColumnStatistic();
-                    }
-
-                    @Override
-                    protected void finalAction() {
-                        super.finalAction();
-                        data2D.stopTask();
-                        task = null;
-                    }
-
-                };
-                start(task);
-            } else {
-                int rowsNumber = tableData.size();
-                for (int col : checkedColsIndices) {
-                    String[] colData = new String[rowsNumber];
-                    for (int r = 0; r < rowsNumber; r++) {
-                        colData[r] = tableData.get(r).get(col + 1);
-                    }
-                    DoubleStatistic statistic = new DoubleStatistic(colData, calculation);
-                    data2D.column(col).setDoubleStatistic(statistic);
-                }
-                applyColumnStatistic();
-            }
-
-        } catch (Exception e) {
-            popError(message(e.toString()));
-        }
-    }
-
-    public void applyColumnStatistic() {
-        try {
-            tableController.isSettingValues = true;
-            for (int row : checkedRowsIndices) {
-                List<String> values = tableController.tableData.get(row);
-                for (int col : checkedColsIndices) {
-                    if (valueController.columnMeanRadio.isSelected()) {
-                        values.set(col + 1, data2D.column(col).getDoubleStatistic().mean + "");
-                    } else if (valueController.columnMedianRadio.isSelected()) {
-                        values.set(col + 1, data2D.column(col).getDoubleStatistic().median + "");
-                    } else if (valueController.columnModeRadio.isSelected()) {
-                        values.set(col + 1, data2D.column(col).getDoubleStatistic().modeValue + "");
-                    }
-                }
-                tableController.tableData.set(row, values);
-            }
-            updateTable();
-        } catch (Exception e) {
-            popError(message(e.toString()));
-        }
-        tableController.isSettingValues = false;
     }
 
     public void setValue() {
         try {
             Random random = new Random();
-            String script = valueController.expressionController.scriptInput.getText();
+            String script = valueController.expression();
             ExpressionCalculator calculator = valueController.expressionController.calculator;
-            for (int row : checkedRowsIndices) {
+            for (int row : filteredRowsIndices) {
                 List<String> values = tableController.tableData.get(row);
                 String v = valueController.value;
                 if (valueController.blankRadio.isSelected()) {
@@ -314,9 +220,17 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
 
     public void gaussianDistribution() {
         try {
-            float[][] m = ConvolutionKernel.makeGaussMatrix((int) checkedRowsIndices.size() / 2);
+            if (filteredRowsIndices.size() != checkedColsIndices.size()) {
+                popError(message("MatricesCannotCalculateShouldSqure"));
+                return;
+            }
+            if (filteredRowsIndices.size() % 2 == 0) {
+                popError(message("MatricesCannotCalculateShouldOdd"));
+                return;
+            }
+            float[][] m = ConvolutionKernel.makeGaussMatrix((int) filteredRowsIndices.size() / 2);
             int rowIndex = 0, colIndex;
-            for (int row : checkedRowsIndices) {
+            for (int row : filteredRowsIndices) {
                 List<String> tableRow = tableController.tableData.get(row);
                 colIndex = 0;
                 for (int col : checkedColsIndices) {
@@ -338,8 +252,12 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
 
     public void identifyMatrix() {
         try {
+            if (filteredRowsIndices.size() != checkedColsIndices.size()) {
+                popError(message("MatricesCannotCalculateShouldSqure"));
+                return;
+            }
             int rowIndex = 0, colIndex;
-            for (int row : checkedRowsIndices) {
+            for (int row : filteredRowsIndices) {
                 List<String> values = tableController.tableData.get(row);
                 colIndex = 0;
                 for (int col : checkedColsIndices) {
@@ -362,8 +280,12 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
 
     public void upperTriangleMatrix() {
         try {
+            if (filteredRowsIndices.size() != checkedColsIndices.size()) {
+                popError(message("MatricesCannotCalculateShouldSqure"));
+                return;
+            }
             int rowIndex = 0, colIndex;
-            for (int row : checkedRowsIndices) {
+            for (int row : filteredRowsIndices) {
                 List<String> values = tableController.tableData.get(row);
                 colIndex = 0;
                 for (int col : checkedColsIndices) {
@@ -386,8 +308,12 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
 
     public void lowerTriangleMatrix() {
         try {
+            if (filteredRowsIndices.size() != checkedColsIndices.size()) {
+                popError(message("MatricesCannotCalculateShouldSqure"));
+                return;
+            }
             int rowIndex = 0, colIndex;
-            for (int row : checkedRowsIndices) {
+            for (int row : filteredRowsIndices) {
                 List<String> values = tableController.tableData.get(row);
                 colIndex = 0;
                 for (int col : checkedColsIndices) {

@@ -404,9 +404,9 @@ public class DataTable extends Data2D {
     }
 
     @Override
-    public boolean setValue(List<Integer> cols, String value, boolean errorContinue) {
+    public long setValue(List<Integer> cols, String value, boolean errorContinue) {
         if (cols == null || cols.isEmpty()) {
-            return false;
+            return -1;
         }
         boolean isRandom = false, isRandomNn = false, isBlank = false, isMean = false,
                 isMedian = false, isMode = false;
@@ -428,6 +428,7 @@ public class DataTable extends Data2D {
                 isMedian = true;
             }
         }
+        long count = 0;
         if (!isRandom && !isRandomNn && script == null && !needFilter()) {
             try ( Connection conn = DerbyBase.getConnection();
                      Statement update = conn.createStatement()) {
@@ -447,17 +448,17 @@ public class DataTable extends Data2D {
                     sql += column.getColumnName() + "=" + quote + ovalue + quote;
                 }
                 if (sql == null) {
-                    return false;
+                    return -2;
                 }
                 sql = "UPDATE " + sheet + " SET " + sql;
-                update.executeUpdate(sql);
+                count = update.executeUpdate(sql);
                 conn.commit();
             } catch (Exception e) {
                 if (task != null) {
                     task.setError(e.toString());
                 }
                 MyBoxLog.error(e);
-                return false;
+                return -2;
             }
         } else {
             try ( Connection conn = DerbyBase.getConnection();
@@ -466,7 +467,6 @@ public class DataTable extends Data2D {
                 Random random = new Random();
                 conn.setAutoCommit(false);
                 rowIndex = 0;
-                int count = 0;
                 startFilter();
                 while (results.next() && task != null && !task.isCancelled()) {
                     Data2DRow row = tableData2D.readData(results);
@@ -488,7 +488,7 @@ public class DataTable extends Data2D {
                                 continue;
                             } else {
                                 task.setError(error);
-                                return false;
+                                return -2;
                             }
                         }
                     }
@@ -504,17 +504,18 @@ public class DataTable extends Data2D {
                             } else if (isRandomNn) {
                                 v = random(random, c, true);
                             } else if (isMean) {
-                                v = column(c).getDoubleStatistic().mean + "";
+                                v = column(c).getTargetStatistic().mean + "";
                             } else if (isMode) {
-                                v = column(c).getDoubleStatistic().modeValue + "";
+                                v = column(c).getTargetStatistic().modeValue + "";
                             } else if (isMedian) {
-                                v = column(c).getDoubleStatistic().median + "";
+                                v = column(c).getTargetStatistic().median + "";
                             } else if (script != null) {
                                 v = expressionResult();
                             } else {
                                 v = value;
                             }
                             row.setColumnValue(name, column.fromString(v));
+                            count++;
                         }
                     }
                     tableData2D.updateData(conn, row);
@@ -531,23 +532,23 @@ public class DataTable extends Data2D {
                     task.setError(e.toString());
                 }
                 MyBoxLog.debug(e);
-                return false;
+                return -3;
             }
         }
-        return true;
+        return count;
     }
 
     @Override
-    public boolean delete(boolean errorContinue) {
+    public long delete(boolean errorContinue) {
         if (!needFilter()) {
-            return clearData() >= 0;
+            return clearData();
         } else {
+            long count = 0;
             try ( Connection conn = DerbyBase.getConnection();
                      PreparedStatement query = conn.prepareStatement("SELECT * FROM " + sheet);
                      ResultSet results = query.executeQuery()) {
                 conn.setAutoCommit(false);
                 rowIndex = 0;
-                int count = 0;
                 while (results.next() && task != null && !task.isCancelled()) {
                     Data2DRow row = tableData2D.readData(results);
                     List<String> rowValues = new ArrayList<>();
@@ -562,7 +563,7 @@ public class DataTable extends Data2D {
                             continue;
                         } else {
                             task.setError(error);
-                            return false;
+                            return -2;
                         }
                     }
                     if (!filterPassed()) {
@@ -582,10 +583,10 @@ public class DataTable extends Data2D {
                     task.setError(e.toString());
                 }
                 MyBoxLog.debug(e);
-                return false;
+                return -4;
             }
+            return count;
         }
-        return true;
     }
 
     @Override
@@ -865,10 +866,10 @@ public class DataTable extends Data2D {
             DoubleStatistic[] sData = new DoubleStatistic[colLen];
             for (int c = 0; c < cols.size(); c++) {
                 Data2DColumn column = columns.get(cols.get(c));
-                DoubleStatistic colStatistic = column.getDoubleStatistic();
+                DoubleStatistic colStatistic = column.getTargetStatistic();
                 if (colStatistic == null) {
                     colStatistic = new DoubleStatistic();
-                    column.setDoubleStatistic(colStatistic);
+                    column.setTargetStatistic(colStatistic);
                 }
                 colStatistic.invalidAs = selections.invalidAs;
                 sData[c] = colStatistic;
@@ -937,6 +938,11 @@ public class DataTable extends Data2D {
                 }
                 if (selections.mode) {
                     colStatistic.modeValue = mode(conn, column.getColumnName());
+                    try {
+                        colStatistic.mode = Double.valueOf(colStatistic.modeValue + "");
+                    } catch (Exception ex) {
+                        colStatistic.mode = colStatistic.invalidAs;
+                    }
                 }
             }
             return sData;

@@ -84,6 +84,10 @@ public class DescriptiveStatistic {
         return populationVariance || sampleVariance || populationStandardDeviation || sampleStandardDeviation;
     }
 
+    public boolean needStored() {
+        return needPercentile() || mode;
+    }
+
     public boolean needPercentile() {
         return median || upperQuartile || lowerQuartile || needOutlier();
     }
@@ -91,10 +95,6 @@ public class DescriptiveStatistic {
     public boolean needOutlier() {
         return upperMildOutlierLine || upperExtremeOutlierLine
                 || lowerMildOutlierLine || lowerExtremeOutlierLine;
-    }
-
-    public boolean needStored() {
-        return needPercentile() || mode;
     }
 
     public boolean prepare() {
@@ -691,7 +691,7 @@ public class DescriptiveStatistic {
             }
             for (int c : colsIndices) {
                 Data2DColumn column = data2D.getColumns().get(c);
-                DoubleStatistic colStatistic = column.getDoubleStatistic();
+                DoubleStatistic colStatistic = column.getTargetStatistic();
                 statisticByColumnsWrite(colStatistic);
             }
             return true;

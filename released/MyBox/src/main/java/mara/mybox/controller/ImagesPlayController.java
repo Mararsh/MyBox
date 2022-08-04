@@ -36,7 +36,7 @@ import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
@@ -76,7 +76,7 @@ public class ImagesPlayController extends BaseImagesListController {
     protected ControlPlay playController;
 
     public ImagesPlayController() {
-        baseTitle = Languages.message("ImagesPlay");
+        baseTitle = message("ImagesPlay");
         TipsLabelKey = "ImagesPlayTips";
     }
 
@@ -143,8 +143,8 @@ public class ImagesPlayController extends BaseImagesListController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeStyleTools.setTooltip(toInput, new Tooltip(Languages.message("ToPageComments")));
-            NodeStyleTools.setTooltip(thumbsListButton, new Tooltip(Languages.message("ImagesEditor")));
+            NodeStyleTools.setTooltip(toInput, new Tooltip(message("ToPageComments")));
+            NodeStyleTools.setTooltip(thumbsListButton, new Tooltip(message("ImagesEditor")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -198,7 +198,7 @@ public class ImagesPlayController extends BaseImagesListController {
             }
             String format = FileNameTools.suffix(file.getName());
             if (format == null || format.isBlank()) {
-                popError(Languages.message("NotSupport"));
+                popError(message("NotSupport"));
                 return;
             }
             sourceFile = file;
@@ -247,7 +247,7 @@ public class ImagesPlayController extends BaseImagesListController {
             reader.setInput(iis, false, false);
             ImageFileInformation fileInfo = new ImageFileInformation(sourceFile);
             if (loading != null) {
-                loading.setInfo(Languages.message("Loading") + " " + Languages.message("MetaData"));
+                loading.setInfo(message("Loading") + " " + message("MetaData"));
             }
             ImageFileReaders.readImageFileMetaData(reader, fileInfo);
             imageInfos.addAll(fileInfo.getImagesInformation());
@@ -273,14 +273,14 @@ public class ImagesPlayController extends BaseImagesListController {
                 }
                 if (!checkMemory()) {
                     if (task != null) {
-                        task.setError(Languages.message("OutOfMeomey"));
+                        task.setError(message("OutOfMeomey"));
                     }
-                    loading.setInfo(Languages.message("OutOfMeomey"));
+                    loading.setInfo(message("OutOfMeomey"));
                     break;
                 }
                 int index = imageInfo.getIndex();
                 if (loading != null) {
-                    loading.setInfo(Languages.message("Loading") + " " + index + " / " + framesNumber);
+                    loading.setInfo(message("Loading") + " " + index + " / " + framesNumber);
                 }
                 if (notGif) {
                     imageInfo.setDuration(playController.interval);
@@ -288,9 +288,9 @@ public class ImagesPlayController extends BaseImagesListController {
                 ImageInformation.checkMem(imageInfo);
                 if (imageInfo.isNeedSample()) {
                     if (task != null) {
-                        task.setError(Languages.message("OutOfMeomey"));
+                        task.setError(message("OutOfMeomey"));
                     }
-                    loading.setInfo(Languages.message("OutOfMeomey"));
+                    loading.setInfo(message("OutOfMeomey"));
                     break;
                 }
                 BufferedImage bufferedImage = ImageFileReaders.readFrame(reader, imageInfo);
@@ -368,13 +368,13 @@ public class ImagesPlayController extends BaseImagesListController {
                 }
                 if (!checkMemory()) {
                     if (task != null) {
-                        task.setError(Languages.message("OutOfMeomey"));
+                        task.setError(message("OutOfMeomey"));
                     }
-                    loading.setInfo(Languages.message("OutOfMeomey"));
+                    loading.setInfo(message("OutOfMeomey"));
                     break;
                 }
                 if (loading != null) {
-                    loading.setInfo(Languages.message("Loading") + " " + i + " / " + framesNumber);
+                    loading.setInfo(message("Loading") + " " + i + " / " + framesNumber);
                 }
                 try {
                     Slide slide = slides.get(i);
@@ -444,13 +444,13 @@ public class ImagesPlayController extends BaseImagesListController {
                 }
                 if (!checkMemory()) {
                     if (task != null) {
-                        task.setError(Languages.message("OutOfMeomey"));
+                        task.setError(message("OutOfMeomey"));
                     }
-                    loading.setInfo(Languages.message("OutOfMeomey"));
+                    loading.setInfo(message("OutOfMeomey"));
                     break;
                 }
                 if (loading != null) {
-                    loading.setInfo(Languages.message("Loading") + " " + i + " / " + framesNumber);
+                    loading.setInfo(message("Loading") + " " + i + " / " + framesNumber);
                 }
                 try {
                     BufferedImage bufferedImage = renderer.renderImageWithDPI(i, dpi, type);
@@ -506,13 +506,13 @@ public class ImagesPlayController extends BaseImagesListController {
                             }
                             if (!checkMemory()) {
                                 if (task != null) {
-                                    task.setError(Languages.message("OutOfMeomey"));
+                                    task.setError(message("OutOfMeomey"));
                                 }
-                                loading.setInfo(Languages.message("OutOfMeomey"));
+                                loading.setInfo(message("OutOfMeomey"));
                                 break;
                             }
                             if (loading != null) {
-                                loading.setInfo(Languages.message("Loading") + " " + i + " / " + framesNumber);
+                                loading.setInfo(message("Loading") + " " + i + " / " + framesNumber);
                             }
 
                             double targetWidth = loadWidth <= 0 ? info.getWidth() : loadWidth;
@@ -523,9 +523,9 @@ public class ImagesPlayController extends BaseImagesListController {
                             ImageInformation.checkMem(info);
                             if (info.isNeedSample()) {
                                 if (task != null) {
-                                    task.setError(Languages.message("OutOfMeomey"));
+                                    task.setError(message("OutOfMeomey"));
                                 }
-                                loading.setInfo(Languages.message("OutOfMeomey"));
+                                loading.setInfo(message("OutOfMeomey"));
                                 break;
                             }
                             info.loadThumbnail(loadWidth);
@@ -618,7 +618,7 @@ public class ImagesPlayController extends BaseImagesListController {
         }
         if (f == AppValues.InvalidInteger || t == AppValues.InvalidInteger
                 || (t >= 0 && f > t)) {
-            popError(Languages.message("InvalidParametes"));
+            popError(message("InvalidParametes"));
             return;
         }
         fromFrame = f;
@@ -690,6 +690,27 @@ public class ImagesPlayController extends BaseImagesListController {
     public void editFrames() {
         ImagesEditorController controller = (ImagesEditorController) openStage(Fxmls.ImagesEditorFxml);
         controller.loadImages(imageInfos);
+    }
+
+    public void displayFrame(int index) {
+        try {
+            imageInformation = imageInfos.get(index);
+            long interval;
+            if (imageInformation != null) {
+                interval = imageInformation.getDuration();
+            } else {
+                interval = playController.interval;
+            }
+            playController.currentDelay = (long) (interval / playController.speed);
+            frameIndex = index;
+            image = thumb(imageInformation);
+            imageView.setImage(image);
+            refinePane();
+            updateLabelsTitle();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @Override

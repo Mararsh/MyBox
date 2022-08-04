@@ -457,12 +457,13 @@ public class DataFileExcel extends DataFile {
     }
 
     @Override
-    public boolean setValue(List<Integer> cols, String value, boolean errorContinue) {
+    public long setValue(List<Integer> cols, String value, boolean errorContinue) {
         if (file == null || !file.exists() || file.length() == 0
                 || cols == null || cols.isEmpty()) {
-            return false;
+            return -2;
         }
         File tmpFile = TmpFileTools.getTempFile();
+        long count = 0;
         try ( Workbook sourceBook = WorkbookFactory.create(file)) {
             Sheet sourceSheet;
             if (sheet != null) {
@@ -533,15 +534,18 @@ public class DataFileExcel extends DataFile {
                     }
                     filterDataRow(values, ++rowIndex);
                     needSetValue = filterPassed() && !filterReachMaxPassed();
-                    if (needSetValue && script != null) {
-                        calculateDataRowExpression(script, values, rowIndex);
-                        error = expressionError();
-                        if (error != null) {
-                            if (errorContinue) {
-                                continue;
-                            } else {
-                                task.setError(error);
-                                return false;
+                    if (needSetValue) {
+                        count++;
+                        if (script != null) {
+                            calculateDataRowExpression(script, values, rowIndex);
+                            error = expressionError();
+                            if (error != null) {
+                                if (errorContinue) {
+                                    continue;
+                                } else {
+                                    task.setError(error);
+                                    return -2;
+                                }
                             }
                         }
                     }
@@ -555,11 +559,11 @@ public class DataFileExcel extends DataFile {
                             } else if (isRandomNn) {
                                 v = random(random, c, true);
                             } else if (isMean) {
-                                v = column(c).getDoubleStatistic().mean + "";
+                                v = column(c).getTargetStatistic().mean + "";
                             } else if (isMode) {
-                                v = column(c).getDoubleStatistic().modeValue + "";
+                                v = column(c).getTargetStatistic().modeValue + "";
                             } else if (isMedian) {
-                                v = column(c).getDoubleStatistic().median + "";
+                                v = column(c).getTargetStatistic().median + "";
                             } else if (script != null) {
                                 v = expressionResult();
                             } else {
@@ -583,17 +587,22 @@ public class DataFileExcel extends DataFile {
             if (task != null) {
                 task.setError(e.toString());
             }
-            return false;
+            return -3;
         }
-        return FileTools.rename(tmpFile, file, false);
+        if (FileTools.rename(tmpFile, file, false)) {
+            return count;
+        } else {
+            return -4;
+        }
     }
 
     @Override
-    public boolean delete(boolean errorContinue) {
+    public long delete(boolean errorContinue) {
         if (file == null || !file.exists() || file.length() == 0) {
-            return false;
+            return -1;
         }
         File tmpFile = TmpFileTools.getTempFile();
+        long count = 0;
         try ( Workbook sourceBook = WorkbookFactory.create(file)) {
             Sheet sourceSheet;
             if (sheet != null) {
@@ -646,10 +655,11 @@ public class DataFileExcel extends DataFile {
                                 continue;
                             } else {
                                 task.setError(error);
-                                return false;
+                                return -2;
                             }
                         }
                         if (filterPassed() && !filterReachMaxPassed()) {
+                            count++;
                             continue;
                         }
                         for (int c = sourceRow.getFirstCellNum(); c < sourceRow.getLastCellNum(); c++) {
@@ -670,9 +680,13 @@ public class DataFileExcel extends DataFile {
             if (task != null) {
                 task.setError(e.toString());
             }
-            return false;
+            return -3;
         }
-        return FileTools.rename(tmpFile, file, false);
+        if (FileTools.rename(tmpFile, file, false)) {
+            return count;
+        } else {
+            return -4;
+        }
     }
 
     @Override

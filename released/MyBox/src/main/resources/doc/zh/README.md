@@ -4,23 +4,19 @@
 这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。          
 
 ## 新内容
-2022-7-28 版本6.5.7          
+2022-8-4 版本6.5.8          
 
-* 数据：行过滤可设置最多源数据行数；“设置风格”可列过滤；“赋值”可为列平均/中位数/众数；新计算“行表达式”；统计/百分比/归一化时对于非数字可选忽略或计为零；
-   排序时可设置最多结果行数。              
-* 性能：统计/排序/转置不再有内存限制；在非Fx线程中计算表达式时避免频繁切换到Fx线程。                
-* 界面：一些按钮可设置是否在鼠标经过时弹出菜单；改进一些界面以免控件拥挤。                         
-* 解决：“文件重命名”在未匹配情况下会删除源文件（！！抱歉）；转换/计算数据库表数据时有错；读取系统粘贴板会残留临时文件，持续监听可能造成磁盘空间被占尽（！！抱歉）；
-图片OCR失效；添加/提取透明通道失效。        
+* 数据：行过滤/行表达式可用统计值名作为占位符；不再有列过滤。                                      
+* 解决：地图失效；“粘贴MyBox粘贴板中的数据”弹出错误；“播放图列表”在范围内循环时帧序号出错。        
  
-[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.7)             
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.8)             
    
 
 ## 下载与运行
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases)目录下（点击此项目主页的`releases`页签）。       
 
 ### 源码
-[MyBox-6.5.7-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.7/MyBox-6.5.7-src.zip)   41M（大约值）       
+[MyBox-6.5.8-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.8/MyBox-6.5.8-src.zip)   41M（大约值）       
 
 关于源码的结构、编辑、和构建，请参考[开发指南](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-DevGuide-2.1-zh.pdf) 和
 [打包步骤](https://mararsh.github.io/MyBox/pack_steps.html)       
@@ -31,9 +27,9 @@
 
 | 平台 | 链接 | 大小（大约值） | 启动文件 |
 | --- | --- | --- |  --- |
-| win10 x64 | [MyBox-6.5.7-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.7/MyBox-6.5.7-win10-x64.zip)  | 210MB | MyBox.exe |
-| CentOS 7 x64 | [MyBox-6.5.7-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.7/MyBox-6.5.7-CentOS7-x64.tar.gz)  | 242MB  | bin/MyBox  |
-| mac x64| [MyBox-6.5.7-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.7/MyBox-6.5.7-mac.dmg)  | 220MB  |  MyBox-6.5.7.app   |
+| win10 x64 | [MyBox-6.5.8-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.8/MyBox-6.5.8-win10-x64.zip)  | 210MB | MyBox.exe |
+| CentOS 7 x64 | [MyBox-6.5.8-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.8/MyBox-6.5.8-CentOS7-x64.tar.gz)  | 242MB  | bin/MyBox  |
+| mac x64| [MyBox-6.5.8-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.8/MyBox-6.5.8-mac.dmg)  | 220MB  |  MyBox-6.5.8.app   |
 
 双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。        
   
@@ -43,14 +39,14 @@
 
 | 平台 | 链接 | 大小（大约值） | 运行需要 |
 | --- | --- | --- |  --- |
-| win | [MyBox-6.5.7-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.7/MyBox-6.5.7-win-jar.zip)  | 144MB | Java 18或更高版本 |
-| linux | [MyBox-6.5.7-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.7/MyBox-6.5.7-linux-jar.zip)  | 175MB  | Java 18或更高版本 |
-| mac | [MyBox-6.5.7-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.7/MyBox-6.5.7-mac-jar.zip)  |  147MB  | Java 18或更高版本 |
+| win | [MyBox-6.5.8-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.8/MyBox-6.5.8-win-jar.zip)  | 144MB | Java 18或更高版本 |
+| linux | [MyBox-6.5.8-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.8/MyBox-6.5.8-linux-jar.zip)  | 175MB  | Java 18或更高版本 |
+| mac | [MyBox-6.5.8-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.8/MyBox-6.5.8-mac-jar.zip)  |  147MB  | Java 18或更高版本 |
 
 执行以下命令来启动程序：       
-<PRE><CODE>     java   -jar   MyBox-6.5.7.jar</CODE></PRE>       
+<PRE><CODE>     java   -jar   MyBox-6.5.8.jar</CODE></PRE>       
 程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：       
-<PRE><CODE>     java   -jar   MyBox-6.5.7.jar   /tmp/a1.jpg</CODE></PRE>       
+<PRE><CODE>     java   -jar   MyBox-6.5.8.jar   /tmp/a1.jpg</CODE></PRE>       
 
 ### 其它下载地址       
 从云盘下载：  [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)       
@@ -70,9 +66,9 @@
 
 | 平台 | MyBox配置文件的目录 |
 | --- | --- |
-| win | `C:\用户\用户名\mybox\MyBox_v6.5.7.ini`  |
-| linux | `/home/用户名/mybox/MyBox_v6.5.7.ini` |
-| mac | `/Users/用户名/mybox/MyBox_v6.5.7.ini` |       
+| win | `C:\用户\用户名\mybox\MyBox_v6.5.8.ini`  |
+| linux | `/home/用户名/mybox/MyBox_v6.5.8.ini` |
+| mac | `/Users/用户名/mybox/MyBox_v6.5.8.ini` |       
 
 可以临时改变配置文件：在命令行启动jar包时设置参数"config=\"配置文件名\""。       
 利用“设置”功能也可以修改配置参数。       
@@ -91,8 +87,8 @@
 # 文档       
 | 文档名 | 版本 | 修改时间  | 链接 |       
 | --- | --- | --- | --- |
-| 开发日志 | 6.5.7 | 2022-7-28 | [html](#devLog) |
-| 快捷键 | 6.5.7 |  2022-6-11 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
+| 开发日志 | 6.5.8 | 2022-8-4 | [html](#devLog) |
+| 快捷键 | 6.5.6 |  2022-6-11 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
 | 打包步骤 | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps.html) |
 | 开发指南 | 2.1 |  2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf) |
 | 用户手册-综述 |  5.0 |  2019-4-19 | [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-UserGuide-5.0-Overview-zh.pdf) |
@@ -168,7 +164,7 @@ MyBox基于以下开放资源：
 
 
 # 当前版本       
-当前是版本6.5.7，已实现的特点概述如下:      
+当前是版本6.5.8，已实现的特点概述如下:      
   
 * [跨平台](#cross-platform)
 * [国际化](#international)
@@ -206,7 +202,6 @@ MyBox基于以下开放资源：
 * [数据工具](#dataTools)
     - [编辑数据](#editData)
     - [行过滤](#rowFilter)
-    - [列过滤](#columnFilter)
     - [加工数据](#manufactureData)
     - [整理数据](#trimData)
     - [计算数据](#calculateData)
@@ -841,7 +836,7 @@ MyBox v5.3以前的版本均基于Java 8。
                  #{表行号}              
                  #{数据行号}            
                  #{<列名>}               
-	- 点击"示例"按钮以弹出所有合法的占位符的列表。            
+                 #{<列名>-<统计名>}               
 	- 点击"编辑"按钮以保存脚本。            
 3. 在MyBox计算表达式时:             
 	- 占位符被数据行的实际值替换。            
@@ -854,37 +849,17 @@ MyBox v5.3以前的版本均基于Java 8。
 | --- | --- |    
 | #{数据行号} % 2 == 0  |  数据行号为偶数 |    
 | #{表行号}  % 2 == 1 | 当前页的奇数行 |    
-| Math.abs(#{值1}) >= 0 | 列"值1"的值是数值 |    
-| #{值1}) > 0 | 列"值1"的值大于零 |    
-| #{值1} - #{值2}  < 100 | 列"值1"与"值2"的值差小于100  |    
-| '#{值1}'.length > 0 | 列"值1"的值不为空值 |    
-| '#{值1}'.search(/Hello/ig) >= 0 | 列"值1"的值包含字符串"Hello"（忽略大小写） |    
-|  '#{值1}'.startsWith('Hello')  | 列"值1"的值以"Hello"开头 |    
-| var array = [ 'A', 'B', 'C']; array.includes('#{值1}') | 列"值1"的值为'A'或 'B'或 'C' |          
+| Math.abs(#{字段1}) >= 0 | 列"字段1"的值是数值 |    
+| #{字段1}) > 0 | 列"字段1"的值大于零 |    
+| #{字段1} - #{字段2}  < 100 | 列"字段1"与"字段2"的值差小于100  |    
+| '#{字段1}'.length > 0 | 列"字段1"的值不为空值 |    
+| '#{字段1}'.search(/Hello/ig) >= 0 | 列"字段1"的值包含字符串"Hello"（忽略大小写） |    
+|  '#{字段1}'.startsWith('Hello')  | 列"字段1"的值以"Hello"开头 |    
+| var array = [ 'A', 'B', 'C']; array.includes('#{字段1}') | 列"字段1"的值为'A'或 'B'或 'C' |    
+| #{v1} < #{v1-Mean}  | 列"字段1"的值小于列"字段1"的平均值 |                    
+
 
 ![截屏-dataRowFilter](https://mararsh.github.io/MyBox/snap-dataRowFilter.jpg)         
-
-### 列过滤<a id="columnFilter" />             
-列过滤用于判断是否采纳数据单元：           
-
-1. 选取以下条件中的若干： 
-	- 列值是否是："空值", "零",  "负值",  "正值",  "数字",  "非数字"
-	- 列值比较（等于/大于/小于）：
- 		- 对象：最小值、下四分位数、中位数、均值、上四分位数、最大值、异常值线、众数、或输入的数值                       
- 		- 可选：按照字符串比较、按照数字比较。                       
-	- 列值是否满足“列表达式”：
- 		- 它是JavaScript代码，应当最终返回布尔值("true"或"false")。
- 		- 若脚本为空，则不过滤（即满足条件）。
- 		- 脚本只能包含以下占位符: #{列值} 。      
- 		- 点击"编辑"按钮以保存脚本。
- 		- 在MyBox计算表达式时:              
- 			- 占位符被数据单元的实际值替换。
- 			- '#{列值} '被处理为字符串而#{列值}被处理为数字。
-2. 对于每个涉及的“列值”，使用所选取的条件来计算。                  
-   例如，当选择了"空值"，则每一个涉及的数据单元都被验证是否值为空。
-3. 当所选的条件之一为真时，列过滤返回真（即采纳此数据单元）。
-           
-![截屏-dataColumnFilter](https://mararsh.github.io/MyBox/snap-dataColumnFilter.jpg)         
 
 
 ### 加工数据<a id="manufactureData" />       
@@ -897,7 +872,6 @@ MyBox v5.3以前的版本均基于Java 8。
 2. 对所选数据赋值为：
 	- 常数：0、1、空格、或输入的值
 	- 随机数、随机数（非负）
-	- 统计值：列平均、列均值、列众数
 3. 当所选数据为方阵（行列数相同），可赋值为：高斯分布、单位矩阵、上三角矩阵、下三角矩阵
 4. 对所选数据赋值为行表达式：             
 	- 若脚本为空，则返回空字符串。             
@@ -908,8 +882,7 @@ MyBox v5.3以前的版本均基于Java 8。
                           #{表行号}             
                           #{数据行号}             
                           #{<列名>}                    
- 		- 点击"示例"按钮以弹出所有合法占位符的列表。             
- 		- 点击"编辑"按钮以保存脚本。             
+                          #{<列名>-<统计名>}                                           
 	- 在MyBox计算表达式时:             
  		- 占位符被数据行的实际值替换。             
  		-  '#{xxx} '被处理为字符串而#{xxx}被处理为数字。             
@@ -920,10 +893,11 @@ MyBox v5.3以前的版本均基于Java 8。
 | --- | --- |    
 | #{数据行号} % 2 == 0 | 数据行号为偶数 |    
 | #{表行号}  % 2 == 1 | 当前页的奇数行 |    
-| Math.abs(#{值1}) + Math.PI * Math.sqrt(#{值2}) | 数学计算 |    
-| '#{值1}'.replace(/hello/ig, 'Hello') | 把列"值1"的值中所有"hello"(忽略大小写)替换"Hello" |    
-|  '#{值1}'.toLowerCase() | 列"值1"的值的小写 |    
-| '#{值1}'.split(',') | 把列"值1"的值按逗号分隔 |           
+| Math.abs(#{字段1}) + Math.PI * Math.sqrt(#{字段2}) | 数学计算 |    
+| '#{字段1}'.replace(/hello/ig, 'Hello') | 把列"字段1"的值中所有"hello"(忽略大小写)替换"Hello" |    
+|  '#{字段1}'.toLowerCase() | 列"字段1"的值的小写 |    
+| '#{字段1}'.split(',') | 把列"字段1"的值按逗号分隔 |           
+| #{v1} < #{v1-Mean}  | 列"字段1"的值与列"字段1"的平均值之间的差值 |            
 
 5. 若处理数据文件的所有页，则在赋值之前对数据文件自动备份。          
 
@@ -939,7 +913,6 @@ MyBox v5.3以前的版本均基于Java 8。
           例如，在第6行之前插入两行，则原来的第12行变成了第14行，而现在的第12行是原来的第10行。                     
           所以“行号”不是定位特定数据行的正确方式。                     
           引用特定的行的一个方法是列值构成的表达式。                     
-	- 列过滤                                     
 3. 定义风格的值：
 	- 字体颜色、字体大小、背景颜色、是否粗体
 	- 可以输入JavaFx CSS格式的更多值。
@@ -2110,6 +2083,13 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 
 
 # 开发日志<a id="devLog" />             
+2022-8-4 版本6.5.8          
+
+* 数据：行过滤/行表达式可用统计值名作为占位符；不再有列过滤。                                      
+* 解决：地图失效；“粘贴MyBox粘贴板中的数据”弹出错误；“播放图列表”在范围内循环时帧序号出错。        
+ 
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.8)             
+
 2022-7-28 版本6.5.7          
 
 * 数据：行过滤可设置最多源数据行数；“设置风格”可列过滤；“赋值”可为列平均/中位数/众数；新计算“行表达式”；统计/百分比/归一化时对于非数字可选忽略或取值为零；

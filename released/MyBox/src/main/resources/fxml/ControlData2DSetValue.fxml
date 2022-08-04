@@ -37,13 +37,6 @@ License:    Apache License Version 2.0
                   <RadioButton fx:id="lowerTriangleRadio" layoutX="10.0" layoutY="31.0" mnemonicParsing="false" text="%LowerTriangle" toggleGroup="$valueGroup" />
               </children>
           </FlowPane>
-      <FlowPane hgap="5.0" prefWrapLength="300.0" vgap="5.0">
-         <children>
-            <RadioButton fx:id="columnMeanRadio" layoutX="177.0" layoutY="10.0" mnemonicParsing="false" text="%ColumnMean" toggleGroup="$valueGroup" />
-            <RadioButton fx:id="columnModeRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%ColumnMode" toggleGroup="$valueGroup" />
-            <RadioButton fx:id="columnMedianRadio" layoutX="72.0" layoutY="10.0" mnemonicParsing="false" text="%ColumnMedian" toggleGroup="$valueGroup" />
-         </children>
-      </FlowPane>
       <HBox alignment="CENTER_LEFT" spacing="2.0">
          <children>
                   <RadioButton fx:id="setRadio" mnemonicParsing="false" text="%Input" toggleGroup="$valueGroup" />

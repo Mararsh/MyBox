@@ -15,7 +15,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -27,6 +26,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlPlay extends BaseController {
 
+    protected ImagesPlayController imagesController;
     protected int interval, framesNumber, frameIndex, fromFrame, toFrame;
     protected double speed;
     protected long currentDelay;
@@ -40,10 +40,10 @@ public class ControlPlay extends BaseController {
     @FXML
     protected Label totalLabel;
 
-    public void setParameters(BaseController parent) {
+    public void setParameters(ImagesPlayController imagesController) {
         try {
-            this.parentController = parent;
-            this.baseName = parent.baseName;
+            this.imagesController = imagesController;
+            this.baseName = imagesController.baseName;
             clear();
 
             frameSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -101,15 +101,11 @@ public class ControlPlay extends BaseController {
                             interval = v;
                             intervalSelector.getEditor().setStyle(null);
                             UserConfig.setInt(baseName + "Interval", v);
-                            if (parentController instanceof ImagesPlayController) {
-                                ImagesPlayController imagesPlayController = (ImagesPlayController) parentController;
-                                if (imagesPlayController.imageInfos != null) {
-                                    for (ImageInformation info : imagesPlayController.imageInfos) {
-                                        info.setDuration(interval);
-                                    }
+                            if (imagesController.imageInfos != null) {
+                                for (ImageInformation info : imagesController.imageInfos) {
+                                    info.setDuration(interval);
                                 }
                             }
-
                         }
                     } catch (Exception e) {
                         speedSelector.getEditor().setStyle(UserConfig.badStyle());
@@ -203,13 +199,13 @@ public class ControlPlay extends BaseController {
             long delay;
             if (reverseCheck.isSelected()) {
                 index = frameIndex - 1;
-                if (index < 0 && !loopCheck.isSelected()) {
+                if (index < fromFrame && !loopCheck.isSelected()) {
                     setPauseButton(true);
                     return;
                 }
             } else {
                 index = frameIndex + 1;
-                if (index >= framesNumber && !loopCheck.isSelected()) {
+                if (index > toFrame && !loopCheck.isSelected()) {
                     setPauseButton(true);
                     return;
                 }
@@ -237,35 +233,25 @@ public class ControlPlay extends BaseController {
                 return;
             }
             int end = toFrame;
-            if (end < 0) {
+            if (end < 0 || end >= framesNumber) {
                 end = framesNumber - 1;
+            }
+            int start = fromFrame;
+            if (start < 0 || start >= framesNumber) {
+                start = 0;
             }
             frameIndex = index;
             if (frameIndex > end) {
-                frameIndex = fromFrame;
+                frameIndex = start;
             }
-            if (frameIndex < 0) {
+            if (frameIndex < start) {
                 frameIndex = end;
             }
             isSettingValues = true;
             frameSelector.getSelectionModel().select((frameIndex + 1) + "");
             isSettingValues = false;
-            if (this.parentController instanceof ImagesPlayController) {
-                ImagesPlayController imagesPlayController = (ImagesPlayController) parentController;
-                imagesPlayController.imageInformation = imagesPlayController.imageInfos.get(frameIndex);
-                if (imagesPlayController.imageInformation != null) {
-                    speed = speed <= 0 ? 1 : speed;
-                    currentDelay = (int) (imagesPlayController.imageInformation.getDuration() / speed);
-                } else {
-                    currentDelay = (int) (interval / speed);
-                }
-                imagesPlayController.frameIndex = frameIndex;
-                imagesPlayController.image = imagesPlayController.thumb(imagesPlayController.imageInformation);
-                imagesPlayController.imageView.setImage(imagesPlayController.image);
-                imagesPlayController.refinePane();
-                imagesPlayController.updateLabelsTitle();
-            }
-
+            speed = speed <= 0 ? 1 : speed;
+            imagesController.displayFrame(frameIndex);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

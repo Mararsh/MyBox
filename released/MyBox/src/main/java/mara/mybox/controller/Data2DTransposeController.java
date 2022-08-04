@@ -58,7 +58,7 @@ public class Data2DTransposeController extends BaseData2DHandleController {
     public boolean handleRows() {
         try {
             boolean showRowNumber = showRowNumber();
-            outputData = selectedData(showRowNumber);
+            outputData = filtered(showRowNumber);
             if (outputData == null) {
                 return false;
             }

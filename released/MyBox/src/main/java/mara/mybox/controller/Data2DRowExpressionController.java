@@ -75,28 +75,36 @@ public class Data2DRowExpressionController extends BaseData2DHandleController {
             UserConfig.setString(interfaceName + "Name", name);
             TableStringValues.add(interfaceName + "NameHistories", name);
         }
-        String script = expressionController.scriptInput.getText();
-        if (script == null || script.isBlank()) {
-            popError(message("InvalidParameter") + ": " + message("RowExpression"));
-            ok = false;
-        }
         ok = super.checkOptions() && ok;
         okButton.setDisable(!ok);
         return ok;
     }
 
+    public String fillExpression() {
+        String script = expressionController.scriptInput.getText();
+        script = data2D.calculateScriptStatistic(script);
+        if (script == null || script.isBlank()) {
+            error = message("Invalid") + ": " + message("RowExpression");
+            return null;
+        }
+        return script;
+    }
+
     @Override
-    public void handleRowsTask() {
+    public boolean handleRows() {
         try {
             boolean showRowNumber = showRowNumber();
-            outputData = selectedData(showRowNumber);
+            outputData = filtered(showRowNumber);
             if (outputData == null) {
-                popError(message("SelectToHandle"));
-                return;
+                error = message("SelectToHandle");
+                return false;
             }
-            String script = expressionController.scriptInput.getText();
-            for (int i = 0; i < checkedRowsIndices.size(); i++) {
-                int rowIndex = checkedRowsIndices.get(i);
+            String script = fillExpression();
+            if (script == null || script.isBlank()) {
+                return false;
+            }
+            for (int i = 0; i < filteredRowsIndices.size(); i++) {
+                int rowIndex = filteredRowsIndices.get(i);
                 List<String> checkedRow = outputData.get(i);
                 if (expressionController.calculator.calculateTableRowExpression(data2D,
                         script, tableController.tableData.get(rowIndex), rowIndex)) {
@@ -105,10 +113,8 @@ public class Data2DRowExpressionController extends BaseData2DHandleController {
                     if (errorContinueCheck.isSelected()) {
                         checkedRow.add(null);
                     } else {
-                        if (data2D.getError() != null) {
-                            popError(data2D.getError());
-                        }
-                        return;
+                        error = data2D.getError();
+                        return false;
                     }
                 }
                 outputData.set(i, checkedRow);
@@ -123,22 +129,23 @@ public class Data2DRowExpressionController extends BaseData2DHandleController {
                 outputData.add(0, names);
             }
             outputColumns.add(new Data2DColumn(name, ColumnDefinition.ColumnType.String));
-            if (targetController == null || targetController.inTable()) {
-                updateTable();
-            } else {
-                outputExternal();
-            }
+            return true;
         } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
             MyBoxLog.error(e.toString());
-            popError(message(e.toString()));
+            return false;
         }
     }
 
     @Override
     public DataFileCSV generatedFile() {
-        return data2D.rowExpression(expressionController.calculator,
-                expressionController.scriptInput.getText().trim(),
-                nameInput.getText().trim(), errorContinueCheck.isSelected(),
+        String script = fillExpression();
+        if (script == null || script.isBlank()) {
+            return null;
+        }
+        return data2D.rowExpression(script, nameInput.getText().trim(), errorContinueCheck.isSelected(),
                 checkedColsIndices, rowNumberCheck.isSelected(), colNameCheck.isSelected());
     }
 

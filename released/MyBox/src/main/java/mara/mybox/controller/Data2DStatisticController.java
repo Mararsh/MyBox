@@ -396,14 +396,13 @@ public class Data2DStatisticController extends BaseData2DHandleController {
         isSettingValues = false;
     }
 
-    @FXML
     @Override
-    public void okAction() {
+    protected void startOperation() {
         try {
-            if (!checkOptions() || !calculation.prepare()) {
+            if (!calculation.prepare()) {
                 return;
             }
-            data2D.resetStatistic();
+            data2D.resetTargetStatistic();
             if (isAllPages()) {
                 switch (objectType) {
                     case Rows:
@@ -430,7 +429,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
         if (rowsRadio.isSelected() && categorysCol >= 0) {
             colsIndices.add(0, categorysCol);
         }
-        if (!calculation.statisticData(selectedData(colsIndices, rowsRadio.isSelected() && categorysCol < 0))) {
+        if (!calculation.statisticData(filtered(colsIndices, rowsRadio.isSelected() && categorysCol < 0))) {
             return false;
         }
         outputColumns = calculation.getOutputColumns();
@@ -444,7 +443,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
             @Override
             protected boolean handle() {
                 try {
-                    data2D.startTask(task, rowFilterController.rowFilter);
+                    data2D.startTask(task, filterController.filter);
                     calculation.setTask(task);
                     if (calculation.needStored()) {
                         DataTable tmpTable = data2D.toTmpTable(task, checkedColsIndices, false, true);
@@ -501,7 +500,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
             @Override
             protected boolean handle() {
                 try {
-                    data2D.startTask(task, rowFilterController.rowFilter);
+                    data2D.startTask(task, filterController.filter);
                     calculation.setTask(task);
                     if (calculation.needStored()) {
                         DataTable dataTable = data2D.singleColumn(task, checkedColsIndices, true);

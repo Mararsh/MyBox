@@ -23,7 +23,7 @@ public class DoubleStatistic {
     public long count, invalidCount;
     public double invalidAs, sum, mean, geometricMean, sumSquares,
             populationVariance, sampleVariance, populationStandardDeviation, sampleStandardDeviation, skewness,
-            minimum, maximum, median, upperQuartile, lowerQuartile,
+            minimum, maximum, median, upperQuartile, lowerQuartile, mode,
             upperMildOutlierLine, upperExtremeOutlierLine, lowerMildOutlierLine, lowerExtremeOutlierLine,
             dTmp;
     public Object modeValue, minimumValue, maximumValue, medianValue, upperQuartileValue, lowerQuartileValue;
@@ -48,6 +48,11 @@ public class DoubleStatistic {
         initOptions(inOptions);
         if (options.isMode()) {
             modeValue = modeObject(values);
+            try {
+                mode = Double.valueOf(modeValue + "");
+            } catch (Exception e) {
+                mode = Double.NaN;
+            }
         }
         calculate(toDoubleArray(values));
     }
@@ -66,6 +71,7 @@ public class DoubleStatistic {
         maximum = -Double.MAX_VALUE;
         minimum = Double.MAX_VALUE;
         median = Double.NaN;
+        mode = Double.NaN;
         upperQuartile = Double.NaN;
         lowerQuartile = Double.NaN;
         upperMildOutlierLine = Double.NaN;
@@ -260,7 +266,8 @@ public class DoubleStatistic {
             if (!options.isMode()) {
                 return;
             }
-            modeValue = mode(doubles);
+            mode = mode(doubles);
+            modeValue = mode;
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -495,6 +502,7 @@ public class DoubleStatistic {
         return skewness;
     }
 
+
     /*
         get/set
      */
@@ -664,6 +672,14 @@ public class DoubleStatistic {
 
     public void setLowerExtremeOutlierLine(double lowerExtremeOutlierLine) {
         this.lowerExtremeOutlierLine = lowerExtremeOutlierLine;
+    }
+
+    public double getMode() {
+        return mode;
+    }
+
+    public void setMode(double mode) {
+        this.mode = mode;
     }
 
     public Object getMinimumValue() {

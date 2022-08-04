@@ -13,7 +13,6 @@ import mara.mybox.data2d.scan.Data2DReader;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppValues;
@@ -75,10 +74,10 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             DoubleStatistic[] sData = new DoubleStatistic[colLen];
             for (int c = 0; c < colLen; c++) {
                 Data2DColumn column = columns.get(cols.get(c));
-                DoubleStatistic colStatistic = column.getDoubleStatistic();
+                DoubleStatistic colStatistic = column.getTargetStatistic();
                 if (colStatistic == null) {
                     colStatistic = new DoubleStatistic();
-                    column.setDoubleStatistic(colStatistic);
+                    column.setTargetStatistic(colStatistic);
                 }
                 colStatistic.invalidAs = selections.invalidAs;
                 sData[c] = colStatistic;
@@ -128,7 +127,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             }
             for (int i = 0; i < cols.size(); i++) {
                 Data2DColumn column = this.column(cols.get(i));
-                column.setDoubleStatistic(statisticData[i]);
+                column.setTargetStatistic(statisticData[i]);
             }
             tmpTable.drop();
             return statisticData;
@@ -243,8 +242,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
     }
 
-    public DataFileCSV rowExpression(ExpressionCalculator calculator,
-            String script, String name, boolean errorContinue,
+    public DataFileCSV rowExpression(String script, String name, boolean errorContinue,
             List<Integer> cols, boolean includeRowNumber, boolean includeColName) {
         if (cols == null || cols.isEmpty()) {
             return null;
@@ -271,9 +269,8 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             }
             reader = Data2DReader.create(this)
                     .setCsvPrinter(csvPrinter).setCols(cols).setIncludeRowNumber(includeRowNumber)
-                    .setScript(script).setName(name).setCalculator(calculator)
+                    .setScript(script).setName(name)
                     .setReaderTask(task).start(Data2DReader.Operation.RowExpression);
-            calculator.stop();
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());

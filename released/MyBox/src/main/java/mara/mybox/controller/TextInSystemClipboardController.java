@@ -17,10 +17,10 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.Clipboard;
 import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -194,7 +194,7 @@ public class TextInSystemClipboardController extends BaseController {
         } else {
             textArea.appendText((textArea.getLength() > 0 ? "\n" + separateLine : "") + clip);
         }
-        bottomLabel.setText(message("Count") + ": " + textArea.getLength());
+        bottomLabel.setText(message("CharactersNumber") + ": " + textArea.getLength());
     }
 
     @FXML

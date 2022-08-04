@@ -13,7 +13,7 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2022-6-1
  * @License Apache License Version 2.0
  */
-public class ControlData2DValueFilter extends ControlData2DRowFilter {
+public class ControlData2DValueFilter extends ControlData2DFilter {
 
     public ControlData2DValueFilter() {
         TipsLabelKey = "ValueFilterTips";

@@ -10,7 +10,6 @@ import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.db.table.TableData2DStyle;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.RowFilter;
 import mara.mybox.fxml.SingletonTask;
 
 /**
@@ -29,7 +28,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
     public long dataSize, pagesNumber;
     public long currentPage, startRowOfCurrentPage, endRowOfCurrentPage;   // 0-based, excluded end
     public List<Data2DStyle> styles;
-    public RowFilter rowFilter;
+    public DataFilter filter;
     public ControlData2DLoad loadController;
     public boolean tableChanged;
     public SingletonTask task, backgroundTask;
@@ -55,7 +54,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         tableChanged = false;
         options = null;
         styles = null;
-        rowFilter = null;
+        filter = null;
         error = null;
         loadController = null;
         task = null;
@@ -110,7 +109,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
             startRowOfCurrentPage = d.startRowOfCurrentPage;
             endRowOfCurrentPage = d.endRowOfCurrentPage;
             tableChanged = d.tableChanged;
-            rowFilter = d.rowFilter;
+            filter = d.filter;
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -240,12 +239,12 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         return styles;
     }
 
-    public RowFilter getRowFilter() {
-        return rowFilter;
+    public DataFilter getFilter() {
+        return filter;
     }
 
-    public void setRowFilter(RowFilter rowFilter) {
-        this.rowFilter = rowFilter;
+    public void setFilter(DataFilter filter) {
+        this.filter = filter;
     }
 
     public void setStyles(List<Data2DStyle> styles) {
