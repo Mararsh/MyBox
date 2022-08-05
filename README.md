@@ -856,7 +856,7 @@ MyBox v5.3以前的版本均基于Java 8。
 | '#{字段1}'.search(/Hello/ig) >= 0 | 列"字段1"的值包含字符串"Hello"（忽略大小写） |    
 |  '#{字段1}'.startsWith('Hello')  | 列"字段1"的值以"Hello"开头 |    
 | var array = [ 'A', 'B', 'C']; array.includes('#{字段1}') | 列"字段1"的值为'A'或 'B'或 'C' |    
-| #{v1} < #{v1-Mean}  | 列"字段1"的值小于列"字段1"的平均值 |                    
+| #{v1} < #{v1-均值}  | 列"字段1"的值小于列"字段1"的平均值 |                    
 
 
 ![截屏-dataRowFilter](https://mararsh.github.io/MyBox/snap-dataRowFilter.jpg)         
@@ -897,7 +897,7 @@ MyBox v5.3以前的版本均基于Java 8。
 | '#{字段1}'.replace(/hello/ig, 'Hello') | 把列"字段1"的值中所有"hello"(忽略大小写)替换"Hello" |    
 |  '#{字段1}'.toLowerCase() | 列"字段1"的值的小写 |    
 | '#{字段1}'.split(',') | 把列"字段1"的值按逗号分隔 |           
-| #{v1} < #{v1-Mean}  | 列"字段1"的值与列"字段1"的平均值之间的差值 |            
+| #{v1} - #{v1-均值}  | 列"字段1"的值与列"字段1"的平均值之间的差值 |            
 
 5. 若处理数据文件的所有页，则在赋值之前对数据文件自动备份。          
 
