@@ -26,7 +26,7 @@ License:    Apache License Version 2.0
     <children>
         <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
             <items>
-                <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" pannable="true">
+                <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                <content>
                   <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE">
                      <tabs>
@@ -41,7 +41,7 @@ License:    Apache License Version 2.0
                         </Tab>
                         <Tab text="JavaScript">
                            <content>
-                              <VBox>
+                              <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                  <children>
                                     <HBox fx:id="buttonsBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                                        <children>
@@ -66,7 +66,7 @@ License:    Apache License Version 2.0
                                           </Button>
                                        </children>
                                     </HBox>
-                                    <TreeView fx:id="treeView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                                    <TreeView fx:id="treeView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
                                  </children>
                               </VBox>
                            </content>

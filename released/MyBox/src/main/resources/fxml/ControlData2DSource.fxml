@@ -38,13 +38,13 @@ License:    Apache License Version 2.0
                                         <FlowPane fx:id="rowsPane" hgap="2.0" vgap="2.0">
                                             <children>
                                                 <Label text="%Rows" />
-                                                <RadioButton fx:id="currentPageRadio" layoutX="138.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%CurrentPage">
+                                                <RadioButton fx:id="selectedRadio" mnemonicParsing="false" selected="true" text="%Selected">
                                                     <toggleGroup>
                                                         <ToggleGroup fx:id="rowsGroup" />
                                                     </toggleGroup>
                                                 </RadioButton>
-                                                <RadioButton fx:id="selectedRadio" mnemonicParsing="false" text="%Selected" toggleGroup="$rowsGroup" />
-                                                <RadioButton fx:id="allPagesRadio" layoutX="43.0" layoutY="10.0" mnemonicParsing="false" text="%AllPages" toggleGroup="$rowsGroup" />
+                                                <RadioButton fx:id="currentPageRadio" mnemonicParsing="false" text="%CurrentPage" toggleGroup="$rowsGroup" />
+                                                <RadioButton fx:id="allPagesRadio" mnemonicParsing="false" text="%AllPages" toggleGroup="$rowsGroup" />
                                             </children>
                                         </FlowPane>
                                         <HBox alignment="CENTER_LEFT" spacing="2.0">

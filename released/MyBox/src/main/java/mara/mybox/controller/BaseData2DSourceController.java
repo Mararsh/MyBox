@@ -48,23 +48,23 @@ public class BaseData2DSourceController extends ControlData2DLoad {
         try {
             super.initControls();
 
-            String rowsType = UserConfig.getString(baseName + "RowsSelection", "CurrentPage");
-            if (rowsType == null) {
-                currentPageRadio.fire();
-            } else if ("AllPages".equals(rowsType)) {
+            String rowsSelectionType = UserConfig.getString(baseName + "RowsSelectionType", "Selected");
+            if ("AllPages".equals(rowsSelectionType)) {
                 allPagesRadio.fire();
-            } else if ("Selected".equals(rowsType)) {
+            } else if ("CurrentPage".equals(rowsSelectionType)) {
+                currentPageRadio.fire();
+            } else {
                 selectedRadio.fire();
             }
             rowsGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
                     if (allPagesRadio.isSelected()) {
-                        UserConfig.setString(baseName + "RowsSelection", "AllPages");
+                        UserConfig.setString(baseName + "RowsSelectionType", "AllPages");
                     } else if (selectedRadio.isSelected()) {
-                        UserConfig.setString(baseName + "RowsSelection", "Selected");
+                        UserConfig.setString(baseName + "RowsSelectionType", "Selected");
                     } else {
-                        UserConfig.setString(baseName + "RowsSelection", "CurrentPage");
+                        UserConfig.setString(baseName + "RowsSelectionType", "CurrentPage");
                     }
                     notifySelected();
                 }

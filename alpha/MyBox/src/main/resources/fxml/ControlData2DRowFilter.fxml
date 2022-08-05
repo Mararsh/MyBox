@@ -26,8 +26,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS" 
-      xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DFilter">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DFilter">
     <children>
         <FlowPane fx:id="maxPane" hgap="2.0" vgap="2.0">
             <children>
@@ -39,10 +38,10 @@ License:    Apache License Version 2.0
             <items>
                 <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" pannable="true">
                     <content>
-                        <VBox VBox.vgrow="ALWAYS">
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                             <children>
                                 <Label fx:id="titleLabel1" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%SelectToPaste" wrapText="true" />
-                                <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE">
+                                <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                                     <tabs>
                                         <Tab text="%Placeholders">
                                             <content>
@@ -55,7 +54,7 @@ License:    Apache License Version 2.0
                                         </Tab>
                                         <Tab text="JavaScript">
                                             <content>
-                                                <VBox>
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                                     <children>
                                                         <HBox fx:id="buttonsBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                             <children>
@@ -88,7 +87,7 @@ License:    Apache License Version 2.0
                                                                 </Button>
                                                             </children>
                                                         </HBox>
-                                                        <TreeView fx:id="treeView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                                                        <TreeView fx:id="treeView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
                                                     </children>
                                                 </VBox>
                                             </content>

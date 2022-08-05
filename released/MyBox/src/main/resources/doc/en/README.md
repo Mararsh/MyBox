@@ -915,7 +915,7 @@ gaussian distribution, identify matrix, upper triangular matrix, lower triangula
 | '#{v1}'.replace(/hello/ig, 'Hello') | replace all "hello"(case-insensitive) as "Hello" in column "v1" |    
 | '#{v1}'.toLowerCase() | lower case of value of column "v1" |    
 | '#{v1}'.split(',')  | split value of column "v1" by comma |    
-| #{v1} < #{v1-Mean}  | difference between value of column "v1" and mean of column "v1" |              
+| #{v1} - #{v1-Mean}  | difference between value of column "v1" and mean of column "v1" |              
           
 5. If handle all pages of data file, then auto-backup before set values.                    
 

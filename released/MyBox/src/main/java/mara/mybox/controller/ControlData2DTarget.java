@@ -42,6 +42,7 @@ public class ControlData2DTarget extends BaseController {
 
     public void setParameters(BaseController parent, ControlData2DEditTable tableController) {
         try {
+            baseName = parent.baseName;
             this.tableController = tableController;
 
             if (locationPane != null) {
@@ -146,6 +147,7 @@ public class ControlData2DTarget extends BaseController {
                 }
             }
             UserConfig.setString(baseName + "DataTarget", target);
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

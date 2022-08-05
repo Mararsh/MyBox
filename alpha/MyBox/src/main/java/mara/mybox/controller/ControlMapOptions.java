@@ -24,9 +24,6 @@ import mara.mybox.data.CoordinateSystem;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
-import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.value.UserConfig;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.tools.LocationTools;
@@ -80,7 +77,7 @@ public class ControlMapOptions extends BaseController {
     @FXML
     protected TextField markerImageInput;
     @FXML
-    protected VBox optionsBox, dataBox, languageBox, controlsBox, layersBox, sizeBox,
+    protected VBox optionsBox, mapBox, dataBox, languageBox, controlsBox, layersBox, sizeBox,
             markerTextBox, markerImageBox;
     @FXML
     protected FlowPane locationTextPane, baseTextPane, textColorPane,
@@ -706,11 +703,8 @@ public class ControlMapOptions extends BaseController {
     }
 
     protected void mapLoaded() {
-        if (mapLoaded) {
-            return;
-        }
-        mapLoaded = true;
         optionsBox.setDisable(false);
+        mapLoaded = true;
     }
 
     public void setData() {

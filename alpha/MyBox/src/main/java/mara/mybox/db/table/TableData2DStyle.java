@@ -34,7 +34,7 @@ public class TableData2DStyle extends BaseTable<Data2DStyle> {
     public final TableData2DStyle defineColumns() {
         addColumn(new ColumnDefinition("d2sid", ColumnType.Long, true, true).setAuto(true));
         addColumn(new ColumnDefinition("d2id", ColumnType.Long, true)
-                .setReferName("Data2D_Style_d2id_fk").setReferTable("Data2D_Definition").setReferColumn("d2fid")
+                .setReferName("Data2D_Style_d2id_fk").setReferTable("Data2D_Definition").setReferColumn("d2did")
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade));
         addColumn(new ColumnDefinition("title", ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("rowStart", ColumnType.Long)); // 0-based
