@@ -171,7 +171,7 @@ License:    Apache License Version 2.0
                                                 </ScrollPane>
                                             </content>
                                         </Tab>
-                                        <Tab fx:id="filterTab" text="%RowFilter">
+                                        <Tab fx:id="filterTab" text="%Filter">
                                             <content>
                                                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                                                     <content>
@@ -184,30 +184,41 @@ License:    Apache License Version 2.0
                                                 </ScrollPane>
                                             </content>
                                         </Tab>
+                              <Tab fx:id="optionsTab" text="%Options">
+                                 <content>
+                                    <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                                       <content>
+                                                  <VBox fx:id="dataOptionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                      <children>
+                                                          <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="500.0" vgap="5.0">
+                                                              <children>
+                                                                  <Label text="%AccordingTo" />
+                                                                  <RadioButton fx:id="columnsRadio" mnemonicParsing="false" selected="true" text="%Columns">
+                                                                      <toggleGroup>
+                                                                          <ToggleGroup fx:id="objectGroup" />
+                                                                      </toggleGroup>
+                                                                  </RadioButton>
+                                                                  <RadioButton fx:id="rowsRadio" mnemonicParsing="false" text="%Rows" toggleGroup="$objectGroup" />
+                                                                  <RadioButton fx:id="allRadio" mnemonicParsing="false" text="%All" toggleGroup="$objectGroup" />
+                                                              </children>
+                                                          </FlowPane>
+                                                          <FlowPane fx:id="categoryColumnsPane" hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+                                                              <children>
+                                                                  <Label minHeight="-Infinity" minWidth="-Infinity" text="%CategoryColumn" />
+                                                                  <ComboBox fx:id="categoryColumnSelector" prefWidth="200.0" />
+                                                              </children>
+                                                          </FlowPane>
+                                                      </children>
+                                             <padding>
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                             </padding>
+                                                  </VBox>
+                                       </content>
+                                    </ScrollPane>
+                                 </content>
+                              </Tab>
                                     </tabs>
                                 </TabPane>
-                                <VBox fx:id="dataOptionsBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                    <children>
-                                        <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="500.0" vgap="5.0">
-                                            <children>
-                                                <Label text="%AccordingTo" />
-                                                <RadioButton fx:id="columnsRadio" mnemonicParsing="false" selected="true" text="%Columns">
-                                                    <toggleGroup>
-                                                        <ToggleGroup fx:id="objectGroup" />
-                                                    </toggleGroup>
-                                                </RadioButton>
-                                                <RadioButton fx:id="rowsRadio" mnemonicParsing="false" text="%Rows" toggleGroup="$objectGroup" />
-                                                <RadioButton fx:id="allRadio" mnemonicParsing="false" text="%All" toggleGroup="$objectGroup" />
-                                            </children>
-                                        </FlowPane>
-                                        <FlowPane fx:id="categoryColumnsPane" hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
-                                            <children>
-                                                <Label minHeight="-Infinity" minWidth="-Infinity" text="%CategoryColumn" />
-                                                <ComboBox fx:id="categoryColumnSelector" prefWidth="200.0" />
-                                            </children>
-                                        </FlowPane>
-                                    </children>
-                                </VBox>
                                 <HBox alignment="CENTER_LEFT" spacing="2.0"> 
                                     <children>
                                         <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" />

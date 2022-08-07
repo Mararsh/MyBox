@@ -210,10 +210,10 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
         if (sourceFile == null || !backupCheck.isSelected()) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (backgroundTask != null) {
+            backgroundTask.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        backgroundTask = new SingletonTask<Void>(this) {
             private List<FileBackup> list;
             private File currentFile;
 
@@ -238,7 +238,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
             }
 
         };
-        start(task, false, null);
+        start(backgroundTask, false, null);
     }
 
     public FileBackup addBackup(SingletonTask task, File sourceFile) {
@@ -304,7 +304,6 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
             task.cancel();
         }
         task = new SingletonTask<Void>(this) {
-            FileBackup newBackup;
 
             @Override
             protected boolean handle() {

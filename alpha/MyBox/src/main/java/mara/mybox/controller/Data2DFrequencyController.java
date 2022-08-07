@@ -158,6 +158,13 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
     public boolean handleRows() {
         try {
             outputData = new ArrayList<>();
+            filteredRowsIndices = filteredRowsIndices();
+            if (filteredRowsIndices == null || filteredRowsIndices.isEmpty()) {
+                if (task != null) {
+                    task.setError(message("NoData"));
+                }
+                return false;
+            }
             for (int r : filteredRowsIndices) {
                 List<String> tableRow = tableController.tableData.get(r);
                 String d = tableRow.get(freCol + 1);
@@ -180,7 +187,6 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
             if (task != null) {
                 task.setError(e.toString());
             }
-            MyBoxLog.error(e);
             return false;
         }
     }

@@ -199,9 +199,10 @@ public class Data2DPercentageController extends BaseData2DHandleController {
     @Override
     public boolean handleRows() {
         try {
+            filteredRowsIndices = filteredRowsIndices();
             if (filteredRowsIndices == null || filteredRowsIndices.isEmpty()) {
                 if (task != null) {
-                    task.setError(message("SelectToHandle"));
+                    task.setError(message("NoData"));
                 }
                 return false;
             }
@@ -217,7 +218,6 @@ public class Data2DPercentageController extends BaseData2DHandleController {
             if (task != null) {
                 task.setError(e.toString());
             }
-            MyBoxLog.error(e);
             return false;
         }
     }

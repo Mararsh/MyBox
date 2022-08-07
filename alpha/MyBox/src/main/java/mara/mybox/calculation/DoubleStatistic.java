@@ -45,16 +45,7 @@ public class DoubleStatistic {
     }
 
     public DoubleStatistic(String[] values, DescriptiveStatistic inOptions) {
-        initOptions(inOptions);
-        if (options.isMode()) {
-            modeValue = modeObject(values);
-            try {
-                mode = Double.valueOf(modeValue + "");
-            } catch (Exception e) {
-                mode = Double.NaN;
-            }
-        }
-        calculate(toDoubleArray(values));
+        calculate(values, inOptions);
     }
 
     private void init() {
@@ -94,6 +85,19 @@ public class DoubleStatistic {
             options = inOptions;
         }
         invalidAs = options.invalidAs;
+    }
+
+    public final void calculate(String[] values, DescriptiveStatistic inOptions) {
+        initOptions(inOptions);
+        if (options.isMode()) {
+            modeValue = modeObject(values);
+            try {
+                mode = Double.valueOf(modeValue + "");
+            } catch (Exception e) {
+                mode = Double.NaN;
+            }
+        }
+        calculate(toDoubleArray(values));
     }
 
     private void calculate(double[] values) {

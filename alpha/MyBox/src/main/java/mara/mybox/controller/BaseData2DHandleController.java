@@ -251,6 +251,10 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         if (!checkOptions() || !initData()) {
             return;
         }
+        preprocessStatistic();
+    }
+
+    public void preprocessStatistic() {
         String script = data2D.filterScipt();
         if (script == null || script.isBlank()) {
             startOperation();
@@ -275,7 +279,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.setTask(null);
+                data2D.stopTask();
                 task = null;
                 if (ok) {
                     startOperation();

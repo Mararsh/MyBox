@@ -98,11 +98,15 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
                 categoryNumberRadio.fire();
             } else {
                 categoryStringRadio.setDisable(false);
-                plotBox.getChildren().removeAll(bubbleBox);
+
                 if (!(chart instanceof LineChart) && !(chart instanceof ScatterChart)) {
                     categoryStringRadio.fire();
-                    categoryBox.getChildren().removeAll(categoryNumbersBox);
+                    categoryBox.getChildren().remove(categoryNumbersBox);
                 }
+            }
+
+            if (!(chart instanceof BubbleChart)) {
+                plotBox.getChildren().remove(bubbleBox);
             }
 
             if (chart instanceof BarChart || chart instanceof StackedBarChart) {

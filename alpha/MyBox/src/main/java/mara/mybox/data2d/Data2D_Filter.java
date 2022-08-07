@@ -145,9 +145,6 @@ public abstract class Data2D_Filter extends Data2D_Data {
             if (scripts == null || scripts.isEmpty()) {
                 return scripts;
             }
-            Data2D filter2D = ((Data2D) this).cloneAll();
-            filter2D.resetTargetStatistic();
-            filter2D.startTask(task, null);
             DescriptiveStatistic calculation = new DescriptiveStatistic()
                     .setStatisticObject(DescriptiveStatistic.StatisticObject.Columns)
                     .setInvalidAs(Double.NaN);
@@ -158,20 +155,27 @@ public abstract class Data2D_Filter extends Data2D_Data {
             if (!calculation.need()) {
                 return scripts;
             }
-            if (calculation.needNonStored()) {
-                filter2D.statisticByColumnsWithoutStored(colIndices, calculation);
+            DoubleStatistic[] sData = null;
+            if (isMutiplePages()) {
+                Data2D filter2D = ((Data2D) this).cloneAll();
+                filter2D.resetTargetStatistic();
+                filter2D.startTask(task, null);
+                if (calculation.needNonStored()) {
+                    sData = filter2D.statisticByColumnsWithoutStored(colIndices, calculation);
+                }
+                if (calculation.needStored()) {
+                    sData = filter2D.statisticByColumnsForStored(colIndices, calculation);
+                }
+                filter2D.stopTask();
+            } else {
+                sData = ((Data2D) this).statisticByColumnsForCurrentPage(colIndices, calculation);
             }
-            if (calculation.needStored()) {
-                filter2D.statisticByColumnsForStored(colIndices, calculation);
+            if (sData == null) {
+                return null;
             }
-            for (int i = 0; i < colIndices.size(); i++) {
-                Data2DColumn filterColumn = filter2D.column(colIndices.get(i));
-                Data2DColumn column = column(colIndices.get(i));
-                DoubleStatistic columnStatistic = filterColumn.getTargetStatistic();
-                filterColumn.setSourceStatistic(columnStatistic);
-                column.setSourceStatistic(columnStatistic);
+            for (int c = 0; c < colIndices.size(); c++) {
+                column(colIndices.get(c)).setSourceStatistic(sData[c]);
             }
-            filter2D.stopTask();
             List<String> filled = new ArrayList<>();
             FindReplaceString findReplace = ExpressionCalculator.createFindReplace();
             for (String script : scripts) {
@@ -179,7 +183,6 @@ public abstract class Data2D_Filter extends Data2D_Data {
             }
             return filled;
         } catch (Exception e) {
-            MyBoxLog.error(e);
             if (task != null) {
                 task.setError(e.toString());
             }

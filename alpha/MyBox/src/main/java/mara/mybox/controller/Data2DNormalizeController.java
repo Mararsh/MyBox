@@ -34,8 +34,12 @@ public class Data2DNormalizeController extends BaseData2DHandleController {
     @Override
     public boolean handleRows() {
         try {
+            filteredRowsIndices = filteredRowsIndices();
             if (filteredRowsIndices == null || filteredRowsIndices.isEmpty()
                     || checkedColsIndices == null || checkedColsIndices.isEmpty()) {
+                if (task != null) {
+                    task.setError(message("NoData"));
+                }
                 return false;
             }
             int rowsNumber = filteredRowsIndices.size();
@@ -66,7 +70,9 @@ public class Data2DNormalizeController extends BaseData2DHandleController {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            }
             return false;
         }
     }

@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,6 +13,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -24,7 +26,7 @@ import mara.mybox.value.UserConfig;
  */
 public class Data2DRowExpressionController extends BaseData2DHandleController {
 
-    protected String value;
+    protected String expression;
 
     @FXML
     protected TextField nameInput;
@@ -80,14 +82,72 @@ public class Data2DRowExpressionController extends BaseData2DHandleController {
         return ok;
     }
 
-    public String fillExpression() {
-        String script = expressionController.scriptInput.getText();
-        script = data2D.calculateScriptStatistic(script);
-        if (script == null || script.isBlank()) {
-            error = message("Invalid") + ": " + message("RowExpression");
-            return null;
+    @Override
+    public void preprocessStatistic() {
+        List<String> scripts = new ArrayList<>();
+        String filterScript = data2D.filterScipt();
+        if (filterScript != null && !filterScript.isBlank()) {
+            scripts.add(filterScript);
         }
-        return script;
+        expression = expressionController.scriptInput.getText();
+        if (expression == null || expression.isBlank()) {
+            popError(message("Invalid") + ": " + message("RowExpression"));
+            return;
+        }
+        scripts.add(expression);
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try {
+                    data2D.setTask(task);
+                    List<String> filled = data2D.calculateScriptsStatistic(scripts);
+                    if (filled == null) {
+                        return false;
+                    }
+                    String filledExp = null;
+                    if (filled.size() > 1) {
+                        String filledScript = filled.get(0);
+                        if (filledScript == null || filledScript.isBlank()) {
+                            error = message("Invalid") + ": " + message("RowFilter");
+                            return false;
+                        }
+                        data2D.filter.setFilledScript(filledScript);
+                        filledExp = filled.get(1);
+                    } else if (filled.size() == 1) {
+                        filledExp = filled.get(0);
+                    }
+                    if (filledExp == null || filledExp.isBlank()) {
+                        error = message("Invalid") + ": " + message("RowExpression");
+                        return false;
+                    }
+                    expression = filledExp;
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                data2D.stopTask();
+                task = null;
+                if (ok) {
+                    startOperation();
+                }
+            }
+
+        };
+        start(task);
     }
 
     @Override
@@ -99,16 +159,11 @@ public class Data2DRowExpressionController extends BaseData2DHandleController {
                 error = message("SelectToHandle");
                 return false;
             }
-            String script = fillExpression();
-            if (script == null || script.isBlank()) {
-                return false;
-            }
             for (int i = 0; i < filteredRowsIndices.size(); i++) {
                 int rowIndex = filteredRowsIndices.get(i);
                 List<String> checkedRow = outputData.get(i);
-                if (expressionController.calculator.calculateTableRowExpression(data2D,
-                        script, tableController.tableData.get(rowIndex), rowIndex)) {
-                    checkedRow.add(expressionController.calculator.getResult());
+                if (data2D.calculateTableRowExpression(expression, tableController.tableData.get(rowIndex), rowIndex)) {
+                    checkedRow.add(data2D.expressionResult());
                 } else {
                     if (errorContinueCheck.isSelected()) {
                         checkedRow.add(null);
@@ -141,11 +196,8 @@ public class Data2DRowExpressionController extends BaseData2DHandleController {
 
     @Override
     public DataFileCSV generatedFile() {
-        String script = fillExpression();
-        if (script == null || script.isBlank()) {
-            return null;
-        }
-        return data2D.rowExpression(script, nameInput.getText().trim(), errorContinueCheck.isSelected(),
+        MyBoxLog.console(expression);
+        return data2D.rowExpression(expression, nameInput.getText().trim(), errorContinueCheck.isSelected(),
                 checkedColsIndices, rowNumberCheck.isSelected(), colNameCheck.isSelected());
     }
 

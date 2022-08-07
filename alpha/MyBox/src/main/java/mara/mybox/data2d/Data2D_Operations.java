@@ -64,6 +64,37 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         return reader.getRows();
     }
 
+    public DoubleStatistic[] statisticByColumnsForCurrentPage(List<Integer> cols, DescriptiveStatistic selections) {
+        try {
+            if (cols == null || cols.isEmpty() || selections == null) {
+                return null;
+            }
+            int colLen = cols.size();
+            DoubleStatistic[] sData = new DoubleStatistic[colLen];
+            List<List<String>> tableData = tableData();
+            int rNumber = tableData.size();
+            for (int c = 0; c < colLen; c++) {
+                int colIndex = cols.get(c);
+                String[] colData = new String[rNumber];
+                for (int r = 0; r < rNumber; r++) {
+                    colData[r] = tableData.get(r).get(colIndex + 1);
+                }
+                DoubleStatistic colStatistic = new DoubleStatistic();
+                colStatistic.invalidAs = selections.invalidAs;
+                colStatistic.calculate(colData, selections);
+                columns.get(colIndex).setTargetStatistic(colStatistic);
+                sData[c] = colStatistic;
+            }
+            return sData;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
     // No percentile nor mode
     public DoubleStatistic[] statisticByColumnsWithoutStored(List<Integer> cols, DescriptiveStatistic selections) {
         try {

@@ -32,6 +32,11 @@ public class Data2DDeleteController extends BaseData2DHandleController {
     }
 
     @Override
+    public boolean initData() {
+        return !isAllPages() || tableController.checkBeforeNextAction();
+    }
+
+    @Override
     public synchronized void handleRowsTask() {
         task = new SingletonTask<Void>(this) {
 
@@ -88,9 +93,6 @@ public class Data2DDeleteController extends BaseData2DHandleController {
 
     @Override
     public void handleAllTask() {
-        if (!tableController.checkBeforeNextAction()) {
-            return;
-        }
         if (!data2D.needFilter()) {
             if (!PopTools.askSure(this, baseTitle, message("SureDeleteAll"))) {
                 return;

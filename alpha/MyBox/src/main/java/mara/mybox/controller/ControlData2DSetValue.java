@@ -92,6 +92,9 @@ public class ControlData2DSetValue extends BaseController {
                 }
             });
 
+            expressionController.thisPane.disableProperty().bind(expressionRadio.selectedProperty().not());
+            valueInput.disableProperty().bind(setRadio.selectedProperty().not());
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
