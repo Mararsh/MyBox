@@ -85,7 +85,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         try {
             super.refreshControls();
             makeOptions();
-            okAction();
+            afterRefreshControls();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -120,6 +120,10 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    public void afterRefreshControls() {
+        okAction();
     }
 
     @Override

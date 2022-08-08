@@ -33,8 +33,9 @@ public class LabeledStackedAreaChart<X, Y> extends StackedAreaChart<X, Y> {
         HBox.setHgrow(this, Priority.ALWAYS);
     }
 
-    public LabeledStackedAreaChart   setMaker(XYChartMaker<X,Y> chartMaker) {
+    public LabeledStackedAreaChart setMaker(XYChartMaker<X, Y> chartMaker) {
         this.chartMaker = chartMaker;
+        setCreateSymbols(chartMaker.displayLabel());
         return this;
     }
 

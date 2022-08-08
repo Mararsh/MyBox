@@ -23,6 +23,7 @@ public class SimpleLinearRegression extends SimpleRegression {
     protected List<String> lastData;
     protected List<Data2DColumn> columns;
     protected int scale = 8;
+    protected double intercept, slope, rSquare, r;
 
     public SimpleLinearRegression(boolean includeIntercept, String xName, String yName, int scale) {
         super(includeIntercept);
@@ -61,15 +62,21 @@ public class SimpleLinearRegression extends SimpleRegression {
 
     public List<String> addData(long rowIndex, final double x, final double y) {
         super.addData(x, y);
+
+        intercept = getIntercept();
+        slope = getSlope();
+        rSquare = getRSquare();
+        r = getR();
+
         lastData = new ArrayList<>();
         lastData.add(rowIndex + "");
         lastData.add(getN() + "");
         lastData.add(DoubleTools.format(x, scale));
         lastData.add(DoubleTools.format(y, scale));
-        lastData.add(DoubleTools.format(getSlope(), scale));
-        lastData.add(DoubleTools.format(getIntercept(), scale));
-        lastData.add(DoubleTools.format(getRSquare(), scale));
-        lastData.add(DoubleTools.format(getR(), scale));
+        lastData.add(DoubleTools.format(slope, scale));
+        lastData.add(DoubleTools.format(intercept, scale));
+        lastData.add(DoubleTools.format(rSquare, scale));
+        lastData.add(DoubleTools.format(r, scale));
         lastData.add(DoubleTools.format(getMeanSquareError(), scale));
         lastData.add(DoubleTools.format(getSumSquaredErrors(), scale));
         lastData.add(DoubleTools.format(getTotalSumSquares(), scale));
@@ -106,6 +113,40 @@ public class SimpleLinearRegression extends SimpleRegression {
         }
 
         return lastData;
+    }
+
+    // data should have row index as first column
+    public List<List<String>> addData(List<List<String>> data, double invalidAs) {
+        if (data == null) {
+            return null;
+        }
+        List<List<String>> regressionData = new ArrayList<>();
+        for (List<String> row : data) {
+            try {
+                long index = Long.parseLong(row.get(0));
+                double x = DoubleTools.toDouble(row.get(1), invalidAs);
+                double y = DoubleTools.toDouble(row.get(2), invalidAs);
+                List<String> resultRow = addData(index, x, y);
+                regressionData.add(resultRow);
+            } catch (Exception e) {
+                MyBoxLog.debug(e);
+            }
+        }
+        return regressionData;
+    }
+
+    public String modelDesc() {
+        return message("IndependentVariable") + ": " + xName + "\n"
+                + message("DependentVariable") + ": " + yName + "\n"
+                + message("LinearModel") + ": " + model() + "\n"
+                + message("CoefficientOfDetermination") + ": " + DoubleTools.format(rSquare, scale) + "\n"
+                + message("PearsonsR") + ": " + DoubleTools.format(r, scale);
+    }
+
+    public String model() {
+        return yName + " = "
+                + DoubleTools.format(intercept, scale) + (slope > 0 ? " + " : " - ")
+                + DoubleTools.format(Math.abs(slope), scale) + " * " + xName;
     }
 
     /*

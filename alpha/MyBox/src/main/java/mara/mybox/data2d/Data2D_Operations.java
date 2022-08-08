@@ -931,40 +931,48 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
     }
 
-    public DataFileCSV simpleLinearRegression(List<Integer> cols, SimpleLinearRegression simpleRegression) {
+    public DataFileCSV simpleLinearRegression(List<Integer> cols,
+            SimpleLinearRegression simpleRegression, boolean writeFile) {
         if (cols == null || cols.isEmpty() || simpleRegression == null) {
             return null;
         }
-        File csvFile = tmpCSV("simpleLinearRegression");
-        int tcolsNumber = 0;
-        Data2DReader reader = null;
-        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
-            List<String> names = new ArrayList<>();
-            List<Data2DColumn> resultColumns = simpleRegression.getColumns();
-            for (Data2DColumn c : resultColumns) {
-                names.add(c.getColumnName());
-            }
-            csvPrinter.printRecord(names);
-            tcolsNumber = names.size();
+        if (writeFile) {
+            File csvFile = tmpCSV("simpleLinearRegression");
+            int tcolsNumber = 0;
+            Data2DReader reader = null;
+            try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
+                List<String> names = new ArrayList<>();
+                List<Data2DColumn> resultColumns = simpleRegression.getColumns();
+                for (Data2DColumn c : resultColumns) {
+                    names.add(c.getColumnName());
+                }
+                csvPrinter.printRecord(names);
+                tcolsNumber = names.size();
 
-            reader = Data2DReader.create(this)
-                    .setCols(cols).setSimpleRegression(simpleRegression).setCsvPrinter(csvPrinter)
-                    .setReaderTask(task).start(Data2DReader.Operation.SimpleLinearRegression);
+                reader = Data2DReader.create(this)
+                        .setCols(cols).setSimpleRegression(simpleRegression).setCsvPrinter(csvPrinter)
+                        .setReaderTask(task).start(Data2DReader.Operation.SimpleLinearRegression);
 
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
+            } catch (Exception e) {
+                if (task != null) {
+                    task.setError(e.toString());
+                }
+                MyBoxLog.error(e);
+                return null;
             }
-            MyBoxLog.error(e);
-            return null;
-        }
-        if (reader != null && csvFile != null && csvFile.exists()) {
-            DataFileCSV targetData = new DataFileCSV();
-            targetData.setFile(csvFile).setCharset(Charset.forName("UTF-8"))
-                    .setDelimiter(",").setHasHeader(true)
-                    .setColsNumber(tcolsNumber).setRowsNumber(reader.getRowIndex());
-            return targetData;
+            if (reader != null && csvFile != null && csvFile.exists()) {
+                DataFileCSV targetData = new DataFileCSV();
+                targetData.setFile(csvFile).setCharset(Charset.forName("UTF-8"))
+                        .setDelimiter(",").setHasHeader(true)
+                        .setColsNumber(tcolsNumber).setRowsNumber(reader.getRowIndex());
+                return targetData;
+            } else {
+                return null;
+            }
         } else {
+            Data2DReader.create(this)
+                    .setCols(cols).setSimpleRegression(simpleRegression)
+                    .setReaderTask(task).start(Data2DReader.Operation.SimpleLinearRegression);
             return null;
         }
     }

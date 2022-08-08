@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -9,12 +10,14 @@ import java.util.Random;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import mara.mybox.calculation.SimpleLinearRegression;
 import mara.mybox.data.StringTable;
@@ -23,7 +26,6 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.chart.ChartOptions.ChartType;
 import mara.mybox.fxml.chart.ResidualChart;
@@ -39,7 +41,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-4-21
  * @License Apache License Version 2.0
  */
-public class Data2DSimpleLinearRegressionController extends BaseData2DChartController {
+public class Data2DMultipleLinearRegressionController extends BaseData2DChartController {
 
     protected XYChartMaker fittingMaker, residualMaker;
     protected SimpleLinearRegression simpleRegression;
@@ -51,6 +53,8 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
     protected List<Data2DColumn> residualColumns;
     protected Map<String, String> residualPalette;
 
+    @FXML
+    protected FlowPane columnsPane;
     @FXML
     protected CheckBox interceptCheck, displayAllCheck, textCheck, fittedPointsCheck, fittedLineCheck,
             residualStdCheck;
@@ -67,9 +71,9 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
     @FXML
     protected RadioButton residualPredicateRadio, residualIndRadio, residualActualRadio;
 
-    public Data2DSimpleLinearRegressionController() {
-        baseTitle = message("SimpleLinearRegression");
-        TipsLabelKey = "SimpleLinearRegressionTips";
+    public Data2DMultipleLinearRegressionController() {
+        baseTitle = message("MultipleLinearRegression");
+        TipsLabelKey = "MultipleLinearRegressionTips";
         defaultScale = 8;
     }
 
@@ -203,6 +207,62 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
     }
 
     @Override
+    public void makeOptions() {
+        try {
+            List<String> names = tableController.data2D.columnNames();
+            if (names == null || names.isEmpty()) {
+                return;
+            }
+            isSettingValues = true;
+            columnsPane.getChildren().clear();
+            for (String name : names) {
+                columnsPane.getChildren().add(new CheckBox(name));
+            }
+            selectedValue = valueColumnSelector.getSelectionModel().getSelectedItem();
+            valueColumnSelector.getItems().setAll(names);
+            if (selectedValue != null && names.contains(selectedValue)) {
+                valueColumnSelector.setValue(selectedValue);
+            } else {
+                valueColumnSelector.getSelectionModel().select(names.size() > 1 ? 1 : 0);
+            }
+            isSettingValues = false;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
+    public void afterRefreshControls() {
+
+    }
+
+    @FXML
+    @Override
+    public void selectAllColumns() {
+        try {
+            for (Node node : columnsPane.getChildren()) {
+                CheckBox cb = (CheckBox) node;
+                cb.setSelected(true);
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    @FXML
+    @Override
+    public void selectNoneColumn() {
+        try {
+            for (Node node : columnsPane.getChildren()) {
+                CheckBox cb = (CheckBox) node;
+                cb.setSelected(false);
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    @Override
     public boolean checkOptions() {
         if (isSettingValues) {
             return true;
@@ -257,14 +317,14 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
             if (isAllPages()) {
                 if (displayAllCheck.isSelected()) {
                     outputData = data2D.allRows(dataColsIndices, true);
-                    regressionData = simpleRegression.addData(outputData, invalidAs);
+                    regress(outputData);
                 } else {
                     regressionFile = data2D.simpleLinearRegression(dataColsIndices, simpleRegression, true);
                     outputData = filtered(dataColsIndices, true);
                 }
             } else {
                 outputData = filtered(dataColsIndices, true);
-                regressionData = simpleRegression.addData(outputData, invalidAs);
+                regress(outputData);
             }
             if (outputData == null) {
                 return;
@@ -345,6 +405,24 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
 
         } catch (Exception e) {
             MyBoxLog.debug(e);
+        }
+    }
+
+    public void regress(List<List<String>> data) {
+        if (data == null || simpleRegression == null) {
+            return;
+        }
+        regressionData = new ArrayList<>();
+        for (List<String> row : data) {
+            try {
+                long index = Long.parseLong(row.get(0));
+                double x = DoubleTools.toDouble(row.get(1), invalidAs);
+                double y = DoubleTools.toDouble(row.get(2), invalidAs);
+                List<String> resultRow = simpleRegression.addData(index, x, y);
+                regressionData.add(resultRow);
+            } catch (Exception e) {
+                MyBoxLog.debug(e);
+            }
         }
     }
 
@@ -469,6 +547,16 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
         }
     }
 
+    public String model() {
+        return message("IndependentVariable") + ": " + selectedCategory + "\n"
+                + message("DependentVariable") + ": " + selectedValue + "\n"
+                + message("LinearModel") + ": " + selectedValue + " = "
+                + DoubleTools.format(intercept, scale) + (slope > 0 ? " + " : " - ")
+                + DoubleTools.format(Math.abs(slope), scale) + " * " + selectedCategory + "\n"
+                + message("CoefficientOfDetermination") + ": " + DoubleTools.format(Math.abs(rSquare), scale) + "\n"
+                + message("PearsonsR") + ": " + r;
+    }
+
     @Override
     public Map<String, String> makePalette() {
         try {
@@ -520,7 +608,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
             fittingMaker.setChartStyle();
 
             fittingMaker.getSimpleRegressionChart()
-                    .setModel(simpleRegression.modelDesc())
+                    .setModel(model())
                     .setDisplayText(textCheck.isSelected())
                     .setDisplayFittedPoints(fittedPointsCheck.isSelected())
                     .setDisplayFittedLine(fittedLineCheck.isSelected())
@@ -573,7 +661,27 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
 
     @FXML
     public void about() {
-        openLink(HelpTools.aboutLinearRegressionHtml());
+        try {
+            StringTable table = new StringTable(null, message("AboutLinearRegression"));
+            table.newLinkRow(message("Guide"), "https://www.itl.nist.gov/div898/handbook/");
+            table.newLinkRow("", "https://book.douban.com/subject/10956491/");
+            table.newLinkRow(message("Video"), "https://www.bilibili.com/video/BV1Ua4y1e7YG");
+            table.newLinkRow("", "https://www.bilibili.com/video/BV1i7411d7aP");
+            table.newLinkRow(message("Example"), "https://www.xycoon.com/simple_linear_regression.htm");
+            table.newLinkRow("", "https://www.scribbr.com/statistics/simple-linear-regression/");
+            table.newLinkRow("", "http://www.datasetsanalysis.com/regressions/simple-linear-regression.html");
+            table.newLinkRow(message("Dataset"), "http://archive.ics.uci.edu/ml/datasets/Iris");
+            table.newLinkRow("", "https://github.com/tomsharp/SVR/tree/master/data");
+            table.newLinkRow("", "https://github.com/krishnaik06/simple-Linear-Regression");
+            table.newLinkRow("", "https://github.com/susanli2016/Machine-Learning-with-Python/tree/master/data");
+            table.newLinkRow("Apache-Math", "https://commons.apache.org/proper/commons-math/");
+            table.newLinkRow("", "https://commons.apache.org/proper/commons-math/apidocs/index.html");
+
+            File htmFile = HtmlWriteTools.writeHtml(table.html());
+            openLink(htmFile);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     /*
@@ -586,10 +694,10 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
     /*
         static
      */
-    public static Data2DSimpleLinearRegressionController open(ControlData2DEditTable tableController) {
+    public static Data2DMultipleLinearRegressionController open(ControlData2DEditTable tableController) {
         try {
-            Data2DSimpleLinearRegressionController controller = (Data2DSimpleLinearRegressionController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DSimpleLinearRegressionFxml, false);
+            Data2DMultipleLinearRegressionController controller = (Data2DMultipleLinearRegressionController) WindowTools.openChildStage(
+                    tableController.getMyWindow(), Fxmls.Data2DMultipleLinearRegressionFxml, false);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

@@ -33,8 +33,9 @@ public class LabeledLineChart<X, Y> extends LineChart<X, Y> {
         HBox.setHgrow(this, Priority.ALWAYS);
     }
 
-    public LabeledLineChart   setMaker(XYChartMaker<X,Y> chartMaker) {
+    public LabeledLineChart setMaker(XYChartMaker<X, Y> chartMaker) {
         this.chartMaker = chartMaker;
+        setCreateSymbols(chartMaker.displayLabel());
         return this;
     }
 

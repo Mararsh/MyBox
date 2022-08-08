@@ -21,8 +21,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="5.0" 
-      xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DSetStylesController">
+<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DSetStylesController">
     <children>
         <HBox alignment="CENTER">
             <children>
@@ -162,7 +161,7 @@ License:    Apache License Version 2.0
                                                                 </VBox>
                                                                 <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                                     <children>
-                                                                        <FlowPane fx:id="columnsPane" hgap="2.0" vgap="2.0">
+                                                                        <FlowPane hgap="2.0" vgap="2.0">
                                                                             <children>
                                                                                 <Label text="%Columns" />
                                                                                 <Button fx:id="selectAllColumnsButton" mnemonicParsing="false" onAction="#selectAllColumns">
@@ -186,7 +185,7 @@ License:    Apache License Version 2.0
                                                                                 <Label text="%StyleColumnComments" />
                                                                             </children>
                                                                         </FlowPane>
-                                                                        <FlowPane fx:id="columnsPane" hgap="2.0" vgap="2.0" />
+                                                      <FlowPane fx:id="columnsPane" hgap="2.0" layoutX="15.0" layoutY="15.0" vgap="2.0" />
                                                                     </children>
                                                                 </VBox>
                                                             </children>

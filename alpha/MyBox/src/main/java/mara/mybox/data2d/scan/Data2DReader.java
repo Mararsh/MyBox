@@ -302,7 +302,7 @@ public abstract class Data2DReader {
                 }
                 break;
             case SimpleLinearRegression:
-                if (cols == null || cols.size() < 2 || simpleRegression == null || csvPrinter == null) {
+                if (cols == null || cols.size() < 2 || simpleRegression == null) {
                     failed = true;
                     return null;
                 }
@@ -1188,7 +1188,9 @@ public abstract class Data2DReader {
             double x = DoubleTools.toDouble(record.get(cols.get(0)), invalidAs);
             double y = DoubleTools.toDouble(record.get(cols.get(1)), invalidAs);
             List<String> row = simpleRegression.addData(rowIndex, x, y);
-            csvPrinter.printRecord(row);
+            if (csvPrinter != null) {
+                csvPrinter.printRecord(row);
+            }
         } catch (Exception e) {
             MyBoxLog.console(e);
         }

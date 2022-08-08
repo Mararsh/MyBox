@@ -301,7 +301,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
             return;
         }
         if (task != null) {
-            task.cancel();
+            return;
         }
         task = new SingletonTask<Void>(this) {
 
@@ -334,7 +334,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
         List<FileBackup> targets = new ArrayList<>();
         targets.addAll(selected);
         if (task != null) {
-            task.cancel();
+            return;
         }
         task = new SingletonTask<Void>(this) {
 

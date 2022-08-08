@@ -55,6 +55,40 @@ public class DoubleTools {
         }
     }
 
+    public static int compare(String s1, String s2, boolean desc) {
+        double d1, d2;
+        try {
+            d1 = Double.valueOf(s1);
+        } catch (Exception e) {
+            d1 = Double.NaN;
+        }
+        try {
+            d2 = Double.valueOf(s2);
+        } catch (Exception e) {
+            d2 = Double.NaN;
+        }
+        if (Double.isNaN(d1)) {
+            if (Double.isNaN(d2)) {
+                return 0;
+            } else {
+                return 1;
+            }
+        } else {
+            if (Double.isNaN(d2)) {
+                return 1;
+            } else {
+                double diff = d1 - d2;
+                if (diff == 0) {
+                    return 0;
+                } else if (diff > 0) {
+                    return desc ? -1 : 1;
+                } else {
+                    return desc ? 1 : -1;
+                }
+            }
+        }
+    }
+
     /*
         https://stackoverflow.com/questions/322749/retain-precision-with-double-in-java
         "Do not waste your efford using BigDecimal. In 99.99999% cases you don't need it"
