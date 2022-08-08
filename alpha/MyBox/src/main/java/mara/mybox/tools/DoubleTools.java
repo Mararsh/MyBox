@@ -75,7 +75,7 @@ public class DoubleTools {
             }
         } else {
             if (Double.isNaN(d2)) {
-                return 1;
+                return -1;
             } else {
                 double diff = d1 - d2;
                 if (diff == 0) {

@@ -2,26 +2,23 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import mara.mybox.calculation.SimpleLinearRegression;
-import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DoubleTools;
-import mara.mybox.tools.HtmlWriteTools;
-import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -35,16 +32,18 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
 
     protected SimpleLinearRegression simpleRegression;
     protected double alpha;
-    protected List<List<String>> results;
+    protected ObservableList<List<String>> results;
 
     @FXML
     protected FlowPane columnsPane;
     @FXML
-    protected CheckBox interceptCheck, sortCheck;
+    protected CheckBox interceptCheck;
     @FXML
     protected ComboBox<String> alphaSelector;
     @FXML
-    protected ControlWebView resultsController;
+    protected ControlData2DRegressionTable resultsController;
+    @FXML
+    protected Button chartButton;
 
     public Data2DSimpleLinearRegressionCombinationController() {
         baseTitle = message("SimpleLinearRegressionCombination");
@@ -58,8 +57,6 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
             super.initControls();
 
             noColumnSelection(true);
-
-            resultsController.setParent(this);
 
             alpha = UserConfig.getDouble(baseName + "Alpha", 0.05);
             if (alpha >= 1 || alpha <= 0) {
@@ -88,16 +85,22 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
             });
 
             interceptCheck.setSelected(UserConfig.getBoolean(baseName + "Intercept", true));
-            interceptCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
-                if (isSettingValues) {
-                    return;
+            interceptCheck.selectedProperty().addListener(new ChangeListener() {
+                @Override
+                public void changed(ObservableValue v, Object ov, Object nv) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    UserConfig.setBoolean(baseName + "Intercept", interceptCheck.isSelected());
                 }
-                UserConfig.setBoolean(baseName + "Intercept", interceptCheck.isSelected());
             });
 
-            sortCheck.setSelected(UserConfig.getBoolean(baseName + "Sort", true));
-            sortCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
-                UserConfig.setBoolean(baseName + "Sort", sortCheck.isSelected());
+            resultsController.selectedNotify.addListener(new ChangeListener() {
+                @Override
+                public void changed(ObservableValue v, Object ov, Object nv) {
+                    checkSelected();
+                    notifySelected();
+                }
             });
 
         } catch (Exception e) {
@@ -155,11 +158,8 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
         if (task != null) {
             task.cancel();
         }
-        results = new ArrayList<>();
-        resultsController.loadContents("");
+        resultsController.tableData.clear();
         task = new SingletonTask<Void>(this) {
-
-            private StringBuilder s;
 
             @Override
             protected boolean handle() {
@@ -184,37 +184,6 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
                         }
                     }
                     data2D.stopFilter();
-                    if (sortCheck.isSelected()) {
-                        Collections.sort(results, new Comparator<List<String>>() {
-                            @Override
-                            public int compare(List<String> v1, List<String> v2) {
-                                return DoubleTools.compare(v1.get(5), v2.get(5), true);
-                            }
-                        });
-                    } else {
-                        Collections.sort(results, new Comparator<List<String>>() {
-                            @Override
-                            public int compare(List<String> v1, List<String> v2) {
-                                return StringTools.compare(v1.get(0), v2.get(0));
-                            }
-                        });
-                    }
-                    s = new StringBuilder();
-                    s.append("<P").append(message("Data")).append(": ").append(data2D.displayName()).append("</P>\n");
-                    s.append("<P").append(message("NumberOfObservations")).append(": ").append(simpleRegression.getN()).append("</P>\n");
-                    List<String> names = new ArrayList<>();
-                    names.add(message("DependentVariable"));
-                    names.add(message("IndependentVariable"));
-                    names.add(message("Slope"));
-                    names.add(message("Intercept"));
-                    names.add(message("CoefficientOfDetermination"));
-                    names.add(message("PearsonsR"));
-                    names.add(message("Model"));
-                    StringTable table = new StringTable(names, message("SimpleLinearRegressionCombination"));
-                    for (List<String> row : results) {
-                        table.add(row);
-                    }
-                    s.append(table.div());
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
@@ -242,8 +211,14 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
                     row.add(DoubleTools.format(simpleRegression.getIntercept(), scale));
                     row.add(DoubleTools.format(simpleRegression.getRSquare(), scale));
                     row.add(DoubleTools.format(simpleRegression.getR(), scale));
-                    row.add(simpleRegression.model());
-                    results.add(row);
+                    row.add(simpleRegression.getModel());
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            resultsController.addRow(row);
+                        }
+                    });
+
                 } catch (Exception e) {
                     error = e.toString();
                 }
@@ -251,7 +226,7 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
 
             @Override
             protected void whenSucceeded() {
-                resultsController.loadContents(HtmlWriteTools.html(s.toString()));
+                resultsController.sortR();
             }
 
             @Override
@@ -268,12 +243,17 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
 
     @FXML
     public void editResultsAction() {
-        resultsController.editAction();
+        resultsController.dataAction();
     }
 
     @FXML
-    public void popResultsMenu(MouseEvent mouseEvent) {
-        resultsController.popFunctionsMenu(mouseEvent);
+    public void chartAction() {
+        List<String> selected = resultsController.selected();
+        if (selected == null) {
+            Data2DSimpleLinearRegressionController.open(tableController);
+        } else {
+            Data2DSimpleLinearRegressionController.open(tableController, selected.get(1), selected.get(0));
+        }
     }
 
     @FXML

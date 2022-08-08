@@ -202,6 +202,19 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
         }
     }
 
+    public void setParameters(ControlData2DEditTable tableController, String xName, String yName) {
+        try {
+            categoryColumnSelector.getItems().setAll(xName);
+            categoryColumnSelector.getSelectionModel().select(0);
+            valueColumnSelector.getItems().setAll(yName);
+            valueColumnSelector.getSelectionModel().select(0);
+            super.setParameters(tableController);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     @Override
     public boolean checkOptions() {
         if (isSettingValues) {
@@ -591,6 +604,20 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
             Data2DSimpleLinearRegressionController controller = (Data2DSimpleLinearRegressionController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DSimpleLinearRegressionFxml, false);
             controller.setParameters(tableController);
+            controller.requestMouse();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static Data2DSimpleLinearRegressionController open(ControlData2DEditTable tableController,
+            String xName, String yName) {
+        try {
+            Data2DSimpleLinearRegressionController controller = (Data2DSimpleLinearRegressionController) WindowTools.openChildStage(
+                    tableController.getMyWindow(), Fxmls.Data2DSimpleLinearRegressionFxml, false);
+            controller.setParameters(tableController, xName, yName);
             controller.requestMouse();
             return controller;
         } catch (Exception e) {

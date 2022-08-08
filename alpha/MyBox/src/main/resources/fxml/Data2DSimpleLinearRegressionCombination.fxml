@@ -208,7 +208,6 @@ License:    Apache License Version 2.0
                                                                     </children>
                                                                 </FlowPane>
                                                                 <CheckBox fx:id="interceptCheck" mnemonicParsing="false" text="%Intercept" />
-                                                <CheckBox fx:id="sortCheck" mnemonicParsing="false" selected="true" text="%Sort" />
                                                             </children>
                                                             <padding>
                                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -271,27 +270,27 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </CheckBox>
-                                              <Button fx:id="editResultsButton" mnemonicParsing="false" onAction="#editResultsAction">
-                                                  <graphic>
-                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                          <image>
-                                                              <Image url="@../buttons/Red/iconEdit.png" />
-                                                          </image>
-                                                      </ImageView>
-                                                  </graphic>
-                                              </Button>
-                                              <Button fx:id="functionsButton" mnemonicParsing="false" onMouseEntered="#popResultsMenu">
-                                                  <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                          <image>
-                                                              <Image url="@../buttons/Red/iconFunction.png" />
-                                                          </image>
-                                                      </ImageView>
-                                                  </graphic>
-                                              </Button>
+                              <Button fx:id="editResultsButton" mnemonicParsing="false" onAction="#editResultsAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconEdit.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="chartButton" mnemonicParsing="false" onAction="#chartAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconLinearPgression.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
                                     </children>
                                 </HBox>
-                                      <fx:include fx:id="results" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlWebView.fxml" VBox.vgrow="ALWAYS" />
+                        <fx:include fx:id="results" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DRegressionTable.fxml" VBox.vgrow="ALWAYS" />
                             </children>
                         </VBox>
                     </content>

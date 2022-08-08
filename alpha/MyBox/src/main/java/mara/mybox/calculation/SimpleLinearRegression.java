@@ -23,7 +23,7 @@ public class SimpleLinearRegression extends SimpleRegression {
     protected List<String> lastData;
     protected List<Data2DColumn> columns;
     protected int scale = 8;
-    protected double intercept, slope, rSquare, r;
+    protected double lastIntercept, lastSlope, lastRSquare, lastR;
 
     public SimpleLinearRegression(boolean includeIntercept, String xName, String yName, int scale) {
         super(includeIntercept);
@@ -63,20 +63,20 @@ public class SimpleLinearRegression extends SimpleRegression {
     public List<String> addData(long rowIndex, final double x, final double y) {
         super.addData(x, y);
 
-        intercept = getIntercept();
-        slope = getSlope();
-        rSquare = getRSquare();
-        r = getR();
+        lastIntercept = getIntercept();
+        lastSlope = getSlope();
+        lastRSquare = getRSquare();
+        lastR = getR();
 
         lastData = new ArrayList<>();
         lastData.add(rowIndex + "");
         lastData.add(getN() + "");
         lastData.add(DoubleTools.format(x, scale));
         lastData.add(DoubleTools.format(y, scale));
-        lastData.add(DoubleTools.format(slope, scale));
-        lastData.add(DoubleTools.format(intercept, scale));
-        lastData.add(DoubleTools.format(rSquare, scale));
-        lastData.add(DoubleTools.format(r, scale));
+        lastData.add(DoubleTools.format(lastSlope, scale));
+        lastData.add(DoubleTools.format(lastIntercept, scale));
+        lastData.add(DoubleTools.format(lastRSquare, scale));
+        lastData.add(DoubleTools.format(lastR, scale));
         lastData.add(DoubleTools.format(getMeanSquareError(), scale));
         lastData.add(DoubleTools.format(getSumSquaredErrors(), scale));
         lastData.add(DoubleTools.format(getTotalSumSquares(), scale));
@@ -138,15 +138,19 @@ public class SimpleLinearRegression extends SimpleRegression {
     public String modelDesc() {
         return message("IndependentVariable") + ": " + xName + "\n"
                 + message("DependentVariable") + ": " + yName + "\n"
-                + message("LinearModel") + ": " + model() + "\n"
-                + message("CoefficientOfDetermination") + ": " + DoubleTools.format(rSquare, scale) + "\n"
-                + message("PearsonsR") + ": " + DoubleTools.format(r, scale);
+                + message("LinearModel") + ": " + getModel() + "\n"
+                + message("CoefficientOfDetermination") + ": " + DoubleTools.format(lastRSquare, scale) + "\n"
+                + message("PearsonsR") + ": " + DoubleTools.format(lastR, scale);
     }
 
-    public String model() {
+    public String getModel() {
+        if (Double.isNaN(lastIntercept) || Double.isNaN(lastSlope)
+                || Double.isNaN(lastRSquare) || Double.isNaN(lastR)) {
+            return message("Invalid");
+        }
         return yName + " = "
-                + DoubleTools.format(intercept, scale) + (slope > 0 ? " + " : " - ")
-                + DoubleTools.format(Math.abs(slope), scale) + " * " + xName;
+                + DoubleTools.format(lastIntercept, scale) + (lastSlope > 0 ? " + " : " - ")
+                + DoubleTools.format(Math.abs(lastSlope), scale) + " * " + xName;
     }
 
     /*
@@ -185,6 +189,38 @@ public class SimpleLinearRegression extends SimpleRegression {
     public SimpleLinearRegression setScale(int scale) {
         this.scale = scale;
         return this;
+    }
+
+    public double getLastIntercept() {
+        return lastIntercept;
+    }
+
+    public void setLastIntercept(double lastIntercept) {
+        this.lastIntercept = lastIntercept;
+    }
+
+    public double getLastSlope() {
+        return lastSlope;
+    }
+
+    public void setLastSlope(double lastSlope) {
+        this.lastSlope = lastSlope;
+    }
+
+    public double getLastRSquare() {
+        return lastRSquare;
+    }
+
+    public void setLastRSquare(double lastRSquare) {
+        this.lastRSquare = lastRSquare;
+    }
+
+    public double getLastR() {
+        return lastR;
+    }
+
+    public void setLastR(double lastR) {
+        this.lastR = lastR;
     }
 
 }
