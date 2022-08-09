@@ -275,6 +275,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
     public void columnSelected() {
     }
 
+
     /*
         status
      */
@@ -477,17 +478,17 @@ public class BaseData2DSourceController extends ControlData2DLoad {
             }
             List<List<String>> data = new ArrayList<>();
             int size = tableData.size();
-            DataFilter filter = data2D.filter;
             filteredRowsIndices = new ArrayList<>();
+            data2D.resetFilterNumber();
             for (int row : rows) {
                 if (row < 0 || row >= size) {
                     continue;
                 }
                 List<String> tableRow = tableData.get(row);
-                if (!filter.filterTableRow(data2D, tableData.get(row), row)) {
+                if (!data2D.filterTableRow(tableData.get(row), row)) {
                     continue;
                 }
-                if (filter.reachMaxPassed()) {
+                if (data2D.filterReachMaxPassed()) {
                     break;
                 }
 

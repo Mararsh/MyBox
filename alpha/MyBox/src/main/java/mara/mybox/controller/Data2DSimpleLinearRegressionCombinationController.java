@@ -95,13 +95,7 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
                 }
             });
 
-            resultsController.selectedNotify.addListener(new ChangeListener() {
-                @Override
-                public void changed(ObservableValue v, Object ov, Object nv) {
-                    checkSelected();
-                    notifySelected();
-                }
-            });
+            resultsController.setParameters(this);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -158,7 +152,7 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
         if (task != null) {
             task.cancel();
         }
-        resultsController.tableData.clear();
+        resultsController.clear();
         task = new SingletonTask<Void>(this) {
 
             @Override
@@ -191,7 +185,7 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
                 }
             }
 
-            private void regress(int xIndex, int yIndex) {
+            protected void regress(int xIndex, int yIndex) {
                 try {
                     String xName = data2D.columnName(xIndex);
                     String yName = data2D.columnName(yIndex);
@@ -207,11 +201,11 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
                     List<String> row = new ArrayList<>();
                     row.add(yName);
                     row.add(xName);
-                    row.add(DoubleTools.format(simpleRegression.getSlope(), scale));
-                    row.add(DoubleTools.format(simpleRegression.getIntercept(), scale));
                     row.add(DoubleTools.format(simpleRegression.getRSquare(), scale));
                     row.add(DoubleTools.format(simpleRegression.getR(), scale));
                     row.add(simpleRegression.getModel());
+                    row.add(DoubleTools.format(simpleRegression.getSlope(), scale));
+                    row.add(DoubleTools.format(simpleRegression.getIntercept(), scale));
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -243,17 +237,12 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
 
     @FXML
     public void editResultsAction() {
-        resultsController.dataAction();
+        resultsController.editTable();
     }
 
     @FXML
     public void chartAction() {
-        List<String> selected = resultsController.selected();
-        if (selected == null) {
-            Data2DSimpleLinearRegressionController.open(tableController);
-        } else {
-            Data2DSimpleLinearRegressionController.open(tableController, selected.get(1), selected.get(0));
-        }
+        resultsController.editAction();
     }
 
     @FXML

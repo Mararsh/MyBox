@@ -30,23 +30,25 @@ public class DataFilter {
     }
 
     private void init() {
-        passedNumber = 0;
         maxPassed = -1;
         reversed = false;
-        passed = false;
+        resetNumber();
         calculator = new ExpressionCalculator();
     }
 
-    public void start(SingletonTask task, Data2D data2D) {
+    public void resetNumber() {
         passedNumber = 0;
         passed = false;
+    }
+
+    public void start(SingletonTask task, Data2D data2D) {
+        resetNumber();
         this.task = task;
         calculator.start();
     }
 
     public void stop() {
-        passedNumber = 0;
-        passed = false;
+        resetNumber();
         task = null;
         calculator.stop();
     }

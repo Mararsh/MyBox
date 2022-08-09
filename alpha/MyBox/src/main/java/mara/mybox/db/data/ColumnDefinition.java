@@ -3,7 +3,6 @@ package mara.mybox.db.data;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -22,6 +21,7 @@ import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.IntTools;
 import mara.mybox.tools.LongTools;
+import mara.mybox.tools.ShortTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Languages;
@@ -254,6 +254,7 @@ public class ColumnDefinition extends BaseData {
         return !notNull || (value != null && !value.isEmpty());
     }
 
+    // invalid values are counted as smaller
     public int compare(String value1, String value2) {
         try {
             if (value1 == null) {
@@ -267,67 +268,18 @@ public class ColumnDefinition extends BaseData {
             }
             switch (type) {
                 case Double:
-                    double d1 = Double.parseDouble(value1);
-                    double d2 = Double.parseDouble(value2);
-                    if (d1 == d2) {
-                        return 0;
-                    } else if (d1 > d2) {
-                        return 1;
-                    } else {
-                        return -1;
-                    }
+                    return DoubleTools.compare(value1, value2, false);
                 case Float:
-                    float f1 = Float.parseFloat(value1);
-                    float f2 = Float.parseFloat(value2);
-                    if (f1 == f2) {
-                        return 0;
-                    } else if (f1 > f2) {
-                        return 1;
-                    } else {
-                        return -1;
-                    }
+                    return FloatTools.compare(value1, value2, false);
                 case Long:
                 case Era:
-                    long l1 = Long.parseLong(value1);
-                    long l2 = Long.parseLong(value2);
-                    if (l1 == l2) {
-                        return 0;
-                    } else if (l1 > l2) {
-                        return 1;
-                    } else {
-                        return -1;
-                    }
+                    return LongTools.compare(value1, value2, false);
                 case Integer:
-                    int i1 = Integer.parseInt(value1);
-                    int i2 = Integer.parseInt(value2);
-                    if (i1 == i2) {
-                        return 0;
-                    } else if (i1 > i2) {
-                        return 1;
-                    } else {
-                        return -1;
-                    }
+                    return IntTools.compare(value1, value2, false);
                 case Short:
-                    short s1 = Short.parseShort(value1);
-                    short s2 = Short.parseShort(value2);
-                    if (s1 == s2) {
-                        return 0;
-                    } else if (s1 > s2) {
-                        return 1;
-                    } else {
-                        return -1;
-                    }
+                    return ShortTools.compare(value1, value2, false);
                 case Date:
-                    SimpleDateFormat df = new SimpleDateFormat();
-                    long e1 = df.parse(value1).getTime();
-                    long e2 = df.parse(value2).getTime();
-                    if (e1 == e2) {
-                        return 0;
-                    } else if (e1 > e2) {
-                        return 1;
-                    } else {
-                        return -1;
-                    }
+                    return DateTools.compare(value1, value2, false);
                 default:
                     return StringTools.compare(value1, value2);
             }

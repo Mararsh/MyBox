@@ -84,13 +84,13 @@ public class ControlData2DFilter extends ControlData2DRowExpression {
     public void load(String script, boolean reversed) {
         if (script == null || script.isBlank()) {
             scriptInput.clear();
-            trueRadio.fire();
+            trueRadio.setSelected(true);
         } else {
             scriptInput.setText(script);
             if (reversed) {
-                othersRadio.fire();
+                othersRadio.setSelected(true);
             } else {
-                trueRadio.fire();
+                trueRadio.setSelected(true);
             }
         }
     }

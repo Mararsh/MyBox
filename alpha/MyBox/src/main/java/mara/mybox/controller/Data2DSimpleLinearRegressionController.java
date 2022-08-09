@@ -612,18 +612,4 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
         }
     }
 
-    public static Data2DSimpleLinearRegressionController open(ControlData2DEditTable tableController,
-            String xName, String yName) {
-        try {
-            Data2DSimpleLinearRegressionController controller = (Data2DSimpleLinearRegressionController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DSimpleLinearRegressionFxml, false);
-            controller.setParameters(tableController, xName, yName);
-            controller.requestMouse();
-            return controller;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
-    }
-
 }

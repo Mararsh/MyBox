@@ -18,6 +18,22 @@ public class LongTools {
         return value == AppValues.InvalidLong;
     }
 
+    // invalid values are always in the end
+    public static int compare(String s1, String s2, boolean desc) {
+        double d1, d2;
+        try {
+            d1 = Long.valueOf(s1);
+        } catch (Exception e) {
+            d1 = Double.NaN;
+        }
+        try {
+            d2 = Long.valueOf(s2);
+        } catch (Exception e) {
+            d2 = Double.NaN;
+        }
+        return DoubleTools.compare(d1, d2, desc);
+    }
+
     public static long random(Random r, int max, boolean nonNegative) {
         if (r == null) {
             r = new Random();

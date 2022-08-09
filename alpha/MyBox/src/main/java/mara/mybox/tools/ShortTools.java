@@ -13,6 +13,41 @@ import java.util.Random;
  */
 public class ShortTools {
 
+    // invalid values are always in the end
+    public static int compare(String s1, String s2, boolean desc) {
+        float f1, f2;
+        try {
+            f1 = Short.valueOf(s1);
+        } catch (Exception e) {
+            f1 = Float.NaN;
+        }
+        try {
+            f2 = Short.valueOf(s2);
+        } catch (Exception e) {
+            f2 = Float.NaN;
+        }
+        if (Float.isNaN(f1)) {
+            if (Float.isNaN(f2)) {
+                return 0;
+            } else {
+                return 1;
+            }
+        } else {
+            if (Float.isNaN(f2)) {
+                return -1;
+            } else {
+                float diff = f1 - f2;
+                if (diff == 0) {
+                    return 0;
+                } else if (diff > 0) {
+                    return desc ? -1 : 1;
+                } else {
+                    return desc ? 1 : -1;
+                }
+            }
+        }
+    }
+
     public static short random(short max) {
         Random r = new Random();
         return (short) r.nextInt(max);

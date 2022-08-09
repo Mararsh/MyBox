@@ -58,6 +58,26 @@ public abstract class Data2D_Filter extends Data2D_Data {
         filter.stop();
     }
 
+    public void resetFilterNumber() {
+        if (filter == null) {
+            return;
+        }
+        filter.resetNumber();
+    }
+
+    public boolean filterTableRow(List<String> tableRow, long tableRowIndex) {
+        error = null;
+        if (filter == null) {
+            return true;
+        }
+        if (filter.filterTableRow((Data2D) this, tableRow, tableRowIndex)) {
+            return true;
+        } else {
+            error = filter.getError();
+            return false;
+        }
+    }
+
     public boolean filterDataRow(List<String> dataRow, long dataRowIndex) {
         error = null;
         if (filter == null) {

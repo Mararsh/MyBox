@@ -502,6 +502,21 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         return true;
     }
 
+    public void cloneOptions(BaseData2DHandleController sourceController) {
+        if (sourceController.allPagesRadio.isSelected()) {
+            allPagesRadio.setSelected(true);
+        } else if (sourceController.currentPageRadio.isSelected()) {
+            currentPageRadio.setSelected(true);
+        } else {
+            selectedRadio.setSelected(true);
+        }
+        UserConfig.setLong(baseName + "MaxDataNumber", sourceController.filterController.maxData);
+        filterController.maxInput.setText(sourceController.filterController.maxData + "");
+        filterController.load(sourceController.filterController.scriptInput.getText(),
+                sourceController.filterController.othersRadio.isSelected());
+        scaleSelector.getSelectionModel().select(sourceController.scale + "");
+    }
+
     @FXML
     @Override
     public void cancelAction() {

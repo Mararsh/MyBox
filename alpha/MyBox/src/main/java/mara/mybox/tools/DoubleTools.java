@@ -67,15 +67,20 @@ public class DoubleTools {
         } catch (Exception e) {
             d2 = Double.NaN;
         }
+        return compare(d1, d2, desc);
+    }
+
+    // invalid values are counted as smaller
+    public static int compare(double d1, double d2, boolean desc) {
         if (Double.isNaN(d1)) {
             if (Double.isNaN(d2)) {
                 return 0;
             } else {
-                return 1;
+                return desc ? 1 : -1;
             }
         } else {
             if (Double.isNaN(d2)) {
-                return -1;
+                return desc ? -1 : 1;
             } else {
                 double diff = d1 - d2;
                 if (diff == 0) {

@@ -10,19 +10,11 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DRegressionTable">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DRegressionTable">
     <children>
-      <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
-        <columns>
-          <TableColumn fx:id="yColumn" prefWidth="100.0" text="%DependentVariable" />
-          <TableColumn prefWidth="100.0" text="%IndependentVariable" fx:id="xColumn" />
-            <TableColumn fx:id="rsquareColumn" prefWidth="75.0" text="%CoefficientOfDetermination" />
-            <TableColumn fx:id="rColumn" prefWidth="75.0" text="%PearsonsR" />
-            <TableColumn fx:id="modelColumn" prefWidth="400.0" text="%Model" />
-            <TableColumn fx:id="slopeColumn" prefWidth="75.0" text="%Slope" />
-            <TableColumn fx:id="interceptColumn" prefWidth="75.0" text="%Intercept" />
-        </columns>
-      </TableView>
-
+        <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+         <columns>
+            <TableColumn fx:id="dataRowColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="-1.0" text="%DataRow" />
+         </columns></TableView>
     </children>
 </VBox>

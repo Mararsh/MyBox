@@ -42,6 +42,45 @@ public class FloatTools {
         }
     }
 
+    public static int compare(String s1, String s2, boolean desc) {
+        float f1, f2;
+        try {
+            f1 = Float.valueOf(s1);
+        } catch (Exception e) {
+            f1 = Float.NaN;
+        }
+        try {
+            f2 = Float.valueOf(s2);
+        } catch (Exception e) {
+            f2 = Float.NaN;
+        }
+        return compare(f1, f2, desc);
+    }
+
+    // invalid values are counted as smaller
+    public static int compare(float f1, float f2, boolean desc) {
+        if (Float.isNaN(f1)) {
+            if (Float.isNaN(f2)) {
+                return 0;
+            } else {
+                return desc ? 1 : -1;
+            }
+        } else {
+            if (Float.isNaN(f2)) {
+                return desc ? -1 : 1;
+            } else {
+                float diff = f1 - f2;
+                if (diff == 0) {
+                    return 0;
+                } else if (diff > 0) {
+                    return desc ? -1 : 1;
+                } else {
+                    return desc ? 1 : -1;
+                }
+            }
+        }
+    }
+
     public static float scale(float fvalue, int scale) {
         return (float) DoubleTools.scale(fvalue, scale);
     }
