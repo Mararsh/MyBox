@@ -28,7 +28,7 @@ License:    Apache License Version 2.0
     <children>
         <HBox alignment="CENTER" VBox.vgrow="NEVER">
             <children>
-                <Label contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%CopyFilterQuery" textAlignment="CENTER" VBox.vgrow="NEVER" />
+                <Label contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%Group" textAlignment="CENTER" VBox.vgrow="NEVER" />
             </children>
         </HBox>
         <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
@@ -182,6 +182,68 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
+                              <VBox fx:id="operationBox11" layoutX="15.0" layoutY="15.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                 <children>
+                                    <FlowPane fx:id="rowsPane1" hgap="2.0" vgap="2.0">
+                                       <children>
+                                          <Label text="%By" />
+                                          <RadioButton fx:id="selectedRadio1" mnemonicParsing="false" selected="true" text="%Values">
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="rowsGroup1" />
+                                             </toggleGroup>
+                                          </RadioButton>
+                                          <RadioButton fx:id="currentPageRadio1" mnemonicParsing="false" text="%Range" toggleGroup="$rowsGroup1" />
+                                          <RadioButton fx:id="allPagesRadio1" mnemonicParsing="false" text="%Count" toggleGroup="$rowsGroup1" />
+                                       </children>
+                                    </FlowPane>
+                                 </children>
+                              </VBox>
+                              <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                 <children>
+                                    <FlowPane hgap="2.0" vgap="2.0">
+                                       <children>
+                                          <Label text="%Group" />
+                                          <Button fx:id="selectAllColumnsButton1" mnemonicParsing="false" onAction="#selectAllColumns">
+                                             <graphic>
+                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/Red/iconSelectAll.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                          <Button fx:id="selectNoneColumnsButton1" mnemonicParsing="false" onAction="#selectNoneColumn">
+                                             <graphic>
+                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/Red/iconSelectNone.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                          <Label text="%StyleColumnComments" />
+                                       </children>
+                                    </FlowPane>
+                                    <FlowPane fx:id="columnsPane" hgap="2.0" vgap="2.0" />
+                                 </children>
+                              </VBox>
+                              <VBox fx:id="operationBox1" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                 <children>
+                                    <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+                                       <children>
+                                          <Label minWidth="-Infinity" text="%Column" />
+                                          <ComboBox fx:id="colSelector" prefWidth="200.0" />
+                                          <CheckBox fx:id="caseInsensitiveCheck" mnemonicParsing="false" selected="true" text="%CaseInsensitive" />
+                                       </children>
+                                    </FlowPane>
+                                    <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                       <children>
+                                          <Label minHeight="-Infinity" text="%DecimalScale" wrapText="true" />
+                                          <ComboBox fx:id="scaleSelector" editable="true" prefWidth="120.0" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
                                         <HBox fx:id="namesBox" spacing="2.0">
                                             <children>
                                                 <CheckBox fx:id="rowNumberCheck" mnemonicParsing="false" text="%RowNumber" />

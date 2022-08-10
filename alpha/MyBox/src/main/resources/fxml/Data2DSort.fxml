@@ -183,16 +183,10 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                                     <children>
+                                          <Label minHeight="-Infinity" minWidth="-Infinity" text="%DataSortLabel" />
+                              <fx:include fx:id="columns" source="ControlSelection.fxml" />
                                         <VBox fx:id="operationBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                             <children>
-                                                <Label minHeight="-Infinity" minWidth="-Infinity" text="%DataSortLabel" />
-                                                <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
-                                                    <children>
-                                                        <Label minWidth="-Infinity" text="%Column" />
-                                                        <ComboBox fx:id="colSelector" prefWidth="200.0" />
-                                                        <CheckBox fx:id="descendCheck" mnemonicParsing="false" text="%Descending" />
-                                                    </children>
-                                                </FlowPane>
                                                 <FlowPane fx:id="maxPane" hgap="2.0" vgap="2.0">
                                                     <children>
                                                         <Label minHeight="-Infinity" text="%MaxResultsTake" wrapText="true" />

@@ -32,7 +32,7 @@ public class ControlNewDataTable extends BaseController {
     protected long count;
 
     @FXML
-    protected ControlCheckBoxList columnsController;
+    protected ControlSelection columnsController;
     @FXML
     protected ToggleGroup keyGroup;
     @FXML
@@ -48,7 +48,7 @@ public class ControlNewDataTable extends BaseController {
         try {
             this.taskController = taskController;
 
-            columnsController.setParent(this);
+            columnsController.setParameters(this, message("Column"));
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -64,7 +64,7 @@ public class ControlNewDataTable extends BaseController {
         try {
             this.data2D = data2D;
             nameInput.setText(data2D.shortName());
-            columnsController.setValues(data2D.columnNames());
+            columnsController.loadNames(data2D.columnNames());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -77,7 +77,7 @@ public class ControlNewDataTable extends BaseController {
                 return;
             }
             this.columnIndices = columnIndices;
-            columnsController.clear();
+            columnsController.loadNames(null);
             if (columnIndices == null) {
                 return;
             }
@@ -85,7 +85,7 @@ public class ControlNewDataTable extends BaseController {
             for (int index : columnIndices) {
                 names.add(data2D.getColumns().get(index).getColumnName());
             }
-            columnsController.setValues(names);
+            columnsController.loadNames(names);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -97,7 +97,7 @@ public class ControlNewDataTable extends BaseController {
                 taskController.popError(message("InvalidParameters") + ": " + message("TableName"));
                 return false;
             }
-            if (!autoRadio.isSelected() && columnsController.checkedValues().isEmpty()) {
+            if (!autoRadio.isSelected() && columnsController.selectedNames().isEmpty()) {
                 taskController.popError(message("SelectToHandle") + ": " + message("PrimaryKey"));
                 return false;
             }
@@ -142,7 +142,7 @@ public class ControlNewDataTable extends BaseController {
             if (autoRadio.isSelected()) {
                 keys = null;
             } else {
-                keys = columnsController.checkedValues();
+                keys = columnsController.selectedNames();
             }
             dataTable = Data2D.makeTable(nameInput.getText().trim(), sourceColumns, keys);
             if (dataTable == null) {

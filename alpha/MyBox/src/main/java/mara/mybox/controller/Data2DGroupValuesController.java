@@ -3,8 +3,11 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
@@ -17,10 +20,10 @@ import org.apache.commons.math3.stat.Frequency;
 
 /**
  * @Author Mara
- * @CreateDate 2022-4-15
+ * @CreateDate 2022-8-10
  * @License Apache License Version 2.0
  */
-public class Data2DFrequencyController extends BaseData2DHandleController {
+public class Data2DGroupValuesController extends BaseData2DHandleController {
 
     protected List<String> handledNames;
     protected int freCol;
@@ -30,9 +33,11 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
     protected Frequency frequency;
 
     @FXML
+    protected ComboBox<String> colSelector;
+    @FXML
     protected CheckBox caseInsensitiveCheck;
 
-    public Data2DFrequencyController() {
+    public Data2DGroupValuesController() {
         baseTitle = message("FrequencyDistributions");
     }
 
@@ -43,6 +48,44 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
 
             noColumnSelection(true);
 
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
+    public void setParameters(ControlData2DEditTable tableController) {
+        try {
+            super.setParameters(tableController);
+
+            colSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    checkOptions();
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
+    public void refreshControls() {
+        try {
+            super.refreshControls();
+            List<String> names = tableController.data2D.columnNames();
+            if (names == null || names.isEmpty()) {
+                colSelector.getItems().clear();
+                return;
+            }
+            String selectedCol = colSelector.getSelectionModel().getSelectedItem();
+            colSelector.getItems().setAll(names);
+            if (selectedCol != null && names.contains(selectedCol)) {
+                colSelector.setValue(selectedCol);
+            } else {
+                colSelector.getSelectionModel().select(0);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -166,9 +209,9 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
     /*
         static
      */
-    public static Data2DFrequencyController open(ControlData2DEditTable tableController) {
+    public static Data2DGroupValuesController open(ControlData2DEditTable tableController) {
         try {
-            Data2DFrequencyController controller = (Data2DFrequencyController) WindowTools.openChildStage(
+            Data2DGroupValuesController controller = (Data2DGroupValuesController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DFrequencyFxml, false);
             controller.setParameters(tableController);
             controller.requestMouse();

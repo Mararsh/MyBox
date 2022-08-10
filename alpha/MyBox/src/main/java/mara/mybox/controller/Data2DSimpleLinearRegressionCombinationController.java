@@ -12,7 +12,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.layout.FlowPane;
 import mara.mybox.calculation.SimpleLinearRegression;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
@@ -34,8 +33,6 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
     protected double alpha;
     protected ObservableList<List<String>> results;
 
-    @FXML
-    protected FlowPane columnsPane;
     @FXML
     protected CheckBox interceptCheck;
     @FXML

@@ -14,6 +14,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.FlowPane;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Operations.ObjectType;
 import mara.mybox.data2d.DataFileCSV;
@@ -54,6 +55,10 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             skipNonnumericRadio, zeroNonnumericRadio;
     @FXML
     protected ImageView tableTipsView;
+    @FXML
+    protected FlowPane columnsPane;
+    @FXML
+    protected ComboBox<String> colSelector;
 
     public BaseData2DHandleController() {
         baseTitle = message("Handle");
@@ -103,6 +108,15 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                 } else {
                     zeroNonnumericRadio.fire();
                 }
+            }
+
+            if (colSelector != null) {
+                colSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue ov, String oldValue, String newValue) {
+                        checkOptions();
+                    }
+                });
             }
 
         } catch (Exception e) {
@@ -182,6 +196,37 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
     public void refreshControls() {
         try {
             super.refreshControls();
+
+            if (colSelector != null) {
+                List<String> names = data2D.columnNames();
+                if (names == null || names.isEmpty()) {
+                    colSelector.getItems().clear();
+                    return;
+                }
+                String selectedCol = colSelector.getSelectionModel().getSelectedItem();
+                isSettingValues = true;
+                colSelector.getItems().setAll(names);
+                if (selectedCol != null && names.contains(selectedCol)) {
+                    colSelector.setValue(selectedCol);
+                } else {
+                    colSelector.getSelectionModel().select(0);
+                }
+                isSettingValues = false;
+            }
+
+            if (columnsPane != null) {
+                List<String> names = data2D.columnNames();
+                if (names == null || names.isEmpty()) {
+                    return;
+                }
+                isSettingValues = true;
+                columnsPane.getChildren().clear();
+                for (String name : names) {
+                    columnsPane.getChildren().add(new CheckBox(name));
+                }
+                isSettingValues = false;
+            }
+
             checkOptions();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

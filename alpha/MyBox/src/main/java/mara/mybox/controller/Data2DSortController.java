@@ -7,8 +7,6 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
@@ -33,9 +31,7 @@ public class Data2DSortController extends BaseData2DHandleController {
     protected String orderName;
 
     @FXML
-    protected ComboBox<String> colSelector;
-    @FXML
-    protected CheckBox descendCheck;
+    protected ControlSelection columnsController;
     @FXML
     protected TextField maxInput;
 
@@ -73,22 +69,7 @@ public class Data2DSortController extends BaseData2DHandleController {
                 }
             });
 
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void setParameters(ControlData2DEditTable tableController) {
-        try {
-            super.setParameters(tableController);
-
-            colSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    checkOptions();
-                }
-            });
+            columnsController.setParameters(this, message("Column"));
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -99,19 +80,17 @@ public class Data2DSortController extends BaseData2DHandleController {
     public void refreshControls() {
         try {
             super.refreshControls();
-
-            List<String> names = tableController.data2D.columnNames();
-            if (names == null || names.isEmpty()) {
-                colSelector.getItems().clear();
+            if (!data2D.isValid()) {
+                columnsController.loadNames(null);
                 return;
             }
-            String selectedCol = colSelector.getSelectionModel().getSelectedItem();
-            colSelector.getItems().setAll(names);
-            if (selectedCol != null && names.contains(selectedCol)) {
-                colSelector.setValue(selectedCol);
-            } else {
-                colSelector.getSelectionModel().select(0);
+            List<String> orders = new ArrayList<>();
+            for (Data2DColumn column : data2D.columns) {
+                String name = column.getColumnName();
+                orders.add(name + " ASC");
+                orders.add(name + " DESC");
             }
+            columnsController.loadNames(orders);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

@@ -36,7 +36,7 @@ License:    Apache License Version 2.0
               </toggleGroup>
           </RadioButton>
           <RadioButton mnemonicParsing="false" text="%SelectPrimaryColumns" toggleGroup="$keyGroup" />
-        <fx:include fx:id="columns" source="ControlCheckBoxList.fxml" />
+      <fx:include fx:id="columns" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlSelection.fxml" VBox.vgrow="ALWAYS" />
         <HBox alignment="CENTER_LEFT" spacing="2.0">
             <children>
             <Hyperlink maxWidth="1.7976931348623157E308" minHeight="-Infinity" onAction="#sqlLink" text="SQL identifiers" wrapText="true" HBox.hgrow="ALWAYS" />

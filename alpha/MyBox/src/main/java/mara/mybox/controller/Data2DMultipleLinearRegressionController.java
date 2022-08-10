@@ -17,7 +17,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import mara.mybox.calculation.SimpleLinearRegression;
 import mara.mybox.data.StringTable;
@@ -53,8 +52,6 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DChartCon
     protected List<Data2DColumn> residualColumns;
     protected Map<String, String> residualPalette;
 
-    @FXML
-    protected FlowPane columnsPane;
     @FXML
     protected CheckBox interceptCheck, displayAllCheck, textCheck, fittedPointsCheck, fittedLineCheck,
             residualStdCheck;
@@ -209,15 +206,11 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DChartCon
     @Override
     public void makeOptions() {
         try {
-            List<String> names = tableController.data2D.columnNames();
+            List<String> names = data2D.columnNames();
             if (names == null || names.isEmpty()) {
                 return;
             }
             isSettingValues = true;
-            columnsPane.getChildren().clear();
-            for (String name : names) {
-                columnsPane.getChildren().add(new CheckBox(name));
-            }
             selectedValue = valueColumnSelector.getSelectionModel().getSelectedItem();
             valueColumnSelector.getItems().setAll(names);
             if (selectedValue != null && names.contains(selectedValue)) {

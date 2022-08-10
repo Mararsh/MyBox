@@ -64,7 +64,7 @@ public class ControlOCROptions extends BaseController {
     @FXML
     protected Label resultLabel, originalViewLabel, currentOCRFilesLabel;
     @FXML
-    protected ControlCheckBoxList languageListController;
+    protected ControlSelection languagesController;
     @FXML
     protected ComboBox<String> psmSelector, regionSelector, wordSelector;
     @FXML
@@ -124,8 +124,8 @@ public class ControlOCROptions extends BaseController {
                 }
             });
 
-            languageListController.setParent(this);
-            languageListController.checkedNotify.addListener(new ChangeListener<Boolean>() {
+            languagesController.setParameters(this, message("Language"));
+            languagesController.selectedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldV, Boolean newV) {
                     checkLanguages();
@@ -253,7 +253,7 @@ public class ControlOCROptions extends BaseController {
     public void setLanguages() {
         try {
             List<String> langs = OCRTools.namesList(tesseractVersion > 3);
-            languageListController.setValues(langs);
+            languagesController.loadNames(langs);
 
             selectedLanguages = UserConfig.getString("ImageOCRLanguages", null);
             if (selectedLanguages != null && !selectedLanguages.isEmpty()) {
@@ -263,7 +263,6 @@ public class ControlOCROptions extends BaseController {
                 String[] selected = selectedLanguages.split("\\+");
                 Map<String, String> codes = OCRTools.codeName();
                 List<String> selectedNames = new ArrayList<>();
-                List<Integer> selectedIndices = new ArrayList<>();
                 for (String code : selected) {
                     String name = codes.get(code);
                     if (name == null) {
@@ -271,12 +270,7 @@ public class ControlOCROptions extends BaseController {
                     }
                     selectedNames.add(name);
                 }
-                for (int i = 0; i < langs.size(); i++) {
-                    if (selectedNames.contains(langs.get(i))) {
-                        selectedIndices.add(i);
-                    }
-                }
-                languageListController.setCheckIndices(selectedIndices);
+                languagesController.selectNames(selectedNames);
                 isSettingValues = false;
             } else {
                 currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), message("NoData")));
@@ -393,7 +387,7 @@ public class ControlOCROptions extends BaseController {
         }
         try {
             selectedLanguages = null;
-            List<String> langsList = languageListController.checkedOrderedValues();
+            List<String> langsList = languagesController.selectedNames();
             if (langsList != null) {
                 Map<String, String> names = OCRTools.nameCode();
                 for (String name : langsList) {
