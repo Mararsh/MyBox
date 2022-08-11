@@ -247,8 +247,9 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         this.filter = filter;
     }
 
-    public void setStyles(List<Data2DStyle> styles) {
+    public Data2D_Attributes setStyles(List<Data2DStyle> styles) {
         this.styles = styles;
+        return this;
     }
 
     public SingletonTask getTask() {

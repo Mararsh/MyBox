@@ -614,14 +614,33 @@ public class DataTable extends Data2D {
     }
 
     // Based on results of "Data2D_Convert.toTmpTable(...)"
-    public DataFileCSV sort(SingletonTask task, String orderName, boolean desc, int maxData) {
-        if (orderName == null || orderName.isBlank() || sourceColumns == null) {
+    public DataFileCSV sort(SingletonTask task, List<String> orders, int maxData) {
+        if (orders == null || orders.isEmpty() || sourceColumns == null) {
             return null;
         }
+
         File csvFile = tmpCSV("sort");
-        String sql = "SELECT * FROM " + sheet + " ORDER BY " + orderName + (desc ? " DESC" : "");
-        if (maxData > 0) {
-            sql += " FETCH FIRST " + maxData + " ROWS ONLY";
+        String sql = null;
+        try {
+            for (String order : orders) {
+                String name = mappedColumnName(order.substring(0, order.length() - 5))
+                        + order.substring(order.length() - 5);
+                if (sql == null) {
+                    sql = name;
+                } else {
+                    sql += ", " + name;
+                }
+            }
+            sql = "SELECT * FROM " + sheet + " ORDER BY " + sql;
+            if (maxData > 0) {
+                sql += " FETCH FIRST " + maxData + " ROWS ONLY";
+            }
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e.toString());
+            return null;
         }
         try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile);
                  Connection conn = DerbyBase.getConnection();
@@ -1029,6 +1048,38 @@ public class DataTable extends Data2D {
             return targetData;
         } else {
             return null;
+        }
+    }
+
+    // Based on results of "Data2D_Convert.toTmpTable(...)"
+    // first column is id and rows do not include ids.
+    public long save(SingletonTask task, Connection conn, List<List<String>> rows) {
+        try {
+            if (conn == null || rows == null || rows.isEmpty()) {
+                return -1;
+            }
+            int count = 0;
+            conn.setAutoCommit(false);
+            for (List<String> row : rows) {
+                Data2DRow data2DRow = tableData2D.newRow();
+                for (int i = 1; i < columns.size(); i++) {
+                    Data2DColumn column = columns.get(i);
+                    data2DRow.setColumnValue(column.getColumnName(), column.fromString(row.get(i - 1)));
+                }
+                tableData2D.insertData(conn, data2DRow);
+                if (++count % DerbyBase.BatchSize == 0) {
+                    conn.commit();
+                }
+            }
+            conn.commit();
+            conn.setAutoCommit(true);
+            return count;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return -4;
         }
     }
 

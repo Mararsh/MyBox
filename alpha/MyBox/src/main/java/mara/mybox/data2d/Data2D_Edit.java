@@ -125,7 +125,13 @@ public abstract class Data2D_Edit extends Data2D_Filter {
                         column.setAuto(false);
                         column.setIsPrimaryKey(false);
                     }
-                    if (isMatrix()) {
+                    if (initColumnTypes != null) {
+                        try {
+                            column.setType(initColumnTypes.get(i));
+                        } catch (Exception e) {
+                            MyBoxLog.debug(e);
+                        }
+                    } else if (isMatrix()) {
                         column.setType(ColumnDefinition.ColumnType.Double);
                     }
                 }
@@ -142,6 +148,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
                     tableData2DStyle.clear(conn, d2did);
                 }
             }
+            initColumnTypes = null;
             return true;
         } catch (Exception e) {
             if (task != null) {

@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -28,6 +29,8 @@ import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataClipboard;
+import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
@@ -573,7 +576,7 @@ public class ControlData2D extends BaseController {
         }
     }
 
-    public void loadCSVFile(File csvFile) {
+    public void loadCSVFile(File csvFile, List<ColumnType> columnTypes) {
         try {
             if (csvFile == null || !csvFile.exists()) {
                 popError("Nonexistent");
@@ -583,7 +586,9 @@ public class ControlData2D extends BaseController {
                 return;
             }
             setData(Data2D.create(type));
-            tableController.loadCSVFile(csvFile);
+            DataFileCSV csvData = new DataFileCSV(csvFile);
+            csvData.setInitColumnTypes(columnTypes);
+            tableController.loadCSVData(csvData);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -933,7 +938,11 @@ public class ControlData2D extends BaseController {
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaPopulation_" + lang + ".csv",
                         "data", "ChinaPopulation_" + lang + ".csv", true);
-                loadCSVFile(file);
+                List<ColumnType> columnTypes = Arrays.asList(
+                        ColumnType.Integer, ColumnType.Double, ColumnType.Double,
+                        ColumnType.Double, ColumnType.Double, ColumnType.Double
+                );
+                loadCSVFile(file, columnTypes);
             });
             chinaMenu.getItems().add(menu);
 
@@ -941,7 +950,16 @@ public class ControlData2D extends BaseController {
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaCensus_" + lang + ".csv",
                         "data", "ChinaCensus_" + lang + ".csv", true);
-                loadCSVFile(file);
+                List<ColumnType> columnTypes = Arrays.asList(
+                        ColumnType.Integer, ColumnType.Double, ColumnType.Double, ColumnType.Double,
+                        ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double,
+                        ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double,
+                        ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double,
+                        ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double,
+                        ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double,
+                        ColumnType.Double
+                );
+                loadCSVFile(file, columnTypes);
             });
             chinaMenu.getItems().add(menu);
 
@@ -949,7 +967,11 @@ public class ControlData2D extends BaseController {
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaGDP_" + lang + ".csv",
                         "data", "ChinaGDP_" + lang + ".csv", true);
-                loadCSVFile(file);
+                List<ColumnType> columnTypes = Arrays.asList(
+                        ColumnType.Integer, ColumnType.Double, ColumnType.Double, ColumnType.Double,
+                        ColumnType.Double, ColumnType.Double, ColumnType.Double
+                );
+                loadCSVFile(file, columnTypes);
             });
             chinaMenu.getItems().add(menu);
 
@@ -957,7 +979,11 @@ public class ControlData2D extends BaseController {
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaCPI_" + lang + ".csv",
                         "data", "ChinaCPI_" + lang + ".csv", true);
-                loadCSVFile(file);
+                List<ColumnType> columnTypes = Arrays.asList(
+                        ColumnType.Integer, ColumnType.Double, ColumnType.Double, ColumnType.Double,
+                        ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double
+                );
+                loadCSVFile(file, columnTypes);
             });
             chinaMenu.getItems().add(menu);
 
@@ -965,7 +991,12 @@ public class ControlData2D extends BaseController {
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaFoods_" + lang + ".csv",
                         "data", "ChinaFoods_" + lang + ".csv", true);
-                loadCSVFile(file);
+                List<ColumnType> columnTypes = Arrays.asList(
+                        ColumnType.String, ColumnType.Double, ColumnType.Double, ColumnType.Double,
+                        ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double,
+                        ColumnType.Double
+                );
+                loadCSVFile(file, columnTypes);
             });
             chinaMenu.getItems().add(menu);
 
@@ -973,7 +1004,11 @@ public class ControlData2D extends BaseController {
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaGraduates_" + lang + ".csv",
                         "data", "ChinaGraduates_" + lang + ".csv", true);
-                loadCSVFile(file);
+                List<ColumnType> columnTypes = Arrays.asList(
+                        ColumnType.Integer, ColumnType.Double, ColumnType.Double, ColumnType.Double,
+                        ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double
+                );
+                loadCSVFile(file, columnTypes);
             });
             chinaMenu.getItems().add(menu);
 
@@ -981,7 +1016,12 @@ public class ControlData2D extends BaseController {
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaMuseums_" + lang + ".csv",
                         "data", "ChinaMuseums_" + lang + ".csv", true);
-                loadCSVFile(file);
+                List<ColumnType> columnTypes = Arrays.asList(
+                        ColumnType.Integer, ColumnType.Long, ColumnType.Long, ColumnType.Long,
+                        ColumnType.Long, ColumnType.Long, ColumnType.Long, ColumnType.Long,
+                        ColumnType.Long, ColumnType.Double
+                );
+                loadCSVFile(file, columnTypes);
             });
             chinaMenu.getItems().add(menu);
 
@@ -989,7 +1029,12 @@ public class ControlData2D extends BaseController {
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaHealthPersonnel_" + lang + ".csv",
                         "data", "ChinaHealthPersonnel_" + lang + ".csv", true);
-                loadCSVFile(file);
+                List<ColumnType> columnTypes = Arrays.asList(
+                        ColumnType.Integer, ColumnType.Double, ColumnType.Double, ColumnType.Double,
+                        ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double,
+                        ColumnType.Double, ColumnType.Double, ColumnType.Double
+                );
+                loadCSVFile(file, columnTypes);
             });
             chinaMenu.getItems().add(menu);
 
@@ -997,7 +1042,11 @@ public class ControlData2D extends BaseController {
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaMarriage_" + lang + ".csv",
                         "data", "ChinaMarriage_" + lang + ".csv", true);
-                loadCSVFile(file);
+                List<ColumnType> columnTypes = Arrays.asList(
+                        ColumnType.Integer, ColumnType.Double, ColumnType.Double, ColumnType.Double,
+                        ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double
+                );
+                loadCSVFile(file, columnTypes);
             });
             chinaMenu.getItems().add(menu);
 
@@ -1005,7 +1054,11 @@ public class ControlData2D extends BaseController {
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaSportWorldChampions_" + lang + ".csv",
                         "data", "ChinaSportWorldChampions_" + lang + ".csv", true);
-                loadCSVFile(file);
+                List<ColumnType> columnTypes = Arrays.asList(
+                        ColumnType.Integer, ColumnType.Integer, ColumnType.Integer, ColumnType.Integer,
+                        ColumnType.Integer, ColumnType.Integer, ColumnType.Integer
+                );
+                loadCSVFile(file, columnTypes);
             });
             chinaMenu.getItems().add(menu);
 
@@ -1013,7 +1066,12 @@ public class ControlData2D extends BaseController {
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaCrimesFiledByPolice_" + lang + ".csv",
                         "data", "ChinaCrimesFiledByPolice_" + lang + ".csv", true);
-                loadCSVFile(file);
+                List<ColumnType> columnTypes = Arrays.asList(
+                        ColumnType.Integer, ColumnType.Integer, ColumnType.Integer, ColumnType.Integer,
+                        ColumnType.Integer, ColumnType.Integer, ColumnType.Integer, ColumnType.Integer,
+                        ColumnType.Integer, ColumnType.Integer, ColumnType.Integer, ColumnType.Integer
+                );
+                loadCSVFile(file, columnTypes);
             });
             chinaMenu.getItems().add(menu);
 
@@ -1021,7 +1079,13 @@ public class ControlData2D extends BaseController {
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaCrimesFiledByProcuratorate_" + lang + ".csv",
                         "data", "ChinaCrimesFiledByProcuratorate_" + lang + ".csv", true);
-                loadCSVFile(file);
+                List<ColumnType> columnTypes = Arrays.asList(
+                        ColumnType.Integer, ColumnType.Integer, ColumnType.Integer, ColumnType.Integer,
+                        ColumnType.Integer, ColumnType.Integer, ColumnType.Integer, ColumnType.Integer,
+                        ColumnType.Integer, ColumnType.Integer, ColumnType.Integer, ColumnType.Integer,
+                        ColumnType.Integer, ColumnType.Integer
+                );
+                loadCSVFile(file, columnTypes);
             });
             chinaMenu.getItems().add(menu);
 
@@ -1042,7 +1106,10 @@ public class ControlData2D extends BaseController {
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/IncomeHappiness_" + lang + ".csv",
                         "data", "IncomeHappiness_" + lang + ".csv", true);
-                loadCSVFile(file);
+                List<ColumnType> columnTypes = Arrays.asList(
+                        ColumnType.Double, ColumnType.Double
+                );
+                loadCSVFile(file, columnTypes);
             });
             regressionMenu.getItems().add(menu);
 
@@ -1051,7 +1118,10 @@ public class ControlData2D extends BaseController {
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ExperienceSalary_" + lang + ".csv",
                         "data", "ExperienceSalary_" + lang + ".csv", true);
-                loadCSVFile(file);
+                List<ColumnType> columnTypes = Arrays.asList(
+                        ColumnType.Double, ColumnType.Double
+                );
+                loadCSVFile(file, columnTypes);
             });
             regressionMenu.getItems().add(menu);
 
@@ -1060,7 +1130,11 @@ public class ControlData2D extends BaseController {
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/IrisSpecies_" + lang + ".csv",
                         "data", "IrisSpecies_" + lang + ".csv", true);
-                loadCSVFile(file);
+                List<ColumnType> columnTypes = Arrays.asList(
+                        ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double,
+                        ColumnType.String
+                );
+                loadCSVFile(file, columnTypes);
             });
             regressionMenu.getItems().add(menu);
 
@@ -1069,7 +1143,13 @@ public class ControlData2D extends BaseController {
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/BostonHousingPrices_" + lang + ".csv",
                         "data", "BostonHousingPrices_" + lang + ".csv", true);
-                loadCSVFile(file);
+                List<ColumnType> columnTypes = Arrays.asList(
+                        ColumnType.String, ColumnType.Double, ColumnType.Double, ColumnType.Double,
+                        ColumnType.Double, ColumnType.Double, ColumnType.String, ColumnType.Double,
+                        ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double,
+                        ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double
+                );
+                loadCSVFile(file, columnTypes);
             });
             regressionMenu.getItems().add(menu);
             return items;

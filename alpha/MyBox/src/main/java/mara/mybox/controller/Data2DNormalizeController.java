@@ -26,12 +26,6 @@ public class Data2DNormalizeController extends BaseData2DHandleController {
     }
 
     @Override
-    public boolean checkOptions() {
-        targetController.setNotInTable(isAllPages());
-        return super.checkOptions();
-    }
-
-    @Override
     public boolean handleRows() {
         try {
             filteredRowsIndices = filteredRowsIndices();

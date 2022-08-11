@@ -51,7 +51,6 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
     @Override
     public boolean checkOptions() {
         boolean ok = super.checkOptions();
-        targetController.setNotInTable(isAllPages());
         ok = ok && prepareRows();
         okButton.setDisable(!ok);
         return ok;

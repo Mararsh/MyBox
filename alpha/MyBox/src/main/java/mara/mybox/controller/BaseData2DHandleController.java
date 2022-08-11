@@ -275,18 +275,25 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             okButton.setDisable(true);
             return false;
         }
-        if (targetController != null && targetController.checkTarget() == null) {
-            if (infoLabel != null) {
-                infoLabel.setText(message("SelectToHandle"));
+        if (targetController != null) {
+            targetController.setNotInTable(isAllPages());
+            if (targetController.checkTarget() == null) {
+                if (infoLabel != null) {
+                    infoLabel.setText(message("SelectToHandle"));
+                }
+                okButton.setDisable(true);
+                return false;
             }
-            okButton.setDisable(true);
-            return false;
         }
         okButton.setDisable(false);
         return true;
     }
 
     public boolean initData() {
+        outputColumns = checkedColumns;
+        if (showRowNumber()) {
+            outputColumns.add(0, new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
+        }
         return true;
     }
 
@@ -337,10 +344,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
 
     protected void startOperation() {
         try {
-            outputColumns = checkedColumns;
-            if (showRowNumber()) {
-                outputColumns.add(0, new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
-            }
             if (isAllPages()) {
                 handleAllTask();
             } else {

@@ -81,12 +81,6 @@ public class Data2DPercentageController extends BaseData2DHandleController {
     }
 
     @Override
-    public boolean checkOptions() {
-        targetController.setNotInTable(isAllPages());
-        return super.checkOptions();
-    }
-
-    @Override
     protected void startOperation() {
         try {
             if (!prepare()) {

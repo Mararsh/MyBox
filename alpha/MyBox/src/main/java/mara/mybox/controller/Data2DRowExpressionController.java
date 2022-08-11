@@ -62,7 +62,6 @@ public class Data2DRowExpressionController extends BaseData2DHandleController {
 
     @Override
     public boolean checkOptions() {
-        targetController.setNotInTable(isAllPages());
         boolean ok = expressionController.checkExpression(isAllPages());
         if (!ok && data2D.getError() != null) {
             infoLabel.setText(message("Invalid") + ": " + message("RowExpression") + "\n"

@@ -29,6 +29,7 @@ import mara.mybox.data2d.DataFilter;
 import mara.mybox.data2d.DataMatrix;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
@@ -165,6 +166,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             data2D.resetData();
             data2D.cloneAll(def);
         }
+        MyBoxLog.console(data2D.getInitColumnTypes());
         readDefinition();
     }
 
@@ -187,10 +189,12 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             protected boolean handle() {
                 try ( Connection conn = DerbyBase.getConnection()) {
                     data2D.startTask(task, null);
+                    List<ColumnDefinition.ColumnType> types = data2D.getInitColumnTypes();
                     data2D.readDataDefinition(conn);
                     if (isCancelled()) {
                         return false;
                     }
+                    data2D.setInitColumnTypes(types);
                     return data2D.readColumns(conn);
                 } catch (Exception e) {
                     error = e.toString();
@@ -357,13 +361,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         }
     }
 
-    public void loadCSVFile(File csvFile) {
-        if (csvFile == null || !csvFile.exists()) {
-            return;
-        }
-        loadCSVData(new DataFileCSV(csvFile));
-    }
-
     public void loadCSVData(DataFileCSV csvData) {
         if (csvData == null || csvData.getFile() == null || !csvData.getFile().exists()) {
             return;
@@ -377,9 +374,11 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                     if (data2D.getType() == Data2D.Type.Texts) {
                         targetData = new DataFileText();
                         targetData.setColumns(csvData.getColumns())
+                                .setInitColumnTypes(csvData.getInitColumnTypes())
                                 .setFile(csvData.getFile())
                                 .setDelimiter(csvData.getDelimiter())
                                 .setCharset(csvData.getCharset());
+                        MyBoxLog.console(targetData.getInitColumnTypes());
                         targetData.saveAttributes();
                         recordFileWritten(targetData.getFile(), VisitHistory.FileType.Text);
                     } else {
@@ -431,6 +430,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
 
             @Override
             protected void whenSucceeded() {
+                MyBoxLog.console(targetData.getInitColumnTypes());
                 loadDef(targetData);
                 if (dataController != null && dataController.manageController != null) {
                     dataController.manageController.refreshAction();

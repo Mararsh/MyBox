@@ -107,6 +107,21 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         }
     }
 
+    public DataTable toTmpTable(SingletonTask task, List<Integer> cols, List<List<String>> rows,
+            boolean includeRowNumber, boolean forStatistic) {
+        try ( Connection conn = DerbyBase.getConnection()) {
+            DataTable dataTable = createTmpTable(task, conn, tmpTableName(shortName()), cols, includeRowNumber, forStatistic);
+            dataTable.save(task, conn, rows);
+            return dataTable;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public DataTable createTmpTable(SingletonTask task, Connection conn,
             String targetName, List<Integer> cols, boolean includeRowNumber, boolean forStatistic) {
         try {
