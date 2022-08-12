@@ -36,7 +36,7 @@ public class ControlNewDataTable extends BaseController {
     @FXML
     protected ToggleGroup keyGroup;
     @FXML
-    protected TextField nameInput;
+    protected TextField nameInput, idInput;
     @FXML
     protected RadioButton autoRadio;
 
@@ -63,7 +63,8 @@ public class ControlNewDataTable extends BaseController {
     public void setData(Data2D data2D) {
         try {
             this.data2D = data2D;
-            nameInput.setText(data2D.shortName());
+            nameInput.setText(data2D.dataName());
+            idInput.setText("id");
             columnsController.loadNames(data2D.columnNames());
 
         } catch (Exception e) {
@@ -97,7 +98,12 @@ public class ControlNewDataTable extends BaseController {
                 taskController.popError(message("InvalidParameters") + ": " + message("TableName"));
                 return false;
             }
-            if (!autoRadio.isSelected() && columnsController.selectedNames().isEmpty()) {
+            if (autoRadio.isSelected()) {
+                if (idInput.getText().isBlank()) {
+                    taskController.popError(message("InvalidParameters") + ": " + message("ID"));
+                    return false;
+                }
+            } else if (columnsController.selectedNames().isEmpty()) {
                 taskController.popError(message("SelectToHandle") + ": " + message("PrimaryKey"));
                 return false;
             }
@@ -144,7 +150,7 @@ public class ControlNewDataTable extends BaseController {
             } else {
                 keys = columnsController.selectedNames();
             }
-            dataTable = Data2D.makeTable(nameInput.getText().trim(), sourceColumns, keys);
+            dataTable = Data2D.makeTable(nameInput.getText().trim(), sourceColumns, keys, idInput.getText().trim());
             if (dataTable == null) {
                 return false;
             }

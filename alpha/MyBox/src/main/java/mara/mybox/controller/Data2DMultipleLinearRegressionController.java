@@ -312,7 +312,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DChartCon
                     outputData = data2D.allRows(dataColsIndices, true);
                     regress(outputData);
                 } else {
-                    regressionFile = data2D.simpleLinearRegression(dataColsIndices, simpleRegression, true);
+                    regressionFile = data2D.simpleLinearRegression(null, dataColsIndices, simpleRegression, true);
                     outputData = filtered(dataColsIndices, true);
                 }
             } else {
@@ -533,7 +533,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DChartCon
             if (regressionFile != null) {
                 regressionDataController.loadDef(regressionFile);
             } else {
-                regressionDataController.loadTmpData(simpleRegression.getColumns(), regressionData);
+                regressionDataController.loadTmpData(null, simpleRegression.getColumns(), regressionData);
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);

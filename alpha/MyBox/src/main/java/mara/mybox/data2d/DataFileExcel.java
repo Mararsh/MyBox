@@ -597,7 +597,7 @@ public class DataFileExcel extends DataFile {
     }
 
     @Override
-    public long delete(boolean errorContinue) {
+    public long deleteRows(boolean errorContinue) {
         if (file == null || !file.exists() || file.length() == 0) {
             return -1;
         }

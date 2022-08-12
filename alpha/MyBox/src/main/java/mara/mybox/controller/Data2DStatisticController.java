@@ -562,7 +562,8 @@ public class Data2DStatisticController extends BaseData2DHandleController {
         if (rowsRadio.isSelected() && categorysCol >= 0) {
             colsIndices.add(0, categorysCol);
         }
-        return data2D.statisticByRows(calculation.getOutputNames(), colsIndices, calculation);
+        return data2D.statisticByRows(targetController.name(),
+                calculation.getOutputNames(), colsIndices, calculation);
     }
 
     /*

@@ -1076,7 +1076,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                DataFileCSVController.open(Data2DColumn.toColumns(names), data);
+                DataFileCSVController.open(null, Data2DColumn.toColumns(names), data);
             }
         };
         start(dataTask, false, message("LoadingTableData"));

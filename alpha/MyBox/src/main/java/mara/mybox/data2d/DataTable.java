@@ -539,7 +539,7 @@ public class DataTable extends Data2D {
     }
 
     @Override
-    public long delete(boolean errorContinue) {
+    public long deleteRows(boolean errorContinue) {
         if (!needFilter()) {
             return clearData();
         } else {
@@ -594,6 +594,7 @@ public class DataTable extends Data2D {
         return tableData2D.clearData();
     }
 
+    @Override
     public int drop() {
         if (sheet == null || sheet.isBlank()) {
             return -4;
@@ -614,12 +615,12 @@ public class DataTable extends Data2D {
     }
 
     // Based on results of "Data2D_Convert.toTmpTable(...)"
-    public DataFileCSV sort(SingletonTask task, List<String> orders, int maxData) {
+    public DataFileCSV sort(String dname, SingletonTask task, List<String> orders, int maxData) {
         if (orders == null || orders.isEmpty() || sourceColumns == null) {
             return null;
         }
 
-        File csvFile = tmpCSV("sort");
+        File csvFile = tmpFile(dname, "sort", ".csv");
         String sql = null;
         try {
             for (String order : orders) {
@@ -660,7 +661,8 @@ public class DataTable extends Data2D {
                 rowIndex++;
             }
             DataFileCSV targetData = new DataFileCSV();
-            targetData.setColumns(sourceColumns).setFile(csvFile)
+            targetData.setColumns(sourceColumns)
+                    .setFile(csvFile).setDataName(dname)
                     .setCharset(Charset.forName("UTF-8"))
                     .setDelimiter(",").setHasHeader(true)
                     .setColsNumber(sourceColumns.size()).setRowsNumber(rowIndex);
@@ -675,11 +677,11 @@ public class DataTable extends Data2D {
     }
 
     // Based on results of "Data2D_Convert.toTmpTable(...)"
-    public DataFileCSV transpose(SingletonTask task, boolean showColNames, boolean firstColumnAsNames) {
+    public DataFileCSV transpose(String dname, SingletonTask task, boolean showColNames, boolean firstColumnAsNames) {
         if (sourceColumns == null) {
             return null;
         }
-        File csvFile = tmpCSV("transpose");
+        File csvFile = tmpFile(dname, "transpose", ".csv");
         try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile);
                  Connection conn = DerbyBase.getConnection()) {
             String idName = columns.get(0).getColumnName();
@@ -757,7 +759,8 @@ public class DataTable extends Data2D {
                 rNumber++;
             }
             DataFileCSV targetData = new DataFileCSV();
-            targetData.setColumns(targetColumns).setFile(csvFile)
+            targetData.setColumns(targetColumns)
+                    .setFile(csvFile).setDataName(dname)
                     .setCharset(Charset.forName("UTF-8"))
                     .setDelimiter(",").setHasHeader(true)
                     .setColsNumber(targetColumns.size()).setRowsNumber(rNumber);
@@ -771,7 +774,7 @@ public class DataTable extends Data2D {
         }
     }
 
-    public DataFileCSV query(String query, boolean showRowNumber) {
+    public DataFileCSV query(String dname, String query, boolean showRowNumber) {
         if (query == null || query.isBlank()) {
             return null;
         }
@@ -780,7 +783,7 @@ public class DataTable extends Data2D {
                  PreparedStatement statement = conn.prepareStatement(query);
                  ResultSet results = statement.executeQuery()) {
             if (results != null) {
-                targetData = DataFileCSV.save(task, results, showRowNumber);
+                targetData = DataFileCSV.save(dname, task, results, showRowNumber);
             }
         } catch (Exception e) {
             if (task != null) {
@@ -975,14 +978,14 @@ public class DataTable extends Data2D {
     }
 
     @Override
-    public DataFileCSV frequency(Frequency frequency, String colName, int col, int scale) {
+    public DataFileCSV frequency(String dname, Frequency frequency, String colName, int col, int scale) {
         if (frequency == null || colName == null || col < 0) {
             return null;
         }
         if (needFilter()) {
-            return super.frequency(frequency, colName, col, scale);
+            return super.frequency(dname, frequency, colName, col, scale);
         }
-        File csvFile = tmpCSV("frequency");
+        File csvFile = tmpFile(dname, "frequency", ".csv");
         int total = 0, dNumber = 0;
         try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile);
                  Connection conn = DerbyBase.getConnection()) {
@@ -1042,7 +1045,8 @@ public class DataTable extends Data2D {
         }
         if (csvFile != null && csvFile.exists()) {
             DataFileCSV targetData = new DataFileCSV();
-            targetData.setFile(csvFile).setCharset(Charset.forName("UTF-8"))
+            targetData.setFile(csvFile).setDataName(dname)
+                    .setCharset(Charset.forName("UTF-8"))
                     .setDelimiter(",").setHasHeader(true)
                     .setColsNumber(3).setRowsNumber(dNumber);
             return targetData;

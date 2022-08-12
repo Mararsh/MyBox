@@ -104,9 +104,9 @@ public class DataFileTextController extends BaseData2DFileController {
     /*
         static
      */
-    public static DataFileTextController open(List<Data2DColumn> cols, List<List<String>> data) {
+    public static DataFileTextController open(String name, List<Data2DColumn> cols, List<List<String>> data) {
         DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
-        controller.dataController.loadTmpData(cols, data);
+        controller.dataController.loadTmpData(name, cols, data);
         controller.requestMouse();
         return controller;
     }

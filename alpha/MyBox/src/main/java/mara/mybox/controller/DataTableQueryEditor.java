@@ -53,7 +53,7 @@ public class DataTableQueryEditor extends TreeNodeEditor {
             dataTable = (DataTable) tableController.data2D;
 
             dataLabel.setText(dataTable.displayName());
-            targetController.setParameters(this, null);
+            targetController.setParameters(this, tableController);
 
             rowNumberCheck.setSelected(UserConfig.getBoolean(baseName + "CopyRowNumber", false));
             rowNumberCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -92,7 +92,7 @@ public class DataTableQueryEditor extends TreeNodeEditor {
             protected boolean handle() {
                 TableStringValues.add("DataTableQueryHistories", query);
                 dataTable.setTask(task);
-                dataCSV = dataTable.query(query, rowNumberCheck.isSelected());
+                dataCSV = dataTable.query(null, query, rowNumberCheck.isSelected());
                 return dataCSV != null;
             }
 

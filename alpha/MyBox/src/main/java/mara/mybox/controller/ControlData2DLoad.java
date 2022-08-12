@@ -40,7 +40,6 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.tools.DoubleMatrixTools;
-import mara.mybox.tools.FileNameTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -166,7 +165,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             data2D.resetData();
             data2D.cloneAll(def);
         }
-        MyBoxLog.console(data2D.getInitColumnTypes());
         readDefinition();
     }
 
@@ -286,7 +284,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         });
     }
 
-    public synchronized void loadTmpData(List<Data2DColumn> cols, List<List<String>> data) {
+    public synchronized void loadTmpData(String name, List<Data2DColumn> cols, List<List<String>> data) {
         try {
             if (data2D == null) {
                 return;
@@ -327,6 +325,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 }
             }
             data2D.checkForLoad();
+            data2D.setDataName(name);
             resetView(false);
             if (dataController != null) {
                 dataController.setData(data2D);
@@ -374,11 +373,10 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                     if (data2D.getType() == Data2D.Type.Texts) {
                         targetData = new DataFileText();
                         targetData.setColumns(csvData.getColumns())
-                                .setInitColumnTypes(csvData.getInitColumnTypes())
                                 .setFile(csvData.getFile())
+                                .setDataName(csvData.dataName())
                                 .setDelimiter(csvData.getDelimiter())
                                 .setCharset(csvData.getCharset());
-                        MyBoxLog.console(targetData.getInitColumnTypes());
                         targetData.saveAttributes();
                         recordFileWritten(targetData.getFile(), VisitHistory.FileType.Text);
                     } else {
@@ -397,7 +395,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                 break;
                             }
                             case DatabaseTable: {
-                                String name = FileNameTools.prefix(csvData.getFile().getName());
+                                String name = csvData.dataName();
                                 if (name.startsWith(Data2D.TmpTablePrefix)) {
                                     name = name.substring(Data2D.TmpTablePrefix.length());
                                 }
@@ -430,7 +428,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
 
             @Override
             protected void whenSucceeded() {
-                MyBoxLog.console(targetData.getInitColumnTypes());
+                targetData.setInitColumnTypes(csvData.getInitColumnTypes());
                 loadDef(targetData);
                 if (dataController != null && dataController.manageController != null) {
                     dataController.manageController.refreshAction();
@@ -511,7 +509,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             loadNull();
             return;
         }
-        loadTmpData(data2D.tmpColumns(matrix[0].length), DoubleMatrixTools.toList(matrix));
+        loadTmpData(null, data2D.tmpColumns(matrix[0].length), DoubleMatrixTools.toList(matrix));
     }
 
     public synchronized boolean updateData(List<List<String>> newData, boolean columnsChanged) {

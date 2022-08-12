@@ -558,19 +558,19 @@ public class ControlData2D extends BaseController {
                 return;
             }
             setData(Data2D.create(type));
-            tableController.loadTmpData(data2D.tmpColumns(3), data2D.tmpData(3, 3));
+            tableController.loadTmpData(null, data2D.tmpColumns(3), data2D.tmpData(3, 3));
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    public synchronized void loadTmpData(List<Data2DColumn> cols, List<List<String>> data) {
+    public synchronized void loadTmpData(String name, List<Data2DColumn> cols, List<List<String>> data) {
         try {
             if (!checkBeforeNextAction()) {
                 return;
             }
             setData(Data2D.create(type));
-            tableController.loadTmpData(cols, data);
+            tableController.loadTmpData(name, cols, data);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

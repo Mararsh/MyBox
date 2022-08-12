@@ -114,7 +114,7 @@ public class Data2DDeleteController extends BaseData2DHandleController {
                         tableController.dataController.backupController.addBackup(task, data2D.getFile());
                     }
                     data2D.startTask(task, filterController.filter);
-                    count = data2D.delete(errorContinueCheck.isSelected());
+                    count = data2D.deleteRows(errorContinueCheck.isSelected());
                     data2D.stopFilter();
                     return count >= 0;
                 } catch (Exception e) {

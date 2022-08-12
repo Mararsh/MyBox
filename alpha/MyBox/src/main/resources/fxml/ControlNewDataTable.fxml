@@ -30,11 +30,16 @@ License:    Apache License Version 2.0
                 </ImageView>
             </children>
         </HBox>
-          <RadioButton fx:id="autoRadio" mnemonicParsing="false" selected="true" text="%CreateAutoColumnPrimary">
-              <toggleGroup>
-                  <ToggleGroup fx:id="keyGroup" />
-              </toggleGroup>
-          </RadioButton>
+      <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
+         <children>
+                <RadioButton fx:id="autoRadio" mnemonicParsing="false" selected="true" text="%CreateAutoColumnPrimary">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="keyGroup" />
+                    </toggleGroup>
+                </RadioButton>
+            <TextField fx:id="idInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
           <RadioButton mnemonicParsing="false" text="%SelectPrimaryColumns" toggleGroup="$keyGroup" />
       <fx:include fx:id="columns" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlSelection.fxml" VBox.vgrow="ALWAYS" />
         <HBox alignment="CENTER_LEFT" spacing="2.0">

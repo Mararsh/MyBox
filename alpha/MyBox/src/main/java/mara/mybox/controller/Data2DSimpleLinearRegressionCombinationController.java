@@ -191,7 +191,7 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
                     dataColsIndices.add(yIndex);
                     simpleRegression = new SimpleLinearRegression(interceptCheck.isSelected(), xName, yName, scale);
                     if (isAllPages()) {
-                        data2D.simpleLinearRegression(dataColsIndices, simpleRegression, false);
+                        data2D.simpleLinearRegression(null, dataColsIndices, simpleRegression, false);
                     } else {
                         simpleRegression.addData(filtered(dataColsIndices, true), invalidAs);
                     }

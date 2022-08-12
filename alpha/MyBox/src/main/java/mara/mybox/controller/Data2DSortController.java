@@ -147,7 +147,7 @@ public class Data2DSortController extends BaseData2DHandleController {
             if (tmpTable == null) {
                 return false;
             }
-            DataFileCSV csvData = tmpTable.sort(task, orders, maxData);
+            DataFileCSV csvData = tmpTable.sort(null, task, orders, maxData);
             tmpTable.drop();
             if (csvData == null) {
                 return false;
@@ -173,7 +173,7 @@ public class Data2DSortController extends BaseData2DHandleController {
             if (tmpTable == null) {
                 return null;
             }
-            DataFileCSV csvData = tmpTable.sort(task, orders, maxData);
+            DataFileCSV csvData = tmpTable.sort(targetController.name(), task, orders, maxData);
             tmpTable.drop();
             return csvData;
         } catch (Exception e) {

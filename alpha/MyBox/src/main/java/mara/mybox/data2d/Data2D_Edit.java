@@ -38,9 +38,10 @@ public abstract class Data2D_Edit extends Data2D_Filter {
 
     public abstract long setValue(List<Integer> cols, String value, boolean errorContinue);
 
-    public abstract long delete(boolean errorContinue);
+    public abstract long deleteRows(boolean errorContinue);
 
     public abstract long clearData();
+
 
     /*
         read
@@ -125,14 +126,14 @@ public abstract class Data2D_Edit extends Data2D_Filter {
                         column.setAuto(false);
                         column.setIsPrimaryKey(false);
                     }
-                    if (initColumnTypes != null) {
+                    if (isMatrix()) {
+                        column.setType(ColumnDefinition.ColumnType.Double);
+                    } else if (initColumnTypes != null) {
                         try {
                             column.setType(initColumnTypes.get(i));
                         } catch (Exception e) {
                             MyBoxLog.debug(e);
                         }
-                    } else if (isMatrix()) {
-                        column.setType(ColumnDefinition.ColumnType.Double);
                     }
                 }
                 colsNumber = columns.size();

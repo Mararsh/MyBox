@@ -27,7 +27,6 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
-import mara.mybox.value.AppPaths;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -197,13 +196,13 @@ public class DataFileCSV extends DataFileText {
     }
 
     @Override
-    public File tmpFile(List<String> cols, List<List<String>> data) {
+    public File tmpFile(String dname, List<String> cols, List<List<String>> data) {
         if (cols == null || cols.isEmpty()) {
             if (data == null || data.isEmpty()) {
                 return null;
             }
         }
-        File tmpFile = TmpFileTools.csvFile();
+        File tmpFile = tmpFile(dname, "tmp", ".csv");
         try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(tmpFile)) {
             if (cols != null && !cols.isEmpty()) {
                 csvPrinter.printRecord(cols);
@@ -339,7 +338,7 @@ public class DataFileCSV extends DataFileText {
     }
 
     @Override
-    public long delete(boolean errorContinue) {
+    public long deleteRows(boolean errorContinue) {
         if (file == null || !file.exists() || file.length() == 0) {
             return -1;
         }
@@ -433,11 +432,11 @@ public class DataFileCSV extends DataFileText {
         }
     }
 
-    public DataFileCSV savePageAs() {
+    public DataFileCSV savePageAs(String dname) {
         try {
             DataFileCSV targetData = (DataFileCSV) this.cloneAll();
-            File csvFile = TmpFileTools.getPathTempFile(AppPaths.getGeneratedPath(), ".csv");
-            targetData.setFile(csvFile);
+            File csvFile = tmpFile(dname, "save", ".csv");
+            targetData.setFile(csvFile).setDataName(dname);
             savePageData(targetData);
             return targetData;
         } catch (Exception e) {
@@ -449,11 +448,11 @@ public class DataFileCSV extends DataFileText {
     /*
         static
      */
-    public static DataFileCSV tmpCSV() {
+    public static DataFileCSV tmpCSV(String dname) {
         try {
-            File csvFile = TmpFileTools.getPathTempFile(AppPaths.getGeneratedPath(), ".csv");
             DataFileCSV dataFileCSV = new DataFileCSV();
-            dataFileCSV.setFile(csvFile)
+            File csvFile = dataFileCSV.tmpFile(dname, "tmp", ".csv");
+            dataFileCSV.setFile(csvFile).setDataName(dname)
                     .setCharset(Charset.forName("UTF-8"))
                     .setDelimiter(",")
                     .setHasHeader(true);
@@ -512,7 +511,7 @@ public class DataFileCSV extends DataFileText {
 
     }
 
-    public static DataFileCSV save(SingletonTask task, List<Data2DColumn> cols, List<List<String>> data) {
+    public static DataFileCSV save(String dname, SingletonTask task, List<Data2DColumn> cols, List<List<String>> data) {
         try {
             if (cols == null || cols.isEmpty()) {
                 if (data == null || data.isEmpty()) {
@@ -530,7 +529,7 @@ public class DataFileCSV extends DataFileText {
             }
             DataFileCSV dataFileCSV = new DataFileCSV();
             dataFileCSV.setTask(task);
-            File file = dataFileCSV.tmpFile(names, data);
+            File file = dataFileCSV.tmpFile(dname, names, data);
             dataFileCSV.setColumns(targetColumns)
                     .setFile(file)
                     .setCharset(Charset.forName("UTF-8"))

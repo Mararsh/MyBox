@@ -211,6 +211,14 @@ public class Data2DDefinition extends BaseData {
         }
     }
 
+    public String dataName() {
+        if (dataName != null && !dataName.isBlank()) {
+            return dataName;
+        } else {
+            return shortName();
+        }
+    }
+
 
     /*
         static methods

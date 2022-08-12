@@ -125,7 +125,7 @@ public class Data2DTransposeController extends BaseData2DHandleController {
             if (tmpTable == null) {
                 return null;
             }
-            DataFileCSV csvData = tmpTable.transpose(task, showColNames(), firstCheck.isSelected());
+            DataFileCSV csvData = tmpTable.transpose(null, task, showColNames(), firstCheck.isSelected());
             tmpTable.drop();
             return csvData;
         } catch (Exception e) {

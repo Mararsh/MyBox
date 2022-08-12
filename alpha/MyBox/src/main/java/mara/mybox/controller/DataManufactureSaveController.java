@@ -28,7 +28,7 @@ public class DataManufactureSaveController extends BaseChildController {
         try {
             this.tableController = tableController;
 
-            targetController.setParameters(this, null);
+            targetController.setParameters(this, tableController);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -48,18 +48,21 @@ public class DataManufactureSaveController extends BaseChildController {
             @Override
             protected boolean handle() {
                 try {
+                    String name = targetController.name();
                     if (tableController.data2D.isMutiplePages()) {
                         if (tableController.data2D.isTableChanged()) {
                             tableController.data2D.startTask(task, null);
-                            csvFile = ((DataFileCSV) (tableController.data2D)).savePageAs();
+                            csvFile = ((DataFileCSV) (tableController.data2D)).savePageAs(name);
                             tableController.data2D.stopTask();
                         } else {
-                            csvFile = (DataFileCSV) tableController.data2D;
+                            csvFile = tableController.data2D.copy(name,
+                                    tableController.data2D.columnIndices(), false, true);
                         }
                     } else {
-                        csvFile = DataFileCSV.save(task, tableController.data2D.getColumns(),
+                        csvFile = DataFileCSV.save(name, task, tableController.data2D.getColumns(),
                                 tableController.data2D.tableRowsWithoutNumber());
                     }
+                    csvFile.setDataName(name);
                     return csvFile != null;
                 } catch (Exception e) {
                     error = e.toString();

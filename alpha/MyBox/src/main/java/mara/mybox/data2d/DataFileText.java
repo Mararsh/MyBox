@@ -272,14 +272,14 @@ public class DataFileText extends DataFile {
         }
     }
 
-    public File tmpFile(List<String> cols, List<List<String>> data) {
+    public File tmpFile(String dname, List<String> cols, List<List<String>> data) {
         try {
             if (cols == null || cols.isEmpty()) {
                 if (data == null || data.isEmpty()) {
                     return null;
                 }
             }
-            File tmpFile = TmpFileTools.txtFile();
+            File tmpFile = tmpFile(dname, "tmp", ".txt");
             String fDelimiter = ",";
             try ( BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, Charset.forName("UTF-8"), false))) {
                 if (cols != null && !cols.isEmpty()) {
@@ -410,7 +410,7 @@ public class DataFileText extends DataFile {
     }
 
     @Override
-    public long delete(boolean errorContinue) {
+    public long deleteRows(boolean errorContinue) {
         if (file == null || !file.exists() || file.length() == 0) {
             return -1;
         }

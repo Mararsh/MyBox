@@ -196,7 +196,8 @@ public class Data2DRowExpressionController extends BaseData2DHandleController {
     @Override
     public DataFileCSV generatedFile() {
         MyBoxLog.console(expression);
-        return data2D.rowExpression(expression, nameInput.getText().trim(), errorContinueCheck.isSelected(),
+        return data2D.rowExpression(targetController.name(), expression,
+                nameInput.getText().trim(), errorContinueCheck.isSelected(),
                 checkedColsIndices, rowNumberCheck.isSelected(), colNameCheck.isSelected());
     }
 

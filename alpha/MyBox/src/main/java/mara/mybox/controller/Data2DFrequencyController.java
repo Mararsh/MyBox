@@ -149,7 +149,7 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
 
     @Override
     public DataFileCSV generatedFile() {
-        return data2D.frequency(frequency, freName, freCol, scale);
+        return data2D.frequency(targetController.name(), frequency, freName, freCol, scale);
     }
 
     @Override

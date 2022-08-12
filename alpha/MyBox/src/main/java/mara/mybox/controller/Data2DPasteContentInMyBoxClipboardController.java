@@ -137,7 +137,7 @@ public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxCli
                         return false;
                     }
                     if (sourceController.isAllPages()) {
-                        DataFileCSV csv = sourceController.data2D.copy(sourceController.checkedColsIndices, false, true);
+                        DataFileCSV csv = sourceController.data2D.copy(null, sourceController.checkedColsIndices, false, true);
                         if (csv == null) {
                             error = message("InvalidData");
                             return false;

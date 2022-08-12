@@ -159,7 +159,7 @@ public abstract class BaseData2DController extends BaseController {
         if (loadController == null || !checkBeforeNextAction()) {
             return;
         }
-        loadController.loadTmpData(cols, data);
+        loadController.loadTmpData(null, cols, data);
         checkButtons();
     }
 

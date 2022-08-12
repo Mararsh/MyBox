@@ -39,7 +39,8 @@ public class DataClipboard extends DataFileCSV {
         return new File(AppPaths.getDataClipboardPath() + File.separator + DateTools.nowFileString() + ".csv");
     }
 
-    public static DataClipboard create(SingletonTask task, List<Data2DColumn> cols, List<List<String>> data) {
+    public static DataClipboard create(SingletonTask task, String dname,
+            List<Data2DColumn> cols, List<List<String>> data) {
         if (data == null || data.isEmpty()) {
             return null;
         }
@@ -49,21 +50,21 @@ public class DataClipboard extends DataFileCSV {
         for (Data2DColumn c : cols) {
             names.add(c.getColumnName());
         }
-        File tmpFile = d.tmpFile(names, data);
+        File tmpFile = d.tmpFile(dname, names, data);
         if (tmpFile == null) {
             return null;
         }
         File dFile = newFile();
         if (FileTools.rename(tmpFile, dFile, true)) {
-            return create(task, cols, dFile, data.size(), data.get(0).size());
+            return create(task, dname, cols, dFile, data.size(), data.get(0).size());
         } else {
             MyBoxLog.error("Failed");
             return null;
         }
     }
 
-    public static DataClipboard create(SingletonTask task, List<Data2DColumn> cols, File dFile,
-            long rowsNumber, long colsNumber) {
+    public static DataClipboard create(SingletonTask task, String name,
+            List<Data2DColumn> cols, File dFile, long rowsNumber, long colsNumber) {
         if (dFile == null || rowsNumber <= 0) {
             return null;
         }
@@ -75,9 +76,13 @@ public class DataClipboard extends DataFileCSV {
             d.setDelimiter(",");
             d.setHasHeader(cols != null && !cols.isEmpty());
             if (rowsNumber > 0 && colsNumber > 0) {
-                d.setDataName(rowsNumber + "x" + colsNumber);
                 d.setColsNumber(colsNumber);
                 d.setRowsNumber(rowsNumber);
+            }
+            if (name != null && !name.isBlank()) {
+                d.setDataName(name);
+            } else if (rowsNumber > 0 && colsNumber > 0) {
+                d.setDataName(rowsNumber + "x" + colsNumber);
             } else {
                 d.setDataName(dFile.getName());
             }

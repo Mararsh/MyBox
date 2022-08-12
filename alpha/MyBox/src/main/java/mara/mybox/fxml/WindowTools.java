@@ -468,7 +468,7 @@ public class WindowTools {
 
                 new TableFileBackup().clearInvalid(conn);
 
-                new TableData2DDefinition().clearInvalid(conn);
+                new TableData2DDefinition().clearInvalid(conn, true);
 
             } catch (Exception e) {
                 MyBoxLog.error(e);

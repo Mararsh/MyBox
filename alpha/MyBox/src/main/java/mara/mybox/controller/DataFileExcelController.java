@@ -331,9 +331,9 @@ public class DataFileExcelController extends BaseData2DFileController {
         return controller;
     }
 
-    public static DataFileExcelController open(List<Data2DColumn> cols, List<List<String>> data) {
+    public static DataFileExcelController open(String name, List<Data2DColumn> cols, List<List<String>> data) {
         DataFileExcelController controller = (DataFileExcelController) WindowTools.openStage(Fxmls.DataFileExcelFxml);
-        controller.dataController.loadTmpData(cols, data);
+        controller.dataController.loadTmpData(name, cols, data);
         controller.requestMouse();
         return controller;
     }

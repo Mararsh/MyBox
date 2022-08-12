@@ -433,15 +433,16 @@ public class Data2DPercentageController extends BaseData2DHandleController {
         } else {
             toNegative = "zero";
         }
+        String name = targetController.name();
         switch (objectType) {
             case Rows:
-                return data2D.percentageRows(handledNames, checkedColsIndices,
+                return data2D.percentageRows(name, handledNames, checkedColsIndices,
                         scale, valuesCheck.isSelected(), toNegative, invalidAs);
             case All:
-                return data2D.percentageAll(handledNames, checkedColsIndices,
+                return data2D.percentageAll(name, handledNames, checkedColsIndices,
                         scale, valuesCheck.isSelected(), toNegative, invalidAs);
             default:
-                return data2D.percentageColumns(handledNames, checkedColsIndices,
+                return data2D.percentageColumns(name, handledNames, checkedColsIndices,
                         scale, valuesCheck.isSelected(), toNegative, invalidAs);
         }
     }

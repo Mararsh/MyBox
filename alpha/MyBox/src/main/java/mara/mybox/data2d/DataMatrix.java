@@ -187,7 +187,7 @@ public class DataMatrix extends Data2D {
     }
 
     @Override
-    public long delete(boolean errorContinue) {
+    public long deleteRows(boolean errorContinue) {
         return -1;
     }
 

@@ -54,9 +54,9 @@ public class MatricesManageController extends BaseData2DController {
         return controller;
     }
 
-    public static MatricesManageController open(List<Data2DColumn> cols, List<List<String>> data) {
+    public static MatricesManageController open(String name, List<Data2DColumn> cols, List<List<String>> data) {
         MatricesManageController controller = oneOpen();
-        controller.dataController.loadTmpData(cols, data);
+        controller.dataController.loadTmpData(name, cols, data);
         return controller;
     }
 

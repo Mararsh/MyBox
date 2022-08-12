@@ -8,9 +8,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -36,29 +37,27 @@ public class ControlData2DTarget extends BaseController {
     @FXML
     protected ComboBox<String> rowSelector, colSelector;
     @FXML
-    protected VBox tableBox;
+    protected VBox externalBox, inTableBox;
     @FXML
-    protected FlowPane locationPane;
+    protected HBox prefixBox, locationBox;
+    @FXML
+    protected TextField nameInput;
 
     public void setParameters(BaseController parent, ControlData2DEditTable tableController) {
         try {
             baseName = parent.baseName;
             this.tableController = tableController;
 
-            if (locationPane != null) {
-                locationPane.setVisible(inTable());
-            }
+            checkControls();
             targetGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    if (locationPane != null) {
-                        locationPane.setVisible(inTable());
-                    }
                     checkTarget();
                 }
             });
 
-            if (tableBox != null) {
+            if (tableController != null) {
+                refreshControls();
                 tableStatusListener = new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
@@ -66,7 +65,6 @@ public class ControlData2DTarget extends BaseController {
                     }
                 };
                 tableController.statusNotify.addListener(tableStatusListener);
-                refreshControls();
             }
 
             target = UserConfig.getString(baseName + "DataTarget", "csv");
@@ -74,6 +72,24 @@ public class ControlData2DTarget extends BaseController {
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void checkControls() {
+        if (inTable()) {
+            if (inTableBox != null && !inTableBox.getChildren().contains(locationBox)) {
+                inTableBox.getChildren().add(locationBox);
+            }
+            if (externalBox.getChildren().contains(prefixBox)) {
+                externalBox.getChildren().remove(prefixBox);
+            }
+        } else {
+            if (inTableBox != null && inTableBox.getChildren().contains(locationBox)) {
+                inTableBox.getChildren().remove(locationBox);
+            }
+            if (!externalBox.getChildren().contains(prefixBox)) {
+                externalBox.getChildren().add(prefixBox);
+            }
         }
     }
 
@@ -94,7 +110,7 @@ public class ControlData2DTarget extends BaseController {
                 target = "myBoxClipboard";
             } else if (databaseRadio.isSelected()) {
                 target = "table";
-            } else if (tableBox != null) {
+            } else if (inTableBox != null) {
                 if (replaceRadio.isSelected()) {
                     if (!notInTable) {
                         target = "replace";
@@ -133,19 +149,7 @@ public class ControlData2DTarget extends BaseController {
                     }
                 }
             }
-            if (tableBox == null) {
-                notInTable = true;
-            } else {
-                if (!notInTable) {
-                    if (!thisPane.getChildren().contains(tableBox)) {
-                        thisPane.getChildren().add(tableBox);
-                    }
-                } else {
-                    if (thisPane.getChildren().contains(tableBox)) {
-                        thisPane.getChildren().remove(tableBox);
-                    }
-                }
-            }
+            checkControls();
             UserConfig.setString(baseName + "DataTarget", target);
 
         } catch (Exception e) {
@@ -183,21 +187,21 @@ public class ControlData2DTarget extends BaseController {
                     databaseRadio.fire();
                     break;
                 case "append":
-                    if (notInTable && tableBox != null) {
+                    if (notInTable && inTableBox != null) {
                         appendRadio.fire();
                     } else {
                         csvRadio.fire();
                     }
                     break;
                 case "insert":
-                    if (notInTable && tableBox != null) {
+                    if (notInTable && inTableBox != null) {
                         insertRadio.fire();
                     } else {
                         csvRadio.fire();
                     }
                     break;
                 case "relpace":
-                    if (notInTable && tableBox != null) {
+                    if (notInTable && inTableBox != null) {
                         replaceRadio.fire();
                     } else {
                         csvRadio.fire();
@@ -213,7 +217,11 @@ public class ControlData2DTarget extends BaseController {
 
     public synchronized void refreshControls() {
         try {
-            if (rowSelector == null || tableController == null || tableController.data2D == null) {
+            if (tableController == null || tableController.data2D == null) {
+                return;
+            }
+            nameInput.setText(tableController.data2D.dataName());
+            if (rowSelector == null) {
                 return;
             }
             int thisSelect = rowSelector.getSelectionModel().getSelectedIndex();
@@ -255,8 +263,12 @@ public class ControlData2DTarget extends BaseController {
     }
 
     public boolean inTable() {
-        return !notInTable && tableBox != null
+        return !notInTable && inTableBox != null
                 && (insertRadio.isSelected() || appendRadio.isSelected() || replaceRadio.isSelected());
+    }
+
+    public String name() {
+        return nameInput.getText().trim();
     }
 
     public int row() {

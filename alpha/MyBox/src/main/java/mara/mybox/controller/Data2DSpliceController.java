@@ -125,9 +125,9 @@ public class Data2DSpliceController extends BaseData2DController {
                         return false;
                     }
                     if (dataAController.isAllPages()) {
-                        csvA = dataAController.data2D.copy(dataAController.checkedColsIndices, false, true);
+                        csvA = dataAController.data2D.copy(null, dataAController.checkedColsIndices, false, true);
                     } else {
-                        csvA = DataFileCSV.save(task, dataAController.checkedColumns,
+                        csvA = DataFileCSV.save(null, task, dataAController.checkedColumns,
                                 dataAController.filtered(false));
                     }
                     dataAController.data2D.stopTask();
@@ -141,9 +141,9 @@ public class Data2DSpliceController extends BaseData2DController {
                         return false;
                     }
                     if (dataBController.isAllPages()) {
-                        csvB = dataBController.data2D.copy(dataBController.checkedColsIndices, false, true);
+                        csvB = dataBController.data2D.copy(null, dataBController.checkedColsIndices, false, true);
                     } else {
-                        csvB = DataFileCSV.save(task, dataBController.checkedColumns,
+                        csvB = DataFileCSV.save(null, task, dataBController.checkedColumns,
                                 dataBController.filtered(false));
                     }
                     dataBController.data2D.stopTask();
@@ -157,6 +157,8 @@ public class Data2DSpliceController extends BaseData2DController {
                     } else {
                         targetCSV = spliceVertically(csvA, csvB);
                     }
+                    csvA.drop();
+                    csvB.drop();
                     return targetCSV != null;
                 } catch (Exception e) {
                     error = e.toString();
@@ -212,7 +214,7 @@ public class Data2DSpliceController extends BaseData2DController {
         if (columns == null || columns.isEmpty()) {
             return null;
         }
-        DataFileCSV targetCSV = DataFileCSV.tmpCSV();
+        DataFileCSV targetCSV = DataFileCSV.tmpCSV(targetController.name());
         int rowCount = 0;
         try ( CSVPrinter csvPrinter = new CSVPrinter(
                 new FileWriter(targetCSV.getFile(), targetCSV.getCharset()), targetCSV.cvsFormat())) {
@@ -315,7 +317,7 @@ public class Data2DSpliceController extends BaseData2DController {
         if (size <= 0 || colLen == 0) {
             return null;
         }
-        DataFileCSV targetCSV = DataFileCSV.tmpCSV();
+        DataFileCSV targetCSV = DataFileCSV.tmpCSV(targetController.name());
         int rowCount = 0;
         try ( CSVPrinter csvPrinter = new CSVPrinter(
                 new FileWriter(targetCSV.getFile(), targetCSV.getCharset()), targetCSV.cvsFormat());

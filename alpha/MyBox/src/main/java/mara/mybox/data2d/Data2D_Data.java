@@ -34,12 +34,17 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         return this;
     }
 
-    public File tmpCSV(String prefix) {
-        String name = shortName();
-        if (name.startsWith(Data2D.TmpTablePrefix)) {
-            name = name.substring(Data2D.TmpTablePrefix.length());
+    public File tmpFile(String name, String operation, String suffix) {
+        String path = AppPaths.getGeneratedPath();
+        if (name != null && !name.isBlank()) {
+            return getPathTempFile(path, name, suffix);
         }
-        return getPathTempFile(AppPaths.getGeneratedPath(), name + "_" + prefix, ".csv");
+        String pname = shortName();
+        if (pname.startsWith(Data2D.TmpTablePrefix)) {
+            pname = pname.substring(Data2D.TmpTablePrefix.length());
+        }
+        pname = pname + ((operation == null || operation.isBlank()) ? "" : "_" + operation);
+        return getPathTempFile(path, pname, suffix);
     }
 
     /*

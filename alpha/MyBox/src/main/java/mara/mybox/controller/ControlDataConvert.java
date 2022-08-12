@@ -629,7 +629,7 @@ public class ControlDataConvert extends BaseController {
                         .setCharset(csvWriteController.charset)
                         .setDelimiter(csvWriteController.delimiter + "")
                         .setHasHeader(csvWriteController.withNamesCheck.isSelected())
-                        .setDataName(csvFile.getName())
+                        .setDataName(d.dataName())
                         .setColsNumber(columns.size())
                         .setRowsNumber(dataRowIndex);
                 Data2D.saveAttributes(conn, d, columns);
@@ -646,7 +646,7 @@ public class ControlDataConvert extends BaseController {
                         .setCharset(textWriteOptionsController.charset)
                         .setDelimiter(textDelimiter)
                         .setHasHeader(textWriteOptionsController.withNamesCheck.isSelected())
-                        .setDataName(textFile.getName())
+                        .setDataName(d.dataName())
                         .setColsNumber(columns.size())
                         .setRowsNumber(dataRowIndex);
                 Data2D.saveAttributes(conn, d, columns);
@@ -701,7 +701,7 @@ public class ControlDataConvert extends BaseController {
                 Data2D d = Data2D.create(Data2DDefinition.Type.Excel);
                 d.setTask(task).setFile(xlsxFile).setSheet("sheet1")
                         .setHasHeader(excelWithNamesCheck.isSelected())
-                        .setDataName(xlsxFile.getName())
+                        .setDataName(d.dataName())
                         .setColsNumber(columns.size())
                         .setRowsNumber(dataRowIndex);
                 Data2D.saveAttributes(conn, d, columns);

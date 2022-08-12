@@ -1,6 +1,7 @@
 package mara.mybox.data2d;
 
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.FileDeleteTools;
 
 /**
  * @Author Mara
@@ -58,4 +59,10 @@ public abstract class Data2D extends Data2D_Operations {
         return data;
     }
 
+    public int drop() {
+        if (!FileDeleteTools.delete(file)) {
+            return -1;
+        }
+        return tableData2DDefinition.deleteData(this);
+    }
 }

@@ -523,27 +523,28 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             popError(message("NoData"));
             return false;
         }
+        String name = targetController.name();
         switch (targetController.target) {
             case "systemClipboard":
                 tableController.copyToSystemClipboard(null, outputData);
                 break;
             case "myBoxClipboard":
-                tableController.copyToMyBoxClipboard2(outputColumns, outputData);
+                tableController.toMyBoxClipboard(name, outputColumns, outputData);
                 break;
             case "csv":
-                DataFileCSVController.open(outputColumns, outputData);
+                DataFileCSVController.open(name, outputColumns, outputData);
                 break;
             case "excel":
-                DataFileExcelController.open(outputColumns, outputData);
+                DataFileExcelController.open(name, outputColumns, outputData);
                 break;
             case "texts":
-                DataFileTextController.open(outputColumns, outputData);
+                DataFileTextController.open(name, outputColumns, outputData);
                 break;
             case "matrix":
-                MatricesManageController.open(outputColumns, outputData);
+                MatricesManageController.open(name, outputColumns, outputData);
                 break;
             case "table":
-                DataTablesController.open(outputColumns, outputData);
+                DataTablesController.open(name, outputColumns, outputData);
                 break;
         }
         popDone();

@@ -190,11 +190,10 @@ public class Data2DGroupValuesController extends BaseData2DHandleController {
         }
     }
 
-    @Override
-    public DataFileCSV generatedFile() {
-        return data2D.frequency(frequency, freName, freCol, scale);
-    }
-
+//    @Override
+//    public DataFileCSV generatedFile() {
+//        return data2D.frequency(frequency, freName, freCol, scale);
+//    }
     @Override
     public void cleanPane() {
         try {
