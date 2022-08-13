@@ -544,7 +544,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             if (results == null) {
                 return null;
             }
-            File csvFile = getPathTempFile(dname, ".csv");
+            File csvFile = getPathTempFile(AppPaths.getGeneratedPath(), dname, ".csv");
             long count = 0;
             int colsSize;
             List<Data2DColumn> db2Columns = new ArrayList<>();

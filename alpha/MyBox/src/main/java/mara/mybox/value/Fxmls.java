@@ -210,6 +210,7 @@ public class Fxmls {
     public static final String Data2DChartXYOptionsFxml = "/fxml/Data2DChartXYOptions.fxml";
     public static final String Data2DChartPieOptionsFxml = "/fxml/Data2DChartPieOptions.fxml";
     public static final String Data2DSetStylesFxml = "/fxml/Data2DSetStyles.fxml";
+    public static final String Data2DGroupValuesFxml = "/fxml/Data2DGroupValues.fxml";
 
     public static final String JShellFxml = "/fxml/JShell.fxml";
     public static final String JexlFxml = "/fxml/Jexl.fxml";

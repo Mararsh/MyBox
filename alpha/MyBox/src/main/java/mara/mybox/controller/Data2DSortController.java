@@ -85,13 +85,13 @@ public class Data2DSortController extends BaseData2DHandleController {
                 columnsController.loadNames(null);
                 return;
             }
-            List<String> orders = new ArrayList<>();
+            List<String> names = new ArrayList<>();
             for (Data2DColumn column : data2D.columns) {
                 String name = column.getColumnName();
-                orders.add(name + " ASC ");
-                orders.add(name + " DESC");
+                names.add(name + "-" + message("Ascending"));
+                names.add(name + "-" + message("Descending"));
             }
-            columnsController.loadNames(orders);
+            columnsController.loadNames(names);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -117,7 +117,12 @@ public class Data2DSortController extends BaseData2DHandleController {
                 }
             }
             for (String order : orders) {
-                String name = order.substring(0, order.length() - 5);
+                String name;
+                if (order.endsWith("-" + message("Ascending"))) {
+                    name = order.substring(0, order.length() - ("-" + message("Ascending")).length());
+                } else {
+                    name = order.substring(0, order.length() - ("-" + message("Descending")).length());
+                }
                 if (!colsNames.contains(name)) {
                     colsNames.add(name);
                 }
@@ -147,7 +152,8 @@ public class Data2DSortController extends BaseData2DHandleController {
             if (tmpTable == null) {
                 return false;
             }
-            DataFileCSV csvData = tmpTable.sort(null, task, orders, maxData);
+            DataFileCSV csvData = tmpTable.sort(targetController.name(), task,
+                    orders, maxData, colNameCheck.isSelected());
             tmpTable.drop();
             if (csvData == null) {
                 return false;
@@ -173,7 +179,8 @@ public class Data2DSortController extends BaseData2DHandleController {
             if (tmpTable == null) {
                 return null;
             }
-            DataFileCSV csvData = tmpTable.sort(targetController.name(), task, orders, maxData);
+            DataFileCSV csvData = tmpTable.sort(targetController.name(), task,
+                    orders, maxData, colNameCheck.isSelected());
             tmpTable.drop();
             return csvData;
         } catch (Exception e) {

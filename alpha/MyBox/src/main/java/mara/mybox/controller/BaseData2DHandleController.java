@@ -215,18 +215,16 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             }
 
             if (columnsPane != null) {
-                List<String> names = data2D.columnNames();
-                if (names == null || names.isEmpty()) {
-                    return;
-                }
                 isSettingValues = true;
                 columnsPane.getChildren().clear();
-                for (String name : names) {
-                    columnsPane.getChildren().add(new CheckBox(name));
+                List<String> names = data2D.columnNames();
+                if (names != null) {
+                    for (String name : names) {
+                        columnsPane.getChildren().add(new CheckBox(name));
+                    }
                 }
                 isSettingValues = false;
             }
-
             checkOptions();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

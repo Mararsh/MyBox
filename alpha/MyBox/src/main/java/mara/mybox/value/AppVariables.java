@@ -61,7 +61,7 @@ public class AppVariables {
             getBundle();
             getTableBundle();
             getPdfMem();
-            closeCurrentWhenOpenTool = UserConfig.getBoolean("CloseCurrentWhenOpenTool", true);
+            closeCurrentWhenOpenTool = UserConfig.getBoolean("CloseCurrentWhenOpenTool", false);
             recordWindowsSizeLocation = UserConfig.getBoolean("RecordWindowsSizeLocation", true);
             sceneFontSize = UserConfig.getInt("SceneFontSize", 15);
             fileRecentNumber = UserConfig.getInt("FileRecentNumber", 16);

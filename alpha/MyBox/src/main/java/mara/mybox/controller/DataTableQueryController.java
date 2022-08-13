@@ -1,5 +1,7 @@
 package mara.mybox.controller;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.dev.MyBoxLog;
@@ -14,6 +16,9 @@ import static mara.mybox.value.Languages.message;
  */
 public class DataTableQueryController extends TreeManageController {
 
+    protected ControlData2DEditTable tableController;
+    protected ChangeListener<Boolean> tableStatusListener;
+
     @FXML
     protected DataTableQueryEditor nodeController;
 
@@ -26,21 +31,40 @@ public class DataTableQueryController extends TreeManageController {
 
     public void setParameters(ControlData2DEditTable tableController) {
         try {
+            this.tableController = tableController;
             nodeController.setParameters(tableController);
             getMyStage().setTitle(tableController.getTitle());
+
+            tableStatusListener = new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    nodeController.setDataTable(tableController.data2D);
+                }
+            };
+            tableController.statusNotify.addListener(tableStatusListener);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
+//    @Override
+//    public void itemClicked() {
+//    }
+//
+//    @Override
+//    public void itemDoubleClicked() {
+//        editAction();
+//    }
     @Override
-    public void itemClicked() {
-    }
-
-    @Override
-    public void itemDoubleClicked() {
-        editAction();
+    public void cleanPane() {
+        try {
+            tableController.statusNotify.removeListener(tableStatusListener);
+            tableStatusListener = null;
+            tableController = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
 

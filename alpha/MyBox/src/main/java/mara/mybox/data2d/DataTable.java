@@ -615,7 +615,8 @@ public class DataTable extends Data2D {
     }
 
     // Based on results of "Data2D_Convert.toTmpTable(...)"
-    public DataFileCSV sort(String dname, SingletonTask task, List<String> orders, int maxData) {
+    public DataFileCSV sort(String dname, SingletonTask task,
+            List<String> orders, int maxData, boolean includeColName) {
         if (orders == null || orders.isEmpty() || sourceColumns == null) {
             return null;
         }
@@ -623,9 +624,16 @@ public class DataTable extends Data2D {
         File csvFile = tmpFile(dname, "sort", ".csv");
         String sql = null;
         try {
+            String name;
+            boolean asc;
             for (String order : orders) {
-                String name = mappedColumnName(order.substring(0, order.length() - 5))
-                        + order.substring(order.length() - 5);
+                asc = order.endsWith("-" + message("Ascending"));
+                if (asc) {
+                    name = order.substring(0, order.length() - ("-" + message("Ascending")).length());
+                } else {
+                    name = order.substring(0, order.length() - ("-" + message("Descending")).length());
+                }
+                name = mappedColumnName(name) + (asc ? " ASC" : " DESC");
                 if (sql == null) {
                     sql = name;
                 } else {
@@ -647,7 +655,9 @@ public class DataTable extends Data2D {
                  Connection conn = DerbyBase.getConnection();
                  PreparedStatement statement = conn.prepareStatement(sql);
                  ResultSet results = statement.executeQuery()) {
-            csvPrinter.printRecord(sourceColumnNames());
+            if (includeColName) {
+                csvPrinter.printRecord(sourceColumnNames());
+            }
             rowIndex = 0;
             while (results.next() && task != null && !task.isCancelled()) {
                 Data2DRow dataRow = tableData2D.readData(results);
@@ -677,7 +687,8 @@ public class DataTable extends Data2D {
     }
 
     // Based on results of "Data2D_Convert.toTmpTable(...)"
-    public DataFileCSV transpose(String dname, SingletonTask task, boolean showColNames, boolean firstColumnAsNames) {
+    public DataFileCSV transpose(String dname, SingletonTask task,
+            boolean showColNames, boolean firstColumnAsNames) {
         if (sourceColumns == null) {
             return null;
         }
@@ -774,7 +785,86 @@ public class DataTable extends Data2D {
         }
     }
 
-    public DataFileCSV query(String dname, String query, boolean showRowNumber) {
+    // Based on results of "Data2D_Convert.toTmpTable(...)"
+    public DataFileCSV groupValues(String dname, SingletonTask task,
+            List<String> groups, List<String> calculations) {
+        if (groups == null || groups.isEmpty() || sourceColumns == null) {
+            return null;
+        }
+        try {
+            String groupBy = null;
+            for (String group : groups) {
+                String name = mappedColumnName(group);
+                if (groupBy == null) {
+                    groupBy = name;
+                } else {
+                    groupBy += ", " + name;
+                }
+            }
+            String selections = null;
+            for (String name : calculations) {
+                if (name.equals(message("Count"))) {
+                    name = mappedColumnName(groups.get(0));
+                    name = "COUNT(" + name + ") AS " + message("Count");
+                } else if (name.endsWith("-" + message("Mean"))) {
+                    name = name.substring(0, name.length() - ("-" + message("Mean")).length());
+                    name = mappedColumnName(name);
+                    name = "AVG(" + name + ") AS " + name + "_" + message("Mean");
+                } else if (name.endsWith("-" + message("Summation"))) {
+                    name = name.substring(0, name.length() - ("-" + message("Summation")).length());
+                    name = mappedColumnName(name);
+                    name = "SUM(" + name + ") AS " + name + "_" + message("Summation");
+                } else if (name.endsWith("-" + message("Maximum"))) {
+                    name = name.substring(0, name.length() - ("-" + message("Maximum")).length());
+                    name = mappedColumnName(name);
+                    name = "MAX(" + name + ") AS " + name + "_" + message("Maximum");
+                } else if (name.endsWith("-" + message("Minimum"))) {
+                    name = name.substring(0, name.length() - ("-" + message("Minimum")).length());
+                    name = mappedColumnName(name);
+                    name = "MIN(" + name + ") AS " + name + "_" + message("Minimum");
+                } else if (name.endsWith("-" + message("PopulationVariance"))) {
+                    name = name.substring(0, name.length() - ("-" + message("PopulationVariance")).length());
+                    name = mappedColumnName(name);
+                    name = "VAR_POP(" + name + ") AS " + name + "_" + message("PopulationVariance");
+                } else if (name.endsWith("-" + message("SampleVariance"))) {
+                    name = name.substring(0, name.length() - ("-" + message("SampleVariance")).length());
+                    name = mappedColumnName(name);
+                    name = "VAR_SAMP(" + name + ") AS " + name + "_" + message("SampleVariance");
+                } else if (name.endsWith("-" + message("PopulationStandardDeviation"))) {
+                    name = name.substring(0, name.length() - ("-" + message("PopulationStandardDeviation")).length());
+                    name = mappedColumnName(name);
+                    name = "STDDEV_POP(" + name + ") AS " + name + "_" + message("PopulationStandardDeviation");
+                } else if (name.endsWith("-" + message("SampleStandardDeviation"))) {
+                    name = name.substring(0, name.length() - ("-" + message("SampleStandardDeviation")).length());
+                    name = mappedColumnName(name);
+                    name = "STDDEV_SAMP(" + name + ") AS " + name + "_" + message("SampleStandardDeviation");
+                } else {
+                    continue;
+                }
+                if (selections == null) {
+                    selections = name;
+                } else {
+                    selections += ", " + name;
+                }
+            }
+            if (selections == null) {
+                selections = groupBy;
+            } else {
+                selections = groupBy + ", " + selections;
+            }
+            String sql = "SELECT " + selections + " FROM " + sheet + " GROUP BY " + groupBy;
+            return query(dname, task, sql, false);
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+
+    }
+
+    public DataFileCSV query(String dname, SingletonTask task, String query, boolean showRowNumber) {
         if (query == null || query.isBlank()) {
             return null;
         }

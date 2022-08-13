@@ -1,22 +1,17 @@
 package mara.mybox.controller;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import mara.mybox.data2d.DataFileCSV;
-import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.data2d.DataTable;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import org.apache.commons.math3.stat.Frequency;
 
 /**
  * @Author Mara
@@ -25,20 +20,14 @@ import org.apache.commons.math3.stat.Frequency;
  */
 public class Data2DGroupValuesController extends BaseData2DHandleController {
 
-    protected List<String> handledNames;
-    protected int freCol;
-    protected String freName;
-    protected List<Integer> colsIndices;
-    protected List<String> colsNames;
-    protected Frequency frequency;
+    protected List<String> groups, calculations;
 
     @FXML
-    protected ComboBox<String> colSelector;
-    @FXML
-    protected CheckBox caseInsensitiveCheck;
+    protected ControlSelection groupController, calculationController;
 
     public Data2DGroupValuesController() {
-        baseTitle = message("FrequencyDistributions");
+        baseTitle = message("GroupByValues");
+        TipsLabelKey = "GroupByValuesTips";
     }
 
     @Override
@@ -48,23 +37,15 @@ public class Data2DGroupValuesController extends BaseData2DHandleController {
 
             noColumnSelection(true);
 
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void setParameters(ControlData2DEditTable tableController) {
-        try {
-            super.setParameters(tableController);
-
-            colSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            groupController.setParameters(this, message("Group"));
+            groupController.selectedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     checkOptions();
                 }
             });
 
+            calculationController.setParameters(this, message("Calculation"));
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -74,18 +55,28 @@ public class Data2DGroupValuesController extends BaseData2DHandleController {
     public void refreshControls() {
         try {
             super.refreshControls();
-            List<String> names = tableController.data2D.columnNames();
-            if (names == null || names.isEmpty()) {
-                colSelector.getItems().clear();
+            if (!data2D.isValid()) {
+                groupController.loadNames(null);
+                calculationController.loadNames(null);
                 return;
             }
-            String selectedCol = colSelector.getSelectionModel().getSelectedItem();
-            colSelector.getItems().setAll(names);
-            if (selectedCol != null && names.contains(selectedCol)) {
-                colSelector.setValue(selectedCol);
-            } else {
-                colSelector.getSelectionModel().select(0);
+            List<String> gnames = new ArrayList<>();
+            List<String> cnames = new ArrayList<>();
+            cnames.add(message("Count"));
+            for (Data2DColumn column : data2D.columns) {
+                String name = column.getColumnName();
+                gnames.add(name);
+                cnames.add(name + "-" + message("Mean"));
+                cnames.add(name + "-" + message("Summation"));
+                cnames.add(name + "-" + message("Maximum"));
+                cnames.add(name + "-" + message("Minimum"));
+                cnames.add(name + "-" + message("PopulationVariance"));
+                cnames.add(name + "-" + message("SampleVariance"));
+                cnames.add(name + "-" + message("PopulationStandardDeviation"));
+                cnames.add(name + "-" + message("SampleStandardDeviation"));
             }
+            groupController.loadNames(gnames);
+            calculationController.loadNames(cnames);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -93,116 +84,116 @@ public class Data2DGroupValuesController extends BaseData2DHandleController {
 
     @Override
     public boolean checkOptions() {
-        boolean ok = super.checkOptions();
-        ok = ok && prepareRows();
-        okButton.setDisable(!ok);
-        return ok;
-    }
-
-    public boolean prepareRows() {
         try {
-            freName = colSelector.getSelectionModel().getSelectedItem();
-            freCol = data2D.colOrder(freName);
-            Data2DColumn freColumn = data2D.column(freCol);
-            if (freColumn == null) {
+            if (isSettingValues) {
+                return true;
+            }
+            boolean ok = super.checkOptions();
+            groups = groupController.selectedNames();
+            if (groups == null || groups.isEmpty()) {
                 infoLabel.setText(message("SelectToHandle"));
+                okButton.setDisable(true);
                 return false;
             }
-            handledNames = new ArrayList<>();
-            outputColumns = new ArrayList<>();
-            outputColumns.add(freColumn.cloneAll());
-            handledNames.add(freName);
 
-            String cName = freName + "_" + message("Count");
-            while (handledNames.contains(cName)) {
-                cName += "m";
-            }
-            outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Long));
-            handledNames.add(cName);
-
-            cName = freName + "_" + message("CountPercentage");
-            while (handledNames.contains(cName)) {
-                cName += "m";
-            }
-            outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
-            handledNames.add(cName);
-            return true;
+            return ok;
         } catch (Exception e) {
-            popError(e.toString());
             MyBoxLog.error(e);
             return false;
         }
     }
 
     @Override
-    protected void startOperation() {
-        try {
-            if (!prepareRows()) {
-                return;
+    public boolean initData() {
+        List<String> colsNames = new ArrayList<>();
+        colsNames.addAll(groups);
+        calculations = calculationController.selectedNames();
+        if (calculations != null) {
+            for (String name : calculations) {
+                if (name.endsWith("-" + message("Mean"))) {
+                    name = name.substring(0, name.length() - ("-" + message("Mean")).length());
+                } else if (name.endsWith("-" + message("Summation"))) {
+                    name = name.substring(0, name.length() - ("-" + message("Summation")).length());
+                } else if (name.endsWith("-" + message("Maximum"))) {
+                    name = name.substring(0, name.length() - ("-" + message("Maximum")).length());
+                } else if (name.endsWith("-" + message("Minimum"))) {
+                    name = name.substring(0, name.length() - ("-" + message("Minimum")).length());
+                } else if (name.endsWith("-" + message("PopulationVariance"))) {
+                    name = name.substring(0, name.length() - ("-" + message("PopulationVariance")).length());
+                } else if (name.endsWith("-" + message("SampleVariance"))) {
+                    name = name.substring(0, name.length() - ("-" + message("SampleVariance")).length());
+                } else if (name.endsWith("-" + message("PopulationStandardDeviation"))) {
+                    name = name.substring(0, name.length() - ("-" + message("PopulationStandardDeviation")).length());
+                } else if (name.endsWith("-" + message("SampleStandardDeviation"))) {
+                    name = name.substring(0, name.length() - ("-" + message("SampleStandardDeviation")).length());
+                } else {
+                    continue;
+                }
+                if (!colsNames.contains(name)) {
+                    colsNames.add(name);
+                }
             }
-            frequency = caseInsensitiveCheck.isSelected()
-                    ? new Frequency(String.CASE_INSENSITIVE_ORDER)
-                    : new Frequency();
-            if (isAllPages()) {
-                handleAllTask();
-            } else {
-                handleRowsTask();
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
         }
+        checkedColsIndices = new ArrayList<>();
+        checkedColumns = new ArrayList<>();
+        for (String name : colsNames) {
+            checkedColsIndices.add(data2D.colOrder(name));
+            checkedColumns.add(data2D.columnByName(name));
+        }
+        checkedColsNames = colsNames;
+        return true;
     }
 
     @Override
     public boolean handleRows() {
         try {
-            outputData = new ArrayList<>();
-            filteredRowsIndices = filteredRowsIndices();
-            if (filteredRowsIndices == null || filteredRowsIndices.isEmpty()) {
-                if (task != null) {
-                    task.setError(message("NoData"));
-                }
+            outputData = filtered(checkedColsIndices, showRowNumber());
+            if (outputData == null || outputData.isEmpty()) {
                 return false;
             }
-            for (int r : filteredRowsIndices) {
-                List<String> tableRow = tableController.tableData.get(r);
-                String d = tableRow.get(freCol + 1);
-                frequency.addValue(d);
+            DataTable tmpTable = data2D.toTmpTable(task, checkedColsIndices, outputData, showRowNumber(), false);
+            if (tmpTable == null) {
+                return false;
             }
-            Iterator iterator = frequency.valuesIterator();
-            if (iterator != null) {
-                while (iterator.hasNext()) {
-                    List<String> row = new ArrayList<>();
-                    String value = (String) iterator.next();
-                    row.add(value);
-                    row.add(frequency.getCount(value) + "");
-                    row.add(DoubleTools.format(frequency.getPct(value) * 100, scale));
-                    outputData.add(row);
-                }
+            DataFileCSV csvData = tmpTable.groupValues(targetController.name(), task, groups, calculations);
+            tmpTable.drop();
+            if (csvData == null) {
+                return false;
             }
-            frequency.clear();
+            outputColumns = csvData.columns;
+            outputData = csvData.allRows(false);
+            if (showColNames()) {
+                outputData.add(0, csvData.columnNames());
+            }
             return true;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
             }
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
 
-//    @Override
-//    public DataFileCSV generatedFile() {
-//        return data2D.frequency(frequency, freName, freCol, scale);
-//    }
     @Override
-    public void cleanPane() {
+    public DataFileCSV generatedFile() {
         try {
-            tableController.statusNotify.removeListener(tableStatusListener);
-            tableStatusListener = null;
+            DataTable tmpTable = data2D.toTmpTable(task, checkedColsIndices, showRowNumber(), false);
+            if (tmpTable == null) {
+                return null;
+            }
+            DataFileCSV csvData = tmpTable.groupValues(targetController.name(), task, groups, calculations);
+            tmpTable.drop();
+            return csvData;
         } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return null;
         }
-        super.cleanPane();
     }
+
 
     /*
         static
@@ -210,7 +201,7 @@ public class Data2DGroupValuesController extends BaseData2DHandleController {
     public static Data2DGroupValuesController open(ControlData2DEditTable tableController) {
         try {
             Data2DGroupValuesController controller = (Data2DGroupValuesController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DFrequencyFxml, false);
+                    tableController.getMyWindow(), Fxmls.Data2DGroupValuesFxml, false);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

@@ -101,6 +101,16 @@ public class ControlData2D extends BaseController {
         }
     }
 
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+            StyleTools.setIconTooltips(functionsButton, "iconFunction.png", "");
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
     public void setParameters(BaseData2DController topController) {
         try {
             this.manageController = topController;
@@ -775,6 +785,13 @@ public class ControlData2D extends BaseController {
             menu = new MenuItem(message("DescriptiveStatistics"), StyleTools.getIconImage("iconStatistic.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DStatisticController.open(tableController);
+            });
+            menu.setDisable(empty);
+            calMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("GroupByValues"), StyleTools.getIconImage("iconAnalyse.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DGroupValuesController.open(tableController);
             });
             menu.setDisable(empty);
             calMenu.getItems().add(menu);
