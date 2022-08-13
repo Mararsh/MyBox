@@ -5,7 +5,6 @@ import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -14,6 +13,7 @@ import java.util.Map;
 import java.util.Random;
 import mara.mybox.calculation.DescriptiveStatistic;
 import mara.mybox.calculation.DoubleStatistic;
+import mara.mybox.data.SetValue;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
@@ -25,6 +25,7 @@ import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.math3.stat.Frequency;
@@ -404,137 +405,105 @@ public class DataTable extends Data2D {
     }
 
     @Override
-    public long setValue(List<Integer> cols, String value, boolean errorContinue) {
+    public long setValue(List<Integer> cols, SetValue setValue, boolean errorContinue) {
         if (cols == null || cols.isEmpty()) {
             return -1;
         }
-        boolean isRandom = false, isRandomNn = false, isBlank = false, isMean = false,
-                isMedian = false, isMode = false;
-        String script = null;
-        if (value != null) {
-            if ("MyBox##blank".equals(value)) {
-                isBlank = true;
-            } else if ("MyBox##random".equals(value)) {
-                isRandom = true;
-            } else if ("MyBox##randomNn".equals(value)) {
-                isRandomNn = true;
-            } else if (value.startsWith("MyBox##Expression##")) {
-                script = value.substring("MyBox##Expression##".length());
-            } else if (value.startsWith("MyBox##columnMean")) {
-                isMean = true;
-            } else if (value.startsWith("MyBox##columnMode")) {
-                isMode = true;
-            } else if (value.startsWith("MyBox##columnMedian")) {
-                isMedian = true;
-            }
-        }
         long count = 0;
-        if (!isRandom && !isRandomNn && script == null && !needFilter()) {
-            try ( Connection conn = DerbyBase.getConnection();
-                     Statement update = conn.createStatement()) {
-                String sql = null;
-                for (int col : cols) {
-                    Data2DColumn column = columns.get(col);
-                    Object ovalue = column.fromString(value);
-                    if (ovalue == null) {
-                        continue;
-                    }
-                    String quote = column.valueQuoted() ? "'" : "";
-                    if (sql == null) {
-                        sql = "";
-                    } else {
-                        sql += ", ";
-                    }
-                    sql += column.getColumnName() + "=" + quote + ovalue + quote;
+        try ( Connection conn = DerbyBase.getConnection();
+                 PreparedStatement query = conn.prepareStatement("SELECT * FROM " + sheet);
+                 ResultSet results = query.executeQuery()) {
+            String value = setValue.getValue(), expResult = null, currentValue;
+            int num = setValue.getStart();
+            int digit;
+            if (setValue.isFillZero()) {
+                if (setValue.isAotoDigit()) {
+                    digit = (dataSize + "").length();
+                } else {
+                    digit = setValue.getDigit();
                 }
-                if (sql == null) {
-                    return -2;
-                }
-                sql = "UPDATE " + sheet + " SET " + sql;
-                count = update.executeUpdate(sql);
-                conn.commit();
-            } catch (Exception e) {
-                if (task != null) {
-                    task.setError(e.toString());
-                }
-                MyBoxLog.error(e);
-                return -2;
+            } else {
+                digit = 0;
             }
-        } else {
-            try ( Connection conn = DerbyBase.getConnection();
-                     PreparedStatement query = conn.prepareStatement("SELECT * FROM " + sheet);
-                     ResultSet results = query.executeQuery()) {
-                Random random = new Random();
-                conn.setAutoCommit(false);
-                rowIndex = 0;
-                startFilter();
-                while (results.next() && task != null && !task.isCancelled()) {
-                    Data2DRow row = tableData2D.readData(results);
-                    List<String> rowValues = new ArrayList<>();
-                    for (int c = 0; c < columns.size(); c++) {
-                        Data2DColumn column = columns.get(c);
-                        Object v = row.getColumnValue(columns.get(c).getColumnName());
-                        rowValues.add(column.toString(v));
-                    }
-                    filterDataRow(rowValues, ++rowIndex);
-                    if (!filterPassed()) {
-                        continue;
-                    }
-                    if (script != null) {
-                        calculateDataRowExpression(script, rowValues, rowIndex);
-                        error = expressionError();
-                        if (error != null) {
-                            if (errorContinue) {
-                                continue;
-                            } else {
-                                task.setError(error);
-                                return -2;
-                            }
+            final Random random = new Random();
+            conn.setAutoCommit(false);
+            rowIndex = 0;
+            startFilter();
+            while (results.next() && task != null && !task.isCancelled()) {
+                Data2DRow row = tableData2D.readData(results);
+                List<String> rowValues = new ArrayList<>();
+                for (int c = 0; c < columns.size(); c++) {
+                    Data2DColumn column = columns.get(c);
+                    Object v = row.getColumnValue(columns.get(c).getColumnName());
+                    rowValues.add(column.toString(v));
+                }
+                filterDataRow(rowValues, ++rowIndex);
+                if (!filterPassed()) {
+                    continue;
+                }
+                if (setValue.isExpression() && value != null) {
+                    calculateDataRowExpression(value, rowValues, rowIndex);
+                    error = expressionError();
+                    if (error != null) {
+                        if (errorContinue) {
+                            continue;
+                        } else {
+                            task.setError(error);
+                            return -2;
                         }
                     }
-                    for (int c = 0; c < columns.size(); c++) {
-                        Data2DColumn column = columns.get(c);
-                        String name = column.getColumnName();
-                        if (cols.contains(c)) {
-                            String v;
-                            if (isBlank) {
-                                v = "";
-                            } else if (isRandom) {
-                                v = random(random, c, false);
-                            } else if (isRandomNn) {
-                                v = random(random, c, true);
-                            } else if (isMean) {
-                                v = column(c).getTargetStatistic().mean + "";
-                            } else if (isMode) {
-                                v = column(c).getTargetStatistic().modeValue + "";
-                            } else if (isMedian) {
-                                v = column(c).getTargetStatistic().median + "";
-                            } else if (script != null) {
-                                v = expressionResult();
-                            } else {
-                                v = value;
-                            }
-                            row.setColumnValue(name, column.fromString(v));
-                            count++;
+                    expResult = expressionResult();
+                }
+                for (int c = 0; c < columns.size(); c++) {
+                    Data2DColumn column = columns.get(c);
+                    String name = column.getColumnName();
+                    currentValue = column.toString(row.getColumnValue(name));
+                    if (cols.contains(c)) {
+                        String v;
+                        if (setValue.isBlank()) {
+                            v = "";
+                        } else if (setValue.isZero()) {
+                            v = "0";
+                        } else if (setValue.isOne()) {
+                            v = "1";
+                        } else if (setValue.isRandom()) {
+                            v = random(random, c, false);
+                        } else if (setValue.isRandom()) {
+                            v = random(random, c, false);
+                        } else if (setValue.isRandomNonNegative()) {
+                            v = random(random, c, true);
+                        } else if (setValue.isSuffix()) {
+                            v = currentValue == null ? value : currentValue + value;
+                        } else if (setValue.isPrefix()) {
+                            v = currentValue == null ? value : value + currentValue;
+                        } else if (setValue.isSuffixNumber()) {
+                            String suffix = StringTools.fillLeftZero(num++, digit);
+                            v = currentValue == null ? suffix : currentValue + suffix;
+                        } else if (setValue.isExpression()) {
+                            v = expResult;
+                        } else {
+                            v = value;
                         }
-                    }
-                    tableData2D.updateData(conn, row);
-                    if (++count % DerbyBase.BatchSize == 0) {
-                        conn.commit();
-                    }
-                    if (filterReachMaxPassed()) {
-                        break;
+                        row.setColumnValue(name, column.fromString(v));
                     }
                 }
-                conn.commit();
-            } catch (Exception e) {
-                if (task != null) {
-                    task.setError(e.toString());
+                tableData2D.updateData(conn, row);
+                if (++count % DerbyBase.BatchSize == 0) {
+                    conn.commit();
                 }
-                MyBoxLog.debug(e);
-                return -3;
+                if (filterReachMaxPassed()) {
+                    break;
+                }
             }
+            conn.commit();
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.debug(e);
+            return -3;
         }
+
         return count;
     }
 

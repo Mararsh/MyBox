@@ -16,6 +16,7 @@ import mara.mybox.controller.DataFileTextController;
 import mara.mybox.controller.DataInMyBoxClipboardController;
 import mara.mybox.controller.DataTablesController;
 import mara.mybox.controller.MatricesManageController;
+import mara.mybox.data.SetValue;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -24,6 +25,7 @@ import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
@@ -226,7 +228,7 @@ public class DataFileCSV extends DataFileText {
     }
 
     @Override
-    public long setValue(List<Integer> cols, String value, boolean errorContinue) {
+    public long setValue(List<Integer> cols, SetValue setValue, boolean errorContinue) {
         if (file == null || !file.exists() || file.length() == 0 || cols == null || cols.isEmpty()) {
             return -1;
         }
@@ -244,25 +246,17 @@ public class DataFileCSV extends DataFileText {
                     } catch (Exception e) {  // skip  bad lines
                     }
                 }
-                boolean isRandom = false, isRandomNn = false, isBlank = false, isMean = false,
-                        isMedian = false, isMode = false;
-                String script = null;
-                if (value != null) {
-                    if ("MyBox##blank".equals(value)) {
-                        isBlank = true;
-                    } else if ("MyBox##random".equals(value)) {
-                        isRandom = true;
-                    } else if ("MyBox##randomNn".equals(value)) {
-                        isRandomNn = true;
-                    } else if (value.startsWith("MyBox##Expression##")) {
-                        script = value.substring("MyBox##Expression##".length());
-                    } else if (value.startsWith("MyBox##columnMean")) {
-                        isMean = true;
-                    } else if (value.startsWith("MyBox##columnMode")) {
-                        isMode = true;
-                    } else if (value.startsWith("MyBox##columnMedian")) {
-                        isMedian = true;
+                String value = setValue.getValue(), expResult = null, currentValue;
+                int num = setValue.getStart();
+                int digit;
+                if (setValue.isFillZero()) {
+                    if (setValue.isAotoDigit()) {
+                        digit = (dataSize + "").length();
+                    } else {
+                        digit = setValue.getDigit();
                     }
+                } else {
+                    digit = 0;
                 }
                 final Random random = new Random();
                 rowIndex = 0;
@@ -278,8 +272,8 @@ public class DataFileCSV extends DataFileText {
                         needSetValue = filterPassed() && !filterReachMaxPassed();
                         if (needSetValue) {
                             count++;
-                            if (script != null) {
-                                calculateDataRowExpression(script, values, rowIndex);
+                            if (setValue.isExpression() && value != null) {
+                                calculateDataRowExpression(value, values, rowIndex);
                                 error = expressionError();
                                 if (error != null) {
                                     if (errorContinue) {
@@ -289,34 +283,46 @@ public class DataFileCSV extends DataFileText {
                                         return -2;
                                     }
                                 }
+                                expResult = expressionResult();
                             }
                         }
                         List<String> row = new ArrayList<>();
                         for (int i = 0; i < columns.size(); i++) {
-                            if (needSetValue && cols.contains(i)) {
-                                if (isBlank) {
-                                    row.add("");
-                                } else if (isRandom) {
-                                    row.add(random(random, i, false));
-                                } else if (isRandomNn) {
-                                    row.add(random(random, i, true));
-                                } else if (isMean) {
-                                    row.add(column(i).getTargetStatistic().mean + "");
-                                } else if (isMode) {
-                                    row.add(column(i).getTargetStatistic().modeValue + "");
-                                } else if (isMedian) {
-                                    row.add(column(i).getTargetStatistic().median + "");
-                                } else if (script != null) {
-                                    row.add(expressionResult());
-                                } else {
-                                    row.add(value);
-                                }
-
-                            } else if (i < record.size()) {
-                                row.add(record.get(i));
+                            if (i < record.size()) {
+                                currentValue = record.get(i);
                             } else {
-                                row.add(null);
+                                currentValue = null;
                             }
+                            String v;
+                            if (needSetValue && cols.contains(i)) {
+                                if (setValue.isBlank()) {
+                                    v = "";
+                                } else if (setValue.isZero()) {
+                                    v = "0";
+                                } else if (setValue.isOne()) {
+                                    v = "1";
+                                } else if (setValue.isRandom()) {
+                                    v = random(random, i, false);
+                                } else if (setValue.isRandom()) {
+                                    v = random(random, i, false);
+                                } else if (setValue.isRandomNonNegative()) {
+                                    v = random(random, i, true);
+                                } else if (setValue.isSuffix()) {
+                                    v = currentValue == null ? value : currentValue + value;
+                                } else if (setValue.isPrefix()) {
+                                    v = currentValue == null ? value : value + currentValue;
+                                } else if (setValue.isSuffixNumber()) {
+                                    String suffix = StringTools.fillLeftZero(num++, digit);
+                                    v = currentValue == null ? suffix : currentValue + suffix;
+                                } else if (setValue.isExpression()) {
+                                    v = expResult;
+                                } else {
+                                    v = value;
+                                }
+                            } else {
+                                v = currentValue;
+                            }
+                            row.add(v);
                         }
                         csvPrinter.printRecord(row);
                     } catch (Exception e) {  // skip  bad lines

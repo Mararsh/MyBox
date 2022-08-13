@@ -6,7 +6,9 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
@@ -28,7 +30,39 @@ License:    Apache License Version 2.0
                   <RadioButton fx:id="randomRadio" layoutX="94.0" layoutY="14.0" mnemonicParsing="false" text="%Random" toggleGroup="$valueGroup" />
                   <RadioButton fx:id="randomNnRadio" layoutX="134.0" layoutY="10.0" mnemonicParsing="false" text="%RandomNonnegative" toggleGroup="$valueGroup" />
               </children>
-          </FlowPane> 
+          </FlowPane>
+      <HBox alignment="CENTER_LEFT" spacing="5.0">
+         <children>
+                  <RadioButton fx:id="valueRadio" minWidth="-Infinity" mnemonicParsing="false" text="%Value" toggleGroup="$valueGroup" />
+                  <TextField fx:id="valueInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+            <RadioButton fx:id="prefixRadio" minWidth="-Infinity" mnemonicParsing="false" text="%AddPrefix" toggleGroup="$valueGroup" wrapText="true" />
+            <TextField fx:id="prefixInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+            <RadioButton fx:id="suffixRadio" minWidth="-Infinity" mnemonicParsing="false" text="%AppendSuffix" toggleGroup="$valueGroup" wrapText="true" />
+            <TextField fx:id="suffixInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="52.0" spacing="5.0">
+         <children>
+            <RadioButton fx:id="numberRadio" minWidth="-Infinity" mnemonicParsing="false" text="%AddSequenceNumber" toggleGroup="$valueGroup" wrapText="true" />
+            <FlowPane fx:id="numberPane" hgap="5.0" maxWidth="1.7976931348623157E308" vgap="5.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label text="%Start">
+                     <FlowPane.margin>
+                        <Insets />
+                     </FlowPane.margin>
+                  </Label>
+                  <TextField fx:id="startInput" prefWidth="50.0" text="0" />
+                  <CheckBox fx:id="fillZeroCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%FillZero" wrapText="true" />
+                  <Label text="%Digit" />
+                  <TextField fx:id="digitInput" prefWidth="50.0" />
+                  <Label minHeight="-Infinity" text="%AccumDigitComments" wrapText="true" />
+               </children>
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </FlowPane>
+         </children>
+      </HBox> 
           <FlowPane fx:id="matrixPane" hgap="5.0" prefWrapLength="300.0" vgap="5.0">
               <children>
                   <RadioButton fx:id="gaussianDistributionRadio" mnemonicParsing="false" text="%GaussianDistribution" toggleGroup="$valueGroup" />
@@ -37,12 +71,6 @@ License:    Apache License Version 2.0
                   <RadioButton fx:id="lowerTriangleRadio" layoutX="10.0" layoutY="31.0" mnemonicParsing="false" text="%LowerTriangle" toggleGroup="$valueGroup" />
               </children>
           </FlowPane>
-      <HBox alignment="CENTER_LEFT" spacing="2.0">
-         <children>
-                  <RadioButton fx:id="setRadio" mnemonicParsing="false" text="%Input" toggleGroup="$valueGroup" />
-                  <TextField fx:id="valueInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-         </children>
-      </HBox>
       <HBox alignment="CENTER_LEFT" spacing="5.0">
          <children>
             <RadioButton fx:id="expressionRadio" mnemonicParsing="false" text="%RowExpression" toggleGroup="$valueGroup" />

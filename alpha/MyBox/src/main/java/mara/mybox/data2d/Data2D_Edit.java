@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import mara.mybox.data.SetValue;
 import mara.mybox.data2d.scan.Data2DReader;
 import mara.mybox.data2d.scan.Data2DReader.Operation;
 import mara.mybox.db.DerbyBase;
@@ -36,7 +37,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
 
     public abstract boolean savePageData(Data2D targetData);
 
-    public abstract long setValue(List<Integer> cols, String value, boolean errorContinue);
+    public abstract long setValue(List<Integer> cols, SetValue value, boolean errorContinue);
 
     public abstract long deleteRows(boolean errorContinue);
 

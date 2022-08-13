@@ -9,6 +9,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
+import mara.mybox.data.SetValue;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
@@ -23,77 +24,109 @@ public class ControlData2DSetValue extends BaseController {
 
     protected BaseData2DHandleController handleController;
     protected Data2D data2D;
-    protected String value;
+    protected SetValue setValue;
 
     @FXML
     protected ToggleGroup valueGroup;
     @FXML
-    protected RadioButton zeroRadio, oneRadio, blankRadio, randomRadio, randomNnRadio, expressionRadio,
-            setRadio, gaussianDistributionRadio, identifyRadio, upperTriangleRadio, lowerTriangleRadio;
+    protected RadioButton zeroRadio, oneRadio, blankRadio, randomRadio, randomNnRadio,
+            valueRadio, prefixRadio, suffixRadio, numberRadio, expressionRadio,
+            gaussianDistributionRadio, identifyRadio, upperTriangleRadio, lowerTriangleRadio;
     @FXML
-    protected TextField valueInput;
+    protected TextField valueInput, prefixInput, suffixInput, startInput, digitInput;
     @FXML
-    protected FlowPane matrixPane;
+    protected FlowPane matrixPane, numberPane;
     @FXML
     protected ControlData2DRowExpression expressionController;
     @FXML
-    protected CheckBox errorContinueCheck;
+    protected CheckBox errorContinueCheck, fillZeroCheck;
 
     @Override
     public void initControls() {
         try {
             super.initControls();
 
-            value = UserConfig.getString(baseName + "Value", "0");
-            if (value == null) {
-                value = "0";
+            setValue = new SetValue();
+            String valueType = UserConfig.getString(baseName + "ValueType", "Value");
+            if (valueType == null) {
+                valueType = "Value";
             }
-            switch (value) {
-                case "0":
+            switch (valueType) {
+                case "Zero":
                     zeroRadio.fire();
                     break;
-                case "1":
+                case "One":
                     oneRadio.fire();
                     break;
-                case "MyBox##blank":
+                case "Blank":
                     blankRadio.fire();
                     break;
-                case "MyBox##random":
+                case "Random":
                     randomRadio.fire();
                     break;
-                case "MyBox##randomNn":
+                case "RandomNonNegative":
                     randomNnRadio.fire();
                     break;
-                case "MyBox##gaussianDistribution":
+                case "Prefix":
+                    prefixRadio.fire();
+                    break;
+                case "Suffix":
+                    suffixRadio.fire();
+                    break;
+                case "SuffixNumber":
+                    numberRadio.fire();
+                    break;
+                case "Expression":
+                    expressionRadio.fire();
+                    break;
+                case "GaussianDistribution":
                     gaussianDistributionRadio.fire();
                     break;
-                case "MyBox##identify":
+                case "Identify":
                     identifyRadio.fire();
                     break;
-                case "MyBox##upperTriangle":
+                case "UpperTriangle":
                     upperTriangleRadio.fire();
                     break;
-                case "MyBox##lowerTriangle":
+                case "LowerTriangle":
                     lowerTriangleRadio.fire();
                     break;
                 default:
-                    if (value.startsWith("MyBox##Expression")) {
-                        valueInput.setText(value.substring("MyBox##Expression".length()));
-                        expressionRadio.fire();
-                    } else {
-                        valueInput.setText(value);
-                        setRadio.fire();
-                    }
+                    valueRadio.fire();
             }
+            valueInput.setText(UserConfig.getString(baseName + "ValueString", ""));
+            prefixInput.setText(UserConfig.getString(baseName + "Prefix", ""));
+            suffixInput.setText(UserConfig.getString(baseName + "Suffix", ""));
+            startInput.setText(UserConfig.getInt(baseName + "Start", 1) + "");
+            if (UserConfig.getBoolean(baseName + "FillZero", true)) {
+                int digit = UserConfig.getInt(baseName + "Digit", 0);
+                if (digit > 0) {
+                    digitInput.setText(digit + "");
+                } else {
+                    digitInput.setText("");
+                }
+                fillZeroCheck.setSelected(true);
+            } else {
+                fillZeroCheck.setSelected(false);
+                digitInput.setText("");
+            }
+            expressionController.scriptInput.setText(UserConfig.getString(baseName + "Expression", ""));
+
+            checkSelection();
+
             valueGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    checkValue();
+                    checkSelection();
                 }
             });
 
             expressionController.thisPane.disableProperty().bind(expressionRadio.selectedProperty().not());
-            valueInput.disableProperty().bind(setRadio.selectedProperty().not());
+            valueInput.disableProperty().bind(valueRadio.selectedProperty().not());
+            prefixInput.disableProperty().bind(prefixRadio.selectedProperty().not());
+            suffixInput.disableProperty().bind(suffixRadio.selectedProperty().not());
+            numberPane.disableProperty().bind(numberRadio.selectedProperty().not());
+            digitInput.disableProperty().bind(fillZeroCheck.selectedProperty().not());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -111,57 +144,6 @@ public class ControlData2DSetValue extends BaseController {
 
     }
 
-    public void checkValue() {
-        try {
-            if (isSettingValues) {
-                return;
-            }
-            value = null;
-            valueInput.setStyle(null);
-            if (setRadio.isSelected()) {
-                value = valueInput.getText();
-            } else if (zeroRadio.isSelected()) {
-                value = "0";
-            } else if (oneRadio.isSelected()) {
-                value = "1";
-            } else if (blankRadio.isSelected()) {
-                value = "MyBox##blank";
-            } else if (randomRadio.isSelected()) {
-                value = "MyBox##random";
-            } else if (randomNnRadio.isSelected()) {
-                value = "MyBox##randomNn";
-            } else if (gaussianDistributionRadio.isSelected()) {
-                value = "MyBox##gaussianDistribution";
-            } else if (identifyRadio.isSelected()) {
-                value = "MyBox##identify";
-            } else if (upperTriangleRadio.isSelected()) {
-                value = "MyBox##upperTriangle";
-            } else if (lowerTriangleRadio.isSelected()) {
-                value = "MyBox##lowerTriangle";
-            } else if (expressionRadio.isSelected()) {
-                value = setExpression(expressionController.scriptInput.getText());
-            }
-            if (value != null && !value.isBlank()) {
-                UserConfig.setString(baseName + "Value", value);
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    public void showMatrixPane(boolean show) {
-        if (show) {
-            if (!thisPane.getChildren().contains(matrixPane)) {
-                thisPane.getChildren().add(1, matrixPane);
-            }
-        } else {
-            if (thisPane.getChildren().contains(matrixPane)) {
-                thisPane.getChildren().remove(matrixPane);
-            }
-        }
-    }
-
     public void setData2D(Data2D data2D) {
         this.data2D = data2D;
         expressionController.setData2D(data2D);
@@ -171,35 +153,100 @@ public class ControlData2DSetValue extends BaseController {
         if (handleController == null) {
             return true;
         }
-        checkValue();
-        if (value == null) {
-            return false;
-        } else {
-            boolean ok = true;
-            if (expressionRadio.isSelected()) {
-                ok = expressionController.checkExpression(handleController.isAllPages());
-                if (!ok && data2D.getError() != null) {
-                    handleController.infoLabel.setText(message("Invalid") + ": " + message("RowExpression") + "\n"
-                            + data2D.getError());
+        boolean ok = true;
+        setValue.init();
+        if (valueRadio.isSelected()) {
+            String v = valueInput.getText();
+            setValue.setType(SetValue.ValueType.Value).setValue(v);
+            UserConfig.setString(baseName + "ValueString", v);
+        } else if (zeroRadio.isSelected()) {
+            setValue.setType(SetValue.ValueType.Zero).setValue("0");
+        } else if (oneRadio.isSelected()) {
+            setValue.setType(SetValue.ValueType.One).setValue("1");
+        } else if (blankRadio.isSelected()) {
+            setValue.setType(SetValue.ValueType.Blank).setValue("");
+        } else if (randomRadio.isSelected()) {
+            setValue.setType(SetValue.ValueType.Random);
+        } else if (randomNnRadio.isSelected()) {
+            setValue.setType(SetValue.ValueType.RandomNonNegative);
+        } else if (prefixRadio.isSelected()) {
+            String v = prefixInput.getText();
+            if (v == null || v.isEmpty()) {
+                popError(message("Invalid") + ": " + message("AddPrefix"));
+                ok = false;
+            } else {
+                UserConfig.setString(baseName + "Prefix", v);
+            }
+            setValue.setType(SetValue.ValueType.Prefix).setValue(v);
+        } else if (suffixRadio.isSelected()) {
+            String v = suffixInput.getText();
+            if (v == null || v.isEmpty()) {
+                popError(message("Invalid") + ": " + message("AppendSuffix"));
+                ok = false;
+            } else {
+                UserConfig.setString(baseName + "Suffix", v);
+            }
+            setValue.setType(SetValue.ValueType.Suffix).setValue(v);
+        } else if (numberRadio.isSelected()) {
+            setValue.setType(SetValue.ValueType.SuffixNumber).setFillZero(false).setAotoDigit(false);
+            int start;
+            try {
+                start = Integer.valueOf(startInput.getText().trim());
+                UserConfig.setInt(baseName + "Start", start);
+            } catch (Exception e) {
+                popError(message("Invalid") + ": " + message("AddSequenceNumber") + " - " + message("Start"));
+                start = 0;
+                ok = false;
+            }
+            int digit = -1;
+            if (fillZeroCheck.isSelected()) {
+                setValue.setFillZero(true);
+                try {
+                    String v = digitInput.getText();
+                    if (v == null || v.isBlank()) {
+                        digit = 0;
+                        setValue.setAotoDigit(true);
+                    } else {
+                        digit = Integer.valueOf(digitInput.getText());
+                    }
+                    UserConfig.setInt(baseName + "Digit", digit);
+                } catch (Exception e) {
+                    popError(message("Invalid") + ": " + message("AddSequenceNumber") + " - " + message("Digit"));
+                    digit = -2;
+                    ok = false;
                 }
             }
-            return ok;
+            setValue.setStart(start).setDigit(digit);
+            UserConfig.setBoolean(baseName + "FillZero", setValue.isFillZero());
+            UserConfig.setBoolean(baseName + "AutoDigit", setValue.isAotoDigit());
+        } else if (gaussianDistributionRadio.isSelected()) {
+            setValue.setType(SetValue.ValueType.GaussianDistribution);
+        } else if (identifyRadio.isSelected()) {
+            setValue.setType(SetValue.ValueType.GaussianDistribution);
+        } else if (upperTriangleRadio.isSelected()) {
+            setValue.setType(SetValue.ValueType.UpperTriangle);
+        } else if (lowerTriangleRadio.isSelected()) {
+            setValue.setType(SetValue.ValueType.LowerTriangle);
+        } else if (expressionRadio.isSelected()) {
+            String v = expressionController.scriptInput.getText();
+            setValue.setType(SetValue.ValueType.Expression).setValue(v);
+            ok = expressionController.checkExpression(handleController.isAllPages());
+            if (!ok && data2D.getError() != null) {
+                alertError(message("Invalid") + ": " + message("RowExpression") + "\n" + data2D.getError());
+            } else {
+                UserConfig.setString(baseName + "Expression", v);
+            }
         }
+        UserConfig.setString(baseName + "ValueType", setValue.getType().name());
+        return ok;
     }
 
-    public String expression() {
-        if (value == null) {
-            return null;
-        }
-        if (value.startsWith("MyBox##Expression##")) {
-            return value.substring("MyBox##Expression##".length());
-        }
-        return null;
+    public String value() {
+        return setValue.getValue();
     }
 
-    public String setExpression(String exp) {
-        value = "MyBox##Expression##" + exp;
-        return value;
+    public void setValue(String value) {
+        setValue.setValue(value);
     }
 
 }

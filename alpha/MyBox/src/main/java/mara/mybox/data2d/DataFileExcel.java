@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import mara.mybox.data.SetValue;
 import mara.mybox.data2d.scan.Data2DReader;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
@@ -16,6 +17,7 @@ import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TmpFileTools;
 import static mara.mybox.value.Languages.message;
 import org.apache.poi.ss.usermodel.Cell;
@@ -457,7 +459,7 @@ public class DataFileExcel extends DataFile {
     }
 
     @Override
-    public long setValue(List<Integer> cols, String value, boolean errorContinue) {
+    public long setValue(List<Integer> cols, SetValue setValue, boolean errorContinue) {
         if (file == null || !file.exists() || file.length() == 0
                 || cols == null || cols.isEmpty()) {
             return -2;
@@ -498,27 +500,19 @@ public class DataFileExcel extends DataFile {
                     while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
                     }
                 }
-                boolean isRandom = false, isRandomNn = false, isBlank = false, isMean = false,
-                        isMedian = false, isMode = false;
-                String script = null;
-                if (value != null) {
-                    if ("MyBox##blank".equals(value)) {
-                        isBlank = true;
-                    } else if ("MyBox##random".equals(value)) {
-                        isRandom = true;
-                    } else if ("MyBox##randomNn".equals(value)) {
-                        isRandomNn = true;
-                    } else if (value.startsWith("MyBox##Expression##")) {
-                        script = value.substring("MyBox##Expression##".length());
-                    } else if (value.startsWith("MyBox##columnMean")) {
-                        isMean = true;
-                    } else if (value.startsWith("MyBox##columnMode")) {
-                        isMode = true;
-                    } else if (value.startsWith("MyBox##columnMedian")) {
-                        isMedian = true;
+                String value = setValue.getValue(), expResult = null, currentValue;
+                int num = setValue.getStart();
+                int digit;
+                if (setValue.isFillZero()) {
+                    if (setValue.isAotoDigit()) {
+                        digit = (dataSize + "").length();
+                    } else {
+                        digit = setValue.getDigit();
                     }
+                } else {
+                    digit = 0;
                 }
-                Random random = new Random();
+                final Random random = new Random();
                 rowIndex = 0;
                 boolean needSetValue;
                 startFilter();
@@ -536,8 +530,8 @@ public class DataFileExcel extends DataFile {
                     needSetValue = filterPassed() && !filterReachMaxPassed();
                     if (needSetValue) {
                         count++;
-                        if (script != null) {
-                            calculateDataRowExpression(script, values, rowIndex);
+                        if (setValue.isExpression() && value != null) {
+                            calculateDataRowExpression(value, values, rowIndex);
                             error = expressionError();
                             if (error != null) {
                                 if (errorContinue) {
@@ -547,30 +541,39 @@ public class DataFileExcel extends DataFile {
                                     return -2;
                                 }
                             }
+                            expResult = expressionResult();
                         }
                     }
                     for (int c = sourceRow.getFirstCellNum(); c < sourceRow.getLastCellNum(); c++) {
+                        currentValue = MicrosoftDocumentTools.cellString(sourceRow.getCell(c));
                         String v;
                         if (needSetValue && cols.contains(c)) {
-                            if (isBlank) {
+                            if (setValue.isBlank()) {
                                 v = "";
-                            } else if (isRandom) {
+                            } else if (setValue.isZero()) {
+                                v = "0";
+                            } else if (setValue.isOne()) {
+                                v = "1";
+                            } else if (setValue.isRandom()) {
                                 v = random(random, c, false);
-                            } else if (isRandomNn) {
+                            } else if (setValue.isRandom()) {
+                                v = random(random, c, false);
+                            } else if (setValue.isRandomNonNegative()) {
                                 v = random(random, c, true);
-                            } else if (isMean) {
-                                v = column(c).getTargetStatistic().mean + "";
-                            } else if (isMode) {
-                                v = column(c).getTargetStatistic().modeValue + "";
-                            } else if (isMedian) {
-                                v = column(c).getTargetStatistic().median + "";
-                            } else if (script != null) {
-                                v = expressionResult();
+                            } else if (setValue.isSuffix()) {
+                                v = currentValue == null ? value : currentValue + value;
+                            } else if (setValue.isPrefix()) {
+                                v = currentValue == null ? value : value + currentValue;
+                            } else if (setValue.isSuffixNumber()) {
+                                String suffix = StringTools.fillLeftZero(num++, digit);
+                                v = currentValue == null ? suffix : currentValue + suffix;
+                            } else if (setValue.isExpression()) {
+                                v = expResult;
                             } else {
                                 v = value;
                             }
                         } else {
-                            v = MicrosoftDocumentTools.cellString(sourceRow.getCell(c));
+                            v = currentValue;
                         }
                         Cell targetCell = targetRow.createCell(c, CellType.STRING);
                         targetCell.setCellValue(v);

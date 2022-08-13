@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.controller.ControlDataConvert;
+import mara.mybox.data.SetValue;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DCell;
 import mara.mybox.db.data.Data2DColumn;
@@ -182,7 +183,7 @@ public class DataMatrix extends Data2D {
     }
 
     @Override
-    public long setValue(List<Integer> cols, String value, boolean errorContinue) {
+    public long setValue(List<Integer> cols, SetValue value, boolean errorContinue) {
         return -1;
     }
 

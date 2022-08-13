@@ -56,7 +56,7 @@ License:    Apache License Version 2.0
                                                             </toggleGroup>
                                                         </RadioButton>
                                                         <RadioButton mnemonicParsing="false" text="%AppendSuffix" toggleGroup="$renameGroup" />
-                                                        <RadioButton mnemonicParsing="false" text="%AppendPrefix" toggleGroup="$renameGroup" />
+                                                        <RadioButton mnemonicParsing="false" text="%AddPrefix" toggleGroup="$renameGroup" />
                                                         <RadioButton mnemonicParsing="false" text="%AddSequenceNumber" toggleGroup="$renameGroup" />
                                                         <RadioButton mnemonicParsing="false" text="%ChangeExtension" toggleGroup="$renameGroup" />
                                                     </children>
