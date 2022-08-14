@@ -45,19 +45,24 @@ public class Data2DChartPieController extends BaseData2DChartController {
     @Override
     public boolean initData() {
         try {
+            if (!super.initData()) {
+                return false;
+            }
             dataColsIndices = new ArrayList<>();
             outputColumns = new ArrayList<>();
             outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
             int categoryCol = data2D.colOrder(selectedCategory);
             if (categoryCol < 0) {
-                popError(message("SelectToHandle"));
+                outError(message("SelectToHandle") + ": " + message("CategoryColumn"));
+                tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
             dataColsIndices.add(categoryCol);
             outputColumns.add(data2D.column(categoryCol));
             int valueCol = data2D.colOrder(selectedValue);
             if (valueCol < 0) {
-                popError(message("SelectToHandle"));
+                outError(message("SelectToHandle") + ": " + message("ValueColumn"));
+                tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
             dataColsIndices.add(valueCol);

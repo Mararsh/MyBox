@@ -98,16 +98,15 @@ public class Data2DSortController extends BaseData2DHandleController {
     }
 
     @Override
-    public boolean checkOptions() {
+    public boolean initData() {
         try {
-            if (isSettingValues) {
-                return true;
+            if (!super.initData()) {
+                return false;
             }
-            boolean ok = super.checkOptions();
             orders = columnsController.selectedNames();
             if (orders == null || orders.isEmpty()) {
-                infoLabel.setText(message("SelectToHandle"));
-                okButton.setDisable(true);
+                outError(message("SelectToHandle") + ": " + message("Order"));
+                tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
             List<String> colsNames = new ArrayList<>();
@@ -134,7 +133,7 @@ public class Data2DSortController extends BaseData2DHandleController {
                 checkedColumns.add(data2D.columnByName(name));
             }
             checkedColsNames = colsNames;
-            return ok;
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;

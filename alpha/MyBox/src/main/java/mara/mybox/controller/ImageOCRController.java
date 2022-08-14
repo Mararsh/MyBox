@@ -203,7 +203,7 @@ public class ImageOCRController extends ImageViewerController {
     @Override
     public void startAction() {
         ocrOptionsController.setLanguages();
-        File dataPath = ocrOptionsController.dataPathController.file;
+        File dataPath = ocrOptionsController.dataPathController.file();
         if (!dataPath.exists()) {
             popError(Languages.message("InvalidParameters"));
             ocrOptionsController.dataPathController.fileInput.setStyle(UserConfig.badStyle());
@@ -218,10 +218,10 @@ public class ImageOCRController extends ImageViewerController {
 
     protected void command() {
         if (preprocessController.imageView.getImage() == null || timer != null || process != null
-                || ocrOptionsController.dataPathController.file == null) {
+                || ocrOptionsController.dataPathController.file() == null) {
             return;
         }
-        File tesseract = ocrOptionsController.tesseractPathController.file;
+        File tesseract = ocrOptionsController.tesseractPathController.file();
         if (!tesseract.exists()) {
             popError(Languages.message("InvalidParameters"));
             ocrOptionsController.tesseractPathController.fileInput.setStyle(UserConfig.badStyle());
@@ -249,7 +249,7 @@ public class ImageOCRController extends ImageViewerController {
                     parameters.addAll(Arrays.asList(
                             tesseract.getAbsolutePath(),
                             imageFile, fileBase,
-                            "--tessdata-dir", ocrOptionsController.dataPathController.file.getAbsolutePath(),
+                            "--tessdata-dir", ocrOptionsController.dataPathController.file().getAbsolutePath(),
                             version > 3 ? "--psm" : "-psm", ocrOptionsController.psm + ""
                     ));
                     if (ocrOptionsController.selectedLanguages != null) {
@@ -343,7 +343,7 @@ public class ImageOCRController extends ImageViewerController {
 
     protected void embedded() {
         if (preprocessController.imageView.getImage() == null
-                || ocrOptionsController.dataPathController.file == null) {
+                || ocrOptionsController.dataPathController.file() == null) {
             return;
         }
         synchronized (this) {
@@ -370,7 +370,7 @@ public class ImageOCRController extends ImageViewerController {
                                 instance.setVariable(key, p.get(key));
                             }
                         }
-                        instance.setDatapath(ocrOptionsController.dataPathController.file.getAbsolutePath());
+                        instance.setDatapath(ocrOptionsController.dataPathController.file().getAbsolutePath());
                         if (ocrOptionsController.selectedLanguages != null) {
                             instance.setLanguage(ocrOptionsController.selectedLanguages);
                         }

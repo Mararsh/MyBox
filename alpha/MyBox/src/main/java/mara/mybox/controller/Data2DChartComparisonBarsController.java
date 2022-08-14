@@ -83,31 +83,30 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
     }
 
     @Override
-    public boolean checkOptions() {
-        if (isSettingValues) {
+    public boolean initData() {
+        try {
+            if (!super.initData()) {
+                return false;
+            }
+            selectedValue2 = valueColumn2Selector.getSelectionModel().getSelectedItem();
+            if (selectedValue2 == null) {
+                outError(message("SelectToHandle") + ": " + message("Column"));
+                tabPane.getSelectionModel().select(optionsTab);
+                return false;
+            }
+            col1 = data2D.colOrder(selectedValue);
+            col2 = data2D.colOrder(selectedValue2);
+            dataColsIndices = new ArrayList<>();
+            dataColsIndices.add(col1);
+            dataColsIndices.add(col2);
+            if (!dataColsIndices.contains(categorysCol)) {
+                dataColsIndices.add(categorysCol);
+            }
             return true;
-        }
-        boolean ok = super.checkOptions();
-        selectedValue2 = valueColumn2Selector.getSelectionModel().getSelectedItem();
-        if (selectedValue2 == null) {
-            infoLabel.setText(message("SelectToHandle"));
-            okButton.setDisable(true);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
             return false;
         }
-        col1 = data2D.colOrder(selectedValue);
-        col2 = data2D.colOrder(selectedValue2);
-        return ok;
-    }
-
-    @Override
-    public boolean initData() {
-        dataColsIndices = new ArrayList<>();
-        dataColsIndices.add(col1);
-        dataColsIndices.add(col2);
-        if (!dataColsIndices.contains(categorysCol)) {
-            dataColsIndices.add(categorysCol);
-        }
-        return true;
     }
 
     @Override

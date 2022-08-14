@@ -83,13 +83,17 @@ public class Data2DChartXYController extends BaseData2DChartController {
     @Override
     public boolean initData() {
         try {
+            if (!super.initData()) {
+                return false;
+            }
             String title = selectedCategory;
             dataColsIndices = new ArrayList<>();
             outputColumns = new ArrayList<>();
             outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
             int categoryCol = data2D.colOrder(selectedCategory);
             if (categoryCol < 0) {
-                popError(message("SelectToHandle"));
+                outError(message("SelectToHandle") + ": " + message("Column"));
+                tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
             dataColsIndices.add(categoryCol);
@@ -98,14 +102,16 @@ public class Data2DChartXYController extends BaseData2DChartController {
                 title += " - " + selectedValue;
                 int valueCol = data2D.colOrder(selectedValue);
                 if (valueCol < 0) {
-                    popError(message("SelectToHandle"));
+                    outError(message("SelectToHandle") + ": " + message("Column"));
+                    tabPane.getSelectionModel().select(optionsTab);
                     return false;
                 }
                 dataColsIndices.add(valueCol);
                 outputColumns.add(data2D.column(valueCol));
             }
             if (checkedColsIndices == null || checkedColsIndices.isEmpty()) {
-                popError(message("SelectToHandle"));
+                outError(message("SelectToHandle") + ": " + message("Column"));
+                tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
             dataColsIndices.addAll(checkedColsIndices);

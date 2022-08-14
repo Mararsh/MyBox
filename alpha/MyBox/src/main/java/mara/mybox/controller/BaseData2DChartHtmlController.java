@@ -144,16 +144,15 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
     }
 
     @Override
-    public boolean checkOptions() {
-        if (isSettingValues) {
-            return true;
+    public boolean initData() {
+        if (!super.initData()) {
+            return false;
         }
-        boolean ok = super.checkOptions();
         categorysCol = -1;
         if (data2D != null) {
             categorysCol = data2D.colOrder(selectedCategory);
         }
-        return ok;
+        return true;
     }
 
     @Override

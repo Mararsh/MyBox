@@ -61,24 +61,32 @@ public class Data2DRowExpressionController extends BaseData2DHandleController {
     }
 
     @Override
-    public boolean checkOptions() {
-        boolean ok = expressionController.checkExpression(isAllPages());
-        if (!ok && data2D.getError() != null) {
-            infoLabel.setText(message("Invalid") + ": " + message("RowExpression") + "\n"
-                    + data2D.getError());
+    public boolean initData() {
+        try {
+            if (!super.initData()) {
+                return false;
+            }
+            if (!expressionController.checkExpression(isAllPages())) {
+                outError(message("Invalid") + ": " + message("RowExpression") + "\n"
+                        + data2D.getError());
+                tabPane.getSelectionModel().select(optionsTab);
+                return false;
+            }
+            String name = nameInput.getText();
+            if (name == null || name.isBlank()) {
+                outError(message("InvalidParameter") + ": " + message("Name"));
+                tabPane.getSelectionModel().select(optionsTab);
+                return false;
+            } else {
+                name = name.trim();
+                UserConfig.setString(interfaceName + "Name", name);
+                TableStringValues.add(interfaceName + "NameHistories", name);
+            }
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return false;
         }
-        String name = nameInput.getText();
-        if (name == null || name.isBlank()) {
-            popError(message("InvalidParameter") + ": " + message("Name"));
-            ok = false;
-        } else {
-            name = name.trim();
-            UserConfig.setString(interfaceName + "Name", name);
-            TableStringValues.add(interfaceName + "NameHistories", name);
-        }
-        ok = super.checkOptions() && ok;
-        okButton.setDisable(!ok);
-        return ok;
     }
 
     @Override
@@ -195,7 +203,6 @@ public class Data2DRowExpressionController extends BaseData2DHandleController {
 
     @Override
     public DataFileCSV generatedFile() {
-        MyBoxLog.console(expression);
         return data2D.rowExpression(targetController.name(), expression,
                 nameInput.getText().trim(), errorContinueCheck.isSelected(),
                 checkedColsIndices, rowNumberCheck.isSelected(), colNameCheck.isSelected());

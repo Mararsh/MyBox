@@ -76,8 +76,19 @@ public class ControlData2DTarget extends BaseController {
     }
 
     public void checkControls() {
+        if (inTableBox != null) {
+            if (notInTable) {
+                if (thisPane.getChildren().contains(inTableBox)) {
+                    thisPane.getChildren().remove(inTableBox);
+                }
+            } else {
+                if (!thisPane.getChildren().contains(inTableBox)) {
+                    thisPane.getChildren().add(2, inTableBox);
+                }
+            }
+        }
         if (inTable()) {
-            if (inTableBox != null && !inTableBox.getChildren().contains(locationBox)) {
+            if (!inTableBox.getChildren().contains(locationBox)) {
                 inTableBox.getChildren().add(locationBox);
             }
             if (externalBox.getChildren().contains(prefixBox)) {

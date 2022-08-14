@@ -226,13 +226,13 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                 }
             } else {
                 tesseractVersion = ocrOptionsController.tesseractVersion();
-                File tesseract = ocrOptionsController.tesseractPathController.file;
+                File tesseract = ocrOptionsController.tesseractPathController.file();
                 if (!tesseract.exists()) {
                     popError(Languages.message("InvalidParameters"));
                     ocrOptionsController.tesseractPathController.fileInput.setStyle(UserConfig.badStyle());
                     return false;
                 }
-                File dataPath = ocrOptionsController.dataPathController.file;
+                File dataPath = ocrOptionsController.dataPathController.file();
                 if (!dataPath.exists()) {
                     popError(Languages.message("InvalidParameters"));
                     ocrOptionsController.dataPathController.fileInput.setStyle(UserConfig.badStyle());
@@ -530,9 +530,9 @@ public class ImageOCRBatchController extends BaseBatchImageController {
 
             List<String> parameters = new ArrayList<>();
             parameters.addAll(Arrays.asList(
-                    ocrOptionsController.tesseractPathController.file.getAbsolutePath(),
+                    ocrOptionsController.tesseractPathController.file().getAbsolutePath(),
                     srcFile.getAbsolutePath(), tmpPrefix,
-                    "--tessdata-dir", ocrOptionsController.dataPathController.file.getAbsolutePath(),
+                    "--tessdata-dir", ocrOptionsController.dataPathController.file().getAbsolutePath(),
                     tesseractVersion > 3 ? "--psm" : "-psm", ocrOptionsController.psm + ""
             ));
             if (ocrOptionsController.selectedLanguages != null) {

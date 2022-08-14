@@ -83,65 +83,58 @@ public class Data2DGroupValuesController extends BaseData2DHandleController {
     }
 
     @Override
-    public boolean checkOptions() {
+    public boolean initData() {
         try {
-            if (isSettingValues) {
-                return true;
-            }
-            boolean ok = super.checkOptions();
-            groups = groupController.selectedNames();
-            if (groups == null || groups.isEmpty()) {
-                infoLabel.setText(message("SelectToHandle"));
-                okButton.setDisable(true);
+            if (!super.initData()) {
                 return false;
             }
-
-            return ok;
+            groups = groupController.selectedNames();
+            if (groups == null || groups.isEmpty()) {
+                outError(message("SelectToHandle") + ": " + message("Group"));
+                tabPane.getSelectionModel().select(optionsTab);
+                return false;
+            }
+            List<String> colsNames = new ArrayList<>();
+            colsNames.addAll(groups);
+            calculations = calculationController.selectedNames();
+            if (calculations != null) {
+                for (String name : calculations) {
+                    if (name.endsWith("-" + message("Mean"))) {
+                        name = name.substring(0, name.length() - ("-" + message("Mean")).length());
+                    } else if (name.endsWith("-" + message("Summation"))) {
+                        name = name.substring(0, name.length() - ("-" + message("Summation")).length());
+                    } else if (name.endsWith("-" + message("Maximum"))) {
+                        name = name.substring(0, name.length() - ("-" + message("Maximum")).length());
+                    } else if (name.endsWith("-" + message("Minimum"))) {
+                        name = name.substring(0, name.length() - ("-" + message("Minimum")).length());
+                    } else if (name.endsWith("-" + message("PopulationVariance"))) {
+                        name = name.substring(0, name.length() - ("-" + message("PopulationVariance")).length());
+                    } else if (name.endsWith("-" + message("SampleVariance"))) {
+                        name = name.substring(0, name.length() - ("-" + message("SampleVariance")).length());
+                    } else if (name.endsWith("-" + message("PopulationStandardDeviation"))) {
+                        name = name.substring(0, name.length() - ("-" + message("PopulationStandardDeviation")).length());
+                    } else if (name.endsWith("-" + message("SampleStandardDeviation"))) {
+                        name = name.substring(0, name.length() - ("-" + message("SampleStandardDeviation")).length());
+                    } else {
+                        continue;
+                    }
+                    if (!colsNames.contains(name)) {
+                        colsNames.add(name);
+                    }
+                }
+            }
+            checkedColsIndices = new ArrayList<>();
+            checkedColumns = new ArrayList<>();
+            for (String name : colsNames) {
+                checkedColsIndices.add(data2D.colOrder(name));
+                checkedColumns.add(data2D.columnByName(name));
+            }
+            checkedColsNames = colsNames;
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
         }
-    }
-
-    @Override
-    public boolean initData() {
-        List<String> colsNames = new ArrayList<>();
-        colsNames.addAll(groups);
-        calculations = calculationController.selectedNames();
-        if (calculations != null) {
-            for (String name : calculations) {
-                if (name.endsWith("-" + message("Mean"))) {
-                    name = name.substring(0, name.length() - ("-" + message("Mean")).length());
-                } else if (name.endsWith("-" + message("Summation"))) {
-                    name = name.substring(0, name.length() - ("-" + message("Summation")).length());
-                } else if (name.endsWith("-" + message("Maximum"))) {
-                    name = name.substring(0, name.length() - ("-" + message("Maximum")).length());
-                } else if (name.endsWith("-" + message("Minimum"))) {
-                    name = name.substring(0, name.length() - ("-" + message("Minimum")).length());
-                } else if (name.endsWith("-" + message("PopulationVariance"))) {
-                    name = name.substring(0, name.length() - ("-" + message("PopulationVariance")).length());
-                } else if (name.endsWith("-" + message("SampleVariance"))) {
-                    name = name.substring(0, name.length() - ("-" + message("SampleVariance")).length());
-                } else if (name.endsWith("-" + message("PopulationStandardDeviation"))) {
-                    name = name.substring(0, name.length() - ("-" + message("PopulationStandardDeviation")).length());
-                } else if (name.endsWith("-" + message("SampleStandardDeviation"))) {
-                    name = name.substring(0, name.length() - ("-" + message("SampleStandardDeviation")).length());
-                } else {
-                    continue;
-                }
-                if (!colsNames.contains(name)) {
-                    colsNames.add(name);
-                }
-            }
-        }
-        checkedColsIndices = new ArrayList<>();
-        checkedColumns = new ArrayList<>();
-        for (String name : colsNames) {
-            checkedColsIndices.add(data2D.colOrder(name));
-            checkedColumns.add(data2D.columnByName(name));
-        }
-        checkedColsNames = colsNames;
-        return true;
     }
 
     @Override

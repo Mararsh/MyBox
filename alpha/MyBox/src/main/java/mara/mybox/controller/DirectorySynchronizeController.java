@@ -131,7 +131,11 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
     protected boolean initAttributes() {
         try {
             sourcePath = new File(sourcePathInput.getText());
-            targetPath = targetPathInputController.file;
+            targetPath = targetPathInputController.file();
+            if (targetPath == null) {
+                popError(message("Invlid") + ": " + message("TargetPath"));
+                return false;
+            }
             if (targetPath.getAbsolutePath().startsWith(sourcePath.getAbsolutePath())) {
                 popError(message("TargetPathShouldNotSourceSub"));
                 return false;
@@ -427,7 +431,7 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
     @Override
     public void openTarget(ActionEvent event) {
         try {
-            browseURI(targetPathInputController.file.toURI());
+            browseURI(targetPathInputController.file().toURI());
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

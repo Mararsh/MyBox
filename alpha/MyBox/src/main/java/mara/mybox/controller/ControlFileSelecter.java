@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import java.util.List;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -56,10 +57,12 @@ public class ControlFileSelecter extends BaseController {
     public void initControls() {
         super.initControls();
         if (fileInput != null) {
-            fileInput.textProperty().addListener(
-                    (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-                        checkFileInput();
-                    });
+            fileInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    checkFileInput();
+                }
+            });
         }
         label.setMinWidth(Region.USE_PREF_SIZE);
     }
@@ -145,40 +148,27 @@ public class ControlFileSelecter extends BaseController {
         String v = fileInput.getText();
         if (v == null || v.isEmpty()) {
             if (permitNull) {
-                file = null;
                 fileInput.setStyle(null);
-                notify.set(!notify.get());
                 valid.set(true);
             } else {
                 fileInput.setStyle(UserConfig.badStyle());
                 valid.set(false);
             }
+            file = null;
+            notify.set(!notify.get());
             return;
         }
         File inputfile = new File(v);
-        if (mustExist && !inputfile.exists()) {
+        if (mustExist && (!inputfile.exists()
+                || isDirectory && !inputfile.isDirectory()
+                || !isDirectory && !inputfile.isFile())) {
             if (fileInput != null) {
                 fileInput.setStyle(UserConfig.badStyle());
             }
             valid.set(false);
+            file = null;
+            notify.set(!notify.get());
             return;
-        }
-        if (isDirectory) {
-            if (mustExist && !inputfile.isDirectory()) {
-                if (fileInput != null) {
-                    fileInput.setStyle(UserConfig.badStyle());
-                }
-                valid.set(false);
-                return;
-            }
-        } else {
-            if (mustExist && !inputfile.isFile()) {
-                if (fileInput != null) {
-                    fileInput.setStyle(UserConfig.badStyle());
-                }
-                valid.set(false);
-                return;
-            }
         }
         fileInput.setStyle(null);
         setFile(inputfile);
@@ -324,6 +314,10 @@ public class ControlFileSelecter extends BaseController {
         } else {
             return fileInput.getText();
         }
+    }
+
+    public File file() {
+        return file;
     }
 
     @Override

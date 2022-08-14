@@ -27,7 +27,9 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
 
     @Override
     public boolean initData() {
-        super.initData();
+        if (!super.initData()) {
+            return false;
+        }
         if (!dataColsIndices.contains(categorysCol)) {
             dataColsIndices.add(categorysCol);
         }

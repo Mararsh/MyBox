@@ -347,7 +347,6 @@ public class DataFileText extends DataFile {
                 filterDataRow(record, ++rowIndex);
                 needSetValue = filterPassed() && !filterReachMaxPassed();
                 if (needSetValue) {
-                    count++;
                     if (setValue.isExpression() && value != null) {
                         calculateDataRowExpression(value, record, rowIndex);
                         error = expressionError();
@@ -361,6 +360,7 @@ public class DataFileText extends DataFile {
                         }
                         expResult = expressionResult();
                     }
+                    count++;
                 }
                 List<String> row = new ArrayList<>();
                 for (int i = 0; i < columns.size(); i++) {

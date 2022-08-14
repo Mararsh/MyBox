@@ -176,7 +176,7 @@ License:    Apache License Version 2.0
                         </ScrollPane>
                     </content>
                 </Tab>
-                <Tab text="%Options">
+                <Tab  fx:id="optionsTab" text="%Options">
                     <content>
                         <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                             <content>

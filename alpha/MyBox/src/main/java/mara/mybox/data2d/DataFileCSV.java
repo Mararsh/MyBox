@@ -271,7 +271,6 @@ public class DataFileCSV extends DataFileText {
                         filterDataRow(values, ++rowIndex);
                         needSetValue = filterPassed() && !filterReachMaxPassed();
                         if (needSetValue) {
-                            count++;
                             if (setValue.isExpression() && value != null) {
                                 calculateDataRowExpression(value, values, rowIndex);
                                 error = expressionError();
@@ -285,6 +284,7 @@ public class DataFileCSV extends DataFileText {
                                 }
                                 expResult = expressionResult();
                             }
+                            count++;
                         }
                         List<String> row = new ArrayList<>();
                         for (int i = 0; i < columns.size(); i++) {

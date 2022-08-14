@@ -48,14 +48,6 @@ public class DataTableQueryController extends TreeManageController {
         }
     }
 
-//    @Override
-//    public void itemClicked() {
-//    }
-//
-//    @Override
-//    public void itemDoubleClicked() {
-//        editAction();
-//    }
     @Override
     public void cleanPane() {
         try {

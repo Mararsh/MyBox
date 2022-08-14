@@ -49,20 +49,17 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
     }
 
     @Override
-    public boolean checkOptions() {
-        boolean ok = super.checkOptions();
-        ok = ok && prepareRows();
-        okButton.setDisable(!ok);
-        return ok;
-    }
-
-    public boolean prepareRows() {
+    public boolean initData() {
         try {
+            if (!super.initData()) {
+                return false;
+            }
             freName = colSelector.getSelectionModel().getSelectedItem();
             freCol = data2D.colOrder(freName);
             Data2DColumn freColumn = data2D.column(freCol);
             if (freColumn == null) {
-                infoLabel.setText(message("SelectToHandle"));
+                outError(message("SelectToHandle") + ": " + message("Column"));
+                tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
             handledNames = new ArrayList<>();
@@ -83,30 +80,14 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
             }
             outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
             handledNames.add(cName);
-            return true;
-        } catch (Exception e) {
-            popError(e.toString());
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
 
-    @Override
-    protected void startOperation() {
-        try {
-            if (!prepareRows()) {
-                return;
-            }
             frequency = caseInsensitiveCheck.isSelected()
                     ? new Frequency(String.CASE_INSENSITIVE_ORDER)
                     : new Frequency();
-            if (isAllPages()) {
-                handleAllTask();
-            } else {
-                handleRowsTask();
-            }
+            return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+            MyBoxLog.error(e);
+            return false;
         }
     }
 

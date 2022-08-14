@@ -39,7 +39,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
     protected double invalidAs;
 
     @FXML
-    protected Tab dataTab;
+    protected Tab dataTab, filterTab, optionsTab;
     @FXML
     protected ControlData2DTarget targetController;
     @FXML
@@ -180,12 +180,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                     checkOptions();
                 }
             });
-            tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
-                @Override
-                public void changed(ObservableValue ov, Tab oldValue, Tab newValue) {
-                    checkOptions();
-                }
-            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -241,6 +235,13 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
     }
 
     public void objectChanged() {
+        checkObject();
+    }
+
+    public void checkObject() {
+        if (rowsRadio == null) {
+            return;
+        }
         if (rowsRadio.isSelected()) {
             objectType = ObjectType.Rows;
         } else if (allRadio != null && allRadio.isSelected()) {
@@ -255,44 +256,58 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
     }
 
     public boolean checkOptions() {
-        if (isSettingValues) {
-            return true;
-        }
-        if (infoLabel != null) {
-            infoLabel.setText("");
-        }
-        if (skipNonnumericRadio != null) {
-            invalidAs = skipNonnumericRadio.isSelected() ? Double.NaN : 0;
-        } else {
-            invalidAs = 0;
-        }
-        if (!checkSelections()) {
-            if (infoLabel != null) {
-                infoLabel.setText(error != null ? error : message("SelectToHandle"));
+        try {
+            if (isSettingValues) {
+                return true;
             }
-            okButton.setDisable(true);
-            return false;
-        }
-        if (targetController != null) {
-            targetController.setNotInTable(isAllPages());
-            if (targetController.checkTarget() == null) {
-                if (infoLabel != null) {
-                    infoLabel.setText(message("SelectToHandle"));
-                }
-                okButton.setDisable(true);
+            outError(null);
+            if (data2D == null || !data2D.hasData()) {
+                outError(message("NoData"));
                 return false;
             }
+            if (!checkSelections()) {
+                outError(error != null ? error : message("SelectToHandle") + ": " + message("Source"));
+                return false;
+            }
+            if (targetController != null) {
+                targetController.setNotInTable(isAllPages());
+                if (targetController.checkTarget() == null) {
+                    outError(message("SelectToHandle") + ": " + message("Target"));
+                    return false;
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
         }
-        okButton.setDisable(false);
-        return true;
+    }
+
+    public void outError(String error) {
+        if (error != null && !error.isBlank()) {
+            popError(error);
+        }
     }
 
     public boolean initData() {
-        outputColumns = checkedColumns;
-        if (showRowNumber()) {
-            outputColumns.add(0, new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
+        try {
+            checkObject();
+
+            if (skipNonnumericRadio != null) {
+                invalidAs = skipNonnumericRadio.isSelected() ? Double.NaN : 0;
+            } else {
+                invalidAs = 0;
+            }
+
+            outputColumns = checkedColumns;
+            if (showRowNumber()) {
+                outputColumns.add(0, new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
+            }
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
         }
-        return true;
     }
 
     @FXML

@@ -70,18 +70,19 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
     }
 
     @Override
-    public boolean checkOptions() {
-        boolean ok = super.checkOptions();
-        ok = valueController.checkSelection() && ok;
-        return ok;
-    }
-
-    @Override
     public boolean initData() {
-        if (isAllPages() && !tableController.checkBeforeNextAction()) {
+        try {
+            if (!super.initData() || !valueController.checkSelection()) {
+                return false;
+            }
+            if (isAllPages() && !tableController.checkBeforeNextAction()) {
+                return false;
+            }
+            return PopTools.askSure(this, baseTitle, message("SureOverwriteColumns") + "\n" + checkedColsNames);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
             return false;
         }
-        return PopTools.askSure(this, baseTitle, message("SureOverwriteColumns") + "\n" + checkedColsNames);
     }
 
     @Override

@@ -60,7 +60,7 @@ public abstract class PdfViewController_OCR extends BaseFileImagesViewController
             return;
         }
         ocrOptionsController.setLanguages();
-        File dataPath = ocrOptionsController.dataPathController.file;
+        File dataPath = ocrOptionsController.dataPathController.file();
         if (!dataPath.exists()) {
             popError(Languages.message("InvalidParameters"));
             ocrOptionsController.dataPathController.fileInput.setStyle(UserConfig.badStyle());
@@ -77,7 +77,7 @@ public abstract class PdfViewController_OCR extends BaseFileImagesViewController
         if (imageView.getImage() == null || timer != null || process != null) {
             return;
         }
-        File tesseract = ocrOptionsController.tesseractPathController.file;
+        File tesseract = ocrOptionsController.tesseractPathController.file();
         if (!tesseract.exists()) {
             popError(Languages.message("InvalidParameters"));
             ocrOptionsController.tesseractPathController.fileInput.setStyle(UserConfig.badStyle());
@@ -105,7 +105,7 @@ public abstract class PdfViewController_OCR extends BaseFileImagesViewController
                     parameters.addAll(Arrays.asList(
                             tesseract.getAbsolutePath(),
                             imageFile, fileBase,
-                            "--tessdata-dir", ocrOptionsController.dataPathController.file.getAbsolutePath(),
+                            "--tessdata-dir", ocrOptionsController.dataPathController.file().getAbsolutePath(),
                             version > 3 ? "--psm" : "-psm", ocrOptionsController.psm + ""
                     ));
                     if (ocrOptionsController.selectedLanguages != null) {
@@ -211,7 +211,7 @@ public abstract class PdfViewController_OCR extends BaseFileImagesViewController
                                 instance.setVariable(key, p.get(key));
                             }
                         }
-                        instance.setDatapath(ocrOptionsController.dataPathController.file.getAbsolutePath());
+                        instance.setDatapath(ocrOptionsController.dataPathController.file().getAbsolutePath());
                         if (ocrOptionsController.selectedLanguages != null) {
                             instance.setLanguage(ocrOptionsController.selectedLanguages);
                         }

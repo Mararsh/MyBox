@@ -127,26 +127,20 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     }
 
     @Override
-    public boolean checkOptions() {
-        if (isSettingValues) {
-            return true;
-        }
-        boolean ok = super.checkOptions();
-        if (categoryColumnSelector != null) {
-            selectedCategory = categoryColumnSelector.getSelectionModel().getSelectedItem();
-        }
-        if (valueColumnSelector != null) {
-            selectedValue = valueColumnSelector.getSelectionModel().getSelectedItem();
-        }
-        return ok;
-    }
-
-    @Override
     public boolean initData() {
         try {
+            if (!super.initData()) {
+                return false;
+            }
+            if (categoryColumnSelector != null) {
+                selectedCategory = categoryColumnSelector.getSelectionModel().getSelectedItem();
+            }
+            if (valueColumnSelector != null) {
+                selectedValue = valueColumnSelector.getSelectionModel().getSelectedItem();
+            }
             dataColsIndices = new ArrayList<>();
-            if (checkedColsIndices == null || checkedColsIndices.isEmpty()) {
-                popError(message("SelectToHandle"));
+            if (!noColumnSelection && (checkedColsIndices == null || checkedColsIndices.isEmpty())) {
+                outError(message("SelectToHandle") + ": " + message("Columns"));
                 return false;
             }
             dataColsIndices.addAll(checkedColsIndices);

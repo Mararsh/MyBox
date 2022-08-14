@@ -229,25 +229,29 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
 
     public void noticeMemory() {
         if (isAllPages() && displayAllCheck.isSelected()) {
-            infoLabel.setText(message("AllRowsLoadComments"));
-        } else {
-            infoLabel.setText("");
+            outError(message("AllRowsLoadComments"));
+            tabPane.getSelectionModel().select(optionsTab);
         }
     }
 
     @Override
     public boolean initData() {
         try {
+            if (!super.initData()) {
+                return false;
+            }
             dataColsIndices = new ArrayList<>();
             int categoryCol = data2D.colOrder(selectedCategory);
             if (categoryCol < 0) {
-                popError(message("SelectToHandle"));
+                outError(message("SelectToHandle") + ": " + message("CategoryColumn"));
+                tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
             dataColsIndices.add(categoryCol);
             int valueCol = data2D.colOrder(selectedValue);
             if (valueCol < 0) {
-                popError(message("SelectToHandle"));
+                outError(message("SelectToHandle") + ": " + message("ValueColumn"));
+                tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
             dataColsIndices.add(valueCol);

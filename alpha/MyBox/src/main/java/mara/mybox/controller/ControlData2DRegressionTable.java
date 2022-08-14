@@ -47,7 +47,7 @@ public class ControlData2DRegressionTable extends ControlData2DLoad {
     public void setParameters(Data2DSimpleLinearRegressionCombinationController regressController) {
         try {
             this.regressController = regressController;
-
+            checkButtons();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -62,27 +62,59 @@ public class ControlData2DRegressionTable extends ControlData2DLoad {
             return;
         }
         row.add(0, "" + (tableData.size() + 1));
+        isSettingValues = true;
         tableData.add(row);
+        isSettingValues = false;
     }
 
-    public void sortR() {
+    public void afterRegression() {
+        isSettingValues = true;
         tableView.getSortOrder().clear();
         TableColumn rColumn = tableView.getColumns().get(4);
         rColumn.setSortType(TableColumn.SortType.DESCENDING);
         tableView.getSortOrder().add(rColumn);
+        isSettingValues = false;
+        checkButtons();
     }
 
     public List<String> selected() {
         return tableView.getSelectionModel().getSelectedItem();
     }
 
-    public void editTable() {
+    @Override
+    public void tableChanged(boolean changed) {
+        if (isSettingValues) {
+            return;
+        }
+        checkSelected();
+    }
+
+    @Override
+    protected void checkButtons() {
+        super.checkButtons();
+        if (regressController == null) {
+            return;
+        }
+        regressController.dataButton.setDisable(tableData.isEmpty());
+        regressController.viewButton.setDisable(false);
+    }
+
+    @FXML
+    @Override
+    public void dataAction() {
+        if (tableData.isEmpty()) {
+            popError(message("NoData"));
+            return;
+        }
         DataManufactureController.open(data2D.getColumns(), data2D.tableRowsWithoutNumber());
     }
 
     @FXML
     @Override
     public void editAction() {
+        if (regressController == null) {
+            return;
+        }
         List<String> selected = selected();
         if (selected == null) {
             Data2DSimpleLinearRegressionController.open(regressController.tableController);

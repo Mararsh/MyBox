@@ -529,7 +529,6 @@ public class DataFileExcel extends DataFile {
                     filterDataRow(values, ++rowIndex);
                     needSetValue = filterPassed() && !filterReachMaxPassed();
                     if (needSetValue) {
-                        count++;
                         if (setValue.isExpression() && value != null) {
                             calculateDataRowExpression(value, values, rowIndex);
                             error = expressionError();
@@ -543,6 +542,7 @@ public class DataFileExcel extends DataFile {
                             }
                             expResult = expressionResult();
                         }
+                        count++;
                     }
                     for (int c = sourceRow.getFirstCellNum(); c < sourceRow.getLastCellNum(); c++) {
                         currentValue = MicrosoftDocumentTools.cellString(sourceRow.getCell(c));

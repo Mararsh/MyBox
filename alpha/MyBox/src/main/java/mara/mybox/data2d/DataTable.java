@@ -771,49 +771,51 @@ public class DataTable extends Data2D {
                 }
             }
             String selections = null;
-            for (String name : calculations) {
-                if (name.equals(message("Count"))) {
-                    name = mappedColumnName(groups.get(0));
-                    name = "COUNT(" + name + ") AS " + message("Count");
-                } else if (name.endsWith("-" + message("Mean"))) {
-                    name = name.substring(0, name.length() - ("-" + message("Mean")).length());
-                    name = mappedColumnName(name);
-                    name = "AVG(" + name + ") AS " + name + "_" + message("Mean");
-                } else if (name.endsWith("-" + message("Summation"))) {
-                    name = name.substring(0, name.length() - ("-" + message("Summation")).length());
-                    name = mappedColumnName(name);
-                    name = "SUM(" + name + ") AS " + name + "_" + message("Summation");
-                } else if (name.endsWith("-" + message("Maximum"))) {
-                    name = name.substring(0, name.length() - ("-" + message("Maximum")).length());
-                    name = mappedColumnName(name);
-                    name = "MAX(" + name + ") AS " + name + "_" + message("Maximum");
-                } else if (name.endsWith("-" + message("Minimum"))) {
-                    name = name.substring(0, name.length() - ("-" + message("Minimum")).length());
-                    name = mappedColumnName(name);
-                    name = "MIN(" + name + ") AS " + name + "_" + message("Minimum");
-                } else if (name.endsWith("-" + message("PopulationVariance"))) {
-                    name = name.substring(0, name.length() - ("-" + message("PopulationVariance")).length());
-                    name = mappedColumnName(name);
-                    name = "VAR_POP(" + name + ") AS " + name + "_" + message("PopulationVariance");
-                } else if (name.endsWith("-" + message("SampleVariance"))) {
-                    name = name.substring(0, name.length() - ("-" + message("SampleVariance")).length());
-                    name = mappedColumnName(name);
-                    name = "VAR_SAMP(" + name + ") AS " + name + "_" + message("SampleVariance");
-                } else if (name.endsWith("-" + message("PopulationStandardDeviation"))) {
-                    name = name.substring(0, name.length() - ("-" + message("PopulationStandardDeviation")).length());
-                    name = mappedColumnName(name);
-                    name = "STDDEV_POP(" + name + ") AS " + name + "_" + message("PopulationStandardDeviation");
-                } else if (name.endsWith("-" + message("SampleStandardDeviation"))) {
-                    name = name.substring(0, name.length() - ("-" + message("SampleStandardDeviation")).length());
-                    name = mappedColumnName(name);
-                    name = "STDDEV_SAMP(" + name + ") AS " + name + "_" + message("SampleStandardDeviation");
-                } else {
-                    continue;
-                }
-                if (selections == null) {
-                    selections = name;
-                } else {
-                    selections += ", " + name;
+            if (calculations != null) {
+                for (String name : calculations) {
+                    if (name.equals(message("Count"))) {
+                        name = mappedColumnName(groups.get(0));
+                        name = "COUNT(" + name + ") AS " + message("Count");
+                    } else if (name.endsWith("-" + message("Mean"))) {
+                        name = name.substring(0, name.length() - ("-" + message("Mean")).length());
+                        name = mappedColumnName(name);
+                        name = "AVG(" + name + ") AS " + name + "_" + message("Mean");
+                    } else if (name.endsWith("-" + message("Summation"))) {
+                        name = name.substring(0, name.length() - ("-" + message("Summation")).length());
+                        name = mappedColumnName(name);
+                        name = "SUM(" + name + ") AS " + name + "_" + message("Summation");
+                    } else if (name.endsWith("-" + message("Maximum"))) {
+                        name = name.substring(0, name.length() - ("-" + message("Maximum")).length());
+                        name = mappedColumnName(name);
+                        name = "MAX(" + name + ") AS " + name + "_" + message("Maximum");
+                    } else if (name.endsWith("-" + message("Minimum"))) {
+                        name = name.substring(0, name.length() - ("-" + message("Minimum")).length());
+                        name = mappedColumnName(name);
+                        name = "MIN(" + name + ") AS " + name + "_" + message("Minimum");
+                    } else if (name.endsWith("-" + message("PopulationVariance"))) {
+                        name = name.substring(0, name.length() - ("-" + message("PopulationVariance")).length());
+                        name = mappedColumnName(name);
+                        name = "VAR_POP(" + name + ") AS " + name + "_" + message("PopulationVariance").replaceAll(" ", "");
+                    } else if (name.endsWith("-" + message("SampleVariance"))) {
+                        name = name.substring(0, name.length() - ("-" + message("SampleVariance")).length());
+                        name = mappedColumnName(name);
+                        name = "VAR_SAMP(" + name + ") AS " + name + "_" + message("SampleVariance").replaceAll(" ", "");
+                    } else if (name.endsWith("-" + message("PopulationStandardDeviation"))) {
+                        name = name.substring(0, name.length() - ("-" + message("PopulationStandardDeviation")).length());
+                        name = mappedColumnName(name);
+                        name = "STDDEV_POP(" + name + ") AS " + name + "_" + message("PopulationStandardDeviation").replaceAll(" ", "");
+                    } else if (name.endsWith("-" + message("SampleStandardDeviation"))) {
+                        name = name.substring(0, name.length() - ("-" + message("SampleStandardDeviation")).length());
+                        name = mappedColumnName(name);
+                        name = "STDDEV_SAMP(" + name + ") AS " + name + "_" + message("SampleStandardDeviation").replaceAll(" ", "");
+                    } else {
+                        continue;
+                    }
+                    if (selections == null) {
+                        selections = name;
+                    } else {
+                        selections += ", " + name;
+                    }
                 }
             }
             if (selections == null) {

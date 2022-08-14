@@ -33,7 +33,15 @@ public class Data2DDeleteController extends BaseData2DHandleController {
 
     @Override
     public boolean initData() {
-        return !isAllPages() || tableController.checkBeforeNextAction();
+        try {
+            if (!super.initData()) {
+                return false;
+            }
+            return !isAllPages() || tableController.checkBeforeNextAction();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
     }
 
     @Override

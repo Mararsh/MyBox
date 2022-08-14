@@ -329,52 +329,43 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
     }
 
     @Override
-    public boolean checkOptions() {
-        boolean ok = super.checkOptions();
-        objectChanged();
-
-        categorysCol = -1;
-        if (rowsRadio.isSelected() && selectedCategory != null
-                && categoryColumnSelector.getSelectionModel().getSelectedIndex() != 0) {
-            categorysCol = data2D.colOrder(selectedCategory);
-        }
-        calculation = new DescriptiveStatistic()
-                .setMean(true)
-                .setMedian(true)
-                .setMaximum(true)
-                .setMinimum(true)
-                .setUpperQuartile(true)
-                .setLowerQuartile(true)
-                .setUpperExtremeOutlierLine(true)
-                .setUpperMildOutlierLine(true)
-                .setLowerMildOutlierLine(true)
-                .setLowerExtremeOutlierLine(true)
-                .setScale(scale);
-        switch (objectType) {
-            case Rows:
-                calculation.setStatisticObject(DescriptiveStatistic.StatisticObject.Rows);
-                break;
-            case All:
-                calculation.setStatisticObject(DescriptiveStatistic.StatisticObject.All);
-                break;
-            default:
-                calculation.setStatisticObject(DescriptiveStatistic.StatisticObject.Columns);
-                break;
-        }
-        calculation.setHandleController(this).setData2D(data2D)
-                .setColsIndices(checkedColsIndices)
-                .setColsNames(checkedColsNames)
-                .setCategoryName(categorysCol >= 0 ? selectedCategory : null);
-
-        return ok;
-    }
-
-    @Override
     public boolean initData() {
         try {
             if (!super.initData()) {
                 return false;
             }
+            categorysCol = -1;
+            if (rowsRadio.isSelected() && selectedCategory != null
+                    && categoryColumnSelector.getSelectionModel().getSelectedIndex() != 0) {
+                categorysCol = data2D.colOrder(selectedCategory);
+            }
+            calculation = new DescriptiveStatistic()
+                    .setMean(true)
+                    .setMedian(true)
+                    .setMaximum(true)
+                    .setMinimum(true)
+                    .setUpperQuartile(true)
+                    .setLowerQuartile(true)
+                    .setUpperExtremeOutlierLine(true)
+                    .setUpperMildOutlierLine(true)
+                    .setLowerMildOutlierLine(true)
+                    .setLowerExtremeOutlierLine(true)
+                    .setScale(scale);
+            switch (objectType) {
+                case Rows:
+                    calculation.setStatisticObject(DescriptiveStatistic.StatisticObject.Rows);
+                    break;
+                case All:
+                    calculation.setStatisticObject(DescriptiveStatistic.StatisticObject.All);
+                    break;
+                default:
+                    calculation.setStatisticObject(DescriptiveStatistic.StatisticObject.Columns);
+                    break;
+            }
+            calculation.setHandleController(this).setData2D(data2D)
+                    .setColsIndices(checkedColsIndices)
+                    .setColsNames(checkedColsNames)
+                    .setCategoryName(categorysCol >= 0 ? selectedCategory : null);
             if (categorysCol >= 0) {
                 dataColsIndices.add(0, categorysCol);
             }

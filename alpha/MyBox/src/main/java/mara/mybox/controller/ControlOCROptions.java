@@ -345,12 +345,12 @@ public class ControlOCROptions extends BaseController {
 
     public int tesseractVersion() {
         try {
-            if (tesseractPathController.file == null || !tesseractPathController.file.exists()) {
+            if (tesseractPathController.file() == null || !tesseractPathController.file().exists()) {
                 return -1;
             }
             List<String> parameters = new ArrayList<>();
             parameters.addAll(Arrays.asList(
-                    tesseractPathController.file.getAbsolutePath(),
+                    tesseractPathController.file().getAbsolutePath(),
                     "--version"
             ));
             ProcessBuilder pb = new ProcessBuilder(parameters).redirectErrorStream(true);

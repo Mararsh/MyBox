@@ -137,15 +137,6 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DChartCon
                 UserConfig.setBoolean(baseName + "Intercept", interceptCheck.isSelected());
             });
 
-            displayAllCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayAll", true));
-            displayAllCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
-                if (isSettingValues) {
-                    return;
-                }
-                UserConfig.setBoolean(baseName + "DisplayAll", displayAllCheck.isSelected());
-                noticeMemory();
-            });
-
             displayAllCheck.visibleProperty().bind(allPagesRadio.selectedProperty());
 
             fittedPointsCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayFittedPoints", false));
@@ -256,38 +247,21 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DChartCon
     }
 
     @Override
-    public boolean checkOptions() {
-        if (isSettingValues) {
-            return true;
-        }
-        boolean ok = super.checkOptions();
-        if (ok) {
-            noticeMemory();
-        }
-        return ok;
-    }
-
-    public void noticeMemory() {
-        if (isAllPages() && displayAllCheck.isSelected()) {
-            infoLabel.setText(message("AllRowsLoadComments"));
-        } else {
-            infoLabel.setText("");
-        }
-    }
-
-    @Override
     public boolean initData() {
         try {
+            if (!super.initData()) {
+                return false;
+            }
             dataColsIndices = new ArrayList<>();
             int categoryCol = data2D.colOrder(selectedCategory);
             if (categoryCol < 0) {
-                popError(message("SelectToHandle"));
+                popError(message("SelectToHandle") + ": " + message("CategoryColumn"));
                 return false;
             }
             dataColsIndices.add(categoryCol);
             int valueCol = data2D.colOrder(selectedValue);
             if (valueCol < 0) {
-                popError(message("SelectToHandle"));
+                popError(message("SelectToHandle") + ": " + message("ValueColumn"));
                 return false;
             }
             dataColsIndices.add(valueCol);

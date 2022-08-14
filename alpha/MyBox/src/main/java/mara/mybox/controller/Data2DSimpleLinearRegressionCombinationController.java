@@ -40,7 +40,7 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
     @FXML
     protected ControlData2DRegressionTable resultsController;
     @FXML
-    protected Button chartButton;
+    protected Button dataButton;
 
     public Data2DSimpleLinearRegressionCombinationController() {
         baseTitle = message("SimpleLinearRegressionCombination");
@@ -217,7 +217,7 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
 
             @Override
             protected void whenSucceeded() {
-                resultsController.sortR();
+                resultsController.afterRegression();
             }
 
             @Override
@@ -233,12 +233,14 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
     }
 
     @FXML
-    public void editResultsAction() {
-        resultsController.editTable();
+    @Override
+    public void dataAction() {
+        resultsController.dataAction();
     }
 
     @FXML
-    public void chartAction() {
+    @Override
+    public void viewAction() {
         resultsController.editAction();
     }
 

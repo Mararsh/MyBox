@@ -270,20 +270,20 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </CheckBox>
-                              <Button fx:id="editResultsButton" mnemonicParsing="false" onAction="#editResultsAction">
+                              <Button fx:id="dataButton" mnemonicParsing="false" onAction="#dataAction">
                                  <graphic>
                                     <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@../buttons/Red/iconEdit.png" />
+                                          <Image url="@../buttons/Red/iconData.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>
                               </Button>
-                              <Button fx:id="chartButton" mnemonicParsing="false" onAction="#chartAction">
+                              <Button fx:id="viewButton" mnemonicParsing="false" onAction="#viewAction">
                                  <graphic>
                                     <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@../buttons/Red/iconLinearPgression.png" />
+                                          <Image url="@../buttons/Red/iconView.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>
@@ -291,6 +291,7 @@ License:    Apache License Version 2.0
                                     </children>
                                 </HBox>
                         <fx:include fx:id="results" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DRegressionTable.fxml" VBox.vgrow="ALWAYS" />
+                        <Label text="%DoubleClickToView" />
                             </children>
                         </VBox>
                     </content>
