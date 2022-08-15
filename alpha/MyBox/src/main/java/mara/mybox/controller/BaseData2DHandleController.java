@@ -10,7 +10,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.Tab;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
@@ -38,8 +37,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
     protected ObjectType objectType;
     protected double invalidAs;
 
-    @FXML
-    protected Tab dataTab, filterTab, optionsTab;
     @FXML
     protected ControlData2DTarget targetController;
     @FXML
@@ -255,6 +252,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         UserConfig.setBoolean(baseName + "CopyRowNumber", rowNumberCheck.isSelected());
     }
 
+    // Check when selections are changed
     public boolean checkOptions() {
         try {
             if (isSettingValues) {
@@ -266,7 +264,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                 return false;
             }
             if (!checkSelections()) {
-                outError(error != null ? error : message("SelectToHandle") + ": " + message("Source"));
                 return false;
             }
             if (targetController != null) {
@@ -289,6 +286,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         }
     }
 
+    // Check when "OK"/"Start" button is clicked
     public boolean initData() {
         try {
             checkObject();

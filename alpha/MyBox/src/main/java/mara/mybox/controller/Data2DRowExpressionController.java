@@ -66,10 +66,16 @@ public class Data2DRowExpressionController extends BaseData2DHandleController {
             if (!super.initData()) {
                 return false;
             }
-            if (!expressionController.checkExpression(isAllPages())) {
-                outError(message("Invalid") + ": " + message("RowExpression") + "\n"
-                        + data2D.getError());
+            expression = expressionController.scriptInput.getText();
+            if (expression == null || expression.isBlank()) {
                 tabPane.getSelectionModel().select(optionsTab);
+                popError(message("Invalid") + ": " + message("RowExpression"));
+                return false;
+            }
+            if (!expressionController.checkExpression(isAllPages())) {
+                tabPane.getSelectionModel().select(optionsTab);
+                alertError(message("Invalid") + ": " + message("RowExpression") + "\n"
+                        + expressionController.error);
                 return false;
             }
             String name = nameInput.getText();
@@ -95,11 +101,6 @@ public class Data2DRowExpressionController extends BaseData2DHandleController {
         String filterScript = data2D.filterScipt();
         if (filterScript != null && !filterScript.isBlank()) {
             scripts.add(filterScript);
-        }
-        expression = expressionController.scriptInput.getText();
-        if (expression == null || expression.isBlank()) {
-            popError(message("Invalid") + ": " + message("RowExpression"));
-            return;
         }
         scripts.add(expression);
         if (task != null) {

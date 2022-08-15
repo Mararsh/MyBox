@@ -123,7 +123,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
     @FXML
     protected ControlPathInput targetPathInputController;
     @FXML
-    protected Button downloadButton, equalButton, linkButton, htmlButton,
+    protected Button equalButton, linkButton, htmlButton,
             clearDownloadingButton, deleteDownloadingButton, copyDownloadingButton,
             infoDownloadingButton, viewDownloadingButton, linkDownloadingButton,
             downloadFailedButton, linkFailedButton, clearFailedButton,
@@ -223,7 +223,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
                     targetPathInputController.fileInput.styleProperty().isEqualTo(UserConfig.badStyle())
                             .or(addressInput.textProperty().isNull())
             );
-            downloadButton.disableProperty().bind(
+            startButton.disableProperty().bind(
                     targetPathInputController.fileInput.styleProperty().isEqualTo(UserConfig.badStyle())
                             .or(tableView.getSelectionModel().selectedItemProperty().isNull())
             );
@@ -608,7 +608,8 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
     }
 
     @FXML
-    public void downloadAction() {
+    @Override
+    public void startAction() {
         try {
             stopped = false;
             List<Link> selected = tableView.getSelectionModel().getSelectedItems();

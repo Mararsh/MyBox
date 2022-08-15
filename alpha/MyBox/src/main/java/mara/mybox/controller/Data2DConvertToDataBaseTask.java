@@ -33,7 +33,11 @@ public class Data2DConvertToDataBaseTask extends Data2DTableCreateController {
 
     @Override
     public boolean checkOptions() {
-        return convertController.checkOptions() && super.checkOptions();
+        return true;
+    }
+
+    public boolean checkAttributes() {
+        return super.checkOptions();
     }
 
     @Override

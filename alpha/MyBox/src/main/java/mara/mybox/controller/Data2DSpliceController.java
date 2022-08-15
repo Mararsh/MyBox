@@ -10,6 +10,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Tab;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Window;
@@ -34,7 +35,9 @@ import org.apache.commons.csv.CSVRecord;
 public class Data2DSpliceController extends BaseData2DController {
 
     @FXML
-    protected BaseData2DSourceController dataAController, dataBController;
+    protected Tab aTab, bTab, spliceTab;
+    @FXML
+    protected ControlData2DSpliceSource dataAController, dataBController;
     @FXML
     protected RadioButton horizontalRadio, aRadio, bRadio, longerRadio, shorterRadio;
     @FXML
@@ -93,22 +96,21 @@ public class Data2DSpliceController extends BaseData2DController {
     @FXML
     @Override
     public void okAction() {
+        tabPane.getSelectionModel().select(aTab);
         if (dataAController.data2D == null || !dataAController.data2D.hasData()) {
             popError(message("DataA") + ": " + message("NoData"));
             return;
         } else if (!dataAController.checkSelections()) {
-            popError(message("DataA") + ": "
-                    + (dataAController.error != null ? dataAController.error : message("SelectToHanle")));
             return;
         }
+        tabPane.getSelectionModel().select(bTab);
         if (dataBController.data2D == null || !dataBController.data2D.hasData()) {
             popError(message("DataB") + ": " + message("NoData"));
             return;
         } else if (!dataBController.checkSelections()) {
-            popError(message("DataB") + ": "
-                    + (dataBController.error != null ? dataBController.error : message("SelectToHanle")));
             return;
         }
+        tabPane.getSelectionModel().select(spliceTab);
         if (task != null) {
             task.cancel();
         }

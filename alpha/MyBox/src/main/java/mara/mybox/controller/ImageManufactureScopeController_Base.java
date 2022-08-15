@@ -73,48 +73,46 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     @FXML
     protected Label scopeTips, scopePointsLabel, scopeColorsLabel, pointsSizeLabel, colorsSizeLabel, rectangleLabel;
 
-    protected void indicateScope() {
+    protected synchronized void indicateScope() {
         if (isSettingValues || imageView == null || !scopeView.isVisible() || scope == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                private Image scopedImage;
+        if (task != null && !task.isQuit()) {
+            return;
+        }
+        task = new SingletonTask<Void>(this) {
+            private Image scopedImage;
 
-                @Override
-                protected boolean handle() {
-                    try {
-                        PixelsOperation pixelsOperation = PixelsOperationFactory.create(imageView.getImage(),
-                                scope, PixelsOperation.OperationType.ShowScope);
-                        if (!ignoreTransparentCheck.isSelected()) {
-                            pixelsOperation.setSkipTransparent(false);
-                        }
-                        scopedImage = pixelsOperation.operateFxImage();
-                        if (task == null || isCancelled()) {
-                            return false;
-                        }
-                        return scopedImage != null;
-                    } catch (Exception e) {
-                        MyBoxLog.error(e.toString());
+            @Override
+            protected boolean handle() {
+                try {
+                    PixelsOperation pixelsOperation = PixelsOperationFactory.create(imageView.getImage(),
+                            scope, PixelsOperation.OperationType.ShowScope);
+                    if (!ignoreTransparentCheck.isSelected()) {
+                        pixelsOperation.setSkipTransparent(false);
+                    }
+                    scopedImage = pixelsOperation.operateFxImage();
+                    if (task == null || isCancelled()) {
                         return false;
                     }
+                    return scopedImage != null;
+                } catch (Exception e) {
+                    MyBoxLog.error(e.toString());
+                    return false;
                 }
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    scopeView.setImage(scopedImage);
-                    scopeView.setFitWidth(imageView.getFitWidth());
-                    scopeView.setFitHeight(imageView.getFitHeight());
-                    scopeView.setLayoutX(imageView.getLayoutX());
-                    scopeView.setLayoutY(imageView.getLayoutY());
-                }
+            @Override
+            protected void whenSucceeded() {
+                scopeView.setImage(scopedImage);
+                scopeView.setFitWidth(imageView.getFitWidth());
+                scopeView.setFitHeight(imageView.getFitHeight());
+                scopeView.setLayoutX(imageView.getLayoutX());
+                scopeView.setLayoutY(imageView.getLayoutY());
+            }
 
-            };
-            parentController.start(task);
-        }
+        };
+        parentController.start(task);
     }
 
     @Override
@@ -144,6 +142,15 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     public boolean popAction() {
         ImageScopePopController.open((ImageManufactureScopeController) this);
         return true;
+    }
+
+    @FXML
+    public void refreshAction() {
+        isSettingValues = false;
+        if (task != null) {
+            task.cancel();
+        }
+        indicateScope();
     }
 
 }

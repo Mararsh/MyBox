@@ -81,23 +81,11 @@ public class Data2DPercentageController extends BaseData2DHandleController {
     }
 
     @Override
-    protected void startOperation() {
+    public boolean initData() {
         try {
-            if (!prepare()) {
-                return;
+            if (!super.initData()) {
+                return false;
             }
-            if (isAllPages()) {
-                handleAllTask();
-            } else {
-                handleRowsTask();
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
-    public boolean prepare() {
-        try {
             switch (objectType) {
                 case Rows:
                     return prepareByRows();
@@ -107,10 +95,7 @@ public class Data2DPercentageController extends BaseData2DHandleController {
                     return prepareByColumns(message("PercentageInColumn"));
             }
         } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
+            MyBoxLog.error(e.toString());
             return false;
         }
     }

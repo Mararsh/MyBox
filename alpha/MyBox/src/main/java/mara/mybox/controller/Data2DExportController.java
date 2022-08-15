@@ -86,7 +86,6 @@ public class Data2DExportController extends BaseData2DHandleController {
                 return false;
             }
             targetPath = targetPathController.file();
-            MyBoxLog.console(targetPath);
             if (targetPath == null) {
                 outError(message("InvalidParameters") + ": " + message("TargetPath"));
                 tabPane.getSelectionModel().select(targetTab);

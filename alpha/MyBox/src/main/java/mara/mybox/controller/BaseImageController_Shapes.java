@@ -58,8 +58,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
 
     @Override
     public void viewSizeChanged(double change) {
-        if (change < sizeChangeAware
-                || isSettingValues || imageView == null || imageView.getImage() == null) {
+        if (isSettingValues || change < sizeChangeAware
+                || imageView == null || imageView.getImage() == null) {
             return;
         }
         refinePane();

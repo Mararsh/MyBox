@@ -112,7 +112,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 targetFileController.notify.addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                        targetPath = targetPathController.file();
+                        targetPath = targetFileController.file();
                     }
                 });
                 targetFileController.baseName(interfaceName).savedName(interfaceName + "TargetFile").type(TargetFileType).init();

@@ -115,7 +115,6 @@ public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxCli
             return;
         }
         if (!sourceController.checkSelections()) {
-            popError(sourceController.error != null ? sourceController.error : message("SelectToHanle"));
             return;
         }
         row = rowSelector.getSelectionModel().getSelectedIndex();

@@ -57,9 +57,9 @@ License:    Apache License Version 2.0
                                         </CheckBox>
                                     </children>
                                 </HBox>
-                        <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                        <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                           <tabs>
-                            <Tab text="%DataA">
+                            <Tab fx:id="aTab" text="%DataA">
                                  <content>
                                     <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                        <children>
@@ -68,7 +68,7 @@ License:    Apache License Version 2.0
                                     </VBox>
                                  </content>
                               </Tab>
-                            <Tab text="%DataB">
+                            <Tab fx:id="bTab" text="%DataB">
                                  <content>
                                     <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                        <children>
@@ -77,7 +77,7 @@ License:    Apache License Version 2.0
                                     </VBox>
                                  </content>
                               </Tab>
-                              <Tab text="%SpliceData">
+                              <Tab fx:id="spliceTab" text="%SpliceData">
                                  <content>
                                             <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                 <padding>

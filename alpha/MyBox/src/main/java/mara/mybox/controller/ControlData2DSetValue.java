@@ -230,7 +230,8 @@ public class ControlData2DSetValue extends BaseController {
                 String v = expressionController.scriptInput.getText();
                 setValue.setType(SetValue.ValueType.Expression).setValue(v);
                 if (!expressionController.checkExpression(handleController.isAllPages())) {
-                    outError(message("Invalid") + ": " + message("RowExpression") + "\n" + data2D.getError());
+                    handleController.tabPane.getSelectionModel().select(handleController.optionsTab);
+                    alertError(message("Invalid") + ": " + message("RowExpression") + "\n" + expressionController.error);
                     return false;
                 } else {
                     UserConfig.setString(baseName + "Expression", v);

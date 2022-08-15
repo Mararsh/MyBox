@@ -63,7 +63,7 @@ public class ControlNewDataTable extends BaseController {
     public void setData(Data2D data2D) {
         try {
             this.data2D = data2D;
-            nameInput.setText(data2D.dataName());
+            nameInput.setText(data2D.shortName());
             idInput.setText("id");
             columnsController.loadNames(data2D.columnNames());
 

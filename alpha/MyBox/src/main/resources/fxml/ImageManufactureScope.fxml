@@ -34,7 +34,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Text?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureScopeController">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureScopeController">
     <children>
         <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
             <items>
@@ -558,6 +558,8 @@ License:    Apache License Version 2.0
                <children>
                   <HBox alignment="CENTER_RIGHT" spacing="5.0">
                      <children>
+                                  <Label minWidth="-Infinity" text="%Opacity" wrapText="true" />
+                                  <ComboBox fx:id="opacitySelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                         <CheckBox fx:id="contextMenuCheck" mnemonicParsing="false" selected="true">
                            <graphic>
                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -567,8 +569,15 @@ License:    Apache License Version 2.0
                               </ImageView>
                            </graphic>
                         </CheckBox>
-                                  <Label minWidth="-Infinity" text="%Opacity" wrapText="true" />
-                                  <ComboBox fx:id="opacitySelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconRefresh.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
                      </children>
                   </HBox>
                       <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">

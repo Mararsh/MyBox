@@ -7,6 +7,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -31,6 +32,8 @@ public class BaseData2DSourceController extends ControlData2DLoad {
     protected boolean idExclude = false, noColumnSelection = false;
     protected ChangeListener<Boolean> tableLoadListener, tableStatusListener;
 
+    @FXML
+    protected Tab dataTab, filterTab, optionsTab;
     @FXML
     protected ToggleGroup rowsGroup;
     @FXML
@@ -147,6 +150,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                 return;
             }
             data2D = tableController.data2D.cloneAll();
+            data2D.filter = new DataFilter();
             makeColumns();
             isSettingValues = true;
             tableData.setAll(tableController.tableData);
@@ -281,17 +285,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
         status
      */
     public boolean checkSelections() {
-        if (!checkRowFilter() || !checkedRows() || !checkColumns()) {
-            return false;
-        }
-        if ((allPagesRadio.isSelected() || (selectedRowsIndices != null && !selectedRowsIndices.isEmpty()))
-                && (noColumnSelection || (checkedColsIndices != null && !checkedColsIndices.isEmpty()))) {
-            return true;
-        } else {
-            error = message("SelectToHandle");
-            return false;
-        }
-
+        return checkRowFilter() && checkedRows() && checkColumns();
     }
 
     public boolean isAllPages() {
@@ -343,7 +337,6 @@ public class BaseData2DSourceController extends ControlData2DLoad {
             if (noColumnSelection) {
                 return true;
             }
-
             List<Integer> allIndices = new ArrayList<>();
             List<String> allNames = new ArrayList<>();
             List<Data2DColumn> allCols = new ArrayList<>();
@@ -372,10 +365,13 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                 checkedColsNames = allNames;
                 checkedColumns = allCols;
             }
+            if (checkedColsIndices.isEmpty()) {
+                popError(message("SelectToHandle") + ": " + message("Columns"));
+                return false;
+            }
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
-            error = e.toString();
             return false;
         }
     }
@@ -400,10 +396,13 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                     selectedRowsIndices.add(i);
                 }
             }
+            if (!allPagesRadio.isSelected() && selectedRowsIndices.isEmpty()) {
+                popError(message("SelectToHandle") + ": " + message("Rows"));
+                return false;
+            }
             return true;
         } catch (Exception e) {
-            error = e.toString();
-            MyBoxLog.debug(e);
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -426,9 +425,14 @@ public class BaseData2DSourceController extends ControlData2DLoad {
         filter
      */
     private boolean checkRowFilter() {
-        error = null;
         if (!filterController.checkExpression(isAllPages())) {
-            error = filterController.error;
+            String ferror = filterController.error;
+            if (ferror != null && !ferror.isBlank()) {
+                if (filterTab != null) {
+                    tabPane.getSelectionModel().select(filterTab);
+                }
+                alertError(ferror);
+            }
             return false;
         } else {
             return true;

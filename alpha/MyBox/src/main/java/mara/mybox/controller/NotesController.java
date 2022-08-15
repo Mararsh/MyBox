@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Window;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.data.VisitHistory;
@@ -18,10 +19,10 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class NotesController extends TreeManageController {
-
+    
     @FXML
     protected NoteEditor editorController;
-
+    
     public NotesController() {
         baseTitle = Languages.message("Notes");
         TipsLabelKey = "NotesComments";
@@ -29,24 +30,24 @@ public class NotesController extends TreeManageController {
         nameMsg = message("Title");
         valueMsg = message("Html");
     }
-
+    
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.Text);
     }
-
+    
     @Override
     public void initControls() {
         try {
             editorController.setParameters(this);
-
+            
             super.initControls();
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-
+    
     @Override
     public void editNode(TreeNode node) {
         if (!checkBeforeNextAction()) {
@@ -54,22 +55,27 @@ public class NotesController extends TreeManageController {
         }
         editorController.editNote(node);
     }
-
+    
     @FXML
     @Override
     protected void recoverNode() {
         editorController.recoverNote();
     }
-
+    
     @Override
     public boolean isNodeChanged() {
         return editorController.fileChanged || nodeController.nodeChanged;
     }
-
+    
     @Override
     public void nodeSaved() {
         super.nodeSaved();
         editorController.updateFileStatus(false);
+    }
+    
+    @FXML
+    public void popPanesMenu(MouseEvent mouseEvent) {
+        editorController.popPanesMenu(mouseEvent);
     }
 
     /*
@@ -95,5 +101,5 @@ public class NotesController extends TreeManageController {
         controller.requestMouse();
         return controller;
     }
-
+    
 }
