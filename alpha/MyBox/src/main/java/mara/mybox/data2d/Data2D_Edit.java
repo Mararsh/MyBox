@@ -8,8 +8,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import mara.mybox.data.SetValue;
-import mara.mybox.data2d.scan.Data2DReader;
-import mara.mybox.data2d.scan.Data2DReader.Operation;
+import mara.mybox.data2d.reader.Data2DReader;
+import mara.mybox.data2d.reader.Data2DReader.Operation;
+import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
@@ -36,8 +37,6 @@ public abstract class Data2D_Edit extends Data2D_Filter {
     public abstract List<String> readColumnNames();
 
     public abstract boolean savePageData(Data2D targetData);
-
-    public abstract long setValue(List<Integer> cols, SetValue value, boolean errorContinue);
 
     public abstract long deleteRows(boolean errorContinue);
 
@@ -256,7 +255,23 @@ public abstract class Data2D_Edit extends Data2D_Filter {
     }
 
     /*
-        write
+        modify
+     */
+    public long setValue(List<Integer> cols, SetValue setValue, boolean errorContinue) {
+        if (!validData() || cols == null || cols.isEmpty()) {
+            return -1;
+        }
+        Data2DWriter writer = Data2DWriter.create(this)
+                .setSetValue(setValue).setCols(cols)
+                .setWriterTask(task).start(Data2DWriter.Operation.SetValue);
+        if (writer == null || writer.isFailed()) {
+            return -2;
+        }
+        return writer.getCount();
+    }
+
+    /*
+        save
      */
     public boolean checkForSave() {
         if (dataName == null || dataName.isBlank()) {

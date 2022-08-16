@@ -9,12 +9,9 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 import mara.mybox.data.FindReplaceString;
-import mara.mybox.data.SetValue;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
@@ -303,116 +300,6 @@ public class DataFileText extends DataFile {
                 task.setError(e.toString());
             }
             return null;
-        }
-    }
-
-    @Override
-    public long setValue(List<Integer> cols, SetValue setValue, boolean errorContinue) {
-        if (file == null || !file.exists() || file.length() == 0
-                || cols == null || cols.isEmpty()) {
-            return -1;
-        }
-        File tmpFile = TmpFileTools.getTempFile();
-        File validFile = FileTools.removeBOM(file);
-        long count = 0;
-        try ( BufferedReader reader = new BufferedReader(new FileReader(validFile, charset));
-                 BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, charset, false))) {
-            List<String> names = columnNames();
-            if (hasHeader && names != null) {
-                readValidLine(reader);
-                TextFileTools.writeLine(writer, names, delimiter);
-            }
-            String line;
-            String value = setValue.getValue(), expResult = null, currentValue;
-            int num = setValue.getStart();
-            int digit;
-            if (setValue.isFillZero()) {
-                if (setValue.isAotoDigit()) {
-                    digit = (dataSize + "").length();
-                } else {
-                    digit = setValue.getDigit();
-                }
-            } else {
-                digit = 0;
-            }
-            final Random random = new Random();
-            rowIndex = 0;
-            boolean needSetValue;
-            startFilter();
-            while ((line = reader.readLine()) != null && task != null && !task.isCancelled()) {
-                List<String> record = parseFileLine(line);
-                if (record == null || record.isEmpty()) {
-                    continue;
-                }
-                filterDataRow(record, ++rowIndex);
-                needSetValue = filterPassed() && !filterReachMaxPassed();
-                if (needSetValue) {
-                    if (setValue.isExpression() && value != null) {
-                        calculateDataRowExpression(value, record, rowIndex);
-                        error = expressionError();
-                        if (error != null) {
-                            if (errorContinue) {
-                                continue;
-                            } else {
-                                task.setError(error);
-                                return -2;
-                            }
-                        }
-                        expResult = expressionResult();
-                    }
-                    count++;
-                }
-                List<String> row = new ArrayList<>();
-                for (int i = 0; i < columns.size(); i++) {
-                    if (i < record.size()) {
-                        currentValue = record.get(i);
-                    } else {
-                        currentValue = null;
-                    }
-                    String v;
-                    if (needSetValue && cols.contains(i)) {
-                        if (setValue.isBlank()) {
-                            v = "";
-                        } else if (setValue.isZero()) {
-                            v = "0";
-                        } else if (setValue.isOne()) {
-                            v = "1";
-                        } else if (setValue.isRandom()) {
-                            v = random(random, i, false);
-                        } else if (setValue.isRandom()) {
-                            v = random(random, i, false);
-                        } else if (setValue.isRandomNonNegative()) {
-                            v = random(random, i, true);
-                        } else if (setValue.isSuffix()) {
-                            v = currentValue == null ? value : currentValue + value;
-                        } else if (setValue.isPrefix()) {
-                            v = currentValue == null ? value : value + currentValue;
-                        } else if (setValue.isSuffixNumber()) {
-                            String suffix = StringTools.fillLeftZero(num++, digit);
-                            v = currentValue == null ? suffix : currentValue + suffix;
-                        } else if (setValue.isExpression()) {
-                            v = expResult;
-                        } else {
-                            v = value;
-                        }
-                    } else {
-                        v = currentValue;
-                    }
-                    row.add(v);
-                }
-                TextFileTools.writeLine(writer, row, delimiter);
-            }
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return -3;
-        }
-        if (FileTools.rename(tmpFile, file, false)) {
-            return count;
-        } else {
-            return -4;
         }
     }
 

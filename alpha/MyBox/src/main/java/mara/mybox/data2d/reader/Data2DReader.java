@@ -1,4 +1,4 @@
-package mara.mybox.data2d.scan;
+package mara.mybox.data2d.reader;
 
 import java.io.File;
 import java.sql.Connection;
@@ -40,7 +40,7 @@ import org.apache.commons.math3.stat.regression.SimpleRegression;
 public abstract class Data2DReader {
 
     protected Data2D data2D;
-    protected File readerFile;
+    protected File sourceFile;
     protected Operation operation;
     protected long rowIndex, rowsStart, rowsEnd, count;
     protected int columnsNumber, colsLen, scale = -1, scanPass, colIndex;
@@ -65,7 +65,7 @@ public abstract class Data2DReader {
     protected CSVPrinter csvPrinter;
     protected ControlDataConvert convertController;
     protected boolean readerHasHeader, readerStopped, needCheckTask, errorContinue;
-    protected SingletonTask readerTask;
+    protected SingletonTask task;
 
     public static enum Operation {
         ReadDefinition, ReadTotal, ReadColumnNames, ReadPage,
@@ -106,26 +106,15 @@ public abstract class Data2DReader {
 
     public void init(Data2D data) {
         this.data2D = data;
-        readerTask = data2D.getTask();
+        task = data2D.getTask();
     }
 
     public Data2DReader start(Operation operation) {
-        if (data2D == null || operation == null) {
+        if (data2D == null || !data2D.validData() || operation == null) {
             failed = true;
             return null;
         }
-        readerFile = data2D.getFile();
-        if (data2D.isDataFile()) {
-            if (readerFile == null || !readerFile.exists() || readerFile.length() == 0) {
-                failed = true;
-                return null;
-            }
-        } else if (data2D.isTable()) {
-            if (data2D.getSheet() == null) {
-                failed = true;
-                return null;
-            }
-        }
+        sourceFile = data2D.getFile();
         if (cols != null && !cols.isEmpty()) {
             colsLen = cols.size();
         }
@@ -312,9 +301,9 @@ public abstract class Data2DReader {
         this.operation = operation;
         readerStopped = false;
         readerHasHeader = data2D.isHasHeader();
-        needCheckTask = readerTask != null;
+        needCheckTask = task != null;
         columnsNumber = data2D.columnsNumber();
-        rowIndex = 0;
+        rowIndex = 0;  // 1-based
         rowsStart = data2D.getStartRowOfCurrentPage();
         rowsEnd = rowsStart + data2D.getPageSize();
         count = 0;
@@ -354,8 +343,8 @@ public abstract class Data2DReader {
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
-            if (readerTask != null) {
-                readerTask.setError(e.toString());
+            if (task != null) {
+                task.setError(e.toString());
             }
             failed = true;
         }
@@ -378,8 +367,8 @@ public abstract class Data2DReader {
             readerStopped = true;
         } catch (Exception e) {
             MyBoxLog.error(e);
-            if (readerTask != null) {
-                readerTask.setError(e.toString());
+            if (task != null) {
+                task.setError(e.toString());
             }
         }
     }
@@ -392,13 +381,13 @@ public abstract class Data2DReader {
         for (int col = row.size(); col < columnsNumber; col++) {
             row.add(data2D.defaultColValue());
         }
-        row.add(0, "" + (rowIndex + 1));
+        row.add(0, "" + rowIndex);
         rows.add(row);
     }
 
     public void handleRecord() {
         try {
-            if (!data2D.filterDataRow(record, rowIndex + 1)) {
+            if (!data2D.filterDataRow(record, rowIndex)) {
                 return;
             }
             if (data2D.filterReachMaxPassed()) {
@@ -491,8 +480,8 @@ public abstract class Data2DReader {
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
-            if (readerTask != null) {
-                readerTask.setError(e.toString());
+            if (task != null) {
+                task.setError(e.toString());
             }
         }
     }
@@ -511,7 +500,7 @@ public abstract class Data2DReader {
                 return;
             }
             if (includeRowNumber) {
-                row.add(0, (rowIndex + 1) + "");
+                row.add(0, rowIndex + "");
             }
             rows.add(row);
         } catch (Exception e) {
@@ -523,7 +512,7 @@ public abstract class Data2DReader {
             List<String> row = new ArrayList<>();
             row.addAll(record);
             if (includeRowNumber) {
-                row.add(0, (rowIndex + 1) + "");
+                row.add(0, rowIndex + "");
             }
             rows.add(row);
         } catch (Exception e) {
@@ -564,7 +553,7 @@ public abstract class Data2DReader {
                 return;
             }
             if (includeRowNumber) {
-                data2DRow.setColumnValue(writerTable.mappedColumnName(message("SourceRowNumber")), rowIndex + 1);
+                data2DRow.setColumnValue(writerTable.mappedColumnName(message("SourceRowNumber")), rowIndex);
             }
             writerTableData2D.insertData(conn, data2DRow);
             if (++count % DerbyBase.BatchSize == 0) {
@@ -611,7 +600,7 @@ public abstract class Data2DReader {
                 return;
             }
             if (includeRowNumber) {
-                row.add(0, (rowIndex + 1) + "");
+                row.add(0, rowIndex + "");
             }
             csvPrinter.printRecord(row);
         } catch (Exception e) {
@@ -632,9 +621,9 @@ public abstract class Data2DReader {
                 return;
             }
             if (includeRowNumber) {
-                row.add(0, (rowIndex + 1) + "");
+                row.add(0, rowIndex + "");
             }
-            if (data2D.calculateDataRowExpression(script, record, rowIndex + 1)) {
+            if (data2D.calculateDataRowExpression(script, record, rowIndex)) {
                 row.add(data2D.expressionResult());
             } else {
                 if (errorContinue) {
@@ -786,7 +775,7 @@ public abstract class Data2DReader {
             List<String> row = new ArrayList<>();
             int startIndex;
             if (statisticCalculation.getCategoryName() == null) {
-                row.add(message("Row") + " " + (rowIndex + 1));
+                row.add(message("Row") + " " + rowIndex);
                 startIndex = 0;
             } else {
                 row.add(record.get(cols.get(0)));
@@ -831,7 +820,7 @@ public abstract class Data2DReader {
     public void handlePercentageColumns() {
         try {
             List<String> row = new ArrayList<>();
-            row.add(message("Row") + (rowIndex + 1));
+            row.add(message("Row") + rowIndex);
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
                 double d;
@@ -893,7 +882,7 @@ public abstract class Data2DReader {
     public void handlePercentageAll() {
         try {
             List<String> row = new ArrayList<>();
-            row.add(message("Row") + (rowIndex + 1));
+            row.add(message("Row") + rowIndex);
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
                 double d;
@@ -933,7 +922,7 @@ public abstract class Data2DReader {
     public void handlePercentageRows() {
         try {
             List<String> row = new ArrayList<>();
-            row.add(message("Row") + (rowIndex + 1));
+            row.add(message("Row") + rowIndex);
             double sum = 0;
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
@@ -995,7 +984,7 @@ public abstract class Data2DReader {
         try {
             List<String> row = new ArrayList<>();
             if (includeRowNumber) {
-                row.add(message("Row") + (rowIndex + 1));
+                row.add(message("Row") + rowIndex);
             }
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
@@ -1020,7 +1009,7 @@ public abstract class Data2DReader {
         try {
             List<String> row = new ArrayList<>();
             if (includeRowNumber) {
-                row.add(message("Row") + (rowIndex + 1));
+                row.add(message("Row") + rowIndex);
             }
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
@@ -1045,7 +1034,7 @@ public abstract class Data2DReader {
         try {
             List<String> row = new ArrayList<>();
             if (includeRowNumber) {
-                row.add(message("Row") + (rowIndex + 1));
+                row.add(message("Row") + rowIndex);
             }
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
@@ -1074,7 +1063,7 @@ public abstract class Data2DReader {
         try {
             List<String> row = new ArrayList<>();
             if (includeRowNumber) {
-                row.add(message("Row") + (rowIndex + 1));
+                row.add(message("Row") + rowIndex);
             }
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
@@ -1099,7 +1088,7 @@ public abstract class Data2DReader {
         try {
             List<String> row = new ArrayList<>();
             if (includeRowNumber) {
-                row.add(message("Row") + (rowIndex + 1));
+                row.add(message("Row") + rowIndex);
             }
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
@@ -1124,7 +1113,7 @@ public abstract class Data2DReader {
         try {
             List<String> row = new ArrayList<>();
             if (includeRowNumber) {
-                row.add(message("Row") + (rowIndex + 1));
+                row.add(message("Row") + rowIndex);
             }
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
@@ -1153,7 +1142,7 @@ public abstract class Data2DReader {
         try {
             List<String> row = new ArrayList<>();
             if (includeRowNumber) {
-                row.add(message("Row") + (rowIndex + 1));
+                row.add(message("Row") + rowIndex);
             }
             double[] values = new double[colsLen];
             for (int c = 0; c < colsLen; c++) {
@@ -1309,14 +1298,14 @@ public abstract class Data2DReader {
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
-            if (readerTask != null) {
-                readerTask.setError(e.toString());
+            if (task != null) {
+                task.setError(e.toString());
             }
         }
     }
 
     public boolean readerStopped() {
-        return readerStopped || (needCheckTask && (readerTask == null || readerTask.isCancelled()));
+        return readerStopped || (needCheckTask && (task == null || task.isCancelled()));
     }
 
     /*
@@ -1363,7 +1352,7 @@ public abstract class Data2DReader {
     }
 
     public Data2DReader setReaderTask(SingletonTask readerTask) {
-        this.readerTask = readerTask;
+        this.task = readerTask;
         return this;
     }
 

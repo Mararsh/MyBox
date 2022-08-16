@@ -1,4 +1,4 @@
-package mara.mybox.data2d.scan;
+package mara.mybox.data2d.reader;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,11 +29,11 @@ public class DataFileCSVReader extends Data2DReader {
 
     @Override
     public void scanData() {
-        if (!FileTools.hasData(readerFile)) {
+        if (!FileTools.hasData(sourceFile)) {
             return;
         }
         readerCSV.checkForLoad();
-        File validFile = FileTools.removeBOM(readerFile);
+        File validFile = FileTools.removeBOM(sourceFile);
         try ( CSVParser parser = CSVParser.parse(validFile, readerCSV.getCharset(), readerCSV.cvsFormat())) {
             csvParser = parser;
             iterator = parser.iterator();
@@ -42,8 +42,8 @@ public class DataFileCSVReader extends Data2DReader {
             parser.close();
         } catch (Exception e) {
             MyBoxLog.error(e);
-            if (readerTask != null) {
-                readerTask.setError(e.toString());
+            if (task != null) {
+                task.setError(e.toString());
             }
             failed = true;
         }
@@ -68,8 +68,8 @@ public class DataFileCSVReader extends Data2DReader {
                 }
             } catch (Exception e) {
                 MyBoxLog.error(e);
-                if (readerTask != null) {
-                    readerTask.setError(e.toString());
+                if (task != null) {
+                    task.setError(e.toString());
                 }
             }
         } else {
@@ -107,19 +107,18 @@ public class DataFileCSVReader extends Data2DReader {
         if (iterator == null) {
             return;
         }
-        rowIndex = -1;
+        rowIndex = 0;
         while (iterator.hasNext() && !readerStopped()) {
-            if (++rowIndex < rowsStart) {
-                iterator.next();
-                continue;
-            }
-            if (rowIndex >= rowsEnd) {
-                readerStopped = true;
-                break;
-            }
             readRecord();
             if (record == null || record.isEmpty()) {
                 continue;
+            }
+            if (rowIndex++ < rowsStart) {
+                continue;
+            }
+            if (rowIndex > rowsEnd) {
+                readerStopped = true;
+                break;
             }
             handlePageRow();
         }
@@ -136,8 +135,9 @@ public class DataFileCSVReader extends Data2DReader {
             if (record == null || record.isEmpty()) {
                 continue;
             }
-            handleRecord();
             ++rowIndex;
+            handleRecord();
+
         }
     }
 
@@ -157,8 +157,8 @@ public class DataFileCSVReader extends Data2DReader {
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
-            if (readerTask != null) {
-                readerTask.setError(e.toString());
+            if (task != null) {
+                task.setError(e.toString());
             }
         }
     }

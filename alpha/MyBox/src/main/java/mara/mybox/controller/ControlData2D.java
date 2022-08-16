@@ -672,28 +672,73 @@ public class ControlData2D extends BaseController {
             boolean empty = invalidData || tableController.tableData.isEmpty();
             MenuItem menu;
 
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            Menu modifyMenu = new Menu(message("Modify"), StyleTools.getIconImage("iconEdit.png"));
+            popMenu.getItems().add(modifyMenu);
+
+            menu = new MenuItem(message("SetValues"), StyleTools.getIconImage("iconEqual.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DSetValuesController.open(tableController);
+            });
+            menu.setDisable(empty);
+            modifyMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Delete"), StyleTools.getIconImage("iconDelete.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DDeleteController.open(tableController);
+            });
+            menu.setDisable(empty);
+            modifyMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("SetStyles"), StyleTools.getIconImage("iconColor.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DSetStylesController.open(tableController);
+            });
+            menu.setDisable(empty || data2D.isTmpData());
+            modifyMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("PasteContentInSystemClipboard"), StyleTools.getIconImage("iconPasteSystem.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                tableController.pasteContentInSystemClipboard();
+            });
+            menu.setDisable(invalidData);
+            modifyMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("PasteContentInMyBoxClipboard"), StyleTools.getIconImage("iconPaste.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                tableController.pasteContentInMyboxClipboard();
+            });
+            menu.setDisable(invalidData);
+            modifyMenu.getItems().add(menu);
+
+            modifyMenu.getItems().add(new SeparatorMenuItem());
+
             menu = new MenuItem(message("Save"), StyleTools.getIconImage("iconSave.png"));
             menu.setOnAction((ActionEvent event) -> {
                 save();
             });
             menu.setDisable(invalidData || !tableController.dataSizeLoaded);
-            popMenu.getItems().add(menu);
+            modifyMenu.getItems().add(menu);
 
             menu = new MenuItem(message("Recover"), StyleTools.getIconImage("iconRecover.png"));
             menu.setOnAction((ActionEvent event) -> {
                 recover();
             });
             menu.setDisable(invalidData || data2D.isTmpData());
-            popMenu.getItems().add(menu);
+            modifyMenu.getItems().add(menu);
 
             menu = new MenuItem(message("Refresh"), StyleTools.getIconImage("iconRefresh.png"));
             menu.setOnAction((ActionEvent event) -> {
                 refreshAction();
             });
             menu.setDisable(invalidData || data2D.isTmpData());
-            popMenu.getItems().add(menu);
+            modifyMenu.getItems().add(menu);
 
             popMenu.getItems().add(new SeparatorMenuItem());
+
+            Menu trimMenu = new Menu(message("Trim"), StyleTools.getIconImage("iconClean.png"));
+            popMenu.getItems().add(trimMenu);
 
             if (data2D.isTable()) {
                 menu = new MenuItem(message("Query"), StyleTools.getIconImage("iconQuery.png"));
@@ -701,48 +746,8 @@ public class ControlData2D extends BaseController {
                     DataTableQueryController.open(tableController);
                 });
                 menu.setDisable(empty);
-                popMenu.getItems().add(menu);
+                trimMenu.getItems().add(menu);
             }
-
-            menu = new MenuItem(message("SetValues"), StyleTools.getIconImage("iconEqual.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DSetValuesController.open(tableController);
-            });
-            menu.setDisable(empty);
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("SetStyles"), StyleTools.getIconImage("iconColor.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DSetStylesController.open(tableController);
-            });
-            menu.setDisable(empty || data2D.isTmpData());
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("PasteContentInSystemClipboard"), StyleTools.getIconImage("iconPasteSystem.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                tableController.pasteContentInSystemClipboard();
-            });
-            menu.setDisable(invalidData);
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("PasteContentInMyBoxClipboard"), StyleTools.getIconImage("iconPaste.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                tableController.pasteContentInMyboxClipboard();
-            });
-            menu.setDisable(invalidData);
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("Delete"), StyleTools.getIconImage("iconDelete.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DDeleteController.open(tableController);
-            });
-            menu.setDisable(empty);
-            popMenu.getItems().add(menu);
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-
-            Menu trimMenu = new Menu(message("Trim"), StyleTools.getIconImage("iconClean.png"));
-            popMenu.getItems().add(trimMenu);
 
             menu = new MenuItem(message("CopyFilterQuery"), StyleTools.getIconImage("iconCopy.png"));
             menu.setOnAction((ActionEvent event) -> {

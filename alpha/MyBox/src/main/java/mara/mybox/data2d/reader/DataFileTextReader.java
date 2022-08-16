@@ -1,4 +1,4 @@
-package mara.mybox.data2d.scan;
+package mara.mybox.data2d.reader;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -25,7 +25,7 @@ public class DataFileTextReader extends Data2DReader {
 
     @Override
     public void scanData() {
-        File validFile = FileTools.removeBOM(readerFile);
+        File validFile = FileTools.removeBOM(sourceFile);
         try ( BufferedReader reader = new BufferedReader(new FileReader(validFile, readerText.getCharset()))) {
             textReader = reader;
             handleData();
@@ -33,8 +33,8 @@ public class DataFileTextReader extends Data2DReader {
             reader.close();
         } catch (Exception e) {
             MyBoxLog.error(e);
-            if (readerTask != null) {
-                readerTask.setError(e.toString());
+            if (task != null) {
+                task.setError(e.toString());
             }
             failed = true;
         }
@@ -62,8 +62,8 @@ public class DataFileTextReader extends Data2DReader {
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
-            if (readerTask != null) {
-                readerTask.setError(e.toString());
+            if (task != null) {
+                task.setError(e.toString());
             }
         }
     }
@@ -86,8 +86,8 @@ public class DataFileTextReader extends Data2DReader {
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
-            if (readerTask != null) {
-                readerTask.setError(e.toString());
+            if (task != null) {
+                task.setError(e.toString());
             }
             failed = true;
         }
@@ -106,17 +106,17 @@ public class DataFileTextReader extends Data2DReader {
         }
         try {
             skipHeader();
-            rowIndex = -1;
+            rowIndex = 0;
             String line;
             while ((line = textReader.readLine()) != null && !readerStopped()) {
                 record = parseFileLine(line);
                 if (record == null || record.isEmpty()) {
                     continue;
                 }
-                if (++rowIndex < rowsStart) {
+                if (rowIndex++ < rowsStart) {
                     continue;
                 }
-                if (rowIndex >= rowsEnd) {
+                if (rowIndex > rowsEnd) {
                     readerStopped = true;
                     break;
                 }
@@ -124,8 +124,8 @@ public class DataFileTextReader extends Data2DReader {
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
-            if (readerTask != null) {
-                readerTask.setError(e.toString());
+            if (task != null) {
+                task.setError(e.toString());
             }
             failed = true;
         }
@@ -145,13 +145,13 @@ public class DataFileTextReader extends Data2DReader {
                 if (record == null || record.isEmpty()) {
                     continue;
                 }
-                handleRecord();
                 ++rowIndex;
+                handleRecord();
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
-            if (readerTask != null) {
-                readerTask.setError(e.toString());
+            if (task != null) {
+                task.setError(e.toString());
             }
             failed = true;
         }

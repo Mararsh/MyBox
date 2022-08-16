@@ -82,6 +82,18 @@ public class SetValue {
         return type == ValueType.LowerTriangle;
     }
 
+    public int countFinalDigit(long dataSize) {
+        int finalDigit = digit;
+        if (isFillZero()) {
+            if (isAotoDigit()) {
+                finalDigit = (dataSize + "").length();
+            }
+        } else {
+            finalDigit = 0;
+        }
+        return finalDigit;
+    }
+
     /*
         set/set
      */

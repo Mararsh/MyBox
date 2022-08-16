@@ -15,6 +15,7 @@ import mara.mybox.controller.MatricesManageController;
 import mara.mybox.controller.MyBoxTablesController;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
+import mara.mybox.tools.FileTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -117,6 +118,16 @@ public class Data2DDefinition extends BaseData {
 
     public boolean isValid() {
         return valid(this);
+    }
+
+    public boolean validData() {
+        if (isDataFile()) {
+            return FileTools.hasData(file);
+        } else if (isTable()) {
+            return sheet != null;
+        } else {
+            return true;
+        }
     }
 
     public Data2DDefinition setCharsetName(String charsetName) {

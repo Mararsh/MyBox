@@ -109,7 +109,6 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
             startRowOfCurrentPage = d.startRowOfCurrentPage;
             endRowOfCurrentPage = d.endRowOfCurrentPage;
             tableChanged = d.tableChanged;
-            filter = d.filter;
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }

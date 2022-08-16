@@ -150,7 +150,6 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                 return;
             }
             data2D = tableController.data2D.cloneAll();
-            data2D.filter = new DataFilter();
             makeColumns();
             isSettingValues = true;
             tableData.setAll(tableController.tableData);

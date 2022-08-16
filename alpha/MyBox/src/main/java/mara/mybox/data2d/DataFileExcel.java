@@ -7,9 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
-import mara.mybox.data.SetValue;
-import mara.mybox.data2d.scan.Data2DReader;
+import mara.mybox.data2d.reader.Data2DReader;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
@@ -17,7 +15,6 @@ import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
-import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TmpFileTools;
 import static mara.mybox.value.Languages.message;
 import org.apache.poi.ss.usermodel.Cell;
@@ -233,7 +230,7 @@ public class DataFileExcel extends DataFile {
         return FileTools.rename(tmpFile, tFile, false);
     }
 
-    protected int writeHeader(Sheet targetSheet, int targetRowIndex) {
+    public int writeHeader(Sheet targetSheet, int targetRowIndex) {
         if (!isColumnsValid()) {
             return targetRowIndex;
         }
@@ -455,147 +452,6 @@ public class DataFileExcel extends DataFile {
         } catch (Exception e) {
             error = e.toString();
             return -1;
-        }
-    }
-
-    @Override
-    public long setValue(List<Integer> cols, SetValue setValue, boolean errorContinue) {
-        if (file == null || !file.exists() || file.length() == 0
-                || cols == null || cols.isEmpty()) {
-            return -2;
-        }
-        File tmpFile = TmpFileTools.getTempFile();
-        long count = 0;
-        try ( Workbook sourceBook = WorkbookFactory.create(file)) {
-            Sheet sourceSheet;
-            if (sheet != null) {
-                sourceSheet = sourceBook.getSheet(sheet);
-            } else {
-                sourceSheet = sourceBook.getSheetAt(0);
-                sheet = sourceSheet.getSheetName();
-            }
-            Workbook targetBook;
-            Sheet targetSheet;
-            File tmpDataFile = null;
-            int sheetsNumber = sourceBook.getNumberOfSheets();
-            if (sheetsNumber == 1) {
-                targetBook = new XSSFWorkbook();
-                targetSheet = targetBook.createSheet(sheet);
-            } else {
-                tmpDataFile = TmpFileTools.getTempFile();
-                FileCopyTools.copyFile(file, tmpDataFile);
-                targetBook = WorkbookFactory.create(tmpDataFile);
-                int index = targetBook.getSheetIndex(sheet);
-                targetBook.removeSheetAt(index);
-                targetSheet = targetBook.createSheet(sheet);
-                targetBook.setSheetOrder(sheet, index);
-            }
-            int targetRowIndex = 0;
-            if (hasHeader) {
-                targetRowIndex = writeHeader(targetSheet, targetRowIndex);
-            }
-            Iterator<Row> iterator = sourceSheet.iterator();
-            if (iterator != null && iterator.hasNext()) {
-                if (hasHeader) {
-                    while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
-                    }
-                }
-                String value = setValue.getValue(), expResult = null, currentValue;
-                int num = setValue.getStart();
-                int digit;
-                if (setValue.isFillZero()) {
-                    if (setValue.isAotoDigit()) {
-                        digit = (dataSize + "").length();
-                    } else {
-                        digit = setValue.getDigit();
-                    }
-                } else {
-                    digit = 0;
-                }
-                final Random random = new Random();
-                rowIndex = 0;
-                boolean needSetValue;
-                startFilter();
-                while (iterator.hasNext() && task != null && !task.isCancelled()) {
-                    Row sourceRow = iterator.next();
-                    if (sourceRow == null) {
-                        continue;
-                    }
-                    Row targetRow = targetSheet.createRow(targetRowIndex++);
-                    List<String> values = new ArrayList<>();
-                    for (int c = sourceRow.getFirstCellNum(); c < sourceRow.getLastCellNum(); c++) {
-                        values.add(MicrosoftDocumentTools.cellString(sourceRow.getCell(c)));
-                    }
-                    filterDataRow(values, ++rowIndex);
-                    needSetValue = filterPassed() && !filterReachMaxPassed();
-                    if (needSetValue) {
-                        if (setValue.isExpression() && value != null) {
-                            calculateDataRowExpression(value, values, rowIndex);
-                            error = expressionError();
-                            if (error != null) {
-                                if (errorContinue) {
-                                    continue;
-                                } else {
-                                    task.setError(error);
-                                    return -2;
-                                }
-                            }
-                            expResult = expressionResult();
-                        }
-                        count++;
-                    }
-                    for (int c = sourceRow.getFirstCellNum(); c < sourceRow.getLastCellNum(); c++) {
-                        currentValue = MicrosoftDocumentTools.cellString(sourceRow.getCell(c));
-                        String v;
-                        if (needSetValue && cols.contains(c)) {
-                            if (setValue.isBlank()) {
-                                v = "";
-                            } else if (setValue.isZero()) {
-                                v = "0";
-                            } else if (setValue.isOne()) {
-                                v = "1";
-                            } else if (setValue.isRandom()) {
-                                v = random(random, c, false);
-                            } else if (setValue.isRandom()) {
-                                v = random(random, c, false);
-                            } else if (setValue.isRandomNonNegative()) {
-                                v = random(random, c, true);
-                            } else if (setValue.isSuffix()) {
-                                v = currentValue == null ? value : currentValue + value;
-                            } else if (setValue.isPrefix()) {
-                                v = currentValue == null ? value : value + currentValue;
-                            } else if (setValue.isSuffixNumber()) {
-                                String suffix = StringTools.fillLeftZero(num++, digit);
-                                v = currentValue == null ? suffix : currentValue + suffix;
-                            } else if (setValue.isExpression()) {
-                                v = expResult;
-                            } else {
-                                v = value;
-                            }
-                        } else {
-                            v = currentValue;
-                        }
-                        Cell targetCell = targetRow.createCell(c, CellType.STRING);
-                        targetCell.setCellValue(v);
-                    }
-                }
-            }
-            try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
-                targetBook.write(fileOut);
-            }
-            targetBook.close();
-            FileDeleteTools.delete(tmpDataFile);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            return -3;
-        }
-        if (FileTools.rename(tmpFile, file, false)) {
-            return count;
-        } else {
-            return -4;
         }
     }
 

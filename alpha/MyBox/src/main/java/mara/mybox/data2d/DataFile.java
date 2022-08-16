@@ -2,7 +2,7 @@ package mara.mybox.data2d;
 
 import java.sql.Connection;
 import java.util.List;
-import mara.mybox.data2d.scan.Data2DReader;
+import mara.mybox.data2d.reader.Data2DReader;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.tools.FileTools;
 

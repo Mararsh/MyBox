@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Random;
 import mara.mybox.calculation.DescriptiveStatistic;
 import mara.mybox.calculation.DoubleStatistic;
-import mara.mybox.data.SetValue;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
@@ -25,7 +24,6 @@ import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DoubleTools;
-import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.math3.stat.Frequency;
@@ -217,7 +215,7 @@ public class DataTable extends Data2D {
         return null;
     }
 
-    public Data2DRow from(List<String> values) {
+    public Data2DRow fromTableRow(List<String> values) {
         try {
             if (columns == null || values == null || values.isEmpty()) {
                 return null;
@@ -376,7 +374,7 @@ public class DataTable extends Data2D {
             conn.setAutoCommit(false);
             if (pageData != null) {
                 for (int i = 0; i < pageData.size(); i++) {
-                    Data2DRow row = from(pageData.get(i));
+                    Data2DRow row = fromTableRow(pageData.get(i));
                     if (row != null) {
                         pageRows.add(row);
                         tableData2D.writeData(conn, row);
@@ -402,109 +400,6 @@ public class DataTable extends Data2D {
             MyBoxLog.error(e);
         }
         return false;
-    }
-
-    @Override
-    public long setValue(List<Integer> cols, SetValue setValue, boolean errorContinue) {
-        if (cols == null || cols.isEmpty()) {
-            return -1;
-        }
-        long count = 0;
-        try ( Connection conn = DerbyBase.getConnection();
-                 PreparedStatement query = conn.prepareStatement("SELECT * FROM " + sheet);
-                 ResultSet results = query.executeQuery()) {
-            String value = setValue.getValue(), expResult = null, currentValue;
-            int num = setValue.getStart();
-            int digit;
-            if (setValue.isFillZero()) {
-                if (setValue.isAotoDigit()) {
-                    digit = (dataSize + "").length();
-                } else {
-                    digit = setValue.getDigit();
-                }
-            } else {
-                digit = 0;
-            }
-            final Random random = new Random();
-            conn.setAutoCommit(false);
-            rowIndex = 0;
-            startFilter();
-            while (results.next() && task != null && !task.isCancelled()) {
-                Data2DRow row = tableData2D.readData(results);
-                List<String> rowValues = new ArrayList<>();
-                for (int c = 0; c < columns.size(); c++) {
-                    Data2DColumn column = columns.get(c);
-                    Object v = row.getColumnValue(columns.get(c).getColumnName());
-                    rowValues.add(column.toString(v));
-                }
-                filterDataRow(rowValues, ++rowIndex);
-                if (!filterPassed()) {
-                    continue;
-                }
-                if (setValue.isExpression() && value != null) {
-                    calculateDataRowExpression(value, rowValues, rowIndex);
-                    error = expressionError();
-                    if (error != null) {
-                        if (errorContinue) {
-                            continue;
-                        } else {
-                            task.setError(error);
-                            return -2;
-                        }
-                    }
-                    expResult = expressionResult();
-                }
-                for (int c = 0; c < columns.size(); c++) {
-                    Data2DColumn column = columns.get(c);
-                    String name = column.getColumnName();
-                    currentValue = column.toString(row.getColumnValue(name));
-                    if (cols.contains(c)) {
-                        String v;
-                        if (setValue.isBlank()) {
-                            v = "";
-                        } else if (setValue.isZero()) {
-                            v = "0";
-                        } else if (setValue.isOne()) {
-                            v = "1";
-                        } else if (setValue.isRandom()) {
-                            v = random(random, c, false);
-                        } else if (setValue.isRandom()) {
-                            v = random(random, c, false);
-                        } else if (setValue.isRandomNonNegative()) {
-                            v = random(random, c, true);
-                        } else if (setValue.isSuffix()) {
-                            v = currentValue == null ? value : currentValue + value;
-                        } else if (setValue.isPrefix()) {
-                            v = currentValue == null ? value : value + currentValue;
-                        } else if (setValue.isSuffixNumber()) {
-                            String suffix = StringTools.fillLeftZero(num++, digit);
-                            v = currentValue == null ? suffix : currentValue + suffix;
-                        } else if (setValue.isExpression()) {
-                            v = expResult;
-                        } else {
-                            v = value;
-                        }
-                        row.setColumnValue(name, column.fromString(v));
-                    }
-                }
-                tableData2D.updateData(conn, row);
-                if (++count % DerbyBase.BatchSize == 0) {
-                    conn.commit();
-                }
-                if (filterReachMaxPassed()) {
-                    break;
-                }
-            }
-            conn.commit();
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.debug(e);
-            return -3;
-        }
-
-        return count;
     }
 
     @Override

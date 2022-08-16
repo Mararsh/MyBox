@@ -9,7 +9,7 @@ import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.calculation.Normalization;
 import mara.mybox.calculation.SimpleLinearRegression;
 import mara.mybox.controller.ControlDataConvert;
-import mara.mybox.data2d.scan.Data2DReader;
+import mara.mybox.data2d.reader.Data2DReader;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;

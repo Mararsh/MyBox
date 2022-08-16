@@ -1,4 +1,4 @@
-package mara.mybox.data2d.scan;
+package mara.mybox.data2d.reader;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -30,7 +30,7 @@ public class DataFileExcelReader extends Data2DReader {
 
     @Override
     public void scanData() {
-        try ( Workbook wb = WorkbookFactory.create(readerFile)) {
+        try ( Workbook wb = WorkbookFactory.create(sourceFile)) {
             Sheet sourceSheet;
             if (readerSheet != null) {
                 sourceSheet = wb.getSheet(readerSheet);
@@ -52,8 +52,8 @@ public class DataFileExcelReader extends Data2DReader {
             wb.close();
         } catch (Exception e) {
             MyBoxLog.error(e);
-            if (readerTask != null) {
-                readerTask.setError(e.toString());
+            if (task != null) {
+                task.setError(e.toString());
             }
             failed = true;
         }
@@ -107,19 +107,18 @@ public class DataFileExcelReader extends Data2DReader {
             return;
         }
         skipHeader();
-        rowIndex = -1;
+        rowIndex = 0;
         while (iterator.hasNext() && !readerStopped()) {
-            if (++rowIndex < rowsStart) {
-                iterator.next();
-                continue;
-            }
-            if (rowIndex >= rowsEnd) {
-                readerStopped = true;
-                break;
-            }
             readRecord();
             if (record == null || record.isEmpty()) {
                 continue;
+            }
+            if (rowIndex++ < rowsStart) {
+                continue;
+            }
+            if (rowIndex > rowsEnd) {
+                readerStopped = true;
+                break;
             }
             handlePageRow();
         }
@@ -137,8 +136,8 @@ public class DataFileExcelReader extends Data2DReader {
             if (record == null || record.isEmpty()) {
                 continue;
             }
-            handleRecord();
             ++rowIndex;
+            handleRecord();
         }
     }
 
@@ -159,8 +158,8 @@ public class DataFileExcelReader extends Data2DReader {
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
-            if (readerTask != null) {
-                readerTask.setError(e.toString());
+            if (task != null) {
+                task.setError(e.toString());
             }
         }
     }

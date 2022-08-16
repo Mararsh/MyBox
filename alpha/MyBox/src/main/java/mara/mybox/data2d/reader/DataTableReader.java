@@ -1,4 +1,4 @@
-package mara.mybox.data2d.scan;
+package mara.mybox.data2d.reader;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -37,8 +37,8 @@ public class DataTableReader extends Data2DReader {
                 conn.close();
             } catch (Exception e) {
                 MyBoxLog.error(e);
-                if (readerTask != null) {
-                    readerTask.setError(e.toString());
+                if (task != null) {
+                    task.setError(e.toString());
                 }
             }
         } else {
@@ -52,8 +52,8 @@ public class DataTableReader extends Data2DReader {
             names = readerTable.columnNames();
         } catch (Exception e) {
             MyBoxLog.error(e);
-            if (readerTask != null) {
-                readerTask.setError(e.toString());
+            if (task != null) {
+                task.setError(e.toString());
             }
         }
     }
@@ -64,8 +64,8 @@ public class DataTableReader extends Data2DReader {
             rowIndex = readerTableData2D.size(conn);
         } catch (Exception e) {
             MyBoxLog.error(e);
-            if (readerTask != null) {
-                readerTask.setError(e.toString());
+            if (task != null) {
+                task.setError(e.toString());
             }
             failed = true;
         }
@@ -73,18 +73,18 @@ public class DataTableReader extends Data2DReader {
 
     @Override
     public void readPage() {
-        rowIndex = 0;
+        rowIndex = data2D.startRowOfCurrentPage;
         try ( PreparedStatement statement = conn.prepareStatement(readerTable.pageQuery());
                  ResultSet results = statement.executeQuery()) {
             while (results.next()) {
                 makeRecord(readerTableData2D.readData(results));
-                handlePageRow();
                 rowIndex++;
+                handlePageRow();
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
-            if (readerTask != null) {
-                readerTask.setError(e.toString());
+            if (task != null) {
+                task.setError(e.toString());
             }
             failed = true;
         }
@@ -98,13 +98,13 @@ public class DataTableReader extends Data2DReader {
                  ResultSet results = statement.executeQuery()) {
             while (results.next() && !readerStopped()) {
                 makeRecord(readerTableData2D.readData(results));
-                handleRecord();
                 rowIndex++;
+                handleRecord();
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
-            if (readerTask != null) {
-                readerTask.setError(e.toString());
+            if (task != null) {
+                task.setError(e.toString());
             }
             failed = true;
         }
@@ -120,8 +120,8 @@ public class DataTableReader extends Data2DReader {
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
-            if (readerTask != null) {
-                readerTask.setError(e.toString());
+            if (task != null) {
+                task.setError(e.toString());
             }
             failed = true;
         }
