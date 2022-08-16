@@ -27,7 +27,7 @@ public abstract class DataFile extends Data2D {
             return null;
         }
         Data2DReader reader = Data2DReader.create(this)
-                .setReaderTask(task).start(Data2DReader.Operation.ReadColumnNames);
+                .setTask(task).start(Data2DReader.Operation.ReadColumnNames);
         if (reader == null) {
             hasHeader = false;
             return null;

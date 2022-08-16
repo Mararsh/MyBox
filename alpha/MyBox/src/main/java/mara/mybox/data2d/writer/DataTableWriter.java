@@ -22,6 +22,7 @@ public class DataTableWriter extends Data2DWriter {
     protected TableData2D tableData2D;
     protected int writeCount;
     protected Data2DRow sourceTableRow;
+    protected Connection conn;
 
     public DataTableWriter(DataTable data) {
         init(data);
@@ -31,13 +32,25 @@ public class DataTableWriter extends Data2DWriter {
     }
 
     @Override
+    public Data2DWriter start(Operation operation) {
+        this.operation = operation;
+        if (isClearData()) {
+            count = tableData2D.clearData();
+            return this;
+        }
+        return super.start(operation);
+    }
+
+    @Override
     public void scanData() {
         rowIndex = 0;
+        count = 0;
         writeCount = 0;
         String sql = "SELECT * FROM " + sourceTable.getSheet();
-        try ( Connection conn = DerbyBase.getConnection();
-                 PreparedStatement statement = conn.prepareStatement(sql);
+        try ( Connection dconn = DerbyBase.getConnection();
+                 PreparedStatement statement = dconn.prepareStatement(sql);
                  ResultSet results = statement.executeQuery()) {
+            conn = dconn;
             conn.setAutoCommit(false);
             while (results.next() && !writerStopped() && !data2D.filterReachMaxPassed()) {
                 sourceTableRow = tableData2D.readData(results);
@@ -46,21 +59,7 @@ public class DataTableWriter extends Data2DWriter {
                     continue;
                 }
                 rowIndex++;
-                handleRecord();
-                if (targetRow == null || targetRow.isEmpty()) {
-                    continue;
-                }
-                for (int i = 0; i < columnsNumber; ++i) {
-                    Data2DColumn column = sourceTable.getColumns().get(i);
-                    String name = column.getColumnName();
-                    Object value = column.fromString(targetRow.get(i));
-                    sourceTableRow.setColumnValue(name, value);
-                }
-                tableData2D.updateData(conn, sourceTableRow);
-                if (writeCount++ % DerbyBase.BatchSize == 0) {
-                    conn.commit();
-                }
-
+                handleRow();
             }
             conn.commit();
             conn.close();
@@ -87,6 +86,47 @@ public class DataTableWriter extends Data2DWriter {
                 Data2DColumn column = sourceTable.getColumns().get(i);
                 Object value = sourceTableRow.getColumnValue(column.getColumnName());
                 sourceRow.add(column.toString(value));
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            }
+        }
+    }
+
+    @Override
+    public void writeRow() {
+        try {
+            if (writerStopped() || targetRow == null || targetRow.isEmpty()) {
+                return;
+            }
+            for (int i = 0; i < columnsNumber; ++i) {
+                Data2DColumn column = sourceTable.getColumns().get(i);
+                String name = column.getColumnName();
+                Object value = column.fromString(targetRow.get(i));
+                sourceTableRow.setColumnValue(name, value);
+            }
+            tableData2D.updateData(conn, sourceTableRow);
+            if (writeCount++ % DerbyBase.BatchSize == 0) {
+                conn.commit();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            }
+        }
+    }
+
+    @Override
+    public void deleteRow(boolean needDelete) {
+        try {
+            if (needDelete) {
+                tableData2D.deleteData(conn, sourceTableRow);
+                if (++writeCount % DerbyBase.BatchSize == 0) {
+                    conn.commit();
+                }
             }
         } catch (Exception e) {
             MyBoxLog.error(e);

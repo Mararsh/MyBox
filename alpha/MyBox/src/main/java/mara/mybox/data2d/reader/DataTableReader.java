@@ -91,7 +91,7 @@ public class DataTableReader extends Data2DReader {
     }
 
     @Override
-    public void readRecords() {
+    public void readRows() {
         rowIndex = 0;
         String sql = "SELECT * FROM " + readerTable.getSheet();
         try ( PreparedStatement statement = conn.prepareStatement(sql);
@@ -99,7 +99,7 @@ public class DataTableReader extends Data2DReader {
             while (results.next() && !readerStopped()) {
                 makeRecord(readerTableData2D.readData(results));
                 rowIndex++;
-                handleRecord();
+                handleRow();
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -112,11 +112,11 @@ public class DataTableReader extends Data2DReader {
 
     public void makeRecord(Data2DRow row) {
         try {
-            record = new ArrayList<>();
+            sourceRow = new ArrayList<>();
             for (int i = 0; i < columnsNumber; ++i) {
                 Data2DColumn column = readerTable.getColumns().get(i);
                 Object value = row.getColumnValue(column.getColumnName());
-                record.add(column.toString(value));
+                sourceRow.add(column.toString(value));
             }
         } catch (Exception e) {
             MyBoxLog.error(e);

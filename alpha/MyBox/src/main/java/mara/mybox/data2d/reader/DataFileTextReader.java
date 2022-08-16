@@ -53,8 +53,8 @@ public class DataFileTextReader extends Data2DReader {
         try {
             String line;
             while ((line = textReader.readLine()) != null && !readerStopped()) {
-                record = parseFileLine(line);
-                if (record == null || record.isEmpty()) {
+                sourceRow = parseFileLine(line);
+                if (sourceRow == null || sourceRow.isEmpty()) {
                     continue;
                 }
                 handleHeader();
@@ -109,8 +109,8 @@ public class DataFileTextReader extends Data2DReader {
             rowIndex = 0;
             String line;
             while ((line = textReader.readLine()) != null && !readerStopped()) {
-                record = parseFileLine(line);
-                if (record == null || record.isEmpty()) {
+                sourceRow = parseFileLine(line);
+                if (sourceRow == null || sourceRow.isEmpty()) {
                     continue;
                 }
                 if (rowIndex++ < rowsStart) {
@@ -132,7 +132,7 @@ public class DataFileTextReader extends Data2DReader {
     }
 
     @Override
-    public void readRecords() {
+    public void readRows() {
         try {
             if (textReader == null) {
                 return;
@@ -141,12 +141,12 @@ public class DataFileTextReader extends Data2DReader {
             rowIndex = 0;
             String line;
             while ((line = textReader.readLine()) != null && !readerStopped()) {
-                record = parseFileLine(line);
-                if (record == null || record.isEmpty()) {
+                sourceRow = parseFileLine(line);
+                if (sourceRow == null || sourceRow.isEmpty()) {
                     continue;
                 }
                 ++rowIndex;
-                handleRecord();
+                handleRow();
             }
         } catch (Exception e) {
             MyBoxLog.error(e);

@@ -54,7 +54,7 @@ public class DataFileCSVReader extends Data2DReader {
         if (csvParser == null) {
             return;
         }
-        record = null;
+        sourceRow = null;
         if (readerHasHeader) {
             try {
                 List<String> values = csvParser.getHeaderNames();
@@ -63,8 +63,8 @@ public class DataFileCSVReader extends Data2DReader {
                     names.addAll(values);
                     return;
                 } else {
-                    record = new ArrayList<>();
-                    record.addAll(values);
+                    sourceRow = new ArrayList<>();
+                    sourceRow.addAll(values);
                 }
             } catch (Exception e) {
                 MyBoxLog.error(e);
@@ -75,7 +75,7 @@ public class DataFileCSVReader extends Data2DReader {
         } else {
             while (iterator.hasNext() && !readerStopped()) {
                 readRecord();
-                if (record != null && !record.isEmpty()) {
+                if (sourceRow != null && !sourceRow.isEmpty()) {
                     break;
                 }
             }
@@ -96,7 +96,7 @@ public class DataFileCSVReader extends Data2DReader {
                 return;
             }
             readRecord();
-            if (record != null && !record.isEmpty()) {
+            if (sourceRow != null && !sourceRow.isEmpty()) {
                 ++rowIndex;
             }
         }
@@ -110,7 +110,7 @@ public class DataFileCSVReader extends Data2DReader {
         rowIndex = 0;
         while (iterator.hasNext() && !readerStopped()) {
             readRecord();
-            if (record == null || record.isEmpty()) {
+            if (sourceRow == null || sourceRow.isEmpty()) {
                 continue;
             }
             if (rowIndex++ < rowsStart) {
@@ -125,25 +125,25 @@ public class DataFileCSVReader extends Data2DReader {
     }
 
     @Override
-    public void readRecords() {
+    public void readRows() {
         if (iterator == null) {
             return;
         }
         rowIndex = 0;
         while (iterator.hasNext() && !readerStopped()) {
             readRecord();
-            if (record == null || record.isEmpty()) {
+            if (sourceRow == null || sourceRow.isEmpty()) {
                 continue;
             }
             ++rowIndex;
-            handleRecord();
+            handleRow();
 
         }
     }
 
     public void readRecord() {
         try {
-            record = null;
+            sourceRow = null;
             if (readerStopped() || iterator == null) {
                 return;
             }
@@ -151,9 +151,9 @@ public class DataFileCSVReader extends Data2DReader {
             if (csvRecord == null) {
                 return;
             }
-            record = new ArrayList<>();
+            sourceRow = new ArrayList<>();
             for (String v : csvRecord) {
-                record.add(v);
+                sourceRow.add(v);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);

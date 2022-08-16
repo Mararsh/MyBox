@@ -38,11 +38,6 @@ public abstract class Data2D_Edit extends Data2D_Filter {
 
     public abstract boolean savePageData(Data2D targetData);
 
-    public abstract long deleteRows(boolean errorContinue);
-
-    public abstract long clearData();
-
-
     /*
         read
      */
@@ -163,7 +158,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
     public long readTotal() {
         dataSize = 0;
         Data2DReader reader = Data2DReader.create(this)
-                .setReaderTask(backgroundTask).start(Operation.ReadTotal);
+                .setTask(backgroundTask).start(Operation.ReadTotal);
         if (reader != null) {
             dataSize = reader.getRowIndex();
         }
@@ -189,7 +184,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
         endRowOfCurrentPage = startRowOfCurrentPage;
         Data2DReader reader = Data2DReader.create(this)
-                .setConn(conn).setReaderTask(task)
+                .setConn(conn).setTask(task)
                 .start(Operation.ReadPage);
         if (reader == null) {
             startRowOfCurrentPage = endRowOfCurrentPage = 0;
@@ -263,12 +258,37 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
         Data2DWriter writer = Data2DWriter.create(this)
                 .setSetValue(setValue).setCols(cols)
-                .setWriterTask(task).start(Data2DWriter.Operation.SetValue);
+                .setTask(task).start(Data2DWriter.Operation.SetValue);
         if (writer == null || writer.isFailed()) {
             return -2;
         }
         return writer.getCount();
     }
+
+    public long deleteRows(boolean errorContinue) {
+        if (!validData()) {
+            return -1;
+        }
+        Data2DWriter writer = Data2DWriter.create(this)
+                .setTask(task).start(Data2DWriter.Operation.Delete);
+        if (writer == null || writer.isFailed()) {
+            return -2;
+        }
+        return writer.getCount();
+    }
+
+    public long clearData() {
+        if (!validData()) {
+            return -1;
+        }
+        Data2DWriter writer = Data2DWriter.create(this)
+                .setTask(task).start(Data2DWriter.Operation.ClearData);
+        if (writer == null || writer.isFailed()) {
+            return -2;
+        }
+        return dataSize;
+    }
+
 
     /*
         save

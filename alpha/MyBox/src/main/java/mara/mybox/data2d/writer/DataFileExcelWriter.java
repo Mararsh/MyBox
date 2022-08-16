@@ -47,6 +47,8 @@ public class DataFileExcelWriter extends Data2DWriter {
             return;
         }
         File tmpFile = TmpFileTools.getTempFile();
+        rowIndex = 0;
+        count = 0;
         try ( Workbook sourceBook = WorkbookFactory.create(sourceFile)) {
             if (sheetName != null) {
                 sourceSheet = sourceBook.getSheet(sheetName);
@@ -84,26 +86,23 @@ public class DataFileExcelWriter extends Data2DWriter {
                 targetRowIndex = sourceExcel.writeHeader(targetSheet, targetRowIndex);
             }
             iterator = sourceSheet.iterator();
-            if (iterator != null && iterator.hasNext()) {
-                if (data2D.isHasHeader()) {
-                    while (iterator.hasNext() && (iterator.next() == null) && !writerStopped()) {
-                    }
-                }
-                readRecords();
-            }
+            failed = !handleRows();
             sourceBook.close();
-            try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
-                targetBook.write(fileOut);
+            if (failed) {
+                FileDeleteTools.delete(tmpFile);
+            } else {
+                try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
+                    targetBook.write(fileOut);
+                }
+                targetBook.close();
+                failed = !FileTools.rename(tmpFile, sourceFile, false);
             }
-            targetBook.close();
             FileDeleteTools.delete(tmpDataFile);
-            failed = !FileTools.rename(tmpFile, sourceFile, false);
         } catch (Exception e) {
             MyBoxLog.error(e);
             if (task != null) {
                 task.setError(e.toString());
             }
-            failed = true;
             failed = true;
         }
         if (failed) {
@@ -111,23 +110,38 @@ public class DataFileExcelWriter extends Data2DWriter {
         }
     }
 
-    public void readRecords() {
+    public boolean handleRows() {
         if (iterator == null) {
-            return;
+            return false;
         }
-        rowIndex = 0;
-        while (iterator.hasNext() && !writerStopped()) {
-            readRecord();
-            if (sourceRow == null || sourceRow.isEmpty()) {
-                continue;
+        try {
+            if (data2D.isHasHeader()) {
+                while (iterator.hasNext() && (iterator.next() == null) && !writerStopped()) {
+                }
             }
-            ++rowIndex;
-            handleRecord();
-            writeRecord();
+            if (isClearData()) {
+                count = data2D.getDataSize();
+                return true;
+            }
+            while (iterator.hasNext() && !writerStopped()) {
+                readRow();
+                if (sourceRow == null || sourceRow.isEmpty()) {
+                    continue;
+                }
+                ++rowIndex;
+                handleRow();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            return false;
         }
+        return true;
     }
 
-    public void readRecord() {
+    public void readRow() {
         try {
             sourceRow = null;
             if (writerStopped() || iterator == null) {
@@ -149,7 +163,8 @@ public class DataFileExcelWriter extends Data2DWriter {
         }
     }
 
-    public void writeRecord() {
+    @Override
+    public void writeRow() {
         try {
             if (writerStopped() || sourceExcelRow == null || targetRow == null) {
                 return;

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TmpFileTools;
 import org.apache.commons.csv.CSVFormat;
@@ -40,26 +41,23 @@ public class DataFileCSVWriter extends Data2DWriter {
         Charset charset = sourceCSV.getCharset();
         CSVFormat format = sourceCSV.cvsFormat();
         File validFile = FileTools.removeBOM(sourceFile);
+        rowIndex = 0;
         count = 0;
         try ( CSVParser parser = CSVParser.parse(validFile, charset, format);
                  CSVPrinter printer = new CSVPrinter(new FileWriter(tmpFile, charset), format)) {
             csvParser = parser;
             csvPrinter = printer;
             iterator = parser.iterator();
-            if (iterator != null) {
-                if (sourceCSV.isHasHeader()) {
-                    try {
-                        csvPrinter.printRecord(parser.getHeaderNames());
-                    } catch (Exception e) {  // skip  bad lines
-                    }
-                }
-                failed = readRecords();
-            }
+            failed = !handleRows();
             csvPrinter = null;
             csvParser = null;
             printer.close();
             parser.close();
-            failed = !FileTools.rename(tmpFile, sourceFile, false);
+            if (failed) {
+                FileDeleteTools.delete(tmpFile);
+            } else {
+                failed = !FileTools.rename(tmpFile, sourceFile, false);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
             if (task != null) {
@@ -72,20 +70,28 @@ public class DataFileCSVWriter extends Data2DWriter {
         }
     }
 
-    public boolean readRecords() {
+    public boolean handleRows() {
         if (iterator == null) {
             return false;
         }
         try {
-            rowIndex = 0;
+            if (sourceCSV.isHasHeader()) {
+                try {
+                    csvPrinter.printRecord(csvParser.getHeaderNames());
+                } catch (Exception e) {  // skip  bad lines
+                }
+            }
+            if (isClearData()) {
+                count = data2D.getDataSize();
+                return true;
+            }
             while (iterator.hasNext() && !writerStopped()) {
-                readRecord();
+                readRow();
                 if (sourceRow == null || sourceRow.isEmpty()) {
                     continue;
                 }
                 ++rowIndex;
-                handleRecord();
-                writeRecord();
+                handleRow();
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -97,7 +103,7 @@ public class DataFileCSVWriter extends Data2DWriter {
         return true;
     }
 
-    public void readRecord() {
+    public void readRow() {
         try {
             sourceRow = null;
             if (writerStopped() || iterator == null) {
@@ -119,7 +125,8 @@ public class DataFileCSVWriter extends Data2DWriter {
         }
     }
 
-    public void writeRecord() {
+    @Override
+    public void writeRow() {
         try {
             if (writerStopped() || targetRow == null) {
                 return;

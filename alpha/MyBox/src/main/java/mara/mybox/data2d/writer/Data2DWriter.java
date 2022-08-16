@@ -42,6 +42,8 @@ public abstract class Data2DWriter {
 
     public abstract void scanData();
 
+    public abstract void writeRow();
+
     public static Data2DWriter create(Data2D_Edit data) {
         if (data == null) {
             return null;
@@ -88,7 +90,6 @@ public abstract class Data2DWriter {
                 break;
 
         }
-
         this.operation = operation;
         writerStopped = false;
         needCheckTask = task != null;
@@ -104,7 +105,12 @@ public abstract class Data2DWriter {
         return this;
     }
 
-    public void handleRecord() {
+    public boolean isClearData() {
+        return operation == Operation.ClearData
+                || (operation == Operation.Delete && !data2D.needFilter());
+    }
+
+    public void handleRow() {
         try {
             targetRow = null;
             switch (operation) {
@@ -113,9 +119,6 @@ public abstract class Data2DWriter {
                     break;
                 case Delete:
                     handleDelete();
-                    break;
-                case ClearData:
-                    handleClearData();
                     break;
                 default:
                     break;
@@ -136,6 +139,7 @@ public abstract class Data2DWriter {
             if (needSetValue) {
                 if (setValue.isExpression() && dataValue != null) {
                     data2D.calculateDataRowExpression(dataValue, sourceRow, rowIndex);
+                    expResult = data2D.expressionResult();
                     data2D.error = data2D.expressionError();
                     if (data2D.error != null) {
                         if (errorContinue) {
@@ -147,7 +151,6 @@ public abstract class Data2DWriter {
                             return;
                         }
                     }
-                    expResult = data2D.expressionResult();
                 }
                 count++;
             } else if (data2D instanceof DataTable) {
@@ -191,6 +194,7 @@ public abstract class Data2DWriter {
                 }
                 targetRow.add(v);
             }
+            writeRow();
         } catch (Exception e) {
             MyBoxLog.console(e);
         }
@@ -198,15 +202,30 @@ public abstract class Data2DWriter {
 
     public void handleDelete() {
         try {
-
+            data2D.filterDataRow(sourceRow, rowIndex);
+            boolean needDelete = data2D.filterPassed() && !data2D.filterReachMaxPassed();
+            if (data2D.error != null) {
+                if (errorContinue) {
+                    return;
+                } else {
+                    failed = true;
+                    writerStopped = true;
+                    task.setError(data2D.error);
+                    return;
+                }
+            }
+            if (needDelete) {
+                count++;
+            }
+            deleteRow(needDelete);
         } catch (Exception e) {
         }
     }
 
-    public void handleClearData() {
-        try {
-
-        } catch (Exception e) {
+    public void deleteRow(boolean needDelete) {
+        if (!needDelete) {
+            targetRow = sourceRow;
+            writeRow();
         }
     }
 
@@ -255,8 +274,8 @@ public abstract class Data2DWriter {
         return this;
     }
 
-    public Data2DWriter setWriterTask(SingletonTask writerTask) {
-        this.task = writerTask;
+    public Data2DWriter setTask(SingletonTask task) {
+        this.task = task;
         return this;
     }
 

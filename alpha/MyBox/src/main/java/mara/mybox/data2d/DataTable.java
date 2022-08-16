@@ -403,62 +403,6 @@ public class DataTable extends Data2D {
     }
 
     @Override
-    public long deleteRows(boolean errorContinue) {
-        if (!needFilter()) {
-            return clearData();
-        } else {
-            long count = 0;
-            try ( Connection conn = DerbyBase.getConnection();
-                     PreparedStatement query = conn.prepareStatement("SELECT * FROM " + sheet);
-                     ResultSet results = query.executeQuery()) {
-                conn.setAutoCommit(false);
-                rowIndex = 0;
-                while (results.next() && task != null && !task.isCancelled()) {
-                    Data2DRow row = tableData2D.readData(results);
-                    List<String> rowValues = new ArrayList<>();
-                    for (int c = 0; c < columns.size(); c++) {
-                        Data2DColumn column = columns.get(c);
-                        Object v = row.getColumnValue(columns.get(c).getColumnName());
-                        rowValues.add(column.toString(v));
-                    }
-                    filterDataRow(rowValues, ++rowIndex);
-                    if (error != null) {
-                        if (errorContinue) {
-                            continue;
-                        } else {
-                            task.setError(error);
-                            return -2;
-                        }
-                    }
-                    if (!filterPassed()) {
-                        continue;
-                    }
-                    tableData2D.deleteData(conn, row);
-                    if (++count % DerbyBase.BatchSize == 0) {
-                        conn.commit();
-                    }
-                    if (filterReachMaxPassed()) {
-                        break;
-                    }
-                }
-                conn.commit();
-            } catch (Exception e) {
-                if (task != null) {
-                    task.setError(e.toString());
-                }
-                MyBoxLog.debug(e);
-                return -4;
-            }
-            return count;
-        }
-    }
-
-    @Override
-    public long clearData() {
-        return tableData2D.clearData();
-    }
-
-    @Override
     public int drop() {
         if (sheet == null || sheet.isBlank()) {
             return -4;

@@ -37,7 +37,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
         Data2DReader reader = Data2DReader.create(this)
                 .setConvertController(convertController).setCols(cols)
-                .setReaderTask(task).start(Data2DReader.Operation.Export);
+                .setTask(task).start(Data2DReader.Operation.Export);
         return reader != null && !reader.isFailed();
     }
 
@@ -47,7 +47,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
         Data2DReader reader = Data2DReader.create(this)
                 .setCols(cols).setIncludeRowNumber(rowNumber)
-                .setReaderTask(task).start(Data2DReader.Operation.ReadCols);
+                .setTask(task).start(Data2DReader.Operation.ReadCols);
         if (reader == null) {
             return null;
         }
@@ -57,7 +57,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
     public List<List<String>> allRows(boolean rowNumber) {
         Data2DReader reader = Data2DReader.create(this)
                 .setIncludeRowNumber(rowNumber)
-                .setReaderTask(task).start(Data2DReader.Operation.ReadRows);
+                .setTask(task).start(Data2DReader.Operation.ReadRows);
         if (reader == null) {
             return null;
         }
@@ -116,7 +116,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             Data2DReader reader = Data2DReader.create(this)
                     .setStatisticData(sData).setCols(cols)
                     .setScanPass(1).setStatisticSelection(selections)
-                    .setReaderTask(task).start(Data2DReader.Operation.StatisticColumns);
+                    .setTask(task).start(Data2DReader.Operation.StatisticColumns);
             if (reader == null) {
                 return null;
             }
@@ -125,7 +125,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
                 reader = Data2DReader.create(this)
                         .setStatisticData(sData).setCols(cols)
                         .setScanPass(2).setStatisticSelection(selections)
-                        .setReaderTask(task).start(Data2DReader.Operation.StatisticColumns);
+                        .setTask(task).start(Data2DReader.Operation.StatisticColumns);
                 if (reader == null) {
                     return null;
                 }
@@ -181,7 +181,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             csvPrinter.printRecord(names);
             reader = Data2DReader.create(this)
                     .setCsvPrinter(csvPrinter).setCols(cols).setStatisticSelection(selections)
-                    .setReaderTask(task).start(Data2DReader.Operation.StatisticRows);
+                    .setTask(task).start(Data2DReader.Operation.StatisticRows);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -211,7 +211,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         Data2DReader reader = Data2DReader.create(this)
                 .setStatisticAll(sData).setCols(cols)
                 .setScanPass(1).setStatisticSelection(selections)
-                .setReaderTask(task).start(Data2DReader.Operation.StatisticAll);
+                .setTask(task).start(Data2DReader.Operation.StatisticAll);
         if (reader == null) {
             return null;
         }
@@ -220,7 +220,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             reader = Data2DReader.create(this)
                     .setStatisticAll(sData).setCols(cols)
                     .setScanPass(2).setStatisticSelection(selections)
-                    .setReaderTask(task).start(Data2DReader.Operation.StatisticAll);
+                    .setTask(task).start(Data2DReader.Operation.StatisticAll);
             if (reader == null) {
                 return null;
             }
@@ -252,7 +252,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             }
             reader = Data2DReader.create(this)
                     .setCsvPrinter(csvPrinter).setCols(cols).setIncludeRowNumber(includeRowNumber)
-                    .setReaderTask(task).start(Data2DReader.Operation.Copy);
+                    .setTask(task).start(Data2DReader.Operation.Copy);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -303,7 +303,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             reader = Data2DReader.create(this)
                     .setCsvPrinter(csvPrinter).setCols(cols).setIncludeRowNumber(includeRowNumber)
                     .setScript(script).setName(name)
-                    .setReaderTask(task).start(Data2DReader.Operation.RowExpression);
+                    .setTask(task).start(Data2DReader.Operation.RowExpression);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -334,7 +334,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         Data2DReader reader = Data2DReader.create(this)
                 .setCols(cols).setToNegative(toNegative).setInvalidAs(invalidAs)
                 .setScanPass(1).setScale(scale)
-                .setReaderTask(task).start(Data2DReader.Operation.PercentageColumns);
+                .setTask(task).start(Data2DReader.Operation.PercentageColumns);
         if (reader == null) {
             return null;
         }
@@ -356,7 +356,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
                     .setCsvPrinter(csvPrinter).setColValues(colsSum).setCols(cols)
                     .setWithValues(withValues).setToNegative(toNegative).setInvalidAs(invalidAs)
                     .setScanPass(2).setScale(scale)
-                    .setReaderTask(task).start(Data2DReader.Operation.PercentageColumns);
+                    .setTask(task).start(Data2DReader.Operation.PercentageColumns);
 
         } catch (Exception e) {
             if (task != null) {
@@ -385,7 +385,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         Data2DReader reader = Data2DReader.create(this)
                 .setCols(cols).setToNegative(toNegative).setInvalidAs(invalidAs)
                 .setScanPass(1).setScale(scale)
-                .setReaderTask(task).start(Data2DReader.Operation.PercentageAll);
+                .setTask(task).start(Data2DReader.Operation.PercentageAll);
         if (reader == null) {
             return null;
         }
@@ -411,7 +411,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
                     .setCsvPrinter(csvPrinter).setCols(cols)
                     .setWithValues(withValues).setToNegative(toNegative).setInvalidAs(invalidAs)
                     .setValue(sum).setScanPass(2).setScale(scale)
-                    .setReaderTask(task).start(Data2DReader.Operation.PercentageAll);
+                    .setTask(task).start(Data2DReader.Operation.PercentageAll);
 
         } catch (Exception e) {
             if (task != null) {
@@ -444,7 +444,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             reader = Data2DReader.create(this)
                     .setCsvPrinter(csvPrinter).setCols(cols).setScale(scale)
                     .setWithValues(withValues).setToNegative(toNegative).setInvalidAs(invalidAs)
-                    .setReaderTask(task).start(Data2DReader.Operation.PercentageRows);
+                    .setTask(task).start(Data2DReader.Operation.PercentageRows);
 
         } catch (Exception e) {
             if (task != null) {
@@ -481,7 +481,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             reader = Data2DReader.create(this)
                     .setCsvPrinter(csvPrinter).setFrequency(frequency)
                     .setCol(col).setScale(scale)
-                    .setReaderTask(task).start(Data2DReader.Operation.Frequency);
+                    .setTask(task).start(Data2DReader.Operation.Frequency);
 
         } catch (Exception e) {
             if (task != null) {
@@ -517,7 +517,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
                 .setSum(true).setMaximum(true).setMinimum(true);
         Data2DReader reader = Data2DReader.create(this).setCols(cols).setScale(scale)
                 .setStatisticData(sData).setStatisticSelection(selections).setScanPass(1)
-                .setReaderTask(task).start(Data2DReader.Operation.StatisticColumns);
+                .setTask(task).start(Data2DReader.Operation.StatisticColumns);
         if (reader == null) {
             return null;
         }
@@ -545,7 +545,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             reader = Data2DReader.create(this)
                     .setStatisticData(sData).setCols(cols).setCsvPrinter(csvPrinter)
                     .setIncludeRowNumber(rowNumber).setFrom(from).setScale(scale).setInvalidAs(invalidAs)
-                    .setReaderTask(task).start(Data2DReader.Operation.NormalizeMinMaxColumns);
+                    .setTask(task).start(Data2DReader.Operation.NormalizeMinMaxColumns);
 
         } catch (Exception e) {
             if (task != null) {
@@ -581,7 +581,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         Data2DReader reader = Data2DReader.create(this).setCols(cols).setSumAbs(true)
                 .setStatisticData(sData).setStatisticSelection(selections)
                 .setScanPass(1).setScale(scale)
-                .setReaderTask(task).start(Data2DReader.Operation.StatisticColumns);
+                .setTask(task).start(Data2DReader.Operation.StatisticColumns);
         if (reader == null) {
             return null;
         }
@@ -613,7 +613,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             reader = Data2DReader.create(this)
                     .setColValues(colValues).setCols(cols).setCsvPrinter(csvPrinter)
                     .setIncludeRowNumber(rowNumber).setScale(scale).setInvalidAs(invalidAs)
-                    .setReaderTask(task).start(Data2DReader.Operation.NormalizeSumColumns);
+                    .setTask(task).start(Data2DReader.Operation.NormalizeSumColumns);
 
         } catch (Exception e) {
             if (task != null) {
@@ -651,14 +651,14 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         Data2DReader reader = Data2DReader.create(this).setCols(cols)
                 .setStatisticData(sData).setStatisticSelection(selections)
                 .setScanPass(1).setScale(scale)
-                .setReaderTask(task).start(Data2DReader.Operation.StatisticColumns);
+                .setTask(task).start(Data2DReader.Operation.StatisticColumns);
         if (reader == null) {
             return null;
         }
         reader = Data2DReader.create(this).setCols(cols)
                 .setStatisticData(sData).setStatisticSelection(selections)
                 .setScanPass(2).setScale(scale)
-                .setReaderTask(task).start(Data2DReader.Operation.StatisticColumns);
+                .setTask(task).start(Data2DReader.Operation.StatisticColumns);
         if (reader == null) {
             return null;
         }
@@ -681,7 +681,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             reader = Data2DReader.create(this)
                     .setStatisticData(sData).setCols(cols).setCsvPrinter(csvPrinter)
                     .setIncludeRowNumber(rowNumber).setScale(scale).setInvalidAs(invalidAs)
-                    .setReaderTask(task).start(Data2DReader.Operation.NormalizeZscoreColumns);
+                    .setTask(task).start(Data2DReader.Operation.NormalizeZscoreColumns);
 
         } catch (Exception e) {
             if (task != null) {
@@ -714,7 +714,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         Data2DReader reader = Data2DReader.create(this)
                 .setStatisticAll(sData).setCols(cols)
                 .setScanPass(1).setStatisticSelection(selections)
-                .setReaderTask(task).start(Data2DReader.Operation.StatisticAll);
+                .setTask(task).start(Data2DReader.Operation.StatisticAll);
         if (reader == null) {
             return null;
         }
@@ -740,7 +740,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             reader = Data2DReader.create(this)
                     .setStatisticAll(sData).setCols(cols).setCsvPrinter(csvPrinter)
                     .setIncludeRowNumber(rowNumber).setFrom(from).setScale(scale).setInvalidAs(invalidAs)
-                    .setReaderTask(task).start(Data2DReader.Operation.NormalizeMinMaxAll);
+                    .setTask(task).start(Data2DReader.Operation.NormalizeMinMaxAll);
 
         } catch (Exception e) {
             if (task != null) {
@@ -772,7 +772,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         Data2DReader reader = Data2DReader.create(this).setCols(cols).setSumAbs(true)
                 .setStatisticAll(sData).setStatisticSelection(selections)
                 .setScanPass(1).setScale(scale)
-                .setReaderTask(task).start(Data2DReader.Operation.StatisticAll);
+                .setTask(task).start(Data2DReader.Operation.StatisticAll);
         if (reader == null) {
             return null;
         }
@@ -802,7 +802,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             reader = Data2DReader.create(this)
                     .setValue(k).setCols(cols).setCsvPrinter(csvPrinter)
                     .setIncludeRowNumber(rowNumber).setScale(scale).setInvalidAs(invalidAs)
-                    .setReaderTask(task).start(Data2DReader.Operation.NormalizeSumAll);
+                    .setTask(task).start(Data2DReader.Operation.NormalizeSumAll);
 
         } catch (Exception e) {
             if (task != null) {
@@ -836,14 +836,14 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         Data2DReader reader = Data2DReader.create(this).setCols(cols)
                 .setStatisticAll(sData).setStatisticSelection(selections)
                 .setScanPass(1).setScale(scale)
-                .setReaderTask(task).start(Data2DReader.Operation.StatisticAll);
+                .setTask(task).start(Data2DReader.Operation.StatisticAll);
         if (reader == null) {
             return null;
         }
         reader = Data2DReader.create(this).setCols(cols)
                 .setStatisticAll(sData).setStatisticSelection(selections)
                 .setScanPass(2).setScale(scale)
-                .setReaderTask(task).start(Data2DReader.Operation.StatisticAll);
+                .setTask(task).start(Data2DReader.Operation.StatisticAll);
         if (reader == null) {
             return null;
         }
@@ -866,7 +866,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             reader = Data2DReader.create(this)
                     .setStatisticAll(sData).setCols(cols).setCsvPrinter(csvPrinter)
                     .setIncludeRowNumber(rowNumber).setScale(scale).setInvalidAs(invalidAs)
-                    .setReaderTask(task).start(Data2DReader.Operation.NormalizeZscoreAll);
+                    .setTask(task).start(Data2DReader.Operation.NormalizeZscoreAll);
 
         } catch (Exception e) {
             if (task != null) {
@@ -914,7 +914,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
                     .setCols(cols).setCsvPrinter(csvPrinter)
                     .setIncludeRowNumber(rowNumber).setScale(scale).setInvalidAs(invalidAs)
                     .setFrom(from).setTo(to)
-                    .setReaderTask(task);
+                    .setTask(task);
             switch (a) {
                 case Sum:
                     reader.start(Data2DReader.Operation.NormalizeSumRows);
@@ -965,7 +965,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
 
                 reader = Data2DReader.create(this)
                         .setCols(cols).setSimpleRegression(simpleRegression).setCsvPrinter(csvPrinter)
-                        .setReaderTask(task).start(Data2DReader.Operation.SimpleLinearRegression);
+                        .setTask(task).start(Data2DReader.Operation.SimpleLinearRegression);
 
             } catch (Exception e) {
                 if (task != null) {
@@ -987,7 +987,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         } else {
             Data2DReader.create(this)
                     .setCols(cols).setSimpleRegression(simpleRegression)
-                    .setReaderTask(task).start(Data2DReader.Operation.SimpleLinearRegression);
+                    .setTask(task).start(Data2DReader.Operation.SimpleLinearRegression);
             return null;
         }
     }

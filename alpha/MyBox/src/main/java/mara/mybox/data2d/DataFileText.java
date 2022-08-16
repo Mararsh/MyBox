@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import mara.mybox.data.FindReplaceString;
@@ -300,97 +299,6 @@ public class DataFileText extends DataFile {
                 task.setError(e.toString());
             }
             return null;
-        }
-    }
-
-    @Override
-    public long deleteRows(boolean errorContinue) {
-        if (file == null || !file.exists() || file.length() == 0) {
-            return -1;
-        }
-        File tmpFile = TmpFileTools.getTempFile();
-        File validFile = FileTools.removeBOM(file);
-        long count = 0;
-        try ( BufferedReader reader = new BufferedReader(new FileReader(validFile, charset));
-                 BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, charset, false))) {
-            List<String> names = columnNames();
-            if (hasHeader && names != null) {
-                readValidLine(reader);
-                TextFileTools.writeLine(writer, names, delimiter);
-            }
-            if (needFilter()) {
-                String line;
-                rowIndex = 0;
-                while ((line = reader.readLine()) != null && task != null && !task.isCancelled()) {
-                    List<String> record = parseFileLine(line);
-                    if (record == null || record.isEmpty()) {
-                        continue;
-                    }
-                    filterDataRow(record, ++rowIndex);
-                    if (error != null) {
-                        if (errorContinue) {
-                            continue;
-                        } else {
-                            task.setError(error);
-                            return -2;
-                        }
-                    }
-                    if (filterPassed() && !filterReachMaxPassed()) {
-                        count++;
-                        continue;
-                    }
-                    List<String> row = new ArrayList<>();
-                    for (int i = 0; i < columns.size(); i++) {
-                        if (i < record.size()) {
-                            row.add(record.get(i));
-                        } else {
-                            row.add(null);
-                        }
-                    }
-                    TextFileTools.writeLine(writer, row, delimiter);
-                }
-            }
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return -3;
-        }
-        if (FileTools.rename(tmpFile, file, false)) {
-            return count;
-        } else {
-            return -4;
-        }
-    }
-
-    @Override
-    public long clearData() {
-        File tmpFile = TmpFileTools.getTempFile();
-        checkForLoad();
-        if (file != null && file.exists() && file.length() > 0) {
-            File validFile = FileTools.removeBOM(file);
-            try ( BufferedReader reader = new BufferedReader(new FileReader(validFile, charset));
-                     BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, charset, false))) {
-                List<String> colsNames = columnNames();
-                if (hasHeader && colsNames != null) {
-                    readValidLine(reader);
-                    TextFileTools.writeLine(writer, colsNames, delimiter);
-                }
-            } catch (Exception e) {
-                MyBoxLog.error(e);
-                if (task != null) {
-                    task.setError(e.toString());
-                }
-                return -1;
-            }
-            if (FileTools.rename(tmpFile, file, false)) {
-                return getDataSize();
-            } else {
-                return -1;
-            }
-        } else {
-            return -1;
         }
     }
 

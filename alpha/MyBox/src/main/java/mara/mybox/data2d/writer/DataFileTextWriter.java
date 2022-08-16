@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.util.List;
 import mara.mybox.data2d.DataFileText;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TmpFileTools;
@@ -37,17 +38,22 @@ public class DataFileTextWriter extends Data2DWriter {
         }
         File tmpFile = TmpFileTools.getTempFile();
         File validFile = FileTools.removeBOM(sourceFile);
+        rowIndex = 0;
         count = 0;
         try ( BufferedReader reader = new BufferedReader(new FileReader(validFile, sourceText.getCharset()));
                  BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, sourceText.getCharset(), false))) {
             textReader = reader;
             textWriter = writer;
-            failed = readRecords();
+            failed = !handleRows();
             textWriter = null;
             textReader = null;
             writer.close();
             reader.close();
-            failed = !FileTools.rename(tmpFile, sourceFile, false);
+            if (failed) {
+                FileDeleteTools.delete(tmpFile);
+            } else {
+                failed = !FileTools.rename(tmpFile, sourceFile, false);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
             if (task != null) {
@@ -60,7 +66,7 @@ public class DataFileTextWriter extends Data2DWriter {
         }
     }
 
-    public boolean readRecords() {
+    public boolean handleRows() {
         if (textReader == null) {
             return false;
         }
@@ -70,7 +76,10 @@ public class DataFileTextWriter extends Data2DWriter {
                 sourceText.readValidLine(textReader);
                 TextFileTools.writeLine(textWriter, names, delimiter);
             }
-            rowIndex = 0;
+            if (isClearData()) {
+                count = data2D.getDataSize();
+                return true;
+            }
             String line;
             while ((line = textReader.readLine()) != null && !writerStopped()) {
                 sourceRow = sourceText.parseFileLine(line);
@@ -78,8 +87,7 @@ public class DataFileTextWriter extends Data2DWriter {
                     continue;
                 }
                 ++rowIndex;
-                handleRecord();
-                writeRecord();
+                handleRow();
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -91,7 +99,8 @@ public class DataFileTextWriter extends Data2DWriter {
         return true;
     }
 
-    public void writeRecord() {
+    @Override
+    public void writeRow() {
         try {
             if (writerStopped() || targetRow == null) {
                 return;

@@ -179,7 +179,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             Data2DReader reader = Data2DReader.create(this)
                     .setConn(conn).setDataTable(dataTable)
                     .setCols(cols).setIncludeRowNumber(includeRowNumber)
-                    .setReaderTask(task).start(Operation.WriteTable);
+                    .setTask(task).start(Operation.WriteTable);
             if (reader != null && !reader.isFailed()) {
                 conn.commit();
                 return reader.getCount();
@@ -225,7 +225,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             }
             Data2DReader reader = Data2DReader.create(this)
                     .setConn(conn).setDataTable(dataTable).setCols(cols)
-                    .setReaderTask(task).start(Operation.SingleColumn);
+                    .setTask(task).start(Operation.SingleColumn);
             if (reader != null && !reader.isFailed()) {
                 conn.commit();
                 return dataTable;

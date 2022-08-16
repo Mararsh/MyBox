@@ -66,7 +66,7 @@ public class DataFileExcelReader extends Data2DReader {
         }
         while (iterator.hasNext() && !readerStopped()) {
             readRecord();
-            if (record == null || record.isEmpty()) {
+            if (sourceRow == null || sourceRow.isEmpty()) {
                 continue;
             }
             handleHeader();
@@ -87,7 +87,7 @@ public class DataFileExcelReader extends Data2DReader {
                 return;
             }
             readRecord();
-            if (record != null && !record.isEmpty()) {
+            if (sourceRow != null && !sourceRow.isEmpty()) {
                 ++rowIndex;
             }
         }
@@ -110,7 +110,7 @@ public class DataFileExcelReader extends Data2DReader {
         rowIndex = 0;
         while (iterator.hasNext() && !readerStopped()) {
             readRecord();
-            if (record == null || record.isEmpty()) {
+            if (sourceRow == null || sourceRow.isEmpty()) {
                 continue;
             }
             if (rowIndex++ < rowsStart) {
@@ -125,7 +125,7 @@ public class DataFileExcelReader extends Data2DReader {
     }
 
     @Override
-    public void readRecords() {
+    public void readRows() {
         if (iterator == null) {
             return;
         }
@@ -133,17 +133,17 @@ public class DataFileExcelReader extends Data2DReader {
         rowIndex = 0;
         while (iterator.hasNext() && !readerStopped()) {
             readRecord();
-            if (record == null || record.isEmpty()) {
+            if (sourceRow == null || sourceRow.isEmpty()) {
                 continue;
             }
             ++rowIndex;
-            handleRecord();
+            handleRow();
         }
     }
 
     public void readRecord() {
         try {
-            record = null;
+            sourceRow = null;
             if (readerStopped() || iterator == null) {
                 return;
             }
@@ -151,10 +151,10 @@ public class DataFileExcelReader extends Data2DReader {
             if (readerFileRow == null) {
                 return;
             }
-            record = new ArrayList<>();
+            sourceRow = new ArrayList<>();
             for (int cellIndex = readerFileRow.getFirstCellNum(); cellIndex < readerFileRow.getLastCellNum(); cellIndex++) {
                 String v = MicrosoftDocumentTools.cellString(readerFileRow.getCell(cellIndex));
-                record.add(v);
+                sourceRow.add(v);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);

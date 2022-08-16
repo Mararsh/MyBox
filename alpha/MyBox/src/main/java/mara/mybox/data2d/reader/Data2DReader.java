@@ -44,7 +44,7 @@ public abstract class Data2DReader {
     protected Operation operation;
     protected long rowIndex, rowsStart, rowsEnd, count;
     protected int columnsNumber, colsLen, scale = -1, scanPass, colIndex;
-    protected List<String> record, names;
+    protected List<String> sourceRow, names;
     protected List<List<String>> rows = new ArrayList<>();
     protected List<Integer> cols;
     protected boolean includeRowNumber, includeColName, withValues, failed, sumAbs;
@@ -86,7 +86,7 @@ public abstract class Data2DReader {
 
     public abstract void readPage();
 
-    public abstract void readRecords();
+    public abstract void readRows();
 
     public static Data2DReader create(Data2D_Edit data) {
         if (data == null) {
@@ -312,7 +312,7 @@ public abstract class Data2DReader {
         if (scale < 0) {
             scale = data2D.getScale();
         }
-        record = new ArrayList<>();
+        sourceRow = new ArrayList<>();
         data2D.startFilter();
         scanData();
         afterScanned();
@@ -322,7 +322,7 @@ public abstract class Data2DReader {
     public void handleData() {
         try {
             if (operation == null) {
-                readRecords();
+                readRows();
             } else {
                 switch (operation) {
                     case ReadDefinition:
@@ -337,7 +337,7 @@ public abstract class Data2DReader {
                         readPage();
                         break;
                     default:
-                        readRecords();
+                        readRows();
                         break;
                 }
             }
@@ -353,12 +353,12 @@ public abstract class Data2DReader {
     public void handleHeader() {
         try {
             names = new ArrayList<>();
-            if (readerHasHeader && StringTools.noDuplicated(record, true)) {
-                names.addAll(record);
+            if (readerHasHeader && StringTools.noDuplicated(sourceRow, true)) {
+                names.addAll(sourceRow);
             } else {
                 readerHasHeader = false;
-                if (record != null) {
-                    for (int i = 1; i <= record.size(); i++) {
+                if (sourceRow != null) {
+                    for (int i = 1; i <= sourceRow.size(); i++) {
                         names.add(data2D.colPrefix() + i);
                     }
                 }
@@ -375,8 +375,8 @@ public abstract class Data2DReader {
 
     public void handlePageRow() {
         List<String> row = new ArrayList<>();
-        for (int i = 0; i < Math.min(record.size(), columnsNumber); i++) {
-            row.add(record.get(i));
+        for (int i = 0; i < Math.min(sourceRow.size(), columnsNumber); i++) {
+            row.add(sourceRow.get(i));
         }
         for (int col = row.size(); col < columnsNumber; col++) {
             row.add(data2D.defaultColValue());
@@ -385,9 +385,9 @@ public abstract class Data2DReader {
         rows.add(row);
     }
 
-    public void handleRecord() {
+    public void handleRow() {
         try {
-            if (!data2D.filterDataRow(record, rowIndex)) {
+            if (!data2D.filterDataRow(sourceRow, rowIndex)) {
                 return;
             }
             if (data2D.filterReachMaxPassed()) {
@@ -490,8 +490,8 @@ public abstract class Data2DReader {
         try {
             List<String> row = new ArrayList<>();
             for (int col : cols) {
-                if (col >= 0 && col < record.size()) {
-                    row.add(record.get(col));
+                if (col >= 0 && col < sourceRow.size()) {
+                    row.add(sourceRow.get(col));
                 } else {
                     row.add(null);
                 }
@@ -510,7 +510,7 @@ public abstract class Data2DReader {
     public void handleReadRows() {
         try {
             List<String> row = new ArrayList<>();
-            row.addAll(record);
+            row.addAll(sourceRow);
             if (includeRowNumber) {
                 row.add(0, rowIndex + "");
             }
@@ -523,8 +523,8 @@ public abstract class Data2DReader {
         try {
             List<String> row = new ArrayList<>();
             for (int col : cols) {
-                if (col >= 0 && col < record.size()) {
-                    row.add(record.get(col));
+                if (col >= 0 && col < sourceRow.size()) {
+                    row.add(sourceRow.get(col));
                 } else {
                     row.add(null);
                 }
@@ -540,13 +540,13 @@ public abstract class Data2DReader {
     public void handleWriteTable() {
         try {
             Data2DRow data2DRow = writerTableData2D.newRow();
-            int len = record.size();
+            int len = sourceRow.size();
             for (int col : cols) {
                 if (col >= 0 && col < len) {
                     Data2DColumn sourceColumn = data2D.getColumns().get(col);
                     String colName = writerTable.mappedColumnName(sourceColumn.getColumnName());
                     Data2DColumn targetColumn = writerTable.columnByName(colName);
-                    data2DRow.setColumnValue(colName, targetColumn.fromString(record.get(col)));
+                    data2DRow.setColumnValue(colName, targetColumn.fromString(sourceRow.get(col)));
                 }
             }
             if (data2DRow.isEmpty()) {
@@ -566,12 +566,12 @@ public abstract class Data2DReader {
 
     public void handleSingleColumn() {
         try {
-            int len = record.size();
+            int len = sourceRow.size();
             for (int col : cols) {
                 if (col >= 0 && col < len) {
                     Data2DRow data2DRow = writerTableData2D.newRow();
                     Data2DColumn targetColumn = writerTable.columnByName("data");
-                    String value = record.get(col);
+                    String value = sourceRow.get(col);
                     if (targetColumn != null && value != null) {
                         data2DRow.setColumnValue("data", targetColumn.fromString(value));
                         writerTableData2D.insertData(conn, data2DRow);
@@ -590,8 +590,8 @@ public abstract class Data2DReader {
         try {
             List<String> row = new ArrayList<>();
             for (int col : cols) {
-                if (col >= 0 && col < record.size()) {
-                    row.add(record.get(col));
+                if (col >= 0 && col < sourceRow.size()) {
+                    row.add(sourceRow.get(col));
                 } else {
                     row.add(null);
                 }
@@ -611,8 +611,8 @@ public abstract class Data2DReader {
         try {
             List<String> row = new ArrayList<>();
             for (int col : cols) {
-                if (col >= 0 && col < record.size()) {
-                    row.add(record.get(col));
+                if (col >= 0 && col < sourceRow.size()) {
+                    row.add(sourceRow.get(col));
                 } else {
                     row.add(null);
                 }
@@ -623,7 +623,7 @@ public abstract class Data2DReader {
             if (includeRowNumber) {
                 row.add(0, rowIndex + "");
             }
-            if (data2D.calculateDataRowExpression(script, record, rowIndex)) {
+            if (data2D.calculateDataRowExpression(script, sourceRow, rowIndex)) {
                 row.add(data2D.expressionResult());
             } else {
                 if (errorContinue) {
@@ -650,10 +650,10 @@ public abstract class Data2DReader {
         try {
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
-                if (i < 0 || i >= record.size()) {
+                if (i < 0 || i >= sourceRow.size()) {
                     continue;
                 }
-                double v = statisticData[c].toDouble(record.get(i));
+                double v = statisticData[c].toDouble(sourceRow.get(i));
                 if (DoubleTools.invalidDouble(v)) {
                     statisticData[c].invalidCount++;
                     continue;
@@ -693,10 +693,10 @@ public abstract class Data2DReader {
                     continue;
                 }
                 int i = cols.get(c);
-                if (i < 0 || i >= record.size()) {
+                if (i < 0 || i >= sourceRow.size()) {
                     continue;
                 }
-                double v = statisticData[c].toDouble(record.get(i));
+                double v = statisticData[c].toDouble(sourceRow.get(i));
                 if (!DoubleTools.invalidDouble(v)) {
                     v = v - statisticData[c].mean;
                     statisticData[c].dTmp += v * v;
@@ -718,10 +718,10 @@ public abstract class Data2DReader {
         try {
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
-                if (i < 0 || i >= record.size()) {
+                if (i < 0 || i >= sourceRow.size()) {
                     continue;
                 }
-                double v = statisticAll.toDouble(record.get(i));
+                double v = statisticAll.toDouble(sourceRow.get(i));
                 if (DoubleTools.invalidDouble(v)) {
                     statisticAll.invalidCount++;
                     continue;
@@ -757,10 +757,10 @@ public abstract class Data2DReader {
                     continue;
                 }
                 int i = cols.get(c);
-                if (i < 0 || i >= record.size()) {
+                if (i < 0 || i >= sourceRow.size()) {
                     continue;
                 }
-                double v = statisticAll.toDouble(record.get(i));
+                double v = statisticAll.toDouble(sourceRow.get(i));
                 if (!DoubleTools.invalidDouble(v)) {
                     v = v - statisticAll.mean;
                     statisticAll.dTmp += v * v;
@@ -778,16 +778,16 @@ public abstract class Data2DReader {
                 row.add(message("Row") + " " + rowIndex);
                 startIndex = 0;
             } else {
-                row.add(record.get(cols.get(0)));
+                row.add(sourceRow.get(cols.get(0)));
                 startIndex = 1;
             }
             String[] values = new String[colsLen - startIndex];
             for (int c = startIndex; c < colsLen; c++) {
                 int i = cols.get(c);
-                if (i < 0 || i >= record.size()) {
+                if (i < 0 || i >= sourceRow.size()) {
                     continue;
                 }
-                values[c - startIndex] = record.get(i);
+                values[c - startIndex] = sourceRow.get(i);
             }
             DoubleStatistic statistic = new DoubleStatistic(values, statisticCalculation);
             row.addAll(statistic.toStringList());
@@ -800,10 +800,10 @@ public abstract class Data2DReader {
         try {
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
-                if (i < 0 || i >= record.size()) {
+                if (i < 0 || i >= sourceRow.size()) {
                     continue;
                 }
-                double d = DoubleTools.toDouble(record.get(i), invalidAs);
+                double d = DoubleTools.toDouble(sourceRow.get(i), invalidAs);
                 if (DoubleTools.invalidDouble(d)) {
                 } else if (d < 0) {
                     if ("abs".equals(toNegative)) {
@@ -824,8 +824,8 @@ public abstract class Data2DReader {
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
                 double d;
-                if (i >= 0 && i < record.size()) {
-                    d = DoubleTools.toDouble(record.get(i), invalidAs);
+                if (i >= 0 && i < sourceRow.size()) {
+                    d = DoubleTools.toDouble(sourceRow.get(i), invalidAs);
                 } else {
                     d = invalidAs;
                 }
@@ -862,10 +862,10 @@ public abstract class Data2DReader {
         try {
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
-                if (i < 0 || i >= record.size()) {
+                if (i < 0 || i >= sourceRow.size()) {
                     continue;
                 }
-                double d = DoubleTools.toDouble(record.get(i), invalidAs);
+                double d = DoubleTools.toDouble(sourceRow.get(i), invalidAs);
                 if (DoubleTools.invalidDouble(d)) {
                 } else if (d < 0) {
                     if ("abs".equals(toNegative)) {
@@ -886,8 +886,8 @@ public abstract class Data2DReader {
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
                 double d;
-                if (i >= 0 && i < record.size()) {
-                    d = DoubleTools.toDouble(record.get(i), invalidAs);
+                if (i >= 0 && i < sourceRow.size()) {
+                    d = DoubleTools.toDouble(sourceRow.get(i), invalidAs);
                 } else {
                     d = invalidAs;
                 }
@@ -926,8 +926,8 @@ public abstract class Data2DReader {
             double sum = 0;
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
-                if (i >= 0 && i < record.size()) {
-                    double d = DoubleTools.toDouble(record.get(i), invalidAs);
+                if (i >= 0 && i < sourceRow.size()) {
+                    double d = DoubleTools.toDouble(sourceRow.get(i), invalidAs);
                     if (DoubleTools.invalidDouble(d)) {
                     } else if (d < 0) {
                         if ("abs".equals(toNegative)) {
@@ -942,8 +942,8 @@ public abstract class Data2DReader {
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
                 double d = 0;
-                if (i >= 0 && i < record.size()) {
-                    d = DoubleTools.toDouble(record.get(i), invalidAs);
+                if (i >= 0 && i < sourceRow.size()) {
+                    d = DoubleTools.toDouble(sourceRow.get(i), invalidAs);
                 }
                 if (withValues) {
                     if (DoubleTools.invalidDouble(d)) {
@@ -975,7 +975,7 @@ public abstract class Data2DReader {
 
     public void handleFrequency() {
         try {
-            frequency.addValue(record.get(colIndex));
+            frequency.addValue(sourceRow.get(colIndex));
         } catch (Exception e) {
         }
     }
@@ -988,10 +988,10 @@ public abstract class Data2DReader {
             }
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
-                if (i < 0 || i >= record.size()) {
+                if (i < 0 || i >= sourceRow.size()) {
                     row.add(null);
                 } else {
-                    double v = statisticData[c].toDouble(record.get(i));
+                    double v = statisticData[c].toDouble(sourceRow.get(i));
                     if (DoubleTools.invalidDouble(v)) {
                         row.add(Double.NaN + "");
                     } else {
@@ -1013,10 +1013,10 @@ public abstract class Data2DReader {
             }
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
-                if (i < 0 || i >= record.size()) {
+                if (i < 0 || i >= sourceRow.size()) {
                     row.add(null);
                 } else {
-                    double v = DoubleTools.toDouble(record.get(i), invalidAs);
+                    double v = DoubleTools.toDouble(sourceRow.get(i), invalidAs);
                     if (DoubleTools.invalidDouble(v)) {
                         row.add(Double.NaN + "");
                     } else {
@@ -1038,10 +1038,10 @@ public abstract class Data2DReader {
             }
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
-                if (i < 0 || i >= record.size()) {
+                if (i < 0 || i >= sourceRow.size()) {
                     row.add(null);
                 } else {
-                    double v = statisticData[c].toDouble(record.get(i));
+                    double v = statisticData[c].toDouble(sourceRow.get(i));
                     if (DoubleTools.invalidDouble(v)) {
                         row.add(Double.NaN + "");
                     } else {
@@ -1067,10 +1067,10 @@ public abstract class Data2DReader {
             }
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
-                if (i < 0 || i >= record.size()) {
+                if (i < 0 || i >= sourceRow.size()) {
                     row.add(null);
                 } else {
-                    double v = statisticAll.toDouble(record.get(i));
+                    double v = statisticAll.toDouble(sourceRow.get(i));
                     if (DoubleTools.invalidDouble(v)) {
                         row.add(Double.NaN + "");
                     } else {
@@ -1092,10 +1092,10 @@ public abstract class Data2DReader {
             }
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
-                if (i < 0 || i >= record.size()) {
+                if (i < 0 || i >= sourceRow.size()) {
                     row.add(null);
                 } else {
-                    double v = DoubleTools.toDouble(record.get(i), invalidAs);
+                    double v = DoubleTools.toDouble(sourceRow.get(i), invalidAs);
                     if (DoubleTools.invalidDouble(v)) {
                         row.add(Double.NaN + "");
                     } else {
@@ -1117,10 +1117,10 @@ public abstract class Data2DReader {
             }
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
-                if (i < 0 || i >= record.size()) {
+                if (i < 0 || i >= sourceRow.size()) {
                     row.add(null);
                 } else {
-                    double v = statisticAll.toDouble(record.get(i));
+                    double v = statisticAll.toDouble(sourceRow.get(i));
                     if (DoubleTools.invalidDouble(v)) {
                         row.add(Double.NaN + "");
                     } else {
@@ -1147,10 +1147,10 @@ public abstract class Data2DReader {
             double[] values = new double[colsLen];
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
-                if (i < 0 || i >= record.size()) {
+                if (i < 0 || i >= sourceRow.size()) {
                     values[c] = 0;
                 } else {
-                    values[c] = DoubleTools.toDouble(record.get(i), invalidAs);
+                    values[c] = DoubleTools.toDouble(sourceRow.get(i), invalidAs);
                 }
             }
             values = Normalization.create()
@@ -1174,8 +1174,8 @@ public abstract class Data2DReader {
 
     public void handleSimpleLinearRegression() {
         try {
-            double x = DoubleTools.toDouble(record.get(cols.get(0)), invalidAs);
-            double y = DoubleTools.toDouble(record.get(cols.get(1)), invalidAs);
+            double x = DoubleTools.toDouble(sourceRow.get(cols.get(0)), invalidAs);
+            double y = DoubleTools.toDouble(sourceRow.get(cols.get(1)), invalidAs);
             List<String> row = simpleRegression.addData(rowIndex, x, y);
             if (csvPrinter != null) {
                 csvPrinter.printRecord(row);
@@ -1351,8 +1351,8 @@ public abstract class Data2DReader {
         return this;
     }
 
-    public Data2DReader setReaderTask(SingletonTask readerTask) {
-        this.task = readerTask;
+    public Data2DReader setTask(SingletonTask task) {
+        this.task = task;
         return this;
     }
 
