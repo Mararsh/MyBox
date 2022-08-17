@@ -13,7 +13,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.FlowPane;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Operations.ObjectType;
 import mara.mybox.data2d.DataFileCSV;
@@ -52,8 +51,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             skipNonnumericRadio, zeroNonnumericRadio;
     @FXML
     protected ImageView tableTipsView;
-    @FXML
-    protected FlowPane columnsPane;
     @FXML
     protected ComboBox<String> colSelector;
 
@@ -205,17 +202,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                 isSettingValues = false;
             }
 
-            if (columnsPane != null) {
-                isSettingValues = true;
-                columnsPane.getChildren().clear();
-                List<String> names = data2D.columnNames();
-                if (names != null) {
-                    for (String name : names) {
-                        columnsPane.getChildren().add(new CheckBox(name));
-                    }
-                }
-                isSettingValues = false;
-            }
             checkOptions();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

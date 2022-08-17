@@ -3,70 +3,43 @@ package mara.mybox.controller;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
-import mara.mybox.calculation.SimpleLinearRegression;
 import mara.mybox.data.StringTable;
-import mara.mybox.data2d.DataFileCSV;
-import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.fxml.chart.ChartOptions.ChartType;
-import mara.mybox.fxml.chart.ResidualChart;
-import mara.mybox.fxml.chart.XYChartMaker;
-import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
+import org.apache.commons.math3.stat.regression.OLSMultipleLinearRegression;
 
 /**
  * @Author Mara
  * @CreateDate 2022-4-21
  * @License Apache License Version 2.0
  */
-public class Data2DMultipleLinearRegressionController extends BaseData2DChartController {
+public class Data2DMultipleLinearRegressionController extends BaseData2DHandleController {
 
-    protected XYChartMaker fittingMaker, residualMaker;
-    protected SimpleLinearRegression simpleRegression;
-    protected double alpha, intercept, slope, rSquare, r;
-    protected int residualInside;
-    protected DataFileCSV regressionFile;
-    protected List<List<String>> regressionData;
-    protected List<List<String>> residualData;
-    protected List<Data2DColumn> residualColumns;
-    protected Map<String, String> residualPalette;
+    protected OLSMultipleLinearRegression olsRegression;
+    protected String yName;
+    protected int yCol;
+    protected List<Integer> dataColsIndices;
+    protected double alpha, intercept, rSquared, sigma, regressandVariance;
+    protected double[] beta, residuals;
+    protected double[][] parametersVariance;
 
     @FXML
-    protected CheckBox interceptCheck, displayAllCheck, textCheck, fittedPointsCheck, fittedLineCheck,
-            residualStdCheck;
+    protected CheckBox interceptCheck;
     @FXML
     protected ComboBox<String> alphaSelector;
     @FXML
-    protected ControlData2DResults regressionDataController;
-    @FXML
-    protected ControlWebView modelViewController;
-    @FXML
-    protected ControlData2DChartXY fittingController, residualController;
-    @FXML
-    protected ToggleGroup residualXGroup;
-    @FXML
-    protected RadioButton residualPredicateRadio, residualIndRadio, residualActualRadio;
+    protected ControlWebView resultsController;
 
     public Data2DMultipleLinearRegressionController() {
         baseTitle = message("MultipleLinearRegression");
@@ -79,29 +52,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DChartCon
         try {
             super.initControls();
 
-            fittingController.dataController = this;
-            fittingMaker = fittingController.chartMaker;
-            fittingMaker.init(ChartType.SimpleRegressionChart, message("SimpleRegressionChart"));
-
-            residualController.dataController = this;
-            residualMaker = residualController.chartMaker;
-            residualMaker.init(ChartType.ResidualChart, message("ResidualChart"));
-
             noColumnSelection(true);
-
-            modelViewController.setParent(this);
-
-            initChartTab();
-
-            initResidualPane();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    public void initChartTab() {
-        try {
 
             alpha = UserConfig.getDouble(baseName + "Alpha", 0.05);
             if (alpha >= 1 || alpha <= 0) {
@@ -130,119 +81,19 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DChartCon
             });
 
             interceptCheck.setSelected(UserConfig.getBoolean(baseName + "Intercept", true));
-            interceptCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
-                if (isSettingValues) {
-                    return;
-                }
-                UserConfig.setBoolean(baseName + "Intercept", interceptCheck.isSelected());
-            });
-
-            displayAllCheck.visibleProperty().bind(allPagesRadio.selectedProperty());
-
-            fittedPointsCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayFittedPoints", false));
-            fittedPointsCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
-                if (isSettingValues) {
-                    return;
-                }
-                UserConfig.setBoolean(baseName + "DisplayFittedPoints", fittedPointsCheck.isSelected());
-                fittingMaker.getSimpleRegressionChart().displayFittedPoints(fittedPointsCheck.isSelected());
-            });
-
-            fittedLineCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayFittedLine", true));
-            fittedLineCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
-                if (isSettingValues) {
-                    return;
-                }
-                UserConfig.setBoolean(baseName + "DisplayFittedLine", fittedLineCheck.isSelected());
-                fittingMaker.getSimpleRegressionChart().displayFittedLine(fittedLineCheck.isSelected());
-            });
-
-            textCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayText", true));
-            textCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
-                if (isSettingValues) {
-                    return;
-                }
-                UserConfig.setBoolean(baseName + "DisplayText", textCheck.isSelected());
-                fittingMaker.getSimpleRegressionChart().displayText(textCheck.isSelected());
-            });
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    public void initResidualPane() {
-        try {
-            residualXGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            interceptCheck.selectedProperty().addListener(new ChangeListener() {
                 @Override
-                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    makeResidualChart();
+                public void changed(ObservableValue v, Object ov, Object nv) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    UserConfig.setBoolean(baseName + "Intercept", interceptCheck.isSelected());
                 }
             });
 
-            residualStdCheck.setSelected(UserConfig.getBoolean(baseName + "StandardResidual", true));
-            residualStdCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "StandardResidual", residualStdCheck.isSelected());
-                    makeResidualChart();
-                }
-            });
-
+            resultsController.setParent(this);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void makeOptions() {
-        try {
-            List<String> names = data2D.columnNames();
-            if (names == null || names.isEmpty()) {
-                return;
-            }
-            isSettingValues = true;
-            selectedValue = valueColumnSelector.getSelectionModel().getSelectedItem();
-            valueColumnSelector.getItems().setAll(names);
-            if (selectedValue != null && names.contains(selectedValue)) {
-                valueColumnSelector.setValue(selectedValue);
-            } else {
-                valueColumnSelector.getSelectionModel().select(names.size() > 1 ? 1 : 0);
-            }
-            isSettingValues = false;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void afterRefreshControls() {
-
-    }
-
-    @FXML
-    @Override
-    public void selectAllColumns() {
-        try {
-            for (Node node : columnsPane.getChildren()) {
-                CheckBox cb = (CheckBox) node;
-                cb.setSelected(true);
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
-    @FXML
-    @Override
-    public void selectNoneColumn() {
-        try {
-            for (Node node : columnsPane.getChildren()) {
-                CheckBox cb = (CheckBox) node;
-                cb.setSelected(false);
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
         }
     }
 
@@ -253,22 +104,24 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DChartCon
                 return false;
             }
             dataColsIndices = new ArrayList<>();
-            int categoryCol = data2D.colOrder(selectedCategory);
-            if (categoryCol < 0) {
-                popError(message("SelectToHandle") + ": " + message("CategoryColumn"));
+            yName = colSelector.getSelectionModel().getSelectedItem();
+            yCol = data2D.colOrder(yName);
+            if (yCol < 0) {
+                popError(message("SelectToHandle") + ": " + message("DependentVariable"));
                 return false;
             }
-            dataColsIndices.add(categoryCol);
-            int valueCol = data2D.colOrder(selectedValue);
-            if (valueCol < 0) {
-                popError(message("SelectToHandle") + ": " + message("ValueColumn"));
-                return false;
-            }
-            dataColsIndices.add(valueCol);
-            simpleRegression = null;
-            regressionFile = null;
-            regressionData = null;
+            dataColsIndices.add(yCol);
 
+            if (checkedColsIndices == null || checkedColsIndices.isEmpty()) {
+                popError(message("SelectToHandle") + ": " + message("IndependentVariable"));
+                return false;
+            }
+            for (int col : checkedColsIndices) {
+                if (!dataColsIndices.contains(col)) {
+                    dataColsIndices.add(col);
+                }
+            }
+            olsRegression = null;
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -277,353 +130,123 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DChartCon
     }
 
     @Override
-    public void readData() {
-        try {
-            simpleRegression = new SimpleLinearRegression(interceptCheck.isSelected(),
-                    selectedCategory, selectedValue, scale);
-            if (isAllPages()) {
-                if (displayAllCheck.isSelected()) {
-                    outputData = data2D.allRows(dataColsIndices, true);
-                    regress(outputData);
-                } else {
-                    regressionFile = data2D.simpleLinearRegression(null, dataColsIndices, simpleRegression, true);
-                    outputData = filtered(dataColsIndices, true);
+    protected void startOperation() {
+        if (task != null) {
+            task.cancel();
+        }
+        resultsController.loadContents("");
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try {
+                    data2D.startTask(task, filterController.filter);
+                    List<List<String>> data = data2D.allRows(checkedColsIndices, false);
+                    data2D.stopFilter();
+
+                    olsRegression = new OLSMultipleLinearRegression();
+                    olsRegression.setNoIntercept(!interceptCheck.isSelected());
+                    int n = data.size();
+                    int k = checkedColsIndices.size();
+//                    double[] y = new double[n];
+//                    double[][] x = new double[n][k];
+//                    for (int i = 0; i < n; i++) {
+//                        List<String> row = data.get(i);
+//                        y[i] = DoubleTools.toDouble(row.get(0), invalidAs);
+//                        for (int j = 1; j < row.size(); j++) {
+//                            x[i][j - 1] = DoubleTools.toDouble(row.get(j), invalidAs);
+//                        }
+//                    }
+                    double[] y = new double[]{11.0, 12.0, 13.0, 14.0, 15.0, 16.0};
+                    double[][] x = new double[6][];
+                    x[0] = new double[]{0, 0, 0, 0, 0};
+                    x[1] = new double[]{2.0, 0, 0, 0, 0};
+                    x[2] = new double[]{0, 3.0, 0, 0, 0};
+                    x[3] = new double[]{0, 0, 4.0, 0, 0};
+                    x[4] = new double[]{0, 0, 0, 5.0, 0};
+                    x[5] = new double[]{0, 0, 0, 0, 6.0};
+                    olsRegression.newSampleData(y, x);
+                    beta = olsRegression.estimateRegressionParameters();
+                    residuals = olsRegression.estimateResiduals();
+                    parametersVariance = olsRegression.estimateRegressionParametersVariance();
+                    regressandVariance = olsRegression.estimateRegressandVariance();
+                    rSquared = olsRegression.calculateRSquared();
+                    sigma = olsRegression.estimateRegressionStandardError();
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
                 }
-            } else {
-                outputData = filtered(dataColsIndices, true);
-                regress(outputData);
-            }
-            if (outputData == null) {
-                return;
-            }
-            intercept = interceptCheck.isSelected() ? simpleRegression.getIntercept() : 0;
-            slope = simpleRegression.getSlope();
-            rSquare = simpleRegression.getRSquare();
-            r = simpleRegression.getR();
-
-            outputColumns = new ArrayList<>();
-            outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
-            outputColumns.add(data2D.columnByName(selectedCategory));
-            outputColumns.add(data2D.columnByName(selectedValue));
-            outputColumns.add(new Data2DColumn(selectedValue + "_" + message("FittedValue"), ColumnDefinition.ColumnType.Double));
-            for (int i = 0; i < outputData.size(); i++) {
-                List<String> rowData = outputData.get(i);
-                double x = DoubleTools.toDouble(rowData.get(1), invalidAs);
-                rowData.add(DoubleTools.format(intercept + slope * x, scale));
             }
 
-            makeResidualData();
+            @Override
+            protected void whenSucceeded() {
+                printResults();
+            }
 
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                data2D.stopTask();
+                task = null;
+            }
+
+        };
+        start(task);
     }
 
-    public void makeResidualData() {
+    protected void printResults() {
         try {
-            residualColumns = new ArrayList<>();
-            residualColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
-            if (residualIndRadio.isSelected()) {
-                residualColumns.add(new Data2DColumn(message("IndependentVariable"), ColumnDefinition.ColumnType.Double));
-            } else if (residualActualRadio.isSelected()) {
-                residualColumns.add(new Data2DColumn(message("ActualValue"), ColumnDefinition.ColumnType.Double));
-            } else {
-                residualColumns.add(new Data2DColumn(message("PredictedValue"), ColumnDefinition.ColumnType.Double));
-            }
-            double stdDeviation = 1;
-            if (residualStdCheck.isSelected()) {
-                residualColumns.add(new Data2DColumn(message("StandardizedResidual"), ColumnDefinition.ColumnType.Double));
-                residualColumns.add(new Data2DColumn(message("Sigma2UpperLine"), ColumnDefinition.ColumnType.Double));
-                residualColumns.add(new Data2DColumn(message("Sigma2lLowerLine"), ColumnDefinition.ColumnType.Double));
-                stdDeviation = Math.sqrt(simpleRegression.getMeanSquareError());
-            } else {
-                residualColumns.add(new Data2DColumn(message("Residual"), ColumnDefinition.ColumnType.Double));
-            }
-            residualData = new ArrayList<>();
-            residualInside = 0;
-            for (int i = 0; i < outputData.size(); i++) {
-                List<String> rowData = outputData.get(i);
-                List<String> residualRow = new ArrayList<>();
-                double x = DoubleTools.toDouble(rowData.get(1), invalidAs);
-                double y = DoubleTools.toDouble(rowData.get(2), invalidAs);
-                double predict = intercept + slope * x;
-                double residual = y - predict;
-                residualRow.add(rowData.get(0));
-                if (residualIndRadio.isSelected()) {
-                    residualRow.add(DoubleTools.format(x, scale));
-                } else if (residualActualRadio.isSelected()) {
-                    residualRow.add(DoubleTools.format(y, scale));
-                } else {
-                    residualRow.add(DoubleTools.format(predict, scale));
-                }
-                if (residualStdCheck.isSelected()) {
-                    double stdResidual = residual / stdDeviation;
-                    residualRow.add(DoubleTools.format(stdResidual, scale));
-                    residualRow.add("1.96");
-                    residualRow.add("-1.96");
-                    if (stdResidual >= -1.96 && stdResidual <= 1.96) {
-                        residualInside++;
-                    }
-                } else {
-                    residualRow.add(DoubleTools.format(residual, scale));
-                }
-                residualData.add(residualRow);
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
-    public void regress(List<List<String>> data) {
-        if (data == null || simpleRegression == null) {
-            return;
-        }
-        regressionData = new ArrayList<>();
-        for (List<String> row : data) {
-            try {
-                long index = Long.parseLong(row.get(0));
-                double x = DoubleTools.toDouble(row.get(1), invalidAs);
-                double y = DoubleTools.toDouble(row.get(2), invalidAs);
-                List<String> resultRow = simpleRegression.addData(index, x, y);
-                regressionData.add(resultRow);
-            } catch (Exception e) {
-                MyBoxLog.debug(e);
-            }
-        }
-    }
-
-    @Override
-    public void outputData() {
-        writeModelView();
-        writeRegressionData();
-        drawChart();
-    }
-
-    @Override
-    public void drawChart() {
-        drawFittingChart();
-        drawResidualChart();
-    }
-
-    public void drawFittingChart() {
-        try {
-            if (outputData == null || outputData.isEmpty()) {
-                popError(message("NoData"));
-                return;
-            }
-
-            fittingMaker.setDefaultChartTitle(selectedCategory + "_" + selectedValue + " - " + message("SimpleRegressionChart"))
-                    .setDefaultCategoryLabel(selectedCategory)
-                    .setDefaultValueLabel(selectedValue);
-            fittingController.writeXYChart(outputColumns, outputData);
-            fittingMaker.getSimpleRegressionChart()
-                    .setDisplayText(textCheck.isSelected())
-                    .setDisplayFittedPoints(fittedPointsCheck.isSelected())
-                    .setDisplayFittedLine(fittedLineCheck.isSelected());
-            randomColorsFitting();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void drawResidualChart() {
-        try {
-            if (residualColumns == null || residualData.isEmpty()) {
-                popError(message("NoData"));
-                return;
-            }
-            residualMaker.setDefaultChartTitle((selectedCategory + "_" + selectedValue + " - " + message("Residual")))
-                    .setCategoryLabel(residualColumns.get(1).getColumnName())
-                    .setDefaultCategoryLabel(residualMaker.getDefaultCategoryLabel())
-                    .setValueLabel(message("Residual"))
-                    .setDefaultValueLabel(message("Residual"));
-            residualController.writeXYChart(residualColumns, residualData);
-            randomColorResidual();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void writeModelView() {
-        try {
-            String interceptScaled = DoubleTools.format(intercept, scale);
-            String slopeScaled = DoubleTools.format(Math.abs(slope), scale);
             StringBuilder s = new StringBuilder();
             s.append("<BODY>\n");
-            s.append(" <script>\n"
-                    + "    function calculate() {\n"
-                    + "      var x = document.getElementById('inputX').value;  　\n"
-                    + "      var y =  " + interceptScaled + "  + " + slopeScaled + " * x ;\n"
-                    + "      document.getElementById('outputY').value = y;\n"
-                    //                    + "      var v1 =  y - " + slopeError + ";\n"
-                    //                    + "      var v2 =  y + " + slopeError + ";\n"
-                    //                    + "      document.getElementById('ConfidenceIntervals').value = v1 + ' - ' + v2;\n"
-                    + "    }\n"
-                    + "  </script>\n\n");
-            String m = message("LinearModel") + ": " + selectedValue + " = "
-                    + interceptScaled + (slope > 0 ? " + " : " - ")
-                    + slopeScaled + " * " + selectedCategory;
-            s.append("\n<DIV>").append(m).append("</DIV>\n");
-            s.append("<DIV>\n");
-            s.append("<P>").append(message("IndependentVariable")).append(": ").append(selectedCategory).append(" = \n");
-            s.append("<INPUT id=\"inputX\" type=\"text\" style=\"width:200px\"/>\n");
-            s.append("<BUTTON type=\"button\" onclick=\"calculate();\">").append(message("Predict")).append("</BUTTON></P>\n");
-            s.append("<P>").append(message("DependentVariable")).append(": ").append(selectedValue).append(" = \n");
-            s.append("<INPUT id=\"outputY\"  type=\"text\" style=\"width:200px\"/></P>\n");
-//            s.append("<P>").append(message("ConfidenceIntervals")).append(" = \n");
-//            s.append("<INPUT id=\"ConfidenceIntervals\"  type=\"text\" style=\"width:300px\"/></P>\n");
-            s.append("</DIV>\n<HR/>\n");
 
             s.append("<H3 align=center>").append(message("LastStatus")).append("</H3>\n");
             List<String> names = new ArrayList<>();
             names.add(message("Name"));
             names.add(message("Value"));
             StringTable table = new StringTable(names);
-            List<Data2DColumn> columns = simpleRegression.getColumns();
-            List<String> lastData = simpleRegression.getLastData();
-            for (int i = 0; i < columns.size(); i++) {
-                List<String> row = new ArrayList<>();
-                Data2DColumn c = columns.get(i);
-                row.add(c.getColumnName());
-                row.add(lastData.get(i));
-                table.add(row);
-            }
+
+            List<String> row = new ArrayList<>();
+            row.add(message("IndependentVariable"));
+            row.add(checkedColsNames.toString());
+            table.add(row);
+
+            row = new ArrayList<>();
+            row.add(message("DependentVariable"));
+            row.add(yName);
+            table.add(row);
+
+            row = new ArrayList<>();
+            row.add("beta");
+            row.add(Arrays.toString(beta));
+            table.add(row);
+
+            row = new ArrayList<>();
+            row.add("residuals");
+            row.add(Arrays.toString(residuals));
+            table.add(row);
+
+            row = new ArrayList<>();
+            row.add(message("CoefficientOfDetermination"));
+            row.add(rSquared + "");
+            table.add(row);
+
+            row = new ArrayList<>();
+            row.add(message("sigma"));
+            row.add(sigma + "");
+            table.add(row);
+
+            row = new ArrayList<>();
+            row.add(message("regressandVariance"));
+            row.add(regressandVariance + "");
+            table.add(row);
+
             s.append(table.div());
-
-            s.append("\n<HR/><P align=left style=\"font-size:1em;\">* ")
-                    .append(message("HtmlEditableComments")).append("</P>\n");
-
             s.append("</BODY>\n");
-            modelViewController.loadContents(HtmlWriteTools.html(s.toString()));
-
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
-    public void writeRegressionData() {
-        try {
-            if (regressionFile != null) {
-                regressionDataController.loadDef(regressionFile);
-            } else {
-                regressionDataController.loadTmpData(null, simpleRegression.getColumns(), regressionData);
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
-    public String model() {
-        return message("IndependentVariable") + ": " + selectedCategory + "\n"
-                + message("DependentVariable") + ": " + selectedValue + "\n"
-                + message("LinearModel") + ": " + selectedValue + " = "
-                + DoubleTools.format(intercept, scale) + (slope > 0 ? " + " : " - ")
-                + DoubleTools.format(Math.abs(slope), scale) + " * " + selectedCategory + "\n"
-                + message("CoefficientOfDetermination") + ": " + DoubleTools.format(Math.abs(rSquare), scale) + "\n"
-                + message("PearsonsR") + ": " + r;
-    }
-
-    @Override
-    public Map<String, String> makePalette() {
-        try {
-            Random random = new Random();
-            if (palette == null) {
-                palette = new HashMap();
-            } else {
-                palette.clear();
-            }
-            for (int i = 0; i < outputColumns.size(); i++) {
-                Data2DColumn column = outputColumns.get(i);
-                Color color = column.getColor();
-                if (i > 2 || color == null) {
-                    color = FxColorTools.randomColor(random);
-                }
-                String rgb = FxColorTools.color2rgb(color);
-                palette.put(column.getColumnName(), rgb);
-            }
-
+            resultsController.loadContents(HtmlWriteTools.html(s.toString()));
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-        return palette;
-    }
-
-    public Map<String, String> makeResidualPalette() {
-        try {
-            Random random = new Random();
-            residualPalette = new HashMap();
-            for (int i = 0; i < residualColumns.size(); i++) {
-                Data2DColumn column = residualColumns.get(i);
-                Color color = column.getColor();
-                if (i > 1 || color == null) {
-                    color = FxColorTools.randomColor(random);
-                }
-                String rgb = FxColorTools.color2rgb(color);
-                residualPalette.put(column.getColumnName(), rgb);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-        return residualPalette;
-    }
-
-    @FXML
-    public void randomColorsFitting() {
-        try {
-            fittingMaker.setPalette(makePalette());
-            fittingMaker.setChartStyle();
-
-            fittingMaker.getSimpleRegressionChart()
-                    .setModel(model())
-                    .setDisplayText(textCheck.isSelected())
-                    .setDisplayFittedPoints(fittedPointsCheck.isSelected())
-                    .setDisplayFittedLine(fittedLineCheck.isSelected())
-                    .displayControls();
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
-    public void randomColorResidual() {
-        try {
-            residualMaker.setPalette(makeResidualPalette());
-            residualMaker.setChartStyle();
-
-            ResidualChart residualChart = residualMaker.getResidualChart();
-            residualChart.setInfo(message("InsideSigma2") + ": "
-                    + residualInside + "/" + residualData.size()
-                    + " = " + DoubleTools.percentage(residualInside, residualData.size(), 2) + "%")
-                    .displayControls(residualColumns.size() - 2);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    public void makeResidualChart() {
-        makeResidualData();
-        drawResidualChart();
-    }
-
-    @Override
-    public void drawChart(BaseData2DChartFx chartController) {
-        if (chartController == fittingController) {
-            drawFittingChart();
-        }
-        if (chartController == residualController) {
-            drawResidualChart();
-        }
-    }
-
-    @FXML
-    public void editModelAction() {
-        modelViewController.editAction();
-    }
-
-    @FXML
-    public void popModelMenu(MouseEvent mouseEvent) {
-        modelViewController.popFunctionsMenu(mouseEvent);
     }
 
     @FXML
@@ -649,13 +272,6 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DChartCon
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-    }
-
-    /*
-        get/set
-     */
-    public Map<String, String> getResidualPalette() {
-        return residualPalette;
     }
 
     /*

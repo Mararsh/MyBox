@@ -8,7 +8,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -100,51 +99,6 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
     }
 
     @Override
-    public void refreshControls() {
-        try {
-            super.refreshControls();
-            List<String> names = tableController.data2D.columnNames();
-            if (names == null || names.isEmpty()) {
-                return;
-            }
-            isSettingValues = true;
-            columnsPane.getChildren().clear();
-            for (String name : names) {
-                columnsPane.getChildren().add(new CheckBox(name));
-            }
-            isSettingValues = false;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
-    @Override
-    public void selectAllColumns() {
-        try {
-            for (Node node : columnsPane.getChildren()) {
-                CheckBox cb = (CheckBox) node;
-                cb.setSelected(true);
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
-    @FXML
-    @Override
-    public void selectNoneColumn() {
-        try {
-            for (Node node : columnsPane.getChildren()) {
-                CheckBox cb = (CheckBox) node;
-                cb.setSelected(false);
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
-    @Override
     protected void startOperation() {
         if (task != null) {
             task.cancel();
@@ -156,18 +110,8 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
             protected boolean handle() {
                 try {
                     data2D.startTask(task, filterController.filter);
-                    List<Integer> cols = new ArrayList<>();
-                    for (Node node : columnsPane.getChildren()) {
-                        CheckBox cb = (CheckBox) node;
-                        if (cb.isSelected()) {
-                            cols.add(data2D.colOrder(cb.getText()));
-                        }
-                    }
-                    if (cols.isEmpty()) {
-                        cols = data2D.columnIndices();
-                    }
-                    for (int yIndex : cols) {
-                        for (int xIndex : cols) {
+                    for (int yIndex : checkedColsIndices) {
+                        for (int xIndex : checkedColsIndices) {
                             if (xIndex == yIndex) {
                                 continue;
                             }

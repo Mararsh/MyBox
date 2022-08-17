@@ -66,14 +66,16 @@ public class Data2DGroupValuesController extends BaseData2DHandleController {
             for (Data2DColumn column : data2D.columns) {
                 String name = column.getColumnName();
                 gnames.add(name);
-                cnames.add(name + "-" + message("Mean"));
-                cnames.add(name + "-" + message("Summation"));
-                cnames.add(name + "-" + message("Maximum"));
-                cnames.add(name + "-" + message("Minimum"));
-                cnames.add(name + "-" + message("PopulationVariance"));
-                cnames.add(name + "-" + message("SampleVariance"));
-                cnames.add(name + "-" + message("PopulationStandardDeviation"));
-                cnames.add(name + "-" + message("SampleStandardDeviation"));
+                if (column.isNumberType()) {
+                    cnames.add(name + "-" + message("Mean"));
+                    cnames.add(name + "-" + message("Summation"));
+                    cnames.add(name + "-" + message("Maximum"));
+                    cnames.add(name + "-" + message("Minimum"));
+                    cnames.add(name + "-" + message("PopulationVariance"));
+                    cnames.add(name + "-" + message("SampleVariance"));
+                    cnames.add(name + "-" + message("PopulationStandardDeviation"));
+                    cnames.add(name + "-" + message("SampleStandardDeviation"));
+                }
             }
             groupController.loadNames(gnames);
             calculationController.loadNames(cnames);

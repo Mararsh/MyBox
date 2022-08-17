@@ -660,6 +660,7 @@ public class DataTable extends Data2D {
                 selections = groupBy + ", " + selections;
             }
             String sql = "SELECT " + selections + " FROM " + sheet + " GROUP BY " + groupBy;
+//            MyBoxLog.console(sql);
             return query(dname, task, sql, false);
         } catch (Exception e) {
             if (task != null) {

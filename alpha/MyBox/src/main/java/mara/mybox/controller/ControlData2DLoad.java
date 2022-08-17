@@ -973,6 +973,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             if (show) {
                 if (!dataController.thisPane.getChildren().contains(paginationPane)) {
                     dataController.thisPane.getChildren().add(paginationPane);
+                    NodeStyleTools.refreshStyle(paginationPane);
                 }
             } else {
                 if (dataController.thisPane.getChildren().contains(paginationPane)) {
@@ -983,6 +984,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             if (show) {
                 if (!thisPane.getChildren().contains(paginationPane)) {
                     thisPane.getChildren().add(paginationPane);
+                    NodeStyleTools.refreshStyle(paginationPane);
                 }
             } else {
                 if (thisPane.getChildren().contains(paginationPane)) {
@@ -990,7 +992,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 }
             }
         }
-        NodeStyleTools.refreshStyle(paginationPane);
     }
 
     /*
