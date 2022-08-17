@@ -38,7 +38,22 @@ public class DoubleTools {
             }
             return scale(data * 100 / total, scale) + "";
         } catch (Exception e) {
-            return message("Invalid");
+            return data + "";
+        }
+    }
+
+    public static String format(double data) {
+        try {
+            String format = "#,###";
+            String s = data + "";
+            int pos = s.indexOf(".");
+            if (pos >= 0) {
+                format += "." + "#".repeat(s.substring(pos + 1).length());
+            }
+            DecimalFormat df = new DecimalFormat(format);
+            return df.format(data);
+        } catch (Exception e) {
+            return data + "";
         }
     }
 
@@ -51,19 +66,19 @@ public class DoubleTools {
             DecimalFormat df = new DecimalFormat(format);
             return df.format(scale(data, scale));
         } catch (Exception e) {
-            return message("Invalid");
+            return data + "";
         }
     }
 
     public static int compare(String s1, String s2, boolean desc) {
         double d1, d2;
         try {
-            d1 = Double.valueOf(s1);
+            d1 = Double.valueOf(s1.replaceAll(",", ""));
         } catch (Exception e) {
             d1 = Double.NaN;
         }
         try {
-            d2 = Double.valueOf(s2);
+            d2 = Double.valueOf(s2.replaceAll(",", ""));
         } catch (Exception e) {
             d2 = Double.NaN;
         }

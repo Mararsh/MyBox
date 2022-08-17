@@ -25,7 +25,8 @@ public abstract class Data2DWriter {
     protected Data2D data2D;
     protected File sourceFile;
     protected Operation operation;
-    protected long rowIndex, count;
+    protected long rowIndex; // 1-based
+    protected long count;
     protected int columnsNumber, colsLen, scale = -1, colIndex, dataIndex, digit;
     protected List<String> sourceRow, targetRow;
     protected List<Integer> cols;
@@ -83,10 +84,8 @@ public abstract class Data2DWriter {
                 random = new Random();
                 break;
             case Delete:
-
                 break;
             case ClearData:
-
                 break;
 
         }

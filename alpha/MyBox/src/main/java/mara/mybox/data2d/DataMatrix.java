@@ -144,7 +144,7 @@ public class DataMatrix extends Data2D {
 
     public static double toDouble(String d) {
         try {
-            return Double.valueOf(d);
+            return Double.valueOf(d.replaceAll(",", ""));
         } catch (Exception e) {
             return 0;
         }

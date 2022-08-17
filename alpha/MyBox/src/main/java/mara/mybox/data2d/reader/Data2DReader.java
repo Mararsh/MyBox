@@ -42,7 +42,9 @@ public abstract class Data2DReader {
     protected Data2D data2D;
     protected File sourceFile;
     protected Operation operation;
-    protected long rowIndex, rowsStart, rowsEnd, count;
+    protected long rowIndex; // 1-based 
+    protected long rowsStart, rowsEnd; //  0-based
+    protected long count;
     protected int columnsNumber, colsLen, scale = -1, scanPass, colIndex;
     protected List<String> sourceRow, names;
     protected List<List<String>> rows = new ArrayList<>();
@@ -572,7 +574,7 @@ public abstract class Data2DReader {
                     Data2DRow data2DRow = writerTableData2D.newRow();
                     Data2DColumn targetColumn = writerTable.columnByName("data");
                     String value = sourceRow.get(col);
-                    if (targetColumn != null && value != null) {
+                    if (targetColumn != null) {
                         data2DRow.setColumnValue("data", targetColumn.fromString(value));
                         writerTableData2D.insertData(conn, data2DRow);
                         if (++count % DerbyBase.BatchSize == 0) {

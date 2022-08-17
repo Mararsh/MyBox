@@ -19,19 +19,19 @@ import mara.mybox.tools.DateTools;
  * @License Apache License Version 2.0
  */
 public class TableConvolutionKernel extends BaseTable<ConvolutionKernel> {
-
+    
     public TableConvolutionKernel() {
         tableName = "Convolution_Kernel";
         defineColumns();
     }
-
+    
     public TableConvolutionKernel(boolean defineColumns) {
         tableName = "Convolution_Kernel";
         if (defineColumns) {
             defineColumns();
         }
     }
-
+    
     public final TableConvolutionKernel defineColumns() {
         addColumn(new ColumnDefinition("name", ColumnDefinition.ColumnType.String, true, true).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("width", ColumnDefinition.ColumnType.Integer, true));
@@ -45,7 +45,7 @@ public class TableConvolutionKernel extends BaseTable<ConvolutionKernel> {
         addColumn(new ColumnDefinition("description", ColumnDefinition.ColumnType.String).setLength(StringMaxLength));
         return this;
     }
-
+    
     public static List<ConvolutionKernel> read() {
         List<ConvolutionKernel> records = new ArrayList<>();
         try ( Connection conn = DerbyBase.getConnection();
@@ -64,7 +64,7 @@ public class TableConvolutionKernel extends BaseTable<ConvolutionKernel> {
         }
         return records;
     }
-
+    
     public static ConvolutionKernel read(String name) {
         if (name == null) {
             return null;
@@ -83,7 +83,7 @@ public class TableConvolutionKernel extends BaseTable<ConvolutionKernel> {
         }
         return null;
     }
-
+    
     public static ConvolutionKernel read(Connection conn, ResultSet kResult) {
         if (kResult == null) {
             return null;
@@ -108,6 +108,7 @@ public class TableConvolutionKernel extends BaseTable<ConvolutionKernel> {
                 record.setModifyTime(DateTools.datetimeToString(t));
             }
             record.setDescription(kResult.getString("description"));
+            conn.setAutoCommit(true);
             try ( PreparedStatement matrixQuery
                     = conn.prepareStatement(" SELECT * FROM Float_Matrix WHERE name=? AND row=? AND col=?")) {
                 float[][] matrix = new float[h][w];
@@ -131,7 +132,7 @@ public class TableConvolutionKernel extends BaseTable<ConvolutionKernel> {
             return null;
         }
     }
-
+    
     public static boolean existData(String name) {
         if (name == null) {
             return false;
@@ -144,13 +145,14 @@ public class TableConvolutionKernel extends BaseTable<ConvolutionKernel> {
             return false;
         }
     }
-
+    
     public static boolean existData(Connection conn, String name) {
         if (conn == null || name == null) {
             return false;
         }
         try ( PreparedStatement kernelQuery = conn.prepareStatement(" SELECT width FROM Convolution_Kernel WHERE name=?")) {
             kernelQuery.setString(1, name);
+            conn.setAutoCommit(true);
             try ( ResultSet kResult = kernelQuery.executeQuery()) {
                 return (kResult.next());
             }
@@ -159,7 +161,7 @@ public class TableConvolutionKernel extends BaseTable<ConvolutionKernel> {
             return false;
         }
     }
-
+    
     public static boolean insert(Connection conn, ConvolutionKernel record) {
         String sql = "INSERT INTO Convolution_Kernel "
                 + "(name, width , height, type, edge, is_gray, is_invert, create_time, modify_time, description) "
@@ -182,7 +184,7 @@ public class TableConvolutionKernel extends BaseTable<ConvolutionKernel> {
             return false;
         }
     }
-
+    
     public static boolean update(Connection conn, ConvolutionKernel record) {
         String sql = "UPDATE Convolution_Kernel SET "
                 + "  width=?, height=?, type=?, edge=?, is_gray=?, is_invert=?, create_time=?, "
@@ -206,7 +208,7 @@ public class TableConvolutionKernel extends BaseTable<ConvolutionKernel> {
             return false;
         }
     }
-
+    
     public static boolean write(ConvolutionKernel record) {
         if (record == null || record.getName() == null
                 || record.getWidth() < 3 || record.getWidth() % 2 == 0
@@ -224,11 +226,11 @@ public class TableConvolutionKernel extends BaseTable<ConvolutionKernel> {
             return false;
         }
     }
-
+    
     public static boolean writeExamples() {
         return write(ConvolutionKernel.makeExample());
     }
-
+    
     public static boolean write(List<ConvolutionKernel> records) {
         if (records == null || records.isEmpty()) {
             return false;
@@ -247,7 +249,7 @@ public class TableConvolutionKernel extends BaseTable<ConvolutionKernel> {
             return false;
         }
     }
-
+    
     public static boolean deleteRecords(List<ConvolutionKernel> records) {
         if (records == null || records.isEmpty()) {
             return false;
@@ -268,7 +270,7 @@ public class TableConvolutionKernel extends BaseTable<ConvolutionKernel> {
             return false;
         }
     }
-
+    
     public static boolean delete(List<String> names) {
         if (names == null || names.isEmpty()) {
             return false;
@@ -289,7 +291,7 @@ public class TableConvolutionKernel extends BaseTable<ConvolutionKernel> {
             return false;
         }
     }
-
+    
     public static float[][] readMatrix(String name) {
         float[][] matrix = null;
         if (name == null) {
@@ -301,5 +303,5 @@ public class TableConvolutionKernel extends BaseTable<ConvolutionKernel> {
         }
         return TableFloatMatrix.read(name, k.getWidth(), k.getHeight());
     }
-
+    
 }

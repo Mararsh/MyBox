@@ -29,13 +29,13 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public abstract class Data2D_Edit extends Data2D_Filter {
-
+    
     public abstract Data2DDefinition queryDefinition(Connection conn);
-
+    
     public abstract void applyOptions();
-
+    
     public abstract List<String> readColumnNames();
-
+    
     public abstract boolean savePageData(Data2D targetData);
 
     /*
@@ -44,7 +44,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
     public boolean checkForLoad() {
         return true;
     }
-
+    
     public long readDataDefinition(Connection conn) {
         if (isTmpData()) {
             checkForLoad();
@@ -77,7 +77,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
         return d2did;
     }
-
+    
     public boolean readColumns(Connection conn) {
         try {
             columns = null;
@@ -154,7 +154,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             return false;
         }
     }
-
+    
     public long readTotal() {
         dataSize = 0;
         Data2DReader reader = Data2DReader.create(this)
@@ -173,7 +173,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
         return dataSize;
     }
-
+    
     public List<List<String>> readPageData(Connection conn) {
         if (!isColumnsValid()) {
             startRowOfCurrentPage = endRowOfCurrentPage = 0;
@@ -197,7 +197,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         readPageStyles(conn);
         return rows;
     }
-
+    
     public void readPageStyles(Connection conn) {
         styles = new ArrayList<>();
         if (d2did < 0 || startRowOfCurrentPage >= endRowOfCurrentPage) {
@@ -205,6 +205,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
         try ( PreparedStatement statement = conn.prepareStatement(TableData2DStyle.QueryStyles)) {
             statement.setLong(1, d2did);
+            conn.setAutoCommit(true);
             try ( ResultSet results = statement.executeQuery()) {
                 while (results.next()) {
                     Data2DStyle style = tableData2DStyle.readData(results);
@@ -237,7 +238,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             }
         }
     }
-
+    
     public void countSize() {
         try {
             rowsNumber = dataSize + (tableRowsNumber() - (endRowOfCurrentPage - startRowOfCurrentPage));
@@ -264,7 +265,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
         return writer.getCount();
     }
-
+    
     public long deleteRows(boolean errorContinue) {
         if (!validData()) {
             return -1;
@@ -276,7 +277,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
         return writer.getCount();
     }
-
+    
     public long clearData() {
         if (!validData()) {
             return -1;
@@ -303,7 +304,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
         return true;
     }
-
+    
     public boolean saveAttributes() {
         try ( Connection conn = DerbyBase.getConnection()) {
             return saveAttributes(conn, (Data2D) this, columns);
@@ -315,7 +316,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             return false;
         }
     }
-
+    
     public static boolean saveAttributes(Data2D source, Data2D target) {
         try ( Connection conn = DerbyBase.getConnection()) {
             target.cloneAttributes(source);
@@ -331,7 +332,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             return false;
         }
     }
-
+    
     public static boolean saveAttributes(Data2D d, List<Data2DColumn> cols) {
         if (d == null) {
             return false;
@@ -346,7 +347,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             return false;
         }
     }
-
+    
     public static boolean saveAttributes(Connection conn, Data2D d, List<Data2DColumn> inColumns) {
         if (d == null) {
             return false;
@@ -417,5 +418,5 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             return false;
         }
     }
-
+    
 }

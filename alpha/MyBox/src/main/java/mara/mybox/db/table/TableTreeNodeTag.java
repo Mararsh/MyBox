@@ -114,6 +114,7 @@ public class TableTreeNodeTag extends BaseTable<TreeNodeTag> {
         }
         try ( PreparedStatement statement = conn.prepareStatement(QueryNodeTags)) {
             statement.setLong(1, nodeid);
+            conn.setAutoCommit(true);
             ResultSet results = statement.executeQuery();
             while (results.next()) {
                 TreeNodeTag tag = readData(results);
@@ -135,6 +136,7 @@ public class TableTreeNodeTag extends BaseTable<TreeNodeTag> {
         try ( PreparedStatement statement = conn.prepareStatement(QueryNodeTag)) {
             statement.setLong(1, nodeid);
             statement.setLong(2, tagid);
+            conn.setAutoCommit(true);
             ResultSet results = statement.executeQuery();
             if (results.next()) {
                 tag = readData(results);
@@ -166,6 +168,7 @@ public class TableTreeNodeTag extends BaseTable<TreeNodeTag> {
         try ( PreparedStatement statement = conn.prepareStatement(QueryNodeTags)) {
             statement.setLong(1, nodeid);
             ResultSet results = statement.executeQuery();
+            conn.setAutoCommit(true);
             while (results.next()) {
                 TreeNodeTag nodeTag = readData(results);
                 if (nodeTag != null) {

@@ -22,19 +22,19 @@ import mara.mybox.tools.DateTools;
  * @License Apache License Version 2.0
  */
 public class TableQueryCondition extends BaseTable<StringValue> {
-
+    
     public TableQueryCondition() {
         tableName = "Query_Condition";
         defineColumns();
     }
-
+    
     public TableQueryCondition(boolean defineColumns) {
         tableName = "Query_Condition";
         if (defineColumns) {
             defineColumns();
         }
     }
-
+    
     public final TableQueryCondition defineColumns() {
         addColumn(new ColumnDefinition("qcid", ColumnDefinition.ColumnType.Long, true, true).setAuto(true));
         addColumn(new ColumnDefinition("data_name", ColumnDefinition.ColumnType.String, true).setLength(StringMaxLength));
@@ -48,30 +48,30 @@ public class TableQueryCondition extends BaseTable<StringValue> {
         addColumn(new ColumnDefinition("time", ColumnDefinition.ColumnType.Datetime, true));
         return this;
     }
-
+    
     public static final String QCidQeury
             = "SELECT * FROM Query_Condition WHERE qcid=?";
-
+    
     public static final String OperationQeury
             = " SELECT * FROM Query_Condition WHERE data_name=? AND operation=? ORDER BY time DESC";
-
+    
     public static final String Insert
             = "INSERT INTO Query_Condition "
             + " ( data_name, operation, title, prefix, qwhere, qorder, qfetch, top, time )"
             + "VALUES(?,?,?,?,?,?,?,?,?)";
-
+    
     public static final String Update
             = "UPDATE Query_Condition SET "
             + " data_name=?, operation=?, title=?, prefix=?, qwhere=?, qorder=?, qfetch=?, top=?, time=?"
             + " WHERE qcid=?";
-
+    
     public static final String Delete
             = "DELETE FROM Query_Condition WHERE qcid=?";
-
+    
     public static List<QueryCondition> readList(String dataName, DataOperation dataOperation) {
         return readList(dataName, dataOperation, 0);
     }
-
+    
     public static List<QueryCondition> readList(String dataName,
             DataOperation dataOperation, int max) {
         try ( Connection conn = DerbyBase.getConnection()) {
@@ -82,7 +82,7 @@ public class TableQueryCondition extends BaseTable<StringValue> {
             return new ArrayList();
         }
     }
-
+    
     public static List<QueryCondition> read(Connection conn,
             String dataName, DataOperation dataOperation, int max) {
         List<QueryCondition> conditions = new ArrayList();
@@ -94,6 +94,7 @@ public class TableQueryCondition extends BaseTable<StringValue> {
             statement.setMaxRows(max);
             statement.setString(1, dataName);
             statement.setShort(2, (short) operation);
+            conn.setAutoCommit(true);
             try ( ResultSet results = statement.executeQuery()) {
                 while (results.next()) {
                     QueryCondition condition = read(results);
@@ -104,11 +105,11 @@ public class TableQueryCondition extends BaseTable<StringValue> {
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
-
+            
         }
         return conditions;
     }
-
+    
     public static QueryCondition read(ResultSet results) {
         if (results == null) {
             return null;
@@ -125,14 +126,14 @@ public class TableQueryCondition extends BaseTable<StringValue> {
             condition.setFetch(results.getString("qfetch"));
             condition.setTop(results.getShort("top"));
             condition.setTime(results.getTimestamp("time").getTime());
-
+            
             return condition;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
         }
     }
-
+    
     public static QueryCondition read(long qcid) {
         if (qcid <= 0) {
             return null;
@@ -145,7 +146,7 @@ public class TableQueryCondition extends BaseTable<StringValue> {
         }
         return null;
     }
-
+    
     public static QueryCondition read(Connection conn, long qcid) {
         if (conn == null || qcid < 0) {
             return null;
@@ -157,7 +158,7 @@ public class TableQueryCondition extends BaseTable<StringValue> {
         }
         return null;
     }
-
+    
     public static QueryCondition read(PreparedStatement statement, long qcid) {
         if (statement == null || qcid < 0) {
             return null;
@@ -165,6 +166,7 @@ public class TableQueryCondition extends BaseTable<StringValue> {
         try {
             statement.setMaxRows(1);
             statement.setLong(1, qcid);
+            statement.getConnection().setAutoCommit(true);
             try ( ResultSet results = statement.executeQuery()) {
                 if (results.next()) {
                     return read(results);
@@ -175,7 +177,7 @@ public class TableQueryCondition extends BaseTable<StringValue> {
         }
         return null;
     }
-
+    
     public static QueryCondition read(QueryCondition queryCondition) {
         if (queryCondition == null) {
             return null;
@@ -188,7 +190,7 @@ public class TableQueryCondition extends BaseTable<StringValue> {
         }
         return null;
     }
-
+    
     public static QueryCondition read(Connection conn, QueryCondition queryCondition) {
         if (queryCondition == null) {
             return null;
@@ -213,7 +215,7 @@ public class TableQueryCondition extends BaseTable<StringValue> {
         }
         return null;
     }
-
+    
     public static boolean write(QueryCondition condition, boolean checkEqual) {
         if (condition == null) {
             return false;
@@ -225,7 +227,7 @@ public class TableQueryCondition extends BaseTable<StringValue> {
             return false;
         }
     }
-
+    
     public static boolean write(Connection conn, QueryCondition condition, boolean checkEqual) {
         if (conn == null || condition == null || !condition.isValid()) {
             return false;
@@ -251,11 +253,11 @@ public class TableQueryCondition extends BaseTable<StringValue> {
             return false;
         }
     }
-
+    
     public static boolean write(List<QueryCondition> conditions, boolean checkEqual) {
         if (conditions == null || conditions.isEmpty()) {
             return false;
-
+            
         }
         try ( Connection conn = DerbyBase.getConnection();
                  PreparedStatement idQuery = conn.prepareStatement(QCidQeury);
@@ -285,7 +287,7 @@ public class TableQueryCondition extends BaseTable<StringValue> {
             return false;
         }
     }
-
+    
     public static boolean insert(QueryCondition condition) {
         if (condition == null) {
             return false;
@@ -297,7 +299,7 @@ public class TableQueryCondition extends BaseTable<StringValue> {
             return false;
         }
     }
-
+    
     public static boolean insert(Connection conn, QueryCondition condition) {
         if (conn == null || condition == null || !condition.isValid()) {
             return false;
@@ -309,7 +311,7 @@ public class TableQueryCondition extends BaseTable<StringValue> {
             return false;
         }
     }
-
+    
     public static boolean insert(PreparedStatement statement, QueryCondition condition) {
         if (statement == null || condition == null || !condition.isValid()) {
             return false;
@@ -330,7 +332,7 @@ public class TableQueryCondition extends BaseTable<StringValue> {
             return false;
         }
     }
-
+    
     public static boolean update(QueryCondition condition) {
         if (condition == null) {
             return false;
@@ -342,7 +344,7 @@ public class TableQueryCondition extends BaseTable<StringValue> {
             return false;
         }
     }
-
+    
     public static boolean update(Connection conn, QueryCondition condition) {
         if (conn == null || condition == null
                 || condition.getQcid() <= 0 || !condition.isValid()) {
@@ -355,7 +357,7 @@ public class TableQueryCondition extends BaseTable<StringValue> {
             return false;
         }
     }
-
+    
     public static boolean update(PreparedStatement statement, QueryCondition condition) {
         if (statement == null || condition == null
                 || condition.getQcid() <= 0 || !condition.isValid()) {
@@ -378,14 +380,14 @@ public class TableQueryCondition extends BaseTable<StringValue> {
             return false;
         }
     }
-
+    
     public static boolean delete(QueryCondition condition) {
         if (condition == null || condition.getQcid() <= 0) {
             return false;
         }
         return delete(condition.getQcid());
     }
-
+    
     public static boolean delete(long qcid) {
         if (qcid <= 0) {
             return false;
@@ -394,11 +396,11 @@ public class TableQueryCondition extends BaseTable<StringValue> {
             return delete(conn, qcid);
         } catch (Exception e) {
             MyBoxLog.error(e);
-
+            
             return false;
         }
     }
-
+    
     public static boolean delete(Connection conn, long qcid) {
         if (conn == null || qcid <= 0) {
             return false;
@@ -408,11 +410,11 @@ public class TableQueryCondition extends BaseTable<StringValue> {
             return statement.executeUpdate() > 0;
         } catch (Exception e) {
             MyBoxLog.error(e);
-
+            
             return false;
         }
     }
-
+    
     public static boolean delete(List<QueryCondition> conditions) {
         if (conditions == null || conditions.isEmpty()) {
             return false;
@@ -429,9 +431,9 @@ public class TableQueryCondition extends BaseTable<StringValue> {
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
-
+            
             return false;
         }
     }
-
+    
 }

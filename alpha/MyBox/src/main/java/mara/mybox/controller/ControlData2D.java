@@ -961,7 +961,7 @@ public class ControlData2D extends BaseController {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaPopulation_" + lang + ".csv",
                         "data", "ChinaPopulation_" + lang + ".csv", true);
                 List<ColumnType> columnTypes = Arrays.asList(
-                        ColumnType.Integer, ColumnType.Double, ColumnType.Double,
+                        ColumnType.String, ColumnType.Double, ColumnType.Double,
                         ColumnType.Double, ColumnType.Double, ColumnType.Double
                 );
                 loadCSVFile(file, columnTypes);
@@ -973,7 +973,7 @@ public class ControlData2D extends BaseController {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaCensus_" + lang + ".csv",
                         "data", "ChinaCensus_" + lang + ".csv", true);
                 List<ColumnType> columnTypes = Arrays.asList(
-                        ColumnType.Integer, ColumnType.Double, ColumnType.Double, ColumnType.Double,
+                        ColumnType.String, ColumnType.Double, ColumnType.Double, ColumnType.Double,
                         ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double,
                         ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double,
                         ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double,
@@ -990,7 +990,7 @@ public class ControlData2D extends BaseController {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaGDP_" + lang + ".csv",
                         "data", "ChinaGDP_" + lang + ".csv", true);
                 List<ColumnType> columnTypes = Arrays.asList(
-                        ColumnType.Integer, ColumnType.Double, ColumnType.Double, ColumnType.Double,
+                        ColumnType.String, ColumnType.Double, ColumnType.Double, ColumnType.Double,
                         ColumnType.Double, ColumnType.Double, ColumnType.Double
                 );
                 loadCSVFile(file, columnTypes);
@@ -1002,7 +1002,7 @@ public class ControlData2D extends BaseController {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaCPI_" + lang + ".csv",
                         "data", "ChinaCPI_" + lang + ".csv", true);
                 List<ColumnType> columnTypes = Arrays.asList(
-                        ColumnType.Integer, ColumnType.Double, ColumnType.Double, ColumnType.Double,
+                        ColumnType.String, ColumnType.Double, ColumnType.Double, ColumnType.Double,
                         ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double
                 );
                 loadCSVFile(file, columnTypes);
@@ -1027,7 +1027,7 @@ public class ControlData2D extends BaseController {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaGraduates_" + lang + ".csv",
                         "data", "ChinaGraduates_" + lang + ".csv", true);
                 List<ColumnType> columnTypes = Arrays.asList(
-                        ColumnType.Integer, ColumnType.Double, ColumnType.Double, ColumnType.Double,
+                        ColumnType.String, ColumnType.Double, ColumnType.Double, ColumnType.Double,
                         ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double
                 );
                 loadCSVFile(file, columnTypes);
@@ -1039,7 +1039,7 @@ public class ControlData2D extends BaseController {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaMuseums_" + lang + ".csv",
                         "data", "ChinaMuseums_" + lang + ".csv", true);
                 List<ColumnType> columnTypes = Arrays.asList(
-                        ColumnType.Integer, ColumnType.Long, ColumnType.Long, ColumnType.Long,
+                        ColumnType.String, ColumnType.Long, ColumnType.Long, ColumnType.Long,
                         ColumnType.Long, ColumnType.Long, ColumnType.Long, ColumnType.Long,
                         ColumnType.Long, ColumnType.Double
                 );
@@ -1052,7 +1052,7 @@ public class ControlData2D extends BaseController {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaHealthPersonnel_" + lang + ".csv",
                         "data", "ChinaHealthPersonnel_" + lang + ".csv", true);
                 List<ColumnType> columnTypes = Arrays.asList(
-                        ColumnType.Integer, ColumnType.Double, ColumnType.Double, ColumnType.Double,
+                        ColumnType.String, ColumnType.Double, ColumnType.Double, ColumnType.Double,
                         ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double,
                         ColumnType.Double, ColumnType.Double, ColumnType.Double
                 );
@@ -1065,7 +1065,7 @@ public class ControlData2D extends BaseController {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaMarriage_" + lang + ".csv",
                         "data", "ChinaMarriage_" + lang + ".csv", true);
                 List<ColumnType> columnTypes = Arrays.asList(
-                        ColumnType.Integer, ColumnType.Double, ColumnType.Double, ColumnType.Double,
+                        ColumnType.String, ColumnType.Double, ColumnType.Double, ColumnType.Double,
                         ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double
                 );
                 loadCSVFile(file, columnTypes);
@@ -1077,7 +1077,7 @@ public class ControlData2D extends BaseController {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaSportWorldChampions_" + lang + ".csv",
                         "data", "ChinaSportWorldChampions_" + lang + ".csv", true);
                 List<ColumnType> columnTypes = Arrays.asList(
-                        ColumnType.Integer, ColumnType.Integer, ColumnType.Integer, ColumnType.Integer,
+                        ColumnType.String, ColumnType.Integer, ColumnType.Integer, ColumnType.Integer,
                         ColumnType.Integer, ColumnType.Integer, ColumnType.Integer
                 );
                 loadCSVFile(file, columnTypes);
@@ -1089,7 +1089,7 @@ public class ControlData2D extends BaseController {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaCrimesFiledByPolice_" + lang + ".csv",
                         "data", "ChinaCrimesFiledByPolice_" + lang + ".csv", true);
                 List<ColumnType> columnTypes = Arrays.asList(
-                        ColumnType.Integer, ColumnType.Integer, ColumnType.Integer, ColumnType.Integer,
+                        ColumnType.String, ColumnType.Integer, ColumnType.Integer, ColumnType.Integer,
                         ColumnType.Integer, ColumnType.Integer, ColumnType.Integer, ColumnType.Integer,
                         ColumnType.Integer, ColumnType.Integer, ColumnType.Integer, ColumnType.Integer
                 );
@@ -1102,7 +1102,7 @@ public class ControlData2D extends BaseController {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaCrimesFiledByProcuratorate_" + lang + ".csv",
                         "data", "ChinaCrimesFiledByProcuratorate_" + lang + ".csv", true);
                 List<ColumnType> columnTypes = Arrays.asList(
-                        ColumnType.Integer, ColumnType.Integer, ColumnType.Integer, ColumnType.Integer,
+                        ColumnType.String, ColumnType.Integer, ColumnType.Integer, ColumnType.Integer,
                         ColumnType.Integer, ColumnType.Integer, ColumnType.Integer, ColumnType.Integer,
                         ColumnType.Integer, ColumnType.Integer, ColumnType.Integer, ColumnType.Integer,
                         ColumnType.Integer, ColumnType.Integer

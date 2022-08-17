@@ -149,6 +149,8 @@ public class Data2DColumn extends ColumnDefinition {
                 return data.isAuto();
             case "editable":
                 return data.isEditable();
+            case "need_format":
+                return data.isNeedFormat();
             case "on_delete":
                 return onDelete(data.getOnDelete());
             case "on_update":
@@ -216,6 +218,9 @@ public class Data2DColumn extends ColumnDefinition {
                     return true;
                 case "editable":
                     data.setEditable(value == null ? false : (boolean) value);
+                    return true;
+                case "need_format":
+                    data.setNeedFormat(value == null ? false : (boolean) value);
                     return true;
                 case "on_delete":
                     data.setOnDelete(onDelete((short) value));

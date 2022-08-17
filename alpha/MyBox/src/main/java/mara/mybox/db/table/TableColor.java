@@ -90,6 +90,7 @@ public class TableColor extends BaseTable<ColorData> {
         try ( PreparedStatement statement = conn.prepareStatement(QueryValue)) {
             statement.setInt(1, value);
             statement.setMaxRows(1);
+            conn.setAutoCommit(true);
             try ( ResultSet results = statement.executeQuery()) {
                 if (results != null && results.next()) {
                     data = readData(results);
@@ -147,7 +148,6 @@ public class TableColor extends BaseTable<ColorData> {
     public ColorData findAndCreate(Connection conn, int value, String name) {
         try {
             boolean ac = conn.getAutoCommit();
-            conn.setAutoCommit(true);
             ColorData data = read(conn, value);
             if (data == null) {
                 data = new ColorData(value).calculate().setColorName(name);

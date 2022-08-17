@@ -29,6 +29,21 @@ public class FloatTools {
         }
     }
 
+    public static String format(float data) {
+        try {
+            String format = "#,###";
+            String s = data + "";
+            int pos = s.indexOf(".");
+            if (pos >= 0) {
+                format += "." + "#".repeat(s.substring(pos + 1).length());
+            }
+            DecimalFormat df = new DecimalFormat(format);
+            return df.format(data);
+        } catch (Exception e) {
+            return data + "";
+        }
+    }
+
     public static String format(float data, int scale) {
         try {
             String format = "#,###";
@@ -45,12 +60,12 @@ public class FloatTools {
     public static int compare(String s1, String s2, boolean desc) {
         float f1, f2;
         try {
-            f1 = Float.valueOf(s1);
+            f1 = Float.valueOf(s1.replaceAll(",", ""));
         } catch (Exception e) {
             f1 = Float.NaN;
         }
         try {
-            f2 = Float.valueOf(s2);
+            f2 = Float.valueOf(s2.replaceAll(",", ""));
         } catch (Exception e) {
             f2 = Float.NaN;
         }

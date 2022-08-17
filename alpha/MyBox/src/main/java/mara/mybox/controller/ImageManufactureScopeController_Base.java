@@ -144,13 +144,4 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
         return true;
     }
 
-    @FXML
-    public void refreshAction() {
-        isSettingValues = false;
-        if (task != null) {
-            task.cancel();
-        }
-        indicateScope();
-    }
-
 }

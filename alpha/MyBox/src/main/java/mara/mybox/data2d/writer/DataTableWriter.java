@@ -104,8 +104,7 @@ public class DataTableWriter extends Data2DWriter {
             for (int i = 0; i < columnsNumber; ++i) {
                 Data2DColumn column = sourceTable.getColumns().get(i);
                 String name = column.getColumnName();
-                Object value = column.fromString(targetRow.get(i));
-                sourceTableRow.setColumnValue(name, value);
+                sourceTableRow.setColumnValue(name, column.fromString(targetRow.get(i)));
             }
             tableData2D.updateData(conn, sourceTableRow);
             if (writeCount++ % DerbyBase.BatchSize == 0) {

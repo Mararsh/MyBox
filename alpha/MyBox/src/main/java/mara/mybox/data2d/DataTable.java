@@ -225,10 +225,7 @@ public class DataTable extends Data2D {
             for (int i = 0; i < Math.min(columns.size(), values.size() - 1); i++) {
                 Data2DColumn column = columns.get(i);
                 String name = column.getColumnName();
-                Object value = column.fromString(values.get(i + 1));
-                if (value != null) {
-                    data2DRow.setColumnValue(name, value);
-                }
+                data2DRow.setColumnValue(name, column.fromString(values.get(i + 1)));
             }
             return data2DRow;
         } catch (Exception e) {

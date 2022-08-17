@@ -102,6 +102,7 @@ public class DataFileCSVReader extends Data2DReader {
         }
     }
 
+    // rowIndex is 1-base while rowsStart and rowsEnd are 0-based
     @Override
     public void readPage() {
         if (iterator == null) {

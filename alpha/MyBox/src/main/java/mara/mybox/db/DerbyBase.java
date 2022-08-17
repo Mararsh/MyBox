@@ -283,88 +283,118 @@ public class DerbyBase {
 
     // Upper case
     public static List<String> allTables(Connection conn) {
-        List<String> tables = new ArrayList<>();
-        String sql = "SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='T'";
-        try ( Statement statement = conn.createStatement();
-                 ResultSet resultSet = statement.executeQuery(sql)) {
-            while (resultSet.next()) {
-                String savedName = resultSet.getString("TABLENAME");
-                String referredName = referredName(savedName);
-                tables.add(referredName);
+        try {
+            List<String> tables = new ArrayList<>();
+            String sql = "SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='T'";
+            conn.setAutoCommit(true);
+            try ( Statement statement = conn.createStatement();
+                     ResultSet resultSet = statement.executeQuery(sql)) {
+                while (resultSet.next()) {
+                    String savedName = resultSet.getString("TABLENAME");
+                    String referredName = referredName(savedName);
+                    tables.add(referredName);
+                }
+            } catch (Exception e) {
+                MyBoxLog.error(e, sql);
             }
+            return tables;
         } catch (Exception e) {
-            MyBoxLog.error(e, sql);
+            MyBoxLog.error(e);
+            return null;
         }
-        return tables;
     }
 
     public static List<String> columns(Connection conn, String tablename) {
-        List<String> columns = new ArrayList<>();
-        String sql = "SELECT columnname, columndatatype FROM SYS.SYSTABLES t, SYS.SYSCOLUMNS c "
-                + " where t.TABLEID=c.REFERENCEID AND tablename='" + tablename.toUpperCase() + "'"
-                + " order by columnnumber";
-        try ( Statement statement = conn.createStatement();
-                 ResultSet resultSet = statement.executeQuery(sql)) {
-            while (resultSet.next()) {
-                String savedName = resultSet.getString("columnname");
-                String referredName = referredName(savedName);
-                columns.add(referredName + ", " + resultSet.getString("columndatatype"));
+        try {
+            List<String> columns = new ArrayList<>();
+            String sql = "SELECT columnname, columndatatype FROM SYS.SYSTABLES t, SYS.SYSCOLUMNS c "
+                    + " where t.TABLEID=c.REFERENCEID AND tablename='" + tablename.toUpperCase() + "'"
+                    + " order by columnnumber";
+            conn.setAutoCommit(true);
+            try ( Statement statement = conn.createStatement();
+                     ResultSet resultSet = statement.executeQuery(sql)) {
+                while (resultSet.next()) {
+                    String savedName = resultSet.getString("columnname");
+                    String referredName = referredName(savedName);
+                    columns.add(referredName + ", " + resultSet.getString("columndatatype"));
+                }
+            } catch (Exception e) {
+                MyBoxLog.error(e, sql);
             }
+            return columns;
         } catch (Exception e) {
-            MyBoxLog.error(e, sql);
+            MyBoxLog.error(e);
+            return null;
         }
-        return columns;
     }
 
     // lower case
     public static List<String> columnNames(Connection conn, String tablename) {
-        List<String> columns = new ArrayList<>();
-        String sql = "SELECT columnname  FROM SYS.SYSTABLES t, SYS.SYSCOLUMNS c "
-                + " where t.TABLEID=c.REFERENCEID AND tablename='" + tablename.toUpperCase() + "'"
-                + " order by columnnumber";
-        try ( Statement statement = conn.createStatement();
-                 ResultSet resultSet = statement.executeQuery(sql)) {
-            while (resultSet.next()) {
-                String savedName = resultSet.getString("columnname");
-                String referredName = referredName(savedName);
-                columns.add(referredName);
+        try {
+            List<String> columns = new ArrayList<>();
+            String sql = "SELECT columnname  FROM SYS.SYSTABLES t, SYS.SYSCOLUMNS c "
+                    + " where t.TABLEID=c.REFERENCEID AND tablename='" + tablename.toUpperCase() + "'"
+                    + " order by columnnumber";
+            conn.setAutoCommit(true);
+            try ( Statement statement = conn.createStatement();
+                     ResultSet resultSet = statement.executeQuery(sql)) {
+                while (resultSet.next()) {
+                    String savedName = resultSet.getString("columnname");
+                    String referredName = referredName(savedName);
+                    columns.add(referredName);
+                }
+            } catch (Exception e) {
+                MyBoxLog.error(e, sql);
             }
+            return columns;
         } catch (Exception e) {
-            MyBoxLog.error(e, sql);
+            MyBoxLog.error(e);
+            return null;
         }
-        return columns;
     }
 
     public static List<String> indexes(Connection conn) {
-        List<String> indexes = new ArrayList<>();
-        String sql = "SELECT CONGLOMERATENAME FROM SYS.SYSCONGLOMERATES";
-        try ( Statement statement = conn.createStatement();
-                 ResultSet resultSet = statement.executeQuery(sql)) {
-            while (resultSet.next()) {
-                String savedName = resultSet.getString("CONGLOMERATENAME");
-                String referredName = referredName(savedName);
-                indexes.add(referredName);
+        try {
+            List<String> indexes = new ArrayList<>();
+            String sql = "SELECT CONGLOMERATENAME FROM SYS.SYSCONGLOMERATES";
+            conn.setAutoCommit(true);
+            try ( Statement statement = conn.createStatement();
+                     ResultSet resultSet = statement.executeQuery(sql)) {
+                while (resultSet.next()) {
+                    String savedName = resultSet.getString("CONGLOMERATENAME");
+                    String referredName = referredName(savedName);
+                    indexes.add(referredName);
+                }
+            } catch (Exception e) {
+                MyBoxLog.console(e, sql);
             }
+            return indexes;
         } catch (Exception e) {
-            MyBoxLog.console(e, sql);
+            MyBoxLog.error(e);
+            return null;
         }
-        return indexes;
     }
 
     public static List<String> views(Connection conn) {
-        List<String> tables = new ArrayList<>();
-        String sql = "SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='V'";
-        try ( Statement statement = conn.createStatement();
-                 ResultSet resultSet = statement.executeQuery(sql)) {
-            while (resultSet.next()) {
-                String savedName = resultSet.getString("TABLENAME");
-                String referredName = referredName(savedName);
-                tables.add(referredName);
+        try {
+            List<String> tables = new ArrayList<>();
+            String sql = "SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='V'";
+            conn.setAutoCommit(true);
+            try ( Statement statement = conn.createStatement();
+                     ResultSet resultSet = statement.executeQuery(sql)) {
+                while (resultSet.next()) {
+                    String savedName = resultSet.getString("TABLENAME");
+                    String referredName = referredName(savedName);
+                    tables.add(referredName);
+                }
+            } catch (Exception e) {
+                MyBoxLog.console(e, sql);
             }
+            return tables;
         } catch (Exception e) {
-            MyBoxLog.console(e, sql);
+            MyBoxLog.error(e);
+            return null;
         }
-        return tables;
     }
 
     public static boolean initTables(MyBoxLoadingController loadingController) {
@@ -722,12 +752,20 @@ public class DerbyBase {
 
     public static int size(Connection conn, String sql) {
         int size = 0;
-        try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
-            if (results != null && results.next()) {
-                size = results.getInt(1);
+        try {
+            boolean ac = conn.getAutoCommit();
+            conn.setAutoCommit(true);
+            try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
+                if (results != null && results.next()) {
+                    size = results.getInt(1);
+                }
+            } catch (Exception e) {
+                MyBoxLog.error(e, sql);
             }
+            conn.setAutoCommit(ac);
         } catch (Exception e) {
             MyBoxLog.error(e, sql);
+            return 0;
         }
         return size;
 
@@ -740,28 +778,24 @@ public class DerbyBase {
             return isEmpty(conn, sql);
         } catch (Exception e) {
             MyBoxLog.error(e, tableName);
-            return true;
-        }
-    }
-
-    public static boolean isEmpty(String sql) {
-        try ( Connection conn = DerbyBase.getConnection()) {
-            conn.setReadOnly(true);
-            return isEmpty(conn, sql);
-        } catch (Exception e) {
-            MyBoxLog.error(e, sql);
-            return true;
+            return false;
         }
     }
 
     public static boolean isEmpty(Connection conn, String sql) {
-        boolean isEmpty = true;
-        try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
-            isEmpty = results == null || !results.next();
+        try {
+            boolean isEmpty = true;
+            conn.setAutoCommit(true);
+            try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
+                isEmpty = results == null || !results.next();
+            } catch (Exception e) {
+                MyBoxLog.error(e, sql);
+            }
+            return isEmpty;
         } catch (Exception e) {
             MyBoxLog.error(e, sql);
+            return false;
         }
-        return isEmpty;
     }
 
     public static ResultSet query(String sql) {
@@ -776,6 +810,7 @@ public class DerbyBase {
 
     public static ResultSet query(Connection conn, String sql) {
         try ( Statement statement = conn.createStatement()) {
+            conn.setAutoCommit(true);
             return statement.executeQuery(sql);
         } catch (Exception e) {
             MyBoxLog.error(e, sql);

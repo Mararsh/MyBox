@@ -27,9 +27,9 @@ import static mara.mybox.value.Languages.message;
  *
  */
 public class Data2DColumnCreateController extends BaseChildController {
-
+    
     protected ControlData2DColumns columnsController;
-
+    
     @FXML
     protected TextField nameInput, defaultInput, lengthInput, widthInput;
     @FXML
@@ -37,24 +37,24 @@ public class Data2DColumnCreateController extends BaseChildController {
     @FXML
     protected RadioButton stringRadio, doubleRadio, floatRadio, longRadio, intRadio, shortRadio, booleanRadio, dateRadio;
     @FXML
-    protected CheckBox notNullCheck, editableCheck;
+    protected CheckBox notNullCheck, editableCheck, formatCheck;
     @FXML
     protected ColorSet colorController;
     @FXML
     protected Label buttomLabel;
-
+    
     public Data2DColumnCreateController() {
         baseTitle = message("NewColumn");
         TipsLabelKey = message("SqlIdentifierComments");
     }
-
+    
     protected void setParameters(ControlData2DColumns columnsController) {
         try {
             this.columnsController = columnsController;
-
+            
             colorController.init(this, baseName + "Color");
             colorController.setColor(FxColorTools.randomColor());
-
+            
             typeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
@@ -77,15 +77,15 @@ public class Data2DColumnCreateController extends BaseChildController {
                     }
                 }
             });
-
+            
             buttomLabel.setVisible(columnsController.data2D.isTable() && columnsController.data2D.getSheet() != null);
             rightTipsView.setVisible(columnsController.data2D.isTable());
-
+            
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
         }
     }
-
+    
     @FXML
     @Override
     public void okAction() {
@@ -122,6 +122,7 @@ public class Data2DColumnCreateController extends BaseChildController {
             column.setColumnName(name).setLength(length).setWidth(width)
                     .setNotNull(notNullCheck.isSelected())
                     .setEditable(editableCheck.isSelected())
+                    .setNeedFormat(formatCheck.isSelected())
                     .setColor((Color) colorController.rect.getFill());
             if (stringRadio.isSelected()) {
                 column.setType(ColumnType.String);
@@ -144,7 +145,7 @@ public class Data2DColumnCreateController extends BaseChildController {
             if (dv != null) {
                 column.setDefaultValue(dv);
             }
-
+            
             columnsController.addRow(column);
             popSuccessful();
         } catch (Exception e) {
@@ -167,5 +168,5 @@ public class Data2DColumnCreateController extends BaseChildController {
             return null;
         }
     }
-
+    
 }

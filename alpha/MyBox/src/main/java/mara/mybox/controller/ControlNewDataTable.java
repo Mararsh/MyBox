@@ -220,17 +220,14 @@ public class ControlNewDataTable extends BaseController {
             Data2DRow data2DRow = tableData2D.newRow();
             for (int col : columnIndices) {
                 Data2DColumn sourceColumn = data2D.getColumns().get(col);
-                Object value = sourceColumn.fromString(pageRow.get(col + 1));
-                if (value != null) {
-                    String name = sourceColumn.getColumnName();
-                    if (dataTable.getColumnsMap() != null) {
-                        String tableColumnName = dataTable.getColumnsMap().get(name);
-                        if (tableColumnName != null) {
-                            name = tableColumnName;
-                        }
+                String name = sourceColumn.getColumnName();
+                if (dataTable.getColumnsMap() != null) {
+                    String tableColumnName = dataTable.getColumnsMap().get(name);
+                    if (tableColumnName != null) {
+                        name = tableColumnName;
                     }
-                    data2DRow.setColumnValue(name, value);
                 }
+                data2DRow.setColumnValue(name, sourceColumn.fromString(pageRow.get(col + 1)));
             }
             tableData2D.insertData(conn, data2DRow);
             if (++count % DerbyBase.BatchSize == 0) {

@@ -74,6 +74,7 @@ public class TableStringValue extends BaseTable<StringValue> {
         try ( PreparedStatement statement = conn.prepareStatement(Query)) {
             statement.setMaxRows(1);
             statement.setString(1, stringValue(name));
+            conn.setAutoCommit(true);
             try ( ResultSet results = statement.executeQuery()) {
                 if (results.next()) {
                     return results.getString("string_value");
@@ -105,6 +106,7 @@ public class TableStringValue extends BaseTable<StringValue> {
             try ( PreparedStatement statement = conn.prepareStatement(Query)) {
                 statement.setMaxRows(1);
                 statement.setString(1, name);
+                conn.setAutoCommit(true);
                 try ( ResultSet results = statement.executeQuery()) {
                     if (results.next()) {
                         existed = true;

@@ -302,8 +302,8 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             }
             count = invalid.size();
             deleteData(conn, invalid);
-            conn.setAutoCommit(true);
 
+            conn.setAutoCommit(true);
             invalid.clear();
             sql = "SELECT * FROM Data2D_Definition WHERE data_type ="
                     + Data2D.type(Data2DDefinition.Type.DatabaseTable);
@@ -320,6 +320,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             deleteData(conn, invalid);
 
             if (clearTmpTables) {
+                conn.setAutoCommit(true);
                 invalid.clear();
                 sql = "SELECT * FROM Data2D_Definition WHERE data_type="
                         + Data2D.type(Data2DDefinition.Type.DatabaseTable)
@@ -338,8 +339,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
                     deleteUserTable(conn, d.getSheet());
                 }
             }
-
-            conn.setAutoCommit(true);
+            conn.commit();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

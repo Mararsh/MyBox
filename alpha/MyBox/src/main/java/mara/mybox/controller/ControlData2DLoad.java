@@ -39,6 +39,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DoubleMatrixTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -646,6 +647,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 return;
             }
             List<Data2DColumn> columns = data2D.getColumns();
+            int scale = data2D.getScale();
             for (int i = 0; i < columns.size(); i++) {
                 Data2DColumn dataColumn = columns.get(i);
                 String name = dataColumn.getColumnName();
@@ -660,11 +662,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                     public ObservableValue<String> call(TableColumn.CellDataFeatures<List<String>, String> param) {
                         try {
                             List<String> row = (List<String>) param.getValue();
-                            String value = row.get(col);
-                            if (value == null) {
-                                return null;
-                            }
-                            return new SimpleStringProperty(value);
+                            return new SimpleStringProperty(row.get(col));
                         } catch (Exception e) {
                             return null;
                         }
@@ -689,7 +687,9 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                         if (empty || item == null) {
                                             setText(null);
                                             setGraphic(null);
+                                            return;
                                         }
+                                        setText(dataColumn.display(item));
                                     }
 
                                     @Override
@@ -714,7 +714,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                             if ((value == null && oldValue != null)
                                                     || (value != null && !value.equals(oldValue))) {
                                                 super.commitEdit(value);
-                                                row.set(col, value);
+                                                row.set(col, dataColumn.display(value));
                                                 tableData.set(rowIndex, row);
                                             }
                                         } catch (Exception e) {
@@ -750,7 +750,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                             setGraphic(null);
                                             return;
                                         }
-                                        setText(item);
+                                        setText(dataColumn.display(item));
                                     }
                                 };
 
@@ -990,6 +990,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 }
             }
         }
+        NodeStyleTools.refreshStyle(paginationPane);
     }
 
     /*

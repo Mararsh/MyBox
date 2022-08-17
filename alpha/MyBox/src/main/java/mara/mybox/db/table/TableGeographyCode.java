@@ -640,6 +640,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
         try {
             GeographyCode code;
             statement.setMaxRows(1);
+            conn.setAutoCommit(true);
             try ( ResultSet results = statement.executeQuery()) {
                 if (results.next()) {
                     code = readResults(results);
@@ -697,8 +698,11 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
                 return;
             }
             try ( PreparedStatement query = conn.prepareStatement(GCidQeury)) {
+                conn.setAutoCommit(true);
+
                 if (code.getContinent() > 0) {
                     query.setLong(1, code.getContinent());
+
                     try ( ResultSet cresults = query.executeQuery()) {
                         if (cresults.next()) {
                             code.setContinentCode(readResults(cresults));
@@ -789,6 +793,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
         }
         try {
             statement.setMaxRows(1);
+            conn.setAutoCommit(true);
             try ( ResultSet results = statement.executeQuery()) {
                 if (results.next()) {
                     return results.getLong("gcid");
@@ -925,6 +930,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
     public static List<GeographyCode> readCodes(Connection conn, PreparedStatement statement, boolean decodeAncestors) {
         List<GeographyCode> codes = new ArrayList<>();
         try {
+            conn.setAutoCommit(true);
             try ( ResultSet results = statement.executeQuery()) {
                 while (results.next()) {
                     GeographyCode code = readResults(results);
@@ -947,6 +953,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
         }
         try ( PreparedStatement query = conn.prepareStatement(ChildrenQuery)) {
             query.setLong(1, gcid);
+            conn.setAutoCommit(true);
             try ( ResultSet results = query.executeQuery()) {
                 while (results.next()) {
                     GeographyCode code = readResults(results);
@@ -1558,6 +1565,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
         }
         try ( PreparedStatement query = conn.prepareStatement(FirstChildQuery)) {
             query.setMaxRows(1);
+            conn.setAutoCommit(true);
             for (GeographyCode code : nodes) {
                 long gcid = code.getGcid();
                 query.setLong(1, gcid);

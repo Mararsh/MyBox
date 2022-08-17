@@ -250,6 +250,7 @@ public class TableEpidemicReport extends BaseTable<EpidemicReport> {
             statement.setString(1, dataset);
             statement.setString(2, DateTools.datetimeToString(time));
             statement.setLong(3, location);
+            conn.setAutoCommit(true);
             try ( ResultSet results = statement.executeQuery()) {
                 if (results.next()) {
                     report = statisticViewQuery(conn, results, decodeAncestors);
@@ -384,6 +385,7 @@ public class TableEpidemicReport extends BaseTable<EpidemicReport> {
                     statement.setString(1, report.getDataSet());
                     statement.setString(2, DateTools.datetimeToString(report.getTime()));
                     statement.setLong(3, report.getLocationid());
+                    conn.setAutoCommit(true);
                     try ( ResultSet results = statement.executeQuery()) {
                         if (results.next()) {
                             exist = true;
@@ -395,6 +397,7 @@ public class TableEpidemicReport extends BaseTable<EpidemicReport> {
                 try ( PreparedStatement statement = conn.prepareStatement(EPidQuery)) {
                     statement.setMaxRows(1);
                     statement.setLong(1, report.getEpid());
+                    conn.setAutoCommit(true);
                     try ( ResultSet results = statement.executeQuery()) {
                         if (results.next()) {
                             exist = true;
@@ -447,6 +450,7 @@ public class TableEpidemicReport extends BaseTable<EpidemicReport> {
                     equalQuery.setString(1, report.getDataSet());
                     equalQuery.setString(2, DateTools.datetimeToString(report.getTime()));
                     equalQuery.setLong(3, report.getLocationid());
+                    conn.setAutoCommit(true);
                     try ( ResultSet results = equalQuery.executeQuery()) {
                         if (results.next()) {
                             exist = true;
@@ -455,6 +459,7 @@ public class TableEpidemicReport extends BaseTable<EpidemicReport> {
                     }
                 } else {
                     epidQuery.setLong(1, report.getEpid());
+                    conn.setAutoCommit(true);
                     try ( ResultSet results = epidQuery.executeQuery()) {
                         if (results.next()) {
                             exist = true;
@@ -681,6 +686,7 @@ public class TableEpidemicReport extends BaseTable<EpidemicReport> {
             return datasets;
         }
         try ( PreparedStatement statement = conn.prepareStatement(Datasets)) {
+            conn.setAutoCommit(true);
             try ( ResultSet results = statement.executeQuery()) {
                 while (results.next()) {
                     String c = results.getString("data_set");
@@ -711,6 +717,7 @@ public class TableEpidemicReport extends BaseTable<EpidemicReport> {
             return times;
         }
         try ( PreparedStatement statement = conn.prepareStatement(Times)) {
+            conn.setAutoCommit(true);
             try ( ResultSet results = statement.executeQuery()) {
                 while (results.next()) {
                     Date d = results.getTimestamp("time");
@@ -735,6 +742,7 @@ public class TableEpidemicReport extends BaseTable<EpidemicReport> {
         }
         try ( PreparedStatement statement = conn.prepareStatement(DatasetTimes)) {
             statement.setString(1, dataset);
+            conn.setAutoCommit(true);
             try ( ResultSet results = statement.executeQuery()) {
                 while (results.next()) {
                     Date d = results.getTimestamp("time");
@@ -753,6 +761,7 @@ public class TableEpidemicReport extends BaseTable<EpidemicReport> {
         int size = 0;
         try ( PreparedStatement statement = conn.prepareStatement(DatasetCount)) {
             statement.setString(1, dataset);
+            conn.setAutoCommit(true);
             try ( ResultSet results = statement.executeQuery()) {
                 if (results.next()) {
                     size = results.getInt(1);
