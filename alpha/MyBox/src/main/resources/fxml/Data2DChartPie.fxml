@@ -178,6 +178,11 @@ License:    Apache License Version 2.0
                                                                   <ComboBox fx:id="valueColumnSelector" prefWidth="200.0" />
                                                               </children>
                                                           </FlowPane>
+                                                <Label fx:id="noticeLabel" minHeight="-Infinity" text="%AllRowsLoadComments" wrapText="true">
+                                                   <VBox.margin>
+                                                      <Insets top="10.0" />
+                                                   </VBox.margin>
+                                                </Label>
                                                       </children>
                                              <padding>
                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

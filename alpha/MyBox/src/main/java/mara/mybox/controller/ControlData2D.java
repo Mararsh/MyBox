@@ -672,6 +672,70 @@ public class ControlData2D extends BaseController {
             boolean empty = invalidData || tableController.tableData.isEmpty();
             MenuItem menu;
 
+            Menu dataMenu = new Menu(message("Data"), StyleTools.getIconImage("iconData.png"));
+            popMenu.getItems().add(dataMenu);
+
+            menu = new MenuItem(message("Save"), StyleTools.getIconImage("iconSave.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                save();
+            });
+            menu.setDisable(invalidData || !tableController.dataSizeLoaded);
+            dataMenu.getItems().add(menu);
+
+            dataMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("Recover"), StyleTools.getIconImage("iconRecover.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                recover();
+            });
+            menu.setDisable(invalidData || data2D.isTmpData());
+            dataMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Refresh"), StyleTools.getIconImage("iconRefresh.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                refreshAction();
+            });
+            menu.setDisable(invalidData || data2D.isTmpData());
+            dataMenu.getItems().add(menu);
+
+            dataMenu.getItems().add(new SeparatorMenuItem());
+
+            if (data2D.isDataFile()) {
+                menu = new MenuItem(message("Open"), StyleTools.getIconImage("iconOpen.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    selectSourceFile();
+                });
+                dataMenu.getItems().add(menu);
+            }
+
+            menu = new MenuItem(message("CreateData"), StyleTools.getIconImage("iconAdd.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                create();
+            });
+            dataMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("LoadContentInSystemClipboard"), StyleTools.getIconImage("iconImageSystem.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                loadContentInSystemClipboard();
+            });
+            dataMenu.getItems().add(menu);
+
+            dataMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("Export"), StyleTools.getIconImage("iconExport.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DExportController.open(tableController);
+            });
+            menu.setDisable(empty);
+            dataMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ConvertToDatabaseTable"), StyleTools.getIconImage("iconDatabase.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DConvertToDataBaseController.open(tableController);
+            });
+            menu.setDisable(invalidData);
+            dataMenu.getItems().add(menu);
+
             popMenu.getItems().add(new SeparatorMenuItem());
 
             Menu modifyMenu = new Menu(message("Modify"), StyleTools.getIconImage("iconEdit.png"));
@@ -711,31 +775,6 @@ public class ControlData2D extends BaseController {
             });
             menu.setDisable(invalidData);
             modifyMenu.getItems().add(menu);
-
-            modifyMenu.getItems().add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("Save"), StyleTools.getIconImage("iconSave.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                save();
-            });
-            menu.setDisable(invalidData || !tableController.dataSizeLoaded);
-            modifyMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("Recover"), StyleTools.getIconImage("iconRecover.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                recover();
-            });
-            menu.setDisable(invalidData || data2D.isTmpData());
-            modifyMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("Refresh"), StyleTools.getIconImage("iconRefresh.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                refreshAction();
-            });
-            menu.setDisable(invalidData || data2D.isTmpData());
-            modifyMenu.getItems().add(menu);
-
-            popMenu.getItems().add(new SeparatorMenuItem());
 
             Menu trimMenu = new Menu(message("Trim"), StyleTools.getIconImage("iconClean.png"));
             popMenu.getItems().add(trimMenu);
@@ -876,46 +915,11 @@ public class ControlData2D extends BaseController {
 
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            menu = new MenuItem(message("Export"), StyleTools.getIconImage("iconExport.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DExportController.open(tableController);
-            });
-            menu.setDisable(empty);
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ConvertToDatabaseTable"), StyleTools.getIconImage("iconDatabase.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DConvertToDataBaseController.open(tableController);
-            });
-            menu.setDisable(invalidData);
-            popMenu.getItems().add(menu);
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-
-            if (data2D.isDataFile()) {
-                menu = new MenuItem(message("Open"), StyleTools.getIconImage("iconOpen.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    selectSourceFile();
-                });
-                popMenu.getItems().add(menu);
-            }
-
-            menu = new MenuItem(message("CreateData"), StyleTools.getIconImage("iconAdd.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                create();
-            });
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("LoadContentInSystemClipboard"), StyleTools.getIconImage("iconImageSystem.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                loadContentInSystemClipboard();
-            });
-            popMenu.getItems().add(menu);
-
             if (data2D.isDataFile() || data2D.isUserTable() || data2D.isClipboard()) {
                 Menu examplesMenu = new Menu(message("Examples"), StyleTools.getIconImage("iconExamples.png"));
                 examplesMenu.getItems().addAll(examplesMenu());
                 popMenu.getItems().add(examplesMenu);
+                popMenu.getItems().add(new SeparatorMenuItem());
             }
 
             CheckMenuItem passPop = new CheckMenuItem(message("PopWhenMouseHovering"));

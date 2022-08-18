@@ -9,10 +9,12 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import mara.mybox.calculation.Normalization;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -39,7 +41,9 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DHandleCo
     @FXML
     protected ComboBox<String> alphaSelector;
     @FXML
-    protected ControlWebView resultsController;
+    protected ControlWebView modelController;
+    @FXML
+    protected ControlData2DResults regressionDataController;
 
     public Data2DMultipleLinearRegressionController() {
         baseTitle = message("MultipleLinearRegression");
@@ -91,7 +95,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DHandleCo
                 }
             });
 
-            resultsController.setParent(this);
+            modelController.setParent(this);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -134,45 +138,16 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DHandleCo
         if (task != null) {
             task.cancel();
         }
-        resultsController.loadContents("");
+        modelController.loadContents("");
         task = new SingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
                 try {
                     data2D.startTask(task, filterController.filter);
-                    List<List<String>> data = data2D.allRows(checkedColsIndices, false);
+                    List<List<String>> data = data2D.allRows(dataColsIndices, false);
                     data2D.stopFilter();
-
-                    olsRegression = new OLSMultipleLinearRegression();
-                    olsRegression.setNoIntercept(!interceptCheck.isSelected());
-                    int n = data.size();
-                    int k = checkedColsIndices.size();
-//                    double[] y = new double[n];
-//                    double[][] x = new double[n][k];
-//                    for (int i = 0; i < n; i++) {
-//                        List<String> row = data.get(i);
-//                        y[i] = DoubleTools.toDouble(row.get(0), invalidAs);
-//                        for (int j = 1; j < row.size(); j++) {
-//                            x[i][j - 1] = DoubleTools.toDouble(row.get(j), invalidAs);
-//                        }
-//                    }
-                    double[] y = new double[]{11.0, 12.0, 13.0, 14.0, 15.0, 16.0};
-                    double[][] x = new double[6][];
-                    x[0] = new double[]{0, 0, 0, 0, 0};
-                    x[1] = new double[]{2.0, 0, 0, 0, 0};
-                    x[2] = new double[]{0, 3.0, 0, 0, 0};
-                    x[3] = new double[]{0, 0, 4.0, 0, 0};
-                    x[4] = new double[]{0, 0, 0, 5.0, 0};
-                    x[5] = new double[]{0, 0, 0, 0, 6.0};
-                    olsRegression.newSampleData(y, x);
-                    beta = olsRegression.estimateRegressionParameters();
-                    residuals = olsRegression.estimateResiduals();
-                    parametersVariance = olsRegression.estimateRegressionParametersVariance();
-                    regressandVariance = olsRegression.estimateRegressandVariance();
-                    rSquared = olsRegression.calculateRSquared();
-                    sigma = olsRegression.estimateRegressionStandardError();
-                    return true;
+                    return regress(data);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -181,7 +156,8 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DHandleCo
 
             @Override
             protected void whenSucceeded() {
-                printResults();
+                writeModel();
+                writeRegressionData();
             }
 
             @Override
@@ -195,11 +171,63 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DHandleCo
         start(task);
     }
 
-    protected void printResults() {
+    protected boolean regress(List<List<String>> data) {
+        try {
+            olsRegression = new OLSMultipleLinearRegression();
+            olsRegression.setNoIntercept(!interceptCheck.isSelected());
+            int n = data.size();
+            int k = checkedColsIndices.size() - 1;
+            double[] y = new double[n];
+            double[][] x = new double[n][k];
+            Normalization normalization = Normalization.create()
+                    .setA(Normalization.Algorithm.ZScore)
+                    .setInvalidAs(invalidAs);
+            for (int i = 0; i < n; i++) {
+                List<String> row = data.get(i);
+                y[i] = DoubleTools.toDouble(row.get(0), invalidAs);
+                for (int j = 0; j < k; j++) {
+                    x[i][j] = DoubleTools.toDouble(row.get(j + 1), invalidAs);
+                }
+            }
+            y = normalization.setSourceVector(y).calculate();
+            x = normalization.setSourceMatrix(x).columnsNormalize();
+            olsRegression.newSampleData(y, x);
+            beta = olsRegression.estimateRegressionParameters();
+            residuals = olsRegression.estimateResiduals();
+            parametersVariance = olsRegression.estimateRegressionParametersVariance();
+            regressandVariance = olsRegression.estimateRegressandVariance();
+            rSquared = olsRegression.calculateRSquared();
+            sigma = olsRegression.estimateRegressionStandardError();
+            return true;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                error = e.toString();
+            }
+            return false;
+        }
+    }
+
+    protected void writeModel() {
         try {
             StringBuilder s = new StringBuilder();
             s.append("<BODY>\n");
 
+//            s.append(" <script>\n"
+//                    + "    function calculate() {\n"
+//                    + "      var x = document.getElementById('inputX').value;  　\n"
+//                    + "      var y =  " + interceptScaled + "  + " + slopeScaled + " * x ;\n"
+//                    + "      document.getElementById('outputY').value = y;\n"
+//                    //                    + "      var v1 =  y - " + slopeError + ";\n"
+//                    //                    + "      var v2 =  y + " + slopeError + ";\n"
+//                    //                    + "      document.getElementById('ConfidenceIntervals').value = v1 + ' - ' + v2;\n"
+//                    + "    }\n"
+//                    + "  </script>\n\n");
+//            String m = message("LinearModel") + ": " + selectedValue + " = "
+//                    + interceptScaled + (slope > 0 ? " + " : " - ")
+//                    + slopeScaled + " * " + selectedCategory;
+//            s.append("\n<DIV>").append(m).append("</DIV>\n");
             s.append("<H3 align=center>").append(message("LastStatus")).append("</H3>\n");
             List<String> names = new ArrayList<>();
             names.add(message("Name"));
@@ -243,9 +271,17 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DHandleCo
 
             s.append(table.div());
             s.append("</BODY>\n");
-            resultsController.loadContents(HtmlWriteTools.html(s.toString()));
+            modelController.loadContents(HtmlWriteTools.html(s.toString()));
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void writeRegressionData() {
+        try {
+//            regressionDataController.loadTmpData(null, simpleRegression.getColumns(), regressionData);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
         }
     }
 

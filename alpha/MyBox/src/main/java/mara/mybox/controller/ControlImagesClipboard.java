@@ -352,7 +352,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
                     refreshAction();
                 }
             };
-            parentController.start(task);
+            start(task);
         }
     }
 

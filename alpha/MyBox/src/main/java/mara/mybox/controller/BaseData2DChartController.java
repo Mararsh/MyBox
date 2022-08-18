@@ -9,6 +9,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ColumnDefinition;
@@ -31,6 +32,8 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
     @FXML
     protected ComboBox<String> categoryColumnSelector, valueColumnSelector;
+    @FXML
+    protected Label noticeLabel;
 
     @Override
     public void initControls() {
@@ -124,6 +127,23 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
     public void afterRefreshControls() {
         okAction();
+    }
+
+    @Override
+    public boolean checkOptions() {
+        if (isSettingValues) {
+            return true;
+        }
+        boolean ok = super.checkOptions();
+        noticeMemory();
+        return ok;
+    }
+
+    public void noticeMemory() {
+        if (noticeLabel == null) {
+            return;
+        }
+        noticeLabel.setVisible(isAllPages());
     }
 
     @Override

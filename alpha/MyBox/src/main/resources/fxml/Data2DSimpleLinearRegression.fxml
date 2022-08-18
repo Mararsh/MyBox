@@ -187,6 +187,11 @@ License:    Apache License Version 2.0
                                                                 </FlowPane>
                                                                 <CheckBox fx:id="interceptCheck" mnemonicParsing="false" text="%Intercept" />
                                                                 <CheckBox fx:id="displayAllCheck" mnemonicParsing="false" text="%DisplayAllDataInChart" />
+                                                <Label fx:id="noticeLabel" minHeight="-Infinity" text="%AllRowsLoadComments" wrapText="true">
+                                                   <VBox.margin>
+                                                      <Insets top="10.0" />
+                                                   </VBox.margin>
+                                                </Label>
                                                             </children>
                                                             <padding>
                                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

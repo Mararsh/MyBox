@@ -326,6 +326,12 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
                 dataOptionsBox.getChildren().remove(categoryColumnsPane);
             }
         }
+        noticeMemory();
+    }
+
+    @Override
+    public void noticeMemory() {
+        noticeLabel.setVisible(isAllPages() && rowsRadio.isSelected());
     }
 
     @Override
@@ -434,6 +440,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
             if (outputData == null) {
                 return false;
             }
+            calculation.setTask(task);
             return calculation.statisticData(outputData);
         } catch (Exception e) {
             error = e.toString();
@@ -446,6 +453,14 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
 
     public boolean handlePages() {
         try {
+            if (rowsRadio.isSelected()) {
+                outputData = data2D.allRows(dataColsIndices, rowsRadio.isSelected() && categorysCol < 0);
+                if (outputData == null) {
+                    return false;
+                }
+                calculation.setTask(task);
+                return calculation.statisticData(outputData);
+            }
             DataTable tmpTable = data2D.toTmpTable(task, dataColsIndices, false, true);
             if (tmpTable == null) {
                 outputData = null;

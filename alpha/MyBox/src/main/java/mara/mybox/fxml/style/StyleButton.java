@@ -283,9 +283,9 @@ public class StyleButton {
         if (id.startsWith("data")) {
             if (id.startsWith("database")) {
                 return new StyleData(id, "", message("DatabaseTable"), "", "iconDatabase.png");
-            } else if (id.startsWith("dataImport") || id.startsWith("import")) {
+            } else if (id.startsWith("dataImport")) {
                 return new StyleData(id, message("Import"), "", "iconImport.png");
-            } else if (id.startsWith("dataExport") || id.startsWith("export")) {
+            } else if (id.startsWith("dataExport")) {
                 return new StyleData(id, message("Export"), "", "iconExport.png");
             } else if (id.startsWith("dataset")) {
                 return new StyleData(id, message("DataSet"), "", "iconDataset.png");
@@ -303,7 +303,12 @@ public class StyleButton {
         if (id.startsWith("map")) {
             return new StyleData(id, message("Map"), "", "iconMap.png");
         }
-
+        if (id.startsWith("import")) {
+            return new StyleData(id, message("Import"), "", "iconImport.png");
+        }
+        if (id.startsWith("export")) {
+            return new StyleData(id, message("Export"), "", "iconExport.png");
+        }
         if (id.startsWith("sureButton")) {
             return new StyleData(id, message("Sure"), "", "iconYes.png");
         }

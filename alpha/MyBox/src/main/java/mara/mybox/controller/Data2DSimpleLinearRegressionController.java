@@ -216,22 +216,8 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
     }
 
     @Override
-    public boolean checkOptions() {
-        if (isSettingValues) {
-            return true;
-        }
-        boolean ok = super.checkOptions();
-        if (ok) {
-            noticeMemory();
-        }
-        return ok;
-    }
-
     public void noticeMemory() {
-        if (isAllPages() && displayAllCheck.isSelected()) {
-            outError(message("AllRowsLoadComments"));
-            tabPane.getSelectionModel().select(optionsTab);
-        }
+        noticeLabel.setVisible(isAllPages() && displayAllCheck.isSelected());
     }
 
     @Override
