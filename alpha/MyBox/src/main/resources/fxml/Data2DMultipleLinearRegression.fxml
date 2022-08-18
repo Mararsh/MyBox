@@ -208,13 +208,12 @@ License:    Apache License Version 2.0
                                                                         <ComboBox fx:id="alphaSelector" editable="true" prefWidth="100.0" />
                                                                     </children>
                                                                 </FlowPane>
-                                                <FlowPane hgap="2.0" layoutX="15.0" layoutY="90.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
-                                                   <children>
-                                                                <Label minHeight="-Infinity" text="%DecimalScale" wrapText="true" />
-                                                                <ComboBox fx:id="scaleSelector" editable="true" prefWidth="100.0" />
-                                                   </children>
-                                                </FlowPane>
                                                                 <CheckBox fx:id="interceptCheck" mnemonicParsing="false" text="%Intercept" />
+                                                <Label fx:id="noticeLabel" minHeight="-Infinity" text="%AllRowsLoadComments" wrapText="true">
+                                                   <VBox.margin>
+                                                      <Insets top="10.0" />
+                                                   </VBox.margin>
+                                                </Label>
                                                             </children>
                                                             <padding>
                                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -260,25 +259,36 @@ License:    Apache License Version 2.0
                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                             </padding>
                             <children>
-                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                    <children>
-                                        <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconTips.png" />
-                                            </image>
-                                        </ImageView>
-                                        <Hyperlink maxWidth="1.7976931348623157E308" minHeight="-Infinity" onAction="#about" text="%AboutLinearRegression" wrapText="true" HBox.hgrow="ALWAYS" />
-                                        <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
-                                            <graphic>
-                                                <ImageView fx:id="leftPaneControl1" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconDoubleLeft.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </CheckBox>
-                                    </children>
-                                </HBox>
+                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                           <children>
+                              <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconTips.png" />
+                                 </image>
+                              </ImageView>
+                              <Hyperlink maxWidth="1.7976931348623157E308" minHeight="-Infinity" onAction="#about" text="%AboutLinearRegression" wrapText="true" HBox.hgrow="ALWAYS" />
+                              <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
+                                 <graphic>
+                                    <ImageView fx:id="leftPaneControl1" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconDoubleLeft.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </CheckBox>
+                              <Label minHeight="-Infinity" text="%DecimalScale" wrapText="true" />
+                              <ComboBox fx:id="scaleSelector" editable="true" prefWidth="100.0" />
+                              <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconRefresh.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </HBox>
                         <TabPane fx:id="chartTabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                            <tabs>
                               <Tab fx:id="modelTab" text="%Model">
