@@ -69,8 +69,9 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
             }
-            MyBoxLog.error(e);
             return null;
         }
     }
@@ -87,43 +88,46 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
             }
-            MyBoxLog.error(e);
             return null;
         }
     }
 
-    public DataTable toTmpTable(SingletonTask task, List<Integer> cols, boolean includeRowNumber, boolean forStatistic) {
+    public DataTable toTmpTable(SingletonTask task, List<Integer> cols, boolean includeRowNumber, boolean toNumbers) {
         try ( Connection conn = DerbyBase.getConnection()) {
-            DataTable dataTable = createTmpTable(task, conn, tmpTableName(dataName()), cols, includeRowNumber, forStatistic);
+            DataTable dataTable = createTmpTable(task, conn, tmpTableName(dataName()), cols, includeRowNumber, toNumbers);
             writeTableData(task, conn, dataTable, cols, includeRowNumber);
             return dataTable;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
             }
-            MyBoxLog.error(e);
             return null;
         }
     }
 
     public DataTable toTmpTable(SingletonTask task, List<Integer> cols, List<List<String>> rows,
-            boolean includeRowNumber, boolean forStatistic) {
+            boolean includeRowNumber, boolean toNumbers) {
         try ( Connection conn = DerbyBase.getConnection()) {
-            DataTable dataTable = createTmpTable(task, conn, tmpTableName(dataName()), cols, includeRowNumber, forStatistic);
+            DataTable dataTable = createTmpTable(task, conn, tmpTableName(dataName()), cols, includeRowNumber, toNumbers);
             dataTable.save(task, conn, rows);
             return dataTable;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
             }
-            MyBoxLog.error(e);
             return null;
         }
     }
 
     public DataTable createTmpTable(SingletonTask task, Connection conn,
-            String targetName, List<Integer> cols, boolean includeRowNumber, boolean forStatistic) {
+            String targetName, List<Integer> cols, boolean includeRowNumber, boolean toNumbers) {
         try {
             if (conn == null || cols == null || cols.isEmpty()) {
                 return null;
@@ -142,7 +146,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                 if (cols.contains(i)) {
                     Data2DColumn column = columns.get(i).cloneAll();
                     column.setD2cid(-1).setD2id(-1);
-                    if (forStatistic) {
+                    if (toNumbers) {
                         column.setType(ColumnDefinition.ColumnType.Double);
                     }
                     sourceColumns.add(column);
@@ -152,8 +156,9 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
             }
-            MyBoxLog.error(e);
             return null;
         }
     }
@@ -189,8 +194,9 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
             }
-            MyBoxLog.error(e);
             return -4;
         }
     }
@@ -235,13 +241,14 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
             }
-            MyBoxLog.error(e);
             return null;
         }
     }
 
-    public static DataTable makeTable(String tname, List<Data2DColumn> sourceColumns, List<String> keys, String idName) {
+    public static DataTable makeTable(SingletonTask task, String tname, List<Data2DColumn> sourceColumns, List<String> keys, String idName) {
         try {
             if (sourceColumns == null || sourceColumns.isEmpty()) {
                 return null;
@@ -293,7 +300,11 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             dataTable.setSourceColumns(sourceColumns);
             return dataTable;
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
+            }
             return null;
         }
     }
@@ -317,11 +328,12 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                 dataTable.drop(conn, tableName);
                 conn.commit();
             }
-            dataTable = makeTable(tableName, sourceColumns, keys, idName);
+            dataTable = makeTable(task, tableName, sourceColumns, keys, idName);
             if (dataTable == null) {
                 return null;
             }
             tableData2D = dataTable.getTableData2D();
+//            MyBoxLog.console(tableData2D.createTableStatement());
             if (conn.createStatement().executeUpdate(tableData2D.createTableStatement()) < 0) {
                 return null;
             }
@@ -331,8 +343,9 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
             }
-            MyBoxLog.error(e);
             return null;
         }
     }
@@ -364,9 +377,10 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e);
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
             }
             return null;
         }
@@ -448,9 +462,10 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             }
             targetBook.close();
         } catch (Exception e) {
-            MyBoxLog.error(e);
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
             }
             return null;
         }
@@ -494,9 +509,10 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e);
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
             }
             return null;
         }
@@ -548,6 +564,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             long count = 0;
             int colsSize;
             List<Data2DColumn> db2Columns = new ArrayList<>();
+            List<String> fileRow = new ArrayList<>();
             try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
                 List<String> names = new ArrayList<>();
                 if (showRowNumber) {
@@ -565,7 +582,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                 }
                 csvPrinter.printRecord(names);
                 colsSize = names.size();
-                List<String> fileRow = new ArrayList<>();
+
                 while (results.next() && task != null && !task.isCancelled()) {
                     count++;
                     if (showRowNumber) {
@@ -579,7 +596,11 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                     fileRow.clear();
                 }
             } catch (Exception e) {
-                MyBoxLog.error(e.toString());
+                if (task != null) {
+                    task.setError(e.toString());
+                } else {
+                    MyBoxLog.error(e.toString());
+                }
                 return null;
             }
             DataFileCSV targetData = new DataFileCSV();
@@ -595,8 +616,9 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
             }
-            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -659,8 +681,9 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
             }
-            MyBoxLog.error(e);
             return null;
         }
         if (excelFile != null && excelFile.exists()) {
@@ -716,8 +739,9 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             } catch (Exception e) {
                 if (task != null) {
                     task.setError(e.toString());
+                } else {
+                    MyBoxLog.error(e.toString());
                 }
-                MyBoxLog.error(e);
                 return null;
             }
         }
@@ -749,8 +773,9 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             } catch (Exception e) {
                 if (task != null) {
                     task.setError(e.toString());
+                } else {
+                    MyBoxLog.error(e.toString());
                 }
-                MyBoxLog.error(e);
                 return null;
             }
         }
@@ -759,7 +784,11 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             return DataClipboard.create(task, csvData.dataName(),
                     cols, dFile, csvData.getRowsNumber(), cols.size());
         } else {
-            MyBoxLog.error("Failed");
+            if (task != null) {
+                task.setError(message("Failed"));
+            } else {
+                MyBoxLog.error(message("Failed"));
+            }
             return null;
         }
     }

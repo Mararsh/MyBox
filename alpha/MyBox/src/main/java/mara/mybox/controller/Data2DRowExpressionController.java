@@ -80,7 +80,7 @@ public class Data2DRowExpressionController extends BaseData2DHandleController {
             }
             String name = nameInput.getText();
             if (name == null || name.isBlank()) {
-                outError(message("InvalidParameter") + ": " + message("Name"));
+                outOptionsError(message("InvalidParameter") + ": " + message("Name"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             } else {

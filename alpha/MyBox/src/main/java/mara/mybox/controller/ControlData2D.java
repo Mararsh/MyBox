@@ -833,9 +833,9 @@ public class ControlData2D extends BaseController {
             menu.setDisable(empty);
             calMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("GroupByValues"), StyleTools.getIconImage("iconAnalyse.png"));
+            menu = new MenuItem(message("GroupEqualValues"), StyleTools.getIconImage("iconAnalyse.png"));
             menu.setOnAction((ActionEvent event) -> {
-                Data2DGroupValuesController.open(tableController);
+                Data2DGroupEqualValuesController.open(tableController);
             });
             menu.setDisable(empty);
             calMenu.getItems().add(menu);

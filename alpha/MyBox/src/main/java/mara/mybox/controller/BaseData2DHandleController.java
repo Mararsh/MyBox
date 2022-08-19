@@ -244,9 +244,9 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             if (isSettingValues) {
                 return true;
             }
-            outError(null);
+            outOptionsError(null);
             if (data2D == null || !data2D.hasData()) {
-                outError(message("NoData"));
+                outOptionsError(message("NoData"));
                 return false;
             }
             if (!checkSelections()) {
@@ -255,7 +255,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             if (targetController != null) {
                 targetController.setNotInTable(isAllPages());
                 if (targetController.checkTarget() == null) {
-                    outError(message("SelectToHandle") + ": " + message("Target"));
+                    outOptionsError(message("SelectToHandle") + ": " + message("Target"));
                     return false;
                 }
             }
@@ -266,7 +266,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         }
     }
 
-    public void outError(String error) {
+    public void outOptionsError(String error) {
         if (error != null && !error.isBlank()) {
             popError(error);
         }
@@ -377,6 +377,14 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             }
 
             @Override
+            protected void whenFailed() {
+                if (isCancelled()) {
+                    return;
+                }
+                outTaskError(error);
+            }
+
+            @Override
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
@@ -410,6 +418,14 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             @Override
             protected void whenSucceeded() {
                 ouputRows();
+            }
+
+            @Override
+            protected void whenFailed() {
+                if (isCancelled()) {
+                    return;
+                }
+                outTaskError(error);
             }
 
             @Override
@@ -546,6 +562,19 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         }
         popDone();
         return true;
+    }
+
+    public void outTaskError(String error) {
+        if (error != null && !error.isBlank()) {
+            //https://db.apache.org/derby/docs/10.15/ref/rrefsqljvarsamp.html#rrefsqljvarsamp
+            if (error.contains("java.sql.SQLDataException: 22003 : [0] DOUBLE")) {
+                alertError(error + "\n\n" + message("DataOverflow"));
+            } else {
+                alertError(error);
+            }
+        } else {
+            popFailed();
+        }
     }
 
     public void cloneOptions(BaseData2DHandleController sourceController) {

@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,11 +9,9 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.calculation.SimpleLinearRegression;
 import mara.mybox.data.StringTable;
@@ -23,7 +20,6 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.chart.ChartOptions.ChartType;
 import mara.mybox.fxml.chart.ResidualChart;
@@ -39,11 +35,11 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-4-21
  * @License Apache License Version 2.0
  */
-public class Data2DSimpleLinearRegressionController extends BaseData2DChartController {
+public class Data2DSimpleLinearRegressionController extends BaseRegressionController {
 
     protected XYChartMaker fittingMaker, residualMaker;
     protected SimpleLinearRegression simpleRegression;
-    protected double alpha, intercept, slope, rSquare, r;
+    protected double slope, r;
     protected int residualInside;
     protected DataFileCSV regressionFile;
     protected List<List<String>> regressionData;
@@ -52,14 +48,8 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
     protected Map<String, String> residualPalette;
 
     @FXML
-    protected CheckBox interceptCheck, displayAllCheck, textCheck, fittedPointsCheck, fittedLineCheck,
-            residualStdCheck;
-    @FXML
-    protected ComboBox<String> alphaSelector;
-    @FXML
-    protected ControlData2DResults regressionDataController;
-    @FXML
-    protected ControlWebView modelViewController;
+    protected CheckBox displayAllCheck, textCheck,
+            fittedPointsCheck, fittedLineCheck, residualStdCheck;
     @FXML
     protected ControlData2DChartXY fittingController, residualController;
     @FXML
@@ -86,10 +76,6 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
             residualMaker = residualController.chartMaker;
             residualMaker.init(ChartType.ResidualChart, message("ResidualChart"));
 
-            noColumnSelection(true);
-
-            modelViewController.setParent(this);
-
             initChartTab();
 
             initResidualPane();
@@ -101,40 +87,6 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
 
     public void initChartTab() {
         try {
-
-            alpha = UserConfig.getDouble(baseName + "Alpha", 0.05);
-            if (alpha >= 1 || alpha <= 0) {
-                alpha = 0.05;
-            }
-            alphaSelector.getItems().addAll(Arrays.asList(
-                    "0.05", "0.01", "0.02", "0.03", "0.06", "0.1"
-            ));
-            alphaSelector.getSelectionModel().select(alpha + "");
-            alphaSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        double v = Double.parseDouble(newValue);
-                        if (v > 0 && v < 1) {
-                            alpha = v;
-                            alphaSelector.getEditor().setStyle(null);
-                            UserConfig.setDouble(baseName + "Alpha", alpha);
-                        } else {
-                            alphaSelector.getEditor().setStyle(UserConfig.badStyle());
-                        }
-                    } catch (Exception e) {
-                        alphaSelector.getEditor().setStyle(UserConfig.badStyle());
-                    }
-                }
-            });
-
-            interceptCheck.setSelected(UserConfig.getBoolean(baseName + "Intercept", true));
-            interceptCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
-                if (isSettingValues) {
-                    return;
-                }
-                UserConfig.setBoolean(baseName + "Intercept", interceptCheck.isSelected());
-            });
 
             displayAllCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayAll", true));
             displayAllCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
@@ -221,6 +173,11 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
     }
 
     @Override
+    public void afterRefreshControls() {
+        okAction();
+    }
+
+    @Override
     public boolean initData() {
         try {
             if (!super.initData()) {
@@ -229,14 +186,14 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
             dataColsIndices = new ArrayList<>();
             int categoryCol = data2D.colOrder(selectedCategory);
             if (categoryCol < 0) {
-                outError(message("SelectToHandle") + ": " + message("CategoryColumn"));
+                outOptionsError(message("SelectToHandle") + ": " + message("CategoryColumn"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
             dataColsIndices.add(categoryCol);
             int valueCol = data2D.colOrder(selectedValue);
             if (valueCol < 0) {
-                outError(message("SelectToHandle") + ": " + message("ValueColumn"));
+                outOptionsError(message("SelectToHandle") + ": " + message("ValueColumn"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
@@ -453,7 +410,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
                     .append(message("HtmlEditableComments")).append("</P>\n");
 
             s.append("</BODY>\n");
-            modelViewController.loadContents(HtmlWriteTools.html(s.toString()));
+            modelController.loadContents(HtmlWriteTools.html(s.toString()));
 
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -465,7 +422,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
             if (regressionFile != null) {
                 regressionDataController.loadDef(regressionFile);
             } else {
-                regressionDataController.loadTmpData(null, simpleRegression.getColumns(), regressionData);
+                regressionDataController.loadData(simpleRegression.getColumns(), regressionData);
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -562,21 +519,6 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DChartContr
         if (chartController == residualController) {
             drawResidualChart();
         }
-    }
-
-    @FXML
-    public void editModelAction() {
-        modelViewController.editAction();
-    }
-
-    @FXML
-    public void popModelMenu(MouseEvent mouseEvent) {
-        modelViewController.popFunctionsMenu(mouseEvent);
-    }
-
-    @FXML
-    public void about() {
-        openLink(HelpTools.aboutLinearRegressionHtml());
     }
 
     /*

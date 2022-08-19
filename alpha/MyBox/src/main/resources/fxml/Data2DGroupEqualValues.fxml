@@ -24,11 +24,12 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DGroupValuesController">
+<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="5.0"
+      xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DGroupEqualValuesController">
     <children>
         <HBox alignment="CENTER" VBox.vgrow="NEVER">
             <children>
-                <Label contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%GroupByValues" textAlignment="CENTER" VBox.vgrow="NEVER" />
+                <Label contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%GroupEqualValues" textAlignment="CENTER" VBox.vgrow="NEVER" />
             </children>
         </HBox>
         <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
@@ -40,7 +41,7 @@ License:    Apache License Version 2.0
                                 <VBox fx:id="dataBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                     <children>
                                         <HBox alignment="CENTER_LEFT" spacing="2.0">
-                                 <children>
+                                            <children>
                                                 <Label text="%Rows" />
                                                 <RadioButton fx:id="selectedRadio" mnemonicParsing="false" selected="true" text="%Selected">
                                                     <toggleGroup>
@@ -55,7 +56,7 @@ License:    Apache License Version 2.0
                                                         <Image url="@../buttons/Red/iconTipsRight.png" />
                                                     </image>
                                                 </ImageView>
-                                 </children>
+                                            </children>
                                         </HBox>
                                         <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                                             <columns>
@@ -159,8 +160,8 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
-                              <fx:include fx:id="group" maxWidth="1.7976931348623157E308" minHeight="200.0" prefHeight="200.0" source="ControlSelection.fxml" />
-                              <fx:include fx:id="calculation" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlSelection.fxml" VBox.vgrow="ALWAYS" />
+                                        <fx:include fx:id="group" maxWidth="1.7976931348623157E308" minHeight="200.0" prefHeight="200.0" source="ControlSelection.fxml" />
+                                        <fx:include fx:id="calculation" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlSelection.fxml" VBox.vgrow="ALWAYS" />
                                     </children>
                                     <padding>
                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -170,26 +171,26 @@ License:    Apache License Version 2.0
                         </ScrollPane>
                     </content>
                 </Tab>
-            <Tab fx:id="resultsTab" text="%Results">
-               <content>
-                  <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                     <content>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                           <padding>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </padding>
-                           <children>
+                <Tab fx:id="resultsTab" text="%Results">
+                    <content>
+                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                            <content>
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                    <padding>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                    </padding>
+                                    <children>
                                         <VBox fx:id="targetBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                             <children>
                                                 <fx:include fx:id="target" source="ControlData2DTarget.fxml" />
                                             </children>
                                         </VBox>
-                           </children>
-                        </VBox>
-                     </content>
-                  </ScrollPane>
-               </content>
-            </Tab>
+                                    </children>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+                    </content>
+                </Tab>
             </tabs>
         </TabPane>
         <HBox alignment="CENTER_LEFT" spacing="5.0">

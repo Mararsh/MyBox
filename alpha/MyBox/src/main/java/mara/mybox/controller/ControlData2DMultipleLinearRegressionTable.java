@@ -18,16 +18,24 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-4-21
  * @License Apache License Version 2.0
  */
-public class ControlData2DRegressionTable extends ControlData2DLoad {
+public class ControlData2DMultipleLinearRegressionTable extends ControlData2DLoad {
 
     protected Data2DSimpleLinearRegressionCombinationController regressController;
+    protected TableColumn sortColumn;
 
     @Override
-    public void initControls() {
+    public void initValues() {
         try {
-            super.initControls();
-
+            super.initValues();
             data2D = Data2D.create(Data2DDefinition.Type.Texts);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
+    public void makeColumns() {
+        try {
             List<Data2DColumn> cols = new ArrayList<>();
             cols.add(new Data2DColumn(message("DependentVariable"), ColumnType.String, 100));
             cols.add(new Data2DColumn(message("IndependentVariable"), ColumnType.String, 100));
@@ -36,9 +44,10 @@ public class ControlData2DRegressionTable extends ControlData2DLoad {
             cols.add(new Data2DColumn(message("Model"), ColumnType.String, 300));
             cols.add(new Data2DColumn(message("Slope"), ColumnType.Double, 100));
             cols.add(new Data2DColumn(message("Intercept"), ColumnType.Double, 100));
-            data2D.setColumns(cols);
-            makeColumns();
 
+            data2D.setColumns(cols);
+            super.makeColumns();
+            sortColumn = tableView.getColumns().get(3);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -47,6 +56,7 @@ public class ControlData2DRegressionTable extends ControlData2DLoad {
     public void setParameters(Data2DSimpleLinearRegressionCombinationController regressController) {
         try {
             this.regressController = regressController;
+            makeColumns();
             checkButtons();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -70,9 +80,8 @@ public class ControlData2DRegressionTable extends ControlData2DLoad {
     public void afterRegression() {
         isSettingValues = true;
         tableView.getSortOrder().clear();
-        TableColumn rColumn = tableView.getColumns().get(4);
-        rColumn.setSortType(TableColumn.SortType.DESCENDING);
-        tableView.getSortOrder().add(rColumn);
+        sortColumn.setSortType(TableColumn.SortType.DESCENDING);
+        tableView.getSortOrder().add(sortColumn);
         isSettingValues = false;
         checkButtons();
     }

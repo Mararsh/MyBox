@@ -247,7 +247,7 @@ public class ControlData2DSetValue extends BaseController {
 
     public void outError(String error) {
         if (error != null && !error.isBlank()) {
-            handleController.outError(error);
+            handleController.outOptionsError(error);
             handleController.tabPane.getSelectionModel().select(handleController.optionsTab);
         }
     }

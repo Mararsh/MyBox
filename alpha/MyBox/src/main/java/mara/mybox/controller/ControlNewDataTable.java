@@ -150,7 +150,7 @@ public class ControlNewDataTable extends BaseController {
             } else {
                 keys = columnsController.selectedNames();
             }
-            dataTable = Data2D.makeTable(nameInput.getText().trim(), sourceColumns, keys, idInput.getText().trim());
+            dataTable = Data2D.makeTable(task, nameInput.getText().trim(), sourceColumns, keys, idInput.getText().trim());
             if (dataTable == null) {
                 return false;
             }

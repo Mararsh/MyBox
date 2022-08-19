@@ -105,7 +105,7 @@ public class Data2DSortController extends BaseData2DHandleController {
             }
             orders = columnsController.selectedNames();
             if (orders == null || orders.isEmpty()) {
-                outError(message("SelectToHandle") + ": " + message("Order"));
+                outOptionsError(message("SelectToHandle") + ": " + message("Order"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }

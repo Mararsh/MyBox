@@ -89,7 +89,11 @@ public class DataTable extends Data2D {
             }
             return recordTable(conn, referredName, dataColumns);
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
             return false;
         }
     }
@@ -110,7 +114,11 @@ public class DataTable extends Data2D {
             conn.commit();
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
             return false;
         }
     }
@@ -204,8 +212,9 @@ public class DataTable extends Data2D {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e);
             return false;
         }
     }
@@ -338,8 +347,9 @@ public class DataTable extends Data2D {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e);
             return false;
         }
     }
@@ -394,7 +404,11 @@ public class DataTable extends Data2D {
             }
             conn.commit();
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
         }
         return false;
     }
@@ -407,7 +421,11 @@ public class DataTable extends Data2D {
         try ( Connection conn = DerbyBase.getConnection();) {
             return drop(conn, sheet);
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
             return -5;
         }
     }
@@ -452,8 +470,9 @@ public class DataTable extends Data2D {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e.toString());
             return null;
         }
         try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile);
@@ -485,8 +504,9 @@ public class DataTable extends Data2D {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -531,8 +551,9 @@ public class DataTable extends Data2D {
                 } catch (Exception e) {
                     if (task != null) {
                         task.setError(e.toString());
+                    } else {
+                        MyBoxLog.error(e);
                     }
-                    MyBoxLog.error(e.toString());
                     return null;
                 }
                 if (i == 0) {
@@ -584,14 +605,15 @@ public class DataTable extends Data2D {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e.toString());
             return null;
         }
     }
 
     // Based on results of "Data2D_Convert.toTmpTable(...)"
-    public DataFileCSV groupValues(String dname, SingletonTask task,
+    public DataFileCSV groupEqualValues(String dname, SingletonTask task,
             List<String> groups, List<String> calculations) {
         if (groups == null || groups.isEmpty() || sourceColumns == null) {
             return null;
@@ -615,35 +637,43 @@ public class DataTable extends Data2D {
                     } else if (name.endsWith("-" + message("Mean"))) {
                         name = name.substring(0, name.length() - ("-" + message("Mean")).length());
                         name = mappedColumnName(name);
-                        name = "AVG(" + name + ") AS " + name + "_" + message("Mean");
+                        name = (columnByName(name).isNumberType() ? "AVG(" + name + ")" : "'N/A'")
+                                + " AS " + name + "_" + message("Mean");
                     } else if (name.endsWith("-" + message("Summation"))) {
                         name = name.substring(0, name.length() - ("-" + message("Summation")).length());
                         name = mappedColumnName(name);
-                        name = "SUM(" + name + ") AS " + name + "_" + message("Summation");
+                        name = (columnByName(name).isNumberType() ? "SUM(" + name + ")" : "'N/A'")
+                                + " AS " + name + "_" + message("Summation");
                     } else if (name.endsWith("-" + message("Maximum"))) {
                         name = name.substring(0, name.length() - ("-" + message("Maximum")).length());
                         name = mappedColumnName(name);
-                        name = "MAX(" + name + ") AS " + name + "_" + message("Maximum");
+                        name = (columnByName(name).isNumberType() ? "MAX(" + name + ")" : "'N/A'")
+                                + " AS " + name + "_" + message("Maximum");
                     } else if (name.endsWith("-" + message("Minimum"))) {
                         name = name.substring(0, name.length() - ("-" + message("Minimum")).length());
                         name = mappedColumnName(name);
-                        name = "MIN(" + name + ") AS " + name + "_" + message("Minimum");
+                        name = (columnByName(name).isNumberType() ? "MIN(" + name + ")" : "'N/A'")
+                                + " AS " + name + "_" + message("Minimum");
                     } else if (name.endsWith("-" + message("PopulationVariance"))) {
                         name = name.substring(0, name.length() - ("-" + message("PopulationVariance")).length());
                         name = mappedColumnName(name);
-                        name = "VAR_POP(" + name + ") AS " + name + "_" + message("PopulationVariance").replaceAll(" ", "");
+                        name = (columnByName(name).isNumberType() ? "VAR_POP(" + name + ")" : "'N/A'")
+                                + " AS " + name + "_" + message("PopulationVariance").replaceAll(" ", "");
                     } else if (name.endsWith("-" + message("SampleVariance"))) {
                         name = name.substring(0, name.length() - ("-" + message("SampleVariance")).length());
                         name = mappedColumnName(name);
-                        name = "VAR_SAMP(" + name + ") AS " + name + "_" + message("SampleVariance").replaceAll(" ", "");
+                        name = (columnByName(name).isNumberType() ? "VAR_SAMP(" + name + ")" : "'N/A'")
+                                + " AS " + name + "_" + message("SampleVariance").replaceAll(" ", "");
                     } else if (name.endsWith("-" + message("PopulationStandardDeviation"))) {
                         name = name.substring(0, name.length() - ("-" + message("PopulationStandardDeviation")).length());
                         name = mappedColumnName(name);
-                        name = "STDDEV_POP(" + name + ") AS " + name + "_" + message("PopulationStandardDeviation").replaceAll(" ", "");
+                        name = (columnByName(name).isNumberType() ? "STDDEV_POP(" + name + ")" : "'N/A'")
+                                + " AS " + name + "_" + message("PopulationStandardDeviation").replaceAll(" ", "");
                     } else if (name.endsWith("-" + message("SampleStandardDeviation"))) {
                         name = name.substring(0, name.length() - ("-" + message("SampleStandardDeviation")).length());
                         name = mappedColumnName(name);
-                        name = "STDDEV_SAMP(" + name + ") AS " + name + "_" + message("SampleStandardDeviation").replaceAll(" ", "");
+                        name = (columnByName(name).isNumberType() ? "STDDEV_SAMP(" + name + ")" : "'N/A'")
+                                + " AS " + name + "_" + message("SampleStandardDeviation").replaceAll(" ", "");
                     } else {
                         continue;
                     }
@@ -660,13 +690,13 @@ public class DataTable extends Data2D {
                 selections = groupBy + ", " + selections;
             }
             String sql = "SELECT " + selections + " FROM " + sheet + " GROUP BY " + groupBy;
-//            MyBoxLog.console(sql);
             return query(dname, task, sql, false);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
             }
-            MyBoxLog.error(e.toString());
             return null;
         }
 
@@ -686,8 +716,9 @@ public class DataTable extends Data2D {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
             }
-            MyBoxLog.error(e.toString());
         }
         return targetData;
     }
@@ -707,8 +738,9 @@ public class DataTable extends Data2D {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
             }
-            MyBoxLog.error(e.toString());
         }
         return mode;
     }
@@ -770,8 +802,9 @@ public class DataTable extends Data2D {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
             }
-            MyBoxLog.error(e.toString());
         }
         return percentile;
     }
@@ -869,8 +902,9 @@ public class DataTable extends Data2D {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
             }
-            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -930,15 +964,17 @@ public class DataTable extends Data2D {
             } catch (Exception e) {
                 if (task != null) {
                     task.setError(e.toString());
+                } else {
+                    MyBoxLog.error(e);
                 }
-                MyBoxLog.error(e);
                 return null;
             }
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e);
             return null;
         }
         if (csvFile != null && csvFile.exists()) {
@@ -979,8 +1015,9 @@ public class DataTable extends Data2D {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e);
             return -4;
         }
     }

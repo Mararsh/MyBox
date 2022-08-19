@@ -53,7 +53,7 @@ public class Data2DChartPieController extends BaseData2DChartController {
             outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
             int categoryCol = data2D.colOrder(selectedCategory);
             if (categoryCol < 0) {
-                outError(message("SelectToHandle") + ": " + message("CategoryColumn"));
+                outOptionsError(message("SelectToHandle") + ": " + message("CategoryColumn"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
@@ -61,7 +61,7 @@ public class Data2DChartPieController extends BaseData2DChartController {
             outputColumns.add(data2D.column(categoryCol));
             int valueCol = data2D.colOrder(selectedValue);
             if (valueCol < 0) {
-                outError(message("SelectToHandle") + ": " + message("ValueColumn"));
+                outOptionsError(message("SelectToHandle") + ": " + message("ValueColumn"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }

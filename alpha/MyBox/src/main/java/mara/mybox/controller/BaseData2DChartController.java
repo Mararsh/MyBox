@@ -75,15 +75,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     }
 
     @Override
-    public boolean scaleChanged() {
-        if (super.scaleChanged()) {
-            okAction();
-            return true;
-        }
-        return false;
-    }
-
-    @Override
     public void refreshControls() {
         try {
             super.refreshControls();
@@ -160,7 +151,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             }
             dataColsIndices = new ArrayList<>();
             if (!noColumnSelection && (checkedColsIndices == null || checkedColsIndices.isEmpty())) {
-                outError(message("SelectToHandle") + ": " + message("Columns"));
+                outOptionsError(message("SelectToHandle") + ": " + message("Columns"));
                 return false;
             }
             dataColsIndices.addAll(checkedColsIndices);

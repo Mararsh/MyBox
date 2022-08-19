@@ -72,11 +72,10 @@ public class OLSLinearRegression extends OLSMultipleLinearRegression {
     public List<Data2DColumn> makeColumns() {
         try {
             List<Data2DColumn> columns = new ArrayList<>();
-            columns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.Long));
+            columns.add(new Data2DColumn(message("Item"), ColumnDefinition.ColumnType.String));
             columns.add(new Data2DColumn(message("DependentVariable") + "_" + yName, ColumnDefinition.ColumnType.Double));
             for (String name : xNames) {
                 columns.add(new Data2DColumn(message("IndependentVariable") + "_" + name, ColumnDefinition.ColumnType.Double));
-                columns.add(new Data2DColumn(message("Coefficient") + "_" + name, ColumnDefinition.ColumnType.Double));
             }
             columns.add(new Data2DColumn(message("Residual"), ColumnDefinition.ColumnType.Double));
             return columns;
@@ -91,16 +90,21 @@ public class OLSLinearRegression extends OLSMultipleLinearRegression {
     public List<List<String>> makeRegressionData() {
         try {
             List<List<String>> data = new ArrayList<>();
-            double[] beta = estimateRegressionParameters();
             double[] residuals = estimateResiduals();
+            List<String> row = new ArrayList<>();
+            row.add(message("Coefficient"));
+            row.add("");
+            for (int j = 0; j < coefficients.length; j++) {
+                row.add(coefficients[j] + "");
+            }
+            row.add("");
+            data.add(row);
             for (int i = 0; i < x.length; i++) {
-                List<String> row = new ArrayList<>();
-                row.add("" + (i + 1));
+                row = new ArrayList<>();
+                row.add(message("Row") + (i + 1));
                 row.add(y[i] + "");
                 for (int j = 0; j < x[i].length; j++) {
                     row.add(x[i][j] + "");
-                    double coef = isNoIntercept() ? beta[j] : beta[j + 1];
-                    row.add(coef + "");
                 }
                 row.add(residuals[i] + "");
                 data.add(row);

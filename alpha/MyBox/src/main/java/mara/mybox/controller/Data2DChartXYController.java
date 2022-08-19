@@ -92,7 +92,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
             outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
             int categoryCol = data2D.colOrder(selectedCategory);
             if (categoryCol < 0) {
-                outError(message("SelectToHandle") + ": " + message("Column"));
+                outOptionsError(message("SelectToHandle") + ": " + message("Column"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
@@ -102,7 +102,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
                 title += " - " + selectedValue;
                 int valueCol = data2D.colOrder(selectedValue);
                 if (valueCol < 0) {
-                    outError(message("SelectToHandle") + ": " + message("Column"));
+                    outOptionsError(message("SelectToHandle") + ": " + message("Column"));
                     tabPane.getSelectionModel().select(optionsTab);
                     return false;
                 }
@@ -110,7 +110,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
                 outputColumns.add(data2D.column(valueCol));
             }
             if (checkedColsIndices == null || checkedColsIndices.isEmpty()) {
-                outError(message("SelectToHandle") + ": " + message("Column"));
+                outOptionsError(message("SelectToHandle") + ": " + message("Column"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }

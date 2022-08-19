@@ -58,7 +58,7 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
             freCol = data2D.colOrder(freName);
             Data2DColumn freColumn = data2D.column(freCol);
             if (freColumn == null) {
-                outError(message("SelectToHandle") + ": " + message("Column"));
+                outOptionsError(message("SelectToHandle") + ": " + message("Column"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }

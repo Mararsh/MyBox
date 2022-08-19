@@ -18,16 +18,15 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-8-10
  * @License Apache License Version 2.0
  */
-public class Data2DGroupValuesController extends BaseData2DHandleController {
+public class Data2DGroupEqualValuesController extends BaseData2DHandleController {
 
     protected List<String> groups, calculations;
 
     @FXML
     protected ControlSelection groupController, calculationController;
 
-    public Data2DGroupValuesController() {
-        baseTitle = message("GroupByValues");
-        TipsLabelKey = "GroupByValuesTips";
+    public Data2DGroupEqualValuesController() {
+        baseTitle = message("GroupEqualValues");
     }
 
     @Override
@@ -66,16 +65,14 @@ public class Data2DGroupValuesController extends BaseData2DHandleController {
             for (Data2DColumn column : data2D.columns) {
                 String name = column.getColumnName();
                 gnames.add(name);
-                if (column.isNumberType()) {
-                    cnames.add(name + "-" + message("Mean"));
-                    cnames.add(name + "-" + message("Summation"));
-                    cnames.add(name + "-" + message("Maximum"));
-                    cnames.add(name + "-" + message("Minimum"));
-                    cnames.add(name + "-" + message("PopulationVariance"));
-                    cnames.add(name + "-" + message("SampleVariance"));
-                    cnames.add(name + "-" + message("PopulationStandardDeviation"));
-                    cnames.add(name + "-" + message("SampleStandardDeviation"));
-                }
+                cnames.add(name + "-" + message("Mean"));
+                cnames.add(name + "-" + message("Summation"));
+                cnames.add(name + "-" + message("Maximum"));
+                cnames.add(name + "-" + message("Minimum"));
+                cnames.add(name + "-" + message("PopulationVariance"));
+                cnames.add(name + "-" + message("SampleVariance"));
+                cnames.add(name + "-" + message("PopulationStandardDeviation"));
+                cnames.add(name + "-" + message("SampleStandardDeviation"));
             }
             groupController.loadNames(gnames);
             calculationController.loadNames(cnames);
@@ -92,7 +89,7 @@ public class Data2DGroupValuesController extends BaseData2DHandleController {
             }
             groups = groupController.selectedNames();
             if (groups == null || groups.isEmpty()) {
-                outError(message("SelectToHandle") + ": " + message("Group"));
+                outOptionsError(message("SelectToHandle") + ": " + message("Group"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
@@ -150,7 +147,7 @@ public class Data2DGroupValuesController extends BaseData2DHandleController {
             if (tmpTable == null) {
                 return false;
             }
-            DataFileCSV csvData = tmpTable.groupValues(targetController.name(), task, groups, calculations);
+            DataFileCSV csvData = tmpTable.groupEqualValues(targetController.name(), task, groups, calculations);
             tmpTable.drop();
             if (csvData == null) {
                 return false;
@@ -164,8 +161,9 @@ public class Data2DGroupValuesController extends BaseData2DHandleController {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
             }
-            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -177,26 +175,26 @@ public class Data2DGroupValuesController extends BaseData2DHandleController {
             if (tmpTable == null) {
                 return null;
             }
-            DataFileCSV csvData = tmpTable.groupValues(targetController.name(), task, groups, calculations);
+            DataFileCSV csvData = tmpTable.groupEqualValues(targetController.name(), task, groups, calculations);
             tmpTable.drop();
             return csvData;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e);
             return null;
         }
     }
 
-
     /*
         static
      */
-    public static Data2DGroupValuesController open(ControlData2DEditTable tableController) {
+    public static Data2DGroupEqualValuesController open(ControlData2DEditTable tableController) {
         try {
-            Data2DGroupValuesController controller = (Data2DGroupValuesController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DGroupValuesFxml, false);
+            Data2DGroupEqualValuesController controller = (Data2DGroupEqualValuesController) WindowTools.openChildStage(
+                    tableController.getMyWindow(), Fxmls.Data2DGroupEqualValuesFxml, false);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

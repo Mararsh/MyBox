@@ -1,14 +1,9 @@
 package mara.mybox.controller;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import mara.mybox.calculation.OLSLinearRegression;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
@@ -17,88 +12,23 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
  * @CreateDate 2022-4-21
  * @License Apache License Version 2.0
  */
-public class Data2DMultipleLinearRegressionController extends BaseData2DChartController {
+public class Data2DMultipleLinearRegressionController extends BaseRegressionController {
 
     protected OLSLinearRegression regression;
     protected String yName;
     protected int yCol;
     protected List<String> xNames;
-    protected double alpha;
-
-    @FXML
-    protected CheckBox interceptCheck;
-    @FXML
-    protected ComboBox<String> alphaSelector;
-    @FXML
-    protected ControlWebView modelController;
-    @FXML
-    protected ControlData2DResults regressionDataController;
 
     public Data2DMultipleLinearRegressionController() {
         baseTitle = message("MultipleLinearRegression");
         TipsLabelKey = "MultipleLinearRegressionTips";
         defaultScale = 8;
-    }
-
-    @Override
-    public void initControls() {
-        try {
-            super.initControls();
-
-            noColumnSelection(true);
-
-            alpha = UserConfig.getDouble(baseName + "Alpha", 0.05);
-            if (alpha >= 1 || alpha <= 0) {
-                alpha = 0.05;
-            }
-            alphaSelector.getItems().addAll(Arrays.asList(
-                    "0.05", "0.01", "0.02", "0.03", "0.06", "0.1"
-            ));
-            alphaSelector.getSelectionModel().select(alpha + "");
-            alphaSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        double v = Double.parseDouble(newValue);
-                        if (v > 0 && v < 1) {
-                            alpha = v;
-                            alphaSelector.getEditor().setStyle(null);
-                            UserConfig.setDouble(baseName + "Alpha", alpha);
-                        } else {
-                            alphaSelector.getEditor().setStyle(UserConfig.badStyle());
-                        }
-                    } catch (Exception e) {
-                        alphaSelector.getEditor().setStyle(UserConfig.badStyle());
-                    }
-                }
-            });
-
-            interceptCheck.setSelected(UserConfig.getBoolean(baseName + "Intercept", true));
-            interceptCheck.selectedProperty().addListener(new ChangeListener() {
-                @Override
-                public void changed(ObservableValue v, Object ov, Object nv) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    UserConfig.setBoolean(baseName + "Intercept", interceptCheck.isSelected());
-                }
-            });
-
-            modelController.setParent(this);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void afterRefreshControls() {
     }
 
     @Override
@@ -111,13 +41,13 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DChartCon
             yName = colSelector.getSelectionModel().getSelectedItem();
             yCol = data2D.colOrder(yName);
             if (yCol < 0) {
-                outError(message("SelectToHandle") + ": " + message("DependentVariable"));
+                outOptionsError(message("SelectToHandle") + ": " + message("DependentVariable"));
                 return false;
             }
             dataColsIndices.add(yCol);
 
             if (checkedColsIndices == null || checkedColsIndices.isEmpty()) {
-                outError(message("SelectToHandle") + ": " + message("IndependentVariable"));
+                outOptionsError(message("SelectToHandle") + ": " + message("IndependentVariable"));
                 return false;
             }
             xNames = new ArrayList<>();
@@ -129,7 +59,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DChartCon
                 }
             }
             if (xNames.isEmpty()) {
-                outError(message("SelectToHandle") + ": " + message("IndependentVariable"));
+                outOptionsError(message("SelectToHandle") + ": " + message("IndependentVariable"));
                 return false;
             }
             regression = null;
@@ -164,7 +94,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DChartCon
                         return false;
                     }
                     regression = new OLSLinearRegression(interceptCheck.isSelected())
-                            .setTask(task).setScale(scale).setInvalidAs(0)
+                            .setTask(task).setScale(scale).setInvalidAs(Double.NaN)
                             .setyName(yName).setxNames(xNames);
                     return regression.calculate(data);
                 } catch (Exception e) {
@@ -201,10 +131,11 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DChartCon
 
     protected void writeModel() {
         try {
+            regression.setScale(scale);
             StringBuilder s = new StringBuilder();
             s.append("<BODY>\n");
             double[] coefficients = regression.scaledCoefficients();
-            double intercept = regression.scaledIntercept();
+            intercept = regression.scaledIntercept();
             String scriptModel = "y = " + intercept;
             String model = yName + " = " + intercept;
             for (int i = 0; i < coefficients.length; i++) {
@@ -294,32 +225,13 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DChartCon
     }
 
     public void writeRegressionData() {
-        regressionDataController.loadTmpData(null, regression.makeColumns(), regression.makeRegressionData());
+        regressionDataController.loadData(regression.makeColumns(), regression.makeRegressionData());
     }
 
     @FXML
-    public void about() {
-        try {
-            StringTable table = new StringTable(null, message("AboutLinearRegression"));
-            table.newLinkRow(message("Guide"), "https://www.itl.nist.gov/div898/handbook/");
-            table.newLinkRow("", "https://book.douban.com/subject/10956491/");
-            table.newLinkRow(message("Video"), "https://www.bilibili.com/video/BV1Ua4y1e7YG");
-            table.newLinkRow("", "https://www.bilibili.com/video/BV1i7411d7aP");
-            table.newLinkRow(message("Example"), "https://www.xycoon.com/simple_linear_regression.htm");
-            table.newLinkRow("", "https://www.scribbr.com/statistics/simple-linear-regression/");
-            table.newLinkRow("", "http://www.datasetsanalysis.com/regressions/simple-linear-regression.html");
-            table.newLinkRow(message("Dataset"), "http://archive.ics.uci.edu/ml/datasets/Iris");
-            table.newLinkRow("", "https://github.com/tomsharp/SVR/tree/master/data");
-            table.newLinkRow("", "https://github.com/krishnaik06/simple-Linear-Regression");
-            table.newLinkRow("", "https://github.com/susanli2016/Machine-Learning-with-Python/tree/master/data");
-            table.newLinkRow("Apache-Math", "https://commons.apache.org/proper/commons-math/");
-            table.newLinkRow("", "https://commons.apache.org/proper/commons-math/apidocs/index.html");
-
-            File htmFile = HtmlWriteTools.writeHtml(table.html());
-            openLink(htmFile);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+    @Override
+    public void refreshAction() {
+        writeModel();
     }
 
     /*
