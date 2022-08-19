@@ -17,7 +17,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-8-19
  * @License Apache License Version 2.0
  */
-public class BaseRegressionController extends BaseData2DChartController {
+public class BaseData2DRegressionController extends BaseData2DChartController {
 
     protected double alpha, intercept, rSquare;
 

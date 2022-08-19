@@ -588,13 +588,13 @@ public class WeiboSnapController extends BaseController {
 
         String pdfSize = UserConfig.getString("WeiBoSnapPdfSize", "500M");
         if ("1G".equals(pdfSize)) {
-            pdfSize1GRadio.fire();
+            pdfSize1GRadio.setSelected(true);
         } else if ("2G".equals(pdfSize)) {
-            pdfSize2GRadio.fire();
+            pdfSize2GRadio.setSelected(true);
         } else if (Languages.message("Unlimit").equals(pdfSize)) {
-            pdfSizeUnlimitRadio.fire();
+            pdfSizeUnlimitRadio.setSelected(true);
         } else {
-            pdfSize500MRadio.fire();
+            pdfSize500MRadio.setSelected(true);
         }
 
         pdfSizeGroup.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) -> {

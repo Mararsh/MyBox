@@ -56,11 +56,11 @@ public class Data2DPercentageController extends BaseData2DHandleController {
 
             String toNegative = UserConfig.getString(baseName + "ToNegative", "skip");
             if ("zero".equals(toNegative)) {
-                negativeZeroRadio.fire();
+                negativeZeroRadio.setSelected(true);
             } else if ("abs".equals(toNegative)) {
-                negativeAbsRadio.fire();
+                negativeAbsRadio.setSelected(true);
             } else {
-                negativeSkipRadio.fire();
+                negativeSkipRadio.setSelected(true);
             }
             negativeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override

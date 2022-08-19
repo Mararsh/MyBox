@@ -79,7 +79,7 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
     @FXML
     protected void pdfPlay(ActionEvent event) {
         ImagesPlayController c = (ImagesPlayController) loadScene(Fxmls.ImagesPlayFxml);
-        c.pdfRadio.fire();
+        c.pdfRadio.setSelected(true);
     }
 
     @FXML
@@ -275,7 +275,7 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
     @FXML
     protected void pptPlay(ActionEvent event) {
         ImagesPlayController c = (ImagesPlayController) loadScene(Fxmls.ImagesPlayFxml);
-        c.pptRadio.fire();
+        c.pptRadio.setSelected(true);
     }
 
     @FXML

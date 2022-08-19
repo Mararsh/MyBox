@@ -8,7 +8,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import mara.mybox.calculation.OLSLinearRegression;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -22,15 +21,13 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-8-19
  * @License Apache License Version 2.0
  */
-public class Data2DMultipleLinearRegressionCombinationController extends BaseRegressionController {
+public class Data2DMultipleLinearRegressionCombinationController extends BaseData2DRegressionController {
 
     protected OLSLinearRegression regression;
     protected ObservableList<List<String>> results;
 
     @FXML
     protected ControlData2DSimpleLinearRegressionTable resultsController;
-    @FXML
-    protected Button dataButton;
 
     public Data2DMultipleLinearRegressionCombinationController() {
         baseTitle = message("SimpleLinearRegressionCombination");

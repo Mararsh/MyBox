@@ -130,7 +130,7 @@ public class ControlData2DTarget extends BaseController {
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
-                                csvRadio.fire();
+                                csvRadio.setSelected(true);
                             }
                         });
                     }
@@ -142,7 +142,7 @@ public class ControlData2DTarget extends BaseController {
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
-                                csvRadio.fire();
+                                csvRadio.setSelected(true);
                             }
                         });
                     }
@@ -154,7 +154,7 @@ public class ControlData2DTarget extends BaseController {
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
-                                csvRadio.fire();
+                                csvRadio.setSelected(true);
                             }
                         });
                     }
@@ -172,54 +172,54 @@ public class ControlData2DTarget extends BaseController {
     public void setTarget(String target) {
         try {
             if (target == null) {
-                csvRadio.fire();
+                csvRadio.setSelected(true);
                 return;
             }
             switch (target) {
                 case "csv":
-                    csvRadio.fire();
+                    csvRadio.setSelected(true);
                     break;
                 case "excel":
-                    excelRadio.fire();
+                    excelRadio.setSelected(true);
                     break;
                 case "texts":
-                    textsRadio.fire();
+                    textsRadio.setSelected(true);
                     break;
                 case "matrix":
-                    matrixRadio.fire();
+                    matrixRadio.setSelected(true);
                     break;
                 case "systemClipboard":
-                    systemClipboardRadio.fire();
+                    systemClipboardRadio.setSelected(true);
                     break;
                 case "myBoxClipboard":
-                    myBoxClipboardRadio.fire();
+                    myBoxClipboardRadio.setSelected(true);
                     break;
                 case "table":
-                    databaseRadio.fire();
+                    databaseRadio.setSelected(true);
                     break;
                 case "append":
                     if (notInTable && inTableBox != null) {
-                        appendRadio.fire();
+                        appendRadio.setSelected(true);
                     } else {
-                        csvRadio.fire();
+                        csvRadio.setSelected(true);
                     }
                     break;
                 case "insert":
                     if (notInTable && inTableBox != null) {
-                        insertRadio.fire();
+                        insertRadio.setSelected(true);
                     } else {
-                        csvRadio.fire();
+                        csvRadio.setSelected(true);
                     }
                     break;
                 case "relpace":
                     if (notInTable && inTableBox != null) {
-                        replaceRadio.fire();
+                        replaceRadio.setSelected(true);
                     } else {
-                        csvRadio.fire();
+                        csvRadio.setSelected(true);
                     }
                     break;
                 default:
-                    csvRadio.fire();
+                    csvRadio.setSelected(true);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

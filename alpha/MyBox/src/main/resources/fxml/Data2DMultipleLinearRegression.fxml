@@ -202,12 +202,26 @@ License:    Apache License Version 2.0
                                                                         <ComboBox fx:id="colSelector" prefWidth="200.0" />
                                                                     </children>
                                                                 </FlowPane>
-                                                                <FlowPane hgap="2.0" layoutX="10.0" layoutY="66.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
-                                                                    <children>
-                                                                        <Label minWidth="-Infinity" text="%SignificanceLevelDesired" />
-                                                                        <ComboBox fx:id="alphaSelector" editable="true" prefWidth="100.0" />
-                                                                    </children>
-                                                                </FlowPane>
+                                                <FlowPane hgap="2.0" prefWrapLength="300.0" vgap="2.0">
+                                                   <children>
+                                                      <Label text="%Normalize" />
+                                                      <RadioButton fx:id="zscoreRadio" mnemonicParsing="false" selected="true" text="L2(Z-Score)">
+                                                         <toggleGroup>
+                                                            <ToggleGroup fx:id="algorithmGroup" />
+                                                         </toggleGroup>
+                                                      </RadioButton>
+                                                   </children>
+                                                </FlowPane>
+                                                <FlowPane hgap="2.0" layoutX="15.0" layoutY="90.0" prefWrapLength="300.0" vgap="2.0">
+                                                   <children>
+                                                      <Label text="%Regression" />
+                                                      <RadioButton fx:id="zscoreRadio1" mnemonicParsing="false" selected="true" text="%OrdinaryLeastSquares">
+                                                         <toggleGroup>
+                                                            <ToggleGroup fx:id="algorithmGroup1" />
+                                                         </toggleGroup>
+                                                      </RadioButton>
+                                                   </children>
+                                                </FlowPane>
                                                                 <CheckBox fx:id="interceptCheck" mnemonicParsing="false" text="%Intercept" />
                                                 <Label fx:id="noticeLabel" minHeight="-Infinity" text="%AllRowsLoadComments" wrapText="true">
                                                    <VBox.margin>

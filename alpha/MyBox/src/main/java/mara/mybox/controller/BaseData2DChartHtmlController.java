@@ -114,9 +114,9 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
             });
 
             if (UserConfig.getBoolean(baseName + "Absoluate", true)) {
-                absoluateRadio.fire();
+                absoluateRadio.setSelected(true);
             } else {
-                minMaxRadio.fire();
+                minMaxRadio.setSelected(true);
             }
             compareGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override

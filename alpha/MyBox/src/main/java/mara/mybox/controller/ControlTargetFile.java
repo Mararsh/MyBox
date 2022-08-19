@@ -61,13 +61,13 @@ public class ControlTargetFile extends ControlFileSelecter {
             }
             switch (targetExistType) {
                 case Replace:
-                    targetReplaceRadio.fire();
+                    targetReplaceRadio.setSelected(true);
                     break;
                 case Skip:
-                    targetSkipRadio.fire();
+                    targetSkipRadio.setSelected(true);
                     break;
                 default:
-                    targetRenameRadio.fire();
+                    targetRenameRadio.setSelected(true);
                     break;
             }
             targetExistGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {

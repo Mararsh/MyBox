@@ -116,7 +116,7 @@ public class LocationInMapController extends GeographyCodeMapController {
 
     public void loadCoordinate(BaseController parent, double longitude, double latitude) {
         parentController = parent;
-        clickMapRadio.fire();
+        clickMapRadio.setSelected(true);
         loading = true;
         getMyStage().setAlwaysOnTop(true);
         setCoordinate(longitude, latitude);

@@ -409,7 +409,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
             if (!calculation.prepare()) {
                 return;
             }
-            data2D.resetTargetStatistic();
+            data2D.resetStatistic();
             if (isAllPages()) {
                 switch (objectType) {
                     case Rows:

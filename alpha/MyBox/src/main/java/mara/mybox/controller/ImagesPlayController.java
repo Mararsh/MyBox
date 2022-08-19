@@ -234,7 +234,7 @@ public class ImagesPlayController extends BaseImagesListController {
     protected boolean loadImageFile() {
         imageInfos.clear();
         Platform.runLater(() -> {
-            imagesRadio.fire();
+            imagesRadio.setSelected(true);
         });
         if (sourceFile == null) {
             return false;
@@ -314,7 +314,7 @@ public class ImagesPlayController extends BaseImagesListController {
     protected boolean loadIconFile() {
         imageInfos.clear();
         Platform.runLater(() -> {
-            imagesRadio.fire();
+            imagesRadio.setSelected(true);
         });
         if (sourceFile == null) {
             return false;
@@ -335,7 +335,7 @@ public class ImagesPlayController extends BaseImagesListController {
     public boolean loadPPT() {
         imageInfos.clear();
         Platform.runLater(() -> {
-            pptRadio.fire();
+            pptRadio.setSelected(true);
         });
         if (sourceFile == null) {
             return false;
@@ -410,7 +410,7 @@ public class ImagesPlayController extends BaseImagesListController {
     public boolean loadPDF() {
         imageInfos.clear();
         Platform.runLater(() -> {
-            pdfRadio.fire();
+            pdfRadio.setSelected(true);
         });
         if (sourceFile == null) {
             return false;

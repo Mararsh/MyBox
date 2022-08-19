@@ -98,9 +98,9 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
 
             if (skipNonnumericRadio != null) {
                 if (UserConfig.getBoolean(baseName + "SkipNonnumeric", true)) {
-                    skipNonnumericRadio.fire();
+                    skipNonnumericRadio.setSelected(true);
                 } else {
-                    zeroNonnumericRadio.fire();
+                    zeroNonnumericRadio.setSelected(true);
                 }
             }
 

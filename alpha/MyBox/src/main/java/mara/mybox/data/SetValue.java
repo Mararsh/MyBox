@@ -1,5 +1,7 @@
 package mara.mybox.data;
 
+import mara.mybox.tools.DoubleTools;
+
 /**
  * @Author Mara
  * @CreateDate 2022-8-13
@@ -9,12 +11,17 @@ public class SetValue {
 
     public ValueType type;
     public String value;
-    public int start, digit;
+    public int start, digit, scale;
     public boolean fillZero, aotoDigit;
+    public ToNonnumeric toNonnumeric;
 
     public static enum ValueType {
-        Value, Zero, One, Blank, Random, RandomNonNegative, Prefix, Suffix, SuffixNumber,
+        Value, Zero, One, Blank, Random, RandomNonNegative, Scale, Prefix, Suffix, SuffixNumber,
         Expression, GaussianDistribution, Identify, UpperTriangle, LowerTriangle
+    }
+
+    public static enum ToNonnumeric {
+        Skip, Zero, Blank
     }
 
     public SetValue() {
@@ -26,8 +33,10 @@ public class SetValue {
         value = null;
         start = 0;
         digit = 0;
+        scale = 5;
         fillZero = true;
         aotoDigit = true;
+        toNonnumeric = ToNonnumeric.Skip;
     }
 
     public boolean isZero() {
@@ -48,6 +57,10 @@ public class SetValue {
 
     public boolean isRandomNonNegative() {
         return type == ValueType.RandomNonNegative;
+    }
+
+    public boolean isScale() {
+        return type == ValueType.Scale;
     }
 
     public boolean isPrefix() {
@@ -94,20 +107,32 @@ public class SetValue {
         return finalDigit;
     }
 
-    /*
-        set/set
-     */
-    public ValueType getType() {
-        return type;
+    public String scale(String value) {
+        double d = DoubleTools.toDouble(value, Double.NaN);
+        if (DoubleTools.invalidDouble(d)) {
+            if (null == toNonnumeric) {
+                return value;
+            } else {
+                switch (toNonnumeric) {
+                    case Zero:
+                        return "0";
+                    case Blank:
+                        return "";
+                    default:
+                        return value;
+                }
+            }
+        } else {
+            return DoubleTools.scale(d, scale) + "";
+        }
     }
 
+    /*
+        set
+     */
     public SetValue setType(ValueType type) {
         this.type = type;
         return this;
-    }
-
-    public String getValue() {
-        return value;
     }
 
     public SetValue setValue(String value) {
@@ -115,17 +140,9 @@ public class SetValue {
         return this;
     }
 
-    public int getStart() {
-        return start;
-    }
-
     public SetValue setStart(int start) {
         this.start = start;
         return this;
-    }
-
-    public int getDigit() {
-        return digit;
     }
 
     public SetValue setDigit(int digit) {
@@ -133,22 +150,59 @@ public class SetValue {
         return this;
     }
 
-    public boolean isFillZero() {
-        return fillZero;
-    }
-
     public SetValue setFillZero(boolean fillZero) {
         this.fillZero = fillZero;
         return this;
+    }
+
+    public SetValue setAotoDigit(boolean aotoDigit) {
+        this.aotoDigit = aotoDigit;
+        return this;
+    }
+
+    public SetValue setScale(int scale) {
+        this.scale = scale;
+        return this;
+    }
+
+    public SetValue setToNonnumeric(ToNonnumeric toNonnumeric) {
+        this.toNonnumeric = toNonnumeric;
+        return this;
+    }
+
+    /*
+        get
+     */
+    public ValueType getType() {
+        return type;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public int getStart() {
+        return start;
+    }
+
+    public int getDigit() {
+        return digit;
+    }
+
+    public boolean isFillZero() {
+        return fillZero;
     }
 
     public boolean isAotoDigit() {
         return aotoDigit;
     }
 
-    public SetValue setAotoDigit(boolean aotoDigit) {
-        this.aotoDigit = aotoDigit;
-        return this;
+    public int getScale() {
+        return scale;
+    }
+
+    public ToNonnumeric getToNonnumeric() {
+        return toNonnumeric;
     }
 
 }

@@ -45,7 +45,7 @@ public class ColumnDefinition extends BaseData {
     protected Object value;
     protected Number maxValue, minValue;
     protected Map<Object, String> data;  // value, displayString
-    protected DoubleStatistic sourceStatistic, targetStatistic;
+    protected DoubleStatistic statistic;
 
     public static enum ColumnType {
         String, Boolean, Text,
@@ -84,8 +84,7 @@ public class ColumnDefinition extends BaseData {
         referTable = null;
         referColumn = null;
         label = null;
-        sourceStatistic = null;
-        targetStatistic = null;
+        statistic = null;
         data = null;
     }
 
@@ -153,8 +152,7 @@ public class ColumnDefinition extends BaseData {
             maxValue = c.maxValue;
             minValue = c.minValue;
             columnValues = c.columnValues;
-            sourceStatistic = c.sourceStatistic;
-            targetStatistic = c.targetStatistic;
+            statistic = c.statistic;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -995,21 +993,12 @@ public class ColumnDefinition extends BaseData {
         this.color = color;
     }
 
-    public DoubleStatistic getTargetStatistic() {
-        return targetStatistic;
+    public DoubleStatistic getStatistic() {
+        return statistic;
     }
 
-    public ColumnDefinition setTargetStatistic(DoubleStatistic targetStatistic) {
-        this.targetStatistic = targetStatistic;
-        return this;
-    }
-
-    public DoubleStatistic getSourceStatistic() {
-        return sourceStatistic;
-    }
-
-    public ColumnDefinition setSourceStatistic(DoubleStatistic sourceStatistic) {
-        this.sourceStatistic = sourceStatistic;
+    public ColumnDefinition setStatistic(DoubleStatistic statistic) {
+        this.statistic = statistic;
         return this;
     }
 

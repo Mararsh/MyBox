@@ -233,7 +233,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
 
             loadImage(sourceFile, imageInformation, imageController.image, parent.imageChanged);
             checkScopeType();
-            scopeAllRadio.fire();
+            scopeAllRadio.setSelected(true);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }

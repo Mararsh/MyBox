@@ -95,12 +95,12 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
                     || chart instanceof SimpleRegressionChart
                     || chart instanceof ResidualChart) {
                 categoryStringRadio.setDisable(true);
-                categoryNumberRadio.fire();
+                categoryNumberRadio.setSelected(true);
             } else {
                 categoryStringRadio.setDisable(false);
 
                 if (!(chart instanceof LineChart) && !(chart instanceof ScatterChart)) {
-                    categoryStringRadio.fire();
+                    categoryStringRadio.setSelected(true);
                     categoryBox.getChildren().remove(categoryNumbersBox);
                 }
             }
@@ -111,7 +111,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
 
             if (chart instanceof BarChart || chart instanceof StackedBarChart) {
                 if (pointRadio.isSelected()) {
-                    noRadio.fire();
+                    noRadio.setSelected(true);
                 }
                 pointRadio.setDisable(true);
             } else {
@@ -439,9 +439,9 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
             });
 
             if (chartMaker.isCategoryIsNumbers()) {
-                categoryNumberRadio.fire();
+                categoryNumberRadio.setSelected(true);
             } else {
-                categoryStringRadio.fire();
+                categoryStringRadio.setSelected(true);
             }
             categoryValuesGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override

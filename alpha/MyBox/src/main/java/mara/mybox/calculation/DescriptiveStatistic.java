@@ -71,6 +71,74 @@ public class DescriptiveStatistic {
                 .setLowerExtremeOutlierLine(select);
     }
 
+    public List<String> list() {
+        List<String> list = new ArrayList<>();
+        if (count) {
+            list.add("count");
+        }
+        if (sum) {
+            list.add("sum");
+        }
+        if (mean) {
+            list.add("mean");
+        }
+        if (count) {
+            list.add("count");
+        }
+        if (maximum) {
+            list.add("maximum");
+        }
+        if (minimum) {
+            list.add("minimum");
+        }
+        if (skewness) {
+            list.add("skewness");
+        }
+        if (geometricMean) {
+            list.add("geometricMean");
+        }
+        if (sumSquares) {
+            list.add("sumSquares");
+        }
+        if (populationVariance) {
+            list.add("populationVariance");
+        }
+        if (sampleVariance) {
+            list.add("sampleVariance");
+        }
+        if (populationStandardDeviation) {
+            list.add("populationStandardDeviation");
+        }
+        if (sampleStandardDeviation) {
+            list.add("sampleStandardDeviation");
+        }
+        if (mode) {
+            list.add("mode");
+        }
+        if (median) {
+            list.add("median");
+        }
+        if (upperQuartile) {
+            list.add("upperQuartile");
+        }
+        if (lowerQuartile) {
+            list.add("lowerQuartile");
+        }
+        if (upperMildOutlierLine) {
+            list.add("upperMildOutlierLine");
+        }
+        if (upperExtremeOutlierLine) {
+            list.add("upperExtremeOutlierLine");
+        }
+        if (lowerMildOutlierLine) {
+            list.add("lowerMildOutlierLine");
+        }
+        if (lowerExtremeOutlierLine) {
+            list.add("lowerExtremeOutlierLine");
+        }
+        return list;
+    }
+
     public boolean need() {
         return needNonStored() || needStored();
     }
@@ -691,7 +759,7 @@ public class DescriptiveStatistic {
             }
             for (int c : colsIndices) {
                 Data2DColumn column = data2D.getColumns().get(c);
-                DoubleStatistic colStatistic = column.getTargetStatistic();
+                DoubleStatistic colStatistic = column.getStatistic();
                 statisticByColumnsWrite(colStatistic);
             }
             return true;

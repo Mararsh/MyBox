@@ -106,7 +106,7 @@ public class ControlTextOptions extends BaseController {
     
     protected void setCharset(Charset charset) {
         if (charsetKnownRadio != null) {
-            charsetKnownRadio.fire();
+            charsetKnownRadio.setSelected(true);
         }
         if (charset != null) {
             charsetSelector.setValue(charset.name());

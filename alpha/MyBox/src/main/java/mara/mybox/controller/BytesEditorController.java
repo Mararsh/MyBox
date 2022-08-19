@@ -86,15 +86,15 @@ public class BytesEditorController extends BaseFileEditorController {
 
             String savedLB = UserConfig.getString(baseName + "LineBreak", "Width");
             if (savedLB.equals(Line_Break.Value.toString())) {
-                bytesRadio.fire();
+                bytesRadio.setSelected(true);
             } else if (savedLB.equals(Line_Break.LF.toString())) {
-                lbLFRadio.fire();
+                lbLFRadio.setSelected(true);
             } else if (savedLB.equals(Line_Break.CR.toString())) {
-                lbCRRadio.fire();
+                lbCRRadio.setSelected(true);
             } else if (savedLB.equals(Line_Break.CRLF.toString())) {
-                lbCRLFRsadio.fire();
+                lbCRLFRsadio.setSelected(true);
             } else {
-                lbWidthRadio.fire();
+                lbWidthRadio.setSelected(true);
             }
 
         } catch (Exception e) {

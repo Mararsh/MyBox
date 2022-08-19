@@ -196,7 +196,7 @@ public class ControlDataConvert extends BaseController {
             pdfOptionsController.set(baseName, false);
         }
         pdfOptionsController.pixSizeRadio.setDisable(true);
-        pdfOptionsController.standardSizeRadio.fire();
+        pdfOptionsController.standardSizeRadio.setSelected(true);
     }
 
     private void initOthers() {

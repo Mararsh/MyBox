@@ -97,7 +97,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                     audioComments.setText("alsa");
                     break;
                 case "mac":
-                    fullscreenRadio.fire();
+                    fullscreenRadio.setSelected(true);
                     videoBox.getChildren().removeAll(windowBox, rectBox);
                     checkDevicesMac();
                     break;
@@ -428,7 +428,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
     @Override
     public void defaultAction() {
         super.defaultAction();
-        fullscreenRadio.fire();
+        fullscreenRadio.setSelected(true);
         audioThreadQueueSizeInput.setText("128");
         videoThreadQueueSizeInput.setText("128");
         delayController.select(5);

@@ -143,31 +143,31 @@ public class DatasetEditController extends BaseController {
             datasetInput.setText(loadedDataset.getDataSet());
             switch (loadedDataset.getTimeFormat()) {
                 case Date:
-                    dateRadio.fire();
+                    dateRadio.setSelected(true);
                     break;
                 case Year:
-                    yearRadio.fire();
+                    yearRadio.setSelected(true);
                     break;
                 case Month:
-                    monthRadio.fire();
+                    monthRadio.setSelected(true);
                     break;
                 case Time:
-                    timeRadio.fire();
+                    timeRadio.setSelected(true);
                     break;
                 case TimeMs:
-                    timeMsRadio.fire();
+                    timeMsRadio.setSelected(true);
                     break;
                 case DatetimeMs:
-                    datatimeMsRadio.fire();
+                    datatimeMsRadio.setSelected(true);
                     break;
                 case DatetimeZone:
-                    datetimeZoneRadio.fire();
+                    datetimeZoneRadio.setSelected(true);
                     break;
                 case DatetimeMsZone:
-                    datatimeMsZoneRadio.fire();
+                    datatimeMsZoneRadio.setSelected(true);
                     break;
                 default:
-                    datetimeRadio.fire();
+                    datetimeRadio.setSelected(true);
                     break;
             }
             omitADCheck.setSelected(loadedDataset.isOmitAD());
@@ -206,7 +206,7 @@ public class DatasetEditController extends BaseController {
             idInput.clear();
             categorySelector.getSelectionModel().select(0);
             datasetInput.clear();
-            datetimeRadio.fire();
+            datetimeRadio.setSelected(true);
             sourceFileInput.clear();
             commentsArea.clear();
             initColors();

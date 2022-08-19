@@ -288,8 +288,8 @@ public class ChromaticityDiagramController extends ImageViewerController {
             bgColor = null;
             isLine = true;
             dotSize = 4;
-            bgTransparentRadio.fire();
-            dotLine4pxRadio.fire();
+            bgTransparentRadio.setSelected(true);
+            dotLine4pxRadio.setSelected(true);
             fontSelector.getSelectionModel().select(0);
             isSettingValues = false;
         } catch (Exception e) {

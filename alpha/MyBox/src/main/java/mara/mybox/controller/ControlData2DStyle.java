@@ -147,8 +147,8 @@ public class ControlData2DStyle extends BaseController {
     public void loadNull(Data2DStyle style) {
         currentStyle = style;
         isSettingValues = true;
-        colorDefaultRadio.fire();
-        bgDefaultRadio.fire();
+        colorDefaultRadio.setSelected(true);
+        bgDefaultRadio.setSelected(true);
         fontSizeSelector.setValue(message("Default"));
         boldCheck.setSelected(false);
         moreInput.clear();
@@ -166,11 +166,11 @@ public class ControlData2DStyle extends BaseController {
         isSettingValues = true;
         if (currentStyle.getFontColor() != null && !currentStyle.getFontColor().isBlank()) {
             fontColorController.setColor(Color.web(currentStyle.getFontColor()));
-            colorSetRadio.fire();
+            colorSetRadio.setSelected(true);
         }
         if (currentStyle.getBgColor() != null && !currentStyle.getBgColor().isBlank()) {
             bgColorController.setColor(Color.web(currentStyle.getBgColor()));
-            bgSetRadio.fire();
+            bgSetRadio.setSelected(true);
         }
         fontSizeSelector.setValue(currentStyle.getFontSize());
         boldCheck.setSelected(currentStyle.isBold());

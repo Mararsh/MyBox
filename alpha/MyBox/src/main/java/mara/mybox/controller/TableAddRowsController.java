@@ -53,15 +53,15 @@ public class TableAddRowsController extends BaseController {
 
             String location = UserConfig.getString(baseName + "AddRowsLocation", message("Front"));
             if (location == null || message("Front").equals(location)) {
-                frontRadio.fire();
+                frontRadio.setSelected(true);
             } else if (message("End").equals(location)) {
-                endRadio.fire();
+                endRadio.setSelected(true);
             } else if (message("Below").equals(location)) {
-                belowRadio.fire();
+                belowRadio.setSelected(true);
             } else if (message("Above").equals(location)) {
-                aboveRadio.fire();
+                aboveRadio.setSelected(true);
             } else {
-                frontRadio.fire();
+                frontRadio.setSelected(true);
             }
             rowBox.setVisible(belowRadio.isSelected() || aboveRadio.isSelected());
             locationGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {

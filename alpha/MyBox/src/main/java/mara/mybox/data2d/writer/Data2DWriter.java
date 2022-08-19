@@ -112,12 +112,14 @@ public abstract class Data2DWriter {
     public void handleRow() {
         try {
             targetRow = null;
+            data2D.filterDataRow(sourceRow, rowIndex);
+            boolean filterPassed = data2D.filterPassed() && !data2D.filterReachMaxPassed();
             switch (operation) {
                 case SetValue:
-                    handleSetValues();
+                    handleSetValues(filterPassed);
                     break;
                 case Delete:
-                    handleDelete();
+                    handleDelete(filterPassed);
                     break;
                 default:
                     break;
@@ -130,12 +132,10 @@ public abstract class Data2DWriter {
         }
     }
 
-    public void handleSetValues() {
+    public void handleSetValues(boolean filterPassed) {
         try {
             String expResult = null, currentValue;
-            data2D.filterDataRow(sourceRow, rowIndex);
-            boolean needSetValue = data2D.filterPassed() && !data2D.filterReachMaxPassed();
-            if (needSetValue) {
+            if (filterPassed) {
                 if (setValue.isExpression() && dataValue != null) {
                     data2D.calculateDataRowExpression(dataValue, sourceRow, rowIndex);
                     expResult = data2D.expressionResult();
@@ -163,7 +163,7 @@ public abstract class Data2DWriter {
                     currentValue = null;
                 }
                 String v;
-                if (needSetValue && cols.contains(i)) {
+                if (filterPassed && cols.contains(i)) {
                     if (setValue.isBlank()) {
                         v = "";
                     } else if (setValue.isZero()) {
@@ -176,6 +176,8 @@ public abstract class Data2DWriter {
                         v = data2D.random(random, i, false);
                     } else if (setValue.isRandomNonNegative()) {
                         v = data2D.random(random, i, true);
+                    } else if (setValue.isScale()) {
+                        v = setValue.scale(currentValue);
                     } else if (setValue.isSuffix()) {
                         v = currentValue == null ? dataValue : currentValue + dataValue;
                     } else if (setValue.isPrefix()) {
@@ -199,10 +201,8 @@ public abstract class Data2DWriter {
         }
     }
 
-    public void handleDelete() {
+    public void handleDelete(boolean filterPassed) {
         try {
-            data2D.filterDataRow(sourceRow, rowIndex);
-            boolean needDelete = data2D.filterPassed() && !data2D.filterReachMaxPassed();
             if (data2D.error != null) {
                 if (errorContinue) {
                     return;
@@ -213,10 +213,10 @@ public abstract class Data2DWriter {
                     return;
                 }
             }
-            if (needDelete) {
+            if (filterPassed) {
                 count++;
             }
-            deleteRow(needDelete);
+            deleteRow(filterPassed);
         } catch (Exception e) {
         }
     }

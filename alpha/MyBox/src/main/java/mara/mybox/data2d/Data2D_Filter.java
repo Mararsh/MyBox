@@ -176,9 +176,11 @@ public abstract class Data2D_Filter extends Data2D_Data {
                 return scripts;
             }
             DoubleStatistic[] sData = null;
-            if (isMutiplePages()) {
+            if (isTmpData()) {
+                sData = ((Data2D) this).statisticByColumnsForCurrentPage(colIndices, calculation);
+            } else {
                 Data2D filter2D = ((Data2D) this).cloneAll();
-                filter2D.resetTargetStatistic();
+                filter2D.resetStatistic();
                 filter2D.startTask(task, null);
                 if (calculation.needNonStored()) {
                     sData = filter2D.statisticByColumnsWithoutStored(colIndices, calculation);
@@ -187,14 +189,12 @@ public abstract class Data2D_Filter extends Data2D_Data {
                     sData = filter2D.statisticByColumnsForStored(colIndices, calculation);
                 }
                 filter2D.stopTask();
-            } else {
-                sData = ((Data2D) this).statisticByColumnsForCurrentPage(colIndices, calculation);
             }
             if (sData == null) {
                 return null;
             }
             for (int c = 0; c < colIndices.size(); c++) {
-                column(colIndices.get(c)).setSourceStatistic(sData[c]);
+                column(colIndices.get(c)).setStatistic(sData[c]);
             }
             List<String> filled = new ArrayList<>();
             FindReplaceString findReplace = ExpressionCalculator.createFindReplace();
@@ -277,81 +277,81 @@ public abstract class Data2D_Filter extends Data2D_Data {
                 Data2DColumn column = columns.get(i);
                 String name = column.getColumnName();
                 if (filledScript.contains("#{" + name + "-" + message("Mean") + "}")) {
-                    if (column.getSourceStatistic() == null || DoubleTools.invalidDouble(column.getSourceStatistic().mean)) {
+                    if (column.getStatistic() == null || DoubleTools.invalidDouble(column.getStatistic().mean)) {
                         return null;
                     }
                     filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("Mean") + "}",
-                            column.getSourceStatistic().mean + "");
+                            column.getStatistic().mean + "");
                 }
                 if (filledScript.contains("#{" + name + "-" + message("Median") + "}")) {
-                    if (column.getSourceStatistic() == null || DoubleTools.invalidDouble(column.getSourceStatistic().median)) {
+                    if (column.getStatistic() == null || DoubleTools.invalidDouble(column.getStatistic().median)) {
                         return null;
                     }
                     filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("Median") + "}",
-                            column.getSourceStatistic().median + "");
+                            column.getStatistic().median + "");
                 }
                 if (filledScript.contains("#{" + name + "-" + message("Mode") + "}")) {
-                    if (column.getSourceStatistic() == null || column.getSourceStatistic().modeValue == null) {
+                    if (column.getStatistic() == null || column.getStatistic().modeValue == null) {
                         return null;
                     }
                     filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("Mode") + "}",
-                            column.getSourceStatistic().modeValue.toString());
+                            column.getStatistic().modeValue.toString());
                 }
                 if (filledScript.contains("#{" + name + "-" + message("MinimumQ0") + "}")) {
-                    if (column.getSourceStatistic() == null || DoubleTools.invalidDouble(column.getSourceStatistic().minimum)) {
+                    if (column.getStatistic() == null || DoubleTools.invalidDouble(column.getStatistic().minimum)) {
                         return null;
                     }
                     filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("MinimumQ0") + "}",
-                            column.getSourceStatistic().minimum + "");
+                            column.getStatistic().minimum + "");
                 }
                 if (filledScript.contains("#{" + name + "-" + message("LowerQuartile") + "}")) {
-                    if (column.getSourceStatistic() == null || DoubleTools.invalidDouble(column.getSourceStatistic().lowerQuartile)) {
+                    if (column.getStatistic() == null || DoubleTools.invalidDouble(column.getStatistic().lowerQuartile)) {
                         return null;
                     }
                     filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("LowerQuartile") + "}",
-                            column.getSourceStatistic().lowerQuartile + "");
+                            column.getStatistic().lowerQuartile + "");
                 }
                 if (filledScript.contains("#{" + name + "-" + message("UpperQuartile") + "}")) {
-                    if (column.getSourceStatistic() == null || DoubleTools.invalidDouble(column.getSourceStatistic().upperQuartile)) {
+                    if (column.getStatistic() == null || DoubleTools.invalidDouble(column.getStatistic().upperQuartile)) {
                         return null;
                     }
                     filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("UpperQuartile") + "}",
-                            column.getSourceStatistic().upperQuartile + "");
+                            column.getStatistic().upperQuartile + "");
                 }
                 if (filledScript.contains("#{" + name + "-" + message("MaximumQ4") + "}")) {
-                    if (column.getSourceStatistic() == null || DoubleTools.invalidDouble(column.getSourceStatistic().maximum)) {
+                    if (column.getStatistic() == null || DoubleTools.invalidDouble(column.getStatistic().maximum)) {
                         return null;
                     }
                     filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("MaximumQ4") + "}",
-                            column.getSourceStatistic().maximum + "");
+                            column.getStatistic().maximum + "");
                 }
                 if (filledScript.contains("#{" + name + "-" + message("LowerExtremeOutlierLine") + "}")) {
-                    if (column.getSourceStatistic() == null || DoubleTools.invalidDouble(column.getSourceStatistic().lowerExtremeOutlierLine)) {
+                    if (column.getStatistic() == null || DoubleTools.invalidDouble(column.getStatistic().lowerExtremeOutlierLine)) {
                         return null;
                     }
                     filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("LowerExtremeOutlierLine") + "}",
-                            column.getSourceStatistic().lowerExtremeOutlierLine + "");
+                            column.getStatistic().lowerExtremeOutlierLine + "");
                 }
                 if (filledScript.contains("#{" + name + "-" + message("LowerMildOutlierLine") + "}")) {
-                    if (column.getSourceStatistic() == null || DoubleTools.invalidDouble(column.getSourceStatistic().lowerMildOutlierLine)) {
+                    if (column.getStatistic() == null || DoubleTools.invalidDouble(column.getStatistic().lowerMildOutlierLine)) {
                         return null;
                     }
                     filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("LowerMildOutlierLine") + "}",
-                            column.getSourceStatistic().lowerMildOutlierLine + "");
+                            column.getStatistic().lowerMildOutlierLine + "");
                 }
                 if (filledScript.contains("#{" + name + "-" + message("UpperMildOutlierLine") + "}")) {
-                    if (column.getSourceStatistic() == null || DoubleTools.invalidDouble(column.getSourceStatistic().upperMildOutlierLine)) {
+                    if (column.getStatistic() == null || DoubleTools.invalidDouble(column.getStatistic().upperMildOutlierLine)) {
                         return null;
                     }
                     filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("UpperMildOutlierLine") + "}",
-                            column.getSourceStatistic().upperMildOutlierLine + "");
+                            column.getStatistic().upperMildOutlierLine + "");
                 }
                 if (filledScript.contains("#{" + name + "-" + message("UpperExtremeOutlierLine") + "}")) {
-                    if (column.getSourceStatistic() == null || DoubleTools.invalidDouble(column.getSourceStatistic().upperExtremeOutlierLine)) {
+                    if (column.getStatistic() == null || DoubleTools.invalidDouble(column.getStatistic().upperExtremeOutlierLine)) {
                         return null;
                     }
                     filledScript = findReplace.replaceStringAll(filledScript, "#{" + name + "-" + message("UpperExtremeOutlierLine") + "}",
-                            column.getSourceStatistic().upperExtremeOutlierLine + "");
+                            column.getStatistic().upperExtremeOutlierLine + "");
                 }
             }
             return filledScript;

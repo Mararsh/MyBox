@@ -462,19 +462,19 @@ public class GameEliminationController extends BaseController {
             String sound = UserConfig.getString("GameEliminationSound", "Guai");
             switch (sound) {
                 case "Ben":
-                    benRadio.fire();
+                    benRadio.setSelected(true);
                     break;
                 case "GuaiBen":
-                    guaiBenRadio.fire();
+                    guaiBenRadio.setSelected(true);
                     break;
                 case "Mute":
-                    muteRadio.fire();
+                    muteRadio.setSelected(true);
                     break;
                 case "Customized":
-                    customizedSoundRadio.fire();
+                    customizedSoundRadio.setSelected(true);
                     break;
                 default:
-                    guaiRadio.fire();
+                    guaiRadio.setSelected(true);
                     break;
             }
 
@@ -511,13 +511,13 @@ public class GameEliminationController extends BaseController {
             String dead = UserConfig.getString("GameEliminationDead", "Renew");
             switch (dead) {
                 case "Chance":
-                    deadChanceRadio.fire();
+                    deadChanceRadio.setSelected(true);
                     break;
                 case "Prompt":
-                    deadPromptRadio.fire();
+                    deadPromptRadio.setSelected(true);
                     break;
                 default:
-                    deadRenewRadio.fire();
+                    deadRenewRadio.setSelected(true);
                     break;
             }
 
@@ -557,16 +557,16 @@ public class GameEliminationController extends BaseController {
             String speed = UserConfig.getString("GameEliminationAutoSpeed", "2");
             switch (speed) {
                 case "1":
-                    speed1Radio.fire();
+                    speed1Radio.setSelected(true);
                     break;
                 case "3":
-                    speed3Radio.fire();
+                    speed3Radio.setSelected(true);
                     break;
                 case "5":
-                    speed5Radio.fire();
+                    speed5Radio.setSelected(true);
                     break;
                 default:
-                    speed2Radio.fire();
+                    speed2Radio.setSelected(true);
                     break;
             }
 
@@ -611,16 +611,16 @@ public class GameEliminationController extends BaseController {
             String flush = UserConfig.getString("GameEliminationFlushTime", "2");
             switch (flush) {
                 case "1":
-                    flush1Radio.fire();
+                    flush1Radio.setSelected(true);
                     break;
                 case "3":
-                    flush3Radio.fire();
+                    flush3Radio.setSelected(true);
                     break;
                 case "0":
-                    flush0Radio.fire();
+                    flush0Radio.setSelected(true);
                     break;
                 default:
-                    flush2Radio.fire();
+                    flush2Radio.setSelected(true);
                     break;
             }
 

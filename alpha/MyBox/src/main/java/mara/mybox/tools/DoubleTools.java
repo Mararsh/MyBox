@@ -20,6 +20,9 @@ public class DoubleTools {
 
     public static double toDouble(String string, double invalidAs) {
         try {
+            if (string == null || string.isBlank()) {
+                return invalidAs;
+            }
             double d = Double.valueOf(string.replaceAll(",", ""));
             return invalidDouble(d) ? invalidAs : d;
         } catch (Exception e) {

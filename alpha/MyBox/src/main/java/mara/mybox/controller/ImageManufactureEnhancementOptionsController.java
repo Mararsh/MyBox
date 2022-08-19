@@ -527,7 +527,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
 
     public void applyKernel(ConvolutionKernel kernel) {
         loadedKernel = kernel;
-        ConvolutionRadio.fire();
+        ConvolutionRadio.setSelected(true);
         checkEnhanceType();
     }
 

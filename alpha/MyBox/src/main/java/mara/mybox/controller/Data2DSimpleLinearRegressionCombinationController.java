@@ -17,7 +17,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-8-12
  * @License Apache License Version 2.0
  */
-public class Data2DSimpleLinearRegressionCombinationController extends BaseRegressionController {
+public class Data2DSimpleLinearRegressionCombinationController extends BaseData2DRegressionController {
 
     protected SimpleLinearRegression simpleRegression;
 

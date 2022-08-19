@@ -316,20 +316,20 @@ public class ControlImageFormat extends BaseController {
             alphaRemoveRadio.setDisable(false);
             alphaPreKeepRadio.setDisable(false);
             alphaPreReomveRadio.setDisable(false);
-            alphaKeepRadio.fire();
+            alphaKeepRadio.setSelected(true);
         } else if (FileExtensions.AlphaImages.contains(attributes.getImageFormat())
                 && !message("BlackOrWhite").equals(colorSpace)) {
             alphaKeepRadio.setDisable(false);
             alphaRemoveRadio.setDisable(false);
             alphaPreKeepRadio.setDisable(true);
             alphaPreReomveRadio.setDisable(false);
-            alphaKeepRadio.fire();
+            alphaKeepRadio.setSelected(true);
         } else {
             alphaKeepRadio.setDisable(true);
             alphaRemoveRadio.setDisable(false);
             alphaPreKeepRadio.setDisable(true);
             alphaPreReomveRadio.setDisable(false);
-            alphaRemoveRadio.fire();
+            alphaRemoveRadio.setSelected(true);
         }
 
         checkEmbed();
@@ -404,7 +404,7 @@ public class ControlImageFormat extends BaseController {
                     }
                 });
                 if (defaultCompress.equals(compress)) {
-                    button.fire();
+                    button.setSelected(true);
                 }
                 compressGroup.getToggles().add(button);
                 compressPane.getChildren().add(button);

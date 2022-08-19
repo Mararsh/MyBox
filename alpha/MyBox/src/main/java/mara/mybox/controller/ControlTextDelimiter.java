@@ -134,7 +134,7 @@ public class ControlTextDelimiter extends BaseController {
 
             if (!hasBlanks) {
                 if (blanksRadio.isSelected()) {
-                    blankRadio.fire();
+                    blankRadio.setSelected(true);
                 }
                 blanksRadio.setDisable(true);
             }
@@ -153,94 +153,94 @@ public class ControlTextDelimiter extends BaseController {
             switch (delimiterName.toLowerCase()) {
                 case "blank":
                 case " ":
-                    blankRadio.fire();
+                    blankRadio.setSelected(true);
                     break;
                 case "blank4":
                 case "    ":
-                    blank4Radio.fire();
+                    blank4Radio.setSelected(true);
                     break;
                 case "blank8":
                 case "        ":
-                    blank8Radio.fire();
+                    blank8Radio.setSelected(true);
                     break;
                 case "blanks":
-                    blanksRadio.fire();
+                    blanksRadio.setSelected(true);
                     break;
                 case "tab":
                 case "\t":
-                    tabRadio.fire();
+                    tabRadio.setSelected(true);
                     break;
                 case ",":
-                    commaRadio.fire();
+                    commaRadio.setSelected(true);
                     break;
                 case "|":
-                    lineRadio.fire();
+                    lineRadio.setSelected(true);
                     break;
                 case "@":
-                    atRadio.fire();
+                    atRadio.setSelected(true);
                     break;
                 case "#":
-                    sharpRadio.fire();
+                    sharpRadio.setSelected(true);
                     break;
                 case ";":
-                    semicolonsRadio.fire();
+                    semicolonsRadio.setSelected(true);
                     break;
                 case "-":
-                    hyphenRadio.fire();
+                    hyphenRadio.setSelected(true);
                     break;
                 case "+":
-                    plusRadio.fire();
+                    plusRadio.setSelected(true);
                     break;
                 case ":":
-                    colonRadio.fire();
+                    colonRadio.setSelected(true);
                     break;
                 case "&":
-                    andRadio.fire();
+                    andRadio.setSelected(true);
                     break;
                 case "%":
-                    percentRadio.fire();
+                    percentRadio.setSelected(true);
                     break;
                 case "!":
-                    exclamationRadio.fire();
+                    exclamationRadio.setSelected(true);
                     break;
                 case "\"":
-                    quoteRadio.fire();
+                    quoteRadio.setSelected(true);
                     break;
                 case "'":
-                    singleQuoteRadio.fire();
+                    singleQuoteRadio.setSelected(true);
                     break;
                 case "?":
-                    questionRadio.fire();
+                    questionRadio.setSelected(true);
                     break;
                 case ".":
-                    dotRadio.fire();
+                    dotRadio.setSelected(true);
                     break;
                 case "*":
-                    asteriskRadio.fire();
+                    asteriskRadio.setSelected(true);
                     break;
                 case "\\":
-                    slashRadio.fire();
+                    slashRadio.setSelected(true);
                     break;
                 case "/":
-                    backslashRadio.fire();
+                    backslashRadio.setSelected(true);
                     break;
                 case "_":
-                    underlineRadio.fire();
+                    underlineRadio.setSelected(true);
                     break;
                 case "=":
-                    equalRadio.fire();
+                    equalRadio.setSelected(true);
                     break;
                 case "<":
-                    lessRadio.fire();
+                    lessRadio.setSelected(true);
                     break;
                 case ">":
-                    greateRadio.fire();
+                    greateRadio.setSelected(true);
                     break;
                 default:
                     if (delimiterName.isBlank()) {
-                        blanksRadio.fire();
+                        blanksRadio.setSelected(true);
                     } else {
-                        stringRadio.fire();
+                        stringRadio.setSelected(true);
                         delimiterInput.setText(delimiterName);
                     }
             }

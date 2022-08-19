@@ -114,7 +114,7 @@ public class ControlOCROptions extends BaseController {
                 initWin();
             } else {
                 embedRadio.setDisable(true);
-                tesseractRadio.fire();
+                tesseractRadio.setSelected(true);
             }
             engineGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -183,9 +183,9 @@ public class ControlOCROptions extends BaseController {
     public void initWin() {
         embedRadio.setDisable(false);
         if (UserConfig.getBoolean("ImageOCREmbed", true)) {
-            embedRadio.fire();
+            embedRadio.setSelected(true);
         } else {
-            tesseractRadio.fire();
+            tesseractRadio.setSelected(true);
         }
         regionLevel = -1;
         regionSelector.getItems().addAll(Arrays.asList(message("None"),

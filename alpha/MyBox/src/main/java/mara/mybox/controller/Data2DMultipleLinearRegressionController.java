@@ -18,7 +18,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-4-21
  * @License Apache License Version 2.0
  */
-public class Data2DMultipleLinearRegressionController extends BaseRegressionController {
+public class Data2DMultipleLinearRegressionController extends BaseData2DRegressionController {
 
     protected OLSLinearRegression regression;
     protected String yName;

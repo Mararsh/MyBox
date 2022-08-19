@@ -20,33 +20,33 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class Data2DSetValuesController extends BaseData2DHandleController {
-
+    
     @FXML
     protected ControlData2DSetValue valueController;
-
+    
     public Data2DSetValuesController() {
         baseTitle = message("SetValues");
     }
-
+    
     @Override
     public void setParameters(ControlData2DEditTable tableController) {
         try {
             super.setParameters(tableController);
-
+            
             idExclude(true);
             valueController.setParameter(this);
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-
+    
     @Override
     public void sourceChanged() {
         super.sourceChanged();
         valueController.setData2D(data2D);
     }
-
+    
     @Override
     public void refreshControls() {
         try {
@@ -57,7 +57,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                 allPagesRadio.setDisable(false);
             } else {
                 if (allPagesRadio.isSelected()) {
-                    currentPageRadio.fire();
+                    currentPageRadio.setSelected(true);
                 }
                 allPagesRadio.setDisable(true);
             }
@@ -68,7 +68,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             MyBoxLog.error(e.toString());
         }
     }
-
+    
     @Override
     public boolean initData() {
         try {
@@ -84,7 +84,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             return false;
         }
     }
-
+    
     @Override
     public void preprocessStatistic() {
         List<String> scripts = new ArrayList<>();
@@ -108,7 +108,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             task.cancel();
         }
         task = new SingletonTask<Void>(this) {
-
+            
             @Override
             protected boolean handle() {
                 try {
@@ -144,11 +144,11 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                     return false;
                 }
             }
-
+            
             @Override
             protected void whenSucceeded() {
             }
-
+            
             @Override
             protected void finalAction() {
                 super.finalAction();
@@ -158,17 +158,17 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                     startOperation();
                 }
             }
-
+            
         };
         start(task);
     }
-
+    
     @Override
     public void handleAllTask() {
         task = new SingletonTask<Void>(this) {
-
+            
             private long count;
-
+            
             @Override
             protected boolean handle() {
                 try {
@@ -185,7 +185,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                     return false;
                 }
             }
-
+            
             @Override
             protected void whenSucceeded() {
                 tableController.dataController.goPage();
@@ -194,7 +194,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                 tabPane.getSelectionModel().select(dataTab);
                 alertInformation(message("ChangedRowsNumber") + ": " + count);
             }
-
+            
             @Override
             protected void finalAction() {
                 super.finalAction();
@@ -202,11 +202,11 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                 task = null;
                 valueController.expressionController.calculator.stop();
             }
-
+            
         };
         start(task);
     }
-
+    
     @Override
     public void ouputRows() {
         try {
@@ -215,6 +215,8 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                 random(false);
             } else if (valueController.randomNnRadio.isSelected()) {
                 random(true);
+            } else if (valueController.scaleRadio.isSelected()) {
+                scale();
             } else if (valueController.prefixRadio.isSelected()) {
                 prefix();
             } else if (valueController.suffixRadio.isSelected()) {
@@ -240,7 +242,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
         }
         tableController.isSettingValues = false;
     }
-
+    
     @Override
     public boolean updateTable() {
         tableController.tableView.refresh();
@@ -251,7 +253,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
         alertInformation(message("ChangedRowsNumber") + ": " + filteredRowsIndices.size());
         return true;
     }
-
+    
     public void setValue(String value) {
         try {
             for (int row : filteredRowsIndices) {
@@ -267,7 +269,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             popError(message(e.toString()));
         }
     }
-
+    
     public void random(boolean nonNegative) {
         try {
             Random random = new Random();
@@ -285,7 +287,25 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             popError(message(e.toString()));
         }
     }
-
+    
+    public void scale() {
+        try {
+            String currentValue;
+            for (int row : filteredRowsIndices) {
+                List<String> values = tableController.tableData.get(row);
+                for (int col : checkedColsIndices) {
+                    currentValue = values.get(col + 1);
+                    values.set(col + 1, valueController.scale(currentValue));
+                }
+                tableController.tableData.set(row, values);
+            }
+            updateTable();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            popError(message(e.toString()));
+        }
+    }
+    
     public void prefix() {
         try {
             String prefix = valueController.value();
@@ -308,7 +328,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             popError(message(e.toString()));
         }
     }
-
+    
     public void suffix() {
         try {
             String suffix = valueController.value();
@@ -331,7 +351,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             popError(message(e.toString()));
         }
     }
-
+    
     public void number() {
         try {
             int num = valueController.setValue.getStart();
@@ -361,7 +381,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             popError(message(e.toString()));
         }
     }
-
+    
     public void expression() {
         try {
             String script = valueController.value();
@@ -389,7 +409,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             popError(message(e.toString()));
         }
     }
-
+    
     public void gaussianDistribution() {
         try {
             if (filteredRowsIndices.size() != checkedColsIndices.size()) {
@@ -421,7 +441,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             popError(message(e.toString()));
         }
     }
-
+    
     public void identifyMatrix() {
         try {
             if (filteredRowsIndices.size() != checkedColsIndices.size()) {
@@ -449,7 +469,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             popError(message(e.toString()));
         }
     }
-
+    
     public void upperTriangleMatrix() {
         try {
             if (filteredRowsIndices.size() != checkedColsIndices.size()) {
@@ -477,7 +497,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             popError(message(e.toString()));
         }
     }
-
+    
     public void lowerTriangleMatrix() {
         try {
             if (filteredRowsIndices.size() != checkedColsIndices.size()) {
@@ -521,5 +541,5 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             return null;
         }
     }
-
+    
 }

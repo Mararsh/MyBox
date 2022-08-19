@@ -283,7 +283,7 @@ public class ImageViewerController extends BaseImageController {
                     RadioButton button = (RadioButton) toggle;
                     if (button.getText().equals(message(saveMode))) {
                         isSettingValues = true;
-                        button.fire();
+                        button.setSelected(true);
                         isSettingValues = false;
                     }
                 }
@@ -353,7 +353,7 @@ public class ImageViewerController extends BaseImageController {
                 }
             }
             if (saveAllFramesRadio != null) {
-                saveAllFramesRadio.fire();
+                saveAllFramesRadio.setSelected(true);
                 saveAllFramesSelected();
             }
             if (framesLabel != null) {
@@ -478,9 +478,9 @@ public class ImageViewerController extends BaseImageController {
         if (imageFile() != null && framesNumber > 1) {
             formatController.formatPane.getChildren().setAll(formatController.tifRadio, formatController.gifRadio);
             if ("gif".equalsIgnoreCase(FileNameTools.suffix(imageFile().getName()))) {
-                formatController.gifRadio.fire();
+                formatController.gifRadio.setSelected(true);
             } else {
-                formatController.tifRadio.fire();
+                formatController.tifRadio.setSelected(true);
             }
         } else {
             formatController.formatPane.getChildren().setAll(formatController.pngRadio, formatController.jpgRadio,

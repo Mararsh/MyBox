@@ -80,7 +80,7 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
         imageController.scopeTab();
         if (scopeController.scopeWhole()
                 || scopeController.scope.getScopeType() == ImageScope.ScopeType.Operate) {
-            scopeController.scopeRectangleRadio.fire();
+            scopeController.scopeRectangleRadio.setSelected(true);
         }
     }
 
@@ -135,7 +135,7 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
                 protected void whenSucceeded() {
                     imageController.popSuccessful();
                     if (excludeRadio.isSelected() && imageMarginsCheck.isSelected()) {
-                        scopeController.scopeAllRadio.fire();
+                        scopeController.scopeAllRadio.setSelected(true);
                     }
                     imageController.updateImage(ImageOperation.Crop, newImage, cost);
                     if (cuttedClip != null) {

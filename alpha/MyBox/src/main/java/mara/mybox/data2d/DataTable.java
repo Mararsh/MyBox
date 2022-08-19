@@ -819,10 +819,10 @@ public class DataTable extends Data2D {
             DoubleStatistic[] sData = new DoubleStatistic[colLen];
             for (int c = 0; c < cols.size(); c++) {
                 Data2DColumn column = columns.get(cols.get(c));
-                DoubleStatistic colStatistic = column.getTargetStatistic();
+                DoubleStatistic colStatistic = column.getStatistic();
                 if (colStatistic == null) {
                     colStatistic = new DoubleStatistic();
-                    column.setTargetStatistic(colStatistic);
+                    column.setStatistic(colStatistic);
                 }
                 colStatistic.invalidAs = selections.invalidAs;
                 sData[c] = colStatistic;

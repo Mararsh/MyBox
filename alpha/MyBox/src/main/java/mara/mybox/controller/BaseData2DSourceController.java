@@ -59,11 +59,11 @@ public class BaseData2DSourceController extends ControlData2DLoad {
 
             String rowsSelectionType = UserConfig.getString(baseName + "RowsSelectionType", "Selected");
             if ("AllPages".equals(rowsSelectionType)) {
-                allPagesRadio.fire();
+                allPagesRadio.setSelected(true);
             } else if ("CurrentPage".equals(rowsSelectionType)) {
-                currentPageRadio.fire();
+                currentPageRadio.setSelected(true);
             } else {
-                selectedRadio.fire();
+                selectedRadio.setSelected(true);
             }
             rowsGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -181,7 +181,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                 setPagination();
             } else {
                 if (allPagesRadio.isSelected()) {
-                    currentPageRadio.fire();
+                    currentPageRadio.setSelected(true);
                 }
                 allPagesRadio.setDisable(true);
                 showPaginationPane(false);

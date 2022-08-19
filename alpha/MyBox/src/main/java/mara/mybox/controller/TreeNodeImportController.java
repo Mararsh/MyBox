@@ -85,7 +85,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
             return;
         }
         isSettingValues = true;
-        overrideRadio.fire();
+        overrideRadio.setSelected(true);
         isSettingValues = false;
         startFile(file);
     }

@@ -33,11 +33,11 @@ public class TextEditorController extends BaseFileEditorController {
         try {
             String savedLB = UserConfig.getString(baseName + "LineBreak", Line_Break.LF.toString());
             if (savedLB.equals(Line_Break.CR.toString())) {
-                crRadio.fire();
+                crRadio.setSelected(true);
             } else if (savedLB.equals(Line_Break.CRLF.toString())) {
-                crlfRadio.fire();
+                crlfRadio.setSelected(true);
             } else {
-                lfRadio.fire();
+                lfRadio.setSelected(true);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
