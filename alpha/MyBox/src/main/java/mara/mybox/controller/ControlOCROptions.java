@@ -124,7 +124,7 @@ public class ControlOCROptions extends BaseController {
                 }
             });
 
-            languagesController.setParameters(this, message("Language"));
+            languagesController.setParameters(this, message("Language"), "");
             languagesController.selectedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldV, Boolean newV) {

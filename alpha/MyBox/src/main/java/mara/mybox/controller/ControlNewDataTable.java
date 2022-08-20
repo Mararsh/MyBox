@@ -48,7 +48,7 @@ public class ControlNewDataTable extends BaseController {
         try {
             this.taskController = taskController;
 
-            columnsController.setParameters(this, message("Column"));
+            columnsController.setParameters(this, message("Column"), "");
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

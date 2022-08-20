@@ -5,6 +5,7 @@ import java.util.List;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
 import mara.mybox.dev.MyBoxLog;
@@ -18,6 +19,8 @@ public class ControlSelection extends BaseTableViewController<List<String>> {
 
     @FXML
     protected TableColumn<List<String>, String> nameColumn;
+    @FXML
+    protected Label titleLabel;
 
     @Override
     protected void initColumns() {
@@ -44,18 +47,24 @@ public class ControlSelection extends BaseTableViewController<List<String>> {
         }
     }
 
-    public void setParameters(BaseController parent, String nameLabel) {
+    public void setParameters(BaseController parent, String name, String title) {
         try {
             this.parentController = parent;
             this.baseName = parent.baseName;
-            setLabel(nameLabel);
+            setName(name);
+            setTitle(title);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    public void setLabel(String nameLabel) {
-        nameColumn.setText(nameLabel);
+    public void setName(String name) {
+        nameColumn.setText(name);
+    }
+
+    @Override
+    public void setTitle(String title) {
+        titleLabel.setText(title);
     }
 
     public void setWidth(int width) {

@@ -70,8 +70,11 @@ public class Data2DChartPieController extends BaseData2DChartController {
 
             pieMaker.init(message("PieChart"))
                     .setDefaultChartTitle(selectedCategory + " - " + selectedValue)
+                    .setChartTitle(pieMaker.getDefaultChartTitle())
                     .setDefaultCategoryLabel(selectedCategory)
-                    .setDefaultValueLabel(selectedValue);
+                    .setCategoryLabel(selectedCategory)
+                    .setDefaultValueLabel(selectedValue)
+                    .setValueLabel(selectedValue);
 
             return true;
         } catch (Exception e) {

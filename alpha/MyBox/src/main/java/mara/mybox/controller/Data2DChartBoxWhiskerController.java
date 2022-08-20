@@ -508,10 +508,12 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
                     }
                 }
             }
-            chartMaker.setDefaultChartTitle((selectedCategory != null ? selectedCategory + " - " : "")
-                    + calculation.getColsNames())
+            chartMaker.setDefaultChartTitle((selectedCategory != null ? selectedCategory + " - " : "") + calculation.getColsNames())
+                    .setChartTitle(chartMaker.getChartTitle())
                     .setDefaultCategoryLabel(selectedCategory)
+                    .setCategoryLabel(selectedCategory)
                     .setDefaultValueLabel(calculation.getColsNames().toString())
+                    .setValueLabel(chartMaker.getDefaultValueLabel())
                     .setPalette(makePalette());
             chartController.writeXYChart(outputColumns, outputData, displayCols, false);
             chartMaker.getBoxWhiskerChart()

@@ -555,7 +555,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
     /*  
         to/from CSV
      */
-    public static DataFileCSV save(String dname, SingletonTask task, ResultSet results, boolean showRowNumber) {
+    public static DataFileCSV save(String dname, SingletonTask task, ResultSet results, String rowNumberName) {
         try {
             if (results == null) {
                 return null;
@@ -567,8 +567,8 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             List<String> fileRow = new ArrayList<>();
             try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
                 List<String> names = new ArrayList<>();
-                if (showRowNumber) {
-                    names.add(message("SourceRowNumber"));
+                if (rowNumberName != null) {
+                    names.add(rowNumberName);
                 }
                 ResultSetMetaData meta = results.getMetaData();
 
@@ -585,8 +585,8 @@ public abstract class Data2D_Convert extends Data2D_Edit {
 
                 while (results.next() && task != null && !task.isCancelled()) {
                     count++;
-                    if (showRowNumber) {
-                        fileRow.add(count + "");
+                    if (rowNumberName != null) {
+                        fileRow.add(rowNumberName + count);
                     }
                     for (Data2DColumn column : db2Columns) {
                         Object v = results.getObject(column.getColumnName());
@@ -608,8 +608,8 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                     .setCharset(Charset.forName("UTF-8"))
                     .setDelimiter(",").setHasHeader(true)
                     .setColsNumber(colsSize).setRowsNumber(count);
-            if (showRowNumber) {
-                db2Columns.add(0, new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
+            if (rowNumberName != null) {
+                db2Columns.add(0, new Data2DColumn(rowNumberName, ColumnDefinition.ColumnType.String));
             }
             targetData.setColumns(db2Columns);
             return targetData;

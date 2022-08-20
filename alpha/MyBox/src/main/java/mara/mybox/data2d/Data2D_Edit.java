@@ -29,13 +29,13 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public abstract class Data2D_Edit extends Data2D_Filter {
-    
+
     public abstract Data2DDefinition queryDefinition(Connection conn);
-    
+
     public abstract void applyOptions();
-    
+
     public abstract List<String> readColumnNames();
-    
+
     public abstract boolean savePageData(Data2D targetData);
 
     /*
@@ -44,7 +44,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
     public boolean checkForLoad() {
         return true;
     }
-    
+
     public long readDataDefinition(Connection conn) {
         if (isTmpData()) {
             checkForLoad();
@@ -77,7 +77,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
         return d2did;
     }
-    
+
     public boolean readColumns(Connection conn) {
         try {
             columns = null;
@@ -154,7 +154,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             return false;
         }
     }
-    
+
     public long readTotal() {
         dataSize = 0;
         Data2DReader reader = Data2DReader.create(this)
@@ -173,7 +173,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
         return dataSize;
     }
-    
+
     public List<List<String>> readPageData(Connection conn) {
         if (!isColumnsValid()) {
             startRowOfCurrentPage = endRowOfCurrentPage = 0;
@@ -197,7 +197,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         readPageStyles(conn);
         return rows;
     }
-    
+
     public void readPageStyles(Connection conn) {
         styles = new ArrayList<>();
         if (d2did < 0 || startRowOfCurrentPage >= endRowOfCurrentPage) {
@@ -238,7 +238,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             }
         }
     }
-    
+
     public void countSize() {
         try {
             rowsNumber = dataSize + (tableRowsNumber() - (endRowOfCurrentPage - startRowOfCurrentPage));
@@ -265,7 +265,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
         return writer.getCount();
     }
-    
+
     public long deleteRows(boolean errorContinue) {
         if (!validData()) {
             return -1;
@@ -277,7 +277,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
         return writer.getCount();
     }
-    
+
     public long clearData() {
         if (!validData()) {
             return -1;
@@ -304,7 +304,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
         return true;
     }
-    
+
     public boolean saveAttributes() {
         try ( Connection conn = DerbyBase.getConnection()) {
             return saveAttributes(conn, (Data2D) this, columns);
@@ -316,7 +316,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             return false;
         }
     }
-    
+
     public static boolean saveAttributes(Data2D source, Data2D target) {
         try ( Connection conn = DerbyBase.getConnection()) {
             target.cloneAttributes(source);
@@ -332,7 +332,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             return false;
         }
     }
-    
+
     public static boolean saveAttributes(Data2D d, List<Data2DColumn> cols) {
         if (d == null) {
             return false;
@@ -347,7 +347,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             return false;
         }
     }
-    
+
     public static boolean saveAttributes(Connection conn, Data2D d, List<Data2DColumn> inColumns) {
         if (d == null) {
             return false;
@@ -380,7 +380,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             d.cloneAll(def);
             if (inColumns != null && !inColumns.isEmpty()) {
                 try {
-                    List<Data2DColumn> savedColumns = new ArrayList<>();
+                    List<Data2DColumn> targetColumns = new ArrayList<>();
                     for (int i = 0; i < inColumns.size(); i++) {
                         Data2DColumn column = inColumns.get(i).cloneAll();
                         if (column.getD2id() != did) {
@@ -395,10 +395,10 @@ public abstract class Data2D_Edit extends Data2D_Filter {
                         if (d.isMatrix()) {
                             column.setType(ColumnDefinition.ColumnType.Double);
                         }
-                        savedColumns.add(column);
+                        targetColumns.add(column);
                     }
-                    d.getTableData2DColumn().save(conn, did, savedColumns);
-                    d.setColumns(savedColumns);
+                    d.getTableData2DColumn().save(conn, did, targetColumns);
+                    d.setColumns(targetColumns);
                 } catch (Exception e) {
                     if (d.getTask() != null) {
                         d.getTask().setError(e.toString());
@@ -418,5 +418,5 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             return false;
         }
     }
-    
+
 }

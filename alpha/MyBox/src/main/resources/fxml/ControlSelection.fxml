@@ -8,6 +8,7 @@ License:    Apache License Version 2.0
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.image.Image?>
@@ -46,6 +47,7 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </Button>
+            <Label fx:id="titleLabel" minHeight="-Infinity" wrapText="true" />
             </children>
         </FlowPane>
         <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">

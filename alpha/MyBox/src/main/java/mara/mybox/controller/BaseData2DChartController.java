@@ -171,6 +171,9 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     }
 
     public String categoryName() {
+        if (categoryColumnSelector == null) {
+            return null;
+        }
         return categoryColumnSelector.getSelectionModel().getSelectedItem();
     }
 
@@ -245,20 +248,23 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
     public Map<String, String> makePalette() {
         try {
+
             Random random = new Random();
             if (palette == null) {
                 palette = new HashMap();
             } else {
                 palette.clear();
             }
-            for (int i = 0; i < outputColumns.size(); i++) {
-                Data2DColumn column = outputColumns.get(i);
-                Color color = column.getColor();
-                if (color == null) {
-                    color = FxColorTools.randomColor(random);
+            if (outputColumns != null) {
+                for (int i = 0; i < outputColumns.size(); i++) {
+                    Data2DColumn column = outputColumns.get(i);
+                    Color color = column.getColor();
+                    if (color == null) {
+                        color = FxColorTools.randomColor(random);
+                    }
+                    String rgb = FxColorTools.color2rgb(color);
+                    palette.put(column.getColumnName(), rgb);
                 }
-                String rgb = FxColorTools.color2rgb(color);
-                palette.put(column.getColumnName(), rgb);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

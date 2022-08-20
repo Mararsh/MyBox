@@ -690,7 +690,16 @@ public class DataTable extends Data2D {
                 selections = groupBy + ", " + selections;
             }
             String sql = "SELECT " + selections + " FROM " + sheet + " GROUP BY " + groupBy;
-            return query(dname, task, sql, false);
+            DataFileCSV results = query(dname, task, sql, message("Group"));
+            if (results == null) {
+                return null;
+            }
+            for (int i = 1; i < results.columns.size(); i++) {
+                Data2DColumn column = results.columns.get(i);
+                column.setType(ColumnDefinition.ColumnType.Double);
+            }
+            results.saveAttributes();
+            return results;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -702,7 +711,7 @@ public class DataTable extends Data2D {
 
     }
 
-    public DataFileCSV query(String dname, SingletonTask task, String query, boolean showRowNumber) {
+    public DataFileCSV query(String dname, SingletonTask task, String query, String rowNumberName) {
         if (query == null || query.isBlank()) {
             return null;
         }
@@ -711,7 +720,7 @@ public class DataTable extends Data2D {
                  PreparedStatement statement = conn.prepareStatement(query);
                  ResultSet results = statement.executeQuery()) {
             if (results != null) {
-                targetData = DataFileCSV.save(dname, task, results, showRowNumber);
+                targetData = DataFileCSV.save(dname, task, results, rowNumberName);
             }
         } catch (Exception e) {
             if (task != null) {

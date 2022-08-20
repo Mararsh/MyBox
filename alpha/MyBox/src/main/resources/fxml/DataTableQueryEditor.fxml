@@ -106,6 +106,27 @@ License:    Apache License Version 2.0
                         </VBox>
                     </content>
                 </Tab>
+            <Tab fx:id="optionsTab" text="%Options">
+               <content>
+                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
+                     <padding>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </padding>
+                     <children>
+                          <HBox fx:id="namesBox" spacing="2.0">
+                              <children>
+                                  <CheckBox fx:id="rowNumberCheck" mnemonicParsing="false" text="%RowNumber" />
+                              </children>
+                          </HBox>
+                          <VBox fx:id="targetBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                              <children>
+                                  <fx:include fx:id="target" source="ControlData2DTargetExternal.fxml" />
+                              </children>
+                          </VBox>
+                     </children>
+                  </VBox>
+               </content>
+            </Tab>
                 <Tab fx:id="attributesTab" text="%Attributes">
                     <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
@@ -185,15 +206,5 @@ License:    Apache License Version 2.0
                 </Tab>
             </tabs>
         </TabPane>
-        <HBox fx:id="namesBox" spacing="2.0">
-            <children>
-                <CheckBox fx:id="rowNumberCheck" mnemonicParsing="false" text="%RowNumber" />
-            </children>
-        </HBox>
-        <VBox fx:id="targetBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-            <children>
-                <fx:include fx:id="target" source="ControlData2DTargetExternal.fxml" />
-            </children>
-        </VBox>
     </children>
 </VBox>

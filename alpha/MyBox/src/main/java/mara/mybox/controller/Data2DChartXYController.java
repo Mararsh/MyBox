@@ -34,7 +34,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
     @FXML
     protected VBox columnsBox;
     @FXML
-    protected FlowPane valueColumnPane, categoryColumnsPane;
+    protected FlowPane valueColumnPane, categoryColumnsPane, typesPane;
     @FXML
     protected ControlData2DChartXY chartController;
 
@@ -55,8 +55,10 @@ public class Data2DChartXYController extends BaseData2DChartController {
             chartGroup.selectedToggleProperty().addListener(
                     (ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) -> {
                         checkChartType();
-                        okAction();
+                        refreshAction();
                     });
+
+            typesPane.disableProperty().bind(chartController.buttonsPane.disableProperty());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -65,6 +67,9 @@ public class Data2DChartXYController extends BaseData2DChartController {
 
     public void checkChartType() {
         try {
+            if (columnsBox == null) {
+                return;
+            }
             columnsBox.getChildren().clear();
 
             if (bubbleChartRadio.isSelected()) {
@@ -118,6 +123,15 @@ public class Data2DChartXYController extends BaseData2DChartController {
             outputColumns.addAll(checkedColumns);
             title += " - " + checkedColsNames;
 
+            return initChart(title);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return false;
+        }
+    }
+
+    public boolean initChart(String title) {
+        try {
             ChartType chartType;
             String chartName;
             if (barChartRadio.isSelected()) {
@@ -146,9 +160,11 @@ public class Data2DChartXYController extends BaseData2DChartController {
             }
             chartMaker.init(chartType, chartName)
                     .setDefaultChartTitle(title)
+                    .setChartTitle(title)
                     .setDefaultCategoryLabel(selectedCategory)
+                    .setCategoryLabel(selectedCategory)
                     .setDefaultValueLabel(selectedValue)
-                    .setPalette(makePalette());
+                    .setValueLabel(selectedValue);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -163,6 +179,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
                 popError(message("NoData"));
                 return;
             }
+            chartMaker.setPalette(makePalette());
             chartController.writeXYChart(outputColumns, outputData);
         } catch (Exception e) {
             MyBoxLog.error(e);

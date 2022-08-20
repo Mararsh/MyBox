@@ -329,8 +329,11 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
             }
 
             fittingMaker.setDefaultChartTitle(selectedCategory + "_" + selectedValue + " - " + message("SimpleRegressionChart"))
+                    .setChartTitle(fittingMaker.getDefaultChartTitle())
                     .setDefaultCategoryLabel(selectedCategory)
-                    .setDefaultValueLabel(selectedValue);
+                    .setCategoryLabel(selectedCategory)
+                    .setDefaultValueLabel(selectedValue)
+                    .setValueLabel(selectedValue);
             fittingController.writeXYChart(outputColumns, outputData);
             fittingMaker.getSimpleRegressionChart()
                     .setDisplayText(textCheck.isSelected())
@@ -349,10 +352,11 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
                 return;
             }
             residualMaker.setDefaultChartTitle((selectedCategory + "_" + selectedValue + " - " + message("Residual")))
-                    .setCategoryLabel(residualColumns.get(1).getColumnName())
-                    .setDefaultCategoryLabel(residualMaker.getDefaultCategoryLabel())
-                    .setValueLabel(message("Residual"))
-                    .setDefaultValueLabel(message("Residual"));
+                    .setChartTitle(fittingMaker.getDefaultChartTitle())
+                    .setDefaultCategoryLabel(residualColumns.get(1).getColumnName())
+                    .setCategoryLabel(residualMaker.getDefaultCategoryLabel())
+                    .setDefaultValueLabel(message("Residual"))
+                    .setValueLabel(message("Residual"));
             residualController.writeXYChart(residualColumns, residualData);
             randomColorResidual();
         } catch (Exception e) {
