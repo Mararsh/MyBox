@@ -8,8 +8,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import mara.mybox.data.SetValue;
-import mara.mybox.data2d.reader.Data2DReader;
-import mara.mybox.data2d.reader.Data2DReader.Operation;
+import mara.mybox.data2d.reader.Data2DReadPage;
+import mara.mybox.data2d.reader.Data2DReadTotal;
+import mara.mybox.data2d.reader.Data2DOperator;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
@@ -157,8 +158,8 @@ public abstract class Data2D_Edit extends Data2D_Filter {
 
     public long readTotal() {
         dataSize = 0;
-        Data2DReader reader = Data2DReader.create(this)
-                .setTask(backgroundTask).start(Operation.ReadTotal);
+        Data2DOperator reader = Data2DReadTotal.create(this)
+                .setTask(backgroundTask).start();
         if (reader != null) {
             dataSize = reader.getRowIndex();
         }
@@ -183,13 +184,12 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             startRowOfCurrentPage = 0;
         }
         endRowOfCurrentPage = startRowOfCurrentPage;
-        Data2DReader reader = Data2DReader.create(this)
-                .setConn(conn).setTask(task)
-                .start(Operation.ReadPage);
+        Data2DReadPage reader = Data2DReadPage.create(this).setConn(conn);
         if (reader == null) {
             startRowOfCurrentPage = endRowOfCurrentPage = 0;
             return null;
         }
+        reader.setTask(task).start();
         List<List<String>> rows = reader.getRows();
         if (rows != null) {
             endRowOfCurrentPage = startRowOfCurrentPage + rows.size();

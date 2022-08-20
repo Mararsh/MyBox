@@ -9,7 +9,9 @@ import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.calculation.Normalization;
 import mara.mybox.calculation.SimpleLinearRegression;
 import mara.mybox.controller.ControlDataConvert;
+import mara.mybox.data2d.reader.Data2DOperator;
 import mara.mybox.data2d.reader.Data2DReader;
+import mara.mybox.data2d.reader.Data2DStatistic;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -113,19 +115,21 @@ public abstract class Data2D_Operations extends Data2D_Convert {
                 colStatistic.invalidAs = selections.invalidAs;
                 sData[c] = colStatistic;
             }
-            Data2DReader reader = Data2DReader.create(this)
-                    .setStatisticData(sData).setCols(cols)
-                    .setScanPass(1).setStatisticSelection(selections)
-                    .setTask(task).start(Data2DReader.Operation.StatisticColumns);
+            Data2DOperator reader = Data2DStatistic.create(this)
+                    .setStatisticData(sData)
+                    .setStatisticCalculation(selections)
+                    .setType(Data2DStatistic.Type.ColumnsPass1)
+                    .setCols(cols).setTask(task).start();
             if (reader == null) {
                 return null;
             }
             if (selections.isPopulationStandardDeviation() || selections.isPopulationVariance()
                     || selections.isSampleStandardDeviation() || selections.isSampleVariance()) {
-                reader = Data2DReader.create(this)
-                        .setStatisticData(sData).setCols(cols)
-                        .setScanPass(2).setStatisticSelection(selections)
-                        .setTask(task).start(Data2DReader.Operation.StatisticColumns);
+                reader = Data2DStatistic.create(this)
+                        .setStatisticData(sData)
+                        .setStatisticCalculation(selections)
+                        .setType(Data2DStatistic.Type.ColumnsPass2)
+                        .setCols(cols).setTask(task).start();
                 if (reader == null) {
                     return null;
                 }
@@ -176,12 +180,14 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return null;
         }
         File csvFile = tmpFile(dname, "statistic", ".csv");
-        Data2DReader reader = null;
+        Data2DOperator reader = null;
         try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             csvPrinter.printRecord(names);
-            reader = Data2DReader.create(this)
-                    .setCsvPrinter(csvPrinter).setCols(cols).setStatisticSelection(selections)
-                    .setTask(task).start(Data2DReader.Operation.StatisticRows);
+            reader = Data2DStatistic.create(this)
+                    .setStatisticCalculation(selections)
+                    .setType(Data2DStatistic.Type.Rows)
+                    .setCsvPrinter(csvPrinter)
+                    .setCols(cols).setTask(task).start();
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -208,19 +214,21 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
         DoubleStatistic sData = new DoubleStatistic();
         sData.invalidAs = selections.invalidAs;
-        Data2DReader reader = Data2DReader.create(this)
-                .setStatisticAll(sData).setCols(cols)
-                .setScanPass(1).setStatisticSelection(selections)
-                .setTask(task).start(Data2DReader.Operation.StatisticAll);
+        Data2DOperator reader = Data2DStatistic.create(this)
+                .setStatisticAll(sData)
+                .setStatisticCalculation(selections)
+                .setType(Data2DStatistic.Type.AllPass1)
+                .setCols(cols).setTask(task).start();
         if (reader == null) {
             return null;
         }
         if (selections.isPopulationStandardDeviation() || selections.isPopulationVariance()
                 || selections.isSampleStandardDeviation() || selections.isSampleVariance()) {
-            reader = Data2DReader.create(this)
-                    .setStatisticAll(sData).setCols(cols)
-                    .setScanPass(2).setStatisticSelection(selections)
-                    .setTask(task).start(Data2DReader.Operation.StatisticAll);
+            reader = Data2DStatistic.create(this)
+                    .setStatisticAll(sData)
+                    .setStatisticCalculation(selections)
+                    .setType(Data2DStatistic.Type.AllPass2)
+                    .setCols(cols).setTask(task).start();
             if (reader == null) {
                 return null;
             }
@@ -515,10 +523,12 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
         DescriptiveStatistic selections = DescriptiveStatistic.all(false)
                 .setSum(true).setMaximum(true).setMinimum(true);
-        Data2DReader reader = Data2DReader.create(this).setCols(cols).setScale(scale)
-                .setStatisticData(sData).setStatisticSelection(selections).setScanPass(1)
-                .setTask(task).start(Data2DReader.Operation.StatisticColumns);
-        if (reader == null) {
+        Data2DOperator operator = Data2DStatistic.create(this)
+                .setStatisticData(sData)
+                .setStatisticCalculation(selections)
+                .setType(Data2DStatistic.Type.ColumnsPass1)
+                .setCols(cols).setScale(scale).setTask(task).start();
+        if (operator == null) {
             return null;
         }
         for (int c = 0; c < colLen; c++) {
@@ -527,6 +537,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
         File csvFile = tmpFile(dname, "normalizeMinMax", ".csv");
         int tcolsNumber = 0;
+        Data2DReader reader = null;
         try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             List<String> names = new ArrayList<>();
             if (rowNumber) {
@@ -578,11 +589,13 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             sData[c].invalidAs = invalidAs;
         }
         DescriptiveStatistic selections = DescriptiveStatistic.all(false);
-        Data2DReader reader = Data2DReader.create(this).setCols(cols).setSumAbs(true)
-                .setStatisticData(sData).setStatisticSelection(selections)
-                .setScanPass(1).setScale(scale)
-                .setTask(task).start(Data2DReader.Operation.StatisticColumns);
-        if (reader == null) {
+        Data2DOperator operator = Data2DStatistic.create(this)
+                .setStatisticData(sData)
+                .setStatisticCalculation(selections)
+                .setType(Data2DStatistic.Type.ColumnsPass1)
+                .setSumAbs(true)
+                .setCols(cols).setScale(scale).setTask(task).start();
+        if (operator == null) {
             return null;
         }
         double[] colValues = new double[colLen];
@@ -595,6 +608,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
         File csvFile = tmpFile(dname, "normalizeSum", ".csv");
         int tcolsNumber = 0;
+        Data2DReader reader = null;
         try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             List<String> names = new ArrayList<>();
             if (rowNumber) {
@@ -648,21 +662,24 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
         DescriptiveStatistic selections = DescriptiveStatistic.all(false)
                 .setPopulationStandardDeviation(true);
-        Data2DReader reader = Data2DReader.create(this).setCols(cols)
-                .setStatisticData(sData).setStatisticSelection(selections)
-                .setScanPass(1).setScale(scale)
-                .setTask(task).start(Data2DReader.Operation.StatisticColumns);
-        if (reader == null) {
+        Data2DOperator operator = Data2DStatistic.create(this)
+                .setStatisticData(sData)
+                .setStatisticCalculation(selections)
+                .setType(Data2DStatistic.Type.ColumnsPass1)
+                .setCols(cols).setScale(scale).setTask(task).start();
+        if (operator == null) {
             return null;
         }
-        reader = Data2DReader.create(this).setCols(cols)
-                .setStatisticData(sData).setStatisticSelection(selections)
-                .setScanPass(2).setScale(scale)
-                .setTask(task).start(Data2DReader.Operation.StatisticColumns);
-        if (reader == null) {
+        operator = Data2DStatistic.create(this)
+                .setStatisticData(sData)
+                .setStatisticCalculation(selections)
+                .setType(Data2DStatistic.Type.ColumnsPass2)
+                .setCols(cols).setScale(scale).setTask(task).start();
+        if (operator == null) {
             return null;
         }
         File csvFile = tmpFile(dname, "normalizeZscore", ".csv");
+        Data2DReader reader = null;
         try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             List<String> names = new ArrayList<>();
             if (rowNumber) {
@@ -711,17 +728,19 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         sData.invalidAs = invalidAs;
         DescriptiveStatistic selections = DescriptiveStatistic.all(false)
                 .setSum(true).setMaximum(true).setMinimum(true);
-        Data2DReader reader = Data2DReader.create(this)
-                .setStatisticAll(sData).setCols(cols)
-                .setScanPass(1).setStatisticSelection(selections)
-                .setTask(task).start(Data2DReader.Operation.StatisticAll);
-        if (reader == null) {
+        Data2DOperator operator = Data2DStatistic.create(this)
+                .setStatisticAll(sData)
+                .setStatisticCalculation(selections)
+                .setType(Data2DStatistic.Type.AllPass1)
+                .setCols(cols).setScale(scale).setTask(task).start();
+        if (operator == null) {
             return null;
         }
         double d = sData.maximum - sData.minimum;
         sData.dTmp = (to - from) / (d == 0 ? AppValues.TinyDouble : d);
         File csvFile = tmpFile(dname, "normalizeMinMax", ".csv");
         int tcolsNumber = 0;
+        Data2DReader reader = null;
         try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             List<String> names = new ArrayList<>();
             if (rowNumber) {
@@ -769,11 +788,13 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         DoubleStatistic sData = new DoubleStatistic();
         sData.invalidAs = invalidAs;
         DescriptiveStatistic selections = DescriptiveStatistic.all(false);
-        Data2DReader reader = Data2DReader.create(this).setCols(cols).setSumAbs(true)
-                .setStatisticAll(sData).setStatisticSelection(selections)
-                .setScanPass(1).setScale(scale)
-                .setTask(task).start(Data2DReader.Operation.StatisticAll);
-        if (reader == null) {
+        Data2DOperator operator = Data2DStatistic.create(this)
+                .setStatisticAll(sData)
+                .setStatisticCalculation(selections)
+                .setType(Data2DStatistic.Type.AllPass1)
+                .setSumAbs(true)
+                .setCols(cols).setScale(scale).setTask(task).start();
+        if (operator == null) {
             return null;
         }
         double k;
@@ -784,6 +805,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
         File csvFile = tmpFile(dname, "normalizeSum", ".csv");
         int tcolsNumber = 0;
+        Data2DReader reader = null;
         try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             List<String> names = new ArrayList<>();
             if (rowNumber) {
@@ -833,21 +855,24 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         sData.invalidAs = invalidAs;
         DescriptiveStatistic selections = DescriptiveStatistic.all(false)
                 .setPopulationStandardDeviation(true);
-        Data2DReader reader = Data2DReader.create(this).setCols(cols)
-                .setStatisticAll(sData).setStatisticSelection(selections)
-                .setScanPass(1).setScale(scale)
-                .setTask(task).start(Data2DReader.Operation.StatisticAll);
-        if (reader == null) {
+        Data2DOperator operator = Data2DStatistic.create(this)
+                .setStatisticAll(sData)
+                .setStatisticCalculation(selections)
+                .setType(Data2DStatistic.Type.AllPass1)
+                .setCols(cols).setScale(scale).setTask(task).start();
+        if (operator == null) {
             return null;
         }
-        reader = Data2DReader.create(this).setCols(cols)
-                .setStatisticAll(sData).setStatisticSelection(selections)
-                .setScanPass(2).setScale(scale)
-                .setTask(task).start(Data2DReader.Operation.StatisticAll);
-        if (reader == null) {
+        operator = Data2DStatistic.create(this)
+                .setStatisticAll(sData)
+                .setStatisticCalculation(selections)
+                .setType(Data2DStatistic.Type.AllPass2)
+                .setCols(cols).setScale(scale).setTask(task).start();
+        if (operator == null) {
             return null;
         }
         File csvFile = tmpFile(dname, "normalizeZscore", ".csv");
+        Data2DReader reader = null;
         try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             List<String> names = new ArrayList<>();
             if (rowNumber) {

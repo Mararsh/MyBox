@@ -17,9 +17,6 @@ import mara.mybox.data2d.DataFileExcel;
 import mara.mybox.data2d.DataFileText;
 import mara.mybox.data2d.DataFilter;
 import mara.mybox.data2d.DataTable;
-import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.Data2DColumn;
-import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -42,6 +39,7 @@ public abstract class Data2DReader {
     protected Data2D data2D;
     protected File sourceFile;
     protected Operation operation;
+    protected Data2DOperator operator;
     protected long rowIndex; // 1-based 
     protected long rowsStart, rowsEnd; //  0-based
     protected long count;
@@ -70,9 +68,7 @@ public abstract class Data2DReader {
     protected SingletonTask task;
 
     public static enum Operation {
-        ReadDefinition, ReadTotal, ReadColumnNames, ReadPage,
-        ReadCols, ReadRows, Export, WriteTable, Copy, RowExpression, SingleColumn,
-        StatisticColumns, StatisticRows, StatisticAll,
+        ReadCols, ReadRows, Export, Copy, RowExpression,
         PercentageColumns, PercentageRows, PercentageAll,
         NormalizeMinMaxColumns, NormalizeSumColumns, NormalizeZscoreColumns,
         NormalizeMinMaxRows, NormalizeSumRows, NormalizeZscoreRows,
@@ -111,19 +107,43 @@ public abstract class Data2DReader {
         task = data2D.getTask();
     }
 
+    public boolean start() {
+        if (data2D == null || !data2D.validData() || operator == null) {
+            return false;
+        }
+        sourceFile = data2D.getFile();
+        readerStopped = false;
+        readerHasHeader = data2D.isHasHeader();
+        needCheckTask = task != null;
+        columnsNumber = data2D.columnsNumber();
+        rowIndex = 0;  // 1-based
+        rowsStart = data2D.getStartRowOfCurrentPage();
+        rowsEnd = rowsStart + data2D.getPageSize();
+        count = 0;
+        names = new ArrayList<>();
+        rows = new ArrayList<>();
+        if (scale < 0) {
+            scale = data2D.getScale();
+        }
+        sourceRow = new ArrayList<>();
+        data2D.startFilter();
+        scanData();
+        afterScanned();
+        operator.end();
+        return true;
+    }
+
     public Data2DReader start(Operation operation) {
         if (data2D == null || !data2D.validData() || operation == null) {
             failed = true;
             return null;
         }
         sourceFile = data2D.getFile();
+        MyBoxLog.console(operation + "     " + sourceFile);
         if (cols != null && !cols.isEmpty()) {
             colsLen = cols.size();
         }
         switch (operation) {
-            case ReadColumnNames:
-                data2D.checkForLoad();
-                break;
             case ReadCols:
                 if (cols == null || cols.isEmpty()) {
                     failed = true;
@@ -132,19 +152,6 @@ public abstract class Data2DReader {
                 break;
             case Export:
                 if (cols == null || cols.isEmpty() || convertController == null) {
-                    failed = true;
-                    return null;
-                }
-                break;
-            case WriteTable:
-                if (cols == null || cols.isEmpty() || conn == null || writerTable == null || writerTableData2D == null) {
-                    failed = true;
-                    return null;
-                }
-                names = data2D.columnNames();
-                break;
-            case SingleColumn:
-                if (cols == null || cols.isEmpty() || conn == null || writerTable == null || writerTableData2D == null) {
                     failed = true;
                     return null;
                 }
@@ -198,46 +205,7 @@ public abstract class Data2DReader {
                     return null;
                 }
                 break;
-            case StatisticColumns:
-                if (cols == null || cols.isEmpty() || scanPass < 1
-                        || statisticData == null || statisticCalculation == null) {
-                    failed = true;
-                    return null;
-                }
-                if (scanPass == 1) {
-                    colValues = new double[colsLen];
-                    if (statisticCalculation.isSkewness()) {
-                        skewnessList = new ArrayList<>();
-                        for (int i = 0; i < cols.size(); i++) {
-                            skewnessList.add(new Skewness());
-                        }
-                    }
-                } else if (scanPass == 2) {
-                    for (int i = 0; i < cols.size(); i++) {
-                        statisticData[i].dTmp = 0;
-                    }
-                }
-                break;
-            case StatisticAll:
-                if (cols == null || cols.isEmpty() || scanPass < 1
-                        || statisticAll == null || statisticCalculation == null) {
-                    failed = true;
-                    return null;
-                }
-                if (scanPass == 1) {
-                    if (statisticCalculation.isSkewness()) {
-                        skewnessAll = new Skewness();
-                    }
-                } else if (scanPass == 2) {
-                    statisticAll.dTmp = 0;
-                }
-                break;
-            case StatisticRows:
-                if (cols == null || cols.isEmpty() || csvPrinter == null || statisticCalculation == null) {
-                    failed = true;
-                    return null;
-                }
-                break;
+
             case NormalizeMinMaxColumns:
                 if (cols == null || cols.isEmpty() || statisticData == null || csvPrinter == null) {
                     failed = true;
@@ -321,34 +289,23 @@ public abstract class Data2DReader {
         return this;
     }
 
-    public void handleData() {
+    public void handleRow() {
         try {
-            if (operation == null) {
-                readRows();
-            } else {
-                switch (operation) {
-                    case ReadDefinition:
-                        break;
-                    case ReadColumnNames:
-                        readColumnNames();
-                        break;
-                    case ReadTotal:
-                        readTotal();
-                        break;
-                    case ReadPage:
-                        readPage();
-                        break;
-                    default:
-                        readRows();
-                        break;
-                }
+            if (!data2D.filterDataRow(sourceRow, rowIndex)) {
+                return;
             }
+            if (data2D.filterReachMaxPassed()) {
+                readerStopped = true;
+                return;
+            }
+            operator.sourceRow = sourceRow;
+            operator.rowIndex = rowIndex;
+            operator.handleRow();
         } catch (Exception e) {
             MyBoxLog.error(e);
             if (task != null) {
                 task.setError(e.toString());
             }
-            failed = true;
         }
     }
 
@@ -387,7 +344,7 @@ public abstract class Data2DReader {
         rows.add(row);
     }
 
-    public void handleRow() {
+    public void handleRow2() {
         try {
             if (!data2D.filterDataRow(sourceRow, rowIndex)) {
                 return;
@@ -406,26 +363,11 @@ public abstract class Data2DReader {
                 case Export:
                     handleExport();
                     break;
-                case WriteTable:
-                    handleWriteTable();
-                    break;
-                case SingleColumn:
-                    handleSingleColumn();
-                    break;
                 case Copy:
                     handleCopy();
                     break;
                 case RowExpression:
                     handleRowExpression();
-                    break;
-                case StatisticColumns:
-                    handleStatisticColumns();
-                    break;
-                case StatisticAll:
-                    handleStatisticAll();
-                    break;
-                case StatisticRows:
-                    handleStatisticRows();
                     break;
                 case PercentageColumns:
                     if (scanPass == 1) {
@@ -539,55 +481,6 @@ public abstract class Data2DReader {
         }
     }
 
-    public void handleWriteTable() {
-        try {
-            Data2DRow data2DRow = writerTableData2D.newRow();
-            int len = sourceRow.size();
-            for (int col : cols) {
-                if (col >= 0 && col < len) {
-                    Data2DColumn sourceColumn = data2D.getColumns().get(col);
-                    String colName = writerTable.mappedColumnName(sourceColumn.getColumnName());
-                    Data2DColumn targetColumn = writerTable.columnByName(colName);
-                    data2DRow.setColumnValue(colName, targetColumn.fromString(sourceRow.get(col)));
-                }
-            }
-            if (data2DRow.isEmpty()) {
-                return;
-            }
-            if (includeRowNumber) {
-                data2DRow.setColumnValue(writerTable.mappedColumnName(message("SourceRowNumber")), rowIndex);
-            }
-            writerTableData2D.insertData(conn, data2DRow);
-            if (++count % DerbyBase.BatchSize == 0) {
-                conn.commit();
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void handleSingleColumn() {
-        try {
-            int len = sourceRow.size();
-            for (int col : cols) {
-                if (col >= 0 && col < len) {
-                    Data2DRow data2DRow = writerTableData2D.newRow();
-                    Data2DColumn targetColumn = writerTable.columnByName("data");
-                    String value = sourceRow.get(col);
-                    if (targetColumn != null) {
-                        data2DRow.setColumnValue("data", targetColumn.fromString(value));
-                        writerTableData2D.insertData(conn, data2DRow);
-                        if (++count % DerbyBase.BatchSize == 0) {
-                            conn.commit();
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     public void handleCopy() {
         try {
             List<String> row = new ArrayList<>();
@@ -635,164 +528,6 @@ public abstract class Data2DReader {
                     return;
                 }
             }
-            csvPrinter.printRecord(row);
-        } catch (Exception e) {
-        }
-    }
-
-    public void handleStatisticColumns() {
-        if (scanPass == 1) {
-            handleStatisticColumnsPass1();
-        } else if (scanPass == 2) {
-            handleStatisticColumnsPass2();
-        }
-    }
-
-    public void handleStatisticColumnsPass1() {
-        try {
-            for (int c = 0; c < colsLen; c++) {
-                int i = cols.get(c);
-                if (i < 0 || i >= sourceRow.size()) {
-                    continue;
-                }
-                double v = statisticData[c].toDouble(sourceRow.get(i));
-                if (DoubleTools.invalidDouble(v)) {
-                    statisticData[c].invalidCount++;
-                    continue;
-                } else {
-                    statisticData[c].count++;
-                }
-                if (sumAbs) {
-                    statisticData[c].sum += Math.abs(v);
-                } else {
-                    statisticData[c].sum += v;
-                }
-                if (statisticCalculation.isMaximum() && v > statisticData[c].maximum) {
-                    statisticData[c].maximum = v;
-                }
-                if (statisticCalculation.isMinimum() && v < statisticData[c].minimum) {
-                    statisticData[c].minimum = v;
-                }
-                if (statisticCalculation.isGeometricMean()) {
-                    statisticData[c].geometricMean = statisticData[c].geometricMean * v;
-                }
-                if (statisticCalculation.isSumSquares()) {
-                    statisticData[c].sumSquares += v * v;
-                }
-                if (statisticCalculation.isSkewness()) {
-                    skewnessList.get(c).increment(v);
-                }
-            }
-        } catch (Exception e) {
-
-        }
-    }
-
-    public void handleStatisticColumnsPass2() {
-        try {
-            for (int c = 0; c < colsLen; c++) {
-                if (statisticData[c].count == 0) {
-                    continue;
-                }
-                int i = cols.get(c);
-                if (i < 0 || i >= sourceRow.size()) {
-                    continue;
-                }
-                double v = statisticData[c].toDouble(sourceRow.get(i));
-                if (!DoubleTools.invalidDouble(v)) {
-                    v = v - statisticData[c].mean;
-                    statisticData[c].dTmp += v * v;
-                }
-            }
-        } catch (Exception e) {
-        }
-    }
-
-    public void handleStatisticAll() {
-        if (scanPass == 1) {
-            handleStatisticAllPass1();
-        } else if (scanPass == 2) {
-            handleStatisticAllPass2();
-        }
-    }
-
-    public void handleStatisticAllPass1() {
-        try {
-            for (int c = 0; c < colsLen; c++) {
-                int i = cols.get(c);
-                if (i < 0 || i >= sourceRow.size()) {
-                    continue;
-                }
-                double v = statisticAll.toDouble(sourceRow.get(i));
-                if (DoubleTools.invalidDouble(v)) {
-                    statisticAll.invalidCount++;
-                    continue;
-                } else {
-                    statisticAll.count++;
-                }
-                statisticAll.sum += v;
-                if (statisticCalculation.isMaximum() && v > statisticAll.maximum) {
-                    statisticAll.maximum = v;
-                }
-                if (statisticCalculation.isMinimum() && v < statisticAll.minimum) {
-                    statisticAll.minimum = v;
-                }
-                if (statisticCalculation.isGeometricMean()) {
-                    statisticAll.geometricMean = statisticAll.geometricMean * v;
-                }
-                if (statisticCalculation.isSumSquares()) {
-                    statisticAll.sumSquares += v * v;
-                }
-                if (statisticCalculation.isSkewness()) {
-                    skewnessAll.increment(v);
-                }
-            }
-        } catch (Exception e) {
-
-        }
-    }
-
-    public void handleStatisticAllPass2() {
-        try {
-            for (int c = 0; c < colsLen; c++) {
-                if (statisticAll.count == 0) {
-                    continue;
-                }
-                int i = cols.get(c);
-                if (i < 0 || i >= sourceRow.size()) {
-                    continue;
-                }
-                double v = statisticAll.toDouble(sourceRow.get(i));
-                if (!DoubleTools.invalidDouble(v)) {
-                    v = v - statisticAll.mean;
-                    statisticAll.dTmp += v * v;
-                }
-            }
-        } catch (Exception e) {
-        }
-    }
-
-    public void handleStatisticRows() {
-        try {
-            List<String> row = new ArrayList<>();
-            int startIndex;
-            if (statisticCalculation.getCategoryName() == null) {
-                row.add(message("Row") + " " + rowIndex);
-                startIndex = 0;
-            } else {
-                row.add(sourceRow.get(cols.get(0)));
-                startIndex = 1;
-            }
-            String[] values = new String[colsLen - startIndex];
-            for (int c = startIndex; c < colsLen; c++) {
-                int i = cols.get(c);
-                if (i < 0 || i >= sourceRow.size()) {
-                    continue;
-                }
-                values[c - startIndex] = sourceRow.get(i);
-            }
-            DoubleStatistic statistic = new DoubleStatistic(values, statisticCalculation);
-            row.addAll(statistic.toStringList());
             csvPrinter.printRecord(row);
         } catch (Exception e) {
         }
@@ -1190,91 +925,18 @@ public abstract class Data2DReader {
     public void afterScanned() {
         try {
             data2D.stopFilter();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            }
+        }
+    }
+
+    public void afterScanned2() {
+        try {
+            data2D.stopFilter();
             switch (operation) {
-                case StatisticColumns:
-                    if (scanPass == 1) {
-                        for (int c = 0; c < colsLen; c++) {
-                            if (statisticData[c].count > 0) {
-                                if (!DoubleTools.invalidDouble(statisticData[c].sum)) {
-                                    statisticData[c].mean = statisticData[c].sum / statisticData[c].count;
-                                } else {
-                                    statisticData[c].mean = Double.NaN;
-                                }
-                                if (statisticCalculation.isGeometricMean()) {
-                                    if (!DoubleTools.invalidDouble(statisticData[c].geometricMean)) {
-                                        statisticData[c].geometricMean = Math.pow(statisticData[c].geometricMean, 1d / statisticData[c].count);
-                                    } else {
-                                        statisticData[c].geometricMean = Double.NaN;
-                                    }
-                                }
-                            } else {
-                                statisticData[c].mean = Double.NaN;
-                                statisticData[c].geometricMean = Double.NaN;
-                            }
-                            if (statisticCalculation.isSkewness()) {
-                                statisticData[c].skewness = skewnessList.get(c).getResult();
-                            }
-                        }
-                    } else if (scanPass == 2) {
-                        for (int c = 0; c < colsLen; c++) {
-                            if (statisticData[c].count > 0 && !DoubleTools.invalidDouble(statisticData[c].dTmp)) {
-                                statisticData[c].populationVariance = statisticData[c].dTmp / statisticData[c].count;
-                                statisticData[c].sampleVariance = statisticData[c].dTmp / (statisticData[c].count - 1);
-                                if (statisticCalculation.isPopulationStandardDeviation()) {
-                                    statisticData[c].populationStandardDeviation = Math.sqrt(statisticData[c].populationVariance);
-                                }
-                                if (statisticCalculation.isSampleStandardDeviation()) {
-                                    statisticData[c].sampleStandardDeviation = Math.sqrt(statisticData[c].sampleVariance);
-                                }
-                            } else {
-                                statisticData[c].populationVariance = Double.NaN;
-                                statisticData[c].sampleVariance = Double.NaN;
-                                statisticData[c].populationStandardDeviation = Double.NaN;
-                                statisticData[c].sampleStandardDeviation = Double.NaN;
-                            }
-                        }
-                    }
-                    break;
-                case StatisticAll:
-                    if (scanPass == 1) {
-                        if (statisticAll.count > 0) {
-                            if (!DoubleTools.invalidDouble(statisticAll.sum)) {
-                                statisticAll.mean = statisticAll.sum / statisticAll.count;
-                            } else {
-                                statisticAll.mean = Double.NaN;
-                            }
-                            if (statisticCalculation.isGeometricMean()) {
-                                if (!DoubleTools.invalidDouble(statisticAll.geometricMean)) {
-                                    statisticAll.geometricMean = Math.pow(statisticAll.geometricMean, 1d / statisticAll.count);
-                                } else {
-                                    statisticAll.geometricMean = Double.NaN;
-                                }
-                            }
-                        } else {
-                            statisticAll.mean = Double.NaN;
-                            statisticAll.geometricMean = Double.NaN;
-                        }
-                        if (statisticCalculation.isSkewness()) {
-                            statisticAll.skewness = skewnessAll.getResult();
-                        }
-                    } else if (scanPass == 2) {
-                        if (statisticAll.count > 0 && !DoubleTools.invalidDouble(statisticAll.dTmp)) {
-                            statisticAll.populationVariance = statisticAll.dTmp / statisticAll.count;
-                            statisticAll.sampleVariance = statisticAll.dTmp / (statisticAll.count - 1);
-                            if (statisticCalculation.isPopulationStandardDeviation()) {
-                                statisticAll.populationStandardDeviation = Math.sqrt(statisticAll.populationVariance);
-                            }
-                            if (statisticCalculation.isSampleStandardDeviation()) {
-                                statisticAll.sampleStandardDeviation = Math.sqrt(statisticAll.sampleVariance);
-                            }
-                        } else {
-                            statisticAll.populationVariance = Double.NaN;
-                            statisticAll.sampleVariance = Double.NaN;
-                            statisticAll.populationStandardDeviation = Double.NaN;
-                            statisticAll.sampleStandardDeviation = Double.NaN;
-                        }
-                    }
-                    break;
                 case Frequency:
                     List<String> row = new ArrayList<>();
                     row.add(message("All"));
@@ -1436,11 +1098,6 @@ public abstract class Data2DReader {
         return this;
     }
 
-    public Data2DReader setStatisticSelection(DescriptiveStatistic statisticSelection) {
-        this.statisticCalculation = statisticSelection;
-        return this;
-    }
-
     public Data2DReader setScanPass(int scanPass) {
         this.scanPass = scanPass;
         return this;
@@ -1493,6 +1150,11 @@ public abstract class Data2DReader {
 
     public Data2DReader setStatisticAll(DoubleStatistic statisticAll) {
         this.statisticAll = statisticAll;
+        return this;
+    }
+
+    public Data2DReader setStatisticCalculation(DescriptiveStatistic statisticCalculation) {
+        this.statisticCalculation = statisticCalculation;
         return this;
     }
 

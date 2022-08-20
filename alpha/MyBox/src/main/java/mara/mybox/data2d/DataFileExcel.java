@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import mara.mybox.data2d.reader.Data2DReader;
+import mara.mybox.data2d.reader.Data2DReadDefinition;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
@@ -116,7 +116,12 @@ public class DataFileExcel extends DataFile {
 
     @Override
     public long readDataDefinition(Connection conn) {
-        Data2DReader.create(this).setTask(task).start(Data2DReader.Operation.ReadDefinition);
+        Data2DReadDefinition reader = Data2DReadDefinition.create(this);
+        if (reader == null) {
+            hasHeader = false;
+            return -2;
+        }
+        reader.setTask(task).start();
         return super.readDataDefinition(conn);
     }
 

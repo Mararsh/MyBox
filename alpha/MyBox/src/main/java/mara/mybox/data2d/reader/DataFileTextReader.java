@@ -28,7 +28,7 @@ public class DataFileTextReader extends Data2DReader {
         File validFile = FileTools.removeBOM(sourceFile);
         try ( BufferedReader reader = new BufferedReader(new FileReader(validFile, readerText.getCharset()))) {
             textReader = reader;
-            handleData();
+            operator.handleData();
             textReader = null;
             reader.close();
         } catch (Exception e) {

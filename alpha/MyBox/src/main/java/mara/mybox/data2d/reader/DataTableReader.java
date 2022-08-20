@@ -33,7 +33,7 @@ public class DataTableReader extends Data2DReader {
         if (conn == null) {
             try ( Connection dconn = DerbyBase.getConnection()) {
                 conn = dconn;
-                handleData();
+                operator.handleData();
                 conn.close();
             } catch (Exception e) {
                 MyBoxLog.error(e);
@@ -42,7 +42,7 @@ public class DataTableReader extends Data2DReader {
                 }
             }
         } else {
-            handleData();
+            operator.handleData();
         }
     }
 

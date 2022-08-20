@@ -14,8 +14,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import mara.mybox.data2d.reader.Data2DReader;
-import mara.mybox.data2d.reader.Data2DReader.Operation;
+import mara.mybox.data2d.reader.Data2DOperator;
+import mara.mybox.data2d.reader.Data2DSingleColumn;
+import mara.mybox.data2d.reader.Data2DWriteTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
@@ -181,15 +182,18 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                     cols.add(i);
                 }
             }
-            Data2DReader reader = Data2DReader.create(this)
-                    .setConn(conn).setDataTable(dataTable)
-                    .setCols(cols).setIncludeRowNumber(includeRowNumber)
-                    .setTask(task).start(Operation.WriteTable);
-            if (reader != null && !reader.isFailed()) {
+            Data2DWriteTable reader = Data2DWriteTable.create(this)
+                    .setConn(conn).setWriterTable(dataTable)
+                    .setIncludeRowNumber(includeRowNumber);
+            if (reader == null) {
+                return -3;
+            }
+            reader.setCols(cols).setTask(task).start();
+            if (!reader.failed()) {
                 conn.commit();
                 return reader.getCount();
             } else {
-                return -3;
+                return -4;
             }
         } catch (Exception e) {
             if (task != null) {
@@ -197,7 +201,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             } else {
                 MyBoxLog.error(e.toString());
             }
-            return -4;
+            return -5;
         }
     }
 
@@ -229,10 +233,10 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                     cols.add(i);
                 }
             }
-            Data2DReader reader = Data2DReader.create(this)
-                    .setConn(conn).setDataTable(dataTable).setCols(cols)
-                    .setTask(task).start(Operation.SingleColumn);
-            if (reader != null && !reader.isFailed()) {
+            Data2DOperator reader = Data2DSingleColumn.create(this)
+                    .setConn(conn).setWriterTable(dataTable)
+                    .setCols(cols).setTask(task).start();
+            if (reader != null && !reader.failed()) {
                 conn.commit();
                 return dataTable;
             } else {

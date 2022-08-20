@@ -20,7 +20,7 @@ public class DataFileCSVReader extends Data2DReader {
 
     protected DataFileCSV readerCSV;
     protected Iterator<CSVRecord> iterator;
-    CSVParser csvParser;
+    protected CSVParser csvParser;
 
     public DataFileCSVReader(DataFileCSV data) {
         this.readerCSV = data;
@@ -37,7 +37,7 @@ public class DataFileCSVReader extends Data2DReader {
         try ( CSVParser parser = CSVParser.parse(validFile, readerCSV.getCharset(), readerCSV.cvsFormat())) {
             csvParser = parser;
             iterator = parser.iterator();
-            handleData();
+            operator.handleData();
             csvParser = null;
             parser.close();
         } catch (Exception e) {
@@ -138,7 +138,6 @@ public class DataFileCSVReader extends Data2DReader {
             }
             ++rowIndex;
             handleRow();
-
         }
     }
 

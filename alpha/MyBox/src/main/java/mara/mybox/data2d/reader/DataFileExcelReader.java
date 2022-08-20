@@ -48,7 +48,7 @@ public class DataFileExcelReader extends Data2DReader {
                 readerExcel.setSheet(readerSheet);
             }
             iterator = sourceSheet.iterator();
-            handleData();
+            operator.handleData();
             wb.close();
         } catch (Exception e) {
             MyBoxLog.error(e);
