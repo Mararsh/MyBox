@@ -13,6 +13,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import mara.mybox.data.SetValue;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -224,13 +225,13 @@ public class ControlData2DSetValue extends BaseController {
                 }
                 setValue.setScale(v);
                 if (zeroNonnumericRadio.isSelected()) {
-                    setValue.setToNonnumeric(SetValue.ToNonnumeric.Zero);
+                    setValue.setInvalidAs(InvalidAs.Zero);
                 } else if (blankNonnumericRadio.isSelected()) {
-                    setValue.setToNonnumeric(SetValue.ToNonnumeric.Blank);
+                    setValue.setInvalidAs(InvalidAs.Blank);
                 } else {
-                    setValue.setToNonnumeric(SetValue.ToNonnumeric.Skip);
+                    setValue.setInvalidAs(InvalidAs.Skip);
                 }
-                UserConfig.setString(baseName + "Nonnumeric", setValue.getToNonnumeric().name());
+                UserConfig.setString(baseName + "Nonnumeric", setValue.getInvalidAs().name());
             } else if (prefixRadio.isSelected()) {
                 String v = prefixInput.getText();
                 setValue.setType(SetValue.ValueType.Prefix).setValue(v);

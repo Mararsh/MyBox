@@ -33,7 +33,6 @@ public class Data2DSingleColumn extends Data2DOperator {
         }
         writerTableData2D = writerTable.getTableData2D();
         count = 0;
-        MyBoxLog.console("here");
         return true;
     }
 

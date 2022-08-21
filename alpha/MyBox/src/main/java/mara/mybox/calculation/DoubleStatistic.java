@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleArrayTools;
 import mara.mybox.tools.DoubleTools;
@@ -21,14 +22,16 @@ public class DoubleStatistic {
 
     public String name;
     public long count, invalidCount;
-    public double invalidAs, sum, mean, geometricMean, sumSquares,
+    public double sum, mean, geometricMean, sumSquares,
             populationVariance, sampleVariance, populationStandardDeviation, sampleStandardDeviation, skewness,
             minimum, maximum, median, upperQuartile, lowerQuartile, mode,
             upperMildOutlierLine, upperExtremeOutlierLine, lowerMildOutlierLine, lowerExtremeOutlierLine,
             dTmp;
     public Object modeValue, minimumValue, maximumValue, medianValue, upperQuartileValue, lowerQuartileValue;
     public DescriptiveStatistic options;
-    private double[] doubles;
+    public InvalidAs invalidAs;
+
+    private double[] doubles, valids;
 
     public DoubleStatistic() {
         init();
@@ -71,10 +74,11 @@ public class DoubleStatistic {
         lowerExtremeOutlierLine = Double.NaN;
         modeValue = null;
         dTmp = 0;
-        invalidAs = 0;
+        invalidAs = InvalidAs.Zero;
         invalidCount = 0;
         options = null;
         doubles = null;
+        valids = null;
     }
 
     private void initOptions(DescriptiveStatistic inOptions) {
@@ -130,13 +134,22 @@ public class DoubleStatistic {
             if (total == 0) {
                 return;
             }
+            List<Double> validList = new ArrayList<>();
             for (int i = 0; i < total; ++i) {
                 double v = doubles[i];
                 if (Double.isNaN(v)) {
-                    invalidCount++;
-                    continue;
+                    switch (invalidAs) {
+                        case Blank:
+                        case Skip:
+                            invalidCount++;
+                            continue;
+                        case Zero:
+                            v = 0;
+                            break;
+                    }
                 }
                 count++;
+                validList.add(v);
                 sum += v;
                 if (options.isMaximum() && v > maximum) {
                     maximum = v;
@@ -156,22 +169,23 @@ public class DoubleStatistic {
                 sum = Double.NaN;
                 geometricMean = Double.NaN;
                 sumSquares = Double.NaN;
+                valids = null;
             } else {
                 mean = sum / count;
                 if (options.isGeometricMean()) {
                     geometricMean = Math.pow(geometricMean, 1d / count);
                 }
-                if (invalidCount > 0) {
-                    double[] valid = new double[(int) count];
-                    int index = 0;
-                    for (int i = 0; i < doubles.length; i++) {
-                        double v = doubles[i];
-                        if (!Double.isNaN(v)) {
-                            valid[index++] = v;
-                        }
-                    }
-                    doubles = valid;
+                valids = new double[validList.size()];
+                int index = 0;
+                for (double d : validList) {
+                    valids[index++] = d;
                 }
+            }
+            if (maximum == -Double.MAX_VALUE) {
+                maximum = Double.NaN;
+            }
+            if (minimum == Double.MAX_VALUE) {
+                minimum = Double.NaN;
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -180,7 +194,7 @@ public class DoubleStatistic {
 
     private void calculateVariance() {
         try {
-            if (doubles == null || options == null || count <= 0) {
+            if (valids == null || count <= 0 || options == null || count <= 0) {
                 return;
             }
             if (!options.needVariance()) {
@@ -188,7 +202,8 @@ public class DoubleStatistic {
             }
             dTmp = 0;
             for (int i = 0; i < count; ++i) {
-                double p = doubles[i] - mean;
+                double v = valids[i];
+                double p = v - mean;
                 double p2 = p * p;
                 dTmp += p2;
             }
@@ -207,14 +222,15 @@ public class DoubleStatistic {
 
     private void calculatePercentile() {
         try {
-            if (doubles == null || options == null || count <= 0) {
+            if (valids == null || count <= 0 || options == null) {
                 return;
             }
             if (!options.needPercentile()) {
                 return;
             }
             Percentile percentile = new Percentile();
-            percentile.setData(doubles);
+
+            percentile.setData(valids);
             if (options.isMedian()) {
                 median = percentile.evaluate(50);
                 medianValue = median;
@@ -250,13 +266,13 @@ public class DoubleStatistic {
 
     private void calculateSkewness() {
         try {
-            if (doubles == null || options == null || count <= 0) {
+            if (valids == null || count <= 0 || options == null || count <= 0) {
                 return;
             }
             if (!options.isSkewness()) {
                 return;
             }
-            skewness = new Skewness().evaluate(doubles);
+            skewness = new Skewness().evaluate(valids);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -264,13 +280,13 @@ public class DoubleStatistic {
 
     private void calculateMode() {
         try {
-            if (options == null || count <= 0) {
+            if (valids == null || count <= 0) {
                 return;
             }
             if (!options.isMode()) {
                 return;
             }
-            mode = mode(doubles);
+            mode = mode(valids);
             modeValue = mode;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -345,10 +361,6 @@ public class DoubleStatistic {
             }
         }
         return list;
-    }
-
-    public double toDouble(String string) {
-        return DoubleTools.toDouble(string, invalidAs);
     }
 
     public final double[] toDoubleArray(String[] strings) {
@@ -757,11 +769,11 @@ public class DoubleStatistic {
         return this;
     }
 
-    public double getInvalidAs() {
+    public InvalidAs getInvalidAs() {
         return invalidAs;
     }
 
-    public DoubleStatistic setInvalidAs(double invalidAs) {
+    public DoubleStatistic setInvalidAs(InvalidAs invalidAs) {
         this.invalidAs = invalidAs;
         return this;
     }

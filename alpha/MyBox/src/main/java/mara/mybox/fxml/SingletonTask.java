@@ -36,6 +36,9 @@ public class SingletonTask<Void> extends BaseTask<Void> {
                 if (error.equals(message("Failed"))) {
                     controller.popError(error);
                 } else {
+                    if (error.contains("java.sql.SQLDataException: 22003 : [0] DOUBLE")) {
+                        error = error + "\n\n" + message("DataOverflow");
+                    }
                     controller.alertError(error);
                 }
                 MyBoxLog.debug(controller.getTitle() + ": " + error);

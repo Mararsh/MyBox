@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import mara.mybox.controller.BaseData2DHandleController;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
@@ -26,7 +27,7 @@ public class DescriptiveStatistic {
             minimum, maximum, median, upperQuartile, lowerQuartile, mode,
             upperMildOutlierLine, upperExtremeOutlierLine, lowerMildOutlierLine, lowerExtremeOutlierLine;
     public int scale;
-    public double invalidAs = 0;
+    public InvalidAs invalidAs;
 
     protected BaseData2DHandleController handleController;
     protected SingletonTask<Void> task;
@@ -1236,11 +1237,11 @@ public class DescriptiveStatistic {
         return this;
     }
 
-    public double getInvalidAs() {
+    public InvalidAs getInvalidAs() {
         return invalidAs;
     }
 
-    public DescriptiveStatistic setInvalidAs(double invalidAs) {
+    public DescriptiveStatistic setInvalidAs(InvalidAs invalidAs) {
         this.invalidAs = invalidAs;
         return this;
     }

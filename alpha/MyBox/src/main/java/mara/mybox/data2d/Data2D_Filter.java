@@ -167,7 +167,7 @@ public abstract class Data2D_Filter extends Data2D_Data {
             }
             DescriptiveStatistic calculation = new DescriptiveStatistic()
                     .setStatisticObject(DescriptiveStatistic.StatisticObject.Columns)
-                    .setInvalidAs(Double.NaN);
+                    .setInvalidAs(InvalidAs.Blank);
             List<Integer> colIndices = new ArrayList<>();
             for (String script : scripts) {
                 checkFilterStatistic(script, calculation, colIndices);

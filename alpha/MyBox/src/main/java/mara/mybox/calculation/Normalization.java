@@ -1,8 +1,9 @@
 package mara.mybox.calculation;
 
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.DoubleMatrixTools;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppValues;
 
 /**
@@ -12,11 +13,12 @@ import mara.mybox.value.AppValues;
  */
 public class Normalization {
 
-    protected double from, to, max, min, sum, mean, variance, width, maxAbs, invalidAs;
+    protected double from, to, max, min, sum, mean, variance, width, maxAbs;
     protected Algorithm a;
-    protected double[] sourceVector, resultVector;
-    protected double[][] sourceMatrix, resultMatrix;
+    protected String[] sourceVector, resultVector;
+    protected String[][] sourceMatrix, resultMatrix;
     protected Normalization[] values;
+    protected InvalidAs invalidAs;
 
     public static enum Algorithm {
         MinMax, Sum, ZScore, Absoluate
@@ -34,7 +36,7 @@ public class Normalization {
         a = Algorithm.MinMax;
         sourceVector = null;
         sourceMatrix = null;
-        invalidAs = Double.NaN;
+        invalidAs = InvalidAs.Zero;
     }
 
     private void resetResults() {
@@ -63,7 +65,7 @@ public class Normalization {
         }
     }
 
-    public double[] calculate() {
+    public String[] calculate() {
         try {
             resetResults();
             if (a == null) {
@@ -90,6 +92,19 @@ public class Normalization {
         return resultVector;
     }
 
+    public double[] toDoubles(InvalidAs invalidAs) {
+        calculate();
+        if (resultVector == null) {
+            return null;
+        }
+        double[] doubleVector = new double[resultVector.length];
+        for (int i = 0; i < resultVector.length; i++) {
+            String s = resultVector[i];
+            doubleVector[i] = DoubleTools.toDouble(s, invalidAs);
+        }
+        return doubleVector;
+    }
+
     public boolean minMax() {
         try {
             resetResults();
@@ -102,13 +117,16 @@ public class Normalization {
             }
             min = Double.MAX_VALUE;
             max = -Double.MAX_VALUE;
-            boolean skip = DoubleTools.invalidDouble(invalidAs);
-            for (double d : sourceVector) {
+            for (String s : sourceVector) {
+                double d = DoubleTools.toDouble(s, invalidAs);
                 if (DoubleTools.invalidDouble(d)) {
-                    if (skip) {
-                        continue;
-                    } else {
-                        d = invalidAs;
+                    switch (invalidAs) {
+                        case Zero:
+                            d = 0;
+                            break;
+                        case Skip:
+                        case Blank:
+                            continue;
                     }
                 }
                 if (d > max) {
@@ -126,18 +144,25 @@ public class Normalization {
                 k = AppValues.TinyDouble;
             }
             k = (to - from) / k;
-            resultVector = new double[len];
+            resultVector = new String[len];
             for (int i = 0; i < len; i++) {
-                double d = sourceVector[i];
+                String s = sourceVector[i];
+                double d = DoubleTools.toDouble(s, invalidAs);
                 if (DoubleTools.invalidDouble(d)) {
-                    if (skip) {
-                        resultVector[i] = Double.NaN;
-                        continue;
-                    } else {
-                        d = invalidAs;
+                    switch (invalidAs) {
+                        case Zero:
+                            resultVector[i] = "0";
+                            break;
+                        case Skip:
+                            resultVector[i] = s;
+                            break;
+                        case Blank:
+                            resultVector[i] = "";
+                            break;
                     }
+                    continue;
                 }
-                resultVector[i] = from + k * (d - min);
+                resultVector[i] = from + k * (d - min) + "";
             }
             return true;
         } catch (Exception e) {
@@ -157,25 +182,25 @@ public class Normalization {
                 return false;
             }
             sum = 0;
-            boolean skip = DoubleTools.invalidDouble(invalidAs);
-            for (double d : sourceVector) {
+            for (String s : sourceVector) {
+                double d = DoubleTools.toDouble(s, invalidAs);
                 if (DoubleTools.invalidDouble(d)) {
-                    if (skip) {
-                        continue;
-                    } else {
-                        d = invalidAs;
-                    }
+                    continue;
                 }
                 sum += d;
             }
             mean = sum / len;
             variance = 0;
-            for (double d : sourceVector) {
+            for (String s : sourceVector) {
+                double d = DoubleTools.toDouble(s, invalidAs);
                 if (DoubleTools.invalidDouble(d)) {
-                    if (skip) {
-                        continue;
-                    } else {
-                        d = invalidAs;
+                    switch (invalidAs) {
+                        case Zero:
+                            d = 0;
+                            break;
+                        case Skip:
+                        case Blank:
+                            continue;
                     }
                 }
                 double v = d - mean;
@@ -185,18 +210,25 @@ public class Normalization {
             if (variance == 0) {
                 variance = AppValues.TinyDouble;
             }
-            resultVector = new double[len];
+            resultVector = new String[len];
             for (int i = 0; i < len; i++) {
-                double d = sourceVector[i];
+                String s = sourceVector[i];
+                double d = DoubleTools.toDouble(s, invalidAs);
                 if (DoubleTools.invalidDouble(d)) {
-                    if (skip) {
-                        resultVector[i] = Double.NaN;
-                        continue;
-                    } else {
-                        d = invalidAs;
+                    switch (invalidAs) {
+                        case Zero:
+                            resultVector[i] = "0";
+                            break;
+                        case Skip:
+                            resultVector[i] = s;
+                            break;
+                        case Blank:
+                            resultVector[i] = "";
+                            break;
                     }
+                    continue;
                 }
-                resultVector[i] = (d - mean) / variance;
+                resultVector[i] = (d - mean) / variance + "";
             }
             return true;
         } catch (Exception e) {
@@ -216,32 +248,35 @@ public class Normalization {
                 return false;
             }
             sum = 0;
-            boolean skip = DoubleTools.invalidDouble(invalidAs);
-            for (double d : sourceVector) {
+            for (String s : sourceVector) {
+                double d = DoubleTools.toDouble(s, invalidAs);
                 if (DoubleTools.invalidDouble(d)) {
-                    if (skip) {
-                        continue;
-                    } else {
-                        d = invalidAs;
-                    }
+                    continue;
                 }
                 sum += Math.abs(d);
             }
             if (sum == 0) {
                 sum = AppValues.TinyDouble;
             }
-            resultVector = new double[len];
+            resultVector = new String[len];
             for (int i = 0; i < len; i++) {
-                double d = sourceVector[i];
+                String s = sourceVector[i];
+                double d = DoubleTools.toDouble(s, invalidAs);
                 if (DoubleTools.invalidDouble(d)) {
-                    if (skip) {
-                        resultVector[i] = Double.NaN;
-                        continue;
-                    } else {
-                        d = invalidAs;
+                    switch (invalidAs) {
+                        case Zero:
+                            resultVector[i] = "0";
+                            break;
+                        case Skip:
+                            resultVector[i] = s;
+                            break;
+                        case Blank:
+                            resultVector[i] = "";
+                            break;
                     }
+                    continue;
                 }
-                resultVector[i] = d / sum;
+                resultVector[i] = d / sum + "";
             }
             return true;
         } catch (Exception e) {
@@ -261,35 +296,38 @@ public class Normalization {
                 return false;
             }
             maxAbs = 0;
-            boolean skip = DoubleTools.invalidDouble(invalidAs);
-            for (double d : sourceVector) {
+            for (String s : sourceVector) {
+                double d = DoubleTools.toDouble(s, invalidAs);
                 if (DoubleTools.invalidDouble(d)) {
-                    if (skip) {
-                        continue;
-                    } else {
-                        d = invalidAs;
-                    }
+                    continue;
                 }
                 double abs = Math.abs(d);
                 if (abs > maxAbs) {
                     maxAbs = abs;
                 }
             }
-            resultVector = new double[len];
+            resultVector = new String[len];
             for (int i = 0; i < len; i++) {
-                double d = sourceVector[i];
+                String s = sourceVector[i];
+                double d = DoubleTools.toDouble(s, invalidAs);
                 if (DoubleTools.invalidDouble(d)) {
-                    if (skip) {
-                        resultVector[i] = Double.NaN;
-                        continue;
-                    } else {
-                        d = invalidAs;
+                    switch (invalidAs) {
+                        case Zero:
+                            resultVector[i] = "0";
+                            break;
+                        case Skip:
+                            resultVector[i] = s;
+                            break;
+                        case Blank:
+                            resultVector[i] = "";
+                            break;
                     }
+                    continue;
                 }
                 if (maxAbs == 0 || width == 0) {
-                    resultVector[i] = 0;
+                    resultVector[i] = "0";
                 } else {
-                    resultVector[i] = width * d / maxAbs;
+                    resultVector[i] = width * d / maxAbs + "";
                 }
             }
             return true;
@@ -299,18 +337,18 @@ public class Normalization {
         }
     }
 
-    public double[][] columnsNormalize() {
+    public String[][] columnsNormalize() {
         try {
             if (sourceMatrix == null || sourceMatrix.length == 0 || a == null) {
                 return null;
             }
-            double[][] orignalSource = sourceMatrix;
-            sourceMatrix = DoubleMatrixTools.transpose(sourceMatrix);
+            String[][] orignalSource = sourceMatrix;
+            sourceMatrix = StringTools.transpose(sourceMatrix);
             if (rowsNormalize() == null) {
                 resetResults();
                 return null;
             }
-            resultMatrix = DoubleMatrixTools.transpose(resultMatrix);
+            resultMatrix = StringTools.transpose(resultMatrix);
             sourceMatrix = orignalSource;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -318,13 +356,13 @@ public class Normalization {
         return resultMatrix;
     }
 
-    public double[][] rowsNormalize() {
+    public String[][] rowsNormalize() {
         try {
             if (sourceMatrix == null || sourceMatrix.length == 0 || a == null) {
                 return null;
             }
             int rlen = sourceMatrix.length, clen = sourceMatrix[0].length;
-            resultMatrix = new double[rlen][clen];
+            resultMatrix = new String[rlen][clen];
             values = new Normalization[rlen];
             for (int i = 0; i < rlen; i++) {
                 sourceVector = sourceMatrix[i];
@@ -341,18 +379,18 @@ public class Normalization {
         return resultMatrix;
     }
 
-    public double[][] allNormalize() {
+    public String[][] allNormalize() {
         try {
             if (sourceMatrix == null || sourceMatrix.length == 0 || a == null) {
                 return null;
             }
             int w = sourceMatrix[0].length;
-            sourceVector = DoubleMatrixTools.matrix2Array(sourceMatrix);
+            sourceVector = StringTools.matrix2Array(sourceMatrix);
             if (calculate() == null) {
                 resetResults();
                 return null;
             }
-            resultMatrix = DoubleMatrixTools.array2Matrix(resultVector, w);
+            resultMatrix = StringTools.array2Matrix(resultVector, w);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -405,11 +443,11 @@ public class Normalization {
         return this;
     }
 
-    public double getInvalidAs() {
+    public InvalidAs getInvalidAs() {
         return invalidAs;
     }
 
-    public Normalization setInvalidAs(double invalidAs) {
+    public Normalization setInvalidAs(InvalidAs invalidAs) {
         this.invalidAs = invalidAs;
         return this;
     }
@@ -459,38 +497,38 @@ public class Normalization {
         return this;
     }
 
-    public double[] getSourceVector() {
+    public String[] getSourceVector() {
         return sourceVector;
     }
 
-    public Normalization setSourceVector(double[] sourceVector) {
+    public Normalization setSourceVector(String[] sourceVector) {
         this.sourceVector = sourceVector;
         return this;
     }
 
-    public double[] getResultVector() {
+    public String[] getResultVector() {
         return resultVector;
     }
 
-    public Normalization setResultVector(double[] resultVector) {
+    public Normalization setResultVector(String[] resultVector) {
         this.resultVector = resultVector;
         return this;
     }
 
-    public double[][] getSourceMatrix() {
+    public String[][] getSourceMatrix() {
         return sourceMatrix;
     }
 
-    public Normalization setSourceMatrix(double[][] sourceMatrix) {
+    public Normalization setSourceMatrix(String[][] sourceMatrix) {
         this.sourceMatrix = sourceMatrix;
         return this;
     }
 
-    public double[][] getResultMatrix() {
+    public String[][] getResultMatrix() {
         return resultMatrix;
     }
 
-    public Normalization setResultMatrix(double[][] resultMatrix) {
+    public Normalization setResultMatrix(String[][] resultMatrix) {
         this.resultMatrix = resultMatrix;
         return this;
     }

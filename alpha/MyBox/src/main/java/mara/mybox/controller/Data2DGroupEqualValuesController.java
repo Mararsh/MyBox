@@ -6,6 +6,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.data.ColumnDefinition;
@@ -98,9 +99,9 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
             checkObject();
 
             if (skipNonnumericRadio != null) {
-                invalidAs = skipNonnumericRadio.isSelected() ? Double.NaN : 0;
+                invalidAs = skipNonnumericRadio.isSelected() ? InvalidAs.Skip : InvalidAs.Zero;
             } else {
-                invalidAs = 0;
+                invalidAs = InvalidAs.Zero;
             }
             groups = groupController.selectedNames();
             if (groups == null || groups.isEmpty()) {

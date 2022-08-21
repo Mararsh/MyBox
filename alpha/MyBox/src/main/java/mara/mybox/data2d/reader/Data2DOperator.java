@@ -2,8 +2,8 @@ package mara.mybox.data2d.reader;
 
 import java.util.List;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.Data2D_Edit;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import org.apache.commons.csv.CSVPrinter;
 
@@ -19,9 +19,11 @@ public abstract class Data2DOperator {
     protected SingletonTask task;
     protected List<Integer> cols;
     protected int colsLen, scale = -1;
+    protected boolean includeRowNumber;
     protected List<String> sourceRow;
     protected long rowIndex; // 1-based 
     protected CSVPrinter csvPrinter;
+    protected InvalidAs invalidAs;
 
     public boolean setData(Data2D_Edit data) {
         reader = Data2DReader.create(data);
@@ -30,12 +32,12 @@ public abstract class Data2DOperator {
         }
         data2D = reader.data2D;
         task = reader.task;
+        invalidAs = data2D.getInvalidAs();
         reader.operator = this;
         return true;
     }
 
     public Data2DOperator start() {
-        MyBoxLog.console(this.getClass());
         if (data2D == null || !data2D.validData()
                 || !checkParameters()
                 || !reader.start()) {
@@ -50,9 +52,7 @@ public abstract class Data2DOperator {
     }
 
     public void handleData() {
-        MyBoxLog.console(reader.getClass());
         reader.readRows();
-        MyBoxLog.console(reader.getRowIndex());
     }
 
     public void handleRow() {
@@ -94,6 +94,11 @@ public abstract class Data2DOperator {
         return this;
     }
 
+    public Data2DOperator setIncludeRowNumber(boolean includeRowNumber) {
+        this.includeRowNumber = includeRowNumber;
+        return this;
+    }
+
     public Data2DOperator setSourceRow(List<String> sourceRow) {
         this.sourceRow = sourceRow;
         return this;
@@ -106,6 +111,11 @@ public abstract class Data2DOperator {
 
     public Data2DOperator setScale(int scale) {
         this.scale = scale;
+        return this;
+    }
+
+    public Data2DOperator setInvalidAs(InvalidAs invalidAs) {
+        this.invalidAs = invalidAs;
         return this;
     }
 

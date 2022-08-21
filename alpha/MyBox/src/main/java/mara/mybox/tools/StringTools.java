@@ -400,4 +400,70 @@ public class StringTools {
         }
     }
 
+    public static String[][] transpose(String[][] matrix) {
+        try {
+            if (matrix == null) {
+                return null;
+            }
+            int rowsNumber = matrix.length, columnsNumber = matrix[0].length;
+            String[][] result = new String[columnsNumber][rowsNumber];
+            for (int row = 0; row < rowsNumber; ++row) {
+                for (int col = 0; col < columnsNumber; ++col) {
+                    result[col][row] = matrix[row][col];
+                }
+            }
+            return result;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static String[] matrix2Array(String[][] m) {
+        if (m == null || m.length == 0 || m[0].length == 0) {
+            return null;
+        }
+        int h = m.length;
+        int w = m[0].length;
+        String[] a = new String[w * h];
+        for (int j = 0; j < h; ++j) {
+            System.arraycopy(m[j], 0, a, j * w, w);
+        }
+        return a;
+    }
+
+    public static String[][] array2Matrix(String[] a, int w) {
+        if (a == null || a.length == 0 || w < 1) {
+            return null;
+        }
+        int h = a.length / w;
+        if (h < 1) {
+            return null;
+        }
+        String[][] m = new String[h][w];
+        for (int j = 0; j < h; ++j) {
+            for (int i = 0; i < w; ++i) {
+                m[j][i] = a[j * w + i];
+            }
+        }
+        return m;
+    }
+
+    public static String[][] toString(double[][] dMatrix) {
+        try {
+            if (dMatrix == null) {
+                return null;
+            }
+            int rsize = dMatrix.length, csize = dMatrix[0].length;
+            String[][] sMatrix = new String[rsize][csize];
+            for (int i = 0; i < rsize; i++) {
+                for (int j = 0; j < csize; j++) {
+                    sMatrix[i][j] = dMatrix[i][j] + "";
+                }
+            }
+            return sMatrix;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 }

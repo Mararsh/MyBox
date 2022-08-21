@@ -213,25 +213,25 @@ public class MatricesBinaryCalculationController extends BaseController {
                 protected boolean handle() {
                     try {
                         if (plusRadio.isSelected()) {
-                            result = DoubleMatrixTools.add(dataAMatrix.toArray(), dataBMatrix.toArray());
+                            result = DoubleMatrixTools.add(dataAMatrix.toMatrix(), dataBMatrix.toMatrix());
 
                         } else if (minusRadio.isSelected()) {
-                            result = DoubleMatrixTools.subtract(dataAMatrix.toArray(), dataBMatrix.toArray());
+                            result = DoubleMatrixTools.subtract(dataAMatrix.toMatrix(), dataBMatrix.toMatrix());
 
                         } else if (multiplyRadio.isSelected()) {
-                            result = DoubleMatrixTools.multiply(dataAMatrix.toArray(), dataBMatrix.toArray());
+                            result = DoubleMatrixTools.multiply(dataAMatrix.toMatrix(), dataBMatrix.toMatrix());
 
                         } else if (hadamardProductRadio.isSelected()) {
-                            result = DoubleMatrixTools.hadamardProduct(dataAMatrix.toArray(), dataBMatrix.toArray());
+                            result = DoubleMatrixTools.hadamardProduct(dataAMatrix.toMatrix(), dataBMatrix.toMatrix());
 
                         } else if (kroneckerProductRadio.isSelected()) {
-                            result = DoubleMatrixTools.kroneckerProduct(dataAMatrix.toArray(), dataBMatrix.toArray());
+                            result = DoubleMatrixTools.kroneckerProduct(dataAMatrix.toMatrix(), dataBMatrix.toMatrix());
 
                         } else if (verticalMergeRadio.isSelected()) {
-                            result = DoubleMatrixTools.vertivalMerge(dataAMatrix.toArray(), dataBMatrix.toArray());
+                            result = DoubleMatrixTools.vertivalMerge(dataAMatrix.toMatrix(), dataBMatrix.toMatrix());
 
                         } else if (horizontalMergeRadio.isSelected()) {
-                            result = DoubleMatrixTools.horizontalMerge(dataAMatrix.toArray(), dataBMatrix.toArray());
+                            result = DoubleMatrixTools.horizontalMerge(dataAMatrix.toMatrix(), dataBMatrix.toMatrix());
 
                         }
                     } catch (Exception e) {

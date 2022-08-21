@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.util.List;
 import javafx.scene.paint.Color;
 import mara.mybox.calculation.Normalization;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
@@ -45,13 +46,14 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
             normalization = null;
             int rowsNumber = outputData.size();
             int colsNumber = checkedColsIndices.size();
-            double[][] data = new double[rowsNumber][colsNumber];
+            String[][] data = new String[rowsNumber][colsNumber];
             boolean allNeg = true, allPos = true;
             for (int r = 0; r < rowsNumber; r++) {
                 List<String> tableRow = outputData.get(r);
                 for (int c = 0; c < colsNumber; c++) {
-                    double d = DoubleTools.toDouble(tableRow.get(c + 1), invalidAs);
-                    data[r][c] = d;
+                    String s = tableRow.get(c + 1);
+                    double d = DoubleTools.toDouble(s, invalidAs);
+                    data[r][c] = s;
                     if (d > 0) {
                         allNeg = false;
                     } else if (d < 0) {
@@ -59,7 +61,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
                     }
                 }
             }
-            return dataHtml(calculate(data), allNeg, allPos);
+            return dataHtml(DoubleTools.toDouble(calculate(data), InvalidAs.Zero), allNeg, allPos);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -68,7 +70,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
         return null;
     }
 
-    private double[][] calculate(double[][] data) {
+    private String[][] calculate(String[][] data) {
         try {
             if (data == null || data.length == 0) {
                 return data;

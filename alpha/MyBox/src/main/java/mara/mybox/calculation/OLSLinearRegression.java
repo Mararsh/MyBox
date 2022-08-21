@@ -2,6 +2,7 @@ package mara.mybox.calculation;
 
 import java.util.ArrayList;
 import java.util.List;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.fxml.SingletonTask;
@@ -20,9 +21,10 @@ public class OLSLinearRegression extends OLSMultipleLinearRegression {
     protected List<String> xNames;
     protected int n, k;
     protected int scale = 8;
-    protected double invalidAs, intercept;
+    protected double intercept;
     protected double[][] x;
     protected double[] y, coefficients;
+    public InvalidAs invalidAs;
     protected SingletonTask<Void> task;
 
     public OLSLinearRegression(boolean includeIntercept) {
@@ -34,20 +36,30 @@ public class OLSLinearRegression extends OLSMultipleLinearRegression {
         try {
             n = data.size();
             k = xNames.size();
-            y = new double[n];
-            x = new double[n][k];
+            String[] sy = new String[n];
+            String[][] sx = new String[n][k];
             Normalization normalization = Normalization.create()
                     .setA(Normalization.Algorithm.ZScore)
                     .setInvalidAs(invalidAs);
             for (int i = 0; i < n; i++) {
                 List<String> row = data.get(i);
-                y[i] = DoubleTools.toDouble(row.get(0), invalidAs);
+                sy[i] = row.get(0);
                 for (int j = 0; j < k; j++) {
-                    x[i][j] = DoubleTools.toDouble(row.get(j + 1), invalidAs);
+                    sx[i][j] = row.get(j + 1);
                 }
             }
-            y = normalization.setSourceVector(y).calculate();
-            x = normalization.setSourceMatrix(x).columnsNormalize();
+            sy = normalization.setSourceVector(sy).calculate();
+            sx = normalization.setSourceMatrix(sx).columnsNormalize();
+            y = new double[n];
+            x = new double[n][k];
+            for (int i = 0; i < n; i++) {
+                y[i] = DoubleTools.toDouble(sy[i], invalidAs);
+            }
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < k; j++) {
+                    x[i][j] = DoubleTools.toDouble(sx[i][j], invalidAs);
+                }
+            }
             newSampleData(y, x);
             double[] beta = estimateRegressionParameters();
             if (isNoIntercept()) {
@@ -151,7 +163,7 @@ public class OLSLinearRegression extends OLSMultipleLinearRegression {
         return this;
     }
 
-    public OLSLinearRegression setInvalidAs(double invalidAs) {
+    public OLSLinearRegression setInvalidAs(InvalidAs invalidAs) {
         this.invalidAs = invalidAs;
         return this;
     }

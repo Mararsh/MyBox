@@ -840,7 +840,7 @@ public class DataTable extends Data2D {
                     try {
                         colStatistic.median = Double.valueOf(colStatistic.medianValue + "");
                     } catch (Exception ex) {
-                        colStatistic.median = colStatistic.invalidAs;
+                        colStatistic.median = DoubleTools.value(colStatistic.invalidAs);
                     }
                 }
                 Object q1 = null, q3 = null;
@@ -850,7 +850,7 @@ public class DataTable extends Data2D {
                     try {
                         colStatistic.upperQuartile = Double.valueOf(q3 + "");
                     } catch (Exception ex) {
-                        colStatistic.upperQuartile = colStatistic.invalidAs;
+                        colStatistic.upperQuartile = DoubleTools.value(colStatistic.invalidAs);
                     }
                 }
                 if (selections.lowerQuartile || selections.needOutlier()) {
@@ -859,7 +859,7 @@ public class DataTable extends Data2D {
                     try {
                         colStatistic.lowerQuartile = Double.valueOf(q1 + "");
                     } catch (Exception ex) {
-                        colStatistic.lowerQuartile = colStatistic.invalidAs;
+                        colStatistic.lowerQuartile = DoubleTools.value(colStatistic.invalidAs);
                     }
                 }
                 if (selections.upperExtremeOutlierLine) {
@@ -868,7 +868,7 @@ public class DataTable extends Data2D {
                         double d3 = Double.valueOf(q3 + "");
                         colStatistic.upperExtremeOutlierLine = d3 + 3 * (d3 - d1);
                     } catch (Exception e) {
-                        colStatistic.upperExtremeOutlierLine = colStatistic.invalidAs;
+                        colStatistic.upperExtremeOutlierLine = DoubleTools.value(colStatistic.invalidAs);
                     }
                 }
                 if (selections.upperMildOutlierLine) {
@@ -877,7 +877,7 @@ public class DataTable extends Data2D {
                         double d3 = Double.valueOf(q3 + "");
                         colStatistic.upperMildOutlierLine = d3 + 1.5 * (d3 - d1);
                     } catch (Exception e) {
-                        colStatistic.upperMildOutlierLine = colStatistic.invalidAs;
+                        colStatistic.upperMildOutlierLine = DoubleTools.value(colStatistic.invalidAs);
                     }
                 }
                 if (selections.lowerMildOutlierLine) {
@@ -886,7 +886,7 @@ public class DataTable extends Data2D {
                         double d3 = Double.valueOf(q3 + "");
                         colStatistic.lowerMildOutlierLine = d1 - 1.5 * (d3 - d1);
                     } catch (Exception e) {
-                        colStatistic.lowerMildOutlierLine = colStatistic.invalidAs;
+                        colStatistic.lowerMildOutlierLine = DoubleTools.value(colStatistic.invalidAs);
                     }
                 }
                 if (selections.lowerExtremeOutlierLine) {
@@ -895,7 +895,7 @@ public class DataTable extends Data2D {
                         double d3 = Double.valueOf(q3 + "");
                         colStatistic.lowerExtremeOutlierLine = d1 - 3 * (d3 - d1);
                     } catch (Exception e) {
-                        colStatistic.lowerExtremeOutlierLine = colStatistic.invalidAs;
+                        colStatistic.lowerExtremeOutlierLine = DoubleTools.value(colStatistic.invalidAs);
                     }
                 }
                 if (selections.mode) {
@@ -903,7 +903,7 @@ public class DataTable extends Data2D {
                     try {
                         colStatistic.mode = Double.valueOf(colStatistic.modeValue + "");
                     } catch (Exception ex) {
-                        colStatistic.mode = colStatistic.invalidAs;
+                        colStatistic.mode = DoubleTools.value(colStatistic.invalidAs);
                     }
                 }
             }

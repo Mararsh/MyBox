@@ -14,6 +14,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.Data2D_Operations.ObjectType;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.ColumnDefinition;
@@ -34,7 +35,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
     protected List<Data2DColumn> outputColumns;
     protected int scale, defaultScale = 2;
     protected ObjectType objectType;
-    protected double invalidAs;
+    protected InvalidAs invalidAs = InvalidAs.Skip;
 
     @FXML
     protected ControlData2DTarget targetController;
@@ -278,9 +279,9 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             checkObject();
 
             if (skipNonnumericRadio != null) {
-                invalidAs = skipNonnumericRadio.isSelected() ? Double.NaN : 0;
+                invalidAs = skipNonnumericRadio.isSelected() ? InvalidAs.Skip : InvalidAs.Zero;
             } else {
-                invalidAs = 0;
+                invalidAs = InvalidAs.Zero;
             }
 
             outputColumns = checkedColumns;
@@ -377,14 +378,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             }
 
             @Override
-            protected void whenFailed() {
-                if (isCancelled()) {
-                    return;
-                }
-                outTaskError(error);
-            }
-
-            @Override
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
@@ -418,14 +411,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             @Override
             protected void whenSucceeded() {
                 ouputRows();
-            }
-
-            @Override
-            protected void whenFailed() {
-                if (isCancelled()) {
-                    return;
-                }
-                outTaskError(error);
             }
 
             @Override
@@ -562,19 +547,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         }
         popDone();
         return true;
-    }
-
-    public void outTaskError(String error) {
-        if (error != null && !error.isBlank()) {
-            //https://db.apache.org/derby/docs/10.15/ref/rrefsqljvarsamp.html#rrefsqljvarsamp
-            if (error.contains("java.sql.SQLDataException: 22003 : [0] DOUBLE")) {
-                alertError(error + "\n\n" + message("DataOverflow"));
-            } else {
-                alertError(error);
-            }
-        } else {
-            popFailed();
-        }
     }
 
     public void cloneOptions(BaseData2DHandleController sourceController) {

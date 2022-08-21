@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.Random;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 
@@ -18,15 +19,54 @@ public class DoubleTools {
         return Double.isNaN(value) || value == AppValues.InvalidDouble;
     }
 
-    public static double toDouble(String string, double invalidAs) {
+    public static double value(InvalidAs invalidAs) {
+        if (invalidAs == InvalidAs.Zero) {
+            return 0;
+        } else {
+            return Double.NaN;
+        }
+    }
+
+    public static double toDouble(String string, InvalidAs invalidAs) {
         try {
-            if (string == null || string.isBlank()) {
-                return invalidAs;
-            }
             double d = Double.valueOf(string.replaceAll(",", ""));
-            return invalidDouble(d) ? invalidAs : d;
+            return invalidDouble(d) ? value(invalidAs) : d;
         } catch (Exception e) {
-            return invalidAs;
+            return value(invalidAs);
+        }
+    }
+
+    public static double[] toDouble(String[] sVector, InvalidAs invalidAs) {
+        try {
+            if (sVector == null) {
+                return null;
+            }
+            int len = sVector.length;
+            double[] doubleVector = new double[len];
+            for (int i = 0; i < len; i++) {
+                doubleVector[i] = DoubleTools.toDouble(sVector[i], invalidAs);
+            }
+            return doubleVector;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static double[][] toDouble(String[][] sMatrix, InvalidAs invalidAs) {
+        try {
+            if (sMatrix == null) {
+                return null;
+            }
+            int rsize = sMatrix.length, csize = sMatrix[0].length;
+            double[][] doubleMatrix = new double[rsize][csize];
+            for (int i = 0; i < rsize; i++) {
+                for (int j = 0; j < csize; j++) {
+                    doubleMatrix[i][j] = DoubleTools.toDouble(sMatrix[i][j], invalidAs);
+                }
+            }
+            return doubleMatrix;
+        } catch (Exception e) {
+            return null;
         }
     }
 

@@ -37,12 +37,12 @@ public class Data2DStatistic extends Data2DOperator {
 
     @Override
     public boolean checkParameters() {
-        if (cols == null || cols.isEmpty() || type == null) {
+        if (cols == null || cols.isEmpty() || type == null || statisticCalculation == null) {
             return false;
         }
         switch (type) {
             case ColumnsPass1:
-                if (statisticData == null || statisticCalculation == null) {
+                if (statisticData == null) {
                     return false;
                 }
                 colValues = new double[colsLen];
@@ -62,7 +62,7 @@ public class Data2DStatistic extends Data2DOperator {
                 }
                 break;
             case AllPass1:
-                if (statisticAll == null || statisticCalculation == null) {
+                if (statisticAll == null) {
                     return false;
                 }
                 if (statisticCalculation.isSkewness()) {
@@ -76,7 +76,7 @@ public class Data2DStatistic extends Data2DOperator {
                 statisticAll.dTmp = 0;
                 break;
             case Rows:
-                if (csvPrinter == null || statisticCalculation == null) {
+                if (csvPrinter == null) {
                     return false;
                 }
                 break;
@@ -114,13 +114,20 @@ public class Data2DStatistic extends Data2DOperator {
                 if (i < 0 || i >= sourceRow.size()) {
                     continue;
                 }
-                double v = statisticData[c].toDouble(sourceRow.get(i));
+                String s = sourceRow.get(i);
+                double v = DoubleTools.toDouble(s, invalidAs);
                 if (DoubleTools.invalidDouble(v)) {
-                    statisticData[c].invalidCount++;
-                    continue;
-                } else {
-                    statisticData[c].count++;
+                    switch (invalidAs) {
+                        case Blank:
+                        case Skip:
+                            statisticData[c].invalidCount++;
+                            continue;
+                        case Zero:
+                            v = 0;
+                            break;
+                    }
                 }
+                statisticData[c].count++;
                 if (sumAbs) {
                     statisticData[c].sum += Math.abs(v);
                 } else {
@@ -157,11 +164,20 @@ public class Data2DStatistic extends Data2DOperator {
                 if (i < 0 || i >= sourceRow.size()) {
                     continue;
                 }
-                double v = statisticData[c].toDouble(sourceRow.get(i));
-                if (!DoubleTools.invalidDouble(v)) {
-                    v = v - statisticData[c].mean;
-                    statisticData[c].dTmp += v * v;
+                String s = sourceRow.get(i);
+                double v = DoubleTools.toDouble(s, invalidAs);
+                if (DoubleTools.invalidDouble(v)) {
+                    switch (invalidAs) {
+                        case Blank:
+                        case Skip:
+                            continue;
+                        case Zero:
+                            v = 0;
+                            break;
+                    }
                 }
+                v = v - statisticData[c].mean;
+                statisticData[c].dTmp += v * v;
             }
         } catch (Exception e) {
         }
@@ -174,13 +190,20 @@ public class Data2DStatistic extends Data2DOperator {
                 if (i < 0 || i >= sourceRow.size()) {
                     continue;
                 }
-                double v = statisticAll.toDouble(sourceRow.get(i));
+                String s = sourceRow.get(i);
+                double v = DoubleTools.toDouble(s, invalidAs);
                 if (DoubleTools.invalidDouble(v)) {
-                    statisticAll.invalidCount++;
-                    continue;
-                } else {
-                    statisticAll.count++;
+                    switch (invalidAs) {
+                        case Blank:
+                        case Skip:
+                            statisticAll.invalidCount++;
+                            continue;
+                        case Zero:
+                            v = 0;
+                            break;
+                    }
                 }
+                statisticAll.count++;
                 statisticAll.sum += v;
                 if (statisticCalculation.isMaximum() && v > statisticAll.maximum) {
                     statisticAll.maximum = v;
@@ -213,11 +236,20 @@ public class Data2DStatistic extends Data2DOperator {
                 if (i < 0 || i >= sourceRow.size()) {
                     continue;
                 }
-                double v = statisticAll.toDouble(sourceRow.get(i));
-                if (!DoubleTools.invalidDouble(v)) {
-                    v = v - statisticAll.mean;
-                    statisticAll.dTmp += v * v;
+                String s = sourceRow.get(i);
+                double v = DoubleTools.toDouble(s, invalidAs);
+                if (DoubleTools.invalidDouble(v)) {
+                    switch (invalidAs) {
+                        case Blank:
+                        case Skip:
+                            continue;
+                        case Zero:
+                            v = 0;
+                            break;
+                    }
                 }
+                v = v - statisticAll.mean;
+                statisticAll.dTmp += v * v;
             }
         } catch (Exception e) {
         }
@@ -275,6 +307,12 @@ public class Data2DStatistic extends Data2DOperator {
                         if (statisticCalculation.isSkewness()) {
                             statisticData[c].skewness = skewnessList.get(c).getResult();
                         }
+                        if (statisticData[c].maximum == -Double.MAX_VALUE) {
+                            statisticData[c].maximum = Double.NaN;
+                        }
+                        if (statisticData[c].minimum == Double.MAX_VALUE) {
+                            statisticData[c].minimum = Double.NaN;
+                        }
                     }
                     break;
                 case ColumnsPass2:
@@ -316,6 +354,12 @@ public class Data2DStatistic extends Data2DOperator {
                     }
                     if (statisticCalculation.isSkewness()) {
                         statisticAll.skewness = skewnessAll.getResult();
+                    }
+                    if (statisticAll.maximum == -Double.MAX_VALUE) {
+                        statisticAll.maximum = Double.NaN;
+                    }
+                    if (statisticAll.minimum == Double.MAX_VALUE) {
+                        statisticAll.minimum = Double.NaN;
                     }
                     break;
                 case AllPass2:
@@ -366,6 +410,7 @@ public class Data2DStatistic extends Data2DOperator {
 
     public Data2DStatistic setStatisticCalculation(DescriptiveStatistic statisticCalculation) {
         this.statisticCalculation = statisticCalculation;
+        invalidAs = statisticCalculation.invalidAs;
         return this;
     }
 

@@ -150,7 +150,7 @@ public class DataMatrix extends Data2D {
         }
     }
 
-    public double[][] toArray() {
+    public double[][] toMatrix() {
         rowsNumber = tableRowsNumber();
         colsNumber = tableColsNumber();
         if (rowsNumber <= 0 || colsNumber <= 0) {

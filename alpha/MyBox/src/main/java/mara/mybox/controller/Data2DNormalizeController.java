@@ -38,13 +38,13 @@ public class Data2DNormalizeController extends BaseData2DHandleController {
             }
             int rowsNumber = filteredRowsIndices.size();
             int colsNumber = checkedColsIndices.size();
-            double[][] matrix = new double[rowsNumber][colsNumber];
+            String[][] matrix = new String[rowsNumber][colsNumber];
             for (int r = 0; r < rowsNumber; r++) {
                 int row = filteredRowsIndices.get(r);
                 List<String> tableRow = tableController.tableData.get(row);
                 for (int c = 0; c < colsNumber; c++) {
                     int col = checkedColsIndices.get(c);
-                    matrix[r][c] = DoubleTools.toDouble(tableRow.get(col + 1), invalidAs);
+                    matrix[r][c] = tableRow.get(col + 1);
                 }
             }
             matrix = normalizeController.calculate(matrix, invalidAs);
@@ -58,7 +58,23 @@ public class Data2DNormalizeController extends BaseData2DHandleController {
                     row.add(message("Row") + (filteredRowsIndices.get(r) + 1) + "");
                 }
                 for (int c = 0; c < colsNumber; c++) {
-                    row.add(DoubleTools.format(matrix[r][c], scale));
+                    String s = matrix[r][c];
+                    double d = DoubleTools.toDouble(s, invalidAs);
+                    if (DoubleTools.invalidDouble(d)) {
+                        switch (invalidAs) {
+                            case Zero:
+                                row.add("0");
+                                break;
+                            case Skip:
+                                row.add(s);
+                                break;
+                            case Blank:
+                                row.add(null);
+                                break;
+                        }
+                    } else {
+                        row.add(DoubleTools.format(d, scale));
+                    }
                 }
                 outputData.add(row);
             }

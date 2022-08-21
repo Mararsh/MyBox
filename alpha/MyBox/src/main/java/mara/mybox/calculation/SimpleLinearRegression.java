@@ -3,6 +3,7 @@ package mara.mybox.calculation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -116,7 +117,7 @@ public class SimpleLinearRegression extends SimpleRegression {
     }
 
     // data should have row index as first column
-    public List<List<String>> addData(List<List<String>> data, double invalidAs) {
+    public List<List<String>> addData(List<List<String>> data, InvalidAs invalidAs) {
         if (data == null) {
             return null;
         }

@@ -18,6 +18,7 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class DataTableReader extends Data2DReader {
 
+    protected Connection conn;
     protected DataTable readerTable;
     protected TableData2D readerTableData2D;
 
@@ -113,7 +114,7 @@ public class DataTableReader extends Data2DReader {
     public void makeRecord(Data2DRow row) {
         try {
             sourceRow = new ArrayList<>();
-            for (int i = 0; i < columnsNumber; ++i) {
+            for (int i = 0; i < data2D.columnsNumber(); ++i) {
                 Data2DColumn column = readerTable.getColumns().get(i);
                 Object value = row.getColumnValue(column.getColumnName());
                 sourceRow.add(column.toString(value));

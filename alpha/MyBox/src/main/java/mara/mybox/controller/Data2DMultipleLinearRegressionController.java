@@ -6,6 +6,7 @@ import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.calculation.OLSLinearRegression;
 import mara.mybox.data.StringTable;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
@@ -94,7 +95,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
                         return false;
                     }
                     regression = new OLSLinearRegression(interceptCheck.isSelected())
-                            .setTask(task).setScale(scale).setInvalidAs(Double.NaN)
+                            .setTask(task).setScale(scale).setInvalidAs(InvalidAs.Blank)
                             .setyName(yName).setxNames(xNames);
                     return regression.calculate(data);
                 } catch (Exception e) {
@@ -114,7 +115,16 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
                 if (isCancelled()) {
                     return;
                 }
-                alertError((error != null ? error + "\n\n" : "") + message("RegressionFailedNotice"));
+                if (error != null && !error.isBlank()) {
+                    //https://db.apache.org/derby/docs/10.15/ref/rrefsqljvarsamp.html#rrefsqljvarsamp
+                    if (error.contains("java.sql.SQLDataException: 22003 : [0] DOUBLE")) {
+                        alertError(error + "\n\n" + message("DataOverflow"));
+                    } else {
+                        alertError(error + "\n\n" + message("RegressionFailedNotice"));
+                    }
+                } else {
+                    alertError(message("RegressionFailedNotice"));
+                }
             }
 
             @Override

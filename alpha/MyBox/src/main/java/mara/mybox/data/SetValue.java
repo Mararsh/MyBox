@@ -1,5 +1,6 @@
 package mara.mybox.data;
 
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.tools.DoubleTools;
 
 /**
@@ -13,15 +14,11 @@ public class SetValue {
     public String value;
     public int start, digit, scale;
     public boolean fillZero, aotoDigit;
-    public ToNonnumeric toNonnumeric;
+    public InvalidAs invalidAs;
 
     public static enum ValueType {
         Value, Zero, One, Blank, Random, RandomNonNegative, Scale, Prefix, Suffix, SuffixNumber,
         Expression, GaussianDistribution, Identify, UpperTriangle, LowerTriangle
-    }
-
-    public static enum ToNonnumeric {
-        Skip, Zero, Blank
     }
 
     public SetValue() {
@@ -36,7 +33,7 @@ public class SetValue {
         scale = 5;
         fillZero = true;
         aotoDigit = true;
-        toNonnumeric = ToNonnumeric.Skip;
+        invalidAs = InvalidAs.Skip;
     }
 
     public boolean isZero() {
@@ -108,12 +105,12 @@ public class SetValue {
     }
 
     public String scale(String value) {
-        double d = DoubleTools.toDouble(value, Double.NaN);
+        double d = DoubleTools.toDouble(value, invalidAs);
         if (DoubleTools.invalidDouble(d)) {
-            if (null == toNonnumeric) {
+            if (null == invalidAs) {
                 return value;
             } else {
-                switch (toNonnumeric) {
+                switch (invalidAs) {
                     case Zero:
                         return "0";
                     case Blank:
@@ -165,8 +162,8 @@ public class SetValue {
         return this;
     }
 
-    public SetValue setToNonnumeric(ToNonnumeric toNonnumeric) {
-        this.toNonnumeric = toNonnumeric;
+    public SetValue setInvalidAs(InvalidAs invalidAs) {
+        this.invalidAs = invalidAs;
         return this;
     }
 
@@ -201,8 +198,8 @@ public class SetValue {
         return scale;
     }
 
-    public ToNonnumeric getToNonnumeric() {
-        return toNonnumeric;
+    public InvalidAs getInvalidAs() {
+        return invalidAs;
     }
 
 }
