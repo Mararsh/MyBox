@@ -19,6 +19,12 @@ public class Data2DReadRows extends Data2DOperator {
     }
 
     @Override
+    public boolean checkParameters() {
+        rows = new ArrayList<>();
+        return true;
+    }
+
+    @Override
     public void handleRow() {
         try {
             List<String> row = new ArrayList<>();

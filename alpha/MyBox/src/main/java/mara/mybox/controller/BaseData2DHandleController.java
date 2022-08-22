@@ -49,7 +49,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
     protected ToggleGroup objectGroup;
     @FXML
     protected RadioButton columnsRadio, rowsRadio, allRadio,
-            skipNonnumericRadio, zeroNonnumericRadio;
+            skipNonnumericRadio, zeroNonnumericRadio, blankNonnumericRadio;
     @FXML
     protected ImageView tableTipsView;
     @FXML
@@ -95,14 +95,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                         scaleChanged();
                     }
                 });
-            }
-
-            if (skipNonnumericRadio != null) {
-                if (UserConfig.getBoolean(baseName + "SkipNonnumeric", true)) {
-                    skipNonnumericRadio.setSelected(true);
-                } else {
-                    zeroNonnumericRadio.setSelected(true);
-                }
             }
 
             if (colSelector != null) {
@@ -278,10 +270,12 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         try {
             checkObject();
 
-            if (skipNonnumericRadio != null) {
-                invalidAs = skipNonnumericRadio.isSelected() ? InvalidAs.Skip : InvalidAs.Zero;
-            } else {
+            if (zeroNonnumericRadio != null && zeroNonnumericRadio.isSelected()) {
                 invalidAs = InvalidAs.Zero;
+            } else if (blankNonnumericRadio != null && blankNonnumericRadio.isSelected()) {
+                invalidAs = InvalidAs.Blank;
+            } else {
+                invalidAs = InvalidAs.Skip;
             }
 
             outputColumns = checkedColumns;

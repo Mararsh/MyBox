@@ -96,10 +96,11 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         }
     }
 
-    public DataTable toTmpTable(SingletonTask task, List<Integer> cols, boolean includeRowNumber, boolean toNumbers) {
+    public DataTable toTmpTable(SingletonTask task, List<Integer> cols,
+            boolean includeRowNumber, boolean toNumbers, InvalidAs invalidAs) {
         try ( Connection conn = DerbyBase.getConnection()) {
             DataTable dataTable = createTmpTable(task, conn, tmpTableName(dataName()), cols, includeRowNumber, toNumbers);
-            writeTableData(task, conn, dataTable, cols, includeRowNumber);
+            writeTableData(task, conn, dataTable, cols, includeRowNumber, invalidAs);
             return dataTable;
         } catch (Exception e) {
             if (task != null) {
@@ -112,10 +113,10 @@ public abstract class Data2D_Convert extends Data2D_Edit {
     }
 
     public DataTable toTmpTable(SingletonTask task, List<Integer> cols, List<List<String>> rows,
-            boolean includeRowNumber, boolean toNumbers) {
+            boolean includeRowNumber, boolean toNumbers, InvalidAs invalidAs) {
         try ( Connection conn = DerbyBase.getConnection()) {
             DataTable dataTable = createTmpTable(task, conn, tmpTableName(dataName()), cols, includeRowNumber, toNumbers);
-            dataTable.save(task, conn, rows);
+            dataTable.save(task, conn, rows, invalidAs);
             return dataTable;
         } catch (Exception e) {
             if (task != null) {
@@ -165,7 +166,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
     }
 
     public long writeTableData(SingletonTask task, Connection conn,
-            DataTable dataTable, List<Integer> cols, boolean includeRowNumber) {
+            DataTable dataTable, List<Integer> cols, boolean includeRowNumber, InvalidAs invalidAs) {
         try {
             if (conn == null || dataTable == null) {
                 return -1;
@@ -188,7 +189,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             if (reader == null) {
                 return -3;
             }
-            reader.setCols(cols).setTask(task).start();
+            reader.setInvalidAs(invalidAs).setCols(cols).setTask(task).start();
             if (!reader.failed()) {
                 conn.commit();
                 return reader.getCount();
@@ -206,7 +207,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
     }
 
     public long writeTableData(SingletonTask task, Connection conn, DataTable dataTable) {
-        return writeTableData(task, conn, dataTable, null, false);
+        return writeTableData(task, conn, dataTable, null, false, InvalidAs.Blank);
     }
 
     public DataTable singleColumn(SingletonTask task, List<Integer> cols, boolean asDouble) {

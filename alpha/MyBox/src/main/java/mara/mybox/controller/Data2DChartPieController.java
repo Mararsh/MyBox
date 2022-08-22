@@ -74,7 +74,8 @@ public class Data2DChartPieController extends BaseData2DChartController {
                     .setDefaultCategoryLabel(selectedCategory)
                     .setCategoryLabel(selectedCategory)
                     .setDefaultValueLabel(selectedValue)
-                    .setValueLabel(selectedValue);
+                    .setValueLabel(selectedValue)
+                    .setInvalidAs(invalidAs);
 
             return true;
         } catch (Exception e) {
@@ -90,7 +91,7 @@ public class Data2DChartPieController extends BaseData2DChartController {
                 popError(message("NoData"));
                 return;
             }
-            chartController.writeChart(outputColumns, outputData);
+            chartController.writeChart(outputColumns, outputData, true);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

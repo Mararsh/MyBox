@@ -1,6 +1,7 @@
 package mara.mybox.data2d.reader;
 
 import java.sql.Connection;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
@@ -20,7 +21,6 @@ public class Data2DWriteTable extends Data2DOperator {
     protected Connection conn;
     protected DataTable writerTable;
     protected TableData2D writerTableData2D;
-    protected boolean includeRowNumber;
     protected long count;
 
     public static Data2DWriteTable create(Data2D_Edit data) {
@@ -30,8 +30,11 @@ public class Data2DWriteTable extends Data2DOperator {
 
     @Override
     public boolean checkParameters() {
-        if (cols == null || cols.isEmpty() || conn == null || writerTable == null) {
+        if (cols == null || cols.isEmpty() || conn == null || writerTable == null || invalidAs == null) {
             return false;
+        }
+        if (invalidAs == InvalidAs.Skip) {
+            invalidAs = InvalidAs.Blank;
         }
         writerTableData2D = writerTable.getTableData2D();
         count = 0;
@@ -48,7 +51,7 @@ public class Data2DWriteTable extends Data2DOperator {
                     Data2DColumn sourceColumn = data2D.getColumns().get(col);
                     String colName = writerTable.mappedColumnName(sourceColumn.getColumnName());
                     Data2DColumn targetColumn = writerTable.columnByName(colName);
-                    data2DRow.setColumnValue(colName, targetColumn.fromString(sourceRow.get(col)));
+                    data2DRow.setColumnValue(colName, targetColumn.fromString(sourceRow.get(col), invalidAs));
                 }
             }
             if (data2DRow.isEmpty()) {

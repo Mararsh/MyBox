@@ -9,6 +9,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
@@ -308,24 +309,28 @@ public class XYChartMaker<X, Y> extends XYChartOptions<X, Y> {
         writeXYChart(columns, data, null, true);
     }
 
-    /*
-        The first column is row number
-        The second columns is "Category"
+    /* 
+        When hasRowNumber is true:
+            The first column is row number
+            The second columns is "Category"
+        When hasRowNumber is false:
+            The first column is "Category"
         Left columns are "Value"
+        if "colIndics" is not null, only contained columns are displayed
      */
     public void writeXYChart(List<Data2DColumn> columns, List<List<String>> data,
-            List<Integer> colIndics, boolean rowNumber) {
+            List<Integer> colIndics, boolean hasRowNumber) {
         try {
             if (columns == null || data == null) {
                 return;
             }
             if (chartType == ChartType.Bubble) {
-                writeBubbleChart(columns, data, colIndics, rowNumber);
+                writeBubbleChart(columns, data, colIndics, hasRowNumber);
                 return;
             }
             xyChart.getData().clear();
             XYChart.Data xyData;
-            int index = 0, startIndex = rowNumber ? 1 : 0;
+            int index = 0, startIndex = hasRowNumber ? 1 : 0;
             for (int col = 1 + startIndex; col < columns.size(); col++) {
                 if (colIndics != null && !colIndics.contains(col)) {
                     continue;
@@ -335,24 +340,38 @@ public class XYChartMaker<X, Y> extends XYChartOptions<X, Y> {
                 XYChart.Series series = new XYChart.Series();
                 series.setName(colName);
 
-                double categoryValue, categoryCoordinateValue, numberValue, numberCoordinateValue;
+                double numberValue;
                 for (List<String> rowData : data) {
                     String category = rowData.get(startIndex);
-                    categoryValue = scaleValue(category);
-                    categoryCoordinateValue = ChartTools.coordinateValue(categoryCoordinate, categoryValue);
                     numberValue = scaleValue(rowData.get(col));
-                    numberCoordinateValue = ChartTools.coordinateValue(numberCoordinate, numberValue);
-                    if (isXY) {
-                        if (xyChart.getXAxis() instanceof NumberAxis) {
-                            xyData = new XYChart.Data(categoryCoordinateValue, numberCoordinateValue);
+                    if (DoubleTools.invalidDouble(numberValue)) {
+                        if (invalidAs == InvalidAs.Zero) {
+                            numberValue = 0;
                         } else {
-                            xyData = new XYChart.Data(category, numberCoordinateValue);
+                            continue;
+                        }
+                    }
+                    numberValue = ChartTools.coordinateValue(numberCoordinate, numberValue);
+                    if (xyChart.getXAxis() instanceof NumberAxis) {
+                        double categoryValue = scaleValue(category);
+                        if (DoubleTools.invalidDouble(categoryValue)) {
+                            if (invalidAs == InvalidAs.Zero) {
+                                categoryValue = 0;
+                            } else {
+                                continue;
+                            }
+                        }
+                        categoryValue = ChartTools.coordinateValue(categoryCoordinate, categoryValue);
+                        if (isXY) {
+                            xyData = new XYChart.Data(categoryValue, numberValue);
+                        } else {
+                            xyData = new XYChart.Data(numberValue, categoryValue);
                         }
                     } else {
-                        if (xyChart.getYAxis() instanceof NumberAxis) {
-                            xyData = new XYChart.Data(numberCoordinateValue, categoryCoordinateValue);
+                        if (isXY) {
+                            xyData = new XYChart.Data(category, numberValue);
                         } else {
-                            xyData = new XYChart.Data(numberCoordinateValue, category);
+                            xyData = new XYChart.Data(numberValue, category);
                         }
                     }
                     series.getData().add(xyData);

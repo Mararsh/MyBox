@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
@@ -104,7 +105,7 @@ public class DataTableWriter extends Data2DWriter {
             for (int i = 0; i < columnsNumber; ++i) {
                 Data2DColumn column = sourceTable.getColumns().get(i);
                 String name = column.getColumnName();
-                sourceTableRow.setColumnValue(name, column.fromString(targetRow.get(i)));
+                sourceTableRow.setColumnValue(name, column.fromString(targetRow.get(i), InvalidAs.Blank));
             }
             tableData2D.updateData(conn, sourceTableRow);
             if (writeCount++ % DerbyBase.BatchSize == 0) {

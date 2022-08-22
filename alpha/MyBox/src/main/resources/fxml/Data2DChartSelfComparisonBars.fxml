@@ -188,7 +188,7 @@ License:    Apache License Version 2.0
                                  <content>
                                     <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                                        <content>
-                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                                              <children>
                                                         <FlowPane fx:id="categoryColumnsPane" hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
                                                             <children>
@@ -196,6 +196,21 @@ License:    Apache License Version 2.0
                                                                 <ComboBox fx:id="categoryColumnSelector" prefWidth="200.0" />
                                                             </children>
                                                         </FlowPane>
+                                                <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+                                                   <children>
+                                                      <Label text="%ToInvalidNumber">
+                                                         <FlowPane.margin>
+                                                            <Insets />
+                                                         </FlowPane.margin>
+                                                      </Label>
+                                                      <RadioButton fx:id="skipNonnumericRadio" mnemonicParsing="false" selected="true" text="%Skip">
+                                                         <toggleGroup>
+                                                            <ToggleGroup fx:id="nonnumericGroup" />
+                                                         </toggleGroup>
+                                                      </RadioButton>
+                                                      <RadioButton fx:id="zeroNonnumericRadio" layoutX="120.0" layoutY="10.0" mnemonicParsing="false" text="%CountAsZero" toggleGroup="$nonnumericGroup" />
+                                                   </children>
+                                                </FlowPane>
                                                 <Label fx:id="noticeLabel" minHeight="-Infinity" text="%AllRowsLoadComments" wrapText="true">
                                                    <VBox.margin>
                                                       <Insets top="10.0" />
@@ -203,7 +218,7 @@ License:    Apache License Version 2.0
                                                 </Label>
                                              </children>
                                              <padding>
-                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                              </padding>
                                           </VBox>
                                        </content>

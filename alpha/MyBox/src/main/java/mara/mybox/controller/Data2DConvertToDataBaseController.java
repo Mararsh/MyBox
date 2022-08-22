@@ -24,7 +24,7 @@ public class Data2DConvertToDataBaseController extends BaseData2DHandleControlle
     @FXML
     protected CheckBox importCheck;
     @FXML
-    protected VBox dataVBox, filterVBox, attributesBox;
+    protected VBox dataVBox, filterVBox, attributesBox, optionsBox;
     @FXML
     protected ControlNewDataTable attributesController;
     @FXML

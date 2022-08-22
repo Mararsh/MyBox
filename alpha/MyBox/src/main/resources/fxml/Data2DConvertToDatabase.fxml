@@ -161,11 +161,6 @@ License:    Apache License Version 2.0
                                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                             </padding>
                                         </VBox>
-                                        <VBox fx:id="dataOptionsBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                            <children>
-                                                <CheckBox fx:id="importCheck" mnemonicParsing="false" selected="true" text="%ImportData" />
-                                            </children>
-                                        </VBox>
                                     </children>
                                 </VBox>
                             </content>
@@ -185,7 +180,7 @@ License:    Apache License Version 2.0
                         </ScrollPane>
                     </content>
                 </Tab>
-                <Tab fx:id="attributesTab" text="%Attributes">
+                <Tab fx:id="attributesTab" text="%DatabaseTable">
                     <content>
                         <VBox fx:id="attributesBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                             <padding>
@@ -198,6 +193,33 @@ License:    Apache License Version 2.0
                         </VBox>
                     </content>
                 </Tab>
+            <Tab fx:id="optionsTab" text="%Options">
+               <content>
+                  <VBox fx:id="optionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                     <children>
+                        <CheckBox fx:id="importCheck" mnemonicParsing="false" selected="true" text="%ImportData" />
+                        <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+                           <children>
+                              <Label text="%ToInvalidNumber">
+                                 <FlowPane.margin>
+                                    <Insets />
+                                 </FlowPane.margin>
+                              </Label>
+                              <RadioButton fx:id="blankNonnumericRadio" mnemonicParsing="false" selected="true" text="%SetAsBlank">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="nonnumericGroup" />
+                                 </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="zeroNonnumericRadio" layoutX="120.0" layoutY="10.0" mnemonicParsing="false" text="%SetAsZero" toggleGroup="$nonnumericGroup" />
+                           </children>
+                        </FlowPane>
+                     </children>
+                  </VBox>
+               </content>
+            </Tab>
                 <Tab fx:id="logsTab" text="%Logs">
                     <content>
                         <VBox fx:id="logsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">

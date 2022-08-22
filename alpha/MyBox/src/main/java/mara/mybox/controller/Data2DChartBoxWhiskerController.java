@@ -371,7 +371,8 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
             calculation.setHandleController(this).setData2D(data2D)
                     .setColsIndices(checkedColsIndices)
                     .setColsNames(checkedColsNames)
-                    .setCategoryName(categorysCol >= 0 ? selectedCategory : null);
+                    .setCategoryName(categorysCol >= 0 ? selectedCategory : null)
+                    .setInvalidAs(invalidAs);
             if (categorysCol >= 0) {
                 dataColsIndices.add(0, categorysCol);
             }
@@ -461,13 +462,13 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
                 calculation.setTask(task);
                 return calculation.statisticData(outputData);
             }
-            DataTable tmpTable = data2D.toTmpTable(task, dataColsIndices, false, true);
+            DataTable tmpTable = data2D.toTmpTable(task, dataColsIndices, false, true, invalidAs);
             if (tmpTable == null) {
                 outputData = null;
                 return false;
             }
             tmpTable.startTask(task, null);
-            calculation.setData2D(tmpTable)
+            calculation.setData2D(tmpTable).setInvalidAs(invalidAs)
                     .setColsIndices(tmpTable.columnIndices().subList(1, tmpTable.columnsNumber()))
                     .setColsNames(tmpTable.columnNames().subList(1, tmpTable.columnsNumber()));
             boolean ok = calculation.statisticAllByColumns();

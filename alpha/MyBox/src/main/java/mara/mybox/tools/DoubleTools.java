@@ -27,6 +27,15 @@ public class DoubleTools {
         }
     }
 
+    public static double scale(String string, InvalidAs invalidAs, int scale) {
+        try {
+            double d = toDouble(string, invalidAs);
+            return scale(d, scale);
+        } catch (Exception e) {
+            return value(invalidAs);
+        }
+    }
+
     public static double toDouble(String string, InvalidAs invalidAs) {
         try {
             double d = Double.valueOf(string.replaceAll(",", ""));

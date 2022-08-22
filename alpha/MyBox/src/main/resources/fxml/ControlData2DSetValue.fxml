@@ -51,7 +51,7 @@ License:    Apache License Version 2.0
                     </HBox.margin>
                     <children>
                         <ComboBox fx:id="scaleSelector" editable="true" prefWidth="100.0" />
-                        <Label text="%ToNonnumeric" />
+                        <Label text="%ToInvalidNumber" />
                         <RadioButton fx:id="skipNonnumericRadio" mnemonicParsing="false" selected="true" text="%Skip">
                             <toggleGroup>
                                 <ToggleGroup fx:id="nonnumericGroup" />

@@ -32,7 +32,6 @@ public abstract class Data2DOperator {
         }
         data2D = reader.data2D;
         task = reader.task;
-        invalidAs = data2D.getInvalidAs();
         reader.operator = this;
         return true;
     }

@@ -187,7 +187,13 @@ public abstract class Data2D_Data extends Data2D_Attributes {
             List<List<String>> rows = new ArrayList<>();
             List<List<String>> data = tableData();
             for (int i = 0; i < data.size(); i++) {
-                rows.add(tableRowWithoutNumber(i));
+                List<String> trow = data.get(i);
+                List<String> row = new ArrayList<>();
+                for (int j = 0; j < columns.size(); j++) {
+                    String v = trow.get(j + 1);
+                    row.add(columns.get(j).savedValue(v));
+                }
+                rows.add(row);
             }
             return rows;
         } catch (Exception e) {

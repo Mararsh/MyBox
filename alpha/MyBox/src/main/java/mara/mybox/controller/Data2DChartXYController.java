@@ -23,9 +23,9 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class Data2DChartXYController extends BaseData2DChartController {
-
+    
     protected XYChartMaker chartMaker;
-
+    
     @FXML
     protected ToggleGroup chartGroup;
     @FXML
@@ -37,45 +37,45 @@ public class Data2DChartXYController extends BaseData2DChartController {
     protected FlowPane valueColumnPane, categoryColumnsPane, typesPane;
     @FXML
     protected ControlData2DChartXY chartController;
-
+    
     public Data2DChartXYController() {
         baseTitle = message("XYChart");
         TipsLabelKey = "DataChartXYTips";
     }
-
+    
     @Override
     public void initControls() {
         try {
             super.initControls();
-
+            
             chartController.dataController = this;
             chartMaker = chartController.chartMaker;
-
+            
             checkChartType();
             chartGroup.selectedToggleProperty().addListener(
                     (ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) -> {
                         checkChartType();
                         refreshAction();
                     });
-
+            
             typesPane.disableProperty().bind(chartController.buttonsPane.disableProperty());
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-
+    
     public void checkChartType() {
         try {
             if (columnsBox == null) {
                 return;
             }
             columnsBox.getChildren().clear();
-
+            
             if (bubbleChartRadio.isSelected()) {
                 columnsBox.getChildren().addAll(categoryColumnsPane, valueColumnPane);
                 setLabel(message("BubbleChartLabel"));
-
+                
             } else {
                 columnsBox.getChildren().addAll(categoryColumnsPane);
                 setLabel(message("XYChartLabel"));
@@ -84,7 +84,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
             MyBoxLog.error(e.toString());
         }
     }
-
+    
     @Override
     public boolean initData() {
         try {
@@ -122,14 +122,14 @@ public class Data2DChartXYController extends BaseData2DChartController {
             dataColsIndices.addAll(checkedColsIndices);
             outputColumns.addAll(checkedColumns);
             title += " - " + checkedColsNames;
-
+            
             return initChart(title);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return false;
         }
     }
-
+    
     public boolean initChart(String title) {
         try {
             ChartType chartType;
@@ -164,14 +164,15 @@ public class Data2DChartXYController extends BaseData2DChartController {
                     .setDefaultCategoryLabel(selectedCategory)
                     .setCategoryLabel(selectedCategory)
                     .setDefaultValueLabel(selectedValue)
-                    .setValueLabel(selectedValue);
+                    .setValueLabel(selectedValue)
+                    .setInvalidAs(invalidAs);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return false;
         }
     }
-
+    
     @Override
     public void drawChart() {
         try {
@@ -201,5 +202,5 @@ public class Data2DChartXYController extends BaseData2DChartController {
             return null;
         }
     }
-
+    
 }

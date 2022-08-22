@@ -6,6 +6,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.data.Data2DColumn;
@@ -147,7 +148,7 @@ public class Data2DSortController extends BaseData2DHandleController {
             if (outputData == null || outputData.isEmpty()) {
                 return false;
             }
-            DataTable tmpTable = data2D.toTmpTable(task, checkedColsIndices, outputData, showRowNumber(), false);
+            DataTable tmpTable = data2D.toTmpTable(task, checkedColsIndices, outputData, showRowNumber(), false, InvalidAs.Blank);
             if (tmpTable == null) {
                 return false;
             }
@@ -174,7 +175,7 @@ public class Data2DSortController extends BaseData2DHandleController {
     @Override
     public DataFileCSV generatedFile() {
         try {
-            DataTable tmpTable = data2D.toTmpTable(task, checkedColsIndices, showRowNumber(), false);
+            DataTable tmpTable = data2D.toTmpTable(task, checkedColsIndices, showRowNumber(), false, InvalidAs.Blank);
             if (tmpTable == null) {
                 return null;
             }

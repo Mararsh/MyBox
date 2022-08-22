@@ -8,6 +8,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
@@ -190,17 +191,17 @@ public class ControlNewDataTable extends BaseController {
         }
     }
 
-    public boolean importData(Connection conn, List<Integer> rows) {
+    public boolean importData(Connection conn, List<Integer> rows, InvalidAs invalidAs) {
         try {
             conn.setAutoCommit(false);
             count = 0;
             if (rows == null || rows.isEmpty()) {
                 for (List<String> pageRow : data2D.tableData()) {
-                    importRow(conn, pageRow);
+                    importRow(conn, pageRow, invalidAs);
                 }
             } else {
                 for (Integer row : rows) {
-                    importRow(conn, data2D.tableData().get(row));
+                    importRow(conn, data2D.tableData().get(row), invalidAs);
                 }
             }
             dataTable.setRowsNumber(count);
@@ -215,7 +216,7 @@ public class ControlNewDataTable extends BaseController {
         }
     }
 
-    public void importRow(Connection conn, List<String> pageRow) {
+    public void importRow(Connection conn, List<String> pageRow, InvalidAs invalidAs) {
         try {
             Data2DRow data2DRow = tableData2D.newRow();
             for (int col : columnIndices) {
@@ -227,7 +228,7 @@ public class ControlNewDataTable extends BaseController {
                         name = tableColumnName;
                     }
                 }
-                data2DRow.setColumnValue(name, sourceColumn.fromString(pageRow.get(col + 1)));
+                data2DRow.setColumnValue(name, sourceColumn.fromString(pageRow.get(col + 1), invalidAs));
             }
             tableData2D.insertData(conn, data2DRow);
             if (++count % DerbyBase.BatchSize == 0) {
@@ -239,9 +240,9 @@ public class ControlNewDataTable extends BaseController {
         }
     }
 
-    public boolean importAllData(Connection conn) {
+    public boolean importAllData(Connection conn, InvalidAs invalidAs) {
         try {
-            count = data2D.writeTableData(task, conn, dataTable, columnIndices, false);
+            count = data2D.writeTableData(task, conn, dataTable, columnIndices, false, invalidAs);
             taskController.updateLogs(message("Imported") + ": " + count);
             setRowsNumber(conn);
             return count >= 0;

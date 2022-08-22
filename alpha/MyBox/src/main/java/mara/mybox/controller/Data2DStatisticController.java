@@ -453,7 +453,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                     data2D.startTask(task, filterController.filter);
                     calculation.setTask(task);
                     if (calculation.needStored()) {
-                        DataTable tmpTable = data2D.toTmpTable(task, checkedColsIndices, false, true);
+                        DataTable tmpTable = data2D.toTmpTable(task, checkedColsIndices, false, true, invalidAs);
                         if (tmpTable == null) {
                             return false;
                         }

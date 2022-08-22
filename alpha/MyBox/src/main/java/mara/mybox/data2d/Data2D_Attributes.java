@@ -33,7 +33,6 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
     public boolean tableChanged;
     public SingletonTask task, backgroundTask;
     public String error;
-    protected InvalidAs invalidAs;
 
     public enum InvalidAs {
         Zero, Blank, Skip
@@ -61,7 +60,6 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         styles = null;
         filter = null;
         error = null;
-        invalidAs = InvalidAs.Zero;
         loadController = null;
         task = null;
         backgroundTask = null;
@@ -238,14 +236,6 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
 
     public void setSavedColumns(List<Data2DColumn> savedColumns) {
         this.savedColumns = savedColumns;
-    }
-
-    public InvalidAs getInvalidAs() {
-        return invalidAs;
-    }
-
-    public void setInvalidAs(InvalidAs invalidAs) {
-        this.invalidAs = invalidAs;
     }
 
     public List<Data2DStyle> getStyles() {

@@ -1,6 +1,7 @@
 package mara.mybox.data2d.reader;
 
 import java.sql.Connection;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
@@ -46,7 +47,7 @@ public class Data2DSingleColumn extends Data2DOperator {
                     Data2DColumn targetColumn = writerTable.columnByName("data");
                     String value = sourceRow.get(col);
                     if (targetColumn != null) {
-                        data2DRow.setColumnValue("data", targetColumn.fromString(value));
+                        data2DRow.setColumnValue("data", targetColumn.fromString(value, InvalidAs.Blank));
                         writerTableData2D.insertData(conn, data2DRow);
                         if (++count % DerbyBase.BatchSize == 0) {
                             conn.commit();

@@ -148,7 +148,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             if (cols == null || cols.isEmpty() || selections == null) {
                 return null;
             }
-            DataTable tmpTable = ((Data2D) this).toTmpTable(task, cols, false, true);
+            DataTable tmpTable = ((Data2D) this).toTmpTable(task, cols, false, true, selections.invalidAs);
             if (tmpTable == null) {
                 return null;
             }

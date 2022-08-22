@@ -52,8 +52,15 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
                 List<String> tableRow = outputData.get(r);
                 for (int c = 0; c < colsNumber; c++) {
                     String s = tableRow.get(c + 1);
-                    double d = DoubleTools.toDouble(s, invalidAs);
                     data[r][c] = s;
+                    double d = DoubleTools.toDouble(s, invalidAs);
+                    if (DoubleTools.invalidDouble(d)) {
+                        if (invalidAs == InvalidAs.Zero) {
+                            d = 0;
+                        } else {
+                            continue;
+                        }
+                    }
                     if (d > 0) {
                         allNeg = false;
                     } else if (d < 0) {
@@ -75,8 +82,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
             if (data == null || data.length == 0) {
                 return data;
             }
-            normalization = Normalization.create()
-                    .setSourceMatrix(data);
+            normalization = Normalization.create().setSourceMatrix(data).setInvalidAs(invalidAs);
             if (absoluateRadio.isSelected()) {
                 normalization.setWidth(barWidth).setA(Normalization.Algorithm.Absoluate);
             } else {

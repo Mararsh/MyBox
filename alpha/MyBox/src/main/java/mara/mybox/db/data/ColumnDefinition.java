@@ -12,6 +12,7 @@ import java.util.Random;
 import javafx.scene.paint.Color;
 import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.data.Era;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.dev.MyBoxLog;
@@ -422,11 +423,8 @@ public class ColumnDefinition extends BaseData {
         return null;
     }
 
-    public Object fromString(String string) {
+    public Object fromString(String string, InvalidAs invalidAs) {
         try {
-            if (string == null) {
-                return null;
-            }
             switch (type) {
                 case Double:
                     return Double.parseDouble(string.replaceAll(",", ""));
@@ -438,6 +436,9 @@ public class ColumnDefinition extends BaseData {
                 case Integer:
                     return (int) Math.round(Double.parseDouble(string.replaceAll(",", "")));
                 case Boolean:
+                    if (string == null || string.isBlank()) {
+                        return false;
+                    }
                     String v = string.toLowerCase();
                     return "1".equals(v) || "true".equalsIgnoreCase(v) || "yes".equalsIgnoreCase(v)
                             || message("true").equals(v) || message("yes").equals(v);
@@ -450,7 +451,25 @@ public class ColumnDefinition extends BaseData {
             }
         } catch (Exception e) {
         }
-        return null;
+        if (null == invalidAs || null == type || !isNumberType()) {
+            return null;
+        } else {
+            switch (invalidAs) {
+                case Zero:
+                    switch (type) {
+                        case Double:
+                            return 0d;
+                        case Float:
+                            return 0f;
+                        default:
+                            return 0;
+                    }
+                case Blank:
+                    return null;
+                default:
+                    return null;
+            }
+        }
     }
 
     public String toString(Object value) {
@@ -474,40 +493,41 @@ public class ColumnDefinition extends BaseData {
             if (string == null) {
                 return null;
             }
+            Object o = fromString(string, InvalidAs.Blank);
             switch (type) {
                 case Double:
                     if (needFormat) {
-                        return DoubleTools.format((double) fromString(string));
+                        return DoubleTools.format((double) o);
                     } else {
-                        return (double) fromString(string) + "";
+                        return (double) o + "";
                     }
                 case Float:
                     if (needFormat) {
-                        return FloatTools.format((float) fromString(string));
+                        return FloatTools.format((float) o);
                     } else {
-                        return (float) fromString(string) + "";
+                        return (float) o + "";
                     }
                 case Long:
                 case Era:
                     if (needFormat) {
-                        return LongTools.format((long) fromString(string));
+                        return LongTools.format((long) o);
                     } else {
-                        return (long) fromString(string) + "";
+                        return (long) o + "";
                     }
                 case Integer:
                     if (needFormat) {
-                        return IntTools.format((int) fromString(string));
+                        return IntTools.format((int) o);
                     } else {
-                        return (int) fromString(string) + "";
+                        return (int) o + "";
                     }
                 case Short:
                     if (needFormat) {
-                        return ShortTools.format((short) fromString(string));
+                        return ShortTools.format((short) o);
                     } else {
-                        return (short) fromString(string) + "";
+                        return (short) o + "";
                     }
                 default:
-                    return fromString(string) + "";
+                    return o + "";
             }
         } catch (Exception e) {
             return string;
@@ -515,7 +535,7 @@ public class ColumnDefinition extends BaseData {
     }
 
     public String savedValue(String string) {
-        return toString(fromString(string));
+        return toString(fromString(string, InvalidAs.Blank));
     }
 
     public boolean valueQuoted() {
@@ -523,7 +543,7 @@ public class ColumnDefinition extends BaseData {
     }
 
     public String getDefValue() {
-        Object v = fromString(defaultValue);
+        Object v = fromString(defaultValue, InvalidAs.Blank);
         switch (type) {
             case String:
             case Text:
@@ -570,7 +590,7 @@ public class ColumnDefinition extends BaseData {
     }
 
     public Object defaultValue() {
-        Object v = fromString(defaultValue);
+        Object v = fromString(defaultValue, InvalidAs.Blank);
         switch (type) {
             case String:
             case Text:

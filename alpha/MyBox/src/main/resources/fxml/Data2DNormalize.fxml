@@ -203,7 +203,7 @@ License:    Apache License Version 2.0
                                                 </HBox>
                                                 <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
                                                     <children>
-                                                        <Label text="%ToNonnumeric" />
+                                                        <Label text="%ToInvalidNumber" />
                                                         <RadioButton fx:id="skipNonnumericRadio" mnemonicParsing="false" selected="true" text="%Skip">
                                                             <toggleGroup>
                                                                 <ToggleGroup fx:id="nonnumericGroup" />

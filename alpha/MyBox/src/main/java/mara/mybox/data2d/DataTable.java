@@ -224,7 +224,7 @@ public class DataTable extends Data2D {
         return null;
     }
 
-    public Data2DRow fromTableRow(List<String> values) {
+    public Data2DRow fromTableRow(List<String> values, InvalidAs invalidAs) {
         try {
             if (columns == null || values == null || values.isEmpty()) {
                 return null;
@@ -234,7 +234,7 @@ public class DataTable extends Data2D {
             for (int i = 0; i < Math.min(columns.size(), values.size() - 1); i++) {
                 Data2DColumn column = columns.get(i);
                 String name = column.getColumnName();
-                data2DRow.setColumnValue(name, column.fromString(values.get(i + 1)));
+                data2DRow.setColumnValue(name, column.fromString(values.get(i + 1), invalidAs));
             }
             return data2DRow;
         } catch (Exception e) {
@@ -381,7 +381,7 @@ public class DataTable extends Data2D {
             conn.setAutoCommit(false);
             if (pageData != null) {
                 for (int i = 0; i < pageData.size(); i++) {
-                    Data2DRow row = fromTableRow(pageData.get(i));
+                    Data2DRow row = fromTableRow(pageData.get(i), InvalidAs.Blank);
                     if (row != null) {
                         pageRows.add(row);
                         tableData2D.writeData(conn, row);
@@ -628,13 +628,16 @@ public class DataTable extends Data2D {
                     groupBy += ", " + name;
                 }
             }
-            String selections = null;
+            String countName = message("Count");
+            for (String name : columnNames()) {
+                if (countName.equals(name)) {
+                    countName += "_";
+                }
+            }
+            String selections = "COUNT(" + mappedColumnName(groups.get(0)) + ") AS " + countName;
             if (calculations != null) {
                 for (String name : calculations) {
-                    if (name.equals(message("Count"))) {
-                        name = mappedColumnName(groups.get(0));
-                        name = "COUNT(" + name + ") AS " + message("Count");
-                    } else if (name.endsWith("-" + message("Mean"))) {
+                    if (name.endsWith("-" + message("Mean"))) {
                         name = name.substring(0, name.length() - ("-" + message("Mean")).length());
                         name = mappedColumnName(name);
                         name = (columnByName(name).isNumberType() ? "AVG(" + name + ")" : "'N/A'")
@@ -677,26 +680,14 @@ public class DataTable extends Data2D {
                     } else {
                         continue;
                     }
-                    if (selections == null) {
-                        selections = name;
-                    } else {
-                        selections += ", " + name;
-                    }
+                    selections += ", " + name;
                 }
             }
-            if (selections == null) {
-                selections = groupBy;
-            } else {
-                selections = groupBy + ", " + selections;
-            }
+            selections = groupBy + ", " + selections;
             String sql = "SELECT " + selections + " FROM " + sheet + " GROUP BY " + groupBy;
             DataFileCSV results = query(dname, task, sql, message("Group"));
             if (results == null) {
                 return null;
-            }
-            for (int i = 1; i < results.columns.size(); i++) {
-                Data2DColumn column = results.columns.get(i);
-                column.setType(ColumnDefinition.ColumnType.Double);
             }
             results.saveAttributes();
             return results;
@@ -1000,7 +991,7 @@ public class DataTable extends Data2D {
 
     // Based on results of "Data2D_Convert.toTmpTable(...)"
     // first column is id and rows do not include ids.
-    public long save(SingletonTask task, Connection conn, List<List<String>> rows) {
+    public long save(SingletonTask task, Connection conn, List<List<String>> rows, InvalidAs invalidAs) {
         try {
             if (conn == null || rows == null || rows.isEmpty()) {
                 return -1;
@@ -1011,7 +1002,7 @@ public class DataTable extends Data2D {
                 Data2DRow data2DRow = tableData2D.newRow();
                 for (int i = 1; i < columns.size(); i++) {
                     Data2DColumn column = columns.get(i);
-                    data2DRow.setColumnValue(column.getColumnName(), column.fromString(row.get(i - 1)));
+                    data2DRow.setColumnValue(column.getColumnName(), column.fromString(row.get(i - 1), invalidAs));
                 }
                 tableData2D.insertData(conn, data2DRow);
                 if (++count % DerbyBase.BatchSize == 0) {
