@@ -10,6 +10,7 @@ import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -26,6 +27,9 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
     protected int yCol;
     protected List<String> xNames;
 
+    @FXML
+    protected ControlData2DChartPie coefficientsChartController;
+
     public Data2DMultipleLinearRegressionController() {
         baseTitle = message("MultipleLinearRegression");
         TipsLabelKey = "MultipleLinearRegressionTips";
@@ -38,6 +42,8 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
             if (!super.initData()) {
                 return false;
             }
+            invalidAs = InvalidAs.Blank;
+
             dataColsIndices = new ArrayList<>();
             yName = colSelector.getSelectionModel().getSelectedItem();
             yCol = data2D.colOrder(yName);
@@ -64,6 +70,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
                 return false;
             }
             regression = null;
+
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -95,7 +102,8 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
                         return false;
                     }
                     regression = new OLSLinearRegression(interceptCheck.isSelected())
-                            .setTask(task).setScale(scale).setInvalidAs(InvalidAs.Blank)
+                            .setTask(task).setScale(scale)
+                            .setInvalidAs(invalidAs)
                             .setyName(yName).setxNames(xNames);
                     return regression.calculate(data);
                 } catch (Exception e) {
@@ -106,8 +114,8 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
 
             @Override
             protected void whenSucceeded() {
-                writeModel();
                 writeRegressionData();
+                writeModel();
             }
 
             @Override
@@ -132,7 +140,6 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
                 super.finalAction();
                 data2D.stopTask();
                 task = null;
-                regression = null;
             }
 
         };
@@ -148,8 +155,12 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
             intercept = regression.scaledIntercept();
             String scriptModel = "y = " + intercept;
             String model = yName + " = " + intercept;
+            boolean invalid = false;
             for (int i = 0; i < coefficients.length; i++) {
                 double d = coefficients[i];
+                if (DoubleTools.invalidDouble(d)) {
+                    invalid = true;
+                }
                 scriptModel += " + " + d + " * x" + i;
                 model += (d > 0 ? " + " : " - ") + Math.abs(d) + " * " + xNames.get(i);
             }
@@ -229,6 +240,10 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
             s.append(table.div());
             s.append("</BODY>\n");
             modelController.loadContents(HtmlWriteTools.html(s.toString()));
+
+            if (invalid) {
+                alertError(message("InvalidData") + "\n" + message("RegressionFailedNotice"));
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

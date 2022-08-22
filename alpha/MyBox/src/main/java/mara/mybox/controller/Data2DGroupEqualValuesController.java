@@ -344,51 +344,53 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
                 return;
             }
             int groupSize = groups.size(), columnSize = resultsFile.columns.size();
-            if (groupSize > 1) {
-                xyColumns = new ArrayList<>();
-                xyColumns.add(resultsFile.columns.get(0));
-                for (int i = groupSize + 1; i < columnSize; i++) {
-                    xyColumns.add(resultsFile.columns.get(i));
+            int categoryIndex = groupSize > 1 ? 0 : 1;
+            int countIndex = groupSize + 1;
+            List<Integer> valueIndice = new ArrayList<>();
+            if (columnSize > groupSize + 2) {
+                for (int i = groupSize + 2; i < columnSize; i++) {
+                    valueIndice.add(i);
                 }
-                pieColumns = xyColumns.subList(0, 2);
-                xyData = new ArrayList<>();
-                pieData = new ArrayList<>();
-                for (List<String> data : resultsData) {
-                    List<String> xyRow = new ArrayList<>();
-                    xyRow.add(data.get(0));
-                    for (int i = groupSize + 1; i < columnSize; i++) {
-                        xyRow.add(data.get(i));
-                    }
-                    xyData.add(xyRow);
-                    pieData.add(xyRow.subList(0, 2));
-                }
-
             } else {
-                xyColumns = new ArrayList<>();
-                for (int i = 1; i < columnSize; i++) {
-                    xyColumns.add(resultsFile.columns.get(i));
-                }
-                pieColumns = xyColumns.subList(0, 2);
-                xyData = new ArrayList<>();
-                pieData = new ArrayList<>();
-                for (List<String> data : resultsData) {
-                    List<String> xyRow = new ArrayList<>();
-                    for (int i = 1; i < columnSize; i++) {
-                        xyRow.add(data.get(i));
-                    }
-                    xyData.add(xyRow);
-                    pieData.add(xyRow.subList(0, 2));
-                }
+                valueIndice.add(countIndex);
             }
-            selectedCategory = xyColumns.get(0).getColumnName();
-            selectedValue = message("Aggregate");
+            Data2DColumn categoryColumn = resultsFile.columns.get(categoryIndex);
+            Data2DColumn countColumn = resultsFile.columns.get(countIndex);
 
+            xyColumns = new ArrayList<>();
+            xyColumns.add(categoryColumn);
+            for (int i : valueIndice) {
+                xyColumns.add(resultsFile.columns.get(i));
+            }
+
+            pieColumns = new ArrayList<>();
+            pieColumns.add(categoryColumn);
+            pieColumns.add(countColumn);
+
+            xyData = new ArrayList<>();
+            pieData = new ArrayList<>();
+            for (List<String> data : resultsData) {
+                List<String> xyRow = new ArrayList<>();
+                String category = data.get(categoryIndex);
+                xyRow.add(category);
+                for (int i : valueIndice) {
+                    xyRow.add(data.get(i));
+                }
+                xyData.add(xyRow);
+                List<String> pieRow = new ArrayList<>();
+                pieRow.add(category);
+                pieRow.add(data.get(countIndex));
+                pieData.add(pieRow);
+            }
+
+            selectedCategory = categoryColumn.getColumnName();
+            selectedValue = message("Aggregate");
             String title = chartTitle();
             initChart(title);
 
             pieMaker.init(message("PieChart"))
-                    .setDefaultChartTitle(title)
-                    .setChartTitle(title)
+                    .setDefaultChartTitle(title + " - " + message("Count"))
+                    .setChartTitle(title + " - " + message("Count"))
                     .setDefaultCategoryLabel(selectedCategory)
                     .setCategoryLabel(selectedCategory)
                     .setDefaultValueLabel(message("Count"))

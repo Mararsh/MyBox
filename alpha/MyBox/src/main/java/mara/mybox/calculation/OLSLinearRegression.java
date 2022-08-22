@@ -131,7 +131,11 @@ public class OLSLinearRegression extends OLSMultipleLinearRegression {
     }
 
     public double scaledIntercept() {
-        return DoubleTools.scale(intercept, scale);
+        if (DoubleTools.invalidDouble(intercept)) {
+            return Double.NaN;
+        } else {
+            return DoubleTools.scale(intercept, scale);
+        }
     }
 
     public double[] scaledCoefficients() {
@@ -140,7 +144,12 @@ public class OLSLinearRegression extends OLSMultipleLinearRegression {
         }
         double[] scaled = new double[coefficients.length];
         for (int i = 0; i < coefficients.length; i++) {
-            scaled[i] = DoubleTools.scale(coefficients[i], scale);
+            double d = coefficients[i];
+            if (DoubleTools.invalidDouble(d)) {
+                scaled[i] = Double.NaN;
+            } else {
+                scaled[i] = DoubleTools.scale(d, scale);
+            }
         }
         return scaled;
     }
