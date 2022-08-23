@@ -40,8 +40,6 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
         try {
             super.initControls();
 
-            noColumnSelection(true);
-
             alpha = UserConfig.getDouble(baseName + "Alpha", 0.05);
             if (alpha >= 1 || alpha <= 0) {
                 alpha = 0.05;

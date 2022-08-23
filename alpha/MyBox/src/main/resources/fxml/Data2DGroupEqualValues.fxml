@@ -317,15 +317,6 @@ License:    Apache License Version 2.0
                                                       </ImageView>
                                                    </graphic>
                                                 </RadioButton>
-                                                <RadioButton fx:id="bubbleChartRadio" layoutX="133.0" layoutY="10.0" mnemonicParsing="false" toggleGroup="$chartGroup">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/iconBubbleChart.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </RadioButton>
                                                 <RadioButton fx:id="areaChartRadio" layoutX="174.0" layoutY="10.0" mnemonicParsing="false" toggleGroup="$chartGroup">
                                                    <graphic>
                                                       <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

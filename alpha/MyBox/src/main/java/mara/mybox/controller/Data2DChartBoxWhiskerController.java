@@ -535,7 +535,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
             }
             BoxWhiskerChart boxWhiskerChart = chartMaker.getBoxWhiskerChart();
             List<XYChart.Series> seriesList = boxWhiskerChart.getData();
-            if (seriesList == null || seriesList.size() != boxWhiskerChart.seriesSize()) {
+            if (seriesList == null || seriesList.size() != boxWhiskerChart.expectedSeriesSize()) {
                 return;
             }
             chartMaker.setChartStyle();

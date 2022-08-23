@@ -69,6 +69,8 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         try {
             super.initControls();
 
+            noColumnSelection(true);
+
             objectType = ObjectType.Columns;
             if (objectGroup != null) {
                 objectGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -227,6 +229,17 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         }
     }
 
+    public void checkInvalidAs() {
+        if (zeroNonnumericRadio != null && zeroNonnumericRadio.isSelected()) {
+            invalidAs = InvalidAs.Zero;
+        } else if (blankNonnumericRadio != null && blankNonnumericRadio.isSelected()) {
+            invalidAs = InvalidAs.Blank;
+        } else {
+            invalidAs = InvalidAs.Skip;
+        }
+
+    }
+
     public void rowNumberCheckChanged() {
         UserConfig.setBoolean(baseName + "CopyRowNumber", rowNumberCheck.isSelected());
     }
@@ -269,14 +282,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
     public boolean initData() {
         try {
             checkObject();
-
-            if (zeroNonnumericRadio != null && zeroNonnumericRadio.isSelected()) {
-                invalidAs = InvalidAs.Zero;
-            } else if (blankNonnumericRadio != null && blankNonnumericRadio.isSelected()) {
-                invalidAs = InvalidAs.Blank;
-            } else {
-                invalidAs = InvalidAs.Skip;
-            }
+            checkInvalidAs();
 
             outputColumns = checkedColumns;
             if (showRowNumber()) {
@@ -307,6 +313,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         if (task != null) {
             task.cancel();
         }
+
         task = new SingletonTask<Void>(this) {
 
             @Override
@@ -326,6 +333,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                 data2D.stopTask();
                 task = null;
                 if (ok) {
+                    showRightPane();
                     startOperation();
                 }
             }

@@ -292,7 +292,7 @@ public class ControlData2DSetValue extends BaseController {
                 String v = expressionController.scriptInput.getText();
                 setValue.setType(SetValue.ValueType.Expression).setValue(v);
                 if (!expressionController.checkExpression(handleController.isAllPages())) {
-                    handleController.tabPane.getSelectionModel().select(handleController.optionsTab);
+                    handleController.tabPane.getSelectionModel().select(handleController.valuesTab);
                     alertError(message("Invalid") + ": " + message("RowExpression") + "\n" + expressionController.error);
                     return false;
                 } else {
@@ -310,7 +310,7 @@ public class ControlData2DSetValue extends BaseController {
     public void outError(String error) {
         if (error != null && !error.isBlank()) {
             handleController.outOptionsError(error);
-            handleController.tabPane.getSelectionModel().select(handleController.optionsTab);
+            handleController.tabPane.getSelectionModel().select(handleController.valuesTab);
         }
     }
 

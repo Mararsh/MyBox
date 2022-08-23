@@ -77,7 +77,6 @@ public class BaseData2DRegressionController extends BaseData2DChartController {
                 });
             }
 
-            noColumnSelection(true);
             if (modelController != null) {
                 modelController.setParent(this);
             }

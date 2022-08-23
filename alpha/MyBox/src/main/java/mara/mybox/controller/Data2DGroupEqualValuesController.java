@@ -8,7 +8,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.data.ColumnDefinition;
@@ -60,8 +59,6 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
             pieChartController.dataController = this;
             pieMaker = pieChartController.pieMaker;
 
-            noColumnSelection(true);
-
             groupController.setParameters(this, message("Column"), message("GroupBy"));
             groupController.selectedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -71,8 +68,6 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
             });
 
             calculationController.setParameters(this, message("Calculation"), message("Aggregate"));
-
-            bubbleChartRadio.setDisable(true);
 
             displayAllCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayAll", true));
             displayAllCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
@@ -140,12 +135,8 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
     public boolean initData() {
         try {
             checkObject();
+            checkInvalidAs();
 
-            if (blankNonnumericRadio.isSelected()) {
-                invalidAs = InvalidAs.Blank;
-            } else {
-                invalidAs = InvalidAs.Zero;
-            }
             groups = groupController.selectedNames();
             if (groups == null || groups.isEmpty()) {
                 outOptionsError(message("SelectToHandle") + ": " + message("GroupBy"));

@@ -37,18 +37,6 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
     }
 
     @Override
-    public void initControls() {
-        try {
-            super.initControls();
-
-            noColumnSelection(true);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
     public boolean initData() {
         try {
             if (!super.initData()) {

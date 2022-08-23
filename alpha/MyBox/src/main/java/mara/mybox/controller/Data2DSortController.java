@@ -65,7 +65,7 @@ public class Data2DSortController extends BaseData2DHandleController {
                 }
             });
 
-            columnsController.setParameters(this, message("Column"), "");
+            columnsController.setParameters(this, message("Column"), message("DataSortLabel"));
             columnsController.selectedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {

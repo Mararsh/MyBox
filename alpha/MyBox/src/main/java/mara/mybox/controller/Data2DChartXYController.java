@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -23,68 +24,70 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class Data2DChartXYController extends BaseData2DChartController {
-    
+
     protected XYChartMaker chartMaker;
-    
+
     @FXML
     protected ToggleGroup chartGroup;
     @FXML
     protected RadioButton barChartRadio, stackedBarChartRadio, lineChartRadio, scatterChartRadio,
             bubbleChartRadio, areaChartRadio, stackedAreaChartRadio;
     @FXML
-    protected VBox columnsBox;
+    protected VBox columnsBox, columnCheckBoxsBox;
+    @FXML
+    protected Label valuesLabel;
     @FXML
     protected FlowPane valueColumnPane, categoryColumnsPane, typesPane;
     @FXML
     protected ControlData2DChartXY chartController;
-    
+
     public Data2DChartXYController() {
         baseTitle = message("XYChart");
         TipsLabelKey = "DataChartXYTips";
     }
-    
+
     @Override
     public void initControls() {
         try {
             super.initControls();
-            
+
             chartController.dataController = this;
             chartMaker = chartController.chartMaker;
-            
+
             checkChartType();
             chartGroup.selectedToggleProperty().addListener(
                     (ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) -> {
                         checkChartType();
                         refreshAction();
                     });
-            
+
             typesPane.disableProperty().bind(chartController.buttonsPane.disableProperty());
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     public void checkChartType() {
         try {
             if (columnsBox == null) {
                 return;
             }
             columnsBox.getChildren().clear();
-            
-            if (bubbleChartRadio.isSelected()) {
-                columnsBox.getChildren().addAll(categoryColumnsPane, valueColumnPane);
-                setLabel(message("BubbleChartLabel"));
-                
+
+            if (bubbleChartRadio != null && bubbleChartRadio.isSelected()) {
+                columnsBox.getChildren().addAll(categoryColumnsPane, valueColumnPane, columnCheckBoxsBox);
+                valuesLabel.setText(message("SizeColumns"));
+
             } else {
-                columnsBox.getChildren().addAll(categoryColumnsPane);
-                setLabel(message("XYChartLabel"));
+                columnsBox.getChildren().addAll(categoryColumnsPane, columnCheckBoxsBox);
+                valuesLabel.setText(message("ValueColumns"));
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     @Override
     public boolean initData() {
         try {
@@ -103,7 +106,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
             }
             dataColsIndices.add(categoryCol);
             outputColumns.add(data2D.column(categoryCol));
-            if (bubbleChartRadio.isSelected()) {
+            if (bubbleChartRadio != null && bubbleChartRadio.isSelected()) {
                 title += " - " + selectedValue;
                 int valueCol = data2D.colOrder(selectedValue);
                 if (valueCol < 0) {
@@ -122,14 +125,14 @@ public class Data2DChartXYController extends BaseData2DChartController {
             dataColsIndices.addAll(checkedColsIndices);
             outputColumns.addAll(checkedColumns);
             title += " - " + checkedColsNames;
-            
+
             return initChart(title);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return false;
         }
     }
-    
+
     public boolean initChart(String title) {
         try {
             ChartType chartType;
@@ -172,7 +175,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
             return false;
         }
     }
-    
+
     @Override
     public void drawChart() {
         try {
@@ -202,5 +205,5 @@ public class Data2DChartXYController extends BaseData2DChartController {
             return null;
         }
     }
-    
+
 }

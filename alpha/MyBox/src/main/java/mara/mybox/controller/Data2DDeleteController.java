@@ -26,12 +26,6 @@ public class Data2DDeleteController extends BaseData2DHandleController {
     }
 
     @Override
-    public void initControls() {
-        super.initControls();
-        noColumnSelection(true);
-    }
-
-    @Override
     public boolean initData() {
         try {
             if (!super.initData()) {

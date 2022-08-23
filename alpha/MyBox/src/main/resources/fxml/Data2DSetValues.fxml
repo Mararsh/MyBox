@@ -39,40 +39,20 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox fx:id="dataBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                     <children>
-                                        <FlowPane fx:id="rowsPane" hgap="2.0" vgap="2.0">
-                                            <children>
-                                                <Label text="%Rows" />
-                                                <RadioButton fx:id="selectedRadio" mnemonicParsing="false" selected="true" text="%Selected">
-                                                    <toggleGroup>
-                                                        <ToggleGroup fx:id="rowsGroup" />
-                                                    </toggleGroup>
-                                                </RadioButton>
-                                                <RadioButton fx:id="currentPageRadio" mnemonicParsing="false" text="%CurrentPage" toggleGroup="$rowsGroup" />
-                                                <RadioButton fx:id="allPagesRadio" mnemonicParsing="false" text="%AllPages" toggleGroup="$rowsGroup" />
-                                            </children>
-                                        </FlowPane>
                                         <HBox alignment="CENTER_LEFT" spacing="2.0">
                                             <children>
-                                                <Label text="%Columns" />
-                                                <Button fx:id="selectAllColumnsButton" mnemonicParsing="false" onAction="#selectAllColumns">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconSelectAll.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="selectNoneColumnsButton" mnemonicParsing="false" onAction="#selectNoneColumn">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconSelectNone.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Label fx:id="dataLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
+                                              <FlowPane fx:id="rowsPane" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
+                                                  <children>
+                                                      <Label text="%Rows" />
+                                                      <RadioButton fx:id="selectedRadio" mnemonicParsing="false" selected="true" text="%Selected">
+                                                          <toggleGroup>
+                                                              <ToggleGroup fx:id="rowsGroup" />
+                                                          </toggleGroup>
+                                                      </RadioButton>
+                                                      <RadioButton fx:id="currentPageRadio" mnemonicParsing="false" text="%CurrentPage" toggleGroup="$rowsGroup" />
+                                                      <RadioButton fx:id="allPagesRadio" mnemonicParsing="false" text="%AllPages" toggleGroup="$rowsGroup" />
+                                                  </children>
+                                              </FlowPane>
                                                 <ImageView fx:id="tableTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
                                                         <Image url="@../buttons/Red/iconTipsRight.png" />
@@ -176,7 +156,51 @@ License:    Apache License Version 2.0
                         </ScrollPane>
                     </content>
                 </Tab>
-                <Tab fx:id="optionsTab" text="%Options">
+            <Tab fx:id="optionsTab" text="%Columns">
+               <content>
+                  <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                     <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                           <children>
+                              <VBox fx:id="columnCheckBoxsBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                 <children>
+                                    <FlowPane hgap="2.0" vgap="2.0">
+                                       <children>
+                                          <Label fx:id="valuesLabel" text="%Columns" />
+                                          <Button fx:id="selectAllColumnsButton" mnemonicParsing="false" onAction="#selectAllColumns">
+                                             <graphic>
+                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/Red/iconSelectAll.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                          <Button fx:id="selectNoneColumnsButton" mnemonicParsing="false" onAction="#selectNoneColumn">
+                                             <graphic>
+                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/Red/iconSelectNone.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                          <Label text="%StyleColumnComments" />
+                                       </children>
+                                    </FlowPane>
+                                    <FlowPane fx:id="columnsPane" hgap="2.0" vgap="2.0" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
+                <Tab fx:id="valuesTab" text="%Values">
                     <content>
                         <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                             <content>

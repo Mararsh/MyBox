@@ -23,46 +23,44 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlController {
-    
+
     protected String selectedValue2;
     protected int col1, col2, rowsNumber;
     protected double[] bar;
     protected Normalization normalization;
-    
+
     @FXML
     protected ComboBox<String> valueColumn2Selector;
-    
+
     public Data2DChartComparisonBarsController() {
         baseTitle = message("ComparisonBarsChart");
         TipsLabelKey = "ComparisonBarsChartTips";
     }
-    
+
     @Override
     public void initControls() {
         try {
             super.initControls();
-            
-            noColumnSelection(true);
-            
+
             valueColumn2Selector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     checkOptions();
                 }
             });
-            
+
             webViewController.initStyle = "";
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     @Override
     public void makeOptions() {
         try {
             super.makeOptions();
-            
+
             List<String> names = tableController.data2D.columnNames();
             if (names == null || names.isEmpty()) {
                 return;
@@ -77,12 +75,12 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
                 valueColumn2Selector.getSelectionModel().select(names.size() > 2 ? 2 : 0);
             }
             isSettingValues = false;
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     @Override
     public boolean initData() {
         try {
@@ -109,7 +107,7 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
             return false;
         }
     }
-    
+
     @Override
     protected String handleData() {
         try {
@@ -131,7 +129,7 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
                 normalization.setFrom(0).setTo(barWidth).setA(Normalization.Algorithm.MinMax);
             }
             bar = DoubleTools.toDouble(normalization.calculate(), InvalidAs.Zero);
-            
+
             StringBuilder s = new StringBuilder();
             s.append(jsBody());
             String title = data2D.displayName() + " - " + message("ComparisonBarsChart");
@@ -158,14 +156,14 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
             for (int r = 0; r < rowsNumber; r++) {
                 List<String> tableRow = outputData.get(r);
                 s.append("<TR>\n");
-                
+
                 s.append("<TD align=center class=\"RowNumber\">")
                         .append(message("Row")).append(tableRow.get(0)).append("</TD>\n");
-                
+
                 s.append("<TD align=right>")
                         .append("<SPAN class=\"DataValue\">").append(tableRow.get(1)).append("</SPAN>")
                         .append(bar(bar[r], color1)).append("</TD>\n");
-                
+
                 int pos = dataColsIndices.indexOf(categorysCol);
                 String v;
                 if (pos >= 0) {
@@ -176,12 +174,12 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
                     v = "";
                 }
                 s.append("<TD align=center class=\"Category\">").append(v).append("</TD>\n");
-                
+
                 s.append("<TD align=left>")
                         .append(bar(bar[r + rowsNumber], color2))
                         .append("<SPAN class=\"DataValue\">").append(tableRow.get(2)).append("</SPAN>")
                         .append("</TD>\n");
-                
+
                 s.append("</TR>\n");
             }
             s.append("</Table>\n");
@@ -198,7 +196,7 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
         normalization = null;
         return null;
     }
-    
+
     protected String bar(double width, Color color) {
         Color dColor = color;
         double dWitdh = width;
@@ -233,5 +231,5 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
             return null;
         }
     }
-    
+
 }

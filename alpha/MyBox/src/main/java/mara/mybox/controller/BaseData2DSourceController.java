@@ -186,7 +186,6 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                 allPagesRadio.setDisable(true);
                 showPaginationPane(false);
             }
-            restoreSelections();
 
             if (columnsPane != null) {
                 isSettingValues = true;
@@ -199,6 +198,8 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                 }
                 isSettingValues = false;
             }
+
+            restoreSelections();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -220,18 +221,26 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                 tableView.getSelectionModel().clearSelection();
             }
 
-            if (!noColumnSelection) {
-                if (checkedColsIndices != null && !checkedColsIndices.isEmpty()
-                        && checkedColsIndices.size() != tableView.getColumns().size() - 2) {
+            if (checkedColsIndices != null && !checkedColsIndices.isEmpty()
+                    && checkedColsIndices.size() != tableView.getColumns().size() - 2) {
+                if (noColumnSelection) {
+                    if (columnsPane != null) {
+                        for (Node node : columnsPane.getChildren()) {
+                            CheckBox cb = (CheckBox) node;
+                            int col = data2D.colOrder(cb.getText());
+                            cb.setSelected(col >= 0 && checkedColsIndices.contains(col));
+                        }
+                    }
+                } else {
                     for (int i = 2; i < tableView.getColumns().size(); i++) {
                         TableColumn tableColumn = tableView.getColumns().get(i);
                         CheckBox cb = (CheckBox) tableColumn.getGraphic();
                         int col = data2D.colOrder(cb.getText());
                         cb.setSelected(col >= 0 && checkedColsIndices.contains(col));
                     }
-                } else {
-                    selectNoneColumn();
                 }
+            } else {
+                selectNoneColumn();
             }
 
             isSettingValues = false;

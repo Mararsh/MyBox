@@ -5,6 +5,7 @@ import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data2d.DataFileCSV;
@@ -34,6 +35,8 @@ public class Data2DRowExpressionController extends BaseData2DHandleController {
     protected ControlData2DRowExpression expressionController;
     @FXML
     protected CheckBox errorContinueCheck;
+    @FXML
+    protected Tab valuesTab;
 
     public Data2DRowExpressionController() {
         baseTitle = message("RowExpression");
@@ -68,12 +71,12 @@ public class Data2DRowExpressionController extends BaseData2DHandleController {
             }
             expression = expressionController.scriptInput.getText();
             if (expression == null || expression.isBlank()) {
-                tabPane.getSelectionModel().select(optionsTab);
+                tabPane.getSelectionModel().select(valuesTab);
                 popError(message("Invalid") + ": " + message("RowExpression"));
                 return false;
             }
             if (!expressionController.checkExpression(isAllPages())) {
-                tabPane.getSelectionModel().select(optionsTab);
+                tabPane.getSelectionModel().select(valuesTab);
                 alertError(message("Invalid") + ": " + message("RowExpression") + "\n"
                         + expressionController.error);
                 return false;
@@ -81,7 +84,7 @@ public class Data2DRowExpressionController extends BaseData2DHandleController {
             String name = nameInput.getText();
             if (name == null || name.isBlank()) {
                 outOptionsError(message("InvalidParameter") + ": " + message("Name"));
-                tabPane.getSelectionModel().select(optionsTab);
+                tabPane.getSelectionModel().select(valuesTab);
                 return false;
             } else {
                 name = name.trim();
