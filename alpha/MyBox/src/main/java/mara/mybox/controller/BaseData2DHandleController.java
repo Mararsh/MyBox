@@ -301,6 +301,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         if (!checkOptions() || !initData()) {
             return;
         }
+        showRightPane();
         preprocessStatistic();
     }
 
@@ -313,7 +314,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         if (task != null) {
             task.cancel();
         }
-
         task = new SingletonTask<Void>(this) {
 
             @Override
@@ -333,7 +333,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                 data2D.stopTask();
                 task = null;
                 if (ok) {
-                    showRightPane();
                     startOperation();
                 }
             }

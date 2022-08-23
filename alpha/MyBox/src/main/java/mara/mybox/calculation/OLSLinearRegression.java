@@ -17,13 +17,13 @@ import org.apache.commons.math3.stat.regression.OLSMultipleLinearRegression;
  */
 public class OLSLinearRegression extends OLSMultipleLinearRegression {
 
-    protected String yName;
-    protected List<String> xNames;
-    protected int n, k;
-    protected int scale = 8;
-    protected double intercept;
-    protected double[][] x;
-    protected double[] y, coefficients;
+    public String yName;
+    public List<String> xNames;
+    public int n, k;
+    public int scale = 8;
+    public double intercept, rSqure, adjustedRSqure, standardError, variance;
+    public double[][] x;
+    public double[] y, coefficients;
     public InvalidAs invalidAs;
     protected SingletonTask<Void> task;
 
@@ -72,6 +72,10 @@ public class OLSLinearRegression extends OLSMultipleLinearRegression {
                     coefficients[i - 1] = beta[i];
                 }
             }
+            rSqure = calculateRSquared();
+            adjustedRSqure = calculateAdjustedRSquared();
+            standardError = estimateRegressionStandardError();
+            variance = estimateRegressandVariance();
             return true;
         } catch (Exception e) {
             if (task != null) {
@@ -127,14 +131,6 @@ public class OLSLinearRegression extends OLSMultipleLinearRegression {
                 task.setError(e.toString());
             }
             return null;
-        }
-    }
-
-    public double scaledIntercept() {
-        if (DoubleTools.invalidDouble(intercept)) {
-            return Double.NaN;
-        } else {
-            return DoubleTools.scale(intercept, scale);
         }
     }
 

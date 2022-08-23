@@ -188,11 +188,18 @@ public class DoubleTools {
     }
 
     public static double scale(double v, int scale) {
-        BigDecimal b = new BigDecimal(v);
-        return scale(b, scale);
+        try {
+            BigDecimal b = new BigDecimal(v);
+            return scale(b, scale);
+        } catch (Exception e) {
+            return v;
+        }
     }
 
     public static double scale(BigDecimal b, int scale) {
+        if (b == null) {
+            return Double.NaN;
+        }
         return b.setScale(scale, RoundingMode.HALF_UP).doubleValue();
     }
 

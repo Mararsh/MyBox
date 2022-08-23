@@ -290,17 +290,6 @@ License:    Apache License Version 2.0
                                     </ImageView>
                                  </graphic>
                               </CheckBox>
-                              <Label minHeight="-Infinity" text="%DecimalScale" wrapText="true" />
-                              <ComboBox fx:id="scaleSelector" editable="true" prefWidth="100.0" />
-                              <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
-                                 <graphic>
-                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconRefresh.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
                            </children>
                         </HBox>
                         <TabPane fx:id="chartTabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
@@ -312,6 +301,17 @@ License:    Apache License Version 2.0
                                           <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                                              <children>
                                                 <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                <Label minHeight="-Infinity" text="%DecimalScale" wrapText="true" />
+                                                <ComboBox fx:id="scaleSelector" editable="true" prefWidth="100.0" />
+                                                <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/Red/iconRefresh.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
                                                 <Button fx:id="editModelButton" mnemonicParsing="false" onAction="#editModelAction">
                                                    <graphic>
                                                       <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">

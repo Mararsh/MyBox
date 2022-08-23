@@ -152,7 +152,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
             StringBuilder s = new StringBuilder();
             s.append("<BODY>\n");
             double[] coefficients = regression.scaledCoefficients();
-            intercept = regression.scaledIntercept();
+            intercept = DoubleTools.scale(regression.intercept, scale);
             String scriptModel = "y = " + intercept;
             String model = yName + " = " + intercept;
             boolean invalid = false;
@@ -204,7 +204,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
 
             row = new ArrayList<>();
             row.add(message("NumberOfObservations"));
-            row.add(regression.getN() + "");
+            row.add(regression.n + "");
             table.add(row);
 
             row = new ArrayList<>();
@@ -219,22 +219,22 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
 
             row = new ArrayList<>();
             row.add(message("CoefficientOfDetermination"));
-            row.add(regression.calculateRSquared() + "");
+            row.add(DoubleTools.scale(regression.rSqure, scale) + "");
             table.add(row);
 
             row = new ArrayList<>();
             row.add(message("AdjustedRSquared"));
-            row.add(regression.calculateAdjustedRSquared() + "");
+            row.add(DoubleTools.scale(regression.adjustedRSqure, scale) + "");
             table.add(row);
 
             row = new ArrayList<>();
             row.add(message("StandardError"));
-            row.add(regression.estimateRegressionStandardError() + "");
+            row.add(DoubleTools.scale(regression.standardError, scale) + "");
             table.add(row);
 
             row = new ArrayList<>();
             row.add(message("Variance"));
-            row.add(regression.estimateRegressandVariance() + "");
+            row.add(DoubleTools.scale(regression.variance, scale) + "");
             table.add(row);
 
             s.append(table.div());
