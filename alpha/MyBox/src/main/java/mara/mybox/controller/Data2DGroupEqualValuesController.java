@@ -7,6 +7,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TextField;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
@@ -27,18 +28,21 @@ import mara.mybox.value.UserConfig;
  */
 public class Data2DGroupEqualValuesController extends Data2DChartXYController {
 
-    protected List<String> groups, calculationColumns, calculations;
+    protected List<String> groups, calculationColumns, calculations, sorts;
     protected DataFileCSV resultsFile;
     protected PieChartMaker pieMaker;
     protected List<List<String>> xyData, pieData;
     protected List<Data2DColumn> xyColumns, pieColumns;
+    protected int maxData = -1;
 
     @FXML
     protected Tab groupTab;
     @FXML
-    protected ControlSelection groupController, calculationController;
+    protected ControlSelection groupController, calculationController, sortController;
     @FXML
     protected ControlData2DResults valuesController;
+    @FXML
+    protected TextField maxInput;
     @FXML
     protected CheckBox displayAllCheck;
     @FXML
@@ -63,11 +67,17 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
             groupController.selectedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    checkOptions();
+                    makeSortList();
                 }
             });
-
             calculationController.setParameters(this, message("Calculation"), message("Aggregate"));
+            calculationController.selectedNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    makeSortList();
+                }
+            });
+            sortController.setParameters(this, message("Sort"), message("Sort"));
 
             displayAllCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayAll", true));
             displayAllCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
@@ -88,6 +98,31 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
                 }
             });
 
+            maxData = UserConfig.getInt(baseName + "MaxDataNumber", -1);
+            if (maxData > 0) {
+                maxInput.setText(maxData + "");
+            }
+            maxInput.setStyle(null);
+            maxInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    String maxs = maxInput.getText();
+                    if (maxs == null || maxs.isBlank()) {
+                        maxData = -1;
+                        maxInput.setStyle(null);
+                        UserConfig.setLong(baseName + "MaxDataNumber", -1);
+                    } else {
+                        try {
+                            maxData = Integer.valueOf(maxs);
+                            maxInput.setStyle(null);
+                            UserConfig.setLong(baseName + "MaxDataNumber", maxData);
+                        } catch (Exception e) {
+                            maxInput.setStyle(UserConfig.badStyle());
+                        }
+                    }
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -96,6 +131,7 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
     @Override
     public void makeOptions() {
         try {
+            sortController.loadNames(null);
             if (!data2D.isValid()) {
                 groupController.loadNames(null);
                 calculationController.loadNames(null);
@@ -117,6 +153,32 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
             }
             groupController.loadNames(gnames);
             calculationController.loadNames(cnames);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void makeSortList() {
+        try {
+            sortController.loadNames(null);
+            List<String> names = new ArrayList<>();
+            names.add(message("Count") + "-" + message("Descending"));
+            names.add(message("Count") + "-" + message("Ascending"));
+            groups = groupController.selectedNames();
+            if (groups != null) {
+                for (String name : groups) {
+                    names.add(name + "-" + message("Descending"));
+                    names.add(name + "-" + message("Ascending"));
+                }
+            }
+            calculations = calculationController.selectedNames();
+            if (calculations != null) {
+                for (String name : calculations) {
+                    names.add(name + "-" + message("Descending"));
+                    names.add(name + "-" + message("Ascending"));
+                }
+            }
+            sortController.loadNames(names);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -176,6 +238,7 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
                     }
                 }
             }
+            sorts = sortController.selectedNames();
             checkedColsIndices = new ArrayList<>();
             checkedColumns = new ArrayList<>();
             for (String name : colsNames) {
@@ -184,7 +247,7 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
             }
             checkedColsNames = colsNames;
 
-            return initChart(groups.toString());
+            return initChart(groups.toString(), false);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
@@ -230,7 +293,8 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
                     if (tmpTable == null) {
                         return false;
                     }
-                    resultsFile = tmpTable.groupEqualValues(data2D.dataName() + "_group", task, groups, calculations);
+                    resultsFile = tmpTable.groupEqualValues(data2D.dataName() + "_group", task,
+                            groups, calculations, sorts, maxData);
                     tmpTable.drop();
                     return resultsFile != null;
                 } catch (Exception e) {
@@ -345,7 +409,7 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
             } else {
                 valueIndice.add(countIndex);
             }
-            Data2DColumn categoryColumn = resultsFile.columns.get(categoryIndex);
+            categoryColumn = resultsFile.columns.get(categoryIndex);
             Data2DColumn countColumn = resultsFile.columns.get(countIndex);
 
             xyColumns = new ArrayList<>();
@@ -377,7 +441,7 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
             selectedCategory = categoryColumn.getColumnName();
             selectedValue = message("Aggregate");
             String title = chartTitle();
-            initChart(title);
+            initChart(title, categoryColumn.isNumberType());
 
             pieMaker.init(message("PieChart"))
                     .setDefaultChartTitle(title + " - " + message("Count"))

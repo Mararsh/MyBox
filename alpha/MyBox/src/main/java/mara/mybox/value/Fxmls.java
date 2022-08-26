@@ -214,6 +214,7 @@ public class Fxmls {
 
     public static final String JShellFxml = "/fxml/JShell.fxml";
     public static final String JexlFxml = "/fxml/Jexl.fxml";
+    public static final String JavaScriptFxml = "/fxml/JavaScript.fxml";
 
     public static final String DataFileCSVFxml = "/fxml/DataFileCSV.fxml";
     public static final String DataFileCSVConvertFxml = "/fxml/DataFileCSVConvert.fxml";
@@ -371,7 +372,7 @@ public class Fxmls {
     public static final String TableSizeFxml = "/fxml/TableSize.fxml";
     public static final String TextInputFxml = "/fxml/TextInput.fxml";
     public static final String TextDelimiterFxml = "/fxml/TextDelimiter.fxml";
-    public static final String JavaScriptFxml = "/fxml/JavaScript.fxml";
+    public static final String AddressInputFxml = "/fxml/AddressInput.fxml";
 
     public static final String MenuFxml = "/fxml/Menu.fxml";
     public static final String MenuTextEditFxml = "/fxml/MenuTextEdit.fxml";

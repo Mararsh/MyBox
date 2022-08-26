@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -614,11 +615,12 @@ public class DataTable extends Data2D {
 
     // Based on results of "Data2D_Convert.toTmpTable(...)"
     public DataFileCSV groupEqualValues(String dname, SingletonTask task,
-            List<String> groups, List<String> calculations) {
+            List<String> groups, List<String> calculations, List<String> sorts, int max) {
         if (groups == null || groups.isEmpty() || sourceColumns == null) {
             return null;
         }
         try {
+            Map<String, String> maps = new HashMap<>();
             String groupBy = null;
             for (String group : groups) {
                 String name = mappedColumnName(group);
@@ -627,6 +629,7 @@ public class DataTable extends Data2D {
                 } else {
                     groupBy += ", " + name;
                 }
+                maps.put(group, name);
             }
             String countName = message("Count");
             for (String name : columnNames()) {
@@ -634,57 +637,99 @@ public class DataTable extends Data2D {
                     countName += "_";
                 }
             }
+            maps.put(message("Count"), countName);
             String selections = "COUNT(" + mappedColumnName(groups.get(0)) + ") AS " + countName;
+            String sourceName, mappedName, resultName, selectItem;
             if (calculations != null) {
-                for (String name : calculations) {
-                    if (name.endsWith("-" + message("Mean"))) {
-                        name = name.substring(0, name.length() - ("-" + message("Mean")).length());
-                        name = mappedColumnName(name);
-                        name = (columnByName(name).isNumberType() ? "AVG(" + name + ")" : "'N/A'")
-                                + " AS " + name + "_" + message("Mean");
-                    } else if (name.endsWith("-" + message("Summation"))) {
-                        name = name.substring(0, name.length() - ("-" + message("Summation")).length());
-                        name = mappedColumnName(name);
-                        name = (columnByName(name).isNumberType() ? "SUM(" + name + ")" : "'N/A'")
-                                + " AS " + name + "_" + message("Summation");
-                    } else if (name.endsWith("-" + message("Maximum"))) {
-                        name = name.substring(0, name.length() - ("-" + message("Maximum")).length());
-                        name = mappedColumnName(name);
-                        name = (columnByName(name).isNumberType() ? "MAX(" + name + ")" : "'N/A'")
-                                + " AS " + name + "_" + message("Maximum");
-                    } else if (name.endsWith("-" + message("Minimum"))) {
-                        name = name.substring(0, name.length() - ("-" + message("Minimum")).length());
-                        name = mappedColumnName(name);
-                        name = (columnByName(name).isNumberType() ? "MIN(" + name + ")" : "'N/A'")
-                                + " AS " + name + "_" + message("Minimum");
-                    } else if (name.endsWith("-" + message("PopulationVariance"))) {
-                        name = name.substring(0, name.length() - ("-" + message("PopulationVariance")).length());
-                        name = mappedColumnName(name);
-                        name = (columnByName(name).isNumberType() ? "VAR_POP(" + name + ")" : "'N/A'")
-                                + " AS " + name + "_" + message("PopulationVariance").replaceAll(" ", "");
-                    } else if (name.endsWith("-" + message("SampleVariance"))) {
-                        name = name.substring(0, name.length() - ("-" + message("SampleVariance")).length());
-                        name = mappedColumnName(name);
-                        name = (columnByName(name).isNumberType() ? "VAR_SAMP(" + name + ")" : "'N/A'")
-                                + " AS " + name + "_" + message("SampleVariance").replaceAll(" ", "");
-                    } else if (name.endsWith("-" + message("PopulationStandardDeviation"))) {
-                        name = name.substring(0, name.length() - ("-" + message("PopulationStandardDeviation")).length());
-                        name = mappedColumnName(name);
-                        name = (columnByName(name).isNumberType() ? "STDDEV_POP(" + name + ")" : "'N/A'")
-                                + " AS " + name + "_" + message("PopulationStandardDeviation").replaceAll(" ", "");
-                    } else if (name.endsWith("-" + message("SampleStandardDeviation"))) {
-                        name = name.substring(0, name.length() - ("-" + message("SampleStandardDeviation")).length());
-                        name = mappedColumnName(name);
-                        name = (columnByName(name).isNumberType() ? "STDDEV_SAMP(" + name + ")" : "'N/A'")
-                                + " AS " + name + "_" + message("SampleStandardDeviation").replaceAll(" ", "");
+                for (String calculation : calculations) {
+                    if (calculation.endsWith("-" + message("Mean"))) {
+                        sourceName = calculation.substring(0, calculation.length() - ("-" + message("Mean")).length());
+                        mappedName = mappedColumnName(sourceName);
+                        resultName = mappedName + "_" + message("Mean");
+                        selectItem = (columnByName(mappedName).isNumberType() ? "AVG(" + mappedName + ")" : "'N/A'")
+                                + " AS " + resultName;
+                    } else if (calculation.endsWith("-" + message("Summation"))) {
+                        sourceName = calculation.substring(0, calculation.length() - ("-" + message("Summation")).length());
+                        mappedName = mappedColumnName(sourceName);
+                        resultName = mappedName + "_" + message("Summation");
+                        selectItem = (columnByName(mappedName).isNumberType() ? "SUM(" + mappedName + ")" : "'N/A'")
+                                + " AS " + resultName;
+                    } else if (calculation.endsWith("-" + message("Maximum"))) {
+                        sourceName = calculation.substring(0, calculation.length() - ("-" + message("Maximum")).length());
+                        mappedName = mappedColumnName(sourceName);
+                        resultName = mappedName + "_" + message("Maximum");
+                        selectItem = (columnByName(mappedName).isNumberType() ? "MAX(" + mappedName + ")" : "'N/A'")
+                                + " AS " + resultName;
+                    } else if (calculation.endsWith("-" + message("Minimum"))) {
+                        sourceName = calculation.substring(0, calculation.length() - ("-" + message("Minimum")).length());
+                        mappedName = mappedColumnName(sourceName);
+                        resultName = mappedName + "_" + message("Minimum");
+                        selectItem = (columnByName(mappedName).isNumberType() ? "MIN(" + mappedName + ")" : "'N/A'")
+                                + " AS " + resultName;
+                    } else if (calculation.endsWith("-" + message("PopulationVariance"))) {
+                        sourceName = calculation.substring(0, calculation.length() - ("-" + message("PopulationVariance")).length());
+                        mappedName = mappedColumnName(sourceName);
+                        resultName = mappedName + "_" + message("PopulationVariance").replaceAll(" ", "");
+                        selectItem = (columnByName(mappedName).isNumberType() ? "VAR_POP(" + mappedName + ")" : "'N/A'")
+                                + " AS " + resultName;
+                    } else if (calculation.endsWith("-" + message("SampleVariance"))) {
+                        sourceName = calculation.substring(0, calculation.length() - ("-" + message("SampleVariance")).length());
+                        mappedName = mappedColumnName(sourceName);
+                        resultName = mappedName + "_" + message("SampleVariance").replaceAll(" ", "");
+                        selectItem = (columnByName(mappedName).isNumberType() ? "VAR_SAMP(" + mappedName + ")" : "'N/A'")
+                                + " AS " + resultName;
+                    } else if (calculation.endsWith("-" + message("PopulationStandardDeviation"))) {
+                        sourceName = calculation.substring(0, calculation.length() - ("-" + message("PopulationStandardDeviation")).length());
+                        mappedName = mappedColumnName(sourceName);
+                        resultName = mappedName + "_" + message("PopulationStandardDeviation").replaceAll(" ", "");
+                        selectItem = (columnByName(mappedName).isNumberType() ? "STDDEV_POP(" + mappedName + ")" : "'N/A'")
+                                + " AS " + resultName;
+                    } else if (calculation.endsWith("-" + message("SampleStandardDeviation"))) {
+                        sourceName = calculation.substring(0, calculation.length() - ("-" + message("SampleStandardDeviation")).length());
+                        mappedName = mappedColumnName(sourceName);
+                        resultName = mappedName + "_" + message("SampleStandardDeviation").replaceAll(" ", "");
+                        selectItem = (columnByName(mappedName).isNumberType() ? "STDDEV_SAMP(" + mappedName + ")" : "'N/A'")
+                                + " AS " + resultName;
                     } else {
-                        continue;
+                        sourceName = calculation;
+                        mappedName = mappedColumnName(sourceName);
+                        resultName = mappedName;
+                        selectItem = resultName;
                     }
-                    selections += ", " + name;
+                    maps.put(calculation, resultName);
+                    selections += ", " + selectItem;
                 }
             }
             selections = groupBy + ", " + selections;
             String sql = "SELECT " + selections + " FROM " + sheet + " GROUP BY " + groupBy;
+            if (sorts != null && !sorts.isEmpty()) {
+                String sortString = "";
+                int desclen = ("-" + message("Descending")).length();
+                int asclen = ("-" + message("Ascending")).length();
+                String stype;
+                for (String sort : sorts) {
+                    if (sort.endsWith("-" + message("Descending"))) {
+                        sourceName = sort.substring(0, sort.length() - desclen);
+                        stype = " DESC";
+                    } else if (sort.endsWith("-" + message("Ascending"))) {
+                        sourceName = sort.substring(0, sort.length() - asclen);
+                        stype = " ASC";
+                    } else {
+                        continue;
+                    }
+                    resultName = maps.get(sourceName);
+                    if (resultName != null) {
+                        sortString += ", " + resultName + stype;
+                    }
+                }
+                if (!sortString.isBlank()) {
+                    sql += " ORDER BY " + sortString.substring(2);
+                }
+            }
+            if (max > 0) {
+                sql += " FETCH FIRST " + max + " ROWS ONLY";
+            }
+//            MyBoxLog.console(sql);
             DataFileCSV results = query(dname, task, sql, message("Group"));
             if (results == null) {
                 return null;

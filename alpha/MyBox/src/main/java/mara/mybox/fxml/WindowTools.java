@@ -406,7 +406,7 @@ public class WindowTools {
 
             if (AppVariables.scheduledTasks != null && !AppVariables.scheduledTasks.isEmpty()) {
                 if (UserConfig.getBoolean("StopAlarmsWhenExit")) {
-                    for (Long key : AppVariables.scheduledTasks.keySet()) {
+                    for (String key : AppVariables.scheduledTasks.keySet()) {
                         ScheduledFuture future = AppVariables.scheduledTasks.get(key);
                         future.cancel(true);
                     }

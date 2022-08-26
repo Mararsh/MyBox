@@ -444,7 +444,7 @@ public class DerbyBase {
                 loadingController.info("image_scope");
             }
             if (!tables.contains("Alarm_Clock".toLowerCase())) {
-                new TableAlarmClock().init(conn);
+                new TableAlarmClock().createTable(conn);
                 loadingController.info("Alarm_Clock");
             }
             if (!tables.contains("Convolution_Kernel".toLowerCase())) {

@@ -89,8 +89,8 @@ public class Data2DSortController extends BaseData2DHandleController {
             List<String> names = new ArrayList<>();
             for (Data2DColumn column : data2D.columns) {
                 String name = column.getColumnName();
-                names.add(name + "-" + message("Ascending"));
                 names.add(name + "-" + message("Descending"));
+                names.add(name + "-" + message("Ascending"));
             }
             columnsController.loadNames(names);
         } catch (Exception e) {

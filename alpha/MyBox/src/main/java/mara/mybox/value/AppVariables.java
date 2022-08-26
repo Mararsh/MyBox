@@ -40,7 +40,7 @@ public class AppVariables {
     public static Map<String, String> userConfigValues = new HashMap<>();
     public static Map<String, String> systemConfigValues = new HashMap<>();
     public static ScheduledExecutorService executorService;
-    public static Map<Long, ScheduledFuture<?>> scheduledTasks;
+    public static Map<String, ScheduledFuture<?>> scheduledTasks;
     public static AlarmClockController alarmClockController;
     public static MemoryUsageSetting pdfMemUsage;
     public static int sceneFontSize, fileRecentNumber, iconSize, thumbnailWidth;

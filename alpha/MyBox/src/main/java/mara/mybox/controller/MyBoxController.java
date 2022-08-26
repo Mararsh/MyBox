@@ -39,7 +39,7 @@ public class MyBoxController extends MyBoxController_About {
             titleLabel.setText(baseTitle);
 
             makeImagePopup();
-            if (scheduledTasks != null && scheduledTasks.size() > 0) {
+            if (scheduledTasks != null && !scheduledTasks.isEmpty()) {
                 bottomLabel.setText(MessageFormat.format(message("AlarmClocksRunning"), scheduledTasks.size()));
             }
 

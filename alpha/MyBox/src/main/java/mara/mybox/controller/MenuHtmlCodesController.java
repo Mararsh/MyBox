@@ -123,7 +123,15 @@ public class MenuHtmlCodesController extends MenuTextEditController {
             image.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    insertText("<img src=\"https://mararsh.github.io/MyBox/iconGo.png\" alt=\"ReadMe\" />");
+                    AddressInputController controller = (AddressInputController) openChildStage(Fxmls.AddressInputFxml, true);
+                    controller.setParameters(parentController);
+                    controller.notify.addListener(new ChangeListener<Boolean>() {
+                        @Override
+                        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                            insertText("<img src=\"" + controller.address + "\" alt=\"" + controller.name + "\" />");
+                            controller.closeStage();
+                        }
+                    });
                 }
             });
             aNodes.add(image);
@@ -141,7 +149,15 @@ public class MenuHtmlCodesController extends MenuTextEditController {
             link.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    insertText("<a href=\"https://github.com/Mararsh/MyBox\">MyBox</a>");
+                    AddressInputController controller = (AddressInputController) openChildStage(Fxmls.AddressInputFxml, true);
+                    controller.setParameters(parentController);
+                    controller.notify.addListener(new ChangeListener<Boolean>() {
+                        @Override
+                        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                            insertText("<a href=\"" + controller.address + "\">" + controller.name + "</a>");
+                            controller.closeStage();
+                        }
+                    });
                 }
             });
             aNodes.add(link);

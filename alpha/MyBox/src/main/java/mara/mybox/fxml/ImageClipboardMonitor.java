@@ -39,12 +39,9 @@ public class ImageClipboardMonitor extends Timer {
     protected ImageAttributes attributes;
     protected Date startTime = null;
     protected int recordNumber, savedNumber, copiedNumber;
-//    protected final Clipboard clipboard = Clipboard.getSystemClipboard();
-    protected TableImageClipboard tableImageClipboard = new TableImageClipboard();
+    protected TableImageClipboard tableImageClipboard;
     private String filePrefix;
     private Image lastImage = null;
-    protected Connection conn = null;
-    protected ImageInSystemClipboardController controller;
 
     public ImageClipboardMonitor start(int inInterval, ImageAttributes attributes, String filePrefix) {
         int interval = ImageClipboardTools.setMonitorInterval(inInterval);
@@ -54,6 +51,7 @@ public class ImageClipboardMonitor extends Timer {
         recordNumber = 0;
         savedNumber = 0;
         copiedNumber = 0;
+        lastImage = null;
         schedule(new MonitorTask(), 0, interval);
         Platform.runLater(() -> {
             ImageInSystemClipboardController.updateSystemClipboardStatus();
@@ -71,6 +69,11 @@ public class ImageClipboardMonitor extends Timer {
         });
         MyBoxLog.debug("Image Clipboard Monitor stopped.");
         clearTmpClips();
+        attributes = null;
+        lastImage = null;
+        tableImageClipboard = null;
+        startTime = null;
+        filePrefix = null;
     }
 
     class MonitorTask extends TimerTask {
@@ -86,7 +89,7 @@ public class ImageClipboardMonitor extends Timer {
                 public synchronized void run() {
                     try {
                         clearTmpClips();
-                        controller = ImageInSystemClipboardController.running();
+                        ImageInSystemClipboardController controller = ImageInSystemClipboardController.running();
                         if (controller == null && !ImageClipboardTools.isCopy()
                                 && (!ImageClipboardTools.isSave() || filePrefix == null || attributes == null)) {
                             ImageClipboardTools.stopImageClipboardMonitor();
@@ -160,6 +163,7 @@ public class ImageClipboardMonitor extends Timer {
                             + IntTools.random(1000) + "." + attributes.getImageFormat());
                 }
                 String fname = file.getAbsolutePath();
+                ImageInSystemClipboardController controller = ImageInSystemClipboardController.running();
                 if (controller != null) {
                     Platform.runLater(() -> {
                         controller.filesInfo(message("Saving") + " " + fname);
@@ -190,7 +194,7 @@ public class ImageClipboardMonitor extends Timer {
         new Thread() {
             @Override
             public void run() {
-                try {
+                try ( Connection conn = DerbyBase.getConnection()) {
                     int width = ImageClipboardTools.getWidth();
                     BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
                     if (width > 0) {
@@ -202,13 +206,11 @@ public class ImageClipboardMonitor extends Timer {
                     if (tableImageClipboard == null) {
                         tableImageClipboard = new TableImageClipboard();
                     }
-                    if (conn == null || conn.isClosed()) {
-                        conn = DerbyBase.getConnection();
-                    }
                     tableImageClipboard.insertData(conn, ImageClipboard.create(bufferedImage, ImageSource.SystemClipBoard));
                     conn.commit();
                     ControlImagesClipboard.updateClipboards();
                     copiedNumber++;
+                    ImageInSystemClipboardController controller = ImageInSystemClipboardController.running();
                     if (controller != null) {
                         Platform.runLater(() -> {
                             controller.updateNumbers();
@@ -238,22 +240,6 @@ public class ImageClipboardMonitor extends Timer {
 
     public void setNumber(int number) {
         this.recordNumber = number;
-    }
-
-    public Connection getConn() {
-        return conn;
-    }
-
-    public void setConn(Connection conn) {
-        this.conn = conn;
-    }
-
-    public ImageInSystemClipboardController getController() {
-        return controller;
-    }
-
-    public void setController(ImageInSystemClipboardController controller) {
-        this.controller = controller;
     }
 
     public TableImageClipboard getTableImageClipboard() {

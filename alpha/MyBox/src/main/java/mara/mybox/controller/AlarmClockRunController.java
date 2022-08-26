@@ -7,7 +7,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javax.sound.sampled.Clip;
 import mara.mybox.db.data.AlarmClock;
-import static mara.mybox.db.data.AlarmClock.getTypeString;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.value.Languages;
@@ -39,17 +38,17 @@ public class AlarmClockRunController extends BaseController {
     }
 
     public void inactive(ActionEvent event) {
-        alarm.setIsActive(false);
-        alarm.setStatus(Languages.message("Inactive"));
-        alarm.setNextTime(-1);
-        alarm.setNext("");
-        AlarmClock.scheduleAlarmClock(alarm);
-        AlarmClock.writeAlarmClock(alarm);
-        knowAction(event);
-        AlarmClockController controller = AlarmClockController.oneOpen();
-        if (controller != null) {
-            controller.alertClockTableController.refreshAction();
-        }
+//        alarm.setIsActive(false);
+//        alarm.setStatus(Languages.message("Inactive"));
+//        alarm.setNextTime(-1);
+//        alarm.setNext("");
+//        AlarmClock.scheduleAlarmClock(alarm);
+//        AlarmClock.writeAlarmClock(alarm);
+//        knowAction(event);
+//        AlarmClockController controller = AlarmClockController.oneOpen();
+//        if (controller != null) {
+//            controller.alertClockTableController.refreshAction();
+//        }
     }
 
     @FXML
@@ -75,12 +74,12 @@ public class AlarmClockRunController extends BaseController {
                 soundString += Languages.message("LoopTimes") + " " + alarm.getSoundLoopTimes();
             }
         }
-        soundLabel.setText(soundString);
-        String typeString = getTypeString(alarm);
-        if (alarm.getNext() != null) {
-            typeString += "     " + Languages.message("NextTime") + " " + alarm.getNext();
-        }
-        timeLabel.setText(typeString);
+//        soundLabel.setText(soundString);
+//        String typeString = getTypeString(alarm);
+//        if (alarm.getNext() != null) {
+//            typeString += "     " + Languages.message("NextTime") + " " + alarm.getNext();
+//        }
+//        timeLabel.setText(typeString);
         playTask = new Task<Void>() {
             @Override
             protected Void call() {

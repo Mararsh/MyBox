@@ -80,6 +80,11 @@ public class MyBoxLogViewerController extends HtmlTableController {
         }
     }
 
+    // Avoid interface blocked when logs flooding
+    @Override
+    public void toFront() {
+    }
+
     @FXML
     public void dataAction(ActionEvent event) {
         MyBoxLogController controller = MyBoxLogController.oneOpen();
@@ -131,7 +136,6 @@ public class MyBoxLogViewerController extends HtmlTableController {
         if (controller == null) {
             controller = (MyBoxLogViewerController) WindowTools.openStage(Fxmls.MyBoxLogViewerFxml);
         }
-        controller.requestMouse();
         return controller;
     }
 

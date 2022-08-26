@@ -590,7 +590,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
 
     public void requestMouse() {
         try {
-            if (getMyStage() == null) {
+            if (getMyStage() == null || this instanceof MyBoxLogViewerController) {
                 return;
             }
             Platform.runLater(() -> {

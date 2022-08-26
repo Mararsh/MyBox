@@ -326,8 +326,8 @@ License:    Apache License Version 2.0
                                 </Menu>
                                 <MenuItem mnemonicParsing="false" onAction="#openFFmpegProbeMediaInformation" text="%FFmpegProbeMediaInformation" />
                                 <MenuItem mnemonicParsing="false" onAction="#openFFmpegInformation" text="%FFmpegInformation" />
-                                <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#openAlarmClock" text="%AlarmClock" />
+                                <!--                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#openAlarmClock" text="%AlarmClock" />-->
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openGameElimniation" text="%GameElimniation" />
                                 <MenuItem mnemonicParsing="false" onAction="#openGameMine" text="%GameMine" />
@@ -472,6 +472,7 @@ License:    Apache License Version 2.0
                                 <CheckMenuItem fx:id="monitorMemroyCheck" mnemonicParsing="false" onAction="#checkMemroyMonitor" text="%MonitorMemory" />
                                 <CheckMenuItem fx:id="monitorCpuCheck" mnemonicParsing="false" onAction="#checkCpuMonitor" text="%MonitorCpu" />
                                 <CheckMenuItem fx:id="detailedDebugCheck" mnemonicParsing="false" onAction="#detailedDebug" text="%DetailedDebugLogs" />
+                                <CheckMenuItem fx:id="popErrorCheck" mnemonicParsing="false" onAction="#popError" text="%PopErrorLogs" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#MyBoxProperties" text="%MyBoxProperties" />
                                 <MenuItem mnemonicParsing="false" onAction="#MyBoxLogs" text="%MyBoxLogs" />

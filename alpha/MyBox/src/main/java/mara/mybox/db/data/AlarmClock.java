@@ -1,26 +1,15 @@
 package mara.mybox.db.data;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import mara.mybox.db.table.TableAlarmClock;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.AlarmClockTask;
-import mara.mybox.tools.DateTools;
-import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.executorService;
 import static mara.mybox.value.AppVariables.scheduledTasks;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -32,404 +21,347 @@ public class AlarmClock extends BaseData {
     public static final String AlarmValueSeprator = "_FG-FG_";
     public static final int offset = 1;
 
-    private SimpleStringProperty description, sound, start, status, repeat, next, last;
-    private long key, startTime, lastTime, nextTime, period;
-    private boolean isActive, isSoundLoop, isSoundContinully;
-    private int alarmType, everyValue, soundLoopTimes;
-    private float volume;
+    protected long atid;
+    protected AlarmType alarmType;
+    protected String title, description, sound;
+    protected boolean isActive, isSoundLoop, isSoundContinully;
+    protected int everyValue, soundLoopTimes;
+    protected float volume;
+    protected Date startTime, lastTime, nextTime;
 
-    public final static class AlarmType {
+    public static enum AlarmType {
+        NotRepeat, EveryDay, Weekend, WorkingDays,
+        EverySomeHours, EverySomeMinutes, EverySomeDays, EverySomeSeconds
+    }
 
-        public final static int NotRepeat = 0;
-        public final static int EveryDay = 1;
-        public final static int Weekend = 2;
-        public final static int WorkingDays = 3;
-        public final static int EverySomeHours = 4;
-        public final static int EverySomeMinutes = 5;
-        public final static int EverySomeDays = 6;
-        public final static int EverySomeSeconds = 7;
+    private void init() {
+        atid = -1;
+        alarmType = null;
+
     }
 
     public AlarmClock() {
-//        this.key = new SimpleLongProperty(new Date().getTime());
-
+        init();
     }
 
-    public static List<AlarmClock> readAlarmClocks() {
-        List<AlarmClock> alarms = TableAlarmClock.read();
-        if (alarms != null) {
-            for (AlarmClock a : alarms) {
-                setExtraValues(a);
-                if (a.isIsActive()) {
-                    scheduleAlarmClock(a);
-                }
-            }
-            writeAlarmClocks(alarms);
-        }
-        return alarms;
-    }
-
-    // Keep this method to migrate data from config file to derby db.
-    public static List<AlarmClock> readAlarmClocksFromFile() {
-        try {
-            List<AlarmClock> alarms = new ArrayList<>();
-            try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(AppVariables.AlarmClocksFile))) {
-                Properties values = new Properties();
-                values.load(in);
-                for (Object key : values.keySet()) {
-                    try {
-                        AlarmClock alarm = new AlarmClock();
-                        alarm.setKey(Long.valueOf((String) key));
-                        String[] fields = values.getProperty((String) key).split(AlarmValueSeprator);
-//                        MyBoxLog.debug(Arrays.asList(fields));
-                        if (fields.length != 12) {
-                            continue;
-                        }
-                        alarm.setDescription(fields[0]);
-                        alarm.setAlarmType(Integer.valueOf(fields[1]));
-                        alarm.setStartTime(Long.valueOf(fields[2]));
-                        alarm.setIsActive(Boolean.valueOf(fields[3]));
-                        alarm.setSound(fields[4]);
-                        alarm.setEveryValue(Integer.valueOf(fields[5]));
-                        alarm.setLastTime(Long.valueOf(fields[6]));
-                        alarm.setNextTime(Long.valueOf(fields[7]));
-                        alarm.setIsSoundLoop(Boolean.valueOf(fields[8]));
-                        alarm.setIsSoundContinully(Boolean.valueOf(fields[9]));
-                        alarm.setSoundLoopTimes(Integer.valueOf(fields[10]));
-                        alarm.setVolume(Float.valueOf(fields[11]));
-                        setExtraValues(alarm);
-                        alarms.add(alarm);
-                        if (alarm.isIsActive()) {
-                            scheduleAlarmClock(alarm);
-                        }
-                    } catch (Exception e) {
-                    }
-                }
-            }
-            return alarms;
-        } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
-            return null;
-        }
-    }
-
-    public static void calculateNextTime(AlarmClock alarm) {
-        long now = new Date().getTime();
-        if (!alarm.isIsActive()) {
-            alarm.setNextTime(-1);
+    public void calculateNextTime() {
+        if (!isActive || startTime == null) {
+            nextTime = null;
             return;
         }
-        if (alarm.getStartTime() >= now) {
-            alarm.setNextTime(alarm.getStartTime());
+        Date now = new Date();
+        if (startTime.after(now)) {
+            nextTime = startTime;
         }
-        long next = alarm.getNextTime();
-        if (next < now) {
-            if (alarm.getAlarmType() == AlarmType.NotRepeat) {
-                alarm.setNextTime(-1);
-                alarm.setIsActive(false);
-                writeAlarmClock(alarm);
-                return;
-            }
-            long last = alarm.getStartTime();
-            if (alarm.getLastTime() > last) {
-                last = alarm.getLastTime();
-            }
-            long loops = (now - last) / alarm.getPeriod();
-            next = last + loops * alarm.getPeriod() + alarm.getPeriod();
-        }
-        if (alarm.getAlarmType() == AlarmType.Weekend) {
-            while (!DateTools.isWeekend(next)) {
-                next += 24 * 3600000;
-            }
-        }
-        if (alarm.getAlarmType() == AlarmType.WorkingDays) {
-            while (DateTools.isWeekend(next)) {
-                next += 24 * 3600000;
-            }
-        }
-        alarm.setNextTime(next);
+//        if (nextTime != null && nextTime.before(now)) {
+//            if (alarmType == AlarmType.NotRepeat) {
+//                nextTime = null;
+//                isActive = false;
+////                writeAlarmClock(alarm);
+//                return;
+//            }
+//            if (last != null && last.after(now)) {
+//                last = alarm.getLastTime();
+//            }
+//            long loops = (now.getTime() - last.getTime()) / period(alarm);
+//            next = last + loops * alarm.getPeriod() + alarm.getPeriod();
+//        }
+//        if (alarm.getAlarmType() == AlarmType.Weekend) {
+//            while (!DateTools.isWeekend(next)) {
+//                next += 24 * 3600000;
+//            }
+//        }
+//        if (alarm.getAlarmType() == AlarmType.WorkingDays) {
+//            while (DateTools.isWeekend(next)) {
+//                next += 24 * 3600000;
+//            }
+//        }
+//        alarm.setNextTime(next);
     }
 
-    public static void setExtraValues(AlarmClock alarm) {
-        if (alarm == null) {
-            return;
-        }
-        alarm.setRepeat(getTypeString(alarm));
-        alarm.setStart(DateTools.datetimeToString(alarm.getStartTime()));
-        alarm.setPeriod(getPeriod(alarm));
-        calculateNextTime(alarm);
-        if (!alarm.isIsActive()) {
-            alarm.setStatus(Languages.message("Inactive"));
-        } else {
-            alarm.setStatus(Languages.message("Active"));
-        }
-        if (alarm.getLastTime() > 0) {
-            alarm.setLast(DateTools.datetimeToString(alarm.getLastTime()));
-        } else {
-            alarm.setLast("");
-        }
-        if (alarm.getNextTime() > 0) {
-            alarm.setNext(DateTools.datetimeToString(alarm.getNextTime()));
-        } else {
-            alarm.setNext("");
-        }
-
+    public String scehduleKey() {
+        return "AlarmClock" + atid;
     }
 
-    public static String getTypeString(AlarmClock alarm) {
-
-        switch (alarm.getAlarmType()) {
-            case AlarmType.NotRepeat:
-                return Languages.message("NotRepeat");
-            case AlarmType.EveryDay:
-                return Languages.message("EveryDay");
-            case AlarmType.Weekend:
-                return Languages.message("Weekend");
-            case AlarmType.WorkingDays:
-                return Languages.message("WorkingDays");
-            case AlarmType.EverySomeHours:
-                return Languages.message("Every") + " " + alarm.getEveryValue() + " " + Languages.message("Hours");
-            case AlarmType.EverySomeMinutes:
-                return Languages.message("Every") + " " + alarm.getEveryValue() + " " + Languages.message("Minutes");
-            case AlarmType.EverySomeDays:
-                return Languages.message("Every") + " " + alarm.getEveryValue() + " " + Languages.message("Days");
-            case AlarmType.EverySomeSeconds:
-                return Languages.message("Every") + " " + alarm.getEveryValue() + " " + Languages.message("Seconds");
-        }
-        return null;
-    }
-
-    public static String getTypeString(int type) {
-
-        switch (type) {
-            case AlarmType.NotRepeat:
-                return Languages.message("NotRepeat");
-            case AlarmType.EveryDay:
-                return Languages.message("EveryDay");
-            case AlarmType.Weekend:
-                return Languages.message("Weekend");
-            case AlarmType.WorkingDays:
-                return Languages.message("WorkingDays");
-            case AlarmType.EverySomeHours:
-            case AlarmType.EverySomeMinutes:
-            case AlarmType.EverySomeDays:
-            case AlarmType.EverySomeSeconds:
-                return Languages.message("Every");
-        }
-        return null;
-    }
-
-    public static String getTypeUnit(int type) {
-
-        switch (type) {
-            case AlarmType.EverySomeHours:
-                return Languages.message("Hours");
-            case AlarmType.EverySomeMinutes:
-                return Languages.message("Minutes");
-            case AlarmType.EverySomeDays:
-                return Languages.message("Days");
-            case AlarmType.EverySomeSeconds:
-                return Languages.message("Seconds");
-        }
-        return null;
-    }
-
-    public static long getPeriod(AlarmClock alarm) {
-
-        switch (alarm.getAlarmType()) {
-            case AlarmType.EveryDay:
-            case AlarmType.Weekend:
-            case AlarmType.WorkingDays:
-            case AlarmType.EverySomeDays:
-                return 24 * 3600000;
-            case AlarmType.EverySomeHours:
-                return alarm.getEveryValue() * 3600000;
-            case AlarmType.EverySomeMinutes:
-                return alarm.getEveryValue() * 60000;
-            case AlarmType.EverySomeSeconds:
-                return alarm.getEveryValue() * 1000;
-        }
-        return -1;
-
-    }
-
-    public static boolean writeAlarmClock(AlarmClock theAlarm) {
-        List<AlarmClock> alarms = new ArrayList<>();
-        alarms.add(theAlarm);
-        return writeAlarmClocks(alarms);
-    }
-
-    public static boolean writeAlarmClocks(List<AlarmClock> alarms) {
-        return TableAlarmClock.write(alarms);
-    }
-
-    public static int findAlarmIndex(ObservableList<AlarmClock> alarms, long key) {
+    public int addInSchedule() {
         try {
-            if (alarms == null || key <= 0) {
-                return -1;
+            removeFromSchedule();
+            if (!isActive) {
+                return 0;
             }
-            for (int i = 0; i < alarms.size(); ++i) {
-                if (alarms.get(i).getKey() == key) {
-                    return i;
-                }
-            }
-            return -1;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return -1;
-        }
-    }
-
-    public static boolean deleteAlarmClocks(ObservableList<AlarmClock> alarms) {
-        try {
-            if (alarms == null || alarms.isEmpty()) {
-                return false;
-            }
-            TableAlarmClock.delete(alarms);
-            for (AlarmClock alarm : alarms) {
-                ScheduledFuture future = scheduledTasks.get(alarm.getKey());
-                if (future != null) {
-                    future.cancel(true);
-                    scheduledTasks.remove(alarm.getKey());
-                }
-            }
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return false;
-        }
-    }
-
-    public static boolean deleteAlarmClock(AlarmClock alarm) {
-        ObservableList<AlarmClock> alarms = FXCollections.observableArrayList();
-        alarms.add(alarm);
-        return deleteAlarmClocks(alarms);
-    }
-
-    public static boolean clearAllAlarmClocks() {
-        try {
-            new TableAlarmClock().clearData();
-            for (Long key : scheduledTasks.keySet()) {
-                ScheduledFuture future = scheduledTasks.get(key);
-                future.cancel(true);
-            }
-            scheduledTasks = new HashMap<>();
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return false;
-        }
-    }
-
-    public static void scheduleAlarmClock(AlarmClock alarm) {
-        if (alarm == null || alarm.getKey() <= 0) {
-            return;
-        }
-        try {
-            if (scheduledTasks != null) {
-                ScheduledFuture oldFuture = scheduledTasks.get(alarm.getKey());
-                if (oldFuture != null) {
-                    oldFuture.cancel(true);
-                    scheduledTasks.remove(alarm.getKey());
-                }
-            }
-            if (!alarm.isIsActive()) {
-                return;
-            }
-            AlarmClockTask task = new AlarmClockTask(alarm);
+            AlarmClockTask task = new AlarmClockTask(this);
             ScheduledFuture newFuture;
             if (executorService == null) {
                 executorService = Executors.newScheduledThreadPool(10);
             }
-            if (alarm.getAlarmType() == AlarmType.NotRepeat) {
+            if (alarmType == AlarmType.NotRepeat) {
                 newFuture = executorService.schedule(task, task.getDelay(), TimeUnit.MILLISECONDS);
             } else {
                 if (task.getPeriod() <= 0) {
-                    alarm.setIsActive(false);
-                    writeAlarmClock(alarm);
-                    return;
+                    isActive = false;
+                    return 1;
                 }
                 newFuture = executorService.scheduleAtFixedRate(task, task.getDelay(), task.getPeriod(), TimeUnit.MILLISECONDS);
             }
             if (scheduledTasks == null) {
                 scheduledTasks = new HashMap<>();
             }
-            scheduledTasks.put(alarm.getKey(), newFuture);
+            scheduledTasks.put(scehduleKey(), newFuture);
+            return 0;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return -1;
+        }
+    }
+
+    public boolean removeFromSchedule() {
+        try {
+            if (scheduledTasks == null) {
+                return false;
+            }
+            String key = scehduleKey();
+            ScheduledFuture future = scheduledTasks.get(key);
+            if (future != null) {
+                future.cancel(true);
+                scheduledTasks.remove(key);
+            }
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    /*
+        Static methods
+     */
+    public static AlarmClock create() {
+        return new AlarmClock();
+    }
+
+    public static boolean setValue(AlarmClock data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        try {
+            switch (column) {
+                case "atid":
+                    data.setAtid(value == null ? null : (long) value);
+                    return true;
+                case "alarm_type":
+                    data.setAlarmType(value == null ? null : AlarmType.values()[(int) value]);
+                    return true;
+                case "every_value":
+                    data.setEveryValue(value == null ? null : (int) value);
+                    return true;
+                case "start_time":
+                    data.setStartTime(value == null ? null : (Date) value);
+                    return true;
+                case "last_time":
+                    data.setLastTime(value == null ? null : (Date) value);
+                    return true;
+                case "next_time":
+                    data.setNextTime(value == null ? null : (Date) value);
+                    return true;
+                case "sound_loop_times":
+                    data.setSoundLoopTimes(value == null ? null : (int) value);
+                    return true;
+                case "is_sound_loop":
+                    data.setIsSoundLoop(value == null ? null : (boolean) value);
+                    return true;
+                case "is_sound_continully":
+                    data.setIsSoundContinully(value == null ? null : (boolean) value);
+                    return true;
+                case "is_active":
+                    data.setIsActive(value == null ? null : (boolean) value);
+                    return true;
+                case "volume":
+                    data.setVolume(value == null ? null : (float) value);
+                    return true;
+                case "title":
+                    data.setTitle(value == null ? null : (String) value);
+                    return true;
+                case "sound":
+                    data.setSound(value == null ? null : (String) value);
+                    return true;
+                case "description":
+                    data.setDescription(value == null ? null : (String) value);
+                    return true;
+            }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
+        return false;
+    }
+
+    public static Object getValue(AlarmClock data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        switch (column) {
+            case "atid":
+                return data.getAtid();
+            case "alarm_type":
+                AlarmType type = data.getAlarmType();
+                return type == null ? -1 : type.ordinal();
+            case "every_value":
+                return data.getEveryValue();
+            case "start_time":
+                return data.getStartTime();
+            case "last_time":
+                return data.getLastTime();
+            case "next_time":
+                return data.getNextTime();
+            case "sound_loop_times":
+                return data.getSoundLoopTimes();
+            case "is_sound_loop":
+                return data.isIsSoundLoop();
+            case "is_sound_continully":
+                return data.isIsSoundContinully();
+            case "is_active":
+                return data.isIsActive();
+            case "volume":
+                return data.getVolume();
+            case "title":
+                return data.getTitle();
+            case "sound":
+                return data.getSound();
+            case "description":
+                return data.getDescription();
+        }
+        return null;
+    }
+
+    public static boolean valid(AlarmClock data) {
+        return data != null && data.getAlarmType() == null;
+    }
+
+    public static void setExtraValues2(AlarmClock alarm) {
+        if (alarm == null) {
+            return;
+        }
+//        calculateNextTime(alarm);
+//        if (!alarm.isIsActive()) {
+//            alarm.setStatus(message("Inactive"));
+//        } else {
+//            alarm.setStatus(message("Active"));
+//        }
+//        if (alarm.getLastTime() > 0) {
+//            alarm.setLast(DateTools.datetimeToString(alarm.getLastTime()));
+//        } else {
+//            alarm.setLast("");
+//        }
+//        if (alarm.getNextTime() > 0) {
+//            alarm.setNext(DateTools.datetimeToString(alarm.getNextTime()));
+//        } else {
+//            alarm.setNext("");
+//        }
 
     }
 
-    public String getDescription() {
-        return description.get();
+    public static String typeString(AlarmClock alarm) {
+        AlarmType type = alarm.getAlarmType();
+        switch (type) {
+            case NotRepeat:
+                return message("NotRepeat");
+            case EveryDay:
+                return message("EveryDay");
+            case Weekend:
+                return message("Weekend");
+            case WorkingDays:
+                return message("WorkingDays");
+            case EverySomeHours:
+            case EverySomeMinutes:
+            case EverySomeDays:
+            case EverySomeSeconds:
+                return message("Every") + " " + alarm.getEveryValue() + " " + typeUnit(type);
+        }
+        return null;
     }
 
-    public void setDescription(String Description) {
-        this.description = new SimpleStringProperty(Description);
+    public static String typeUnit(AlarmType type) {
+        switch (type) {
+            case EverySomeHours:
+                return message("Hours");
+            case EverySomeMinutes:
+                return message("Minutes");
+            case EverySomeDays:
+                return message("Days");
+            case EverySomeSeconds:
+                return message("Seconds");
+        }
+        return null;
     }
 
-    public String getSound() {
-        return sound.get();
+    public static long period(AlarmClock alarm) {
+        switch (alarm.getAlarmType()) {
+            case EveryDay:
+            case Weekend:
+            case WorkingDays:
+            case EverySomeDays:
+                return 24 * 3600000;
+            case EverySomeHours:
+                return alarm.getEveryValue() * 3600000;
+            case EverySomeMinutes:
+                return alarm.getEveryValue() * 60000;
+            case EverySomeSeconds:
+                return alarm.getEveryValue() * 1000;
+        }
+        return -1;
+    }
+
+    public static boolean scheduleAll() {
+        return true;
+//        try ( Connection conn = DerbyBase.getConnection()) {
+//            TableAlarmClock tableAlarmClock = new TableAlarmClock();
+//            List<AlarmClock> alarms = tableAlarmClock.readAll(conn);
+//            if (alarms == null) {
+//                return true;
+//            }
+//            for (AlarmClock alarm : alarms) {
+//                if (alarm.addInSchedule() > 0) {
+//                    tableAlarmClock.writeData(conn, alarm);
+//                }
+//            }
+//            return true;
+//        } catch (Exception e) {
+//            MyBoxLog.error(e);
+//            return false;
+//        }
+    }
+
+    /*
+        set
+     */
+    public void setAtid(long atid) {
+        this.atid = atid;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public void setSound(String sound) {
-        this.sound = new SimpleStringProperty(sound);
-    }
-
-    public void setStart(String start) {
-        this.start = new SimpleStringProperty(start);
-    }
-
-    public void setStatus(String status) {
-        this.status = new SimpleStringProperty(status);
-    }
-
-    public void setRepeat(String repeat) {
-        this.repeat = new SimpleStringProperty(repeat);
-    }
-
-    public void setNext(String next) {
-        this.next = new SimpleStringProperty(next);
-    }
-
-    public void setLast(String last) {
-        this.last = new SimpleStringProperty(last);
-    }
-
-    public String getStart() {
-        return start.get();
-    }
-
-    public String getStatus() {
-        return status.get();
-    }
-
-    public String getRepeat() {
-        return repeat.get();
-    }
-
-    public String getNext() {
-        return next.get();
-    }
-
-    public String getLast() {
-        return last.get();
-    }
-
-    public void setKey(long key) {
-        this.key = key;
-    }
-
-    public void setStartTime(long startTime) {
-        this.startTime = startTime;
+        this.sound = sound;
     }
 
     public void setIsActive(boolean isActive) {
         this.isActive = isActive;
     }
 
-    public void setAlarmType(int alarmType) {
+    public void setIsSoundLoop(boolean isSoundLoop) {
+        this.isSoundLoop = isSoundLoop;
+    }
+
+    public void setIsSoundContinully(boolean isSoundContinully) {
+        this.isSoundContinully = isSoundContinully;
+    }
+
+    public void setAlarmType(AlarmType alarmType) {
         this.alarmType = alarmType;
     }
 
@@ -437,19 +369,66 @@ public class AlarmClock extends BaseData {
         this.everyValue = everyValue;
     }
 
-    public long getKey() {
-        return key;
+    public void setSoundLoopTimes(int soundLoopTimes) {
+        this.soundLoopTimes = soundLoopTimes;
     }
 
-    public long getStartTime() {
-        return startTime;
+    public void setVolume(float volume) {
+        this.volume = volume;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setLastTime(Date lastTime) {
+        this.lastTime = lastTime;
+    }
+
+    public void setNextTime(Date nextTime) {
+        this.nextTime = nextTime;
+    }
+
+    /*
+        get
+     */
+    public static String getAlarmValueSeprator() {
+        return AlarmValueSeprator;
+    }
+
+    public static int getOffset() {
+        return offset;
+    }
+
+    public long getAtid() {
+        return atid;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getSound() {
+        return sound;
     }
 
     public boolean isIsActive() {
         return isActive;
     }
 
-    public int getAlarmType() {
+    public boolean isIsSoundLoop() {
+        return isSoundLoop;
+    }
+
+    public boolean isIsSoundContinully() {
+        return isSoundContinully;
+    }
+
+    public AlarmType getAlarmType() {
         return alarmType;
     }
 
@@ -457,60 +436,24 @@ public class AlarmClock extends BaseData {
         return everyValue;
     }
 
-    public long getNextTime() {
-        return nextTime;
-    }
-
-    public void setNextTime(long nextTime) {
-        this.nextTime = nextTime;
-    }
-
-    public long getLastTime() {
-        return lastTime;
-    }
-
-    public void setLastTime(long lastTime) {
-        this.lastTime = lastTime;
-    }
-
-    public boolean isIsSoundLoop() {
-        return isSoundLoop;
-    }
-
-    public void setIsSoundLoop(boolean isSoundLoop) {
-        this.isSoundLoop = isSoundLoop;
-    }
-
-    public boolean isIsSoundContinully() {
-        return isSoundContinully;
-    }
-
-    public void setIsSoundContinully(boolean isSoundContinully) {
-        this.isSoundContinully = isSoundContinully;
-    }
-
     public int getSoundLoopTimes() {
         return soundLoopTimes;
-    }
-
-    public void setSoundLoopTimes(int soundLoopTimes) {
-        this.soundLoopTimes = soundLoopTimes;
     }
 
     public float getVolume() {
         return volume;
     }
 
-    public void setVolume(float volume) {
-        this.volume = volume;
+    public Date getStartTime() {
+        return startTime;
     }
 
-    public long getPeriod() {
-        return period;
+    public Date getLastTime() {
+        return lastTime;
     }
 
-    public void setPeriod(long period) {
-        this.period = period;
+    public Date getNextTime() {
+        return nextTime;
     }
 
 }

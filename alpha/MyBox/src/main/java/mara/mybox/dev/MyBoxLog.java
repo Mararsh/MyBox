@@ -4,8 +4,8 @@ import java.util.Date;
 import javafx.application.Platform;
 import mara.mybox.controller.MyBoxLogViewerController;
 import mara.mybox.db.data.BaseData;
-import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.BaseDataAdaptor;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
@@ -19,11 +19,14 @@ import mara.mybox.value.Languages;
  */
 public class MyBoxLog extends BaseData {
 
-    protected long mblid;
+    protected long mblid, count;
     protected Date time;
     protected LogType logType;
     protected String fileName, className, methodName, log, comments, callers, typeName;
     protected int line;
+    public static MyBoxLog LastMyBoxLog;
+    public static long LastRecordTime;
+    public static int MinInterval = 1;  // ms
 
     public static enum LogType {
         Console, Error, Debug, Info
@@ -33,6 +36,16 @@ public class MyBoxLog extends BaseData {
         mblid = -1;
         time = new Date();
         logType = LogType.Console;
+    }
+
+    public boolean equalTo(MyBoxLog myMyboxLog) {
+        return myMyboxLog != null && logType == myMyboxLog.getLogType()
+                && log != null && log.equals(myMyboxLog.getLog())
+                && fileName != null && fileName.equals(myMyboxLog.getFileName())
+                && className != null && className.equals(myMyboxLog.getClassName())
+                && methodName != null && methodName.equals(myMyboxLog.getMethodName())
+                && callers != null && callers.equals(myMyboxLog.getCallers())
+                && line == myMyboxLog.getLine();
     }
 
     /*
@@ -191,11 +204,18 @@ public class MyBoxLog extends BaseData {
         return log(LogType.Info, log, comments);
     }
 
+    public static boolean isFlooding() {
+        return new Date().getTime() - LastRecordTime < MinInterval;
+    }
+
     private static MyBoxLog log(LogType type, Object log, String comments) {
         try {
             if (type == null) {
                 return null;
             }
+//            if (isFlooding()) {
+//                return null;
+//            }
             String logString = log == null ? "null" : log.toString();
             if (logString.contains("java.sql.SQLException: No suitable driver found")
                     || logString.contains("java.sql.SQLNonTransientConnectionException")) {
@@ -210,7 +230,7 @@ public class MyBoxLog extends BaseData {
                 return null;
             }
             StackTraceElement stack = stacks[2];
-            boolean mylog = stack.getClassName().contains("MyBoxLog");
+            boolean isMylog = stack.getClassName().contains("MyBoxLog");
             String callers = null;
             for (int i = 3; i < stacks.length; ++i) {
                 StackTraceElement s = stacks[i];
@@ -223,7 +243,7 @@ public class MyBoxLog extends BaseData {
                     callers += s.getFileName() + " " + s.getClassName()
                             + " " + s.getMethodName() + " " + s.getLineNumber();
                     if (s.getClassName().contains("MyBoxLog")) {
-                        mylog = true;
+                        isMylog = true;
                     }
                 }
             }
@@ -236,6 +256,9 @@ public class MyBoxLog extends BaseData {
                     .setMethodName(stack.getMethodName())
                     .setLine(stack.getLineNumber())
                     .setCallers(callers);
+            if (LastMyBoxLog != null && LastMyBoxLog.equalTo(myboxLog)) {
+                return myboxLog;
+            }
             String logText = println(myboxLog, type == LogType.Error || (AppVariables.detailedDebugLogs && type == LogType.Debug));
             System.out.print(logText);
             if (AppVariables.popErrorLogs && type == LogType.Error) {
@@ -246,7 +269,7 @@ public class MyBoxLog extends BaseData {
                     }
                 });
             }
-            boolean notSave = mylog || type == LogType.Console
+            boolean notSave = isMylog || type == LogType.Console
                     || (type == LogType.Debug && !AppVariables.saveDebugLogs);
             if (!notSave) {
                 new TableMyBoxLog().writeData(myboxLog);
@@ -254,6 +277,8 @@ public class MyBoxLog extends BaseData {
             if (type == LogType.Error) {
                 errorNotify.set(!errorNotify.get());
             }
+            LastMyBoxLog = myboxLog;
+            LastRecordTime = new Date().getTime();
             return myboxLog;
         } catch (Exception e) {
             return null;

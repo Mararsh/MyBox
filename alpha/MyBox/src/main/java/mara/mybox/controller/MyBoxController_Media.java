@@ -8,9 +8,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -100,7 +97,7 @@ public abstract class MyBoxController_Media extends MyBoxController_Data {
                 screenRecorder,
                 FFmpegConversionMenu, FFmpegMergeMenu,
                 FFprobe, FFmpegInformation, new SeparatorMenuItem(),
-                alarmClock, new SeparatorMenuItem(),
+                //                alarmClock, new SeparatorMenuItem(),
                 GameElimniation, GameMine
         );
 

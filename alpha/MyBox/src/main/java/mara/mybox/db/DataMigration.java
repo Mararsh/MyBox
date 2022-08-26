@@ -35,6 +35,7 @@ import mara.mybox.db.data.Location;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.data.WebHistory;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
+import mara.mybox.db.table.TableAlarmClock;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
@@ -167,6 +168,10 @@ public class DataMigration {
 
             conn.setAutoCommit(true);
             statement.executeUpdate("ALTER TABLE Data2D_Column ADD COLUMN need_format Boolean");
+
+            // Users' data are discarded. Sorry!
+            statement.executeUpdate("DROP TABLE Alarm_Clock");
+            new TableAlarmClock().createTable(conn);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

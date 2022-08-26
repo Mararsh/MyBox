@@ -463,9 +463,7 @@ Add/Delete/Edit children, rename, move, copy, export, display tree view, unfold,
 
 ### Text in MyBox Clipboard<a id="myboxTextClipboard" />
 1. Add/Delete/View texts in MyBox Clipboard.
-2. Add text in System Clipboard.
-3. Paste selected text in System Clipboard.
-4. In context menu of all text input controls, MyBox Clipboard can be popped for selecting text to paste.
+2. Add text in System is onl text input controls, MyBox Clipboard can be popped for selecting text to paste.
 
 ### Text in System Clipboard<a id="systemTextClipboard" />
 Load/Refresh/Delete text in System Clipboard:             

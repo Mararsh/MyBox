@@ -44,7 +44,7 @@ public abstract class MainMenuController_Development extends MainMenuController_
     @FXML
     protected Menu devMenu;
     @FXML
-    protected CheckMenuItem monitorMemroyCheck, monitorCpuCheck, detailedDebugCheck;
+    protected CheckMenuItem monitorMemroyCheck, monitorCpuCheck, detailedDebugCheck, popErrorCheck;
 
     @Override
     public void initControls() {
@@ -64,6 +64,7 @@ public abstract class MainMenuController_Development extends MainMenuController_
     protected void checkDev() {
         monitorMemroyCheck.setSelected(UserConfig.getBoolean("MonitorMemroy", false));
         monitorCpuCheck.setSelected(UserConfig.getBoolean("MonitorCpu", false));
+        popErrorCheck.setSelected(AppVariables.popErrorLogs);
         detailedDebugCheck.setSelected(AppVariables.detailedDebugLogs);
         checkMemroyMonitor();
         checkCpuMonitor();
@@ -267,6 +268,12 @@ public abstract class MainMenuController_Development extends MainMenuController_
     protected void detailedDebug() {
         AppVariables.detailedDebugLogs = detailedDebugCheck.isSelected();
         UserConfig.setBoolean("DetailedDebugLogs", AppVariables.detailedDebugLogs);
+    }
+
+    @FXML
+    protected void popError() {
+        AppVariables.popErrorLogs = popErrorCheck.isSelected();
+        UserConfig.setBoolean("PopErrorLogs", AppVariables.popErrorLogs);
     }
 
     @FXML

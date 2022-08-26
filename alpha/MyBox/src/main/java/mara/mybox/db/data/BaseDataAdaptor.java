@@ -7,6 +7,7 @@ import java.util.List;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.table.BaseTable;
+import mara.mybox.db.table.TableAlarmClock;
 import mara.mybox.db.table.TableBlobValue;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
@@ -128,6 +129,9 @@ public class BaseDataAdaptor {
         } else if (data instanceof Data2DStyle) {
             return new TableData2DStyle();
 
+        } else if (data instanceof AlarmClock) {
+            return new TableAlarmClock();
+
         }
         return null;
     }
@@ -217,6 +221,9 @@ public class BaseDataAdaptor {
         } else if (data instanceof Data2DStyle) {
             return Data2DStyle.valid((Data2DStyle) data);
 
+        } else if (data instanceof AlarmClock) {
+            return AlarmClock.valid((AlarmClock) data);
+
         } else {
             return true;
         }
@@ -305,6 +312,9 @@ public class BaseDataAdaptor {
         } else if (data instanceof Data2DStyle) {
             return Data2DStyle.getValue((Data2DStyle) data, name);
 
+        } else if (data instanceof AlarmClock) {
+            return AlarmClock.getValue((AlarmClock) data, name);
+
         } else {
             return data.getColumnValue(name);
         }
@@ -386,6 +396,9 @@ public class BaseDataAdaptor {
 
         } else if (data instanceof Data2DStyle) {
             return Data2DStyle.setValue((Data2DStyle) data, name, value);
+
+        } else if (data instanceof AlarmClock) {
+            return AlarmClock.setValue((AlarmClock) data, name, value);
 
         } else {
             return data.setColumnValue(name, value);

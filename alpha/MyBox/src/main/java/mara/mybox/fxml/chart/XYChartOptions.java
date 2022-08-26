@@ -359,9 +359,9 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
         return categoryIsNumbers;
     }
 
-    public void setCategoryIsNumbers(boolean categoryIsNumbers) {
+    public XYChartOptions setCategoryIsNumbers(boolean categoryIsNumbers) {
         this.categoryIsNumbers = categoryIsNumbers;
-        UserConfig.setBoolean(chartName + "CategoryIsNumbers", categoryIsNumbers);
+        return this;
     }
 
     public boolean isDisplayCategoryMark() {

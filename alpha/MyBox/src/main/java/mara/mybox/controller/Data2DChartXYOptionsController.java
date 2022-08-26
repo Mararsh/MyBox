@@ -450,6 +450,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
                         return;
                     }
                     chartMaker.setCategoryIsNumbers(categoryNumberRadio.isSelected());
+                    UserConfig.setBoolean(chartName + "CategoryIsNumbers", categoryNumberRadio.isSelected());
                     chartController.redraw();
                 }
             });

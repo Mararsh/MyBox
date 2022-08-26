@@ -17,6 +17,7 @@ import mara.mybox.fxml.chart.ChartOptions.ChartType;
 import mara.mybox.fxml.chart.XYChartMaker;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -26,6 +27,7 @@ import static mara.mybox.value.Languages.message;
 public class Data2DChartXYController extends BaseData2DChartController {
 
     protected XYChartMaker chartMaker;
+    protected Data2DColumn categoryColumn;
 
     @FXML
     protected ToggleGroup chartGroup;
@@ -104,8 +106,9 @@ public class Data2DChartXYController extends BaseData2DChartController {
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
+            categoryColumn = data2D.column(categoryCol);
             dataColsIndices.add(categoryCol);
-            outputColumns.add(data2D.column(categoryCol));
+            outputColumns.add(categoryColumn);
             if (bubbleChartRadio != null && bubbleChartRadio.isSelected()) {
                 title += " - " + selectedValue;
                 int valueCol = data2D.colOrder(selectedValue);
@@ -126,14 +129,14 @@ public class Data2DChartXYController extends BaseData2DChartController {
             outputColumns.addAll(checkedColumns);
             title += " - " + checkedColsNames;
 
-            return initChart(title);
+            return initChart(title, categoryColumn.isNumberType());
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return false;
         }
     }
 
-    public boolean initChart(String title) {
+    public boolean initChart(String title, boolean categoryIsNumbers) {
         try {
             ChartType chartType;
             String chartName;
@@ -161,6 +164,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
             } else {
                 return false;
             }
+            UserConfig.setBoolean(chartName + "CategoryIsNumbers", categoryIsNumbers);
             chartMaker.init(chartType, chartName)
                     .setDefaultChartTitle(title)
                     .setChartTitle(title)
