@@ -27,14 +27,14 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public class Data2DGroupEqualValuesController extends Data2DChartXYController {
-
+    
     protected List<String> groups, calculationColumns, calculations, sorts;
     protected DataFileCSV resultsFile;
     protected PieChartMaker pieMaker;
     protected List<List<String>> xyData, pieData;
     protected List<Data2DColumn> xyColumns, pieColumns;
     protected int maxData = -1;
-
+    
     @FXML
     protected Tab groupTab;
     @FXML
@@ -49,20 +49,21 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
     protected ControlData2DChartXY xyChartController;
     @FXML
     protected ControlData2DChartPie pieChartController;
-
+    
     public Data2DGroupEqualValuesController() {
         baseTitle = message("GroupEqualValues");
+        TipsLabelKey = "GroupEqualTips";
     }
-
+    
     @Override
     public void initControls() {
         try {
             chartController = xyChartController;
             super.initControls();
-
+            
             pieChartController.dataController = this;
             pieMaker = pieChartController.pieMaker;
-
+            
             groupController.setParameters(this, message("Column"), message("GroupBy"));
             groupController.selectedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -78,7 +79,7 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
                 }
             });
             sortController.setParameters(this, message("Sort"), message("Sort"));
-
+            
             displayAllCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayAll", true));
             displayAllCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
                 if (isSettingValues) {
@@ -86,18 +87,18 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
                 }
                 UserConfig.setBoolean(baseName + "DisplayAll", displayAllCheck.isSelected());
                 noticeMemory();
-                drawChart();
+                makeChart();
             });
-
+            
             displayAllCheck.visibleProperty().bind(allPagesRadio.selectedProperty());
-
+            
             valuesController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    drawChart();
+                    makeChart();
                 }
             });
-
+            
             maxData = UserConfig.getInt(baseName + "MaxDataNumber", -1);
             if (maxData > 0) {
                 maxInput.setText(maxData + "");
@@ -122,12 +123,12 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
                     }
                 }
             });
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-
+    
     @Override
     public void makeOptions() {
         try {
@@ -157,7 +158,7 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
             MyBoxLog.error(e.toString());
         }
     }
-
+    
     public void makeSortList() {
         try {
             sortController.loadNames(null);
@@ -183,22 +184,22 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
             MyBoxLog.error(e.toString());
         }
     }
-
+    
     @Override
     public void afterRefreshControls() {
     }
-
+    
     @Override
     public void noticeMemory() {
         noticeLabel.setVisible(isAllPages() && displayAllCheck.isSelected());
     }
-
+    
     @Override
     public boolean initData() {
         try {
             checkObject();
             checkInvalidAs();
-
+            
             groups = groupController.selectedNames();
             if (groups == null || groups.isEmpty()) {
                 outOptionsError(message("SelectToHandle") + ": " + message("GroupBy"));
@@ -246,14 +247,14 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
                 checkedColumns.add(data2D.columnByName(name));
             }
             checkedColsNames = colsNames;
-
+            
             return initChart(groups.toString(), false);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
         }
     }
-
+    
     @Override
     protected void startOperation() {
         if (task != null) {
@@ -262,7 +263,7 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
         resultsFile = null;
         valuesController.loadNull();
         task = new SingletonTask<Void>(this) {
-
+            
             @Override
             protected boolean handle() {
                 try {
@@ -302,41 +303,34 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
                     return false;
                 }
             }
-
+            
             @Override
             protected void whenSucceeded() {
                 valuesController.loadDef(resultsFile);
             }
-
+            
             @Override
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
                 task = null;
             }
-
+            
         };
         start(task);
     }
-
+    
     @Override
     public String chartTitle() {
         return message(message("GroupEqualValues") + " - " + groups);
     }
-
+    
     @Override
     public String categoryName() {
         return selectedCategory;
     }
-
-    @FXML
-    @Override
-    public void refreshAction() {
-        drawChart();
-    }
-
-    @Override
-    public void drawChart() {
+    
+    public void makeChart() {
         xyColumns = null;
         xyData = null;
         pieColumns = null;
@@ -350,43 +344,42 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
             backgroundTask.cancel();
         }
         backgroundTask = new SingletonTask<Void>(this) {
-
+            
             @Override
             protected boolean handle() {
                 try {
                     resultsFile.startTask(backgroundTask, null);
                     makeChartData();
+                    outputColumns = xyColumns;
+                    outputData = xyData;
                     return xyData != null;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
                 }
             }
-
+            
             @Override
             protected void whenSucceeded() {
-                outputColumns = xyColumns;
-                chartMaker.setPalette(makePalette());
-                xyChartController.writeXYChart(xyColumns, xyData, null, false);
-                pieChartController.writeChart(pieColumns, pieData, false);
+                drawChart();
             }
-
+            
             @Override
             protected void whenFailed() {
-
+                
             }
-
+            
             @Override
             protected void finalAction() {
                 super.finalAction();
                 resultsFile.stopTask();
                 backgroundTask = null;
             }
-
+            
         };
         start(backgroundTask, false);
     }
-
+    
     public void makeChartData() {
         try {
             List<List<String>> resultsData;
@@ -411,17 +404,17 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
             }
             categoryColumn = resultsFile.columns.get(categoryIndex);
             Data2DColumn countColumn = resultsFile.columns.get(countIndex);
-
+            
             xyColumns = new ArrayList<>();
             xyColumns.add(categoryColumn);
             for (int i : valueIndice) {
                 xyColumns.add(resultsFile.columns.get(i));
             }
-
+            
             pieColumns = new ArrayList<>();
             pieColumns.add(categoryColumn);
             pieColumns.add(countColumn);
-
+            
             xyData = new ArrayList<>();
             pieData = new ArrayList<>();
             for (List<String> data : resultsData) {
@@ -437,12 +430,12 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
                 pieRow.add(data.get(countIndex));
                 pieData.add(pieRow);
             }
-
+            
             selectedCategory = categoryColumn.getColumnName();
             selectedValue = message("Aggregate");
             String title = chartTitle();
             initChart(title, categoryColumn.isNumberType());
-
+            
             pieMaker.init(message("PieChart"))
                     .setDefaultChartTitle(title + " - " + message("Count"))
                     .setChartTitle(title + " - " + message("Count"))
@@ -451,7 +444,7 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
                     .setDefaultValueLabel(message("Count"))
                     .setValueLabel(message("Count"))
                     .setInvalidAs(invalidAs);
-
+            
         } catch (Exception e) {
             if (backgroundTask != null) {
                 backgroundTask.setError(e.toString());
@@ -460,6 +453,50 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
             }
         }
     }
+    
+    @Override
+    public void drawChart() {
+        drawXYChart();
+        drawPieChart();
+    }
+    
+    @FXML
+    @Override
+    public void refreshAction() {
+        makeChart();
+    }
+    
+    @FXML
+    public void drawXYChart() {
+        try {
+            if (xyData == null || xyData.isEmpty()) {
+                popError(message("NoData"));
+                return;
+            }
+            for (int i = 0; i < xyColumns.size(); i++) {
+                Data2DColumn column = xyColumns.get(i);
+                column.setColor(null);
+            }
+            chartMaker.setPalette(makePalette());
+            xyChartController.writeXYChart(xyColumns, xyData, null, false);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+    
+    @FXML
+    public void drawPieChart() {
+        try {
+            if (pieData == null || pieData.isEmpty()) {
+                popError(message("NoData"));
+                return;
+            }
+            pieChartController.writeChart(pieColumns, pieData, false);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
 
     /*
         static
@@ -476,5 +513,5 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
             return null;
         }
     }
-
+    
 }

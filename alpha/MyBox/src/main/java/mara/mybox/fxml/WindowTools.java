@@ -377,9 +377,14 @@ public class WindowTools {
 
     public static void checkExit() {
         try {
-            if (Window.getWindows().isEmpty()) {
-                appExit();
+            List<Window> windows = new ArrayList<>();
+            windows.addAll(Window.getWindows());
+            for (Window window : windows) {
+                if (window != null && window.isShowing()) {
+                    return;
+                }
             }
+            appExit();
         } catch (Exception e) {
 //            MyBoxLog.error(e.toString());
         }

@@ -26,7 +26,7 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
 
     public Data2DSimpleLinearRegressionCombinationController() {
         baseTitle = message("SimpleLinearRegressionCombination");
-        TipsLabelKey = "SimpleLinearRegressionTips";
+        TipsLabelKey = "SimpleLinearRegressionCombinationTips";
         defaultScale = 8;
     }
 

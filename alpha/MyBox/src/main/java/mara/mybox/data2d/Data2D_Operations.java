@@ -362,7 +362,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             csvPrinter.printRecord(row);
             reader = Data2DPrecentage.create(this)
                     .setType(Data2DPrecentage.Type.ColumnsPass2)
-                    .setToNegative(toNegative)
+                    .setToNegative(toNegative).setWithValues(withValues)
                     .setColValues(colsSum);
             reader.setInvalidAs(invalidAs).setScale(scale).setCsvPrinter(csvPrinter)
                     .setCols(cols).setTask(task).start();
@@ -418,7 +418,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             reader = Data2DPrecentage.create(this)
                     .setType(Data2DPrecentage.Type.AllPass2)
                     .setWithValues(withValues).setToNegative(toNegative)
-                    .settValue(sum);
+                    .settValue(sum).setWithValues(withValues);
             reader.setInvalidAs(invalidAs).setScale(scale).setCsvPrinter(csvPrinter)
                     .setCols(cols).setTask(task).start();
         } catch (Exception e) {

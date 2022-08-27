@@ -248,7 +248,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
     public Map<String, String> makePalette() {
         try {
-
             Random random = new Random();
             if (palette == null) {
                 palette = new HashMap();

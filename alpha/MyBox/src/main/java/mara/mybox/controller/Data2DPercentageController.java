@@ -10,6 +10,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
@@ -235,10 +236,15 @@ public class Data2DPercentageController extends BaseData2DHandleController {
                 row = new ArrayList<>();
                 row.add(message("Row") + (r + 1));
                 for (int c = 0; c < colsLen; c++) {
-                    double d = DoubleTools.toDouble(tableRow.get(colIndices.get(c) + 1), invalidAs);
+                    String s = tableRow.get(colIndices.get(c) + 1);
+                    double d = DoubleTools.toDouble(s, invalidAs);
                     if (valuesCheck.isSelected()) {
                         if (DoubleTools.invalidDouble(d)) {
-                            row.add(Double.NaN + "");
+                            if (invalidAs == InvalidAs.Skip) {
+                                row.add(s);
+                            } else {
+                                row.add(Double.NaN + "");
+                            }
                         } else {
                             row.add(DoubleTools.format(d, scale));
                         }
@@ -295,10 +301,15 @@ public class Data2DPercentageController extends BaseData2DHandleController {
                 }
                 row.add(DoubleTools.format(sum, scale));
                 for (int c : colIndices) {
-                    double d = DoubleTools.toDouble(tableRow.get(c + 1), invalidAs);
+                    String s = tableRow.get(c + 1);
+                    double d = DoubleTools.toDouble(s, invalidAs);
                     if (valuesCheck.isSelected()) {
                         if (DoubleTools.invalidDouble(d)) {
-                            row.add(Double.NaN + "");
+                            if (invalidAs == InvalidAs.Skip) {
+                                row.add(s);
+                            } else {
+                                row.add(Double.NaN + "");
+                            }
                         } else {
                             row.add(DoubleTools.format(d, scale));
                         }
@@ -370,10 +381,15 @@ public class Data2DPercentageController extends BaseData2DHandleController {
                 row = new ArrayList<>();
                 row.add(message("Row") + (r + 1) + "");
                 for (int c : colIndices) {
-                    double d = DoubleTools.toDouble(tableRow.get(c + 1), invalidAs);
+                    String s = tableRow.get(c + 1);
+                    double d = DoubleTools.toDouble(s, invalidAs);
                     if (valuesCheck.isSelected()) {
                         if (DoubleTools.invalidDouble(d)) {
-                            row.add(Double.NaN + "");
+                            if (invalidAs == InvalidAs.Skip) {
+                                row.add(s);
+                            } else {
+                                row.add(Double.NaN + "");
+                            }
                         } else {
                             row.add(DoubleTools.format(d, scale));
                         }

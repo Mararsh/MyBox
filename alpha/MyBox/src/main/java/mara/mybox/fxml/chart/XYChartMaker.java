@@ -352,24 +352,31 @@ public class XYChartMaker<X, Y> extends XYChartOptions<X, Y> {
                         }
                     }
                     numberValue = ChartTools.coordinateValue(numberCoordinate, numberValue);
-                    if (xyChart.getXAxis() instanceof NumberAxis) {
-                        double categoryValue = scaleValue(category);
-                        if (DoubleTools.invalidDouble(categoryValue)) {
-                            if (invalidAs == InvalidAs.Zero) {
-                                categoryValue = 0;
-                            } else {
-                                continue;
+                    if (isXY) {
+                        if (xyChart.getXAxis() instanceof NumberAxis) {
+                            double categoryValue = scaleValue(category);
+                            if (DoubleTools.invalidDouble(categoryValue)) {
+                                if (invalidAs == InvalidAs.Zero) {
+                                    categoryValue = 0;
+                                } else {
+                                    continue;
+                                }
                             }
-                        }
-                        categoryValue = ChartTools.coordinateValue(categoryCoordinate, categoryValue);
-                        if (isXY) {
                             xyData = new XYChart.Data(categoryValue, numberValue);
                         } else {
-                            xyData = new XYChart.Data(numberValue, categoryValue);
+                            xyData = new XYChart.Data(category, numberValue);
                         }
                     } else {
-                        if (isXY) {
-                            xyData = new XYChart.Data(category, numberValue);
+                        if (xyChart.getYAxis() instanceof NumberAxis) {
+                            double categoryValue = scaleValue(category);
+                            if (DoubleTools.invalidDouble(categoryValue)) {
+                                if (invalidAs == InvalidAs.Zero) {
+                                    categoryValue = 0;
+                                } else {
+                                    continue;
+                                }
+                            }
+                            xyData = new XYChart.Data(numberValue, categoryValue);
                         } else {
                             xyData = new XYChart.Data(numberValue, category);
                         }

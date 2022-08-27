@@ -251,6 +251,11 @@ License:    Apache License Version 2.0
                      <children>
                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                            <children>
+                              <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconTips.png" />
+                                 </image>
+                              </ImageView>
                               <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                               <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
                                  <graphic>
@@ -343,11 +348,11 @@ License:    Apache License Version 2.0
                                                       </ImageView>
                                                    </graphic>
                                                 </RadioButton>
-                                                <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
+                                                <Button fx:id="randomColorsXYButton" mnemonicParsing="false" onAction="#drawXYChart">
                                                    <graphic>
-                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                          <image>
-                                                            <Image url="@../buttons/Red/iconRefresh.png" />
+                                                            <Image url="@../buttons/Red/iconRandom.png" />
                                                          </image>
                                                       </ImageView>
                                                    </graphic>
@@ -366,6 +371,19 @@ License:    Apache License Version 2.0
                                           <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                        </padding>
                                        <children>
+                                          <FlowPane fx:id="typesPane1" alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0">
+                                             <children>
+                                                <Button fx:id="randomColorsPieButton" mnemonicParsing="false" onAction="#drawPieChart">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/Red/iconRandom.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
+                                             </children>
+                                          </FlowPane>
                                           <fx:include fx:id="pieChart" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DChartPie.fxml" VBox.vgrow="ALWAYS" />
                                        </children>
                                     </VBox>

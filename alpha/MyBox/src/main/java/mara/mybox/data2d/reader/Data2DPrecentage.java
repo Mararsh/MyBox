@@ -2,6 +2,7 @@ package mara.mybox.data2d.reader;
 
 import java.util.ArrayList;
 import java.util.List;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
@@ -109,15 +110,22 @@ public class Data2DPrecentage extends Data2DOperator {
             row.add(message("Row") + rowIndex);
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
+                String v;
                 double d;
                 if (i >= 0 && i < sourceRow.size()) {
-                    d = DoubleTools.toDouble(sourceRow.get(i), invalidAs);
+                    v = sourceRow.get(i);
+                    d = DoubleTools.toDouble(v, invalidAs);
                 } else {
                     d = DoubleTools.value(invalidAs);
+                    v = d + "";
                 }
                 if (withValues) {
                     if (DoubleTools.invalidDouble(d)) {
-                        row.add(Double.NaN + "");
+                        if (invalidAs == InvalidAs.Skip) {
+                            row.add(v);
+                        } else {
+                            row.add(Double.NaN + "");
+                        }
                     } else {
                         row.add(DoubleTools.format(d, scale));
                     }
@@ -172,14 +180,21 @@ public class Data2DPrecentage extends Data2DOperator {
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
                 double d;
+                String v;
                 if (i >= 0 && i < sourceRow.size()) {
-                    d = DoubleTools.toDouble(sourceRow.get(i), invalidAs);
+                    v = sourceRow.get(i);
+                    d = DoubleTools.toDouble(v, invalidAs);
                 } else {
                     d = DoubleTools.value(invalidAs);
+                    v = d + "";
                 }
                 if (withValues) {
                     if (DoubleTools.invalidDouble(d)) {
-                        row.add(Double.NaN + "");
+                        if (invalidAs == InvalidAs.Skip) {
+                            row.add(v);
+                        } else {
+                            row.add(Double.NaN + "");
+                        }
                     } else {
                         row.add(DoubleTools.format(d, scale));
                     }
@@ -228,12 +243,18 @@ public class Data2DPrecentage extends Data2DOperator {
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
                 double d = 0;
+                String v = null;
                 if (i >= 0 && i < sourceRow.size()) {
+                    v = sourceRow.get(i);
                     d = DoubleTools.toDouble(sourceRow.get(i), invalidAs);
                 }
                 if (withValues) {
                     if (DoubleTools.invalidDouble(d)) {
-                        row.add(Double.NaN + "");
+                        if (invalidAs == InvalidAs.Skip) {
+                            row.add(v);
+                        } else {
+                            row.add(Double.NaN + "");
+                        }
                     } else {
                         row.add(DoubleTools.format(d, scale));
                     }
