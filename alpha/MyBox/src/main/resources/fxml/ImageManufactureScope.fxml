@@ -177,7 +177,7 @@ License:    Apache License Version 2.0
                         </HBox>
                         <VBox fx:id="setBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
                            <children>
-                                      <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE">
+                                      <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                                           <tabs>
                                     <Tab fx:id="areaTab" text="%Area">
                                        <content>
