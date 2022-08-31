@@ -4,7 +4,6 @@ import java.io.File;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -137,14 +136,7 @@ public class MyBoxLoadingController implements Initializable {
                         ImageIO.setCacheDirectory(AppVariables.MyBoxTempPath);
 
                         MicrosoftDocumentTools.registryFactories();
-                        List<AlarmClock> alarms = AlarmClock.readAlarmClocks();
-                        if (alarms != null) {
-                            for (AlarmClock alarm : alarms) {
-                                if (alarm.isIsActive()) {
-                                    AlarmClock.scheduleAlarmClock(alarm);
-                                }
-                            }
-                        }
+                        AlarmClock.scheduleAll();
 
                     } catch (Exception e) {
                         Platform.runLater(() -> {

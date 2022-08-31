@@ -129,7 +129,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             nodesController.setParameters(this, true);
 
             if (UserConfig.getBoolean(baseName + "AllDescendants", false)) {
-                descendantsRadio.fire();
+                descendantsRadio.setSelected(true);
             }
             nodesGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -443,12 +443,12 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     }
 
     public void loadChildren(TreeNode parentNode) {
-        childrenRadio.fire();
+        childrenRadio.setSelected(true);
         loadNodes(parentNode);
     }
 
     public void loadDescendants(TreeNode parentNode) {
-        descendantsRadio.fire();
+        descendantsRadio.setSelected(true);
         loadNodes(parentNode);
     }
 

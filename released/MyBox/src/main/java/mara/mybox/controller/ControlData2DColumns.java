@@ -58,7 +58,8 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     @FXML
     protected TableColumn<Data2DColumn, String> nameColumn, typeColumn, defaultColumn;
     @FXML
-    protected TableColumn<Data2DColumn, Boolean> editableColumn, notNullColumn, primaryColumn, autoColumn;
+    protected TableColumn<Data2DColumn, Boolean> editableColumn, notNullColumn, formatColumn,
+            primaryColumn, autoColumn;
     @FXML
     protected TableColumn<Data2DColumn, Integer> indexColumn, lengthColumn, widthColumn;
     @FXML
@@ -215,6 +216,49 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             });
             editableColumn.setEditable(true);
             editableColumn.getStyleClass().add("editable-column");
+
+            formatColumn.setCellValueFactory(new PropertyValueFactory<>("needFormat"));
+            formatColumn.setCellFactory(new Callback<TableColumn<Data2DColumn, Boolean>, TableCell<Data2DColumn, Boolean>>() {
+                @Override
+                public TableCell<Data2DColumn, Boolean> call(TableColumn<Data2DColumn, Boolean> param) {
+                    try {
+                        TableCheckboxCell<Data2DColumn, Boolean> cell = new TableCheckboxCell<>() {
+                            @Override
+                            protected boolean getCellValue(int rowIndex) {
+                                try {
+                                    return tableData.get(rowIndex).isNeedFormat();
+                                } catch (Exception e) {
+                                    return false;
+                                }
+                            }
+
+                            @Override
+                            protected void setCellValue(int rowIndex, boolean value) {
+                                try {
+                                    if (rowIndex < 0) {
+                                        return;
+                                    }
+                                    Data2DColumn column = tableData.get(rowIndex);
+                                    if (column == null || column.isAuto()) {
+                                        return;
+                                    }
+                                    if (value != column.isNeedFormat()) {
+                                        column.setNeedFormat(value);
+                                        status(Status.Modified);
+                                    }
+                                } catch (Exception e) {
+                                    MyBoxLog.debug(e);
+                                }
+                            }
+                        };
+                        return cell;
+                    } catch (Exception e) {
+                        return null;
+                    }
+                }
+            });
+            formatColumn.setEditable(true);
+            formatColumn.getStyleClass().add("editable-column");
 
             notNullColumn.setCellValueFactory(new PropertyValueFactory<>("notNull"));
             notNullColumn.setCellFactory(new Callback<TableColumn<Data2DColumn, Boolean>, TableCell<Data2DColumn, Boolean>>() {

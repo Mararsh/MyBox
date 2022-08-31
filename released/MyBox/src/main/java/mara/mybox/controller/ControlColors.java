@@ -551,15 +551,16 @@ public class ControlColors extends BaseSysTableController<ColorData> {
                         newPalatte = tableColorPaletteName.insertData(conn, newPalatte);
                         long paletteid = newPalatte.getCpnid();
                         query.setLong(1, selected.getCpnid());
-                        conn.setAutoCommit(false);
+                        conn.setAutoCommit(true);
                         try ( ResultSet results = query.executeQuery()) {
+                            conn.setAutoCommit(false);
                             while (results.next()) {
                                 ColorPalette data = tableColorPalette.readData(results);
                                 data.setPaletteid(paletteid);
                                 tableColorPalette.insertData(conn, data);
                             }
+                            conn.commit();
                         }
-                        conn.commit();
                     } catch (Exception e) {
                         error = e.toString();
                         return false;

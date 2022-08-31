@@ -223,13 +223,13 @@ public class ControlData2DEditTable extends ControlData2DLoad {
                 popError(message("NoData"));
                 return;
             }
-            copyToMyBoxClipboard2(data2D.toColumns(names), data);
+            toMyBoxClipboard(null, data2D.toColumns(names), data);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    public void copyToMyBoxClipboard2(List<Data2DColumn> cols, List<List<String>> data) {
+    public void toMyBoxClipboard(String name, List<Data2DColumn> cols, List<List<String>> data) {
         try {
             if (data == null || data.isEmpty()) {
                 popError(message("NoData"));
@@ -241,7 +241,7 @@ public class ControlData2DEditTable extends ControlData2DLoad {
 
                 @Override
                 protected boolean handle() {
-                    clip = DataClipboard.create(task, cols, data);
+                    clip = DataClipboard.create(task, name, cols, data);
                     return clip != null;
                 }
 

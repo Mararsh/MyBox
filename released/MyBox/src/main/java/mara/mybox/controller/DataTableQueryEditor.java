@@ -1,32 +1,22 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
-import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import static mara.mybox.fxml.PopTools.addButtonsPane;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -37,9 +27,10 @@ import mara.mybox.value.UserConfig;
  */
 public class DataTableQueryEditor extends TreeNodeEditor {
 
-    protected ControlData2DEditTable tableController;
     protected DataTable dataTable;
 
+    @FXML
+    protected ListView namesList;
     @FXML
     protected ControlData2DTarget targetController;
     @FXML
@@ -47,13 +38,32 @@ public class DataTableQueryEditor extends TreeNodeEditor {
     @FXML
     protected Label dataLabel;
 
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            namesList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
+                    if (newV == null || newV.isBlank()) {
+                        return;
+                    }
+                    valueInput.replaceText(valueInput.getSelection(), newV);
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     public void setParameters(ControlData2DEditTable tableController) {
         try {
-            this.tableController = tableController;
-            dataTable = (DataTable) tableController.data2D;
+            setDataTable(tableController.data2D);
 
             dataLabel.setText(dataTable.displayName());
-            targetController.setParameters(this, null);
+            targetController.setParameters(this, tableController);
 
             rowNumberCheck.setSelected(UserConfig.getBoolean(baseName + "CopyRowNumber", false));
             rowNumberCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -62,6 +72,24 @@ public class DataTableQueryEditor extends TreeNodeEditor {
                     UserConfig.setBoolean(baseName + "CopyRowNumber", rowNumberCheck.isSelected());
                 }
             });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void setDataTable(Data2D data2D) {
+        try {
+            this.dataTable = (DataTable) data2D;
+            namesList.getItems().clear();
+            if (dataTable == null || !dataTable.isValid()) {
+                return;
+            }
+            String name = dataTable.getSheet();
+            if (name != null && !name.isBlank()) {
+                namesList.getItems().add(name);
+            }
+            namesList.getItems().addAll(dataTable.columnNames());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -92,7 +120,8 @@ public class DataTableQueryEditor extends TreeNodeEditor {
             protected boolean handle() {
                 TableStringValues.add("DataTableQueryHistories", query);
                 dataTable.setTask(task);
-                dataCSV = dataTable.query(query, rowNumberCheck.isSelected());
+                dataCSV = dataTable.query(targetController.name(), task, query,
+                        rowNumberCheck.isSelected() ? message("Row") : null);
                 return dataCSV != null;
             }
 
@@ -154,90 +183,6 @@ public class DataTableQueryEditor extends TreeNodeEditor {
             HtmlPopController.openHtml(this, html);
         } else {
             popError(message("NotFound"));
-        }
-    }
-
-    @FXML
-    protected void popColumnNames(MouseEvent event) {
-        if (UserConfig.getBoolean("DataTableQueryPopWhenMouseHovering", true)) {
-            columnNames(event);
-        }
-    }
-
-    @FXML
-    protected void showColumnNames(ActionEvent event) {
-        columnNames(event);
-    }
-
-    protected void columnNames(Event event) {
-        try {
-            if (dataTable == null) {
-                return;
-            }
-            List<String> values = dataTable.columnNames();
-            if (values == null || values.isEmpty()) {
-                return;
-            }
-            MenuController controller = MenuController.open(this, valueInput, event);
-
-            boolean isTextArea = valueInput instanceof TextArea;
-
-            List<Node> topButtons = new ArrayList<>();
-            if (isTextArea) {
-                Button newLineButton = new Button();
-                newLineButton.setGraphic(StyleTools.getIconImage("iconTurnOver.png"));
-                NodeStyleTools.setTooltip(newLineButton, new Tooltip(message("Newline")));
-                newLineButton.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        valueInput.replaceText(valueInput.getSelection(), "\n");
-                        controller.getThisPane().requestFocus();
-                        valueInput.requestFocus();
-                    }
-                });
-                topButtons.add(newLineButton);
-            }
-            Button cButton = new Button();
-            cButton.setGraphic(StyleTools.getIconImage("iconClear.png"));
-            NodeStyleTools.setTooltip(cButton, new Tooltip(message("ClearInputArea")));
-            cButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    valueInput.clear();
-                    controller.getThisPane().requestFocus();
-                    valueInput.requestFocus();
-                }
-            });
-            topButtons.add(cButton);
-
-            CheckBox popCheck = new CheckBox();
-            popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
-            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
-            popCheck.setSelected(UserConfig.getBoolean("DataTableQueryPopWhenMouseHovering", true));
-            popCheck.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("DataTableQueryPopWhenMouseHovering", popCheck.isSelected());
-                }
-            });
-            topButtons.add(popCheck);
-
-            controller.addFlowPane(topButtons);
-            controller.addNode(new Separator());
-
-            addButtonsPane(controller, valueInput, values, true);
-
-            Hyperlink link = new Hyperlink("Derby Reference Manual");
-            link.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    openLink("https://db.apache.org/derby/docs/10.15/ref/index.html");
-                }
-            });
-            controller.addNode(link);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
         }
     }
 

@@ -105,9 +105,10 @@ public class TableData2DStyle extends BaseTable<Data2DStyle> {
         clear(conn, targetid);
         int count = 0;
         try ( PreparedStatement statement = conn.prepareStatement(QueryStyles)) {
-            conn.setAutoCommit(false);
             statement.setLong(1, sourceid);
+            conn.setAutoCommit(true);
             ResultSet results = statement.executeQuery();
+            conn.setAutoCommit(false);
             while (results.next()) {
                 Data2DStyle s = readData(results);
                 s.setD2sid(-1);

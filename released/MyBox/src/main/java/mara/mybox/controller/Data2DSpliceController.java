@@ -10,6 +10,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Tab;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Window;
@@ -34,7 +35,9 @@ import org.apache.commons.csv.CSVRecord;
 public class Data2DSpliceController extends BaseData2DController {
 
     @FXML
-    protected BaseData2DSourceController dataAController, dataBController;
+    protected Tab aTab, bTab, spliceTab;
+    @FXML
+    protected ControlData2DSpliceSource dataAController, dataBController;
     @FXML
     protected RadioButton horizontalRadio, aRadio, bRadio, longerRadio, shorterRadio;
     @FXML
@@ -93,22 +96,21 @@ public class Data2DSpliceController extends BaseData2DController {
     @FXML
     @Override
     public void okAction() {
+        tabPane.getSelectionModel().select(aTab);
         if (dataAController.data2D == null || !dataAController.data2D.hasData()) {
             popError(message("DataA") + ": " + message("NoData"));
             return;
         } else if (!dataAController.checkSelections()) {
-            popError(message("DataA") + ": "
-                    + (dataAController.error != null ? dataAController.error : message("SelectToHanle")));
             return;
         }
+        tabPane.getSelectionModel().select(bTab);
         if (dataBController.data2D == null || !dataBController.data2D.hasData()) {
             popError(message("DataB") + ": " + message("NoData"));
             return;
         } else if (!dataBController.checkSelections()) {
-            popError(message("DataB") + ": "
-                    + (dataBController.error != null ? dataBController.error : message("SelectToHanle")));
             return;
         }
+        tabPane.getSelectionModel().select(spliceTab);
         if (task != null) {
             task.cancel();
         }
@@ -125,9 +127,9 @@ public class Data2DSpliceController extends BaseData2DController {
                         return false;
                     }
                     if (dataAController.isAllPages()) {
-                        csvA = dataAController.data2D.copy(dataAController.checkedColsIndices, false, true);
+                        csvA = dataAController.data2D.copy(null, dataAController.checkedColsIndices, false, true);
                     } else {
-                        csvA = DataFileCSV.save(task, dataAController.checkedColumns,
+                        csvA = DataFileCSV.save(null, task, dataAController.checkedColumns,
                                 dataAController.filtered(false));
                     }
                     dataAController.data2D.stopTask();
@@ -141,9 +143,9 @@ public class Data2DSpliceController extends BaseData2DController {
                         return false;
                     }
                     if (dataBController.isAllPages()) {
-                        csvB = dataBController.data2D.copy(dataBController.checkedColsIndices, false, true);
+                        csvB = dataBController.data2D.copy(null, dataBController.checkedColsIndices, false, true);
                     } else {
-                        csvB = DataFileCSV.save(task, dataBController.checkedColumns,
+                        csvB = DataFileCSV.save(null, task, dataBController.checkedColumns,
                                 dataBController.filtered(false));
                     }
                     dataBController.data2D.stopTask();
@@ -157,6 +159,8 @@ public class Data2DSpliceController extends BaseData2DController {
                     } else {
                         targetCSV = spliceVertically(csvA, csvB);
                     }
+                    csvA.drop();
+                    csvB.drop();
                     return targetCSV != null;
                 } catch (Exception e) {
                     error = e.toString();
@@ -212,7 +216,7 @@ public class Data2DSpliceController extends BaseData2DController {
         if (columns == null || columns.isEmpty()) {
             return null;
         }
-        DataFileCSV targetCSV = DataFileCSV.tmpCSV();
+        DataFileCSV targetCSV = DataFileCSV.tmpCSV(targetController.name());
         int rowCount = 0;
         try ( CSVPrinter csvPrinter = new CSVPrinter(
                 new FileWriter(targetCSV.getFile(), targetCSV.getCharset()), targetCSV.cvsFormat())) {
@@ -315,7 +319,7 @@ public class Data2DSpliceController extends BaseData2DController {
         if (size <= 0 || colLen == 0) {
             return null;
         }
-        DataFileCSV targetCSV = DataFileCSV.tmpCSV();
+        DataFileCSV targetCSV = DataFileCSV.tmpCSV(targetController.name());
         int rowCount = 0;
         try ( CSVPrinter csvPrinter = new CSVPrinter(
                 new FileWriter(targetCSV.getFile(), targetCSV.getCharset()), targetCSV.cvsFormat());

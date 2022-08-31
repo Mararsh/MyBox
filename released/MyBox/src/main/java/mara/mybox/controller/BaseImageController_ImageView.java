@@ -273,7 +273,7 @@ public abstract class BaseImageController_ImageView extends BaseController {
     }
 
     public void refinePane() {
-        if (scrollPane == null || imageView == null || imageView.getImage() == null) {
+        if (isSettingValues || scrollPane == null || imageView == null || imageView.getImage() == null) {
             return;
         }
         LocateTools.moveCenter(scrollPane, imageView);

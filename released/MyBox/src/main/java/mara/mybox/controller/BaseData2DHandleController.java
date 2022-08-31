@@ -10,11 +10,11 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.Tab;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.Data2D_Operations.ObjectType;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.ColumnDefinition;
@@ -35,10 +35,8 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
     protected List<Data2DColumn> outputColumns;
     protected int scale, defaultScale = 2;
     protected ObjectType objectType;
-    protected double invalidAs;
+    protected InvalidAs invalidAs = InvalidAs.Skip;
 
-    @FXML
-    protected Tab dataTab;
     @FXML
     protected ControlData2DTarget targetController;
     @FXML
@@ -51,9 +49,11 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
     protected ToggleGroup objectGroup;
     @FXML
     protected RadioButton columnsRadio, rowsRadio, allRadio,
-            skipNonnumericRadio, zeroNonnumericRadio;
+            skipNonnumericRadio, zeroNonnumericRadio, blankNonnumericRadio;
     @FXML
     protected ImageView tableTipsView;
+    @FXML
+    protected ComboBox<String> colSelector;
 
     public BaseData2DHandleController() {
         baseTitle = message("Handle");
@@ -68,6 +68,8 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
     public void initControls() {
         try {
             super.initControls();
+
+            noColumnSelection(true);
 
             objectType = ObjectType.Columns;
             if (objectGroup != null) {
@@ -97,12 +99,13 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                 });
             }
 
-            if (skipNonnumericRadio != null) {
-                if (UserConfig.getBoolean(baseName + "SkipNonnumeric", true)) {
-                    skipNonnumericRadio.fire();
-                } else {
-                    zeroNonnumericRadio.fire();
-                }
+            if (colSelector != null) {
+                colSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue ov, String oldValue, String newValue) {
+                        checkOptions();
+                    }
+                });
             }
 
         } catch (Exception e) {
@@ -166,12 +169,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                     checkOptions();
                 }
             });
-            tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
-                @Override
-                public void changed(ObservableValue ov, Tab oldValue, Tab newValue) {
-                    checkOptions();
-                }
-            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -182,6 +179,24 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
     public void refreshControls() {
         try {
             super.refreshControls();
+
+            if (colSelector != null) {
+                List<String> names = data2D.columnNames();
+                if (names == null || names.isEmpty()) {
+                    colSelector.getItems().clear();
+                    return;
+                }
+                String selectedCol = colSelector.getSelectionModel().getSelectedItem();
+                isSettingValues = true;
+                colSelector.getItems().setAll(names);
+                if (selectedCol != null && names.contains(selectedCol)) {
+                    colSelector.setValue(selectedCol);
+                } else {
+                    colSelector.getSelectionModel().select(0);
+                }
+                isSettingValues = false;
+            }
+
             checkOptions();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -198,6 +213,13 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
     }
 
     public void objectChanged() {
+        checkObject();
+    }
+
+    public void checkObject() {
+        if (rowsRadio == null) {
+            return;
+        }
         if (rowsRadio.isSelected()) {
             objectType = ObjectType.Rows;
         } else if (allRadio != null && allRadio.isSelected()) {
@@ -207,42 +229,70 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         }
     }
 
+    public void checkInvalidAs() {
+        if (zeroNonnumericRadio != null && zeroNonnumericRadio.isSelected()) {
+            invalidAs = InvalidAs.Zero;
+        } else if (blankNonnumericRadio != null && blankNonnumericRadio.isSelected()) {
+            invalidAs = InvalidAs.Blank;
+        } else {
+            invalidAs = InvalidAs.Skip;
+        }
+
+    }
+
     public void rowNumberCheckChanged() {
         UserConfig.setBoolean(baseName + "CopyRowNumber", rowNumberCheck.isSelected());
     }
 
+    // Check when selections are changed
     public boolean checkOptions() {
-        if (isSettingValues) {
+        try {
+            if (isSettingValues) {
+                return true;
+            }
+            outOptionsError(null);
+            if (data2D == null || !data2D.hasData()) {
+                outOptionsError(message("NoData"));
+                return false;
+            }
+            if (!checkSelections()) {
+                return false;
+            }
+            if (targetController != null) {
+                targetController.setNotInTable(isAllPages());
+                if (targetController.checkTarget() == null) {
+                    outOptionsError(message("SelectToHandle") + ": " + message("Target"));
+                    return false;
+                }
+            }
             return true;
-        }
-        if (infoLabel != null) {
-            infoLabel.setText("");
-        }
-        if (skipNonnumericRadio != null) {
-            invalidAs = skipNonnumericRadio.isSelected() ? Double.NaN : 0;
-        } else {
-            invalidAs = 0;
-        }
-        if (!checkSelections()) {
-            if (infoLabel != null) {
-                infoLabel.setText(error != null ? error : message("SelectToHandle"));
-            }
-            okButton.setDisable(true);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
             return false;
         }
-        if (targetController != null && targetController.checkTarget() == null) {
-            if (infoLabel != null) {
-                infoLabel.setText(message("SelectToHandle"));
-            }
-            okButton.setDisable(true);
-            return false;
-        }
-        okButton.setDisable(false);
-        return true;
     }
 
+    public void outOptionsError(String error) {
+        if (error != null && !error.isBlank()) {
+            popError(error);
+        }
+    }
+
+    // Check when "OK"/"Start" button is clicked
     public boolean initData() {
-        return true;
+        try {
+            checkObject();
+            checkInvalidAs();
+
+            outputColumns = checkedColumns;
+            if (showRowNumber()) {
+                outputColumns.add(0, new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
+            }
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
     }
 
     @FXML
@@ -251,6 +301,11 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         if (!checkOptions() || !initData()) {
             return;
         }
+        showRightPane();
+        preprocessStatistic();
+    }
+
+    public void preprocessStatistic() {
         String script = data2D.filterScipt();
         if (script == null || script.isBlank()) {
             startOperation();
@@ -275,7 +330,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.setTask(null);
+                data2D.stopTask();
                 task = null;
                 if (ok) {
                     startOperation();
@@ -288,10 +343,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
 
     protected void startOperation() {
         try {
-            outputColumns = checkedColumns;
-            if (showRowNumber()) {
-                outputColumns.add(0, new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
-            }
             if (isAllPages()) {
                 handleAllTask();
             } else {
@@ -471,31 +522,47 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             popError(message("NoData"));
             return false;
         }
+        String name = targetController.name();
         switch (targetController.target) {
             case "systemClipboard":
                 tableController.copyToSystemClipboard(null, outputData);
                 break;
             case "myBoxClipboard":
-                tableController.copyToMyBoxClipboard2(outputColumns, outputData);
+                tableController.toMyBoxClipboard(name, outputColumns, outputData);
                 break;
             case "csv":
-                DataFileCSVController.open(outputColumns, outputData);
+                DataFileCSVController.open(name, outputColumns, outputData);
                 break;
             case "excel":
-                DataFileExcelController.open(outputColumns, outputData);
+                DataFileExcelController.open(name, outputColumns, outputData);
                 break;
             case "texts":
-                DataFileTextController.open(outputColumns, outputData);
+                DataFileTextController.open(name, outputColumns, outputData);
                 break;
             case "matrix":
-                MatricesManageController.open(outputColumns, outputData);
+                MatricesManageController.open(name, outputColumns, outputData);
                 break;
             case "table":
-                DataTablesController.open(outputColumns, outputData);
+                DataTablesController.open(name, outputColumns, outputData);
                 break;
         }
         popDone();
         return true;
+    }
+
+    public void cloneOptions(BaseData2DHandleController sourceController) {
+        if (sourceController.allPagesRadio.isSelected()) {
+            allPagesRadio.setSelected(true);
+        } else if (sourceController.currentPageRadio.isSelected()) {
+            currentPageRadio.setSelected(true);
+        } else {
+            selectedRadio.setSelected(true);
+        }
+        UserConfig.setLong(baseName + "MaxDataNumber", sourceController.filterController.maxData);
+        filterController.maxInput.setText(sourceController.filterController.maxData + "");
+        filterController.load(sourceController.filterController.scriptInput.getText(),
+                sourceController.filterController.othersRadio.isSelected());
+        scaleSelector.getSelectionModel().select(sourceController.scale + "");
     }
 
     @FXML

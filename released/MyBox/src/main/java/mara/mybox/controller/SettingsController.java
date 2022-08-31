@@ -190,23 +190,23 @@ public class SettingsController extends BaseController {
 
             switch (AppVariables.ControlColor) {
                 case Pink:
-                    pinkRadio.fire();
+                    pinkRadio.setSelected(true);
                     break;
                 case Blue:
-                    blueRadio.fire();
+                    blueRadio.setSelected(true);
                     break;
                 case LightBlue:
-                    lightBlueRadio.fire();
+                    lightBlueRadio.setSelected(true);
                     break;
                 case Orange:
-                    orangeRadio.fire();
+                    orangeRadio.setSelected(true);
                     break;
                 case DarkGreen:
-                    darkGreenRadio.fire();
+                    darkGreenRadio.setSelected(true);
                     break;
                 case Red:
                 default:
-                    redRadio.fire();
+                    redRadio.setSelected(true);
 
             }
 

@@ -7,7 +7,6 @@ import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -25,9 +24,9 @@ import javafx.stage.Window;
 import mara.mybox.db.data.AlarmClock;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
@@ -253,34 +252,34 @@ public class AlarmClockController extends BaseController {
     protected void checkType() {
         RadioButton selected = (RadioButton) typeGroup.getSelectedToggle();
         everyInput.setStyle(null);
-        if (Languages.message("WorkingDays").equals(selected.getText())) {
-            repeatType = AlarmClock.AlarmType.WorkingDays;
-        } else if (Languages.message("EveryDay").equals(selected.getText())) {
-            repeatType = AlarmClock.AlarmType.EveryDay;
-        } else if (Languages.message("Weekend").equals(selected.getText())) {
-            repeatType = AlarmClock.AlarmType.Weekend;
-        } else if (Languages.message("NotRepeat").equals(selected.getText())) {
-            repeatType = AlarmClock.AlarmType.NotRepeat;
-        } else if (Languages.message("Every").equals(selected.getText())) {
-            RadioButton unit = (RadioButton) unitGroup.getSelectedToggle();
-            if (Languages.message("Days").equals(unit.getText())) {
-                repeatType = AlarmClock.AlarmType.EverySomeDays;
-            } else if (Languages.message("Hours").equals(unit.getText())) {
-                repeatType = AlarmClock.AlarmType.EverySomeHours;
-            } else if (Languages.message("Minutes").equals(unit.getText())) {
-                repeatType = AlarmClock.AlarmType.EverySomeMinutes;
-            } else if (Languages.message("Seconds").equals(unit.getText())) {
-                repeatType = AlarmClock.AlarmType.EverySomeSeconds;
-            }
-            try {
-                everyValue = Integer.valueOf(everyInput.getText());
-                if (everyValue <= 0) {
-                    everyInput.setStyle(UserConfig.badStyle());
-                }
-            } catch (Exception e) {
-                everyInput.setStyle(UserConfig.badStyle());
-            }
-        }
+//        if (Languages.message("WorkingDays").equals(selected.getText())) {
+//            repeatType = AlarmClock.AlarmType.WorkingDays;
+//        } else if (Languages.message("EveryDay").equals(selected.getText())) {
+//            repeatType = AlarmClock.AlarmType.EveryDay;
+//        } else if (Languages.message("Weekend").equals(selected.getText())) {
+//            repeatType = AlarmClock.AlarmType.Weekend;
+//        } else if (Languages.message("NotRepeat").equals(selected.getText())) {
+//            repeatType = AlarmClock.AlarmType.NotRepeat;
+//        } else if (Languages.message("Every").equals(selected.getText())) {
+//            RadioButton unit = (RadioButton) unitGroup.getSelectedToggle();
+//            if (Languages.message("Days").equals(unit.getText())) {
+//                repeatType = AlarmClock.AlarmType.EverySomeDays;
+//            } else if (Languages.message("Hours").equals(unit.getText())) {
+//                repeatType = AlarmClock.AlarmType.EverySomeHours;
+//            } else if (Languages.message("Minutes").equals(unit.getText())) {
+//                repeatType = AlarmClock.AlarmType.EverySomeMinutes;
+//            } else if (Languages.message("Seconds").equals(unit.getText())) {
+//                repeatType = AlarmClock.AlarmType.EverySomeSeconds;
+//            }
+//            try {
+//                everyValue = Integer.valueOf(everyInput.getText());
+//                if (everyValue <= 0) {
+//                    everyInput.setStyle(UserConfig.badStyle());
+//                }
+//            } catch (Exception e) {
+//                everyInput.setStyle(UserConfig.badStyle());
+//            }
+//        }
     }
 
     protected void checkLoop() {
@@ -360,31 +359,31 @@ public class AlarmClockController extends BaseController {
     @FXML
     @Override
     public void saveAction() {
-        if (currentAlarm == null || !isEdit) {
-            currentAlarm = new AlarmClock();
-            currentAlarm.setKey(new Date().getTime());
-        }
-        if (repeatType == AlarmClock.AlarmType.NotRepeat
-                && startTime <= new Date().getTime()) {
-            alertInformation(Languages.message("AlarmNeverHappen"));
-            return;
-        }
-        currentAlarm.setAlarmType(repeatType);
-        currentAlarm.setDescription(descInput.getText());
-        currentAlarm.setStartTime(startTime);
-        currentAlarm.setIsActive(activeCheck.isSelected());
-        if (currentSound.contains(miao.getAbsolutePath())) {
-            currentAlarm.setSound(Languages.message("Meow"));
-        } else {
-            currentAlarm.setSound(currentSound);
-        }
+//        if (currentAlarm == null || !isEdit) {
+//            currentAlarm = new AlarmClock();
+//            currentAlarm.setKey(new Date().getTime());
+//        }
+////        if (repeatType == AlarmClock.AlarmType.NotRepeat
+////                && startTime <= new Date().getTime()) {
+////            alertInformation(Languages.message("AlarmNeverHappen"));
+////            return;
+////        }
+//        currentAlarm.setAlarmType(repeatType);
+//        currentAlarm.setDescription(descInput.getText());
+//        currentAlarm.setStartTime(startTime);
+//        currentAlarm.setIsActive(activeCheck.isSelected());
+//        if (currentSound.contains(miao.getAbsolutePath())) {
+//            currentAlarm.setSound(Languages.message("Meow"));
+//        } else {
+//            currentAlarm.setSound(currentSound);
+//        }
         currentAlarm.setEveryValue(everyValue);
         currentAlarm.setIsSoundLoop(loopValue > 0);
         currentAlarm.setIsSoundContinully(loopValue < 0);
         currentAlarm.setSoundLoopTimes(loopValue);
         currentAlarm.setVolume(volumeValue);
 
-        alertClockTableController.saveAlarm(currentAlarm, !isEdit);
+//        alertClockTableController.saveAlarm(currentAlarm, !isEdit);
         reset();
 
     }
@@ -399,30 +398,30 @@ public class AlarmClockController extends BaseController {
     protected void edit(AlarmClock alarm) {
         isEdit = true;
         currentAlarm = alarm;
-        descInput.setText(alarm.getDescription());
-        startInput.setText(alarm.getStart());
-        activeCheck.setSelected(alarm.isIsActive());
-        String type = AlarmClock.getTypeString(alarm.getAlarmType());
-        ObservableList<Toggle> tbuttons = typeGroup.getToggles();
-        for (Toggle button : tbuttons) {
-            RadioButton radioButton = (RadioButton) button;
-            if (radioButton.getText().equals(type)) {
-                button.setSelected(true);
-                break;
-            }
-        }
-        if (Languages.message("Every").equals(type)) {
-            String unit = AlarmClock.getTypeUnit(alarm.getAlarmType());
-            ObservableList<Toggle> ubuttons = unitGroup.getToggles();
-            for (Toggle button : ubuttons) {
-                RadioButton radioButton = (RadioButton) button;
-                if (radioButton.getText().equals(unit)) {
-                    button.setSelected(true);
-                    break;
-                }
-            }
-            everyInput.setText(alarm.getEveryValue() + "");
-        }
+//        descInput.setText(alarm.getDescription());
+//        startInput.setText(alarm.getStart());
+//        activeCheck.setSelected(alarm.isIsActive());
+//        String type = AlarmClock.getTypeString(alarm.getAlarmType());
+//        ObservableList<Toggle> tbuttons = typeGroup.getToggles();
+//        for (Toggle button : tbuttons) {
+//            RadioButton radioButton = (RadioButton) button;
+//            if (radioButton.getText().equals(type)) {
+//                button.setSelected(true);
+//                break;
+//            }
+//        }
+//        if (Languages.message("Every").equals(type)) {
+//            String unit = AlarmClock.getTypeUnit(alarm.getAlarmType());
+//            ObservableList<Toggle> ubuttons = unitGroup.getToggles();
+//            for (Toggle button : ubuttons) {
+//                RadioButton radioButton = (RadioButton) button;
+//                if (radioButton.getText().equals(unit)) {
+//                    button.setSelected(true);
+//                    break;
+//                }
+//            }
+//            everyInput.setText(alarm.getEveryValue() + "");
+//        }
         String sound = alarm.getSound();
         if (Languages.message("meow").equals(sound)) {
             miaoRadio.setSelected(true);

@@ -24,15 +24,21 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
     protected Rectangle[] boxs;
     protected Line[] vLines, minLines, maxLines, medianLines, meanLines,
             uMidOutlierLines, uExOutlierLines, lMidOutlierLines, lExOutlierLines;
-    protected int boxWidth, dataSize;
+    protected int boxWidth, dataSize, currentSeriesSize;
     protected boolean handleOutliers, handleMean;
 
     public BoxWhiskerChart(Axis xAxis, Axis yAxis) {
         super(xAxis, yAxis);
         init();
+        currentSeriesSize = 0;
     }
 
-    public int seriesSize() {
+    public int currentSeriesSize() {
+        currentSeriesSize = getData() == null ? 0 : getData().size();
+        return currentSeriesSize;
+    }
+
+    public int expectedSeriesSize() {
         int seriesSize = 5;
         if (handleMean) {
             seriesSize++;
@@ -41,6 +47,12 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
             seriesSize += 4;
         }
         return seriesSize;
+    }
+
+    @Override
+    protected void layoutPlotChildren() {
+        super.layoutPlotChildren();
+        currentSeriesSize();
     }
 
     private void clearMain() {
@@ -462,7 +474,7 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
             @Override
             public void run() {
                 Platform.runLater(() -> {
-                    if (getData() != null && seriesSize() == getData().size()) {
+                    if (getData() != null && expectedSeriesSize() == currentSeriesSize()) {
                         t.cancel();
                         makeBoxWhisker();
                     }

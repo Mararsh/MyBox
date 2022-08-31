@@ -34,12 +34,17 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         return this;
     }
 
-    public File tmpCSV(String prefix) {
-        String name = shortName();
-        if (name.startsWith(Data2D.TmpTablePrefix)) {
-            name = name.substring(Data2D.TmpTablePrefix.length());
+    public File tmpFile(String name, String operation, String suffix) {
+        String path = AppPaths.getGeneratedPath();
+        if (name != null && !name.isBlank()) {
+            return getPathTempFile(path, name, suffix);
         }
-        return getPathTempFile(AppPaths.getGeneratedPath(), name + "_" + prefix, ".csv");
+        String pname = shortName();
+        if (pname.startsWith(Data2D.TmpTablePrefix)) {
+            pname = pname.substring(Data2D.TmpTablePrefix.length());
+        }
+        pname = pname + ((operation == null || operation.isBlank()) ? "" : "_" + operation);
+        return getPathTempFile(path, pname, suffix);
     }
 
     /*
@@ -163,10 +168,15 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         return -1;
     }
 
-    public List<String> tableRowWithoutNumber(int row) {
+    public List<String> tableRowWithoutNumber(int rowIndex) {
         try {
-            List<String> values = tableData().get(row);
-            return values.subList(1, values.size());
+            List<String> rowStrings = tableData().get(rowIndex);
+            List<String> row = new ArrayList<>();
+            for (int i = 0; i < columns.size(); i++) {
+                String v = rowStrings.get(i + 1);
+                row.add(columns.get(i).savedValue(v));
+            }
+            return row;
         } catch (Exception e) {
             return null;
         }
@@ -175,8 +185,15 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     public List<List<String>> tableRowsWithoutNumber() {
         try {
             List<List<String>> rows = new ArrayList<>();
-            for (List<String> row : tableData()) {
-                rows.add(row.subList(1, row.size()));
+            List<List<String>> data = tableData();
+            for (int i = 0; i < data.size(); i++) {
+                List<String> trow = data.get(i);
+                List<String> row = new ArrayList<>();
+                for (int j = 0; j < columns.size(); j++) {
+                    String v = trow.get(j + 1);
+                    row.add(columns.get(j).savedValue(v));
+                }
+                rows.add(row);
             }
             return rows;
         } catch (Exception e) {
@@ -472,21 +489,12 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         return toColumns(names);
     }
 
-    public void resetSourceStatistic() {
+    public void resetStatistic() {
         if (!isValid()) {
             return;
         }
         for (Data2DColumn column : columns) {
-            column.setSourceStatistic(null);
-        }
-    }
-
-    public void resetTargetStatistic() {
-        if (!isValid()) {
-            return;
-        }
-        for (Data2DColumn column : columns) {
-            column.setTargetStatistic(null);
+            column.setStatistic(null);
         }
     }
 

@@ -125,23 +125,23 @@ public class ControlCsvOptions extends BaseController {
         delimiter = c;
         switch (c) {
             case ',':
-                commaRadio.fire();
+                commaRadio.setSelected(true);
                 break;
             case '|':
-                lineRadio.fire();
+                lineRadio.setSelected(true);
                 break;
             case '@':
-                atRadio.fire();
+                atRadio.setSelected(true);
                 break;
             case '#':
-                sharpRadio.fire();
+                sharpRadio.setSelected(true);
                 break;
             case ';':
-                semicolonsRadio.fire();
+                semicolonsRadio.setSelected(true);
                 break;
             default:
                 delimiterInput.setText(delimiter + "");
-                delimiterInputRadio.fire();
+                delimiterInputRadio.setSelected(true);
         }
     }
 
@@ -165,7 +165,7 @@ public class ControlCsvOptions extends BaseController {
 
     protected void setCharset(Charset charset) {
         if (charsetKnownRadio != null) {
-            charsetKnownRadio.fire();
+            charsetKnownRadio.setSelected(true);
         }
         if (charset != null) {
             charsetSelector.setValue(charset.name());

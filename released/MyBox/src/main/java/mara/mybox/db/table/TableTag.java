@@ -55,6 +55,7 @@ public class TableTag extends BaseTable<Tag> {
         try ( PreparedStatement statement = conn.prepareStatement(TableTag.QueryTag)) {
             statement.setString(1, category);
             statement.setString(2, tag);
+            conn.setAutoCommit(true);
             ResultSet results = statement.executeQuery();
             if (results.next()) {
                 return readData(results);
@@ -81,6 +82,7 @@ public class TableTag extends BaseTable<Tag> {
         try ( PreparedStatement statement = conn.prepareStatement(QueryCategoryTags)) {
             statement.setString(1, category);
             ResultSet results = statement.executeQuery();
+            conn.setAutoCommit(true);
             while (results.next()) {
                 tags.add(results.getString("tag"));
             }

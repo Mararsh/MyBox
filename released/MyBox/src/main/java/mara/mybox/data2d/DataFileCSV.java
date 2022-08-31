@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Random;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.DataFileCSVController;
 import mara.mybox.controller.DataFileExcelController;
@@ -27,7 +26,6 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
-import mara.mybox.value.AppPaths;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -197,13 +195,13 @@ public class DataFileCSV extends DataFileText {
     }
 
     @Override
-    public File tmpFile(List<String> cols, List<List<String>> data) {
+    public File tmpFile(String dname, List<String> cols, List<List<String>> data) {
         if (cols == null || cols.isEmpty()) {
             if (data == null || data.isEmpty()) {
                 return null;
             }
         }
-        File tmpFile = TmpFileTools.csvFile();
+        File tmpFile = tmpFile(dname, "tmp", ".csv");
         try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(tmpFile)) {
             if (cols != null && !cols.isEmpty()) {
                 csvPrinter.printRecord(cols);
@@ -226,218 +224,11 @@ public class DataFileCSV extends DataFileText {
         return tmpFile;
     }
 
-    @Override
-    public long setValue(List<Integer> cols, String value, boolean errorContinue) {
-        if (file == null || !file.exists() || file.length() == 0 || cols == null || cols.isEmpty()) {
-            return -1;
-        }
-        File tmpFile = TmpFileTools.getTempFile();
-        CSVFormat format = cvsFormat();
-        File validFile = FileTools.removeBOM(file);
-        long count = 0;
-        try ( CSVParser parser = CSVParser.parse(validFile, charset, format);
-                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, charset), format)) {
-            Iterator<CSVRecord> iterator = parser.iterator();
-            if (iterator != null) {
-                if (hasHeader) {
-                    try {
-                        csvPrinter.printRecord(parser.getHeaderNames());
-                    } catch (Exception e) {  // skip  bad lines
-                    }
-                }
-                boolean isRandom = false, isRandomNn = false, isBlank = false, isMean = false,
-                        isMedian = false, isMode = false;
-                String script = null;
-                if (value != null) {
-                    if ("MyBox##blank".equals(value)) {
-                        isBlank = true;
-                    } else if ("MyBox##random".equals(value)) {
-                        isRandom = true;
-                    } else if ("MyBox##randomNn".equals(value)) {
-                        isRandomNn = true;
-                    } else if (value.startsWith("MyBox##Expression##")) {
-                        script = value.substring("MyBox##Expression##".length());
-                    } else if (value.startsWith("MyBox##columnMean")) {
-                        isMean = true;
-                    } else if (value.startsWith("MyBox##columnMode")) {
-                        isMode = true;
-                    } else if (value.startsWith("MyBox##columnMedian")) {
-                        isMedian = true;
-                    }
-                }
-                final Random random = new Random();
-                rowIndex = 0;
-                boolean needSetValue;
-                while (iterator.hasNext() && task != null && !task.isCancelled()) {
-                    try {
-                        CSVRecord record = iterator.next();
-                        if (record == null) {
-                            continue;
-                        }
-                        List<String> values = record.toList();
-                        filterDataRow(values, ++rowIndex);
-                        needSetValue = filterPassed() && !filterReachMaxPassed();
-                        if (needSetValue) {
-                            count++;
-                            if (script != null) {
-                                calculateDataRowExpression(script, values, rowIndex);
-                                error = expressionError();
-                                if (error != null) {
-                                    if (errorContinue) {
-                                        continue;
-                                    } else {
-                                        task.setError(error);
-                                        return -2;
-                                    }
-                                }
-                            }
-                        }
-                        List<String> row = new ArrayList<>();
-                        for (int i = 0; i < columns.size(); i++) {
-                            if (needSetValue && cols.contains(i)) {
-                                if (isBlank) {
-                                    row.add("");
-                                } else if (isRandom) {
-                                    row.add(random(random, i, false));
-                                } else if (isRandomNn) {
-                                    row.add(random(random, i, true));
-                                } else if (isMean) {
-                                    row.add(column(i).getTargetStatistic().mean + "");
-                                } else if (isMode) {
-                                    row.add(column(i).getTargetStatistic().modeValue + "");
-                                } else if (isMedian) {
-                                    row.add(column(i).getTargetStatistic().median + "");
-                                } else if (script != null) {
-                                    row.add(expressionResult());
-                                } else {
-                                    row.add(value);
-                                }
-
-                            } else if (i < record.size()) {
-                                row.add(record.get(i));
-                            } else {
-                                row.add(null);
-                            }
-                        }
-                        csvPrinter.printRecord(row);
-                    } catch (Exception e) {  // skip  bad lines
-                    }
-                }
-            }
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return -3;
-        }
-        if (FileTools.rename(tmpFile, file, false)) {
-            return count;
-        } else {
-            return -4;
-        }
-    }
-
-    @Override
-    public long delete(boolean errorContinue) {
-        if (file == null || !file.exists() || file.length() == 0) {
-            return -1;
-        }
-        File tmpFile = TmpFileTools.getTempFile();
-        CSVFormat format = cvsFormat();
-        File validFile = FileTools.removeBOM(file);
-        long count = 0;
-        try ( CSVParser parser = CSVParser.parse(validFile, charset, format);
-                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, charset), format)) {
-            Iterator<CSVRecord> iterator = parser.iterator();
-            if (iterator != null) {
-                if (hasHeader) {
-                    try {
-                        csvPrinter.printRecord(parser.getHeaderNames());
-                    } catch (Exception e) {  // skip  bad lines
-                    }
-                }
-                if (needFilter()) {
-                    rowIndex = 0;
-                    while (iterator.hasNext() && task != null && !task.isCancelled()) {
-                        try {
-                            CSVRecord record = iterator.next();
-                            if (record == null) {
-                                continue;
-                            }
-                            filterDataRow(record.toList(), ++rowIndex);
-                            if (error != null) {
-                                if (errorContinue) {
-                                    continue;
-                                } else {
-                                    task.setError(error);
-                                    return -2;
-                                }
-                            }
-                            if (filterPassed() && !filterReachMaxPassed()) {
-                                count++;
-                                continue;
-                            }
-                            List<String> row = new ArrayList<>();
-                            for (int i = 0; i < columns.size(); i++) {
-                                if (i < record.size()) {
-                                    row.add(record.get(i));
-                                } else {
-                                    row.add(null);
-                                }
-                            }
-                            csvPrinter.printRecord(row);
-                        } catch (Exception e) {  // skip  bad lines
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return -3;
-        }
-        if (FileTools.rename(tmpFile, file, false)) {
-            return count;
-        } else {
-            return -4;
-        }
-    }
-
-    @Override
-    public long clearData() {
-        File tmpFile = TmpFileTools.getTempFile();
-        CSVFormat cvsFormat = cvsFormat();
-        checkForLoad();
-        if (file != null && file.exists() && file.length() > 0) {
-            try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, charset), cvsFormat)) {
-                if (hasHeader) {
-                    writeHeader(csvPrinter);
-                }
-            } catch (Exception e) {
-                MyBoxLog.error(e);
-                if (task != null) {
-                    task.setError(e.toString());
-                }
-                return -1;
-            }
-            if (FileTools.rename(tmpFile, file, false)) {
-                return getDataSize();
-            } else {
-                return -1;
-            }
-        } else {
-            return -1;
-        }
-    }
-
-    public DataFileCSV savePageAs() {
+    public DataFileCSV savePageAs(String dname) {
         try {
             DataFileCSV targetData = (DataFileCSV) this.cloneAll();
-            File csvFile = TmpFileTools.getPathTempFile(AppPaths.getGeneratedPath(), ".csv");
-            targetData.setFile(csvFile);
+            File csvFile = tmpFile(dname, "save", ".csv");
+            targetData.setFile(csvFile).setDataName(dname);
             savePageData(targetData);
             return targetData;
         } catch (Exception e) {
@@ -449,11 +240,11 @@ public class DataFileCSV extends DataFileText {
     /*
         static
      */
-    public static DataFileCSV tmpCSV() {
+    public static DataFileCSV tmpCSV(String dname) {
         try {
-            File csvFile = TmpFileTools.getPathTempFile(AppPaths.getGeneratedPath(), ".csv");
             DataFileCSV dataFileCSV = new DataFileCSV();
-            dataFileCSV.setFile(csvFile)
+            File csvFile = dataFileCSV.tmpFile(dname, "tmp", ".csv");
+            dataFileCSV.setFile(csvFile).setDataName(dname)
                     .setCharset(Charset.forName("UTF-8"))
                     .setDelimiter(",")
                     .setHasHeader(true);
@@ -512,7 +303,7 @@ public class DataFileCSV extends DataFileText {
 
     }
 
-    public static DataFileCSV save(SingletonTask task, List<Data2DColumn> cols, List<List<String>> data) {
+    public static DataFileCSV save(String dname, SingletonTask task, List<Data2DColumn> cols, List<List<String>> data) {
         try {
             if (cols == null || cols.isEmpty()) {
                 if (data == null || data.isEmpty()) {
@@ -530,7 +321,7 @@ public class DataFileCSV extends DataFileText {
             }
             DataFileCSV dataFileCSV = new DataFileCSV();
             dataFileCSV.setTask(task);
-            File file = dataFileCSV.tmpFile(names, data);
+            File file = dataFileCSV.tmpFile(dname, names, data);
             dataFileCSV.setColumns(targetColumns)
                     .setFile(file)
                     .setCharset(Charset.forName("UTF-8"))

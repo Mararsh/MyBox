@@ -377,9 +377,14 @@ public class WindowTools {
 
     public static void checkExit() {
         try {
-            if (Window.getWindows().isEmpty()) {
-                appExit();
+            List<Window> windows = new ArrayList<>();
+            windows.addAll(Window.getWindows());
+            for (Window window : windows) {
+                if (window != null && window.isShowing()) {
+                    return;
+                }
             }
+            appExit();
         } catch (Exception e) {
 //            MyBoxLog.error(e.toString());
         }
@@ -406,7 +411,7 @@ public class WindowTools {
 
             if (AppVariables.scheduledTasks != null && !AppVariables.scheduledTasks.isEmpty()) {
                 if (UserConfig.getBoolean("StopAlarmsWhenExit")) {
-                    for (Long key : AppVariables.scheduledTasks.keySet()) {
+                    for (String key : AppVariables.scheduledTasks.keySet()) {
                         ScheduledFuture future = AppVariables.scheduledTasks.get(key);
                         future.cancel(true);
                     }
@@ -468,7 +473,7 @@ public class WindowTools {
 
                 new TableFileBackup().clearInvalid(conn);
 
-                new TableData2DDefinition().clearInvalid(conn);
+                new TableData2DDefinition().clearInvalid(conn, true);
 
             } catch (Exception e) {
                 MyBoxLog.error(e);

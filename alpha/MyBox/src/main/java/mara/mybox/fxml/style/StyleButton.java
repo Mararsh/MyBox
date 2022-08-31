@@ -528,7 +528,12 @@ public class StyleButton {
             return new StyleData(id, "", "", "iconCharacter.png");
         }
         if (id.startsWith("menu")) {
-            return new StyleData(id, message("Menu"), message("MenuButtonTips"), "iconMenu.png");
+            switch (id) {
+                case "menuButton":
+                    return new StyleData(id, message("MenuButtonTips"), "", "iconMenu.png");
+                default:
+                    return new StyleData(id, message("ContextMenu"), "", "iconMenu.png");
+            }
         }
 
         if (id.startsWith("closePop")) {

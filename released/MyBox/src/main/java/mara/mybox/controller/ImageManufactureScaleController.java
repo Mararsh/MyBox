@@ -6,7 +6,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -55,8 +54,6 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
     @FXML
     protected CheckBox keepRatioCheck;
     @FXML
-    protected Button originalButton, calculatorButton;
-    @FXML
     protected TextField widthInput, heightInput;
     @FXML
     protected Label commentsLabel;
@@ -102,47 +99,6 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     checkPixelsHeight();
-                }
-            });
-
-            originalButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    isSettingValues = true;
-                    widthInput.setText((int) imageController.image.getWidth() + "");
-                    heightInput.setText((int) imageController.image.getHeight() + "");
-                    isSettingValues = false;
-                }
-            });
-
-            calculatorButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    try {
-                        PixelsCalculationController controller
-                                = (PixelsCalculationController) openChildStage(Fxmls.PixelsCalculatorFxml, true);
-                        attributes = new ImageAttributes();
-                        attributes.setRatioAdjustion(keepRatioType);
-                        attributes.setKeepRatio(keepRatioType != KeepRatioType.None);
-                        attributes.setSourceWidth((int) imageController.image.getWidth());
-                        attributes.setSourceHeight((int) imageController.image.getHeight());
-                        attributes.setTargetWidth((int) width);
-                        attributes.setTargetHeight((int) height);
-                        controller.setSource(attributes, widthInput, heightInput);
-                        isSettingValues = true;
-                        controller.getMyStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
-                            @Override
-                            public void handle(WindowEvent event) {
-                                isSettingValues = false;
-                                if (!controller.leavingScene()) {
-                                    event.consume();
-                                }
-                            }
-                        });
-
-                    } catch (Exception e) {
-                        MyBoxLog.error(e.toString());
-                    }
                 }
             });
 
@@ -230,6 +186,7 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
             heightInput.setDisable(false);
             widthInput.setStyle(null);
             heightInput.setStyle(null);
+            scale = 1;
 
             if (!keepRatioCheck.isSelected()) {
                 ratioBox.setDisable(true);
@@ -328,6 +285,7 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
                 + "x" + (int) Math.round(imageView.getImage().getHeight()) + "\n"
                 + Languages.message("AfterChange") + ": " + (int) Math.round(width)
                 + "x" + (int) Math.round(height) + "\n";
+        MyBoxLog.debug(width + " " + width);
         commentsLabel.setText(info);
     }
 
@@ -382,10 +340,40 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
     @FXML
     public void originalSize() {
         isSettingValues = true;
-        widthInput.setText((int) Math.round(imageController.image.getWidth()) + "");
-        heightInput.setText((int) Math.round(imageController.image.getHeight()) + "");
+        width = imageController.image.getWidth();
+        height = imageController.image.getHeight();
+        widthInput.setText((int) Math.round(width) + "");
+        heightInput.setText((int) Math.round(height) + "");
         isSettingValues = false;
-        checkRatio();
+        labelSize();
+    }
+
+    @FXML
+    public void calculator(ActionEvent event) {
+        try {
+            PixelsCalculationController controller
+                    = (PixelsCalculationController) openChildStage(Fxmls.PixelsCalculatorFxml, true);
+            attributes = new ImageAttributes();
+            attributes.setRatioAdjustion(keepRatioType);
+            attributes.setKeepRatio(keepRatioType != KeepRatioType.None);
+            attributes.setSourceWidth((int) imageController.image.getWidth());
+            attributes.setSourceHeight((int) imageController.image.getHeight());
+            attributes.setTargetWidth((int) width);
+            attributes.setTargetHeight((int) height);
+            controller.setSource(attributes, widthInput, heightInput);
+            isSettingValues = true;
+            controller.getMyStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent event) {
+                    isSettingValues = false;
+                    if (!controller.leavingScene()) {
+                        event.consume();
+                    }
+                }
+            });
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @FXML

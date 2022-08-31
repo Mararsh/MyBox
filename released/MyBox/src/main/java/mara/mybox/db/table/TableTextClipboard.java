@@ -55,6 +55,7 @@ public class TableTextClipboard extends BaseTable<TextClipboard> {
                 try ( PreparedStatement statement = conn1.prepareStatement(QueryText)) {
                     statement.setString(1, text);
                     statement.setMaxRows(1);
+                    conn1.setAutoCommit(true);
                     try ( ResultSet results = statement.executeQuery()) {
                         if (results.next()) {
                             exist = readData(results);

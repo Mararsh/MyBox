@@ -3,7 +3,6 @@ package mara.mybox.db.data;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -13,6 +12,7 @@ import java.util.Random;
 import javafx.scene.paint.Color;
 import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.data.Era;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.dev.MyBoxLog;
@@ -22,6 +22,7 @@ import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.IntTools;
 import mara.mybox.tools.LongTools;
+import mara.mybox.tools.ShortTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Languages;
@@ -38,14 +39,14 @@ public class ColumnDefinition extends BaseData {
     protected ColumnType type;
     protected int index, length, width;
     protected Color color;
-    protected boolean isPrimaryKey, notNull, editable, auto;
+    protected boolean isPrimaryKey, notNull, editable, auto, needFormat;
     protected OnDelete onDelete;
     protected OnUpdate onUpdate;
     protected Era.Format timeFormat;
     protected Object value;
     protected Number maxValue, minValue;
     protected Map<Object, String> data;  // value, displayString
-    protected DoubleStatistic sourceStatistic, targetStatistic;
+    protected DoubleStatistic statistic;
 
     public static enum ColumnType {
         String, Boolean, Text,
@@ -70,7 +71,7 @@ public class ColumnDefinition extends BaseData {
         type = ColumnType.String;
         index = -1;
         isPrimaryKey = notNull = auto = false;
-        editable = true;
+        editable = needFormat = true;
         length = StringMaxLength;
         width = 100; // px
         onDelete = OnDelete.Restrict;
@@ -84,8 +85,7 @@ public class ColumnDefinition extends BaseData {
         referTable = null;
         referColumn = null;
         label = null;
-        sourceStatistic = null;
-        targetStatistic = null;
+        statistic = null;
         data = null;
     }
 
@@ -153,8 +153,7 @@ public class ColumnDefinition extends BaseData {
             maxValue = c.maxValue;
             minValue = c.minValue;
             columnValues = c.columnValues;
-            sourceStatistic = c.sourceStatistic;
-            targetStatistic = c.targetStatistic;
+            statistic = c.statistic;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -254,6 +253,7 @@ public class ColumnDefinition extends BaseData {
         return !notNull || (value != null && !value.isEmpty());
     }
 
+    // invalid values are counted as smaller
     public int compare(String value1, String value2) {
         try {
             if (value1 == null) {
@@ -267,67 +267,18 @@ public class ColumnDefinition extends BaseData {
             }
             switch (type) {
                 case Double:
-                    double d1 = Double.parseDouble(value1);
-                    double d2 = Double.parseDouble(value2);
-                    if (d1 == d2) {
-                        return 0;
-                    } else if (d1 > d2) {
-                        return 1;
-                    } else {
-                        return -1;
-                    }
+                    return DoubleTools.compare(value1, value2, false);
                 case Float:
-                    float f1 = Float.parseFloat(value1);
-                    float f2 = Float.parseFloat(value2);
-                    if (f1 == f2) {
-                        return 0;
-                    } else if (f1 > f2) {
-                        return 1;
-                    } else {
-                        return -1;
-                    }
+                    return FloatTools.compare(value1, value2, false);
                 case Long:
                 case Era:
-                    long l1 = Long.parseLong(value1);
-                    long l2 = Long.parseLong(value2);
-                    if (l1 == l2) {
-                        return 0;
-                    } else if (l1 > l2) {
-                        return 1;
-                    } else {
-                        return -1;
-                    }
+                    return LongTools.compare(value1, value2, false);
                 case Integer:
-                    int i1 = Integer.parseInt(value1);
-                    int i2 = Integer.parseInt(value2);
-                    if (i1 == i2) {
-                        return 0;
-                    } else if (i1 > i2) {
-                        return 1;
-                    } else {
-                        return -1;
-                    }
+                    return IntTools.compare(value1, value2, false);
                 case Short:
-                    short s1 = Short.parseShort(value1);
-                    short s2 = Short.parseShort(value2);
-                    if (s1 == s2) {
-                        return 0;
-                    } else if (s1 > s2) {
-                        return 1;
-                    } else {
-                        return -1;
-                    }
+                    return ShortTools.compare(value1, value2, false);
                 case Date:
-                    SimpleDateFormat df = new SimpleDateFormat();
-                    long e1 = df.parse(value1).getTime();
-                    long e2 = df.parse(value2).getTime();
-                    if (e1 == e2) {
-                        return 0;
-                    } else if (e1 > e2) {
-                        return 1;
-                    } else {
-                        return -1;
-                    }
+                    return DateTools.compare(value1, value2, false);
                 default:
                     return StringTools.compare(value1, value2);
             }
@@ -410,7 +361,7 @@ public class ColumnDefinition extends BaseData {
                     double d;
                     try {
                         d = Double.valueOf(results.getObject(savedName).toString());
-                        if (d == AppValues.InvalidDouble) {
+                        if (DoubleTools.invalidDouble(d)) {
                             d = Double.NaN;
                         }
                     } catch (Exception e) {
@@ -421,6 +372,9 @@ public class ColumnDefinition extends BaseData {
                     float f;
                     try {
                         f = Float.valueOf(results.getObject(savedName).toString());
+                        if (FloatTools.invalidFloat(f)) {
+                            f = Float.NaN;
+                        }
                     } catch (Exception e) {
                         f = Float.NaN;
                     }
@@ -469,11 +423,8 @@ public class ColumnDefinition extends BaseData {
         return null;
     }
 
-    public Object fromString(String string) {
+    public Object fromString(String string, InvalidAs invalidAs) {
         try {
-            if (string == null) {
-                return null;
-            }
             switch (type) {
                 case Double:
                     return Double.parseDouble(string.replaceAll(",", ""));
@@ -481,25 +432,44 @@ public class ColumnDefinition extends BaseData {
                     return Float.parseFloat(string.replaceAll(",", ""));
                 case Long:
                 case Era:
-                    return Long.parseLong(string.replaceAll(",", ""));
+                    return Math.round(Double.parseDouble(string.replaceAll(",", "")));
                 case Integer:
-                    return Integer.parseInt(string.replaceAll(",", ""));
+                    return (int) Math.round(Double.parseDouble(string.replaceAll(",", "")));
                 case Boolean:
+                    if (string == null || string.isBlank()) {
+                        return false;
+                    }
                     String v = string.toLowerCase();
                     return "1".equals(v) || "true".equalsIgnoreCase(v) || "yes".equalsIgnoreCase(v)
                             || message("true").equals(v) || message("yes").equals(v);
                 case Short:
-                    return Short.parseShort(string.replaceAll(",", ""));
+                    return (short) Math.round(Double.parseDouble(string.replaceAll(",", "")));
                 case Datetime:
-                    return DateTools.stringToDatetime(string);
-                case Color:
                     return DateTools.stringToDatetime(string);
                 default:
                     return string;
             }
         } catch (Exception e) {
         }
-        return null;
+        if (null == invalidAs || null == type || !isNumberType()) {
+            return null;
+        } else {
+            switch (invalidAs) {
+                case Zero:
+                    switch (type) {
+                        case Double:
+                            return 0d;
+                        case Float:
+                            return 0f;
+                        default:
+                            return 0;
+                    }
+                case Blank:
+                    return null;
+                default:
+                    return null;
+            }
+        }
     }
 
     public String toString(Object value) {
@@ -510,8 +480,6 @@ public class ColumnDefinition extends BaseData {
             switch (type) {
                 case Datetime:
                     return DateTools.datetimeToString((Date) value);
-                case Boolean:
-                    return value + "";
                 default:
                     return value + "";
             }
@@ -520,12 +488,62 @@ public class ColumnDefinition extends BaseData {
         }
     }
 
+    public String display(String string) {
+        try {
+            if (string == null) {
+                return null;
+            }
+            Object o = fromString(string, InvalidAs.Blank);
+            switch (type) {
+                case Double:
+                    if (needFormat) {
+                        return DoubleTools.format((double) o);
+                    } else {
+                        return (double) o + "";
+                    }
+                case Float:
+                    if (needFormat) {
+                        return FloatTools.format((float) o);
+                    } else {
+                        return (float) o + "";
+                    }
+                case Long:
+                case Era:
+                    if (needFormat) {
+                        return LongTools.format((long) o);
+                    } else {
+                        return (long) o + "";
+                    }
+                case Integer:
+                    if (needFormat) {
+                        return IntTools.format((int) o);
+                    } else {
+                        return (int) o + "";
+                    }
+                case Short:
+                    if (needFormat) {
+                        return ShortTools.format((short) o);
+                    } else {
+                        return (short) o + "";
+                    }
+                default:
+                    return o + "";
+            }
+        } catch (Exception e) {
+            return string;
+        }
+    }
+
+    public String savedValue(String string) {
+        return toString(fromString(string, InvalidAs.Blank));
+    }
+
     public boolean valueQuoted() {
         return !isNumberType() && type != ColumnType.Boolean;
     }
 
     public String getDefValue() {
-        Object v = fromString(defaultValue);
+        Object v = fromString(defaultValue, InvalidAs.Blank);
         switch (type) {
             case String:
             case Text:
@@ -572,7 +590,7 @@ public class ColumnDefinition extends BaseData {
     }
 
     public Object defaultValue() {
-        Object v = fromString(defaultValue);
+        Object v = fromString(defaultValue, InvalidAs.Blank);
         switch (type) {
             case String:
             case Text:
@@ -696,15 +714,15 @@ public class ColumnDefinition extends BaseData {
             }
             switch (type) {
                 case Double:
-                    return Double.parseDouble(s);
+                    return Double.parseDouble(s.replaceAll(",", ""));
                 case Float:
-                    return Float.parseFloat(s);
+                    return Float.parseFloat(s.replaceAll(",", ""));
                 case Long:
-                    return Long.parseLong(s);
+                    return Math.round(Double.parseDouble(s.replaceAll(",", "")));
                 case Integer:
-                    return Integer.parseInt(s);
+                    return (int) Math.round(Double.parseDouble(s.replaceAll(",", "")));
                 case Short:
-                    return Short.parseShort(s);
+                    return (short) Math.round(Double.parseDouble(s.replaceAll(",", "")));
             }
         } catch (Exception e) {
         }
@@ -965,6 +983,15 @@ public class ColumnDefinition extends BaseData {
         return this;
     }
 
+    public boolean isNeedFormat() {
+        return needFormat;
+    }
+
+    public ColumnDefinition setNeedFormat(boolean needFormat) {
+        this.needFormat = needFormat;
+        return this;
+    }
+
     public int getWidth() {
         return width;
     }
@@ -986,21 +1013,12 @@ public class ColumnDefinition extends BaseData {
         this.color = color;
     }
 
-    public DoubleStatistic getTargetStatistic() {
-        return targetStatistic;
+    public DoubleStatistic getStatistic() {
+        return statistic;
     }
 
-    public ColumnDefinition setTargetStatistic(DoubleStatistic targetStatistic) {
-        this.targetStatistic = targetStatistic;
-        return this;
-    }
-
-    public DoubleStatistic getSourceStatistic() {
-        return sourceStatistic;
-    }
-
-    public ColumnDefinition setSourceStatistic(DoubleStatistic sourceStatistic) {
-        this.sourceStatistic = sourceStatistic;
+    public ColumnDefinition setStatistic(DoubleStatistic statistic) {
+        this.statistic = statistic;
         return this;
     }
 

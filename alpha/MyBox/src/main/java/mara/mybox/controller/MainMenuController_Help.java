@@ -19,7 +19,7 @@ public abstract class MainMenuController_Help extends MainMenuController_Develop
     @FXML
     protected void Overview(ActionEvent event) {
         String lang = Languages.isChinese() ? "zh" : "en";
-        File file = FxFileTools.getInternalFile("/doc/MyBox-Overview-" + lang + ".pdf", "doc", "MyBox-Overview-" + lang + ".pdf");
+        File file = FxFileTools.getInternalFile("/doc/" + lang + "/MyBox-Overview-" + lang + ".pdf", "doc", "MyBox-Overview-" + lang + ".pdf");
         if (file != null && file.exists()) {
             PopTools.browseURI(this, file.toURI());
         }
@@ -37,7 +37,11 @@ public abstract class MainMenuController_Help extends MainMenuController_Develop
 
     @FXML
     public void documents(ActionEvent event) {
-        openStage(Fxmls.DocumentsFxml);
+        String lang = Languages.isChinese() ? "zh" : "en";
+        File file = FxFileTools.getInternalFile("/doc/" + lang + "/MyBox-Documents-" + lang + ".html", "doc", "MyBox-Documents-" + lang + ".html");
+        if (file != null && file.exists()) {
+            WebBrowserController.oneOpen(file);
+        }
     }
 
     @FXML

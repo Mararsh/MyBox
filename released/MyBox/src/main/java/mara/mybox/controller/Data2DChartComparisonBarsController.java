@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.paint.Color;
 import mara.mybox.calculation.Normalization;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.WindowTools;
@@ -40,8 +41,6 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
     public void initControls() {
         try {
             super.initControls();
-
-            noColumnSelection(true);
 
             valueColumn2Selector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -83,31 +82,30 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
     }
 
     @Override
-    public boolean checkOptions() {
-        if (isSettingValues) {
+    public boolean initData() {
+        try {
+            if (!super.initData()) {
+                return false;
+            }
+            selectedValue2 = valueColumn2Selector.getSelectionModel().getSelectedItem();
+            if (selectedValue2 == null) {
+                outOptionsError(message("SelectToHandle") + ": " + message("Column"));
+                tabPane.getSelectionModel().select(optionsTab);
+                return false;
+            }
+            col1 = data2D.colOrder(selectedValue);
+            col2 = data2D.colOrder(selectedValue2);
+            dataColsIndices = new ArrayList<>();
+            dataColsIndices.add(col1);
+            dataColsIndices.add(col2);
+            if (!dataColsIndices.contains(categorysCol)) {
+                dataColsIndices.add(categorysCol);
+            }
             return true;
-        }
-        boolean ok = super.checkOptions();
-        selectedValue2 = valueColumn2Selector.getSelectionModel().getSelectedItem();
-        if (selectedValue2 == null) {
-            infoLabel.setText(message("SelectToHandle"));
-            okButton.setDisable(true);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
             return false;
         }
-        col1 = data2D.colOrder(selectedValue);
-        col2 = data2D.colOrder(selectedValue2);
-        return ok;
-    }
-
-    @Override
-    public boolean initData() {
-        dataColsIndices = new ArrayList<>();
-        dataColsIndices.add(col1);
-        dataColsIndices.add(col2);
-        if (!dataColsIndices.contains(categorysCol)) {
-            dataColsIndices.add(categorysCol);
-        }
-        return true;
     }
 
     @Override
@@ -118,19 +116,19 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
             }
             normalization = null;
             rowsNumber = outputData.size();
-            double[] data = new double[2 * rowsNumber];
+            String[] data = new String[2 * rowsNumber];
             for (int r = 0; r < rowsNumber; r++) {
                 List<String> tableRow = outputData.get(r);
-                data[r] = DoubleTools.toDouble(tableRow.get(1), invalidAs);
-                data[r + rowsNumber] = DoubleTools.toDouble(tableRow.get(2), invalidAs);
+                data[r] = tableRow.get(1);
+                data[r + rowsNumber] = tableRow.get(1);
             }
-            normalization = Normalization.create().setSourceVector(data);
+            normalization = Normalization.create().setSourceVector(data).setInvalidAs(invalidAs);
             if (absoluateRadio.isSelected()) {
                 normalization.setWidth(barWidth).setA(Normalization.Algorithm.Absoluate);
             } else {
                 normalization.setFrom(0).setTo(barWidth).setA(Normalization.Algorithm.MinMax);
             }
-            bar = normalization.calculate();
+            bar = DoubleTools.toDouble(normalization.calculate(), InvalidAs.Zero);
 
             StringBuilder s = new StringBuilder();
             s.append(jsBody());

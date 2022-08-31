@@ -88,9 +88,9 @@ public class DataTablesController extends BaseData2DController {
         return controller;
     }
 
-    public static DataTablesController open(List<Data2DColumn> cols, List<List<String>> data) {
+    public static DataTablesController open(String name, List<Data2DColumn> cols, List<List<String>> data) {
         DataTablesController controller = oneOpen();
-        controller.dataController.loadTmpData(cols, data);
+        controller.dataController.loadTmpData(name, cols, data);
         return controller;
     }
 

@@ -1,14 +1,17 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import javafx.fxml.FXML;
+import javafx.scene.control.Tab;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ExpressionCalculator;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -21,6 +24,8 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
 
     @FXML
     protected ControlData2DSetValue valueController;
+    @FXML
+    protected Tab valuesTab;
 
     public Data2DSetValuesController() {
         baseTitle = message("SetValues");
@@ -48,38 +53,109 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
     @Override
     public void refreshControls() {
         try {
-            if (data2D == null) {
-                return;
-            }
-            if (data2D.isMutiplePages()) {
-                allPagesRadio.setDisable(false);
-            } else {
-                if (allPagesRadio.isSelected()) {
-                    currentPageRadio.fire();
-                }
-                allPagesRadio.setDisable(true);
-            }
+            super.refreshControls();
             showPaginationPane(false);
-            restoreSelections();
-            checkOptions();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
     @Override
-    public boolean checkOptions() {
-        boolean ok = super.checkOptions();
-        ok = valueController.checkSelection() && ok;
-        okButton.setDisable(!ok);
-        return ok;
+    public boolean initData() {
+        try {
+            if (!super.initData() || !valueController.checkSelection()) {
+                return false;
+            }
+            if (isAllPages() && !tableController.checkBeforeNextAction()) {
+                return false;
+            }
+            return PopTools.askSure(this, baseTitle, message("SureOverwriteColumns") + "\n" + checkedColsNames);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    @Override
+    public void preprocessStatistic() {
+        List<String> scripts = new ArrayList<>();
+        String filterScript = data2D.filterScipt();
+        if (filterScript != null && !filterScript.isBlank()) {
+            scripts.add(filterScript);
+        }
+        if (valueController.expressionRadio.isSelected()) {
+            String expression = valueController.value();
+            if (expression == null || expression.isBlank()) {
+                popError(message("Invalid") + ": " + message("RowExpression"));
+                return;
+            }
+            scripts.add(expression);
+        }
+        if (scripts.isEmpty()) {
+            startOperation();
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try {
+                    data2D.setTask(task);
+                    List<String> filled = data2D.calculateScriptsStatistic(scripts);
+                    if (filled == null) {
+                        return false;
+                    }
+                    String filledExp = null;
+                    if (filterScript != null && !filterScript.isBlank()) {
+                        String filledScript = filled.get(0);
+                        if (filledScript == null || filledScript.isBlank()) {
+                            error = message("Invalid") + ": " + message("RowFilter");
+                            return false;
+                        }
+                        data2D.filter.setFilledScript(filledScript);
+                        if (valueController.expressionRadio.isSelected()) {
+                            filledExp = filled.get(1);
+                        }
+                    } else if (valueController.expressionRadio.isSelected()) {
+                        filledExp = filled.get(0);
+                    }
+                    if (valueController.expressionRadio.isSelected()) {
+                        if (filledExp == null || filledExp.isBlank()) {
+                            error = message("Invalid") + ": " + message("RowExpression");
+                            return false;
+                        }
+                        valueController.setValue(filledExp);
+                    }
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                data2D.setTask(null);
+                task = null;
+                if (ok) {
+                    startOperation();
+                }
+            }
+
+        };
+        start(task);
     }
 
     @Override
     public void handleAllTask() {
-        if (!tableController.checkBeforeNextAction()) {
-            return;
-        }
         task = new SingletonTask<Void>(this) {
 
             private long count;
@@ -91,9 +167,8 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                             && tableController.dataController.backupController.isBack()) {
                         tableController.dataController.backupController.addBackup(task, data2D.getFile());
                     }
-                    fillExpression();
                     data2D.startTask(task, filterController.filter);
-                    count = data2D.setValue(checkedColsIndices, valueController.value, valueController.errorContinueCheck.isSelected());
+                    count = data2D.setValue(checkedColsIndices, valueController.setValue, valueController.errorContinueCheck.isSelected());
                     data2D.stopFilter();
                     return count >= 0;
                 } catch (Exception e) {
@@ -123,31 +198,25 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
         start(task);
     }
 
-    public boolean fillExpression() {
-        if (valueController.expressionRadio.isSelected()) {
-            String filled = data2D.calculateScriptStatistic(valueController.expression());
-            if (filled == null || filled.isBlank()) {
-                error = message("Invalid") + ": " + message("RowExpression");
-                return false;
-            }
-            valueController.setExpression(filled);
-        }
-        return true;
-    }
-
-    @Override
-    public boolean handleRows() {
-        if (!fillExpression()) {
-            return false;
-        }
-        return super.handleRows();
-    }
-
     @Override
     public void ouputRows() {
         try {
             tableController.isSettingValues = true;
-            if (valueController.gaussianDistributionRadio.isSelected()) {
+            if (valueController.randomRadio.isSelected()) {
+                random(false);
+            } else if (valueController.randomNnRadio.isSelected()) {
+                random(true);
+            } else if (valueController.scaleRadio.isSelected()) {
+                scale();
+            } else if (valueController.prefixRadio.isSelected()) {
+                prefix();
+            } else if (valueController.suffixRadio.isSelected()) {
+                suffix();
+            } else if (valueController.numberRadio.isSelected()) {
+                number();
+            } else if (valueController.expressionRadio.isSelected()) {
+                expression();
+            } else if (valueController.gaussianDistributionRadio.isSelected()) {
                 gaussianDistribution();
             } else if (valueController.identifyRadio.isSelected()) {
                 identifyMatrix();
@@ -156,7 +225,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             } else if (valueController.lowerTriangleRadio.isSelected()) {
                 lowerTriangleMatrix();
             } else {
-                setValue();
+                setValue(valueController.value());
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -176,37 +245,151 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
         return true;
     }
 
-    public void setValue() {
+    public void setValue(String value) {
         try {
-            Random random = new Random();
-            String script = valueController.expression();
-            ExpressionCalculator calculator = valueController.expressionController.calculator;
             for (int row : filteredRowsIndices) {
                 List<String> values = tableController.tableData.get(row);
-                String v = valueController.value;
-                if (valueController.blankRadio.isSelected()) {
-                    v = "";
-                } else if (valueController.blankRadio.isSelected()) {
-                    v = "";
-                } else if (valueController.expressionRadio.isSelected()) {
-                    if (!calculator.calculateTableRowExpression(data2D, script, values, row)) {
-                        if (valueController.errorContinueCheck.isSelected()) {
-                            continue;
-                        } else {
-                            if (data2D.getError() != null) {
-                                popError(data2D.getError());
-                            }
-                            return;
-                        }
-                    }
-                    v = calculator.getResult();
-                }
                 for (int col : checkedColsIndices) {
-                    if (valueController.randomRadio.isSelected()) {
-                        v = tableController.data2D.random(random, col, false);
-                    } else if (valueController.randomNnRadio.isSelected()) {
-                        v = tableController.data2D.random(random, col, true);
+                    values.set(col + 1, value);
+                }
+                tableController.tableData.set(row, values);
+            }
+            updateTable();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            popError(message(e.toString()));
+        }
+    }
+
+    public void random(boolean nonNegative) {
+        try {
+            Random random = new Random();
+            for (int row : filteredRowsIndices) {
+                List<String> values = tableController.tableData.get(row);
+                for (int col : checkedColsIndices) {
+                    String v = tableController.data2D.random(random, col, nonNegative);
+                    values.set(col + 1, v);
+                }
+                tableController.tableData.set(row, values);
+            }
+            updateTable();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            popError(message(e.toString()));
+        }
+    }
+
+    public void scale() {
+        try {
+            String currentValue;
+            for (int row : filteredRowsIndices) {
+                List<String> values = tableController.tableData.get(row);
+                for (int col : checkedColsIndices) {
+                    currentValue = values.get(col + 1);
+                    values.set(col + 1, valueController.scale(currentValue));
+                }
+                tableController.tableData.set(row, values);
+            }
+            updateTable();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            popError(message(e.toString()));
+        }
+    }
+
+    public void prefix() {
+        try {
+            String prefix = valueController.value();
+            if (prefix == null) {
+                popError(message("Invalid") + ": " + message("AddPrefix"));
+                return;
+            }
+            String currentValue;
+            for (int row : filteredRowsIndices) {
+                List<String> values = tableController.tableData.get(row);
+                for (int col : checkedColsIndices) {
+                    currentValue = values.get(col + 1);
+                    values.set(col + 1, currentValue == null ? prefix : prefix + currentValue);
+                }
+                tableController.tableData.set(row, values);
+            }
+            updateTable();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            popError(message(e.toString()));
+        }
+    }
+
+    public void suffix() {
+        try {
+            String suffix = valueController.value();
+            if (suffix == null) {
+                popError(message("Invalid") + ": " + message("AppendSuffix"));
+                return;
+            }
+            String currentValue;
+            for (int row : filteredRowsIndices) {
+                List<String> values = tableController.tableData.get(row);
+                for (int col : checkedColsIndices) {
+                    currentValue = values.get(col + 1);
+                    values.set(col + 1, currentValue == null ? suffix : currentValue + suffix);
+                }
+                tableController.tableData.set(row, values);
+            }
+            updateTable();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            popError(message(e.toString()));
+        }
+    }
+
+    public void number() {
+        try {
+            int num = valueController.setValue.getStart();
+            int digit;
+            if (valueController.setValue.isFillZero()) {
+                if (valueController.setValue.isAotoDigit()) {
+                    digit = (filteredRowsIndices.size() + "").length();
+                } else {
+                    digit = valueController.setValue.getDigit();
+                }
+            } else {
+                digit = 0;
+            }
+            String currentValue, suffix;
+            for (int row : filteredRowsIndices) {
+                List<String> values = tableController.tableData.get(row);
+                suffix = StringTools.fillLeftZero(num++, digit);
+                for (int col : checkedColsIndices) {
+                    currentValue = values.get(col + 1);
+                    values.set(col + 1, currentValue == null ? suffix : currentValue + suffix);
+                }
+                tableController.tableData.set(row, values);
+            }
+            updateTable();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            popError(message(e.toString()));
+        }
+    }
+
+    public void expression() {
+        try {
+            String script = valueController.value();
+            for (int row : filteredRowsIndices) {
+                List<String> values = tableController.tableData.get(row);
+                if (!data2D.calculateTableRowExpression(script, values, row)) {
+                    if (valueController.errorContinueCheck.isSelected()) {
+                        continue;
+                    } else {
+                        if (data2D.getError() != null) {
+                            popError(data2D.getError());
+                        }
+                        return;
                     }
+                }
+                String v = data2D.expressionResult();
+                for (int col : checkedColsIndices) {
                     values.set(col + 1, v);
                 }
                 tableController.tableData.set(row, values);

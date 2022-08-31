@@ -60,8 +60,6 @@ public class DoubleArrayTools {
         }
     }
 
-    // 有截断饱和归一化（设置最大最小值，或者用饱和函数截断），中心化（ [公式] ）
-    // ，均值方差归一化（ [公式] ），非线性归一化（对数指数等），L2范数归一化。采用哪种归一化方法取决于后续使用哪种数据分析方法。
     public static double[] normalizeMinMax(double[] array) {
         try {
             if (array == null) {

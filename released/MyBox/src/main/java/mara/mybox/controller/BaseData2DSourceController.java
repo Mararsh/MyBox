@@ -5,15 +5,19 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.data2d.DataFilter;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -32,6 +36,8 @@ public class BaseData2DSourceController extends ControlData2DLoad {
     protected ChangeListener<Boolean> tableLoadListener, tableStatusListener;
 
     @FXML
+    protected Tab dataTab, filterTab, optionsTab;
+    @FXML
     protected ToggleGroup rowsGroup;
     @FXML
     protected RadioButton selectedRadio, allPagesRadio, currentPageRadio;
@@ -39,6 +45,9 @@ public class BaseData2DSourceController extends ControlData2DLoad {
     protected VBox dataBox;
     @FXML
     protected ControlData2DFilter filterController;
+    @FXML
+    protected FlowPane columnsPane;
+
 
     /*
         controls
@@ -50,11 +59,11 @@ public class BaseData2DSourceController extends ControlData2DLoad {
 
             String rowsSelectionType = UserConfig.getString(baseName + "RowsSelectionType", "Selected");
             if ("AllPages".equals(rowsSelectionType)) {
-                allPagesRadio.fire();
+                allPagesRadio.setSelected(true);
             } else if ("CurrentPage".equals(rowsSelectionType)) {
-                currentPageRadio.fire();
+                currentPageRadio.setSelected(true);
             } else {
-                selectedRadio.fire();
+                selectedRadio.setSelected(true);
             }
             rowsGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -172,11 +181,24 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                 setPagination();
             } else {
                 if (allPagesRadio.isSelected()) {
-                    currentPageRadio.fire();
+                    currentPageRadio.setSelected(true);
                 }
                 allPagesRadio.setDisable(true);
                 showPaginationPane(false);
             }
+
+            if (columnsPane != null) {
+                isSettingValues = true;
+                columnsPane.getChildren().clear();
+                List<String> names = data2D.columnNames();
+                if (names != null) {
+                    for (String name : names) {
+                        columnsPane.getChildren().add(new CheckBox(name));
+                    }
+                }
+                isSettingValues = false;
+            }
+
             restoreSelections();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -199,18 +221,26 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                 tableView.getSelectionModel().clearSelection();
             }
 
-            if (!noColumnSelection) {
-                if (checkedColsIndices != null && !checkedColsIndices.isEmpty()
-                        && checkedColsIndices.size() != tableView.getColumns().size() - 2) {
+            if (checkedColsIndices != null && !checkedColsIndices.isEmpty()
+                    && checkedColsIndices.size() != tableView.getColumns().size() - 2) {
+                if (noColumnSelection) {
+                    if (columnsPane != null) {
+                        for (Node node : columnsPane.getChildren()) {
+                            CheckBox cb = (CheckBox) node;
+                            int col = data2D.colOrder(cb.getText());
+                            cb.setSelected(col >= 0 && checkedColsIndices.contains(col));
+                        }
+                    }
+                } else {
                     for (int i = 2; i < tableView.getColumns().size(); i++) {
                         TableColumn tableColumn = tableView.getColumns().get(i);
                         CheckBox cb = (CheckBox) tableColumn.getGraphic();
                         int col = data2D.colOrder(cb.getText());
                         cb.setSelected(col >= 0 && checkedColsIndices.contains(col));
                     }
-                } else {
-                    selectNoneColumn();
                 }
+            } else {
+                selectNoneColumn();
             }
 
             isSettingValues = false;
@@ -226,6 +256,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
         if (show) {
             if (!dataBox.getChildren().contains(paginationPane)) {
                 dataBox.getChildren().add(paginationPane);
+                NodeStyleTools.refreshStyle(paginationPane);
             }
         } else {
             if (dataBox.getChildren().contains(paginationPane)) {
@@ -236,34 +267,32 @@ public class BaseData2DSourceController extends ControlData2DLoad {
 
     @FXML
     public void selectAllColumns() {
-        try {
-            if (noColumnSelection) {
-                return;
-            }
-            isSettingValues = true;
-            for (int i = 2; i < tableView.getColumns().size(); i++) {
-                TableColumn tableColumn = tableView.getColumns().get(i);
-                CheckBox cb = (CheckBox) tableColumn.getGraphic();
-                cb.setSelected(true);
-            }
-            isSettingValues = false;
-            columnSelected();
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
+        setColumnsSelected(true);
     }
 
     @FXML
     public void selectNoneColumn() {
+        setColumnsSelected(false);
+    }
+
+    public void setColumnsSelected(boolean select) {
         try {
             if (noColumnSelection) {
+                if (columnsPane != null) {
+                    isSettingValues = true;
+                    for (Node node : columnsPane.getChildren()) {
+                        CheckBox cb = (CheckBox) node;
+                        cb.setSelected(select);
+                    }
+                    isSettingValues = false;
+                }
                 return;
             }
             isSettingValues = true;
             for (int i = 2; i < tableView.getColumns().size(); i++) {
                 TableColumn tableColumn = tableView.getColumns().get(i);
                 CheckBox cb = (CheckBox) tableColumn.getGraphic();
-                cb.setSelected(false);
+                cb.setSelected(select);
             }
             isSettingValues = false;
             columnSelected();
@@ -275,21 +304,12 @@ public class BaseData2DSourceController extends ControlData2DLoad {
     public void columnSelected() {
     }
 
+
     /*
         status
      */
     public boolean checkSelections() {
-        if (!checkRowFilter() || !checkedRows() || !checkColumns()) {
-            return false;
-        }
-        if ((allPagesRadio.isSelected() || (selectedRowsIndices != null && !selectedRowsIndices.isEmpty()))
-                && (noColumnSelection || (checkedColsIndices != null && !checkedColsIndices.isEmpty()))) {
-            return true;
-        } else {
-            error = message("SelectToHandle");
-            return false;
-        }
-
+        return checkRowFilter() && checkedRows() && checkColumns();
     }
 
     public boolean isAllPages() {
@@ -338,42 +358,66 @@ public class BaseData2DSourceController extends ControlData2DLoad {
             checkedColsIndices = new ArrayList<>();
             checkedColsNames = new ArrayList<>();
             checkedColumns = new ArrayList<>();
-            if (noColumnSelection) {
-                return true;
-            }
-
             List<Integer> allIndices = new ArrayList<>();
             List<String> allNames = new ArrayList<>();
             List<Data2DColumn> allCols = new ArrayList<>();
-            int idOrder = -1;
-            if (idExclude) {
-                idOrder = data2D.idOrder();
-            }
-            for (int i = 2; i < tableView.getColumns().size(); i++) {
-                TableColumn tableColumn = tableView.getColumns().get(i);
-                CheckBox cb = (CheckBox) tableColumn.getGraphic();
-                int col = data2D.colOrder(cb.getText());
-                if (col >= 0 && col != idOrder) {
-                    allIndices.add(col);
-                    allNames.add(cb.getText());
-                    Data2DColumn dcol = data2D.getColumns().get(col).cloneAll();
-                    allCols.add(dcol);
-                    if (cb.isSelected()) {
-                        checkedColsIndices.add(col);
-                        checkedColsNames.add(cb.getText());
-                        checkedColumns.add(dcol);
+            if (noColumnSelection) {
+                if (columnsPane != null) {
+                    for (Node node : columnsPane.getChildren()) {
+                        CheckBox cb = (CheckBox) node;
+                        String name = cb.getText();
+                        int col = data2D.colOrder(name);
+                        if (col >= 0) {
+                            allIndices.add(col);
+                            allNames.add(name);
+                            Data2DColumn dcol = data2D.getColumns().get(col).cloneAll();
+                            allCols.add(dcol);
+                            if (cb.isSelected()) {
+                                checkedColsIndices.add(col);
+                                checkedColsNames.add(name);
+                                checkedColumns.add(dcol);
+                            }
+                        }
+                    }
+                } else {
+                    return true;
+                }
+            } else {
+                int idOrder = -1;
+                if (idExclude) {
+                    idOrder = data2D.idOrder();
+                }
+                for (int i = 2; i < tableView.getColumns().size(); i++) {
+                    TableColumn tableColumn = tableView.getColumns().get(i);
+                    CheckBox cb = (CheckBox) tableColumn.getGraphic();
+                    String name = cb.getText();
+                    int col = data2D.colOrder(name);
+                    if (col >= 0 && col != idOrder) {
+                        allIndices.add(col);
+                        allNames.add(name);
+                        Data2DColumn dcol = data2D.getColumns().get(col).cloneAll();
+                        allCols.add(dcol);
+                        if (cb.isSelected()) {
+                            checkedColsIndices.add(col);
+                            checkedColsNames.add(name);
+                            checkedColumns.add(dcol);
+                        }
                     }
                 }
             }
+
             if (checkedColsIndices.isEmpty()) {
                 checkedColsIndices = allIndices;
                 checkedColsNames = allNames;
                 checkedColumns = allCols;
             }
+            if (checkedColsIndices.isEmpty()) {
+                popError(message("SelectToHandle") + ": " + message("Columns"));
+                return false;
+            }
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
-            error = e.toString();
             return false;
         }
     }
@@ -398,10 +442,13 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                     selectedRowsIndices.add(i);
                 }
             }
+            if (!allPagesRadio.isSelected() && selectedRowsIndices.isEmpty()) {
+                popError(message("SelectToHandle") + ": " + message("Rows"));
+                return false;
+            }
             return true;
         } catch (Exception e) {
-            error = e.toString();
-            MyBoxLog.debug(e);
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -424,9 +471,14 @@ public class BaseData2DSourceController extends ControlData2DLoad {
         filter
      */
     private boolean checkRowFilter() {
-        error = null;
         if (!filterController.checkExpression(isAllPages())) {
-            error = filterController.error;
+            String ferror = filterController.error;
+            if (ferror != null && !ferror.isBlank()) {
+                if (filterTab != null) {
+                    tabPane.getSelectionModel().select(filterTab);
+                }
+                alertError(ferror);
+            }
             return false;
         } else {
             return true;
@@ -477,17 +529,17 @@ public class BaseData2DSourceController extends ControlData2DLoad {
             }
             List<List<String>> data = new ArrayList<>();
             int size = tableData.size();
-            DataFilter filter = data2D.filter;
             filteredRowsIndices = new ArrayList<>();
+            data2D.resetFilterNumber();
             for (int row : rows) {
                 if (row < 0 || row >= size) {
                     continue;
                 }
                 List<String> tableRow = tableData.get(row);
-                if (!filter.filterTableRow(data2D, tableData.get(row), row)) {
+                if (!data2D.filterTableRow(tableData.get(row), row)) {
                     continue;
                 }
-                if (filter.reachMaxPassed()) {
+                if (data2D.filterReachMaxPassed()) {
                     break;
                 }
 

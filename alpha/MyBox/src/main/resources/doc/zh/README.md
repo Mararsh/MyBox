@@ -4,7 +4,7 @@
 这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。          
 
 ## 新内容
-2022-8-27 版本6.5.9          
+2022-8-31 版本6.5.9          
 
 * 数据：简单线性回归-组合；多重线性回归；等值分组；按多列排序；示例数据保存为合适的类型；生成数据时可设置数据名；
 赋值的新选项：小数位数、附加后缀、添加前缀；计算时可选如何处理非法数字。             
@@ -21,7 +21,7 @@
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases)目录下（点击此项目主页的`releases`页签）。       
 
 ### 源码
-[MyBox-6.5.9-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.9/MyBox-6.5.9-src.zip)   42M-       
+[MyBox-6.5.9-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.9/MyBox-6.5.9-src.zip)   52M-       
 
 关于源码的结构、编辑、和构建，请参考[开发指南](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-DevGuide-2.1-zh.pdf) 和
 [打包步骤](https://mararsh.github.io/MyBox/pack_steps.html)       
@@ -32,9 +32,9 @@
 
 | 平台 | 链接 | 大小（大约值） | 启动文件 |
 | --- | --- | --- |  --- |
-| win10 x64 | [MyBox-6.5.9-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.9/MyBox-6.5.9-win10-x64.zip)  | 210MB | MyBox.exe |
-| CentOS 7 x64 | [MyBox-6.5.9-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.9/MyBox-6.5.9-CentOS7-x64.tar.gz)  | 242MB  | bin/MyBox  |
-| mac x64| [MyBox-6.5.9-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.9/MyBox-6.5.9-mac.dmg)  | 220MB  |  MyBox-6.5.9.app   |
+| win10 x64 | [MyBox-6.5.9-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.9/MyBox-6.5.9-win10-x64.zip)  | 220MB- | MyBox.exe |
+| CentOS 7 x64 | [MyBox-6.5.9-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.9/MyBox-6.5.9-CentOS7-x64.tar.gz)  | 240MB-  | bin/MyBox  |
+| mac x64| [MyBox-6.5.9-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.9/MyBox-6.5.9-mac.dmg)  | 240MB-  |  MyBox-6.5.9.app   |
 
 双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。        
   
@@ -44,9 +44,9 @@
 
 | 平台 | 链接 | 大小（大约值） | 运行需要 |
 | --- | --- | --- |  --- |
-| win | [MyBox-6.5.9-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.9/MyBox-6.5.9-win-jar.zip)  | 144MB | Java 18或更高版本 |
-| linux | [MyBox-6.5.9-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.9/MyBox-6.5.9-linux-jar.zip)  | 175MB  | Java 18或更高版本 |
-| mac | [MyBox-6.5.9-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.9/MyBox-6.5.9-mac-jar.zip)  |  147MB  | Java 18或更高版本 |
+| win | [MyBox-6.5.9-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.9/MyBox-6.5.9-win-jar.zip)  | 160MB- | Java 18或更高版本 |
+| linux | [MyBox-6.5.9-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.9/MyBox-6.5.9-linux-jar.zip)  | 180MB-  | Java 18或更高版本 |
+| mac | [MyBox-6.5.9-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.9/MyBox-6.5.9-mac-jar.zip)  |  170MB-  | Java 18或更高版本 |
 
 执行以下命令来启动程序：       
 <PRE><CODE>     java   -jar   MyBox-6.5.9.jar</CODE></PRE>       
@@ -90,19 +90,20 @@
 | 云盘 | [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F) |       
 
 # 文档       
-| 文档名 | 版本 | 修改时间  | 链接 |       
-| --- | --- | --- | --- |
-| 开发日志 | 6.5.9 | 2022-8-27 | [html](https://mararsh.github.io/MyBox/mybox_devLogs.html) |
-| 快捷键 | 6.5.6 |  2022-6-11 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
-| 打包步骤 | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps.html) |
-| 开发指南 | 2.1 |  2020-8-27 | [html](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh-index.html)  [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf) |
-| 用户手册-综述 |  6.5.9|  2019-4-19 | [html](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-Overview-zh-index.html) [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-Overview-zh.pdf) |
-| 用户手册-文档工具 | 6.5.9 |  2022-8-24 | [html](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-DocumentTools-zh-index.html)  [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-DocumentTools-zh.pdf) |
-| 用户手册-图像工具 | 6.5.9 |  2022-8-24 | [html](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-ImageTools-zh-index.html)  [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-ImageTools-zh.pdf) |
-| 用户手册-文件工具 | 6.5.9 |  2022-8-24 | [html](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-FileTools-zh-index.html)  [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-FileTools-zh.pdf) |
-| 用户手册-网络工具 | 6.5.9 |  2022-8-24 | [html](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-NetworkTools-zh-index.html) [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-NetworkTools-zh.pdf) |       
-| 用户手册-数据工具 | 6.5.9 |  2022-8-24 | [html](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-DataTools-zh-index.html) [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-DataTools-zh.pdf) |
-| 用户手册-媒体工具 | 6.5.9 |  2022-8-24 | [html](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-MediaTools-zh-index.html)  [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-MediaTools-zh.pdf) |       
+|      文档名       | 版本    | 修改时间  |                                                                                                                                            英文                                                                                                                                               |                                                                                                                                            中文                                                                                                                                               |
+|-------------------|---------|-----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 开发日志          | 6.5.9   | 2022-8-31 | [html](https://mararsh.github.io/MyBox/mybox_devLogs_en.html)                                                                                                                                                                                                                                 | [html](https://mararsh.github.io/MyBox/mybox_devLogs.html)                                                                                                                                                                                                                                    |
+| 快捷键            | 6.5.6   | 2022-6-11 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html)                                                                                                                                                                                                                               | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html)                                                                                                                                                                                                                                  |
+| 打包步骤          | 6.3.3   | 2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps_en.html)                                                                                                                                                                                                                                    | [html](https://mararsh.github.io/MyBox/pack_steps.html)                                                                                                                                                                                                                                       |
+| 开发指南          | 2.1     | 2020-8-27 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf)                                                                                                                                                                                                                 | [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf)                                                                                                                                                                                                                 |
+| 用户手册-综述     | 6.5.9   | 2022-8-31 | [html](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-Overview-en/MyBox-6.5.9-Overview-en.html) [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-Overview-en.pdf) [odt](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-Overview-en.odt)                     | [html](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-Overview-zh/MyBox-6.5.9-Overview-zh.html) [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-Overview-zh.pdf) [odt](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-Overview-zh.odt)                     |
+| 用户手册-文档工具 | 6.5.9   | 2022-8-31 | [html](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-DocumentTools-en/MyBox-6.5.9-DocumentTools-en.html) [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-DocumentTools-en.pdf) [odt](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-DocumentTools-en.odt) | [html](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-DocumentTools-zh/MyBox-6.5.9-DocumentTools-zh.html) [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-DocumentTools-zh.pdf) [odt](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-DocumentTools-zh.odt) |
+| 用户手册-图像工具 | 6.5.9   | 2022-8-31 | [html](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-ImageTools-en/MyBox-6.5.9-ImageTools-en.html) [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-ImageTools-en.pdf) [odt](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-ImageTools-en.odt)             | [html](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-ImageTools-zh/MyBox-6.5.9-ImageTools-zh.html) [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-ImageTools-zh.pdf) [odt](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-ImageTools-zh.odt)             |
+| 用户手册-文件工具 | 6.5.9   | 2022-8-31 | [html](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-FileTools-en/MyBox-6.5.9-FileTools-en.html) [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-FileTools-en.pdf) [odt](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-FileTools-en.odt)                 | [html](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-FileTools-zh/MyBox-6.5.9-FileTools-zh.html) [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-FileTools-zh.pdf) [odt](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-FileTools-zh.odt)                 |
+| 用户手册-网络工具 | 6.5.9   | 2022-8-31 | [html](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-NetworkTools-en/MyBox-6.5.9-NetworkTools-en.html) [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-NetworkTools-en.pdf) [odt](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-NetworkTools-en.odt)     | [html](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-NetworkTools-zh/MyBox-6.5.9-NetworkTools-zh.html) [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-NetworkTools-zh.pdf) [odt](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-NetworkTools-zh.odt)     |
+| 用户手册-数据工具 | 6.5.9   | 2022-8-31 | [html](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-DataTools-en/MyBox-6.5.9-DataTools-en.html) [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-DataTools-en.pdf) [odt](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-DataTools-en.odt)                 | [html](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-DataTools-zh/MyBox-6.5.9-DataTools-zh.html) [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-DataTools-zh.pdf) [odt](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-DataTools-zh.odt)                 |
+| 用户手册-媒体工具 | 6.5.9   | 2022-8-31 | [html](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-MediaTools-en/MyBox-6.5.9-MediaTools-en.html) [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-MediaTools-en.pdf) [odt](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-MediaTools-en.odt)             | [html](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-MediaTools-zh/MyBox-6.5.9-MediaTools-zh.html) [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-MediaTools-zh.pdf) [odt](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-MediaTools-zh.odt)             |
+| 用户手册-开发工具 | 6.5.9   | 2022-8-31 | [html](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-DevTools-en/MyBox-6.5.9-DevTools-en.html) [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-DevTools-en.pdf) [odt](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-DevTools-en.odt)                     | [html](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-DevTools-zh/MyBox-6.5.9-DevTools-zh.html) [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-DevTools-zh.pdf) [odt](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-DevTools-zh.odt)                     |
 
 
 # 实现基础       

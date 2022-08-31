@@ -244,7 +244,6 @@ public class TestCase {
 
             cases.add(new TestCase(index++, message("Shortcuts"), Fxmls.ShortcutsFxml));
             cases.add(new TestCase(index++, message("FunctionsList"), Fxmls.FunctionsListFxml));
-            cases.add(new TestCase(index++, message("Documents"), Fxmls.DocumentsFxml));
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

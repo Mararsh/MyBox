@@ -41,13 +41,12 @@ public class TextInMyBoxClipboardController extends BaseSysTableController<TextC
     protected TableColumn<TextClipboard, Date> timeColumn;
     @FXML
     protected TableColumn<TextClipboard, Long> lengthColumn;
-
     @FXML
     protected TextArea textArea;
     @FXML
     protected Label textLabel;
     @FXML
-    protected CheckBox noDupCheck;
+    protected CheckBox noDupCheck, wrapCheck;
 
     public TextInMyBoxClipboardController() {
         baseTitle = Languages.message("TextInMyBoxClipboard");
@@ -106,6 +105,17 @@ public class TextInMyBoxClipboardController extends BaseSysTableController<TextC
                     UserConfig.setBoolean("TextClipboardNoDuplication", noDupCheck.isSelected());
                 }
             });
+
+            wrapCheck.setSelected(UserConfig.getBoolean(baseName + "Wrap", true));
+            wrapCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "Wrap", newValue);
+                    textArea.setWrapText(newValue);
+                }
+            });
+            textArea.setWrapText(wrapCheck.isSelected());
+
             textArea.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String ov, String nv) {

@@ -11,6 +11,7 @@ import javafx.scene.chart.Chart;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.FlowPane;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -41,12 +42,27 @@ public abstract class BaseData2DChartFx extends BaseController {
     protected ScrollPane scrollPane;
     @FXML
     protected AnchorPane chartPane;
+    @FXML
+    protected FlowPane buttonsPane;
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+            buttonsPane.setDisable(true);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
 
     public void setChart(Chart chart) {
         try {
             this.chart = chart;
             chartPane.getChildren().clear();
             chartPane.getChildren().add(chart);
+
+            buttonsPane.setDisable(chart == null);
 
         } catch (Exception e) {
             MyBoxLog.debug(e);

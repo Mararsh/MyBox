@@ -2,7 +2,7 @@ package mara.mybox.data2d;
 
 import java.sql.Connection;
 import java.util.List;
-import mara.mybox.data2d.scan.Data2DReader;
+import mara.mybox.data2d.reader.Data2DReadColumnNames;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.tools.FileTools;
 
@@ -26,12 +26,12 @@ public abstract class DataFile extends Data2D {
         if (!FileTools.hasData(file)) {
             return null;
         }
-        Data2DReader reader = Data2DReader.create(this)
-                .setReaderTask(task).start(Data2DReader.Operation.ReadColumnNames);
+        Data2DReadColumnNames reader = Data2DReadColumnNames.create(this);
         if (reader == null) {
             hasHeader = false;
             return null;
         }
+        reader.setTask(task).start();
         return reader.getNames();
     }
 

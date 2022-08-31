@@ -385,7 +385,7 @@ public class ControlPdfWriteOptions extends BaseController {
         try {
             if (!includeImageOptions) {
                 thisPane.getChildren().removeAll(pixSizeRadio, imageOptionsBox);
-                standardSizeRadio.fire();
+                standardSizeRadio.setSelected(true);
                 return;
             }
 

@@ -12,6 +12,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
@@ -55,7 +56,7 @@ License:    Apache License Version 2.0
                                                             </toggleGroup>
                                                         </RadioButton>
                                                         <RadioButton mnemonicParsing="false" text="%AppendSuffix" toggleGroup="$renameGroup" />
-                                                        <RadioButton mnemonicParsing="false" text="%AppendPrefix" toggleGroup="$renameGroup" />
+                                                        <RadioButton mnemonicParsing="false" text="%AddPrefix" toggleGroup="$renameGroup" />
                                                         <RadioButton mnemonicParsing="false" text="%AddSequenceNumber" toggleGroup="$renameGroup" />
                                                         <RadioButton mnemonicParsing="false" text="%ChangeExtension" toggleGroup="$renameGroup" />
                                                     </children>
@@ -177,6 +178,7 @@ License:    Apache License Version 2.0
                                                         <Insets top="10.0" /> 
                                                     </VBox.margin>
                                                 </VBox>
+                                    <Separator prefWidth="200.0" />
                                                 <HBox alignment="CENTER_LEFT" spacing="10.0">
                                                     <children>
                                                         <Label text="%ExistedFiles" /> 
@@ -191,6 +193,7 @@ License:    Apache License Version 2.0
                                                         <Insets top="10.0" />
                                                     </VBox.margin>
                                                 </HBox>
+                                    <Separator prefWidth="200.0" />
                                                 <Label minHeight="-Infinity" text="%FileNameFilterComments" />
                                             </children>
                                         </VBox>

@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -16,6 +17,7 @@ import mara.mybox.fxml.chart.ChartOptions.ChartType;
 import mara.mybox.fxml.chart.XYChartMaker;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -25,6 +27,7 @@ import static mara.mybox.value.Languages.message;
 public class Data2DChartXYController extends BaseData2DChartController {
 
     protected XYChartMaker chartMaker;
+    protected Data2DColumn categoryColumn;
 
     @FXML
     protected ToggleGroup chartGroup;
@@ -32,9 +35,11 @@ public class Data2DChartXYController extends BaseData2DChartController {
     protected RadioButton barChartRadio, stackedBarChartRadio, lineChartRadio, scatterChartRadio,
             bubbleChartRadio, areaChartRadio, stackedAreaChartRadio;
     @FXML
-    protected VBox columnsBox;
+    protected VBox columnsBox, columnCheckBoxsBox;
     @FXML
-    protected FlowPane valueColumnPane, categoryColumnsPane;
+    protected Label valuesLabel;
+    @FXML
+    protected FlowPane valueColumnPane, categoryColumnsPane, typesPane;
     @FXML
     protected ControlData2DChartXY chartController;
 
@@ -55,8 +60,10 @@ public class Data2DChartXYController extends BaseData2DChartController {
             chartGroup.selectedToggleProperty().addListener(
                     (ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) -> {
                         checkChartType();
-                        okAction();
+                        refreshAction();
                     });
+
+            typesPane.disableProperty().bind(chartController.buttonsPane.disableProperty());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -65,15 +72,18 @@ public class Data2DChartXYController extends BaseData2DChartController {
 
     public void checkChartType() {
         try {
+            if (columnsBox == null) {
+                return;
+            }
             columnsBox.getChildren().clear();
 
-            if (bubbleChartRadio.isSelected()) {
-                columnsBox.getChildren().addAll(categoryColumnsPane, valueColumnPane);
-                setLabel(message("BubbleChartLabel"));
+            if (bubbleChartRadio != null && bubbleChartRadio.isSelected()) {
+                columnsBox.getChildren().addAll(categoryColumnsPane, valueColumnPane, columnCheckBoxsBox);
+                valuesLabel.setText(message("SizeColumns"));
 
             } else {
-                columnsBox.getChildren().addAll(categoryColumnsPane);
-                setLabel(message("XYChartLabel"));
+                columnsBox.getChildren().addAll(categoryColumnsPane, columnCheckBoxsBox);
+                valuesLabel.setText(message("ValueColumns"));
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -83,35 +93,51 @@ public class Data2DChartXYController extends BaseData2DChartController {
     @Override
     public boolean initData() {
         try {
+            if (!super.initData()) {
+                return false;
+            }
             String title = selectedCategory;
             dataColsIndices = new ArrayList<>();
             outputColumns = new ArrayList<>();
             outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
             int categoryCol = data2D.colOrder(selectedCategory);
             if (categoryCol < 0) {
-                popError(message("SelectToHandle"));
+                outOptionsError(message("SelectToHandle") + ": " + message("Column"));
+                tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
+            categoryColumn = data2D.column(categoryCol);
             dataColsIndices.add(categoryCol);
-            outputColumns.add(data2D.column(categoryCol));
-            if (bubbleChartRadio.isSelected()) {
+            outputColumns.add(categoryColumn);
+            if (bubbleChartRadio != null && bubbleChartRadio.isSelected()) {
                 title += " - " + selectedValue;
                 int valueCol = data2D.colOrder(selectedValue);
                 if (valueCol < 0) {
-                    popError(message("SelectToHandle"));
+                    outOptionsError(message("SelectToHandle") + ": " + message("Column"));
+                    tabPane.getSelectionModel().select(optionsTab);
                     return false;
                 }
                 dataColsIndices.add(valueCol);
                 outputColumns.add(data2D.column(valueCol));
             }
             if (checkedColsIndices == null || checkedColsIndices.isEmpty()) {
-                popError(message("SelectToHandle"));
+                outOptionsError(message("SelectToHandle") + ": " + message("Column"));
+                tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
             dataColsIndices.addAll(checkedColsIndices);
             outputColumns.addAll(checkedColumns);
             title += " - " + checkedColsNames;
 
+            return initChart(title, categoryColumn.isNumberType());
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return false;
+        }
+    }
+
+    public boolean initChart(String title, boolean categoryIsNumbers) {
+        try {
             ChartType chartType;
             String chartName;
             if (barChartRadio.isSelected()) {
@@ -138,11 +164,15 @@ public class Data2DChartXYController extends BaseData2DChartController {
             } else {
                 return false;
             }
+            UserConfig.setBoolean(chartName + "CategoryIsNumbers", categoryIsNumbers);
             chartMaker.init(chartType, chartName)
                     .setDefaultChartTitle(title)
+                    .setChartTitle(title)
                     .setDefaultCategoryLabel(selectedCategory)
+                    .setCategoryLabel(selectedCategory)
                     .setDefaultValueLabel(selectedValue)
-                    .setPalette(makePalette());
+                    .setValueLabel(selectedValue)
+                    .setInvalidAs(invalidAs);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -157,6 +187,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
                 popError(message("NoData"));
                 return;
             }
+            chartMaker.setPalette(makePalette());
             chartController.writeXYChart(outputColumns, outputData);
         } catch (Exception e) {
             MyBoxLog.error(e);

@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.controller.ControlDataConvert;
+import mara.mybox.data.SetValue;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DCell;
 import mara.mybox.db.data.Data2DColumn;
@@ -143,13 +144,13 @@ public class DataMatrix extends Data2D {
 
     public static double toDouble(String d) {
         try {
-            return Double.valueOf(d);
+            return Double.valueOf(d.replaceAll(",", ""));
         } catch (Exception e) {
             return 0;
         }
     }
 
-    public double[][] toArray() {
+    public double[][] toMatrix() {
         rowsNumber = tableRowsNumber();
         colsNumber = tableColsNumber();
         if (rowsNumber <= 0 || colsNumber <= 0) {
@@ -182,12 +183,12 @@ public class DataMatrix extends Data2D {
     }
 
     @Override
-    public long setValue(List<Integer> cols, String value, boolean errorContinue) {
+    public long setValue(List<Integer> cols, SetValue value, boolean errorContinue) {
         return -1;
     }
 
     @Override
-    public long delete(boolean errorContinue) {
+    public long deleteRows(boolean errorContinue) {
         return -1;
     }
 

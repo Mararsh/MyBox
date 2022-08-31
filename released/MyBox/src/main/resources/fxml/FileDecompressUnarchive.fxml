@@ -26,7 +26,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FileDecompressUnarchiveController">
+<BorderPane fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FileDecompressUnarchiveController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -127,7 +127,7 @@ License:    Apache License Version 2.0
                                         </VBox>
                                         <HBox fx:id="sourceBar" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="10.0">
                                             <children>
-                                                <Button fx:id="goCheckButton" mnemonicParsing="false" onAction="#handleFile"  styleClass="big" stylesheets="@../styles/MyBox.css" >
+                                                <Button fx:id="goCheckButton" mnemonicParsing="false" onAction="#handleFile" styleClass="big" stylesheets="@../styles/MyBox.css">
                                                     <graphic>
                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -152,9 +152,9 @@ License:    Apache License Version 2.0
                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                                             <children>
                                                 <Label fx:id="sourceLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
-                                                <HBox fx:id="encodingHBox" alignment="CENTER_LEFT" spacing="5.0">
+                                                <HBox fx:id="encodingHBox" alignment="CENTER_LEFT" minWidth="-Infinity" spacing="5.0">
                                                     <children>
-                                                        <Label text="%EntriesNameEncoding" />
+                                                        <Label minWidth="-Infinity" text="%EntriesNameEncoding" wrapText="true" />
                                                         <ComboBox fx:id="charsetSelector" prefWidth="150.0" />
                                                     </children>
                                                 </HBox>

@@ -24,11 +24,6 @@ public class Data2DExportTask extends BaseTaskController {
     }
 
     @Override
-    public boolean checkOptions() {
-        return exportController.checkOptions();
-    }
-
-    @Override
     public void beforeTask() {
         try {
             exportController.dataBox.setDisable(true);

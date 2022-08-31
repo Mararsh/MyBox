@@ -10,7 +10,10 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import mara.mybox.calculation.Normalization;
 import mara.mybox.calculation.Normalization.Algorithm;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.UserConfig;
 import static mara.mybox.value.UserConfig.badStyle;
 
@@ -20,9 +23,9 @@ import static mara.mybox.value.UserConfig.badStyle;
  * @License Apache License Version 2.0
  */
 public class ControlData2DNormalize extends BaseController {
-    
+
     protected double from, to;
-    
+
     @FXML
     protected ToggleGroup objectGroup, algorithmGroup;
     @FXML
@@ -33,12 +36,12 @@ public class ControlData2DNormalize extends BaseController {
     protected FlowPane rangePane;
     @FXML
     protected Label rangeLabel;
-    
+
     @Override
     public void initControls() {
         try {
             super.initControls();
-            
+
             try {
                 from = Double.parseDouble(UserConfig.getString(baseName + "From", "0"));
             } catch (Exception e) {
@@ -69,7 +72,7 @@ public class ControlData2DNormalize extends BaseController {
                     }
                 }
             });
-            
+
             toInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -89,27 +92,32 @@ public class ControlData2DNormalize extends BaseController {
                 }
             });
             rangeLabel.setText("(" + from + "," + to + ")");
-            
+
             rangePane.visibleProperty().bind(minmaxRadio.selectedProperty());
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     @FXML
     public void range01() {
         fromInput.setText("0");
         toInput.setText("1");
     }
-    
+
     @FXML
     public void range11() {
         fromInput.setText("-1");
         toInput.setText("1");
     }
-    
-    public double[][] calculate(double[][] matrix, double invalidAs) {
+
+    public double[][] calculateDoubles(double[][] matrix, InvalidAs invalidAs) {
+        String[][] results = calculate(StringTools.toString(matrix), invalidAs);
+        return DoubleTools.toDouble(results, invalidAs);
+    }
+
+    public String[][] calculate(String[][] matrix, InvalidAs invalidAs) {
         try {
             if (matrix == null || matrix.length == 0) {
                 return matrix;
@@ -138,5 +146,5 @@ public class ControlData2DNormalize extends BaseController {
             return null;
         }
     }
-    
+
 }

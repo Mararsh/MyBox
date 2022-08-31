@@ -224,13 +224,18 @@ public class TableLocationData extends BaseTable<Location> {
         if (conn == null) {
             return times;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(Times);
-                 ResultSet results = statement.executeQuery()) {
-            while (results.next()) {
-                long time = results.getLong("start_time");
-                if (time != AppValues.InvalidLong) {
-                    times.add(new Date(time));
+        try {
+            conn.setAutoCommit(true);
+            try ( PreparedStatement statement = conn.prepareStatement(Times);
+                     ResultSet results = statement.executeQuery();) {
+                while (results.next()) {
+                    long time = results.getLong("start_time");
+                    if (time != AppValues.InvalidLong) {
+                        times.add(new Date(time));
+                    }
                 }
+            } catch (Exception e) {
+                MyBoxLog.error(e);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);

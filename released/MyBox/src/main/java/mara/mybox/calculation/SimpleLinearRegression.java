@@ -3,6 +3,7 @@ package mara.mybox.calculation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -23,6 +24,7 @@ public class SimpleLinearRegression extends SimpleRegression {
     protected List<String> lastData;
     protected List<Data2DColumn> columns;
     protected int scale = 8;
+    protected double lastIntercept, lastSlope, lastRSquare, lastR;
 
     public SimpleLinearRegression(boolean includeIntercept, String xName, String yName, int scale) {
         super(includeIntercept);
@@ -61,15 +63,21 @@ public class SimpleLinearRegression extends SimpleRegression {
 
     public List<String> addData(long rowIndex, final double x, final double y) {
         super.addData(x, y);
+
+        lastIntercept = getIntercept();
+        lastSlope = getSlope();
+        lastRSquare = getRSquare();
+        lastR = getR();
+
         lastData = new ArrayList<>();
         lastData.add(rowIndex + "");
         lastData.add(getN() + "");
         lastData.add(DoubleTools.format(x, scale));
         lastData.add(DoubleTools.format(y, scale));
-        lastData.add(DoubleTools.format(getSlope(), scale));
-        lastData.add(DoubleTools.format(getIntercept(), scale));
-        lastData.add(DoubleTools.format(getRSquare(), scale));
-        lastData.add(DoubleTools.format(getR(), scale));
+        lastData.add(DoubleTools.format(lastSlope, scale));
+        lastData.add(DoubleTools.format(lastIntercept, scale));
+        lastData.add(DoubleTools.format(lastRSquare, scale));
+        lastData.add(DoubleTools.format(lastR, scale));
         lastData.add(DoubleTools.format(getMeanSquareError(), scale));
         lastData.add(DoubleTools.format(getSumSquaredErrors(), scale));
         lastData.add(DoubleTools.format(getTotalSumSquares(), scale));
@@ -108,6 +116,44 @@ public class SimpleLinearRegression extends SimpleRegression {
         return lastData;
     }
 
+    // data should have row index as first column
+    public List<List<String>> addData(List<List<String>> data, InvalidAs invalidAs) {
+        if (data == null) {
+            return null;
+        }
+        List<List<String>> regressionData = new ArrayList<>();
+        for (List<String> row : data) {
+            try {
+                long index = Long.parseLong(row.get(0));
+                double x = DoubleTools.toDouble(row.get(1), invalidAs);
+                double y = DoubleTools.toDouble(row.get(2), invalidAs);
+                List<String> resultRow = addData(index, x, y);
+                regressionData.add(resultRow);
+            } catch (Exception e) {
+                MyBoxLog.debug(e);
+            }
+        }
+        return regressionData;
+    }
+
+    public String modelDesc() {
+        return message("IndependentVariable") + ": " + xName + "\n"
+                + message("DependentVariable") + ": " + yName + "\n"
+                + message("LinearModel") + ": " + getModel() + "\n"
+                + message("CoefficientOfDetermination") + ": " + DoubleTools.format(lastRSquare, scale) + "\n"
+                + message("PearsonsR") + ": " + DoubleTools.format(lastR, scale);
+    }
+
+    public String getModel() {
+        if (Double.isNaN(lastIntercept) || Double.isNaN(lastSlope)
+                || Double.isNaN(lastRSquare) || Double.isNaN(lastR)) {
+            return message("Invalid");
+        }
+        return yName + " = "
+                + DoubleTools.format(lastIntercept, scale) + (lastSlope > 0 ? " + " : " - ")
+                + DoubleTools.format(Math.abs(lastSlope), scale) + " * " + xName;
+    }
+
     /*
         get/set
      */
@@ -144,6 +190,38 @@ public class SimpleLinearRegression extends SimpleRegression {
     public SimpleLinearRegression setScale(int scale) {
         this.scale = scale;
         return this;
+    }
+
+    public double getLastIntercept() {
+        return lastIntercept;
+    }
+
+    public void setLastIntercept(double lastIntercept) {
+        this.lastIntercept = lastIntercept;
+    }
+
+    public double getLastSlope() {
+        return lastSlope;
+    }
+
+    public void setLastSlope(double lastSlope) {
+        this.lastSlope = lastSlope;
+    }
+
+    public double getLastRSquare() {
+        return lastRSquare;
+    }
+
+    public void setLastRSquare(double lastRSquare) {
+        this.lastRSquare = lastRSquare;
+    }
+
+    public double getLastR() {
+        return lastR;
+    }
+
+    public void setLastR(double lastR) {
+        this.lastR = lastR;
     }
 
 }

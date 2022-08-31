@@ -102,37 +102,37 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
                 scopeTypeGroup.selectToggle(null);
                 break;
             case Matting:
-                scopeMattingRadio.fire();
+                scopeMattingRadio.setSelected(true);
                 break;
             case Color:
-                scopeColorRadio.fire();
+                scopeColorRadio.setSelected(true);
                 break;
             case Rectangle:
-                scopeRectangleRadio.fire();
+                scopeRectangleRadio.setSelected(true);
                 break;
             case RectangleColor:
-                scopeRectangleColorRadio.fire();
+                scopeRectangleColorRadio.setSelected(true);
                 break;
             case Circle:
-                scopeCircleRadio.fire();
+                scopeCircleRadio.setSelected(true);
                 break;
             case CircleColor:
-                scopeCircleColorRadio.fire();
+                scopeCircleColorRadio.setSelected(true);
                 break;
             case Ellipse:
-                scopeEllipseRadio.fire();
+                scopeEllipseRadio.setSelected(true);
                 break;
             case EllipseColor:
-                scopeEllipseColorRadio.fire();
+                scopeEllipseColorRadio.setSelected(true);
                 break;
             case Polygon:
-                scopePolygonRadio.fire();
+                scopePolygonRadio.setSelected(true);
                 break;
             case PolygonColor:
-                scopePolygonColorRadio.fire();
+                scopePolygonColorRadio.setSelected(true);
                 break;
             case Outline:
-                scopeOutlineRadio.fire();
+                scopeOutlineRadio.setSelected(true);
                 break;
         }
         return true;
@@ -230,25 +230,25 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
             }
             switch (scope.getColorScopeType()) {
                 case Color:
-                    colorRGBRadio.fire();
+                    colorRGBRadio.setSelected(true);
                     break;
                 case Red:
-                    colorRedRadio.fire();
+                    colorRedRadio.setSelected(true);
                     break;
                 case Green:
-                    colorGreenRadio.fire();
+                    colorGreenRadio.setSelected(true);
                     break;
                 case Blue:
-                    colorBlueRadio.fire();
+                    colorBlueRadio.setSelected(true);
                     break;
                 case Hue:
-                    colorHueRadio.fire();
+                    colorHueRadio.setSelected(true);
                     break;
                 case Brightness:
-                    colorBrightnessRadio.fire();
+                    colorBrightnessRadio.setSelected(true);
                     break;
                 case Saturation:
-                    colorSaturationRadio.fire();
+                    colorSaturationRadio.setSelected(true);
                     break;
             }
 

@@ -112,6 +112,7 @@ public class TableSystemConf extends BaseTable<StringValue> {
         try ( PreparedStatement queryStatement = conn.prepareStatement(QueryString)) {
             queryStatement.setMaxRows(1);
             queryStatement.setString(1, keyName);
+            conn.setAutoCommit(true);
             try ( ResultSet resultSet = queryStatement.executeQuery()) {
                 if (resultSet.next()) {
                     String value = resultSet.getString(1);
@@ -163,6 +164,7 @@ public class TableSystemConf extends BaseTable<StringValue> {
         try ( PreparedStatement queryStatement = conn.prepareStatement(QueryInt)) {
             queryStatement.setMaxRows(1);
             queryStatement.setString(1, keyName);
+            conn.setAutoCommit(true);
             try ( ResultSet resultSet = queryStatement.executeQuery()) {
                 if (resultSet.next()) {
                     value = resultSet.getInt(1);

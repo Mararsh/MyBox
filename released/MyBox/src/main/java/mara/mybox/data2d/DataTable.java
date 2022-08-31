@@ -5,10 +5,10 @@ import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -90,7 +90,11 @@ public class DataTable extends Data2D {
             }
             return recordTable(conn, referredName, dataColumns);
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
             return false;
         }
     }
@@ -111,7 +115,11 @@ public class DataTable extends Data2D {
             conn.commit();
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
             return false;
         }
     }
@@ -205,8 +213,9 @@ public class DataTable extends Data2D {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e);
             return false;
         }
     }
@@ -216,7 +225,7 @@ public class DataTable extends Data2D {
         return null;
     }
 
-    public Data2DRow from(List<String> values) {
+    public Data2DRow fromTableRow(List<String> values, InvalidAs invalidAs) {
         try {
             if (columns == null || values == null || values.isEmpty()) {
                 return null;
@@ -226,10 +235,7 @@ public class DataTable extends Data2D {
             for (int i = 0; i < Math.min(columns.size(), values.size() - 1); i++) {
                 Data2DColumn column = columns.get(i);
                 String name = column.getColumnName();
-                Object value = column.fromString(values.get(i + 1));
-                if (value != null) {
-                    data2DRow.setColumnValue(name, value);
-                }
+                data2DRow.setColumnValue(name, column.fromString(values.get(i + 1), invalidAs));
             }
             return data2DRow;
         } catch (Exception e) {
@@ -342,8 +348,9 @@ public class DataTable extends Data2D {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e);
             return false;
         }
     }
@@ -375,7 +382,7 @@ public class DataTable extends Data2D {
             conn.setAutoCommit(false);
             if (pageData != null) {
                 for (int i = 0; i < pageData.size(); i++) {
-                    Data2DRow row = from(pageData.get(i));
+                    Data2DRow row = fromTableRow(pageData.get(i), InvalidAs.Blank);
                     if (row != null) {
                         pageRows.add(row);
                         tableData2D.writeData(conn, row);
@@ -398,202 +405,16 @@ public class DataTable extends Data2D {
             }
             conn.commit();
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
         }
         return false;
     }
 
     @Override
-    public long setValue(List<Integer> cols, String value, boolean errorContinue) {
-        if (cols == null || cols.isEmpty()) {
-            return -1;
-        }
-        boolean isRandom = false, isRandomNn = false, isBlank = false, isMean = false,
-                isMedian = false, isMode = false;
-        String script = null;
-        if (value != null) {
-            if ("MyBox##blank".equals(value)) {
-                isBlank = true;
-            } else if ("MyBox##random".equals(value)) {
-                isRandom = true;
-            } else if ("MyBox##randomNn".equals(value)) {
-                isRandomNn = true;
-            } else if (value.startsWith("MyBox##Expression##")) {
-                script = value.substring("MyBox##Expression##".length());
-            } else if (value.startsWith("MyBox##columnMean")) {
-                isMean = true;
-            } else if (value.startsWith("MyBox##columnMode")) {
-                isMode = true;
-            } else if (value.startsWith("MyBox##columnMedian")) {
-                isMedian = true;
-            }
-        }
-        long count = 0;
-        if (!isRandom && !isRandomNn && script == null && !needFilter()) {
-            try ( Connection conn = DerbyBase.getConnection();
-                     Statement update = conn.createStatement()) {
-                String sql = null;
-                for (int col : cols) {
-                    Data2DColumn column = columns.get(col);
-                    Object ovalue = column.fromString(value);
-                    if (ovalue == null) {
-                        continue;
-                    }
-                    String quote = column.valueQuoted() ? "'" : "";
-                    if (sql == null) {
-                        sql = "";
-                    } else {
-                        sql += ", ";
-                    }
-                    sql += column.getColumnName() + "=" + quote + ovalue + quote;
-                }
-                if (sql == null) {
-                    return -2;
-                }
-                sql = "UPDATE " + sheet + " SET " + sql;
-                count = update.executeUpdate(sql);
-                conn.commit();
-            } catch (Exception e) {
-                if (task != null) {
-                    task.setError(e.toString());
-                }
-                MyBoxLog.error(e);
-                return -2;
-            }
-        } else {
-            try ( Connection conn = DerbyBase.getConnection();
-                     PreparedStatement query = conn.prepareStatement("SELECT * FROM " + sheet);
-                     ResultSet results = query.executeQuery()) {
-                Random random = new Random();
-                conn.setAutoCommit(false);
-                rowIndex = 0;
-                startFilter();
-                while (results.next() && task != null && !task.isCancelled()) {
-                    Data2DRow row = tableData2D.readData(results);
-                    List<String> rowValues = new ArrayList<>();
-                    for (int c = 0; c < columns.size(); c++) {
-                        Data2DColumn column = columns.get(c);
-                        Object v = row.getColumnValue(columns.get(c).getColumnName());
-                        rowValues.add(column.toString(v));
-                    }
-                    filterDataRow(rowValues, ++rowIndex);
-                    if (!filterPassed()) {
-                        continue;
-                    }
-                    if (script != null) {
-                        calculateDataRowExpression(script, rowValues, rowIndex);
-                        error = expressionError();
-                        if (error != null) {
-                            if (errorContinue) {
-                                continue;
-                            } else {
-                                task.setError(error);
-                                return -2;
-                            }
-                        }
-                    }
-                    for (int c = 0; c < columns.size(); c++) {
-                        Data2DColumn column = columns.get(c);
-                        String name = column.getColumnName();
-                        if (cols.contains(c)) {
-                            String v;
-                            if (isBlank) {
-                                v = "";
-                            } else if (isRandom) {
-                                v = random(random, c, false);
-                            } else if (isRandomNn) {
-                                v = random(random, c, true);
-                            } else if (isMean) {
-                                v = column(c).getTargetStatistic().mean + "";
-                            } else if (isMode) {
-                                v = column(c).getTargetStatistic().modeValue + "";
-                            } else if (isMedian) {
-                                v = column(c).getTargetStatistic().median + "";
-                            } else if (script != null) {
-                                v = expressionResult();
-                            } else {
-                                v = value;
-                            }
-                            row.setColumnValue(name, column.fromString(v));
-                            count++;
-                        }
-                    }
-                    tableData2D.updateData(conn, row);
-                    if (++count % DerbyBase.BatchSize == 0) {
-                        conn.commit();
-                    }
-                    if (filterReachMaxPassed()) {
-                        break;
-                    }
-                }
-                conn.commit();
-            } catch (Exception e) {
-                if (task != null) {
-                    task.setError(e.toString());
-                }
-                MyBoxLog.debug(e);
-                return -3;
-            }
-        }
-        return count;
-    }
-
-    @Override
-    public long delete(boolean errorContinue) {
-        if (!needFilter()) {
-            return clearData();
-        } else {
-            long count = 0;
-            try ( Connection conn = DerbyBase.getConnection();
-                     PreparedStatement query = conn.prepareStatement("SELECT * FROM " + sheet);
-                     ResultSet results = query.executeQuery()) {
-                conn.setAutoCommit(false);
-                rowIndex = 0;
-                while (results.next() && task != null && !task.isCancelled()) {
-                    Data2DRow row = tableData2D.readData(results);
-                    List<String> rowValues = new ArrayList<>();
-                    for (int c = 0; c < columns.size(); c++) {
-                        Data2DColumn column = columns.get(c);
-                        Object v = row.getColumnValue(columns.get(c).getColumnName());
-                        rowValues.add(column.toString(v));
-                    }
-                    filterDataRow(rowValues, ++rowIndex);
-                    if (error != null) {
-                        if (errorContinue) {
-                            continue;
-                        } else {
-                            task.setError(error);
-                            return -2;
-                        }
-                    }
-                    if (!filterPassed()) {
-                        continue;
-                    }
-                    tableData2D.deleteData(conn, row);
-                    if (++count % DerbyBase.BatchSize == 0) {
-                        conn.commit();
-                    }
-                    if (filterReachMaxPassed()) {
-                        break;
-                    }
-                }
-                conn.commit();
-            } catch (Exception e) {
-                if (task != null) {
-                    task.setError(e.toString());
-                }
-                MyBoxLog.debug(e);
-                return -4;
-            }
-            return count;
-        }
-    }
-
-    @Override
-    public long clearData() {
-        return tableData2D.clearData();
-    }
-
     public int drop() {
         if (sheet == null || sheet.isBlank()) {
             return -4;
@@ -601,7 +422,11 @@ public class DataTable extends Data2D {
         try ( Connection conn = DerbyBase.getConnection();) {
             return drop(conn, sheet);
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
             return -5;
         }
     }
@@ -614,20 +439,50 @@ public class DataTable extends Data2D {
     }
 
     // Based on results of "Data2D_Convert.toTmpTable(...)"
-    public DataFileCSV sort(SingletonTask task, String orderName, boolean desc, int maxData) {
-        if (orderName == null || orderName.isBlank() || sourceColumns == null) {
+    public DataFileCSV sort(String dname, SingletonTask task,
+            List<String> orders, int maxData, boolean includeColName) {
+        if (orders == null || orders.isEmpty() || sourceColumns == null) {
             return null;
         }
-        File csvFile = tmpCSV("sort");
-        String sql = "SELECT * FROM " + sheet + " ORDER BY " + orderName + (desc ? " DESC" : "");
-        if (maxData > 0) {
-            sql += " FETCH FIRST " + maxData + " ROWS ONLY";
+
+        File csvFile = tmpFile(dname, "sort", ".csv");
+        String sql = null;
+        try {
+            String name;
+            boolean asc;
+            for (String order : orders) {
+                asc = order.endsWith("-" + message("Ascending"));
+                if (asc) {
+                    name = order.substring(0, order.length() - ("-" + message("Ascending")).length());
+                } else {
+                    name = order.substring(0, order.length() - ("-" + message("Descending")).length());
+                }
+                name = mappedColumnName(name) + (asc ? " ASC" : " DESC");
+                if (sql == null) {
+                    sql = name;
+                } else {
+                    sql += ", " + name;
+                }
+            }
+            sql = "SELECT * FROM " + sheet + " ORDER BY " + sql;
+            if (maxData > 0) {
+                sql += " FETCH FIRST " + maxData + " ROWS ONLY";
+            }
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
+            return null;
         }
         try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile);
                  Connection conn = DerbyBase.getConnection();
                  PreparedStatement statement = conn.prepareStatement(sql);
                  ResultSet results = statement.executeQuery()) {
-            csvPrinter.printRecord(sourceColumnNames());
+            if (includeColName) {
+                csvPrinter.printRecord(sourceColumnNames());
+            }
             rowIndex = 0;
             while (results.next() && task != null && !task.isCancelled()) {
                 Data2DRow dataRow = tableData2D.readData(results);
@@ -641,7 +496,8 @@ public class DataTable extends Data2D {
                 rowIndex++;
             }
             DataFileCSV targetData = new DataFileCSV();
-            targetData.setColumns(sourceColumns).setFile(csvFile)
+            targetData.setColumns(sourceColumns)
+                    .setFile(csvFile).setDataName(dname)
                     .setCharset(Charset.forName("UTF-8"))
                     .setDelimiter(",").setHasHeader(true)
                     .setColsNumber(sourceColumns.size()).setRowsNumber(rowIndex);
@@ -649,18 +505,20 @@ public class DataTable extends Data2D {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e.toString());
             return null;
         }
     }
 
     // Based on results of "Data2D_Convert.toTmpTable(...)"
-    public DataFileCSV transpose(SingletonTask task, boolean showColNames, boolean firstColumnAsNames) {
+    public DataFileCSV transpose(String dname, SingletonTask task,
+            boolean showColNames, boolean firstColumnAsNames) {
         if (sourceColumns == null) {
             return null;
         }
-        File csvFile = tmpCSV("transpose");
+        File csvFile = tmpFile(dname, "transpose", ".csv");
         try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile);
                  Connection conn = DerbyBase.getConnection()) {
             String idName = columns.get(0).getColumnName();
@@ -694,8 +552,9 @@ public class DataTable extends Data2D {
                 } catch (Exception e) {
                     if (task != null) {
                         task.setError(e.toString());
+                    } else {
+                        MyBoxLog.error(e);
                     }
-                    MyBoxLog.error(e.toString());
                     return null;
                 }
                 if (i == 0) {
@@ -738,7 +597,8 @@ public class DataTable extends Data2D {
                 rNumber++;
             }
             DataFileCSV targetData = new DataFileCSV();
-            targetData.setColumns(targetColumns).setFile(csvFile)
+            targetData.setColumns(targetColumns)
+                    .setFile(csvFile).setDataName(dname)
                     .setCharset(Charset.forName("UTF-8"))
                     .setDelimiter(",").setHasHeader(true)
                     .setColsNumber(targetColumns.size()).setRowsNumber(rNumber);
@@ -746,13 +606,148 @@ public class DataTable extends Data2D {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e.toString());
             return null;
         }
     }
 
-    public DataFileCSV query(String query, boolean showRowNumber) {
+    // Based on results of "Data2D_Convert.toTmpTable(...)"
+    public DataFileCSV groupEqualValues(String dname, SingletonTask task,
+            List<String> groups, List<String> calculations, List<String> sorts, int max) {
+        if (groups == null || groups.isEmpty() || sourceColumns == null) {
+            return null;
+        }
+        try {
+            Map<String, String> maps = new HashMap<>();
+            String groupBy = null;
+            for (String group : groups) {
+                String name = mappedColumnName(group);
+                if (groupBy == null) {
+                    groupBy = name;
+                } else {
+                    groupBy += ", " + name;
+                }
+                maps.put(group, name);
+            }
+            String countName = message("Count");
+            for (String name : columnNames()) {
+                if (countName.equals(name)) {
+                    countName += "_";
+                }
+            }
+            maps.put(message("Count"), countName);
+            String selections = "COUNT(" + mappedColumnName(groups.get(0)) + ") AS " + countName;
+            String sourceName, mappedName, resultName, selectItem;
+            if (calculations != null) {
+                for (String calculation : calculations) {
+                    if (calculation.endsWith("-" + message("Mean"))) {
+                        sourceName = calculation.substring(0, calculation.length() - ("-" + message("Mean")).length());
+                        mappedName = mappedColumnName(sourceName);
+                        resultName = mappedName + "_" + message("Mean");
+                        selectItem = (columnByName(mappedName).isNumberType() ? "AVG(" + mappedName + ")" : "'N/A'")
+                                + " AS " + resultName;
+                    } else if (calculation.endsWith("-" + message("Summation"))) {
+                        sourceName = calculation.substring(0, calculation.length() - ("-" + message("Summation")).length());
+                        mappedName = mappedColumnName(sourceName);
+                        resultName = mappedName + "_" + message("Summation");
+                        selectItem = (columnByName(mappedName).isNumberType() ? "SUM(" + mappedName + ")" : "'N/A'")
+                                + " AS " + resultName;
+                    } else if (calculation.endsWith("-" + message("Maximum"))) {
+                        sourceName = calculation.substring(0, calculation.length() - ("-" + message("Maximum")).length());
+                        mappedName = mappedColumnName(sourceName);
+                        resultName = mappedName + "_" + message("Maximum");
+                        selectItem = (columnByName(mappedName).isNumberType() ? "MAX(" + mappedName + ")" : "'N/A'")
+                                + " AS " + resultName;
+                    } else if (calculation.endsWith("-" + message("Minimum"))) {
+                        sourceName = calculation.substring(0, calculation.length() - ("-" + message("Minimum")).length());
+                        mappedName = mappedColumnName(sourceName);
+                        resultName = mappedName + "_" + message("Minimum");
+                        selectItem = (columnByName(mappedName).isNumberType() ? "MIN(" + mappedName + ")" : "'N/A'")
+                                + " AS " + resultName;
+                    } else if (calculation.endsWith("-" + message("PopulationVariance"))) {
+                        sourceName = calculation.substring(0, calculation.length() - ("-" + message("PopulationVariance")).length());
+                        mappedName = mappedColumnName(sourceName);
+                        resultName = mappedName + "_" + message("PopulationVariance").replaceAll(" ", "");
+                        selectItem = (columnByName(mappedName).isNumberType() ? "VAR_POP(" + mappedName + ")" : "'N/A'")
+                                + " AS " + resultName;
+                    } else if (calculation.endsWith("-" + message("SampleVariance"))) {
+                        sourceName = calculation.substring(0, calculation.length() - ("-" + message("SampleVariance")).length());
+                        mappedName = mappedColumnName(sourceName);
+                        resultName = mappedName + "_" + message("SampleVariance").replaceAll(" ", "");
+                        selectItem = (columnByName(mappedName).isNumberType() ? "VAR_SAMP(" + mappedName + ")" : "'N/A'")
+                                + " AS " + resultName;
+                    } else if (calculation.endsWith("-" + message("PopulationStandardDeviation"))) {
+                        sourceName = calculation.substring(0, calculation.length() - ("-" + message("PopulationStandardDeviation")).length());
+                        mappedName = mappedColumnName(sourceName);
+                        resultName = mappedName + "_" + message("PopulationStandardDeviation").replaceAll(" ", "");
+                        selectItem = (columnByName(mappedName).isNumberType() ? "STDDEV_POP(" + mappedName + ")" : "'N/A'")
+                                + " AS " + resultName;
+                    } else if (calculation.endsWith("-" + message("SampleStandardDeviation"))) {
+                        sourceName = calculation.substring(0, calculation.length() - ("-" + message("SampleStandardDeviation")).length());
+                        mappedName = mappedColumnName(sourceName);
+                        resultName = mappedName + "_" + message("SampleStandardDeviation").replaceAll(" ", "");
+                        selectItem = (columnByName(mappedName).isNumberType() ? "STDDEV_SAMP(" + mappedName + ")" : "'N/A'")
+                                + " AS " + resultName;
+                    } else {
+                        sourceName = calculation;
+                        mappedName = mappedColumnName(sourceName);
+                        resultName = mappedName;
+                        selectItem = resultName;
+                    }
+                    maps.put(calculation, resultName);
+                    selections += ", " + selectItem;
+                }
+            }
+            selections = groupBy + ", " + selections;
+            String sql = "SELECT " + selections + " FROM " + sheet + " GROUP BY " + groupBy;
+            if (sorts != null && !sorts.isEmpty()) {
+                String sortString = "";
+                int desclen = ("-" + message("Descending")).length();
+                int asclen = ("-" + message("Ascending")).length();
+                String stype;
+                for (String sort : sorts) {
+                    if (sort.endsWith("-" + message("Descending"))) {
+                        sourceName = sort.substring(0, sort.length() - desclen);
+                        stype = " DESC";
+                    } else if (sort.endsWith("-" + message("Ascending"))) {
+                        sourceName = sort.substring(0, sort.length() - asclen);
+                        stype = " ASC";
+                    } else {
+                        continue;
+                    }
+                    resultName = maps.get(sourceName);
+                    if (resultName != null) {
+                        sortString += ", " + resultName + stype;
+                    }
+                }
+                if (!sortString.isBlank()) {
+                    sql += " ORDER BY " + sortString.substring(2);
+                }
+            }
+            if (max > 0) {
+                sql += " FETCH FIRST " + max + " ROWS ONLY";
+            }
+//            MyBoxLog.console(sql);
+            DataFileCSV results = query(dname, task, sql, message("Group"));
+            if (results == null) {
+                return null;
+            }
+            results.saveAttributes();
+            return results;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
+            }
+            return null;
+        }
+
+    }
+
+    public DataFileCSV query(String dname, SingletonTask task, String query, String rowNumberName) {
         if (query == null || query.isBlank()) {
             return null;
         }
@@ -761,13 +756,14 @@ public class DataTable extends Data2D {
                  PreparedStatement statement = conn.prepareStatement(query);
                  ResultSet results = statement.executeQuery()) {
             if (results != null) {
-                targetData = DataFileCSV.save(task, results, showRowNumber);
+                targetData = DataFileCSV.save(dname, task, results, rowNumberName);
             }
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
             }
-            MyBoxLog.error(e.toString());
         }
         return targetData;
     }
@@ -787,8 +783,9 @@ public class DataTable extends Data2D {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
             }
-            MyBoxLog.error(e.toString());
         }
         return mode;
     }
@@ -850,8 +847,9 @@ public class DataTable extends Data2D {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
             }
-            MyBoxLog.error(e.toString());
         }
         return percentile;
     }
@@ -866,10 +864,10 @@ public class DataTable extends Data2D {
             DoubleStatistic[] sData = new DoubleStatistic[colLen];
             for (int c = 0; c < cols.size(); c++) {
                 Data2DColumn column = columns.get(cols.get(c));
-                DoubleStatistic colStatistic = column.getTargetStatistic();
+                DoubleStatistic colStatistic = column.getStatistic();
                 if (colStatistic == null) {
                     colStatistic = new DoubleStatistic();
-                    column.setTargetStatistic(colStatistic);
+                    column.setStatistic(colStatistic);
                 }
                 colStatistic.invalidAs = selections.invalidAs;
                 sData[c] = colStatistic;
@@ -878,7 +876,7 @@ public class DataTable extends Data2D {
                     try {
                         colStatistic.median = Double.valueOf(colStatistic.medianValue + "");
                     } catch (Exception ex) {
-                        colStatistic.median = colStatistic.invalidAs;
+                        colStatistic.median = DoubleTools.value(colStatistic.invalidAs);
                     }
                 }
                 Object q1 = null, q3 = null;
@@ -888,7 +886,7 @@ public class DataTable extends Data2D {
                     try {
                         colStatistic.upperQuartile = Double.valueOf(q3 + "");
                     } catch (Exception ex) {
-                        colStatistic.upperQuartile = colStatistic.invalidAs;
+                        colStatistic.upperQuartile = DoubleTools.value(colStatistic.invalidAs);
                     }
                 }
                 if (selections.lowerQuartile || selections.needOutlier()) {
@@ -897,7 +895,7 @@ public class DataTable extends Data2D {
                     try {
                         colStatistic.lowerQuartile = Double.valueOf(q1 + "");
                     } catch (Exception ex) {
-                        colStatistic.lowerQuartile = colStatistic.invalidAs;
+                        colStatistic.lowerQuartile = DoubleTools.value(colStatistic.invalidAs);
                     }
                 }
                 if (selections.upperExtremeOutlierLine) {
@@ -906,7 +904,7 @@ public class DataTable extends Data2D {
                         double d3 = Double.valueOf(q3 + "");
                         colStatistic.upperExtremeOutlierLine = d3 + 3 * (d3 - d1);
                     } catch (Exception e) {
-                        colStatistic.upperExtremeOutlierLine = colStatistic.invalidAs;
+                        colStatistic.upperExtremeOutlierLine = DoubleTools.value(colStatistic.invalidAs);
                     }
                 }
                 if (selections.upperMildOutlierLine) {
@@ -915,7 +913,7 @@ public class DataTable extends Data2D {
                         double d3 = Double.valueOf(q3 + "");
                         colStatistic.upperMildOutlierLine = d3 + 1.5 * (d3 - d1);
                     } catch (Exception e) {
-                        colStatistic.upperMildOutlierLine = colStatistic.invalidAs;
+                        colStatistic.upperMildOutlierLine = DoubleTools.value(colStatistic.invalidAs);
                     }
                 }
                 if (selections.lowerMildOutlierLine) {
@@ -924,7 +922,7 @@ public class DataTable extends Data2D {
                         double d3 = Double.valueOf(q3 + "");
                         colStatistic.lowerMildOutlierLine = d1 - 1.5 * (d3 - d1);
                     } catch (Exception e) {
-                        colStatistic.lowerMildOutlierLine = colStatistic.invalidAs;
+                        colStatistic.lowerMildOutlierLine = DoubleTools.value(colStatistic.invalidAs);
                     }
                 }
                 if (selections.lowerExtremeOutlierLine) {
@@ -933,7 +931,7 @@ public class DataTable extends Data2D {
                         double d3 = Double.valueOf(q3 + "");
                         colStatistic.lowerExtremeOutlierLine = d1 - 3 * (d3 - d1);
                     } catch (Exception e) {
-                        colStatistic.lowerExtremeOutlierLine = colStatistic.invalidAs;
+                        colStatistic.lowerExtremeOutlierLine = DoubleTools.value(colStatistic.invalidAs);
                     }
                 }
                 if (selections.mode) {
@@ -941,7 +939,7 @@ public class DataTable extends Data2D {
                     try {
                         colStatistic.mode = Double.valueOf(colStatistic.modeValue + "");
                     } catch (Exception ex) {
-                        colStatistic.mode = colStatistic.invalidAs;
+                        colStatistic.mode = DoubleTools.value(colStatistic.invalidAs);
                     }
                 }
             }
@@ -949,21 +947,22 @@ public class DataTable extends Data2D {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
             }
-            MyBoxLog.error(e.toString());
             return null;
         }
     }
 
     @Override
-    public DataFileCSV frequency(Frequency frequency, String colName, int col, int scale) {
+    public DataFileCSV frequency(String dname, Frequency frequency, String colName, int col, int scale) {
         if (frequency == null || colName == null || col < 0) {
             return null;
         }
         if (needFilter()) {
-            return super.frequency(frequency, colName, col, scale);
+            return super.frequency(dname, frequency, colName, col, scale);
         }
-        File csvFile = tmpCSV("frequency");
+        File csvFile = tmpFile(dname, "frequency", ".csv");
         int total = 0, dNumber = 0;
         try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile);
                  Connection conn = DerbyBase.getConnection()) {
@@ -1010,25 +1009,61 @@ public class DataTable extends Data2D {
             } catch (Exception e) {
                 if (task != null) {
                     task.setError(e.toString());
+                } else {
+                    MyBoxLog.error(e);
                 }
-                MyBoxLog.error(e);
                 return null;
             }
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e);
             return null;
         }
         if (csvFile != null && csvFile.exists()) {
             DataFileCSV targetData = new DataFileCSV();
-            targetData.setFile(csvFile).setCharset(Charset.forName("UTF-8"))
+            targetData.setFile(csvFile).setDataName(dname)
+                    .setCharset(Charset.forName("UTF-8"))
                     .setDelimiter(",").setHasHeader(true)
                     .setColsNumber(3).setRowsNumber(dNumber);
             return targetData;
         } else {
             return null;
+        }
+    }
+
+    // Based on results of "Data2D_Convert.toTmpTable(...)"
+    // first column is id and rows do not include ids.
+    public long save(SingletonTask task, Connection conn, List<List<String>> rows, InvalidAs invalidAs) {
+        try {
+            if (conn == null || rows == null || rows.isEmpty()) {
+                return -1;
+            }
+            int count = 0;
+            conn.setAutoCommit(false);
+            for (List<String> row : rows) {
+                Data2DRow data2DRow = tableData2D.newRow();
+                for (int i = 1; i < columns.size(); i++) {
+                    Data2DColumn column = columns.get(i);
+                    data2DRow.setColumnValue(column.getColumnName(), column.fromString(row.get(i - 1), invalidAs));
+                }
+                tableData2D.insertData(conn, data2DRow);
+                if (++count % DerbyBase.BatchSize == 0) {
+                    conn.commit();
+                }
+            }
+            conn.commit();
+            conn.setAutoCommit(true);
+            return count;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
+            return -4;
         }
     }
 

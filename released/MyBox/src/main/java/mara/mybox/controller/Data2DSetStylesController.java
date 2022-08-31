@@ -323,8 +323,8 @@ public class Data2DSetStylesController extends BaseController {
                 return false;
             }
             if (!filterController.checkExpression(false)) {
-                popError(filterController.error);
                 tabPane.getSelectionModel().select(filterTab);
+                alertError(filterController.error);
                 return false;
             }
             checkStyle();

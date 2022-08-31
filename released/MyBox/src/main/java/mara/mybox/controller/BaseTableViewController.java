@@ -70,7 +70,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
     @FXML
     protected CheckBox deleteConfirmCheck, allRowsCheck;
     @FXML
-    protected Button moveUpButton, moveDownButton, refreshButton, deleteItemsButton;
+    protected Button moveUpButton, moveDownButton, moveTopButton, refreshButton, deleteItemsButton;
     @FXML
     protected FlowPane paginationPane;
     @FXML
@@ -143,9 +143,10 @@ public abstract class BaseTableViewController<P> extends BaseController {
             });
 
             tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-            tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+            tableView.getSelectionModel().getSelectedIndices().addListener(new ListChangeListener<Integer>() {
+
                 @Override
-                public void changed(ObservableValue ov, Object t, Object t1) {
+                public void onChanged(ListChangeListener.Change c) {
                     checkSelected();
                     notifySelected();
                 }
@@ -442,6 +443,14 @@ public abstract class BaseTableViewController<P> extends BaseController {
                 items.add(menu);
             }
 
+            if (moveTopButton != null && moveTopButton.isVisible() && !moveTopButton.isDisabled()) {
+                menu = new MenuItem(message("MoveTop"), StyleTools.getIconImage("iconDoubleUp.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    moveTopAction();
+                });
+                items.add(menu);
+            }
+
             if (moveDownButton != null && moveDownButton.isVisible() && !moveDownButton.isDisabled()) {
                 menu = new MenuItem(message("MoveDown"), StyleTools.getIconImage("iconDown.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -528,6 +537,25 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    /*
+        selection
+     */
+    public void selectNone() {
+        if (allRowsCheck != null) {
+            allRowsCheck.setSelected(false);
+        } else {
+            tableView.getSelectionModel().clearSelection();
+        }
+    }
+
+    public void selectAll() {
+        if (allRowsCheck != null) {
+            allRowsCheck.setSelected(true);
+        } else {
+            tableView.getSelectionModel().selectAll();
         }
     }
 
@@ -659,6 +687,9 @@ public abstract class BaseTableViewController<P> extends BaseController {
         }
         if (moveUpButton != null) {
             moveUpButton.setDisable(none);
+        }
+        if (moveTopButton != null) {
+            moveTopButton.setDisable(none);
         }
         if (moveDownButton != null) {
             moveDownButton.setDisable(none);
@@ -979,6 +1010,23 @@ public abstract class BaseTableViewController<P> extends BaseController {
     }
 
     @FXML
+    public void moveTopAction() {
+        List<P> selected = new ArrayList<>();
+        selected.addAll(tableView.getSelectionModel().getSelectedItems());
+        if (selected.isEmpty()) {
+            return;
+        }
+        isSettingValues = true;
+        tableData.removeAll(selected);
+        tableData.addAll(0, selected);
+        tableView.getSelectionModel().clearSelection();
+        tableView.getSelectionModel().selectRange(0, selected.size());
+        tableView.refresh();
+        isSettingValues = false;
+        tableChanged(true);
+    }
+
+    @FXML
     public void dataAction() {
         if (tableData.isEmpty()) {
             popError(message("NoData"));
@@ -1028,7 +1076,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                DataFileCSVController.open(Data2DColumn.toColumns(names), data);
+                DataFileCSVController.open(null, Data2DColumn.toColumns(names), data);
             }
         };
         start(dataTask, false, message("LoadingTableData"));

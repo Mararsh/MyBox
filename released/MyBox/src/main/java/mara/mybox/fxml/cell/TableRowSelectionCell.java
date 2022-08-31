@@ -72,7 +72,7 @@ public class TableRowSelectionCell<S, T> extends CheckBoxTableCell<S, T> {
             }
         };
 
-        selectedListener = new ListChangeListener<ListChangeListener.Change>() {
+        selectedListener = new ListChangeListener<Integer>() {
 
             @Override
             public void onChanged(ListChangeListener.Change c) {

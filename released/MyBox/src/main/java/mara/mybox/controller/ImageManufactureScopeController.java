@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.Tooltip;
@@ -13,8 +14,8 @@ import mara.mybox.data.DoublePoint;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -232,7 +233,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
 
             loadImage(sourceFile, imageInformation, imageController.image, parent.imageChanged);
             checkScopeType();
-            scopeAllRadio.fire();
+            scopeAllRadio.setSelected(true);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -241,7 +242,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
     @Override
     public void viewSizeChanged(double change) {
         super.viewSizeChanged(change);
-        if (change < sizeChangeAware || isSettingValues
+        if (isSettingValues || change < sizeChangeAware
                 || imageView == null || imageView.getImage() == null
                 || scope == null || scope.getScopeType() == null || !scopeView.isVisible()) {
             return;
@@ -249,10 +250,6 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
         // Following handlers can conflict with threads' status changes which must check variables carefully
         switch (scope.getScopeType()) {
             case Operate:
-                scopeView.setFitWidth(imageView.getFitWidth());
-                scopeView.setFitHeight(imageView.getFitHeight());
-                scopeView.setLayoutX(imageView.getLayoutX());
-                scopeView.setLayoutY(imageView.getLayoutY());
                 break;
             case Outline:
                 makeOutline();
@@ -264,8 +261,18 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
     }
 
     @Override
+    public void refinePane() {
+        super.refinePane();
+        scopeView.setFitWidth(imageView.getFitWidth());
+        scopeView.setFitHeight(imageView.getFitHeight());
+        scopeView.setLayoutX(imageView.getLayoutX());
+        scopeView.setLayoutY(imageView.getLayoutY());
+    }
+
+    @Override
     public void paneSizeChanged(double change) {
         refinePane();
+        drawMaskControls();
     }
 
     @Override
@@ -350,4 +357,12 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
 
     }
 
+    @FXML
+    public void refreshAction() {
+        isSettingValues = false;
+        if (task != null) {
+            task.cancel();
+        }
+        viewSizeChanged(sizeChangeAware + 1);
+    }
 }

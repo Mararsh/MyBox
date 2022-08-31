@@ -251,7 +251,9 @@ public class ControlPlay extends BaseController {
             frameSelector.getSelectionModel().select((frameIndex + 1) + "");
             isSettingValues = false;
             speed = speed <= 0 ? 1 : speed;
-            imagesController.displayFrame(frameIndex);
+            if (imagesController != null) {
+                imagesController.displayFrame(frameIndex);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -334,6 +336,16 @@ public class ControlPlay extends BaseController {
         frameIndex = 0;
         fromFrame = 0;
         toFrame = -1;
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            clear();
+            imagesController = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
 }

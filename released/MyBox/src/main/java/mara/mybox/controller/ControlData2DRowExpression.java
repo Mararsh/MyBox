@@ -3,8 +3,6 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -14,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
@@ -44,7 +43,7 @@ public class ControlData2DRowExpression extends TreeNodesController {
     @FXML
     protected TextArea scriptInput;
     @FXML
-    protected ListView placeholdersList;
+    protected ListView<String> placeholdersList;
 
     public ControlData2DRowExpression() {
         baseTitle = "JavaScript";
@@ -62,13 +61,14 @@ public class ControlData2DRowExpression extends TreeNodesController {
             tableTreeNodeTag = new TableTreeNodeTag();
             loadTree(null);
 
-            placeholdersList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            placeholdersList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+            placeholdersList.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
-                public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
-                    if (newV == null || newV.isBlank()) {
-                        return;
+                public void handle(MouseEvent event) {
+                    String selected = placeholdersList.getSelectionModel().getSelectedItem();
+                    if (selected != null && !selected.isBlank()) {
+                        scriptInput.replaceText(scriptInput.getSelection(), selected);
                     }
-                    scriptInput.replaceText(scriptInput.getSelection(), newV);
                 }
             });
 

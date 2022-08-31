@@ -3,11 +3,8 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
@@ -33,8 +30,6 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
     protected Frequency frequency;
 
     @FXML
-    protected ComboBox<String> colSelector;
-    @FXML
     protected CheckBox caseInsensitiveCheck;
 
     public Data2DFrequencyController() {
@@ -42,71 +37,17 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
     }
 
     @Override
-    public void initControls() {
+    public boolean initData() {
         try {
-            super.initControls();
-
-            noColumnSelection(true);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void setParameters(ControlData2DEditTable tableController) {
-        try {
-            super.setParameters(tableController);
-
-            colSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    checkOptions();
-                }
-            });
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void refreshControls() {
-        try {
-            super.refreshControls();
-            List<String> names = tableController.data2D.columnNames();
-            if (names == null || names.isEmpty()) {
-                colSelector.getItems().clear();
-                return;
+            if (!super.initData()) {
+                return false;
             }
-            String selectedCol = colSelector.getSelectionModel().getSelectedItem();
-            colSelector.getItems().setAll(names);
-            if (selectedCol != null && names.contains(selectedCol)) {
-                colSelector.setValue(selectedCol);
-            } else {
-                colSelector.getSelectionModel().select(0);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public boolean checkOptions() {
-        boolean ok = super.checkOptions();
-        targetController.setNotInTable(isAllPages());
-        ok = ok && prepareRows();
-        okButton.setDisable(!ok);
-        return ok;
-    }
-
-    public boolean prepareRows() {
-        try {
             freName = colSelector.getSelectionModel().getSelectedItem();
             freCol = data2D.colOrder(freName);
             Data2DColumn freColumn = data2D.column(freCol);
             if (freColumn == null) {
-                infoLabel.setText(message("SelectToHandle"));
+                outOptionsError(message("SelectToHandle") + ": " + message("Column"));
+                tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
             handledNames = new ArrayList<>();
@@ -127,30 +68,14 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
             }
             outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
             handledNames.add(cName);
-            return true;
-        } catch (Exception e) {
-            popError(e.toString());
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
 
-    @Override
-    protected void startOperation() {
-        try {
-            if (!prepareRows()) {
-                return;
-            }
             frequency = caseInsensitiveCheck.isSelected()
                     ? new Frequency(String.CASE_INSENSITIVE_ORDER)
                     : new Frequency();
-            if (isAllPages()) {
-                handleAllTask();
-            } else {
-                handleRowsTask();
-            }
+            return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+            MyBoxLog.error(e);
+            return false;
         }
     }
 
@@ -158,6 +83,13 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
     public boolean handleRows() {
         try {
             outputData = new ArrayList<>();
+            filteredRowsIndices = filteredRowsIndices();
+            if (filteredRowsIndices == null || filteredRowsIndices.isEmpty()) {
+                if (task != null) {
+                    task.setError(message("NoData"));
+                }
+                return false;
+            }
             for (int r : filteredRowsIndices) {
                 List<String> tableRow = tableController.tableData.get(r);
                 String d = tableRow.get(freCol + 1);
@@ -180,14 +112,13 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
             if (task != null) {
                 task.setError(e.toString());
             }
-            MyBoxLog.error(e);
             return false;
         }
     }
 
     @Override
     public DataFileCSV generatedFile() {
-        return data2D.frequency(frequency, freName, freCol, scale);
+        return data2D.frequency(targetController.name(), frequency, freName, freCol, scale);
     }
 
     @Override

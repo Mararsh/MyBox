@@ -9,6 +9,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.UserConfig;
@@ -31,6 +32,8 @@ public class ChartOptions<X, Y> {
     protected boolean popLabel, displayLabelName, plotAnimated;
     protected Side titleSide, legendSide;
 
+    protected InvalidAs invalidAs;
+
     protected Map<Node, Node> nodeLabels = new HashMap<>();
     protected Map<String, String> palette;
 
@@ -52,6 +55,7 @@ public class ChartOptions<X, Y> {
 
     public void clearChart() {
         chart = null;
+        invalidAs = null;
     }
 
     public final void initChartOptions() {
@@ -164,25 +168,11 @@ public class ChartOptions<X, Y> {
     }
 
     public double doubleValue(String v) {
-        try {
-            if (v == null || v.isBlank()) {
-                return 0;
-            }
-            return Double.parseDouble(v.replaceAll(",", ""));
-        } catch (Exception e) {
-            return 0;
-        }
+        return DoubleTools.toDouble(v, invalidAs);
     }
 
     public double scaleValue(String v) {
-        try {
-            if (v == null || v.isBlank()) {
-                return 0;
-            }
-            return DoubleTools.scale(doubleValue(v), scale);
-        } catch (Exception e) {
-            return 0;
-        }
+        return DoubleTools.scale(v, invalidAs, scale);
     }
 
     protected void setLabelsStyle() {
@@ -407,6 +397,11 @@ public class ChartOptions<X, Y> {
 
     public ChartOptions setDefaultValueLabel(String defaultValueLabel) {
         this.defaultValueLabel = defaultValueLabel;
+        return this;
+    }
+
+    public ChartOptions setInvalidAs(InvalidAs invalidAs) {
+        this.invalidAs = invalidAs;
         return this;
     }
 

@@ -7,8 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
-import mara.mybox.data2d.scan.Data2DReader;
+import mara.mybox.data2d.reader.Data2DReadDefinition;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
@@ -117,8 +116,12 @@ public class DataFileExcel extends DataFile {
 
     @Override
     public long readDataDefinition(Connection conn) {
-        Data2DReader.create(this).
-                setReaderTask(task).start(Data2DReader.Operation.ReadDefinition);
+        Data2DReadDefinition reader = Data2DReadDefinition.create(this);
+        if (reader == null) {
+            hasHeader = false;
+            return -2;
+        }
+        reader.setTask(task).start();
         return super.readDataDefinition(conn);
     }
 
@@ -231,7 +234,7 @@ public class DataFileExcel extends DataFile {
         return FileTools.rename(tmpFile, tFile, false);
     }
 
-    protected int writeHeader(Sheet targetSheet, int targetRowIndex) {
+    public int writeHeader(Sheet targetSheet, int targetRowIndex) {
         if (!isColumnsValid()) {
             return targetRowIndex;
         }
@@ -452,290 +455,6 @@ public class DataFileExcel extends DataFile {
             }
         } catch (Exception e) {
             error = e.toString();
-            return -1;
-        }
-    }
-
-    @Override
-    public long setValue(List<Integer> cols, String value, boolean errorContinue) {
-        if (file == null || !file.exists() || file.length() == 0
-                || cols == null || cols.isEmpty()) {
-            return -2;
-        }
-        File tmpFile = TmpFileTools.getTempFile();
-        long count = 0;
-        try ( Workbook sourceBook = WorkbookFactory.create(file)) {
-            Sheet sourceSheet;
-            if (sheet != null) {
-                sourceSheet = sourceBook.getSheet(sheet);
-            } else {
-                sourceSheet = sourceBook.getSheetAt(0);
-                sheet = sourceSheet.getSheetName();
-            }
-            Workbook targetBook;
-            Sheet targetSheet;
-            File tmpDataFile = null;
-            int sheetsNumber = sourceBook.getNumberOfSheets();
-            if (sheetsNumber == 1) {
-                targetBook = new XSSFWorkbook();
-                targetSheet = targetBook.createSheet(sheet);
-            } else {
-                tmpDataFile = TmpFileTools.getTempFile();
-                FileCopyTools.copyFile(file, tmpDataFile);
-                targetBook = WorkbookFactory.create(tmpDataFile);
-                int index = targetBook.getSheetIndex(sheet);
-                targetBook.removeSheetAt(index);
-                targetSheet = targetBook.createSheet(sheet);
-                targetBook.setSheetOrder(sheet, index);
-            }
-            int targetRowIndex = 0;
-            if (hasHeader) {
-                targetRowIndex = writeHeader(targetSheet, targetRowIndex);
-            }
-            Iterator<Row> iterator = sourceSheet.iterator();
-            if (iterator != null && iterator.hasNext()) {
-                if (hasHeader) {
-                    while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
-                    }
-                }
-                boolean isRandom = false, isRandomNn = false, isBlank = false, isMean = false,
-                        isMedian = false, isMode = false;
-                String script = null;
-                if (value != null) {
-                    if ("MyBox##blank".equals(value)) {
-                        isBlank = true;
-                    } else if ("MyBox##random".equals(value)) {
-                        isRandom = true;
-                    } else if ("MyBox##randomNn".equals(value)) {
-                        isRandomNn = true;
-                    } else if (value.startsWith("MyBox##Expression##")) {
-                        script = value.substring("MyBox##Expression##".length());
-                    } else if (value.startsWith("MyBox##columnMean")) {
-                        isMean = true;
-                    } else if (value.startsWith("MyBox##columnMode")) {
-                        isMode = true;
-                    } else if (value.startsWith("MyBox##columnMedian")) {
-                        isMedian = true;
-                    }
-                }
-                Random random = new Random();
-                rowIndex = 0;
-                boolean needSetValue;
-                startFilter();
-                while (iterator.hasNext() && task != null && !task.isCancelled()) {
-                    Row sourceRow = iterator.next();
-                    if (sourceRow == null) {
-                        continue;
-                    }
-                    Row targetRow = targetSheet.createRow(targetRowIndex++);
-                    List<String> values = new ArrayList<>();
-                    for (int c = sourceRow.getFirstCellNum(); c < sourceRow.getLastCellNum(); c++) {
-                        values.add(MicrosoftDocumentTools.cellString(sourceRow.getCell(c)));
-                    }
-                    filterDataRow(values, ++rowIndex);
-                    needSetValue = filterPassed() && !filterReachMaxPassed();
-                    if (needSetValue) {
-                        count++;
-                        if (script != null) {
-                            calculateDataRowExpression(script, values, rowIndex);
-                            error = expressionError();
-                            if (error != null) {
-                                if (errorContinue) {
-                                    continue;
-                                } else {
-                                    task.setError(error);
-                                    return -2;
-                                }
-                            }
-                        }
-                    }
-                    for (int c = sourceRow.getFirstCellNum(); c < sourceRow.getLastCellNum(); c++) {
-                        String v;
-                        if (needSetValue && cols.contains(c)) {
-                            if (isBlank) {
-                                v = "";
-                            } else if (isRandom) {
-                                v = random(random, c, false);
-                            } else if (isRandomNn) {
-                                v = random(random, c, true);
-                            } else if (isMean) {
-                                v = column(c).getTargetStatistic().mean + "";
-                            } else if (isMode) {
-                                v = column(c).getTargetStatistic().modeValue + "";
-                            } else if (isMedian) {
-                                v = column(c).getTargetStatistic().median + "";
-                            } else if (script != null) {
-                                v = expressionResult();
-                            } else {
-                                v = value;
-                            }
-                        } else {
-                            v = MicrosoftDocumentTools.cellString(sourceRow.getCell(c));
-                        }
-                        Cell targetCell = targetRow.createCell(c, CellType.STRING);
-                        targetCell.setCellValue(v);
-                    }
-                }
-            }
-            try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
-                targetBook.write(fileOut);
-            }
-            targetBook.close();
-            FileDeleteTools.delete(tmpDataFile);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            return -3;
-        }
-        if (FileTools.rename(tmpFile, file, false)) {
-            return count;
-        } else {
-            return -4;
-        }
-    }
-
-    @Override
-    public long delete(boolean errorContinue) {
-        if (file == null || !file.exists() || file.length() == 0) {
-            return -1;
-        }
-        File tmpFile = TmpFileTools.getTempFile();
-        long count = 0;
-        try ( Workbook sourceBook = WorkbookFactory.create(file)) {
-            Sheet sourceSheet;
-            if (sheet != null) {
-                sourceSheet = sourceBook.getSheet(sheet);
-            } else {
-                sourceSheet = sourceBook.getSheetAt(0);
-                sheet = sourceSheet.getSheetName();
-            }
-            Workbook targetBook;
-            Sheet targetSheet;
-            File tmpDataFile = null;
-            int sheetsNumber = sourceBook.getNumberOfSheets();
-            if (sheetsNumber == 1) {
-                targetBook = new XSSFWorkbook();
-                targetSheet = targetBook.createSheet(sheet);
-            } else {
-                tmpDataFile = TmpFileTools.getTempFile();
-                FileCopyTools.copyFile(file, tmpDataFile);
-                targetBook = WorkbookFactory.create(tmpDataFile);
-                int index = targetBook.getSheetIndex(sheet);
-                targetBook.removeSheetAt(index);
-                targetSheet = targetBook.createSheet(sheet);
-                targetBook.setSheetOrder(sheet, index);
-            }
-            int targetRowIndex = 0;
-            if (hasHeader) {
-                targetRowIndex = writeHeader(targetSheet, targetRowIndex);
-            }
-            Iterator<Row> iterator = sourceSheet.iterator();
-            if (iterator != null && iterator.hasNext()) {
-                if (hasHeader) {
-                    while (iterator.hasNext() && (iterator.next() == null) && task != null && !task.isCancelled()) {
-                    }
-                }
-                if (needFilter()) {
-                    rowIndex = 0;
-                    while (iterator.hasNext() && task != null && !task.isCancelled()) {
-                        Row sourceRow = iterator.next();
-                        if (sourceRow == null) {
-                            continue;
-                        }
-                        Row targetRow = targetSheet.createRow(targetRowIndex++);
-                        List<String> values = new ArrayList<>();
-                        for (int c = sourceRow.getFirstCellNum(); c < sourceRow.getLastCellNum(); c++) {
-                            values.add(MicrosoftDocumentTools.cellString(sourceRow.getCell(c)));
-                        }
-                        filterDataRow(values, ++rowIndex);
-                        if (error != null) {
-                            if (errorContinue) {
-                                continue;
-                            } else {
-                                task.setError(error);
-                                return -2;
-                            }
-                        }
-                        if (filterPassed() && !filterReachMaxPassed()) {
-                            count++;
-                            continue;
-                        }
-                        for (int c = sourceRow.getFirstCellNum(); c < sourceRow.getLastCellNum(); c++) {
-                            String v = MicrosoftDocumentTools.cellString(sourceRow.getCell(c));
-                            Cell targetCell = targetRow.createCell(c, CellType.STRING);
-                            targetCell.setCellValue(v);
-                        }
-                    }
-                }
-            }
-            try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
-                targetBook.write(fileOut);
-            }
-            targetBook.close();
-            FileDeleteTools.delete(tmpDataFile);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            return -3;
-        }
-        if (FileTools.rename(tmpFile, file, false)) {
-            return count;
-        } else {
-            return -4;
-        }
-    }
-
-    @Override
-    public long clearData() {
-        File tmpFile = TmpFileTools.getTempFile();
-        checkForLoad();
-        if (file != null && file.exists() && file.length() > 0) {
-            try ( Workbook sourceBook = WorkbookFactory.create(file)) {
-                if (sheet == null) {
-                    sheet = sourceBook.getSheetAt(0).getSheetName();
-                }
-                Workbook targetBook;
-                Sheet targetSheet;
-                File tmpDataFile = null;
-                int sheetsNumber = sourceBook.getNumberOfSheets();
-                if (sheetsNumber == 1) {
-                    targetBook = new XSSFWorkbook();
-                    targetSheet = targetBook.createSheet(sheet);
-                } else {
-                    tmpDataFile = TmpFileTools.getTempFile();
-                    FileCopyTools.copyFile(file, tmpDataFile);
-                    targetBook = WorkbookFactory.create(tmpDataFile);
-                    int index = targetBook.getSheetIndex(sheet);
-                    targetBook.removeSheetAt(index);
-                    targetSheet = targetBook.createSheet(sheet);
-                    targetBook.setSheetOrder(sheet, index);
-                }
-                if (hasHeader) {
-                    writeHeader(targetSheet, 0);
-                }
-
-                try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
-                    targetBook.write(fileOut);
-                }
-                targetBook.close();
-                FileDeleteTools.delete(tmpDataFile);
-                if (FileTools.rename(tmpFile, file, false)) {
-                    return getDataSize();
-                } else {
-                    return -1;
-                }
-            } catch (Exception e) {
-                MyBoxLog.error(e);
-                if (task != null) {
-                    task.setError(e.toString());
-                }
-                return -1;
-            }
-        } else {
             return -1;
         }
     }

@@ -7,8 +7,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
-import mara.mybox.data2d.scan.Data2DReader;
-import mara.mybox.data2d.scan.Data2DReader.Operation;
+import mara.mybox.data.SetValue;
+import mara.mybox.data2d.reader.Data2DReadPage;
+import mara.mybox.data2d.reader.Data2DReadTotal;
+import mara.mybox.data2d.reader.Data2DOperator;
+import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
@@ -35,12 +38,6 @@ public abstract class Data2D_Edit extends Data2D_Filter {
     public abstract List<String> readColumnNames();
 
     public abstract boolean savePageData(Data2D targetData);
-
-    public abstract long setValue(List<Integer> cols, String value, boolean errorContinue);
-
-    public abstract long delete(boolean errorContinue);
-
-    public abstract long clearData();
 
     /*
         read
@@ -127,6 +124,12 @@ public abstract class Data2D_Edit extends Data2D_Filter {
                     }
                     if (isMatrix()) {
                         column.setType(ColumnDefinition.ColumnType.Double);
+                    } else if (initColumnTypes != null) {
+                        try {
+                            column.setType(initColumnTypes.get(i));
+                        } catch (Exception e) {
+                            MyBoxLog.debug(e);
+                        }
                     }
                 }
                 colsNumber = columns.size();
@@ -142,6 +145,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
                     tableData2DStyle.clear(conn, d2did);
                 }
             }
+            initColumnTypes = null;
             return true;
         } catch (Exception e) {
             if (task != null) {
@@ -154,8 +158,8 @@ public abstract class Data2D_Edit extends Data2D_Filter {
 
     public long readTotal() {
         dataSize = 0;
-        Data2DReader reader = Data2DReader.create(this)
-                .setReaderTask(backgroundTask).start(Operation.ReadTotal);
+        Data2DOperator reader = Data2DReadTotal.create(this)
+                .setTask(backgroundTask).start();
         if (reader != null) {
             dataSize = reader.getRowIndex();
         }
@@ -180,13 +184,12 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             startRowOfCurrentPage = 0;
         }
         endRowOfCurrentPage = startRowOfCurrentPage;
-        Data2DReader reader = Data2DReader.create(this)
-                .setConn(conn).setReaderTask(task)
-                .start(Operation.ReadPage);
+        Data2DReadPage reader = Data2DReadPage.create(this).setConn(conn);
         if (reader == null) {
             startRowOfCurrentPage = endRowOfCurrentPage = 0;
             return null;
         }
+        reader.setTask(task).start();
         List<List<String>> rows = reader.getRows();
         if (rows != null) {
             endRowOfCurrentPage = startRowOfCurrentPage + rows.size();
@@ -202,6 +205,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
         try ( PreparedStatement statement = conn.prepareStatement(TableData2DStyle.QueryStyles)) {
             statement.setLong(1, d2did);
+            conn.setAutoCommit(true);
             try ( ResultSet results = statement.executeQuery()) {
                 while (results.next()) {
                     Data2DStyle style = tableData2DStyle.readData(results);
@@ -247,7 +251,48 @@ public abstract class Data2D_Edit extends Data2D_Filter {
     }
 
     /*
-        write
+        modify
+     */
+    public long setValue(List<Integer> cols, SetValue setValue, boolean errorContinue) {
+        if (!validData() || cols == null || cols.isEmpty()) {
+            return -1;
+        }
+        Data2DWriter writer = Data2DWriter.create(this)
+                .setSetValue(setValue).setCols(cols)
+                .setTask(task).start(Data2DWriter.Operation.SetValue);
+        if (writer == null || writer.isFailed()) {
+            return -2;
+        }
+        return writer.getCount();
+    }
+
+    public long deleteRows(boolean errorContinue) {
+        if (!validData()) {
+            return -1;
+        }
+        Data2DWriter writer = Data2DWriter.create(this)
+                .setTask(task).start(Data2DWriter.Operation.Delete);
+        if (writer == null || writer.isFailed()) {
+            return -2;
+        }
+        return writer.getCount();
+    }
+
+    public long clearData() {
+        if (!validData()) {
+            return -1;
+        }
+        Data2DWriter writer = Data2DWriter.create(this)
+                .setTask(task).start(Data2DWriter.Operation.ClearData);
+        if (writer == null || writer.isFailed()) {
+            return -2;
+        }
+        return dataSize;
+    }
+
+
+    /*
+        save
      */
     public boolean checkForSave() {
         if (dataName == null || dataName.isBlank()) {
@@ -335,7 +380,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             d.cloneAll(def);
             if (inColumns != null && !inColumns.isEmpty()) {
                 try {
-                    List<Data2DColumn> savedColumns = new ArrayList<>();
+                    List<Data2DColumn> targetColumns = new ArrayList<>();
                     for (int i = 0; i < inColumns.size(); i++) {
                         Data2DColumn column = inColumns.get(i).cloneAll();
                         if (column.getD2id() != did) {
@@ -350,10 +395,10 @@ public abstract class Data2D_Edit extends Data2D_Filter {
                         if (d.isMatrix()) {
                             column.setType(ColumnDefinition.ColumnType.Double);
                         }
-                        savedColumns.add(column);
+                        targetColumns.add(column);
                     }
-                    d.getTableData2DColumn().save(conn, did, savedColumns);
-                    d.setColumns(savedColumns);
+                    d.getTableData2DColumn().save(conn, did, targetColumns);
+                    d.setColumns(targetColumns);
                 } catch (Exception e) {
                     if (d.getTask() != null) {
                         d.getTask().setError(e.toString());

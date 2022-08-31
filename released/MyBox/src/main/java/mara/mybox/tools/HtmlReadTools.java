@@ -55,7 +55,12 @@ public class HtmlReadTools {
             if (urlAddress == null) {
                 return null;
             }
-            URL url = new URL(urlAddress);
+            URL url;
+            try {
+                url = new URL(urlAddress);
+            } catch (Exception e) {
+                return null;
+            }
             File tmpFile = TmpFileTools.getTempFile();
 
             if ("file".equalsIgnoreCase(url.getProtocol())) {
@@ -179,7 +184,12 @@ public class HtmlReadTools {
             if (address == null) {
                 return null;
             }
-            URL url = new URL(address);
+            URL url;
+            try {
+                url = new URL(address);
+            } catch (Exception e) {
+                return null;
+            }
             try (final BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()))) {
                 String inputLine;
                 StringBuilder sb = new StringBuilder();

@@ -99,17 +99,17 @@ public class Data2DManageQueryController extends BaseChildController {
 
             String order = UserConfig.getString(baseName + "Order", null);
             if (message("ID").equals(order)) {
-                idRadio.fire();
+                idRadio.setSelected(true);
             } else if (message("Name").equals(order)) {
-                nameRadio.fire();
+                nameRadio.setSelected(true);
             } else if (message("RowsNumber").equals(order)) {
-                rowsRadio.fire();
+                rowsRadio.setSelected(true);
             } else if (message("ColumnsNumber").equals(order)) {
-                colsRadio.fire();
+                colsRadio.setSelected(true);
             } else if (message("File").equals(order)) {
-                fileRadio.fire();
+                fileRadio.setSelected(true);
             } else {
-                timeRadio.fire();
+                timeRadio.setSelected(true);
             }
             orderGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override

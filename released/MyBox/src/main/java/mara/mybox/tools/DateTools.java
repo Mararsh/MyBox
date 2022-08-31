@@ -26,6 +26,23 @@ import mara.mybox.value.TimeFormats;
  */
 public class DateTools {
 
+    // invalid values are always in the end
+    public static int compare(String s1, String s2, boolean desc) {
+        double d1, d2;
+        SimpleDateFormat df = new SimpleDateFormat();
+        try {
+            d1 = df.parse(s1).getTime();
+        } catch (Exception e) {
+            d1 = Double.NaN;
+        }
+        try {
+            d2 = df.parse(s2).getTime();
+        } catch (Exception e) {
+            d2 = Double.NaN;
+        }
+        return DoubleTools.compare(d1, d2, desc);
+    }
+
     public static TimeZone getTimeZone() {
         return TimeZone.getDefault();
     }

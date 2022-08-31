@@ -35,8 +35,6 @@ public class Data2DChartPieController extends BaseData2DChartController {
             chartController.dataController = this;
             pieMaker = chartController.pieMaker;
 
-            noColumnSelection(true);
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -45,19 +43,24 @@ public class Data2DChartPieController extends BaseData2DChartController {
     @Override
     public boolean initData() {
         try {
+            if (!super.initData()) {
+                return false;
+            }
             dataColsIndices = new ArrayList<>();
             outputColumns = new ArrayList<>();
             outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
             int categoryCol = data2D.colOrder(selectedCategory);
             if (categoryCol < 0) {
-                popError(message("SelectToHandle"));
+                outOptionsError(message("SelectToHandle") + ": " + message("CategoryColumn"));
+                tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
             dataColsIndices.add(categoryCol);
             outputColumns.add(data2D.column(categoryCol));
             int valueCol = data2D.colOrder(selectedValue);
             if (valueCol < 0) {
-                popError(message("SelectToHandle"));
+                outOptionsError(message("SelectToHandle") + ": " + message("ValueColumn"));
+                tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
             dataColsIndices.add(valueCol);
@@ -65,8 +68,12 @@ public class Data2DChartPieController extends BaseData2DChartController {
 
             pieMaker.init(message("PieChart"))
                     .setDefaultChartTitle(selectedCategory + " - " + selectedValue)
+                    .setChartTitle(pieMaker.getDefaultChartTitle())
                     .setDefaultCategoryLabel(selectedCategory)
-                    .setDefaultValueLabel(selectedValue);
+                    .setCategoryLabel(selectedCategory)
+                    .setDefaultValueLabel(selectedValue)
+                    .setValueLabel(selectedValue)
+                    .setInvalidAs(invalidAs);
 
             return true;
         } catch (Exception e) {
@@ -82,7 +89,7 @@ public class Data2DChartPieController extends BaseData2DChartController {
                 popError(message("NoData"));
                 return;
             }
-            chartController.writeChart(outputColumns, outputData);
+            chartController.writeChart(outputColumns, outputData, true);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

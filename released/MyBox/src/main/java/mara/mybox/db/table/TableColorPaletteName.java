@@ -20,38 +20,38 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class TableColorPaletteName extends BaseTable<ColorPaletteName> {
-
+    
     protected TableColor tableColor;
     protected TableColorPalette tableColorPalette;
-
+    
     public TableColorPaletteName() {
         tableName = "Color_Palette_Name";
         defineColumns();
     }
-
+    
     public TableColorPaletteName(boolean defineColumns) {
         tableName = "Color_Palette_Name";
         if (defineColumns) {
             defineColumns();
         }
     }
-
+    
     public final TableColorPaletteName defineColumns() {
         addColumn(new ColumnDefinition("cpnid", ColumnType.Long, true, true).setAuto(true));
         addColumn(new ColumnDefinition("palette_name", ColumnType.String, true).setLength(StringMaxLength));
         return this;
     }
-
+    
     public static String defaultPaletteName() {
         return message("DefaultPalette");
     }
-
+    
     public static final String Create_Unique_Index
             = "CREATE UNIQUE INDEX Color_Palette_Name_unique_index on Color_Palette_Name ( palette_name )";
-
+    
     public static final String QueryName
             = "SELECT * FROM Color_Palette_Name WHERE palette_name=?";
-
+    
     public ColorPaletteName find(String name) {
         if (name == null || name.isBlank()) {
             return null;
@@ -64,7 +64,7 @@ public class TableColorPaletteName extends BaseTable<ColorPaletteName> {
         }
         return colorPaletteName;
     }
-
+    
     public ColorPaletteName find(Connection conn, String name) {
         if (conn == null || name == null || name.isBlank()) {
             return null;
@@ -72,6 +72,7 @@ public class TableColorPaletteName extends BaseTable<ColorPaletteName> {
         try ( PreparedStatement statement = conn.prepareStatement(QueryName)) {
             statement.setString(1, name);
             statement.setMaxRows(1);
+            conn.setAutoCommit(true);
             try ( ResultSet results = statement.executeQuery()) {
                 if (results.next()) {
                     return readData(results);
@@ -82,7 +83,7 @@ public class TableColorPaletteName extends BaseTable<ColorPaletteName> {
         }
         return null;
     }
-
+    
     public ColorPaletteName findAndCreate(String name) {
         if (name == null || name.isBlank()) {
             return null;
@@ -94,7 +95,7 @@ public class TableColorPaletteName extends BaseTable<ColorPaletteName> {
             return null;
         }
     }
-
+    
     public ColorPaletteName findAndCreate(Connection conn, String name) {
         if (conn == null || name == null || name.isBlank()) {
             return null;
@@ -112,7 +113,7 @@ public class TableColorPaletteName extends BaseTable<ColorPaletteName> {
             return null;
         }
     }
-
+    
     public ColorPaletteName defaultPalette() {
         try ( Connection conn = DerbyBase.getConnection()) {
             return defaultPalette(conn);
@@ -121,7 +122,7 @@ public class TableColorPaletteName extends BaseTable<ColorPaletteName> {
             return null;
         }
     }
-
+    
     public ColorPaletteName defaultPalette(Connection conn) {
         try {
             boolean ac = conn.getAutoCommit();
@@ -152,7 +153,7 @@ public class TableColorPaletteName extends BaseTable<ColorPaletteName> {
             return null;
         }
     }
-
+    
     public ColorPalette insert(Connection conn, long paletteid, String rgba, String name, float orderNumber) {
         if (conn == null) {
             return null;
@@ -180,20 +181,20 @@ public class TableColorPaletteName extends BaseTable<ColorPaletteName> {
         }
         return tableColor;
     }
-
+    
     public void setTableDataset(TableColor tableColor) {
         this.tableColor = tableColor;
     }
-
+    
     public TableColorPalette getTableColorPalette() {
         if (tableColorPalette == null) {
             tableColorPalette = new TableColorPalette();
         }
         return tableColorPalette;
     }
-
+    
     public void setTableColorPalette(TableColorPalette tableColorPalette) {
         this.tableColorPalette = tableColorPalette;
     }
-
+    
 }

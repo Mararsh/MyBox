@@ -443,9 +443,9 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
             NodeTools.setRadioSelected(typeGroup, Languages.message("None"));
         }
         if (kernel.getEdge() == ConvolutionKernel.Edge_Op.COPY) {
-            keepRadio.fire();
+            keepRadio.setSelected(true);
         } else {
-            zeroRadio.fire();
+            zeroRadio.setSelected(true);
         }
         grayCheck.setSelected(kernel.isGray());
         invertCheck.setSelected(kernel.isInvert());

@@ -112,7 +112,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
         if (xyText == null || !xyText.isVisible()) {
             return null;
         }
-        if (!isPickingColor && !UserConfig.getBoolean( "ImagePopCooridnate", false)) {
+        if (!isPickingColor && !UserConfig.getBoolean("ImagePopCooridnate", false)) {
             xyText.setText("");
             return null;
         }
@@ -132,7 +132,11 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
                 + (int) Math.round(p.getY() / heightRatio()) + "\n"
                 + FxColorTools.colorDisplaySimple(color);
         if (isPickingColor) {
-            s = message("PickingColorsNow") + "\n" + s;
+            if (this instanceof ImageManufactureScopeController_Base) {
+                s = message("PickingColorsForScope") + "\n" + s;
+            } else {
+                s = message("PickingColorsNow") + "\n" + s;
+            }
         }
         xyText.setText(s);
         xyText.setX(event.getX() + 10);
@@ -175,11 +179,11 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
             }
 
             if (coordinateCheck != null) {
-                coordinateCheck.setSelected(UserConfig.getBoolean( "ImagePopCooridnate", false));
+                coordinateCheck.setSelected(UserConfig.getBoolean("ImagePopCooridnate", false));
                 coordinateCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean( "ImagePopCooridnate", coordinateCheck.isSelected());
+                        UserConfig.setBoolean("ImagePopCooridnate", coordinateCheck.isSelected());
                         checkCoordinate();
                     }
                 });
@@ -321,7 +325,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
             return;
         }
         clearMaskGridX();
-        if (UserConfig.getBoolean( "ImageGridLines", false)) {
+        if (UserConfig.getBoolean("ImageGridLines", false)) {
             Color lineColor = Color.web(UserConfig.getString("GridLinesColor", Color.LIGHTGRAY.toString()));
             int lineWidth = UserConfig.getInt("GridLinesWidth", 1);
             lineWidth = lineWidth <= 0 ? 1 : lineWidth;
@@ -378,7 +382,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
             return;
         }
         clearMaskGridY();
-        if (UserConfig.getBoolean( "ImageGridLines", false)) {
+        if (UserConfig.getBoolean("ImageGridLines", false)) {
             Color lineColor = Color.web(UserConfig.getString("GridLinesColor", Color.LIGHTGRAY.toString()));
             int lineWidth = UserConfig.getInt("GridLinesWidth", 1);
             double imageWidth = getImageWidth() / widthRatio();

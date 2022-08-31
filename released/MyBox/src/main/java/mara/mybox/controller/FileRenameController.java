@@ -12,6 +12,7 @@ import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -68,13 +69,13 @@ public class FileRenameController extends BaseController {
     public void okAction() {
         try {
             if (file == null || !file.exists() || !file.isFile()) {
-                popError("InvalidParameters");
+                popError(message("InvalidParameters"));
                 closeStage();
                 return;
             }
             File theFile = new File(pathLabel.getText() + FileNameTools.filter(nameInput.getText() + suffixLabel.getText()));
-            if (theFile.getAbsolutePath().equals(file.getAbsolutePath())) {
-                popError("Same");
+            if (theFile.equals(file)) {
+                popError(message("Same"));
                 return;
             }
             if (theFile.exists()) {

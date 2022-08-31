@@ -15,7 +15,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DColumns">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DColumns">
     <children>
         <FlowPane fx:id="buttonsPane" alignment="CENTER_RIGHT" hgap="2.0" vgap="2.0">
             <children>
@@ -116,6 +116,7 @@ License:    Apache License Version 2.0
                 <TableColumn fx:id="widthColumn" prefWidth="75.0" text="%Width" />
                 <TableColumn fx:id="editableColumn" text="%Editable" />
                 <TableColumn fx:id="notNullColumn" text="%NotNull" />
+            <TableColumn fx:id="formatColumn" text="%Format" />
                 <TableColumn fx:id="lengthColumn" prefWidth="75.0" text="%Length" />
                 <TableColumn fx:id="defaultColumn" prefWidth="75.0" text="%DefaultValue" />
                 <TableColumn fx:id="primaryColumn" text="%PrimaryKey" />

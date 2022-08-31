@@ -34,6 +34,10 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
     public SingletonTask task, backgroundTask;
     public String error;
 
+    public enum InvalidAs {
+        Zero, Blank, Skip
+    }
+
     public Data2D_Attributes() {
         tableData2DDefinition = new TableData2DDefinition();
         tableData2DColumn = new TableData2DColumn();
@@ -109,7 +113,6 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
             startRowOfCurrentPage = d.startRowOfCurrentPage;
             endRowOfCurrentPage = d.endRowOfCurrentPage;
             tableChanged = d.tableChanged;
-            filter = d.filter;
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -247,8 +250,9 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         this.filter = filter;
     }
 
-    public void setStyles(List<Data2DStyle> styles) {
+    public Data2D_Attributes setStyles(List<Data2DStyle> styles) {
         this.styles = styles;
+        return this;
     }
 
     public SingletonTask getTask() {

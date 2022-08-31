@@ -111,7 +111,7 @@ public class NetworkQueryAddressController extends HtmlTableController {
 
     public void queryUrl(String address) {
         isSettingValues = true;
-        urlRadio.fire();
+        urlRadio.setSelected(true);
         key = "NetworkQueryURLHistories";
         addressInput.setText(address);
         isSettingValues = false;

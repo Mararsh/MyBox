@@ -19,7 +19,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DColumnCreateController">
+<VBox fx:id="thisPane" spacing="10.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DColumnCreateController">
     <children>
         <HBox alignment="CENTER" VBox.vgrow="NEVER">
             <children>
@@ -83,6 +83,7 @@ License:    Apache License Version 2.0
             <children>
                 <CheckBox fx:id="notNullCheck" layoutX="100.0" layoutY="10.0" mnemonicParsing="false" text="%NotNull" />
                 <CheckBox fx:id="editableCheck" layoutX="190.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Editable" />
+            <CheckBox fx:id="formatCheck" layoutX="90.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Format" />
             </children>
         </FlowPane>
         <HBox alignment="CENTER_LEFT" spacing="5.0">

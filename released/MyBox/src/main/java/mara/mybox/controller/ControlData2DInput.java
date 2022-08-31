@@ -261,7 +261,7 @@ public class ControlData2DInput extends BaseController {
             popError(message("NoData"));
             return;
         }
-        DataFileTextController.open(dataFileText.getColumns(), data);
+        DataFileTextController.open(null, dataFileText.getColumns(), data);
     }
 
     public boolean hasData() {

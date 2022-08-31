@@ -110,7 +110,7 @@ License:    Apache License Version 2.0
                                     </children>
                                 </HBox>
                         <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%DatabaseSQLComments" wrapText="true" />
-                                <TextArea fx:id="valueInput" prefHeight="100.0" />
+                                <TextArea fx:id="valueInput" minHeight="100.0" prefHeight="100.0" />
                                 <TabPane fx:id="sqlPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                                     <tabs>
                                         <Tab fx:id="resultsTab" text="%Results">

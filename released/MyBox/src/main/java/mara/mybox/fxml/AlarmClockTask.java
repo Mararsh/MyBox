@@ -2,24 +2,18 @@ package mara.mybox.fxml;
 
 import java.util.Date;
 import java.util.TimerTask;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import javafx.application.Platform;
 import mara.mybox.controller.AlarmClockRunController;
 import mara.mybox.db.data.AlarmClock;
-import mara.mybox.db.data.AlarmClock.AlarmType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.scheduledTasks;
-
 import mara.mybox.value.Fxmls;
 
 /**
  * @Author Mara
  * @CreateDate 2018-7-16
- * @Description
  * @License Apache License Version 2.0
  */
 public class AlarmClockTask extends TimerTask {
@@ -29,11 +23,11 @@ public class AlarmClockTask extends TimerTask {
     protected TimeUnit timeUnit = TimeUnit.SECONDS;
     protected long delay, period;
 
-    public AlarmClockTask(AlarmClock alarm) {
-        this.alarm = alarm;
-        AlarmClock.calculateNextTime(alarm);
-        delay = alarm.getNextTime() - new Date().getTime();
-        period = alarm.getPeriod();
+    public AlarmClockTask(AlarmClock alarmClock) {
+        this.alarm = alarmClock;
+//        AlarmClock.calculateNextTime(alarmClock);
+//        delay = alarmClock.getNextTime() - new Date().getTime();
+//        period = AlarmClock.period(alarmClock);
     }
 
     @Override
@@ -61,21 +55,20 @@ public class AlarmClockTask extends TimerTask {
                 }
             });
 
-            if (alarm.getAlarmType() == AlarmType.NotRepeat) {
-                ScheduledFuture future = scheduledTasks.get(alarm.getKey());
-                if (future != null) {
-                    future.cancel(true);
-                    scheduledTasks.remove(alarm.getKey());
-                }
-                alarm.setIsActive(false);
-                AlarmClock.writeAlarmClock(alarm);
-            } else {
-                alarm.setLastTime(new Date().getTime());
-                alarm.setNextTime(-1);
-                AlarmClock.calculateNextTime(alarm);
-                AlarmClock.writeAlarmClock(alarm);
-            }
-
+//            if (alarm.getAlarmType() == NotRepeat) {
+//                ScheduledFuture future = scheduledTasks.get(alarm.getKey());
+//                if (future != null) {
+//                    future.cancel(true);
+//                    scheduledTasks.remove(alarm.getKey());
+//                }
+//                alarm.setIsActive(false);
+//                AlarmClock.writeAlarmClock(alarm);
+//            } else {
+//                alarm.setLastTime(new Date().getTime());
+//                alarm.setNextTime(-1);
+//                AlarmClock.calculateNextTime(alarm);
+//                AlarmClock.writeAlarmClock(alarm);
+//            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -85,22 +78,25 @@ public class AlarmClockTask extends TimerTask {
     public static boolean canTriggerAlarm(AlarmClock alarm) {
         long now = new Date().getTime();
         switch (alarm.getAlarmType()) {
-            case AlarmType.NotRepeat:
-            case AlarmType.EveryDay:
-            case AlarmType.EverySomeDays:
-            case AlarmType.EverySomeHours:
-            case AlarmType.EverySomeMinutes:
-            case AlarmType.EverySomeSeconds:
+            case NotRepeat:
+            case EveryDay:
+            case EverySomeDays:
+            case EverySomeHours:
+            case EverySomeMinutes:
+            case EverySomeSeconds:
                 return true;
-            case AlarmType.Weekend:
+            case Weekend:
                 return DateTools.isWeekend(now);
-            case AlarmType.WorkingDays:
+            case WorkingDays:
                 return !DateTools.isWeekend(now);
             default:
                 return false;
         }
     }
 
+    /*
+        get/set
+     */
     public AlarmClock getAlarm() {
         return alarm;
     }

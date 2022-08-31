@@ -40,7 +40,7 @@ public class AppVariables {
     public static Map<String, String> userConfigValues = new HashMap<>();
     public static Map<String, String> systemConfigValues = new HashMap<>();
     public static ScheduledExecutorService executorService;
-    public static Map<Long, ScheduledFuture<?>> scheduledTasks;
+    public static Map<String, ScheduledFuture<?>> scheduledTasks;
     public static AlarmClockController alarmClockController;
     public static MemoryUsageSetting pdfMemUsage;
     public static int sceneFontSize, fileRecentNumber, iconSize, thumbnailWidth;
@@ -61,7 +61,7 @@ public class AppVariables {
             getBundle();
             getTableBundle();
             getPdfMem();
-            closeCurrentWhenOpenTool = UserConfig.getBoolean("CloseCurrentWhenOpenTool", true);
+            closeCurrentWhenOpenTool = UserConfig.getBoolean("CloseCurrentWhenOpenTool", false);
             recordWindowsSizeLocation = UserConfig.getBoolean("RecordWindowsSizeLocation", true);
             sceneFontSize = UserConfig.getInt("SceneFontSize", 15);
             fileRecentNumber = UserConfig.getInt("FileRecentNumber", 16);

@@ -39,7 +39,7 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox fx:id="dataBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                     <children>
-                                        <FlowPane fx:id="rowsPane" hgap="2.0" vgap="2.0">
+                                        <HBox alignment="CENTER_LEFT" spacing="2.0">
                                             <children>
                                                 <Label text="%Rows" />
                                                 <RadioButton fx:id="selectedRadio" mnemonicParsing="false" selected="true" text="%Selected">
@@ -49,30 +49,7 @@ License:    Apache License Version 2.0
                                                 </RadioButton>
                                                 <RadioButton fx:id="currentPageRadio" mnemonicParsing="false" text="%CurrentPage" toggleGroup="$rowsGroup" />
                                                 <RadioButton fx:id="allPagesRadio" mnemonicParsing="false" text="%AllPages" toggleGroup="$rowsGroup" />
-                                            </children>
-                                        </FlowPane>
-                                        <HBox alignment="CENTER_LEFT" spacing="2.0">
-                                            <children>
-                                                <Label text="%Columns" />
-                                                <Button fx:id="selectAllColumnsButton" mnemonicParsing="false" onAction="#selectAllColumns">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconSelectAll.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="selectNoneColumnsButton" mnemonicParsing="false" onAction="#selectNoneColumn">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconSelectNone.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Label fx:id="dataLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
+                                                <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
                                                 <ImageView fx:id="tableTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
                                                         <Image url="@../buttons/Red/iconTipsRight.png" />
@@ -176,7 +153,7 @@ License:    Apache License Version 2.0
                         </ScrollPane>
                     </content>
                 </Tab>
-                <Tab text="%Options">
+                <Tab fx:id="optionsTab" text="%Options">
                     <content>
                         <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                             <content>

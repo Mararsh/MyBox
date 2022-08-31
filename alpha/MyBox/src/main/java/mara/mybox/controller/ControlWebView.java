@@ -23,6 +23,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
@@ -1778,6 +1779,19 @@ public class ControlWebView extends BaseController {
         }
         TextClipboardTools.copyToMyBoxClipboard(myController, chtml);
         return true;
+    }
+
+    @FXML
+    @Override
+    public boolean menuAction() {
+        try {
+            Point2D localToScreen = webView.localToScreen(webView.getWidth() - 80, 80);
+            MenuWebviewController.pop(this, null, localToScreen.getX(), localToScreen.getY());
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+        return false;
     }
 
     @Override

@@ -348,7 +348,7 @@ public class Fxmls {
      */
     public static final String ShortcutsFxml = "/fxml/Shortcuts.fxml";
     public static final String FunctionsListFxml = "/fxml/FunctionsList.fxml";
-    public static final String DocumentsFxml = "/fxml/Documents.fxml";
+
 
     /*
         dev

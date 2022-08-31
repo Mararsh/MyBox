@@ -11,13 +11,11 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.color.ChromaticAdaptation;
-import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
-import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
@@ -124,36 +122,7 @@ public class ChromaticityBaseController extends BaseWebViewController {
 
     @FXML
     public void aboutColor() {
-        openLink(aboutColorHtml());
-    }
-
-    public static File aboutColorHtml() {
-        try {
-            StringTable table = new StringTable(null, Languages.message("ResourcesAboutColor"));
-            table.newLinkRow("ICCWebsite", "http://www.color.org");
-            table.newLinkRow("ICCProfileTags", "https://sno.phy.queensu.ca/~phil/exiftool/TagNames/ICC_Profile.html");
-            table.newLinkRow("IccProfilesECI", "http://www.eci.org/en/downloads");
-            table.newLinkRow("IccProfilesAdobe", "https://supportdownloads.adobe.com/detail.jsp?ftpID=3680");
-            table.newLinkRow("ColorSpace", "http://brucelindbloom.com/index.html?WorkingSpaceInfo.html#Specifications");
-            table.newLinkRow("StandardsRGB", "https://www.w3.org/Graphics/Color/sRGB.html");
-            table.newLinkRow("RGBXYZMatrices", "http://brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html");
-            table.newLinkRow("ColorCalculator", "http://www.easyrgb.com/en/math.php");
-            table.newLinkRow("", "http://brucelindbloom.com/index.html?ColorCalculator.html");
-            table.newLinkRow("", "http://davengrace.com/cgi-bin/cspace.pl");
-            table.newLinkRow("ColorData", "https://www.rit.edu/science/pocs/useful-data");
-            table.newLinkRow("", "http://www.thefullwiki.org/Standard_illuminant");
-            table.newLinkRow("ColorTopics", "https://www.codeproject.com/Articles/1202772/Color-Topics-for-Programmers");
-            table.newLinkRow("", "https://www.w3.org/TR/css-color-4/#lab-to-rgb");
-            table.newLinkRow("ChromaticAdaptation", "http://brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html");
-            table.newLinkRow("ChromaticityDiagram", "http://demonstrations.wolfram.com/CIEChromaticityDiagram/");
-
-            File htmFile = HtmlWriteTools.writeHtml(table.html());
-            return htmFile;
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
+        openLink(HelpTools.aboutColorHtml());
     }
 
     @FXML

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import mara.mybox.controller.BaseData2DHandleController;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
@@ -26,7 +27,7 @@ public class DescriptiveStatistic {
             minimum, maximum, median, upperQuartile, lowerQuartile, mode,
             upperMildOutlierLine, upperExtremeOutlierLine, lowerMildOutlierLine, lowerExtremeOutlierLine;
     public int scale;
-    public double invalidAs = 0;
+    public InvalidAs invalidAs;
 
     protected BaseData2DHandleController handleController;
     protected SingletonTask<Void> task;
@@ -69,6 +70,74 @@ public class DescriptiveStatistic {
                 .setUpperExtremeOutlierLine(select)
                 .setLowerMildOutlierLine(select)
                 .setLowerExtremeOutlierLine(select);
+    }
+
+    public List<String> list() {
+        List<String> list = new ArrayList<>();
+        if (count) {
+            list.add("count");
+        }
+        if (sum) {
+            list.add("sum");
+        }
+        if (mean) {
+            list.add("mean");
+        }
+        if (count) {
+            list.add("count");
+        }
+        if (maximum) {
+            list.add("maximum");
+        }
+        if (minimum) {
+            list.add("minimum");
+        }
+        if (skewness) {
+            list.add("skewness");
+        }
+        if (geometricMean) {
+            list.add("geometricMean");
+        }
+        if (sumSquares) {
+            list.add("sumSquares");
+        }
+        if (populationVariance) {
+            list.add("populationVariance");
+        }
+        if (sampleVariance) {
+            list.add("sampleVariance");
+        }
+        if (populationStandardDeviation) {
+            list.add("populationStandardDeviation");
+        }
+        if (sampleStandardDeviation) {
+            list.add("sampleStandardDeviation");
+        }
+        if (mode) {
+            list.add("mode");
+        }
+        if (median) {
+            list.add("median");
+        }
+        if (upperQuartile) {
+            list.add("upperQuartile");
+        }
+        if (lowerQuartile) {
+            list.add("lowerQuartile");
+        }
+        if (upperMildOutlierLine) {
+            list.add("upperMildOutlierLine");
+        }
+        if (upperExtremeOutlierLine) {
+            list.add("upperExtremeOutlierLine");
+        }
+        if (lowerMildOutlierLine) {
+            list.add("lowerMildOutlierLine");
+        }
+        if (lowerExtremeOutlierLine) {
+            list.add("lowerExtremeOutlierLine");
+        }
+        return list;
     }
 
     public boolean need() {
@@ -691,7 +760,7 @@ public class DescriptiveStatistic {
             }
             for (int c : colsIndices) {
                 Data2DColumn column = data2D.getColumns().get(c);
-                DoubleStatistic colStatistic = column.getTargetStatistic();
+                DoubleStatistic colStatistic = column.getStatistic();
                 statisticByColumnsWrite(colStatistic);
             }
             return true;
@@ -1168,11 +1237,11 @@ public class DescriptiveStatistic {
         return this;
     }
 
-    public double getInvalidAs() {
+    public InvalidAs getInvalidAs() {
         return invalidAs;
     }
 
-    public DescriptiveStatistic setInvalidAs(double invalidAs) {
+    public DescriptiveStatistic setInvalidAs(InvalidAs invalidAs) {
         this.invalidAs = invalidAs;
         return this;
     }

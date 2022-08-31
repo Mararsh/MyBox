@@ -35,7 +35,7 @@ public class Data2DExportController extends BaseData2DHandleController {
     @FXML
     protected CheckBox openCheck;
     @FXML
-    protected Tab logsTab;
+    protected Tab targetTab, logsTab;
     @FXML
     protected Data2DExportTask taskController;
 
@@ -47,6 +47,8 @@ public class Data2DExportController extends BaseData2DHandleController {
     public void initControls() {
         try {
             super.initControls();
+
+            noColumnSelection(false);
 
             openCheck.setSelected(UserConfig.getBoolean(baseName + "OpenGenerated", false));
             openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -79,22 +81,18 @@ public class Data2DExportController extends BaseData2DHandleController {
     @Override
     public boolean checkOptions() {
         try {
+            if (isSettingValues) {
+                return true;
+            }
             if (!super.checkOptions()) {
                 return false;
             }
-            targetPath = targetPathController.file;
+            targetPath = targetPathController.file();
             if (targetPath == null) {
-                infoLabel.setText(message("InvalidParameters"));
-                okButton.setDisable(true);
+                outOptionsError(message("InvalidParameters") + ": " + message("TargetPath"));
+                tabPane.getSelectionModel().select(targetTab);
                 return false;
             }
-            if (!data2D.hasData()) {
-                infoLabel.setText(message("NoData"));
-                okButton.setDisable(true);
-                return false;
-            }
-
-            okButton.setDisable(false);
             filePrefix = data2D.getDataName();
             if (filePrefix == null || filePrefix.isBlank()) {
                 filePrefix = DateTools.nowFileString();
@@ -109,6 +107,11 @@ public class Data2DExportController extends BaseData2DHandleController {
     @FXML
     @Override
     public void startAction() {
+        okAction();
+    }
+
+    @Override
+    protected void startOperation() {
         taskController.startAction();
     }
 

@@ -26,9 +26,16 @@ public class Data2DDeleteController extends BaseData2DHandleController {
     }
 
     @Override
-    public void initControls() {
-        super.initControls();
-        noColumnSelection(true);
+    public boolean initData() {
+        try {
+            if (!super.initData()) {
+                return false;
+            }
+            return !isAllPages() || tableController.checkBeforeNextAction();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
     }
 
     @Override
@@ -88,9 +95,6 @@ public class Data2DDeleteController extends BaseData2DHandleController {
 
     @Override
     public void handleAllTask() {
-        if (!tableController.checkBeforeNextAction()) {
-            return;
-        }
         if (!data2D.needFilter()) {
             if (!PopTools.askSure(this, baseTitle, message("SureDeleteAll"))) {
                 return;
@@ -112,7 +116,7 @@ public class Data2DDeleteController extends BaseData2DHandleController {
                         tableController.dataController.backupController.addBackup(task, data2D.getFile());
                     }
                     data2D.startTask(task, filterController.filter);
-                    count = data2D.delete(errorContinueCheck.isSelected());
+                    count = data2D.deleteRows(errorContinueCheck.isSelected());
                     data2D.stopFilter();
                     return count >= 0;
                 } catch (Exception e) {

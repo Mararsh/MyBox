@@ -396,4 +396,21 @@ public class MarkdownEditorController extends TextEditorController {
         return false;
     }
 
+    @FXML
+    public boolean menuHtmlAction() {
+        return webViewController.menuAction();
+    }
+
+    @FXML
+    public boolean menuCodesAction() {
+        try {
+            Point2D localToScreen = codesArea.localToScreen(codesArea.getWidth() - 80, 80);
+            MenuHtmlCodesController.open(this, codesArea, localToScreen.getX(), localToScreen.getY());
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+        return false;
+    }
+
 }

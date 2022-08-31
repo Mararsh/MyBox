@@ -23,7 +23,12 @@ public class IconTools {
             if (address == null) {
                 return null;
             }
-            URL url = new URL(address);
+            URL url;
+            try {
+                url = new URL(address);
+            } catch (Exception e) {
+                return null;
+            }
             String host = url.getHost();
             if (host == null || host.isBlank()) {
                 return null;
@@ -78,7 +83,12 @@ public class IconTools {
             if (address == null || targetFile == null) {
                 return null;
             }
-            URL url = new URL(address);
+            URL url;
+            try {
+                url = new URL(address);
+            } catch (Exception e) {
+                return null;
+            }
             String iconUrl = "https://" + url.getHost() + "/favicon.ico";
             File actualTarget = downloadIcon(iconUrl, targetFile);
             if (actualTarget == null) {

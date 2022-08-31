@@ -206,7 +206,7 @@ public class HtmlElementsController extends WebAddressController {
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        tagRadio.fire();
+                        tagRadio.setSelected(true);
                         elementInput.setText(value);
                         queryElement();
                     }

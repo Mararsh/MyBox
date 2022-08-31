@@ -44,6 +44,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.ControllerTools;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -287,8 +288,8 @@ public class ChromaticityDiagramController extends ImageViewerController {
             bgColor = null;
             isLine = true;
             dotSize = 4;
-            bgTransparentRadio.fire();
-            dotLine4pxRadio.fire();
+            bgTransparentRadio.setSelected(true);
+            dotLine4pxRadio.setSelected(true);
             fontSelector.getSelectionModel().select(0);
             isSettingValues = false;
         } catch (Exception e) {
@@ -953,7 +954,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
 
     @FXML
     public void aboutColor() {
-        openLink(ChromaticityBaseController.aboutColorHtml());
+        openLink(HelpTools.aboutColorHtml());
     }
 
     @FXML

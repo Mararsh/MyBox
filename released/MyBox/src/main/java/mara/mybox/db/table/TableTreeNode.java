@@ -380,6 +380,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
             int thisSize = nodes.size();
             boolean ok = false;
             query.setLong(1, parentid);
+            conn.setAutoCommit(true);
             try ( ResultSet nresults = query.executeQuery()) {
                 while (nresults.next()) {
                     TreeNode data = readData(nresults);
@@ -454,6 +455,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
         int size = 0;
         try {
             sizeQuery.setLong(1, parent);
+            sizeQuery.getConnection().setAutoCommit(true);
             try ( ResultSet results = sizeQuery.executeQuery()) {
                 if (results != null && results.next()) {
                     size = results.getInt(1);
@@ -496,6 +498,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
         boolean isEmpty = true;
         try ( PreparedStatement statement = conn.prepareStatement(ChildrenEmpty)) {
             statement.setLong(1, parent);
+            conn.setAutoCommit(true);
             try ( ResultSet results = statement.executeQuery()) {
                 isEmpty = results == null || !results.next();
             }
@@ -521,6 +524,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
         int size = 0;
         try ( PreparedStatement statement = conn.prepareStatement(CategoryCount)) {
             statement.setString(1, category);
+            conn.setAutoCommit(true);
             try ( ResultSet results = statement.executeQuery()) {
                 if (results != null && results.next()) {
                     size = results.getInt(1);
@@ -539,6 +543,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
         try ( Connection conn = DerbyBase.getConnection();
                  PreparedStatement statement = conn.prepareStatement(CategoryEmpty)) {
             statement.setString(1, category);
+            conn.setAutoCommit(true);
             try ( ResultSet results = statement.executeQuery()) {
                 isEmpty = results == null || !results.next();
             } catch (Exception e) {
@@ -598,6 +603,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
         }
         try ( PreparedStatement statement = conn.prepareStatement(Times)) {
             statement.setString(1, category);
+            conn.setAutoCommit(true);
             try ( ResultSet results = statement.executeQuery()) {
                 while (results.next()) {
                     Date time = results.getTimestamp("update_time");

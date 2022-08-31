@@ -43,15 +43,15 @@ public class DownloadFirstLevelLinksSetController extends BaseController {
             String type = UserConfig.getString(baseName + "NameType", "name");
             switch (type) {
                 case "title":
-                    titleRadio.fire();
+                    titleRadio.setSelected(true);
                     nameType = FilenameType.ByLinkTitle;
                     break;
                 case "address":
-                    addressRadio.fire();
+                    addressRadio.setSelected(true);
                     nameType = FilenameType.ByLinkAddress;
                     break;
                 default:
-                    nameRadio.fire();
+                    nameRadio.setSelected(true);
                     nameType = FilenameType.ByLinkName;
                     break;
             }

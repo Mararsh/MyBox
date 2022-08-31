@@ -5,6 +5,7 @@ import java.util.List;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.data.ColumnDefinition;
@@ -45,13 +46,6 @@ public class Data2DTransposeController extends BaseData2DHandleController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-    }
-
-    @Override
-    public boolean checkOptions() {
-        boolean ok = super.checkOptions();
-        targetController.setNotInTable(isAllPages());
-        return ok;
     }
 
     @Override
@@ -128,11 +122,11 @@ public class Data2DTransposeController extends BaseData2DHandleController {
     @Override
     public DataFileCSV generatedFile() {
         try {
-            DataTable tmpTable = data2D.toTmpTable(task, checkedColsIndices, showRowNumber(), false);
+            DataTable tmpTable = data2D.toTmpTable(task, checkedColsIndices, showRowNumber(), false, InvalidAs.Blank);
             if (tmpTable == null) {
                 return null;
             }
-            DataFileCSV csvData = tmpTable.transpose(task, showColNames(), firstCheck.isSelected());
+            DataFileCSV csvData = tmpTable.transpose(null, task, showColNames(), firstCheck.isSelected());
             tmpTable.drop();
             return csvData;
         } catch (Exception e) {

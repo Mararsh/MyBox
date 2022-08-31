@@ -234,7 +234,7 @@ public class ImagesPlayController extends BaseImagesListController {
     protected boolean loadImageFile() {
         imageInfos.clear();
         Platform.runLater(() -> {
-            imagesRadio.fire();
+            imagesRadio.setSelected(true);
         });
         if (sourceFile == null) {
             return false;
@@ -314,7 +314,7 @@ public class ImagesPlayController extends BaseImagesListController {
     protected boolean loadIconFile() {
         imageInfos.clear();
         Platform.runLater(() -> {
-            imagesRadio.fire();
+            imagesRadio.setSelected(true);
         });
         if (sourceFile == null) {
             return false;
@@ -335,7 +335,7 @@ public class ImagesPlayController extends BaseImagesListController {
     public boolean loadPPT() {
         imageInfos.clear();
         Platform.runLater(() -> {
-            pptRadio.fire();
+            pptRadio.setSelected(true);
         });
         if (sourceFile == null) {
             return false;
@@ -410,7 +410,7 @@ public class ImagesPlayController extends BaseImagesListController {
     public boolean loadPDF() {
         imageInfos.clear();
         Platform.runLater(() -> {
-            pdfRadio.fire();
+            pdfRadio.setSelected(true);
         });
         if (sourceFile == null) {
             return false;
@@ -694,6 +694,10 @@ public class ImagesPlayController extends BaseImagesListController {
 
     public void displayFrame(int index) {
         try {
+            if (imageInfos == null) {
+                playController.clear();
+                return;
+            }
             imageInformation = imageInfos.get(index);
             long interval;
             if (imageInformation != null) {
@@ -709,6 +713,7 @@ public class ImagesPlayController extends BaseImagesListController {
             updateLabelsTitle();
 
         } catch (Exception e) {
+            playController.clear();
             MyBoxLog.error(e.toString());
         }
     }
@@ -716,12 +721,9 @@ public class ImagesPlayController extends BaseImagesListController {
     @Override
     public void cleanPane() {
         try {
-            if (loadThread != null) {
-                loadThread.interrupt();
-                loadThread = null;
-            }
+            playController.clear();
             if (loading != null) {
-                loading.closeStage();
+                loading.cancelAction();
                 loading = null;
             }
         } catch (Exception e) {

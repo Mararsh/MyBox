@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.FxFileTools;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -14,6 +15,15 @@ import mara.mybox.value.Languages;
  * @License Apache License Version 2.0
  */
 public abstract class MainMenuController_Help extends MainMenuController_Development {
+
+    @FXML
+    protected void Overview(ActionEvent event) {
+        String lang = Languages.isChinese() ? "zh" : "en";
+        File file = FxFileTools.getInternalFile("/doc/" + lang + "/MyBox-Overview-" + lang + ".pdf", "doc", "MyBox-Overview-" + lang + ".pdf");
+        if (file != null && file.exists()) {
+            PopTools.browseURI(this, file.toURI());
+        }
+    }
 
     @FXML
     protected void Shortcuts(ActionEvent event) {
@@ -27,7 +37,11 @@ public abstract class MainMenuController_Help extends MainMenuController_Develop
 
     @FXML
     public void documents(ActionEvent event) {
-        openStage(Fxmls.DocumentsFxml);
+        String lang = Languages.isChinese() ? "zh" : "en";
+        File file = FxFileTools.getInternalFile("/doc/" + lang + "/MyBox-Documents-" + lang + ".html", "doc", "MyBox-Documents-" + lang + ".html");
+        if (file != null && file.exists()) {
+            WebBrowserController.oneOpen(file);
+        }
     }
 
     @FXML

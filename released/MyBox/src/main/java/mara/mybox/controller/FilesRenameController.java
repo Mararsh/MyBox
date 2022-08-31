@@ -60,8 +60,7 @@ public class FilesRenameController extends BaseBatchFileController {
     protected RadioButton targetReplaceRadio, targetSkipRadio, replaceAllRadio;
 
     public static enum RenameType {
-        ReplaceSubString, AppendSuffix, AppendPrefix, AddSequenceNumber,
-        ChangeExtension
+        ReplaceSubString, AppendSuffix, AddPrefix, AddSequenceNumber, ChangeExtension
     }
 
     public FilesRenameController() {
@@ -112,8 +111,8 @@ public class FilesRenameController extends BaseBatchFileController {
             renameType = RenameType.AppendSuffix;
             renameOptionsBox.getChildren().addAll(suffixPane);
 
-        } else if (message("AppendPrefix").equals(selected.getText())) {
-            renameType = RenameType.AppendPrefix;
+        } else if (message("AddPrefix").equals(selected.getText())) {
+            renameType = RenameType.AddPrefix;
             renameOptionsBox.getChildren().addAll(prefixPane);
 
         } else if (message("AddSequenceNumber").equals(selected.getText())) {
@@ -136,7 +135,7 @@ public class FilesRenameController extends BaseBatchFileController {
                     return false;
                 }
                 break;
-            case AppendPrefix:
+            case AddPrefix:
                 if (prefixInput.getText().isBlank()) {
                     return false;
                 }
@@ -295,7 +294,7 @@ public class FilesRenameController extends BaseBatchFileController {
                         }
                     }
                     break;
-                case AppendPrefix:
+                case AddPrefix:
                     newName = FileNameTools.filter(prefixInput.getText()) + currentName;
                     break;
                 case AppendSuffix:

@@ -159,93 +159,93 @@ public class ControlImageRender extends BaseController {
 
             Object render = imageRenderHints.get(RenderingHints.KEY_RENDERING);
             if (RenderingHints.VALUE_RENDER_QUALITY.equals(render)) {
-                renderQualityRadio.fire();
+                renderQualityRadio.setSelected(true);
             } else if (RenderingHints.VALUE_RENDER_SPEED.equals(render)) {
-                renderSpeedRadio.fire();
+                renderSpeedRadio.setSelected(true);
             } else {
-                renderDefaultRadio.fire();
+                renderDefaultRadio.setSelected(true);
             }
 
             Object crender = imageRenderHints.get(RenderingHints.KEY_COLOR_RENDERING);
             if (RenderingHints.VALUE_COLOR_RENDER_QUALITY.equals(crender)) {
-                colorRenderQualityRadio.fire();
+                colorRenderQualityRadio.setSelected(true);
             } else if (RenderingHints.VALUE_COLOR_RENDER_SPEED.equals(crender)) {
-                colorRenderSpeedRadio.fire();
+                colorRenderSpeedRadio.setSelected(true);
             } else {
-                colorRenderDefaultRadio.fire();
+                colorRenderDefaultRadio.setSelected(true);
             }
 
             Object pinter = imageRenderHints.get(RenderingHints.KEY_INTERPOLATION);
             if (RenderingHints.VALUE_INTERPOLATION_BILINEAR.equals(pinter)) {
-                pInter4Radio.fire();
+                pInter4Radio.setSelected(true);
             } else if (RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR.equals(pinter)) {
-                pInter1Radio.fire();
+                pInter1Radio.setSelected(true);
             } else {
-                pInter9Radio.fire();
+                pInter9Radio.setSelected(true);
             }
 
             Object ainter = imageRenderHints.get(RenderingHints.KEY_ALPHA_INTERPOLATION);
             if (RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY.equals(ainter)) {
-                aInterQualityRadio.fire();
+                aInterQualityRadio.setSelected(true);
             } else if (RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED.equals(ainter)) {
-                aInterSpeedRadio.fire();
+                aInterSpeedRadio.setSelected(true);
             } else {
-                aInterDefaultRadio.fire();
+                aInterDefaultRadio.setSelected(true);
             }
 
             Object anti = imageRenderHints.get(RenderingHints.KEY_ANTIALIASING);
             if (RenderingHints.VALUE_ANTIALIAS_ON.equals(anti)) {
-                antiQualityRadio.fire();
+                antiQualityRadio.setSelected(true);
             } else if (RenderingHints.VALUE_ANTIALIAS_OFF.equals(anti)) {
-                antiSpeedRadio.fire();
+                antiSpeedRadio.setSelected(true);
             } else {
-                antiDefaultRadio.fire();
+                antiDefaultRadio.setSelected(true);
             }
 
             Object tanti = imageRenderHints.get(RenderingHints.KEY_TEXT_ANTIALIASING);
             if (RenderingHints.VALUE_TEXT_ANTIALIAS_ON.equals(tanti)) {
-                tantiOnRadio.fire();
+                tantiOnRadio.setSelected(true);
             } else if (RenderingHints.VALUE_TEXT_ANTIALIAS_OFF.equals(tanti)) {
-                tantiOffRadio.fire();
+                tantiOffRadio.setSelected(true);
             } else if (RenderingHints.VALUE_TEXT_ANTIALIAS_GASP.equals(tanti)) {
-                tantiGaspRadio.fire();
+                tantiGaspRadio.setSelected(true);
             } else if (RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB.equals(tanti)) {
-                tantiLcdHrgbRadio.fire();
+                tantiLcdHrgbRadio.setSelected(true);
             } else if (RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HBGR.equals(tanti)) {
-                tantiLcdHbgrRadio.fire();
+                tantiLcdHbgrRadio.setSelected(true);
             } else if (RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_VRGB.equals(tanti)) {
-                tantiLcdVrgbOnRadio.fire();
+                tantiLcdVrgbOnRadio.setSelected(true);
             } else if (RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_VBGR.equals(tanti)) {
-                tantiLcdVbgrRadio.fire();
+                tantiLcdVbgrRadio.setSelected(true);
             } else {
-                tantiDefaultRadio.fire();
+                tantiDefaultRadio.setSelected(true);
             }
 
             Object fontfm = imageRenderHints.get(RenderingHints.KEY_FRACTIONALMETRICS);
             if (RenderingHints.VALUE_FRACTIONALMETRICS_ON.equals(fontfm)) {
-                fmOnRadio.fire();
+                fmOnRadio.setSelected(true);
             } else if (RenderingHints.VALUE_FRACTIONALMETRICS_OFF.equals(fontfm)) {
-                fmOffRadio.fire();
+                fmOffRadio.setSelected(true);
             } else {
-                fmDefaultRadio.fire();
+                fmDefaultRadio.setSelected(true);
             }
 
             Object stroke = imageRenderHints.get(RenderingHints.KEY_STROKE_CONTROL);
             if (RenderingHints.VALUE_STROKE_NORMALIZE.equals(stroke)) {
-                strokeNormalizeRadio.fire();
+                strokeNormalizeRadio.setSelected(true);
             } else if (RenderingHints.VALUE_STROKE_PURE.equals(stroke)) {
-                strokePureRadio.fire();
+                strokePureRadio.setSelected(true);
             } else {
-                strokeDefaultRadio.fire();
+                strokeDefaultRadio.setSelected(true);
             }
 
             Object dither = imageRenderHints.get(RenderingHints.KEY_DITHERING);
             if (RenderingHints.VALUE_DITHER_ENABLE.equals(dither)) {
-                ditherOnRadio.fire();
+                ditherOnRadio.setSelected(true);
             } else if (RenderingHints.VALUE_DITHER_DISABLE.equals(dither)) {
-                ditherOffRadio.fire();
+                ditherOffRadio.setSelected(true);
             } else {
-                ditherDefaultRadio.fire();
+                ditherDefaultRadio.setSelected(true);
             }
 
             isSettingValues = false;

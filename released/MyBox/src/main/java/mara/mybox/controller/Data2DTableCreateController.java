@@ -6,8 +6,12 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
+import mara.mybox.data2d.Data2D_Attributes;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SoundTools;
@@ -23,13 +27,18 @@ public class Data2DTableCreateController extends BaseTaskController {
 
     protected ControlData2DEditTable editController;
     protected ChangeListener<Boolean> columnStatusListener;
+    protected InvalidAs invalidAs = InvalidAs.Blank;
 
     @FXML
     protected Tab attributesTab;
     @FXML
-    protected VBox attributesBox;
+    protected VBox attributesBox, optionsBox;
     @FXML
     protected ControlNewDataTable attributesController;
+    @FXML
+    protected ToggleGroup objectGroup;
+    @FXML
+    protected RadioButton zeroNonnumericRadio, blankNonnumericRadio;
 
     public void setParameters(ControlData2DEditTable editController) {
         try {
@@ -89,6 +98,13 @@ public class Data2DTableCreateController extends BaseTaskController {
     @Override
     public void beforeTask() {
         attributesBox.setDisable(true);
+        optionsBox.setDisable(true);
+
+        if (zeroNonnumericRadio != null && zeroNonnumericRadio.isSelected()) {
+            invalidAs = Data2D_Attributes.InvalidAs.Zero;
+        } else {
+            invalidAs = Data2D_Attributes.InvalidAs.Blank;
+        }
     }
 
     @Override
@@ -98,9 +114,9 @@ public class Data2DTableCreateController extends BaseTaskController {
                 return false;
             }
             if (editController.data2D.isMutiplePages()) {
-                attributesController.importAllData(conn);
+                attributesController.importAllData(conn, invalidAs);
             } else {
-                attributesController.importData(conn, null);
+                attributesController.importData(conn, null, invalidAs);
             }
             return true;
         } catch (Exception e) {
@@ -126,6 +142,7 @@ public class Data2DTableCreateController extends BaseTaskController {
     public void afterTask() {
         try {
             attributesBox.setDisable(successed);
+            optionsBox.setDisable(successed);
             startButton.setDisable(successed);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

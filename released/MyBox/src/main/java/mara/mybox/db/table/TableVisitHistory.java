@@ -112,8 +112,13 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
 
     public static List<VisitHistory> find(Connection conn, PreparedStatement statement) {
         List<VisitHistory> records = new ArrayList<>();
-        try ( ResultSet results = statement.executeQuery()) {
-            records = findList(conn, results);
+        try {
+            conn.setAutoCommit(true);
+            try ( ResultSet results = statement.executeQuery()) {
+                records = findList(conn, results);
+            } catch (Exception e) {
+//            MyBoxLog.debug(e);
+            }
         } catch (Exception e) {
 //            MyBoxLog.debug(e);
         }
@@ -353,6 +358,7 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
                     statement.setInt(2, operationType);
                     statement.setString(3, value);
                     VisitHistory his = null;
+                    conn.setAutoCommit(true);
                     try ( ResultSet results = statement.executeQuery()) {
                         if (results.next()) {
                             his = read(results);
@@ -370,6 +376,7 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
                     statement.setInt(3, operationType);
                     statement.setString(4, value);
                     VisitHistory his = null;
+                    conn.setAutoCommit(true);
                     try ( ResultSet results = statement.executeQuery()) {
                         if (results.next()) {
                             his = read(results);
@@ -554,6 +561,7 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
                 statement.setInt(3, operationType);
                 statement.setString(4, name);
                 statement.setString(5, fxml);
+                conn.setAutoCommit(true);
                 ResultSet results = statement.executeQuery();
                 if (results.next()) {
                     exist = read(results);

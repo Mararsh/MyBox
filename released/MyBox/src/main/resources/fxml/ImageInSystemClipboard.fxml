@@ -213,6 +213,15 @@ License:    Apache License Version 2.0
                                                                                   </ImageView>
                                                                               </graphic>
                                                                           </Button>
+                                                            <Button fx:id="copyToSystemClipboardButton" mnemonicParsing="false" onAction="#copyToSystemClipboard">
+                                                               <graphic>
+                                                                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                     <image>
+                                                                        <Image url="@../buttons/iconCopySystem.png" />
+                                                                     </image>
+                                                                  </ImageView>
+                                                               </graphic>
+                                                            </Button>
                                                                           <Button fx:id="copyToMyBoxClipboardButton" mnemonicParsing="false" onAction="#copyToMyBoxClipboard">
                                                                               <graphic>
                                                                                   <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">

@@ -43,7 +43,7 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
         MenuItem PdfPlay = new MenuItem(message("PdfPlay"));
         PdfPlay.setOnAction((ActionEvent event1) -> {
             ImagesPlayController c = (ImagesPlayController) loadScene(Fxmls.ImagesPlayFxml);
-            c.pdfRadio.fire();
+            c.pdfRadio.setSelected(true);
         });
 
         MenuItem PDFAttributes = new MenuItem(message("PDFAttributes"));
@@ -330,7 +330,7 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
         MenuItem PptPlay = new MenuItem(message("PptPlay"));
         PptPlay.setOnAction((ActionEvent event1) -> {
             ImagesPlayController c = (ImagesPlayController) loadScene(Fxmls.ImagesPlayFxml);
-            c.pptRadio.fire();
+            c.pptRadio.setSelected(true);
         });
 
         MenuItem TextInMyBoxClipboard = new MenuItem(message("TextInMyBoxClipboard"));

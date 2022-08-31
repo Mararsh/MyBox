@@ -29,6 +29,7 @@ import mara.mybox.data2d.DataFilter;
 import mara.mybox.data2d.DataMatrix;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
@@ -38,8 +39,8 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DoubleMatrixTools;
-import mara.mybox.tools.FileNameTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -187,10 +188,12 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             protected boolean handle() {
                 try ( Connection conn = DerbyBase.getConnection()) {
                     data2D.startTask(task, null);
+                    List<ColumnDefinition.ColumnType> types = data2D.getInitColumnTypes();
                     data2D.readDataDefinition(conn);
                     if (isCancelled()) {
                         return false;
                     }
+                    data2D.setInitColumnTypes(types);
                     return data2D.readColumns(conn);
                 } catch (Exception e) {
                     error = e.toString();
@@ -282,7 +285,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         });
     }
 
-    public synchronized void loadTmpData(List<Data2DColumn> cols, List<List<String>> data) {
+    public synchronized void loadTmpData(String name, List<Data2DColumn> cols, List<List<String>> data) {
         try {
             if (data2D == null) {
                 return;
@@ -323,6 +326,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 }
             }
             data2D.checkForLoad();
+            data2D.setDataName(name);
             resetView(false);
             if (dataController != null) {
                 dataController.setData(data2D);
@@ -357,13 +361,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         }
     }
 
-    public void loadCSVFile(File csvFile) {
-        if (csvFile == null || !csvFile.exists()) {
-            return;
-        }
-        loadCSVData(new DataFileCSV(csvFile));
-    }
-
     public void loadCSVData(DataFileCSV csvData) {
         if (csvData == null || csvData.getFile() == null || !csvData.getFile().exists()) {
             return;
@@ -378,6 +375,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                         targetData = new DataFileText();
                         targetData.setColumns(csvData.getColumns())
                                 .setFile(csvData.getFile())
+                                .setDataName(csvData.dataName())
                                 .setDelimiter(csvData.getDelimiter())
                                 .setCharset(csvData.getCharset());
                         targetData.saveAttributes();
@@ -398,7 +396,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                 break;
                             }
                             case DatabaseTable: {
-                                String name = FileNameTools.prefix(csvData.getFile().getName());
+                                String name = csvData.dataName();
                                 if (name.startsWith(Data2D.TmpTablePrefix)) {
                                     name = name.substring(Data2D.TmpTablePrefix.length());
                                 }
@@ -431,6 +429,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
 
             @Override
             protected void whenSucceeded() {
+                targetData.setInitColumnTypes(csvData.getInitColumnTypes());
                 loadDef(targetData);
                 if (dataController != null && dataController.manageController != null) {
                     dataController.manageController.refreshAction();
@@ -511,7 +510,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             loadNull();
             return;
         }
-        loadTmpData(data2D.tmpColumns(matrix[0].length), DoubleMatrixTools.toList(matrix));
+        loadTmpData(null, data2D.tmpColumns(matrix[0].length), DoubleMatrixTools.toList(matrix));
     }
 
     public synchronized boolean updateData(List<List<String>> newData, boolean columnsChanged) {
@@ -648,6 +647,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 return;
             }
             List<Data2DColumn> columns = data2D.getColumns();
+            int scale = data2D.getScale();
             for (int i = 0; i < columns.size(); i++) {
                 Data2DColumn dataColumn = columns.get(i);
                 String name = dataColumn.getColumnName();
@@ -662,11 +662,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                     public ObservableValue<String> call(TableColumn.CellDataFeatures<List<String>, String> param) {
                         try {
                             List<String> row = (List<String>) param.getValue();
-                            String value = row.get(col);
-                            if (value == null) {
-                                return null;
-                            }
-                            return new SimpleStringProperty(value);
+                            return new SimpleStringProperty(row.get(col));
                         } catch (Exception e) {
                             return null;
                         }
@@ -691,7 +687,9 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                         if (empty || item == null) {
                                             setText(null);
                                             setGraphic(null);
+                                            return;
                                         }
+                                        setText(dataColumn.display(item));
                                     }
 
                                     @Override
@@ -716,7 +714,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                             if ((value == null && oldValue != null)
                                                     || (value != null && !value.equals(oldValue))) {
                                                 super.commitEdit(value);
-                                                row.set(col, value);
+                                                row.set(col, dataColumn.display(value));
                                                 tableData.set(rowIndex, row);
                                             }
                                         } catch (Exception e) {
@@ -752,7 +750,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                             setGraphic(null);
                                             return;
                                         }
-                                        setText(item);
+                                        setText(dataColumn.display(item));
                                     }
                                 };
 
@@ -975,6 +973,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             if (show) {
                 if (!dataController.thisPane.getChildren().contains(paginationPane)) {
                     dataController.thisPane.getChildren().add(paginationPane);
+                    NodeStyleTools.refreshStyle(paginationPane);
                 }
             } else {
                 if (dataController.thisPane.getChildren().contains(paginationPane)) {
@@ -985,6 +984,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             if (show) {
                 if (!thisPane.getChildren().contains(paginationPane)) {
                     thisPane.getChildren().add(paginationPane);
+                    NodeStyleTools.refreshStyle(paginationPane);
                 }
             } else {
                 if (thisPane.getChildren().contains(paginationPane)) {

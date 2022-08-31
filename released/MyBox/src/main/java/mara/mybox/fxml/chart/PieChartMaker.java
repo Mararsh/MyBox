@@ -19,24 +19,24 @@ import mara.mybox.tools.DoubleTools;
  * @License Apache License Version 2.0
  */
 public class PieChartMaker extends PieChartOptions {
-
+    
     public PieChartMaker() {
         chartType = ChartType.Pie;
     }
-
+    
     public PieChartMaker init(String chartName) {
         clearChart();
         this.chartName = chartName;
         initPieOptions();
         return this;
     }
-
+    
     @Override
     public void clearChart() {
         super.clearChart();
         pieChart = null;
     }
-
+    
     public PieChart makeChart() {
         try {
             clearChart();
@@ -51,7 +51,7 @@ public class PieChartMaker extends PieChartOptions {
         }
         return pieChart;
     }
-
+    
     public void initPieChart() {
         try {
             pieChart = new PieChart();
@@ -61,7 +61,16 @@ public class PieChartMaker extends PieChartOptions {
         }
     }
 
-    public void writeChart(List<Data2DColumn> columns, List<List<String>> data) {
+    /* 
+        When hasRowNumber is true:
+            The first column is row number
+            The second columns is "Category"
+            The third columns is "Value"
+        When hasRowNumber is false:
+            The first columns is "Category"
+            The second columns is "Value"
+     */
+    public void writeChart(List<Data2DColumn> columns, List<List<String>> data, boolean hasRowNumber) {
         try {
             Random random = new Random();
             ObservableList<PieChart.Data> pieData = FXCollections.observableArrayList();
@@ -70,8 +79,9 @@ public class PieChartMaker extends PieChartOptions {
                 pieChart.setLegendSide(Side.TOP);
             }
             double total = 0;
+            int startIndex = hasRowNumber ? 1 : 0;
             for (List<String> rowData : data) {
-                double d = scaleValue(rowData.get(2));
+                double d = scaleValue(rowData.get(startIndex + 1));
                 if (d > 0) {
                     total += d;
                 }
@@ -82,9 +92,9 @@ public class PieChartMaker extends PieChartOptions {
             String label;
             List<String> paletteList = new ArrayList();
             for (List<String> rowData : data) {
-                String name = rowData.get(1);
-                double d = doubleValue(rowData.get(2));
-                if (d <= 0) {
+                String name = rowData.get(startIndex);
+                double d = doubleValue(rowData.get(startIndex + 1));
+                if (d <= 0 || DoubleTools.invalidDouble(d)) {
                     continue;
                 }
                 double percent = DoubleTools.scale(d * 100 / total, scale);
@@ -116,15 +126,15 @@ public class PieChartMaker extends PieChartOptions {
                 }
                 paletteList.add(FxColorTools.randomRGB(random));
             }
-
+            
             pieChart.setLegendVisible(legendSide == null);
             pieChart.setLabelsVisible(labelVisible());
             pieChart.setClockwise(clockwise);
             ChartTools.setPieColors(pieChart, paletteList, showLegend(), labelFontSize);
-
+            
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
     }
-
+    
 }

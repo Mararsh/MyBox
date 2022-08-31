@@ -326,47 +326,12 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
                 dataOptionsBox.getChildren().remove(categoryColumnsPane);
             }
         }
+        noticeMemory();
     }
 
     @Override
-    public boolean checkOptions() {
-        boolean ok = super.checkOptions();
-        objectChanged();
-
-        categorysCol = -1;
-        if (rowsRadio.isSelected() && selectedCategory != null
-                && categoryColumnSelector.getSelectionModel().getSelectedIndex() != 0) {
-            categorysCol = data2D.colOrder(selectedCategory);
-        }
-        calculation = new DescriptiveStatistic()
-                .setMean(true)
-                .setMedian(true)
-                .setMaximum(true)
-                .setMinimum(true)
-                .setUpperQuartile(true)
-                .setLowerQuartile(true)
-                .setUpperExtremeOutlierLine(true)
-                .setUpperMildOutlierLine(true)
-                .setLowerMildOutlierLine(true)
-                .setLowerExtremeOutlierLine(true)
-                .setScale(scale);
-        switch (objectType) {
-            case Rows:
-                calculation.setStatisticObject(DescriptiveStatistic.StatisticObject.Rows);
-                break;
-            case All:
-                calculation.setStatisticObject(DescriptiveStatistic.StatisticObject.All);
-                break;
-            default:
-                calculation.setStatisticObject(DescriptiveStatistic.StatisticObject.Columns);
-                break;
-        }
-        calculation.setHandleController(this).setData2D(data2D)
-                .setColsIndices(checkedColsIndices)
-                .setColsNames(checkedColsNames)
-                .setCategoryName(categorysCol >= 0 ? selectedCategory : null);
-
-        return ok;
+    public void noticeMemory() {
+        noticeLabel.setVisible(isAllPages() && rowsRadio.isSelected());
     }
 
     @Override
@@ -375,6 +340,39 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
             if (!super.initData()) {
                 return false;
             }
+            categorysCol = -1;
+            if (rowsRadio.isSelected() && selectedCategory != null
+                    && categoryColumnSelector.getSelectionModel().getSelectedIndex() != 0) {
+                categorysCol = data2D.colOrder(selectedCategory);
+            }
+            calculation = new DescriptiveStatistic()
+                    .setMean(true)
+                    .setMedian(true)
+                    .setMaximum(true)
+                    .setMinimum(true)
+                    .setUpperQuartile(true)
+                    .setLowerQuartile(true)
+                    .setUpperExtremeOutlierLine(true)
+                    .setUpperMildOutlierLine(true)
+                    .setLowerMildOutlierLine(true)
+                    .setLowerExtremeOutlierLine(true)
+                    .setScale(scale);
+            switch (objectType) {
+                case Rows:
+                    calculation.setStatisticObject(DescriptiveStatistic.StatisticObject.Rows);
+                    break;
+                case All:
+                    calculation.setStatisticObject(DescriptiveStatistic.StatisticObject.All);
+                    break;
+                default:
+                    calculation.setStatisticObject(DescriptiveStatistic.StatisticObject.Columns);
+                    break;
+            }
+            calculation.setHandleController(this).setData2D(data2D)
+                    .setColsIndices(checkedColsIndices)
+                    .setColsNames(checkedColsNames)
+                    .setCategoryName(categorysCol >= 0 ? selectedCategory : null)
+                    .setInvalidAs(invalidAs);
             if (categorysCol >= 0) {
                 dataColsIndices.add(0, categorysCol);
             }
@@ -443,6 +441,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
             if (outputData == null) {
                 return false;
             }
+            calculation.setTask(task);
             return calculation.statisticData(outputData);
         } catch (Exception e) {
             error = e.toString();
@@ -455,13 +454,21 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
 
     public boolean handlePages() {
         try {
-            DataTable tmpTable = data2D.toTmpTable(task, dataColsIndices, false, true);
+            if (rowsRadio.isSelected()) {
+                outputData = data2D.allRows(dataColsIndices, rowsRadio.isSelected() && categorysCol < 0);
+                if (outputData == null) {
+                    return false;
+                }
+                calculation.setTask(task);
+                return calculation.statisticData(outputData);
+            }
+            DataTable tmpTable = data2D.toTmpTable(task, dataColsIndices, false, true, invalidAs);
             if (tmpTable == null) {
                 outputData = null;
                 return false;
             }
             tmpTable.startTask(task, null);
-            calculation.setData2D(tmpTable)
+            calculation.setData2D(tmpTable).setInvalidAs(invalidAs)
                     .setColsIndices(tmpTable.columnIndices().subList(1, tmpTable.columnsNumber()))
                     .setColsNames(tmpTable.columnNames().subList(1, tmpTable.columnsNumber()));
             boolean ok = calculation.statisticAllByColumns();
@@ -502,10 +509,12 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
                     }
                 }
             }
-            chartMaker.setDefaultChartTitle((selectedCategory != null ? selectedCategory + " - " : "")
-                    + calculation.getColsNames())
+            chartMaker.setDefaultChartTitle((selectedCategory != null ? selectedCategory + " - " : "") + calculation.getColsNames())
+                    .setChartTitle(chartMaker.getChartTitle())
                     .setDefaultCategoryLabel(selectedCategory)
+                    .setCategoryLabel(selectedCategory)
                     .setDefaultValueLabel(calculation.getColsNames().toString())
+                    .setValueLabel(chartMaker.getDefaultValueLabel())
                     .setPalette(makePalette());
             chartController.writeXYChart(outputColumns, outputData, displayCols, false);
             chartMaker.getBoxWhiskerChart()
@@ -526,7 +535,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
             }
             BoxWhiskerChart boxWhiskerChart = chartMaker.getBoxWhiskerChart();
             List<XYChart.Series> seriesList = boxWhiskerChart.getData();
-            if (seriesList == null || seriesList.size() != boxWhiskerChart.seriesSize()) {
+            if (seriesList == null || seriesList.size() != boxWhiskerChart.expectedSeriesSize()) {
                 return;
             }
             chartMaker.setChartStyle();

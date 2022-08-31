@@ -1,15 +1,19 @@
 package mara.mybox.controller;
 
+import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
+import mara.mybox.data.SetValue;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -21,83 +25,153 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlData2DSetValue extends BaseController {
 
-    protected BaseData2DHandleController handleController;
+    protected Data2DSetValuesController handleController;
     protected Data2D data2D;
-    protected String value;
+    protected SetValue setValue;
 
     @FXML
-    protected ToggleGroup valueGroup;
+    protected ToggleGroup valueGroup, nonnumericGroup;
     @FXML
-    protected RadioButton zeroRadio, oneRadio, blankRadio, randomRadio, randomNnRadio, expressionRadio,
-            setRadio, gaussianDistributionRadio, identifyRadio, upperTriangleRadio, lowerTriangleRadio;
+    protected RadioButton zeroRadio, oneRadio, blankRadio, randomRadio, randomNnRadio,
+            valueRadio, scaleRadio, prefixRadio, suffixRadio, numberRadio, expressionRadio,
+            skipNonnumericRadio, zeroNonnumericRadio, blankNonnumericRadio,
+            gaussianDistributionRadio, identifyRadio, upperTriangleRadio, lowerTriangleRadio;
     @FXML
-    protected TextField valueInput;
+    protected TextField valueInput, prefixInput, suffixInput, startInput, digitInput;
     @FXML
-    protected FlowPane matrixPane;
+    protected ComboBox<String> scaleSelector;
+    @FXML
+    protected FlowPane scalePane, numberPane, matrixPane;
     @FXML
     protected ControlData2DRowExpression expressionController;
     @FXML
-    protected CheckBox errorContinueCheck;
+    protected CheckBox errorContinueCheck, fillZeroCheck;
 
     @Override
     public void initControls() {
         try {
             super.initControls();
 
-            value = UserConfig.getString(baseName + "Value", "0");
-            if (value == null) {
-                value = "0";
+            setValue = new SetValue();
+            String valueType = UserConfig.getString(baseName + "ValueType", "Value");
+            if (valueType == null) {
+                valueType = "Value";
             }
-            switch (value) {
-                case "0":
-                    zeroRadio.fire();
+            switch (valueType) {
+                case "Zero":
+                    zeroRadio.setSelected(true);
                     break;
-                case "1":
-                    oneRadio.fire();
+                case "One":
+                    oneRadio.setSelected(true);
                     break;
-                case "MyBox##blank":
-                    blankRadio.fire();
+                case "Blank":
+                    blankRadio.setSelected(true);
                     break;
-                case "MyBox##random":
-                    randomRadio.fire();
+                case "Random":
+                    randomRadio.setSelected(true);
                     break;
-                case "MyBox##randomNn":
-                    randomNnRadio.fire();
+                case "RandomNonNegative":
+                    randomNnRadio.setSelected(true);
                     break;
-                case "MyBox##gaussianDistribution":
-                    gaussianDistributionRadio.fire();
+                case "Scale":
+                    scaleRadio.setSelected(true);
                     break;
-                case "MyBox##identify":
-                    identifyRadio.fire();
+                case "Prefix":
+                    prefixRadio.setSelected(true);
                     break;
-                case "MyBox##upperTriangle":
-                    upperTriangleRadio.fire();
+                case "Suffix":
+                    suffixRadio.setSelected(true);
                     break;
-                case "MyBox##lowerTriangle":
-                    lowerTriangleRadio.fire();
+                case "SuffixNumber":
+                    numberRadio.setSelected(true);
+                    break;
+                case "Expression":
+                    expressionRadio.setSelected(true);
+                    break;
+                case "GaussianDistribution":
+                    gaussianDistributionRadio.setSelected(true);
+                    break;
+                case "Identify":
+                    identifyRadio.setSelected(true);
+                    break;
+                case "UpperTriangle":
+                    upperTriangleRadio.setSelected(true);
+                    break;
+                case "LowerTriangle":
+                    lowerTriangleRadio.setSelected(true);
                     break;
                 default:
-                    if (value.startsWith("MyBox##Expression")) {
-                        valueInput.setText(value.substring("MyBox##Expression".length()));
-                        expressionRadio.fire();
-                    } else {
-                        valueInput.setText(value);
-                        setRadio.fire();
-                    }
+                    valueRadio.setSelected(true);
             }
+            valueInput.setText(UserConfig.getString(baseName + "ValueString", ""));
+            prefixInput.setText(UserConfig.getString(baseName + "Prefix", ""));
+            suffixInput.setText(UserConfig.getString(baseName + "Suffix", ""));
+            startInput.setText(UserConfig.getInt(baseName + "Start", 1) + "");
+            if (UserConfig.getBoolean(baseName + "FillZero", true)) {
+                int digit = UserConfig.getInt(baseName + "Digit", 0);
+                if (digit > 0) {
+                    digitInput.setText(digit + "");
+                } else {
+                    digitInput.setText("");
+                }
+                fillZeroCheck.setSelected(true);
+            } else {
+                fillZeroCheck.setSelected(false);
+                digitInput.setText("");
+            }
+            int scale = UserConfig.getInt(baseName + "Scale", 5);
+            if (scale < 0) {
+                scale = 5;
+            }
+            scaleSelector.getItems().addAll(
+                    Arrays.asList("2", "1", "0", "3", "4", "5", "6", "7", "8", "10", "12", "15")
+            );
+            scaleSelector.setValue(scale + "");
+            scaleSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    checkSelection();
+                }
+            });
+            String nonnumeric = UserConfig.getString(baseName + "Nonnumeric", "Skip");
+            if ("Zero".equals(nonnumeric)) {
+                zeroNonnumericRadio.setSelected(true);
+            } else if ("Blank".equals(nonnumeric)) {
+                blankNonnumericRadio.setSelected(true);
+            } else {
+                skipNonnumericRadio.setSelected(true);
+            }
+            nonnumericGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    checkSelection();
+                }
+            });
+            expressionController.scriptInput.setText(UserConfig.getString(baseName + "Expression", ""));
+
+            checkSelection();
+
             valueGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    checkValue();
+                    checkSelection();
                 }
             });
+
+            expressionController.thisPane.disableProperty().bind(expressionRadio.selectedProperty().not());
+            valueInput.disableProperty().bind(valueRadio.selectedProperty().not());
+            prefixInput.disableProperty().bind(prefixRadio.selectedProperty().not());
+            suffixInput.disableProperty().bind(suffixRadio.selectedProperty().not());
+            numberPane.disableProperty().bind(numberRadio.selectedProperty().not());
+            digitInput.disableProperty().bind(fillZeroCheck.selectedProperty().not());
+            scalePane.disableProperty().bind(scaleRadio.selectedProperty().not());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    public void setParameter(BaseData2DHandleController handleController) {
+    public void setParameter(Data2DSetValuesController handleController) {
         try {
             this.handleController = handleController;
             expressionController.calculator = handleController.filterController.calculator;
@@ -108,95 +182,148 @@ public class ControlData2DSetValue extends BaseController {
 
     }
 
-    public void checkValue() {
-        try {
-            if (isSettingValues) {
-                return;
-            }
-            value = null;
-            valueInput.setStyle(null);
-            if (setRadio.isSelected()) {
-                value = valueInput.getText();
-            } else if (zeroRadio.isSelected()) {
-                value = "0";
-            } else if (oneRadio.isSelected()) {
-                value = "1";
-            } else if (blankRadio.isSelected()) {
-                value = "MyBox##blank";
-            } else if (randomRadio.isSelected()) {
-                value = "MyBox##random";
-            } else if (randomNnRadio.isSelected()) {
-                value = "MyBox##randomNn";
-            } else if (gaussianDistributionRadio.isSelected()) {
-                value = "MyBox##gaussianDistribution";
-            } else if (identifyRadio.isSelected()) {
-                value = "MyBox##identify";
-            } else if (upperTriangleRadio.isSelected()) {
-                value = "MyBox##upperTriangle";
-            } else if (lowerTriangleRadio.isSelected()) {
-                value = "MyBox##lowerTriangle";
-            } else if (expressionRadio.isSelected()) {
-                value = setExpression(expressionController.scriptInput.getText());
-            }
-            if (value != null && !value.isBlank()) {
-                UserConfig.setString(baseName + "Value", value);
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    public void showMatrixPane(boolean show) {
-        if (show) {
-            if (!thisPane.getChildren().contains(matrixPane)) {
-                thisPane.getChildren().add(1, matrixPane);
-            }
-        } else {
-            if (thisPane.getChildren().contains(matrixPane)) {
-                thisPane.getChildren().remove(matrixPane);
-            }
-        }
-    }
-
     public void setData2D(Data2D data2D) {
         this.data2D = data2D;
         expressionController.setData2D(data2D);
     }
 
     public boolean checkSelection() {
-        if (handleController == null) {
-            return true;
-        }
-        checkValue();
-        if (value == null) {
-            return false;
-        } else {
-            boolean ok = true;
-            if (expressionRadio.isSelected()) {
-                ok = expressionController.checkExpression(handleController.isAllPages());
-                if (!ok && data2D.getError() != null) {
-                    handleController.infoLabel.setText(message("Invalid") + ": " + message("RowExpression") + "\n"
-                            + data2D.getError());
+        try {
+            if (handleController == null) {
+                return true;
+            }
+            setValue.init();
+            outError(null);
+            if (valueRadio.isSelected()) {
+                String v = valueInput.getText();
+                setValue.setType(SetValue.ValueType.Value).setValue(v);
+                UserConfig.setString(baseName + "ValueString", v);
+            } else if (zeroRadio.isSelected()) {
+                setValue.setType(SetValue.ValueType.Zero).setValue("0");
+            } else if (oneRadio.isSelected()) {
+                setValue.setType(SetValue.ValueType.One).setValue("1");
+            } else if (blankRadio.isSelected()) {
+                setValue.setType(SetValue.ValueType.Blank).setValue("");
+            } else if (randomRadio.isSelected()) {
+                setValue.setType(SetValue.ValueType.Random);
+            } else if (randomNnRadio.isSelected()) {
+                setValue.setType(SetValue.ValueType.RandomNonNegative);
+            } else if (scaleRadio.isSelected()) {
+                setValue.setType(SetValue.ValueType.Scale);
+                int v = -1;
+                try {
+                    v = Integer.parseInt(scaleSelector.getValue());
+                } catch (Exception e) {
+                }
+                if (v >= 0 && v <= 15) {
+                    UserConfig.setInt(baseName + "Scale", v);
+                    scaleSelector.getEditor().setStyle(null);
+                } else {
+                    scaleSelector.getEditor().setStyle(UserConfig.badStyle());
+                    outError(message("Invalid") + ": " + message("DecimalScale"));
+                    return false;
+                }
+                setValue.setScale(v);
+                if (zeroNonnumericRadio.isSelected()) {
+                    setValue.setInvalidAs(InvalidAs.Zero);
+                } else if (blankNonnumericRadio.isSelected()) {
+                    setValue.setInvalidAs(InvalidAs.Blank);
+                } else {
+                    setValue.setInvalidAs(InvalidAs.Skip);
+                }
+                UserConfig.setString(baseName + "Nonnumeric", setValue.getInvalidAs().name());
+            } else if (prefixRadio.isSelected()) {
+                String v = prefixInput.getText();
+                setValue.setType(SetValue.ValueType.Prefix).setValue(v);
+                if (v == null || v.isEmpty()) {
+                    outError(message("Invalid") + ": " + message("AddPrefix"));
+                    return false;
+                } else {
+                    UserConfig.setString(baseName + "Prefix", v);
+                }
+            } else if (suffixRadio.isSelected()) {
+                String v = suffixInput.getText();
+                setValue.setType(SetValue.ValueType.Suffix).setValue(v);
+                if (v == null || v.isEmpty()) {
+                    outError(message("Invalid") + ": " + message("AppendSuffix"));
+                    return false;
+                } else {
+                    UserConfig.setString(baseName + "Suffix", v);
+                }
+            } else if (numberRadio.isSelected()) {
+                setValue.setType(SetValue.ValueType.SuffixNumber).setFillZero(false).setAotoDigit(false);
+                int start;
+                try {
+                    start = Integer.valueOf(startInput.getText().trim());
+                    UserConfig.setInt(baseName + "Start", start);
+                } catch (Exception e) {
+                    outError(message("Invalid") + ": " + message("AddSequenceNumber") + " - " + message("Start"));
+                    return false;
+                }
+                int digit = -1;
+                if (fillZeroCheck.isSelected()) {
+                    setValue.setFillZero(true);
+                    try {
+                        String v = digitInput.getText();
+                        if (v == null || v.isBlank()) {
+                            digit = 0;
+                            setValue.setAotoDigit(true);
+                        } else {
+                            digit = Integer.valueOf(digitInput.getText());
+                        }
+                        UserConfig.setInt(baseName + "Digit", digit);
+                    } catch (Exception e) {
+                        outError(message("Invalid") + ": " + message("AddSequenceNumber") + " - " + message("Digit"));
+                        return false;
+                    }
+                }
+                setValue.setStart(start).setDigit(digit);
+                UserConfig.setBoolean(baseName + "FillZero", setValue.isFillZero());
+                UserConfig.setBoolean(baseName + "AutoDigit", setValue.isAotoDigit());
+            } else if (gaussianDistributionRadio.isSelected()) {
+                setValue.setType(SetValue.ValueType.GaussianDistribution);
+            } else if (identifyRadio.isSelected()) {
+                setValue.setType(SetValue.ValueType.GaussianDistribution);
+            } else if (upperTriangleRadio.isSelected()) {
+                setValue.setType(SetValue.ValueType.UpperTriangle);
+            } else if (lowerTriangleRadio.isSelected()) {
+                setValue.setType(SetValue.ValueType.LowerTriangle);
+            } else if (expressionRadio.isSelected()) {
+                String v = expressionController.scriptInput.getText();
+                setValue.setType(SetValue.ValueType.Expression).setValue(v);
+                if (!expressionController.checkExpression(handleController.isAllPages())) {
+                    handleController.tabPane.getSelectionModel().select(handleController.valuesTab);
+                    alertError(message("Invalid") + ": " + message("RowExpression") + "\n" + expressionController.error);
+                    return false;
+                } else {
+                    UserConfig.setString(baseName + "Expression", v);
                 }
             }
-            return ok;
+            UserConfig.setString(baseName + "ValueType", setValue.getType().name());
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return false;
         }
     }
 
-    public String expression() {
-        if (value == null) {
-            return null;
+    public void outError(String error) {
+        if (error != null && !error.isBlank()) {
+            handleController.outOptionsError(error);
+            handleController.tabPane.getSelectionModel().select(handleController.valuesTab);
         }
-        if (value.startsWith("MyBox##Expression##")) {
-            return value.substring("MyBox##Expression##".length());
-        }
-        return null;
     }
 
-    public String setExpression(String exp) {
-        value = "MyBox##Expression##" + exp;
-        return value;
+    public String value() {
+        return setValue.getValue();
+    }
+
+    public void setValue(String value) {
+        setValue.setValue(value);
+    }
+
+    public String scale(String value) {
+        return setValue.scale(value);
     }
 
 }

@@ -689,6 +689,7 @@ public abstract class BaseTable<D> {
             }
             String sql = sizeStatement() + c;
             int size = 0;
+            conn.setAutoCommit(true);
             try ( PreparedStatement sizeQuery = conn.prepareStatement(sql);
                      ResultSet results = sizeQuery.executeQuery()) {
                 if (results != null && results.next()) {
@@ -720,14 +721,20 @@ public abstract class BaseTable<D> {
     }
 
     public boolean isEmpty(Connection conn, String sql) {
-        boolean isEmpty = true;
-        try ( PreparedStatement statement = conn.prepareStatement(sql);
-                 ResultSet results = statement.executeQuery()) {
-            isEmpty = results == null || !results.next();
+        try {
+            boolean isEmpty = true;
+            conn.setAutoCommit(true);
+            try ( PreparedStatement statement = conn.prepareStatement(sql);
+                     ResultSet results = statement.executeQuery()) {
+                isEmpty = results == null || !results.next();
+            } catch (Exception e) {
+                MyBoxLog.error(e, sql);
+            }
+            return isEmpty;
         } catch (Exception e) {
-            MyBoxLog.error(e, sql);
+            MyBoxLog.error(e, tableName);
+            return false;
         }
-        return isEmpty;
     }
 
     public String queryStatement() {
@@ -997,6 +1004,7 @@ public abstract class BaseTable<D> {
         try {
             D data;
             statement.setMaxRows(1);
+            conn.setAutoCommit(true);
             try ( ResultSet results = statement.executeQuery()) {
                 if (results.next()) {
                     data = readData(results);
@@ -1016,17 +1024,8 @@ public abstract class BaseTable<D> {
             return null;
         }
         try {
-            D data;
-            statement.setMaxRows(1);
             statement.setString(1, value);
-            try ( ResultSet results = statement.executeQuery()) {
-                if (results.next()) {
-                    data = readData(results);
-                } else {
-                    return null;
-                }
-            }
-            return data;
+            return query(conn, statement);
         } catch (Exception e) {
             MyBoxLog.error(e, tableName + " " + value);
             return null;
@@ -1041,13 +1040,8 @@ public abstract class BaseTable<D> {
         try {
             statement.setMaxRows(1);
             statement.setString(1, "%" + value);
-            try ( ResultSet results = statement.executeQuery()) {
-                while (results.next()) {
-                    D data = readData(results);
-                    dataList.add(data);
-                }
-            }
-            return dataList;
+            conn.setAutoCommit(true);
+            return query(statement);
         } catch (Exception e) {
             MyBoxLog.error(e, tableName + " " + value);
         }
@@ -1093,14 +1087,8 @@ public abstract class BaseTable<D> {
             if (max > 0) {
                 statement.setMaxRows(max);
             }
-            try ( ResultSet results = statement.executeQuery()) {
-                while (results.next()) {
-                    D data = readData(results);
-                    dataList.add(data);
-                }
-            } catch (Exception e) {
-                MyBoxLog.error(e, sql);
-            }
+            conn.setAutoCommit(true);
+            return query(statement);
         } catch (Exception e) {
             MyBoxLog.error(e, sql);
         }
@@ -1243,8 +1231,8 @@ public abstract class BaseTable<D> {
             if (setInsertStatement(conn, statement, data)) {
                 if (statement.executeUpdate() > 0) {
                     if (idColumn != null) {
-                        boolean ac = conn.getAutoCommit();
-                        conn.setAutoCommit(false);
+//                        boolean ac = conn.getAutoCommit();
+//                        conn.setAutoCommit(true);
                         try ( Statement query = conn.createStatement();
                                  ResultSet resultSet = query.executeQuery("VALUES IDENTITY_VAL_LOCAL()")) {
                             if (resultSet.next()) {
@@ -1254,7 +1242,7 @@ public abstract class BaseTable<D> {
                         } catch (Exception e) {
                             MyBoxLog.error(e, tableName);
                         }
-                        conn.setAutoCommit(ac);
+//                        conn.setAutoCommit(ac);
                     }
                     return data;
                 }
@@ -1262,6 +1250,7 @@ public abstract class BaseTable<D> {
         } catch (Exception e) {
             MyBoxLog.error(e, tableName);
         }
+        MyBoxLog.console(tableName + "  " + newID);
         return null;
     }
 

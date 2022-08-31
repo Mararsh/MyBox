@@ -109,6 +109,7 @@ public class TableUserConf extends BaseTable<StringValue> {
         String value = defaultValue;
         try ( PreparedStatement queryStatement = conn.prepareStatement(QueryString)) {
             queryStatement.setString(1, keyName);
+            conn.setAutoCommit(true);
             try ( ResultSet resultSet = queryStatement.executeQuery()) {
                 if (resultSet.next()) {
                     value = resultSet.getString(1);
@@ -166,6 +167,7 @@ public class TableUserConf extends BaseTable<StringValue> {
         }
         try ( PreparedStatement queryStatement = conn.prepareStatement(QueryInt)) {
             queryStatement.setString(1, keyName);
+            conn.setAutoCommit(true);
             try ( ResultSet resultSet = queryStatement.executeQuery()) {
                 if (resultSet != null && resultSet.next()) {
                     value = resultSet.getInt(1);

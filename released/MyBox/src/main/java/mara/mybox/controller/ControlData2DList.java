@@ -119,7 +119,8 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
 
             } else if (manageController instanceof DataTablesController) {
                 buttonsPane.getChildren().removeAll(openButton, queryButton);
-                queryConditions = " data_type = " + Data2D.type(Data2DDefinition.Type.DatabaseTable);
+                queryConditions = " data_type = " + Data2D.type(Data2DDefinition.Type.DatabaseTable)
+                        + " AND NOT( sheet like '" + Data2D.TmpTablePrefix + "%' ) ";
 
             } else {
                 queryConditions = null;
@@ -192,6 +193,12 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
         } else {
             loadTableData();
         }
+    }
+
+    @Override
+    public List<Data2DDefinition> readPageData(Connection conn) {
+        tableData2DDefinition.clearInvalid(conn, false);
+        return super.readPageData(conn);
     }
 
     @FXML

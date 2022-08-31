@@ -500,7 +500,7 @@ public class ControlMapOptions extends BaseController {
                 trafficOpacitySelector.getSelectionModel().select("1");
             }
             if (englishRadio != null && AppVariables.currentBundle != Languages.BundleZhCN) {
-                englishRadio.fire();
+                englishRadio.setSelected(true);
             }
             if (dataMaximumSelector != null) {
                 dataMaximumSelector.getSelectionModel().select(UserConfig.getString(baseName + "DataMax", "300"));
@@ -571,23 +571,23 @@ public class ControlMapOptions extends BaseController {
             }
             if (geodeticRadio != null
                     && "EPSG:4326".equals(UserConfig.getString(baseName + "Projection", "EPSG:900913"))) {
-                geodeticRadio.fire();
+                geodeticRadio.setSelected(true);
             }
             String type = UserConfig.getString(baseName + "MarkerImageType",
                     mapController instanceof LocationDataMapController ? "Dataset" : "Point");
             if ("Circle".equals(type)) {
-                markerCircleRadio.fire();
+                markerCircleRadio.setSelected(true);
             } else if ("Image".equals(type)) {
-                markerImageRadio.fire();
+                markerImageRadio.setSelected(true);
             } else if ("Dataset".equals(type)) {
-                markerDatasetRadio.fire();
+                markerDatasetRadio.setSelected(true);
             } else if ("Data".equals(type)) {
-                markerDataRadio.fire();
+                markerDataRadio.setSelected(true);
             } else {
-                markerPointRadio.fire();
+                markerPointRadio.setSelected(true);
             }
             if (UserConfig.getBoolean(baseName + "TextDataColor", false)) {
-                dataColorRadio.fire();
+                dataColorRadio.setSelected(true);
             }
             isSettingValues = false;
 

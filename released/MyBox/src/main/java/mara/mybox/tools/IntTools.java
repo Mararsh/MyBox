@@ -1,5 +1,6 @@
 package mara.mybox.tools;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,6 +16,32 @@ import javafx.scene.control.IndexRange;
  * @License Apache License Version 2.0
  */
 public class IntTools {
+
+    public static String format(int data) {
+        try {
+            String format = "#,###";
+            DecimalFormat df = new DecimalFormat(format);
+            return df.format(data);
+        } catch (Exception e) {
+            return data + "";
+        }
+    }
+
+    // invalid values are always in the end
+    public static int compare(String s1, String s2, boolean desc) {
+        float f1, f2;
+        try {
+            f1 = Integer.valueOf(s1.replaceAll(",", ""));
+        } catch (Exception e) {
+            f1 = Float.NaN;
+        }
+        try {
+            f2 = Integer.valueOf(s2.replaceAll(",", ""));
+        } catch (Exception e) {
+            f2 = Float.NaN;
+        }
+        return FloatTools.compare(f1, f2, desc);
+    }
 
     public static int mapInt(int value, IndexRange originalRange, IndexRange newlRange) {
         if (originalRange == null || newlRange == null || originalRange.getStart() > value || originalRange.getEnd() < value) {

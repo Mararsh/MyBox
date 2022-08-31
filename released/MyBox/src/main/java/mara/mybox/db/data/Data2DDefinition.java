@@ -3,6 +3,7 @@ package mara.mybox.db.data;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.Date;
+import java.util.List;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.Data2DManageController;
 import mara.mybox.controller.DataFileCSVController;
@@ -14,6 +15,7 @@ import mara.mybox.controller.MatricesManageController;
 import mara.mybox.controller.MyBoxTablesController;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
+import mara.mybox.tools.FileTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -33,6 +35,7 @@ public class Data2DDefinition extends BaseData {
     protected short scale;
     protected int maxRandom;
     protected Date modifyTime;
+    public List<ColumnDefinition.ColumnType> initColumnTypes;
 
     public static enum Type {
         Texts, CSV, Excel, MyBoxClipboard, Matrix, DatabaseTable, InternalTable
@@ -77,6 +80,7 @@ public class Data2DDefinition extends BaseData {
             charset = d.getCharset();
             hasHeader = d.isHasHeader();
             comments = d.getComments();
+            initColumnTypes = d.getInitColumnTypes();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -109,10 +113,21 @@ public class Data2DDefinition extends BaseData {
         maxRandom = 1000;
         modifyTime = new Date();
         comments = null;
+        initColumnTypes = null;
     }
 
     public boolean isValid() {
         return valid(this);
+    }
+
+    public boolean validData() {
+        if (isDataFile()) {
+            return FileTools.hasData(file);
+        } else if (isTable()) {
+            return sheet != null;
+        } else {
+            return true;
+        }
     }
 
     public Data2DDefinition setCharsetName(String charsetName) {
@@ -204,6 +219,14 @@ public class Data2DDefinition extends BaseData {
             return dataName;
         } else {
             return "";
+        }
+    }
+
+    public String dataName() {
+        if (dataName != null && !dataName.isBlank()) {
+            return dataName;
+        } else {
+            return shortName();
         }
     }
 
@@ -443,6 +466,15 @@ public class Data2DDefinition extends BaseData {
 
     public Data2DDefinition setComments(String comments) {
         this.comments = comments;
+        return this;
+    }
+
+    public List<ColumnDefinition.ColumnType> getInitColumnTypes() {
+        return initColumnTypes;
+    }
+
+    public Data2DDefinition setInitColumnTypes(List<ColumnDefinition.ColumnType> initColumnTypes) {
+        this.initColumnTypes = initColumnTypes;
         return this;
     }
 

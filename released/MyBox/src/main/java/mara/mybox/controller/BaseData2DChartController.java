@@ -9,6 +9,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ColumnDefinition;
@@ -31,6 +32,8 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
     @FXML
     protected ComboBox<String> categoryColumnSelector, valueColumnSelector;
+    @FXML
+    protected Label noticeLabel;
 
     @Override
     public void initControls() {
@@ -72,20 +75,11 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     }
 
     @Override
-    public boolean scaleChanged() {
-        if (super.scaleChanged()) {
-            okAction();
-            return true;
-        }
-        return false;
-    }
-
-    @Override
     public void refreshControls() {
         try {
             super.refreshControls();
             makeOptions();
-            okAction();
+            afterRefreshControls();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -122,27 +116,42 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         }
     }
 
+    public void afterRefreshControls() {
+        okAction();
+    }
+
     @Override
     public boolean checkOptions() {
         if (isSettingValues) {
             return true;
         }
         boolean ok = super.checkOptions();
-        if (categoryColumnSelector != null) {
-            selectedCategory = categoryColumnSelector.getSelectionModel().getSelectedItem();
-        }
-        if (valueColumnSelector != null) {
-            selectedValue = valueColumnSelector.getSelectionModel().getSelectedItem();
-        }
+        noticeMemory();
         return ok;
+    }
+
+    public void noticeMemory() {
+        if (noticeLabel == null) {
+            return;
+        }
+        noticeLabel.setVisible(isAllPages());
     }
 
     @Override
     public boolean initData() {
         try {
+            if (!super.initData()) {
+                return false;
+            }
+            if (categoryColumnSelector != null) {
+                selectedCategory = categoryColumnSelector.getSelectionModel().getSelectedItem();
+            }
+            if (valueColumnSelector != null) {
+                selectedValue = valueColumnSelector.getSelectionModel().getSelectedItem();
+            }
             dataColsIndices = new ArrayList<>();
-            if (checkedColsIndices == null || checkedColsIndices.isEmpty()) {
-                popError(message("SelectToHandle"));
+            if (!noColumnSelection && (checkedColsIndices == null || checkedColsIndices.isEmpty())) {
+                outOptionsError(message("SelectToHandle") + ": " + message("Columns"));
                 return false;
             }
             dataColsIndices.addAll(checkedColsIndices);
@@ -162,6 +171,9 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     }
 
     public String categoryName() {
+        if (categoryColumnSelector == null) {
+            return null;
+        }
         return categoryColumnSelector.getSelectionModel().getSelectedItem();
     }
 
@@ -242,14 +254,16 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             } else {
                 palette.clear();
             }
-            for (int i = 0; i < outputColumns.size(); i++) {
-                Data2DColumn column = outputColumns.get(i);
-                Color color = column.getColor();
-                if (color == null) {
-                    color = FxColorTools.randomColor(random);
+            if (outputColumns != null) {
+                for (int i = 0; i < outputColumns.size(); i++) {
+                    Data2DColumn column = outputColumns.get(i);
+                    Color color = column.getColor();
+                    if (color == null) {
+                        color = FxColorTools.randomColor(random);
+                    }
+                    String rgb = FxColorTools.color2rgb(color);
+                    palette.put(column.getColumnName(), rgb);
                 }
-                String rgb = FxColorTools.color2rgb(color);
-                palette.put(column.getColumnName(), rgb);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

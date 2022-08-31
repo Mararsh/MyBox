@@ -49,6 +49,7 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
         addColumn(new Data2DColumn("is_auto", ColumnType.Boolean));
         addColumn(new Data2DColumn("not_null", ColumnType.Boolean));
         addColumn(new Data2DColumn("editable", ColumnType.Boolean));
+        addColumn(new Data2DColumn("need_format", ColumnType.Boolean));
         addColumn(new Data2DColumn("on_delete", ColumnType.Short));
         addColumn(new Data2DColumn("on_update", ColumnType.Short));
         addColumn(new Data2DColumn("default_value", ColumnType.String).setLength(StringMaxLength));

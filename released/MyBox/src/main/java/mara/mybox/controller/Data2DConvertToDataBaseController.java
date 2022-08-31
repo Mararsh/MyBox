@@ -24,7 +24,7 @@ public class Data2DConvertToDataBaseController extends BaseData2DHandleControlle
     @FXML
     protected CheckBox importCheck;
     @FXML
-    protected VBox dataVBox, filterVBox, attributesBox;
+    protected VBox dataVBox, filterVBox, attributesBox, optionsBox;
     @FXML
     protected ControlNewDataTable attributesController;
     @FXML
@@ -50,6 +50,8 @@ public class Data2DConvertToDataBaseController extends BaseData2DHandleControlle
 
             okButton = startButton;
 
+            taskController.setParameters(this);
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -59,8 +61,6 @@ public class Data2DConvertToDataBaseController extends BaseData2DHandleControlle
     public void setParameters(ControlData2DEditTable editController) {
         try {
             super.setParameters(editController);
-
-            taskController.setParameters(this);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -86,9 +86,19 @@ public class Data2DConvertToDataBaseController extends BaseData2DHandleControlle
         attributesController.setColumns(checkedColsIndices);
     }
 
+    @Override
+    public boolean initData() {
+        return super.initData() && taskController.checkAttributes();
+    }
+
     @FXML
     @Override
     public void startAction() {
+        okAction();
+    }
+
+    @Override
+    protected void startOperation() {
         taskController.startAction();
     }
 

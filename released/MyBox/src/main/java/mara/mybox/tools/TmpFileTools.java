@@ -51,11 +51,14 @@ public class TmpFileTools {
     }
 
     public static File getPathTempFile(String path, String prefix, String suffix) {
-        File file = new File(getTempFileName(path, prefix) + suffix);
-        while (file.exists()) {
-            file = new File(getTempFileName(path, prefix) + suffix);
+        if (prefix != null && !prefix.isBlank()) {
+            File tFile = new File(path + File.separator + prefix + suffix);
+            while (tFile.exists()) {
+                tFile = new File(getTempFileName(path, prefix) + suffix);
+            }
+            return tFile;
         }
-        return file;
+        return getPathTempFile(path, suffix);
     }
 
     public static File getTempDirectory() {

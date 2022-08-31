@@ -111,7 +111,7 @@ public class MyBoxSetupController implements Initializable {
                         }
                         if (Languages.message(lang, "Default").equals(name)) {
                             dataDirInput.setText(configPath.getAbsolutePath() + File.separator + "data_v" + AppValues.AppVersion);
-                            embeddedRadio.fire();
+                            embeddedRadio.setSelected(true);
                             final long jvmM = Runtime.getRuntime().maxMemory() / (1024 * 1024);
                             String m = Languages.message(lang, "PhysicalMemory") + ": " + totalM + "MB"
                                     + "    " + Languages.message(lang, "JvmXmx") + ": " + jvmM + "MB";
@@ -125,9 +125,9 @@ public class MyBoxSetupController implements Initializable {
                             }
                             String DerbyMode = ConfigTools.readValue(file, "DerbyMode");
                             if ("client".equals(DerbyMode)) {
-                                networkRadio.fire();
+                                networkRadio.setSelected(true);
                             } else {
-                                embeddedRadio.fire();
+                                embeddedRadio.setSelected(true);
                             }
                             String JVMmemory = ConfigTools.readValue(file, "JVMmemory");
                             if (JVMmemory != null && JVMmemory.startsWith("-Xms") && JVMmemory.endsWith("m")) {

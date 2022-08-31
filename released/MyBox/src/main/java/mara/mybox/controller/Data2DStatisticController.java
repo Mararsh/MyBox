@@ -290,56 +290,63 @@ public class Data2DStatisticController extends BaseData2DHandleController {
     }
 
     @Override
-    public boolean checkOptions() {
-        boolean ok = super.checkOptions();
-        categorysCol = -1;
-        if (rowsRadio.isSelected()) {
-            selectedCategory = categoryColumnSelector.getSelectionModel().getSelectedItem();
-            if (selectedCategory != null && categoryColumnSelector.getSelectionModel().getSelectedIndex() != 0) {
-                categorysCol = data2D.colOrder(selectedCategory);
+    public boolean initData() {
+        try {
+            if (!super.initData()) {
+                return false;
             }
+            categorysCol = -1;
+            if (rowsRadio.isSelected()) {
+                selectedCategory = categoryColumnSelector.getSelectionModel().getSelectedItem();
+                if (selectedCategory != null && categoryColumnSelector.getSelectionModel().getSelectedIndex() != 0) {
+                    categorysCol = data2D.colOrder(selectedCategory);
+                }
+            }
+            calculation = new DescriptiveStatistic()
+                    .setCount(countCheck.isSelected())
+                    .setSum(summationCheck.isSelected())
+                    .setMean(meanCheck.isSelected())
+                    .setGeometricMean(geometricMeanCheck.isSelected())
+                    .setSumSquares(sumOfSquaresCheck.isSelected())
+                    .setPopulationStandardDeviation(populationStandardDeviationCheck.isSelected())
+                    .setPopulationVariance(populationVarianceCheck.isSelected())
+                    .setSampleStandardDeviation(sampleStandardDeviationCheck.isSelected())
+                    .setSampleVariance(sampleVarianceCheck.isSelected())
+                    .setSkewness(skewnessCheck.isSelected())
+                    .setMedian(medianCheck.isSelected())
+                    .setMaximum(maximumCheck.isSelected())
+                    .setMinimum(minimumCheck.isSelected())
+                    .setUpperQuartile(upperQuartileCheck.isSelected())
+                    .setLowerQuartile(lowerQuartileCheck.isSelected())
+                    .setUpperExtremeOutlierLine(UpperExtremeOutlierLineCheck.isSelected())
+                    .setUpperMildOutlierLine(UpperMildOutlierLineCheck.isSelected())
+                    .setLowerExtremeOutlierLine(LowerExtremeOutlierLineCheck.isSelected())
+                    .setLowerMildOutlierLine(LowerMildOutlierLineCheck.isSelected())
+                    .setMode(modeCheck.isSelected())
+                    .setScale(scale)
+                    .setInvalidAs(invalidAs)
+                    .setHandleController(this)
+                    .setData2D(data2D)
+                    .setColsIndices(checkedColsIndices)
+                    .setColsNames(checkedColsNames)
+                    .setCategoryName(categorysCol >= 0 ? selectedCategory : null);
+            switch (objectType) {
+                case Rows:
+                    calculation.setStatisticObject(StatisticObject.Rows);
+                    break;
+                case All:
+                    calculation.setStatisticObject(StatisticObject.All);
+                    break;
+                default:
+                    calculation.setStatisticObject(StatisticObject.Columns);
+                    break;
+            }
+            UserConfig.setBoolean(baseName + "SkipNonnumeric", skipNonnumericRadio.isSelected());
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
         }
-        calculation = new DescriptiveStatistic()
-                .setCount(countCheck.isSelected())
-                .setSum(summationCheck.isSelected())
-                .setMean(meanCheck.isSelected())
-                .setGeometricMean(geometricMeanCheck.isSelected())
-                .setSumSquares(sumOfSquaresCheck.isSelected())
-                .setPopulationStandardDeviation(populationStandardDeviationCheck.isSelected())
-                .setPopulationVariance(populationVarianceCheck.isSelected())
-                .setSampleStandardDeviation(sampleStandardDeviationCheck.isSelected())
-                .setSampleVariance(sampleVarianceCheck.isSelected())
-                .setSkewness(skewnessCheck.isSelected())
-                .setMedian(medianCheck.isSelected())
-                .setMaximum(maximumCheck.isSelected())
-                .setMinimum(minimumCheck.isSelected())
-                .setUpperQuartile(upperQuartileCheck.isSelected())
-                .setLowerQuartile(lowerQuartileCheck.isSelected())
-                .setUpperExtremeOutlierLine(UpperExtremeOutlierLineCheck.isSelected())
-                .setUpperMildOutlierLine(UpperMildOutlierLineCheck.isSelected())
-                .setLowerExtremeOutlierLine(LowerExtremeOutlierLineCheck.isSelected())
-                .setLowerMildOutlierLine(LowerMildOutlierLineCheck.isSelected())
-                .setMode(modeCheck.isSelected())
-                .setScale(scale)
-                .setInvalidAs(invalidAs)
-                .setHandleController(this)
-                .setData2D(data2D)
-                .setColsIndices(checkedColsIndices)
-                .setColsNames(checkedColsNames)
-                .setCategoryName(categorysCol >= 0 ? selectedCategory : null);
-        switch (objectType) {
-            case Rows:
-                calculation.setStatisticObject(StatisticObject.Rows);
-                break;
-            case All:
-                calculation.setStatisticObject(StatisticObject.All);
-                break;
-            default:
-                calculation.setStatisticObject(StatisticObject.Columns);
-                break;
-        }
-        UserConfig.setBoolean(baseName + "SkipNonnumeric", skipNonnumericRadio.isSelected());
-        return ok;
     }
 
     @FXML
@@ -402,7 +409,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
             if (!calculation.prepare()) {
                 return;
             }
-            data2D.resetTargetStatistic();
+            data2D.resetStatistic();
             if (isAllPages()) {
                 switch (objectType) {
                     case Rows:
@@ -446,7 +453,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
                     data2D.startTask(task, filterController.filter);
                     calculation.setTask(task);
                     if (calculation.needStored()) {
-                        DataTable tmpTable = data2D.toTmpTable(task, checkedColsIndices, false, true);
+                        DataTable tmpTable = data2D.toTmpTable(task, checkedColsIndices, false, true, invalidAs);
                         if (tmpTable == null) {
                             return false;
                         }
@@ -562,7 +569,8 @@ public class Data2DStatisticController extends BaseData2DHandleController {
         if (rowsRadio.isSelected() && categorysCol >= 0) {
             colsIndices.add(0, categorysCol);
         }
-        return data2D.statisticByRows(calculation.getOutputNames(), colsIndices, calculation);
+        return data2D.statisticByRows(targetController.name(),
+                calculation.getOutputNames(), colsIndices, calculation);
     }
 
     /*

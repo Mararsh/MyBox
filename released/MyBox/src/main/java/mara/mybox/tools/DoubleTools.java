@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.Random;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 
@@ -18,12 +19,63 @@ public class DoubleTools {
         return Double.isNaN(value) || value == AppValues.InvalidDouble;
     }
 
-    public static double toDouble(String string, double invalidAs) {
+    public static double value(InvalidAs invalidAs) {
+        if (invalidAs == InvalidAs.Zero) {
+            return 0;
+        } else {
+            return Double.NaN;
+        }
+    }
+
+    public static double scale(String string, InvalidAs invalidAs, int scale) {
+        try {
+            double d = toDouble(string, invalidAs);
+            return scale(d, scale);
+        } catch (Exception e) {
+            return value(invalidAs);
+        }
+    }
+
+    public static double toDouble(String string, InvalidAs invalidAs) {
         try {
             double d = Double.valueOf(string.replaceAll(",", ""));
-            return invalidDouble(d) ? invalidAs : d;
+            return invalidDouble(d) ? value(invalidAs) : d;
         } catch (Exception e) {
-            return invalidAs;
+            return value(invalidAs);
+        }
+    }
+
+    public static double[] toDouble(String[] sVector, InvalidAs invalidAs) {
+        try {
+            if (sVector == null) {
+                return null;
+            }
+            int len = sVector.length;
+            double[] doubleVector = new double[len];
+            for (int i = 0; i < len; i++) {
+                doubleVector[i] = DoubleTools.toDouble(sVector[i], invalidAs);
+            }
+            return doubleVector;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static double[][] toDouble(String[][] sMatrix, InvalidAs invalidAs) {
+        try {
+            if (sMatrix == null) {
+                return null;
+            }
+            int rsize = sMatrix.length, csize = sMatrix[0].length;
+            double[][] doubleMatrix = new double[rsize][csize];
+            for (int i = 0; i < rsize; i++) {
+                for (int j = 0; j < csize; j++) {
+                    doubleMatrix[i][j] = DoubleTools.toDouble(sMatrix[i][j], invalidAs);
+                }
+            }
+            return doubleMatrix;
+        } catch (Exception e) {
+            return null;
         }
     }
 
@@ -38,7 +90,22 @@ public class DoubleTools {
             }
             return scale(data * 100 / total, scale) + "";
         } catch (Exception e) {
-            return message("Invalid");
+            return data + "";
+        }
+    }
+
+    public static String format(double data) {
+        try {
+            String format = "#,###";
+            String s = data + "";
+            int pos = s.indexOf(".");
+            if (pos >= 0) {
+                format += "." + "#".repeat(s.substring(pos + 1).length());
+            }
+            DecimalFormat df = new DecimalFormat(format);
+            return df.format(data);
+        } catch (Exception e) {
+            return data + "";
         }
     }
 
@@ -51,7 +118,46 @@ public class DoubleTools {
             DecimalFormat df = new DecimalFormat(format);
             return df.format(scale(data, scale));
         } catch (Exception e) {
-            return message("Invalid");
+            return data + "";
+        }
+    }
+
+    public static int compare(String s1, String s2, boolean desc) {
+        double d1, d2;
+        try {
+            d1 = Double.valueOf(s1.replaceAll(",", ""));
+        } catch (Exception e) {
+            d1 = Double.NaN;
+        }
+        try {
+            d2 = Double.valueOf(s2.replaceAll(",", ""));
+        } catch (Exception e) {
+            d2 = Double.NaN;
+        }
+        return compare(d1, d2, desc);
+    }
+
+    // invalid values are counted as smaller
+    public static int compare(double d1, double d2, boolean desc) {
+        if (Double.isNaN(d1)) {
+            if (Double.isNaN(d2)) {
+                return 0;
+            } else {
+                return desc ? 1 : -1;
+            }
+        } else {
+            if (Double.isNaN(d2)) {
+                return desc ? -1 : 1;
+            } else {
+                double diff = d1 - d2;
+                if (diff == 0) {
+                    return 0;
+                } else if (diff > 0) {
+                    return desc ? -1 : 1;
+                } else {
+                    return desc ? 1 : -1;
+                }
+            }
         }
     }
 
@@ -82,11 +188,18 @@ public class DoubleTools {
     }
 
     public static double scale(double v, int scale) {
-        BigDecimal b = new BigDecimal(v);
-        return scale(b, scale);
+        try {
+            BigDecimal b = new BigDecimal(v);
+            return scale(b, scale);
+        } catch (Exception e) {
+            return v;
+        }
     }
 
     public static double scale(BigDecimal b, int scale) {
+        if (b == null) {
+            return Double.NaN;
+        }
         return b.setScale(scale, RoundingMode.HALF_UP).doubleValue();
     }
 

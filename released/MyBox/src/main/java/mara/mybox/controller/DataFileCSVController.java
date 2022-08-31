@@ -166,9 +166,9 @@ public class DataFileCSVController extends BaseData2DFileController {
         return controller;
     }
 
-    public static DataFileCSVController open(List<Data2DColumn> cols, List<List<String>> data) {
+    public static DataFileCSVController open(String name, List<Data2DColumn> cols, List<List<String>> data) {
         DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
-        controller.dataController.loadTmpData(cols, data);
+        controller.dataController.loadTmpData(name, cols, data);
         controller.requestMouse();
         return controller;
     }

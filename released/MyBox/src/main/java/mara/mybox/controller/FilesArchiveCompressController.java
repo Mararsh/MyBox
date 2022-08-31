@@ -139,7 +139,7 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
         pack200Radio.setDisable(!archiver.equalsIgnoreCase(ArchiveStreamFactory.ZIP)
                 && !archiver.equalsIgnoreCase(ArchiveStreamFactory.JAR));
         if (pack200Radio.isDisabled() && pack200Radio.isSelected()) {
-            gzRadio.fire();
+            gzRadio.setSelected(true);
         }
         checkExtension();
     }

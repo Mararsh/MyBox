@@ -121,9 +121,9 @@ public class LocationDataMapController extends BaseMapController {
 
             isSettingValues = true;
             if (UserConfig.getBoolean(baseName + "Sequence", true)) {
-                sequenceRadio.fire();
+                sequenceRadio.setSelected(true);
             } else {
-                distributionRadio.fire();
+                distributionRadio.setSelected(true);
             }
             overlayCheck.setSelected(UserConfig.getBoolean(baseName + "Overlay", false));
             accumulateCheck.setSelected(UserConfig.getBoolean(baseName + "Accumulate", false));

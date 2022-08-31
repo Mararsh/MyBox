@@ -639,7 +639,7 @@ public class ControlImageText extends BaseController {
     public void setLocation(double x, double y) {
         xInput.setText((int) x + "");
         yInput.setText((int) y + "");
-        customRadio.fire();
+        customRadio.setSelected(true);
     }
 
     public boolean checkParameters() {
