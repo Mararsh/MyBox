@@ -13,7 +13,7 @@ Data name can be set when create data. New options for Set Values. Options for i
 * Solved. Endless errors popped and user has to reboot computer when close window while “Play Images” is running(!! Sorry). 
 Statistic for integer/long may fail. Some operations may fail when row filter includes statistic name. 
 Offset one column when edit results of Simple Linear Regression. No results in Box-and-whisker chart when calculate by rows for all pages. 
-File/Path should be null  instead of saved value when input is empty. Auto-backup of files may be cancelled by itself.。        
+File/Path should be null  instead of saved value when input is empty. Auto-backup of files may be cancelled by itself.        
 
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.9)                    
 
