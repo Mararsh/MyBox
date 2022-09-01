@@ -3,11 +3,8 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
-import javafx.scene.control.TableColumn;
-import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
-import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -18,104 +15,23 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-4-21
  * @License Apache License Version 2.0
  */
-public class ControlData2DMultipleLinearRegressionTable extends ControlData2DLoad {
-
-    protected Data2DSimpleLinearRegressionCombinationController regressController;
-    protected TableColumn sortColumn;
+public class ControlData2DMultipleLinearRegressionTable extends ControlData2DSimpleLinearRegressionTable {
 
     @Override
-    public void initValues() {
-        try {
-            super.initValues();
-            data2D = Data2D.create(Data2DDefinition.Type.Texts);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void makeColumns() {
+    public List<Data2DColumn> createColumns() {
         try {
             List<Data2DColumn> cols = new ArrayList<>();
-            cols.add(new Data2DColumn(message("DependentVariable"), ColumnType.String, 100));
-            cols.add(new Data2DColumn(message("IndependentVariable"), ColumnType.String, 100));
+            cols.add(new Data2DColumn(message("IndependentVariable"), ColumnType.String, 200));
+            cols.add(new Data2DColumn(message("Coefficients"), ColumnType.Double, 80));
             cols.add(new Data2DColumn(message("CoefficientOfDetermination"), ColumnType.Double, 80));
-            cols.add(new Data2DColumn(message("PearsonsR"), ColumnType.Double, 80));
-            cols.add(new Data2DColumn(message("Model"), ColumnType.String, 300));
-            cols.add(new Data2DColumn(message("Slope"), ColumnType.Double, 100));
+            cols.add(new Data2DColumn(message("AdjustedRSquared"), ColumnType.Double, 80));
             cols.add(new Data2DColumn(message("Intercept"), ColumnType.Double, 100));
 
-            data2D.setColumns(cols);
-            super.makeColumns();
-            sortColumn = tableView.getColumns().get(3);
+            return cols;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+            return null;
         }
-    }
-
-    public void setParameters(Data2DSimpleLinearRegressionCombinationController regressController) {
-        try {
-            this.regressController = regressController;
-            makeColumns();
-            checkButtons();
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    public void clear() {
-        tableData.clear();
-    }
-
-    public void addRow(List<String> row) {
-        if (row == null) {
-            return;
-        }
-        row.add(0, "" + (tableData.size() + 1));
-        isSettingValues = true;
-        tableData.add(row);
-        isSettingValues = false;
-    }
-
-    public void afterRegression() {
-        isSettingValues = true;
-        tableView.getSortOrder().clear();
-        sortColumn.setSortType(TableColumn.SortType.DESCENDING);
-        tableView.getSortOrder().add(sortColumn);
-        isSettingValues = false;
-        checkButtons();
-    }
-
-    public List<String> selected() {
-        return tableView.getSelectionModel().getSelectedItem();
-    }
-
-    @Override
-    public void tableChanged(boolean changed) {
-        if (isSettingValues) {
-            return;
-        }
-        checkSelected();
-    }
-
-    @Override
-    protected void checkButtons() {
-        super.checkButtons();
-        if (regressController == null) {
-            return;
-        }
-        regressController.dataButton.setDisable(tableData.isEmpty());
-        regressController.viewButton.setDisable(false);
-    }
-
-    @FXML
-    @Override
-    public void dataAction() {
-        if (tableData.isEmpty()) {
-            popError(message("NoData"));
-            return;
-        }
-        DataManufactureController.open(data2D.getColumns(), data2D.tableRowsWithoutNumber());
     }
 
     @FXML
@@ -126,19 +42,22 @@ public class ControlData2DMultipleLinearRegressionTable extends ControlData2DLoa
         }
         List<String> selected = selected();
         if (selected == null) {
-            Data2DSimpleLinearRegressionController.open(regressController.tableController);
+            Data2DMultipleLinearRegressionController.open(regressController.tableController);
         } else {
             try {
-                Data2DSimpleLinearRegressionController controller = (Data2DSimpleLinearRegressionController) WindowTools.openChildStage(
-                        regressController.parentController.getMyWindow(), Fxmls.Data2DSimpleLinearRegressionFxml, false);
-                controller.categoryColumnSelector.getItems().setAll(selected.get(2));
-                controller.categoryColumnSelector.getSelectionModel().select(0);
-                controller.valueColumnSelector.getItems().setAll(selected.get(1));
-                controller.valueColumnSelector.getSelectionModel().select(0);
+                Data2DMultipleLinearRegressionController controller = (Data2DMultipleLinearRegressionController) WindowTools.openChildStage(
+                        regressController.parentController.getMyWindow(), Fxmls.Data2DMultipleLinearRegressionFxml, false);
+                controller.colSelector.setValue(regressController.colSelector.getValue());
+                List<Integer> cols = new ArrayList<>();
+                List<String> names = ((Data2DMultipleLinearRegressionCombinationController) regressController).namesMap.get(selected.get(1));
+                for (String name : names) {
+                    cols.add(regressController.data2D.colOrder(name));
+                }
+                controller.checkedColsIndices = cols;
                 controller.interceptCheck.setSelected(regressController.interceptCheck.isSelected());
-                controller.alphaSelector.getSelectionModel().select(regressController.alpha + "");
                 controller.cloneOptions(regressController);
                 controller.setParameters(regressController.tableController);
+                controller.okAction();
                 controller.requestMouse();
             } catch (Exception e) {
                 MyBoxLog.error(e.toString());

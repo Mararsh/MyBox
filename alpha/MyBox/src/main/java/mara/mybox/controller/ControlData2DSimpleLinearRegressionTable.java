@@ -20,7 +20,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlData2DSimpleLinearRegressionTable extends ControlData2DLoad {
 
-    protected Data2DSimpleLinearRegressionCombinationController regressController;
+    protected BaseData2DRegressionController regressController;
     protected TableColumn sortColumn;
 
     @Override
@@ -33,8 +33,7 @@ public class ControlData2DSimpleLinearRegressionTable extends ControlData2DLoad 
         }
     }
 
-    @Override
-    public void makeColumns() {
+    public List<Data2DColumn> createColumns() {
         try {
             List<Data2DColumn> cols = new ArrayList<>();
             cols.add(new Data2DColumn(message("DependentVariable"), ColumnType.String, 100));
@@ -45,6 +44,17 @@ public class ControlData2DSimpleLinearRegressionTable extends ControlData2DLoad 
             cols.add(new Data2DColumn(message("Slope"), ColumnType.Double, 100));
             cols.add(new Data2DColumn(message("Intercept"), ColumnType.Double, 100));
 
+            return cols;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    @Override
+    public void makeColumns() {
+        try {
+            List<Data2DColumn> cols = createColumns();
             data2D.setColumns(cols);
             super.makeColumns();
             sortColumn = tableView.getColumns().get(3);
@@ -53,7 +63,7 @@ public class ControlData2DSimpleLinearRegressionTable extends ControlData2DLoad 
         }
     }
 
-    public void setParameters(Data2DSimpleLinearRegressionCombinationController regressController) {
+    public void setParameters(BaseData2DRegressionController regressController) {
         try {
             this.regressController = regressController;
             makeColumns();

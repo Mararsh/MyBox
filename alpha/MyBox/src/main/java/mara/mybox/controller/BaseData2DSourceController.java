@@ -422,6 +422,36 @@ public class BaseData2DSourceController extends ControlData2DLoad {
         }
     }
 
+    public void selectColumns(List<String> names) {
+        try {
+            MyBoxLog.console(names);
+            selectNoneColumn();
+            if (names == null || names.isEmpty()) {
+                return;
+            }
+            if (noColumnSelection) {
+                if (columnsPane != null) {
+                    for (Node node : columnsPane.getChildren()) {
+                        CheckBox cb = (CheckBox) node;
+                        if (names.contains(cb.getText())) {
+                            cb.setSelected(true);
+                        }
+                    }
+                }
+            } else {
+                for (int i = 2; i < tableView.getColumns().size(); i++) {
+                    TableColumn tableColumn = tableView.getColumns().get(i);
+                    CheckBox cb = (CheckBox) tableColumn.getGraphic();
+                    if (names.contains(cb.getText())) {
+                        cb.setSelected(true);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     /*
         rows
      */

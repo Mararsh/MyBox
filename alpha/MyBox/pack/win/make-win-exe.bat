@@ -1,5 +1,5 @@
 rem Unzip source package. Edit this script to change directories as your env.
-set version=6.5.9
+set version=6.6
 set jpackagePath=D:\Programs\Java\openjdk-18\bin
 set jdkPath=D:\Programs\Java\openjdk-18
 

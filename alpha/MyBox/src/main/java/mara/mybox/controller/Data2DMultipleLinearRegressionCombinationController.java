@@ -2,36 +2,36 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import mara.mybox.calculation.OLSLinearRegression;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
  * @CreateDate 2022-8-19
  * @License Apache License Version 2.0
  */
-public class Data2DMultipleLinearRegressionCombinationController extends BaseData2DRegressionController {
+public class Data2DMultipleLinearRegressionCombinationController extends Data2DMultipleLinearRegressionController {
 
-    protected OLSLinearRegression regression;
     protected ObservableList<List<String>> results;
+    protected Map<String, List<String>> namesMap;
 
     @FXML
-    protected ControlData2DSimpleLinearRegressionTable resultsController;
+    protected ControlData2DMultipleLinearRegressionTable resultsController;
 
     public Data2DMultipleLinearRegressionCombinationController() {
-        baseTitle = message("SimpleLinearRegressionCombination");
-        TipsLabelKey = "SimpleLinearRegressionTips";
+        baseTitle = message("MultipleLinearRegressionCombination");
+        TipsLabelKey = "MultipleLinearRegressionTips";
         defaultScale = 8;
     }
 
@@ -40,44 +40,8 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
         try {
             super.initControls();
 
-            alpha = UserConfig.getDouble(baseName + "Alpha", 0.05);
-            if (alpha >= 1 || alpha <= 0) {
-                alpha = 0.05;
-            }
-            alphaSelector.getItems().addAll(Arrays.asList(
-                    "0.05", "0.01", "0.02", "0.03", "0.06", "0.1"
-            ));
-            alphaSelector.getSelectionModel().select(alpha + "");
-            alphaSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        double v = Double.parseDouble(newValue);
-                        if (v > 0 && v < 1) {
-                            alpha = v;
-                            alphaSelector.getEditor().setStyle(null);
-                            UserConfig.setDouble(baseName + "Alpha", alpha);
-                        } else {
-                            alphaSelector.getEditor().setStyle(UserConfig.badStyle());
-                        }
-                    } catch (Exception e) {
-                        alphaSelector.getEditor().setStyle(UserConfig.badStyle());
-                    }
-                }
-            });
+            resultsController.setParameters(this);
 
-            interceptCheck.setSelected(UserConfig.getBoolean(baseName + "Intercept", true));
-            interceptCheck.selectedProperty().addListener(new ChangeListener() {
-                @Override
-                public void changed(ObservableValue v, Object ov, Object nv) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    UserConfig.setBoolean(baseName + "Intercept", interceptCheck.isSelected());
-                }
-            });
-
-//            resultsController.setParameters(this);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -89,21 +53,32 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
             task.cancel();
         }
         resultsController.clear();
+        namesMap = new HashMap<>();
         task = new SingletonTask<Void>(this) {
+
+            List<List<String>> data;
 
             @Override
             protected boolean handle() {
                 try {
                     data2D.startTask(task, filterController.filter);
-                    for (int yIndex : checkedColsIndices) {
-                        for (int xIndex : checkedColsIndices) {
-                            if (xIndex == yIndex) {
-                                continue;
-                            }
-                            regress(xIndex, yIndex);
-                        }
+                    if (isAllPages()) {
+                        data = data2D.allRows(dataColsIndices, false);
+                    } else {
+                        data = filtered(dataColsIndices, false);
                     }
                     data2D.stopFilter();
+                    if (data == null || data.isEmpty()) {
+                        error = message("NoData");
+                        return false;
+                    }
+                    int size = xNames.size();
+                    for (int i = 0; i < size; i++) {
+                        for (int j = i + 1; j <= size; j++) {
+                            List<String> x = xNames.subList(i, j);
+                            regress(x);
+                        }
+                    }
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
@@ -111,31 +86,27 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
                 }
             }
 
-            protected void regress(int xIndex, int yIndex) {
+            protected void regress(List<String> x) {
                 try {
-                    String xName = data2D.columnName(xIndex);
-                    String yName = data2D.columnName(yIndex);
-                    List<Integer> dataColsIndices = new ArrayList<>();
-                    dataColsIndices.add(xIndex);
-                    dataColsIndices.add(yIndex);
-//                    simpleRegression = new SimpleLinearRegression(interceptCheck.isSelected(), xName, yName, scale);
-//                    if (isAllPages()) {
-//                        data2D.simpleLinearRegression(null, dataColsIndices, simpleRegression, false);
-//                    } else {
-//                        simpleRegression.addData(filtered(dataColsIndices, true), invalidAs);
-//                    }
-//                    List<String> row = new ArrayList<>();
-//                    row.add(yName);
-//                    row.add(xName);
-//                    row.add(DoubleTools.format(simpleRegression.getRSquare(), scale));
-//                    row.add(DoubleTools.format(simpleRegression.getR(), scale));
-//                    row.add(simpleRegression.getModel());
-//                    row.add(DoubleTools.format(simpleRegression.getSlope(), scale));
-//                    row.add(DoubleTools.format(simpleRegression.getIntercept(), scale));
+                    regression = new OLSLinearRegression(interceptCheck.isSelected())
+                            .setTask(task).setScale(scale)
+                            .setInvalidAs(invalidAs)
+                            .setyName(yName).setxNames(x);
+                    regression.calculate(data);
+
+                    List<String> row = new ArrayList<>();
+                    String namesString = x.toString();
+                    namesMap.put(namesString, x);
+                    row.add(namesString);
+                    row.add(Arrays.toString(regression.getCoefficients()));
+                    row.add(DoubleTools.format(regression.getrSqure(), scale));
+                    row.add(DoubleTools.format(regression.getAdjustedRSqure(), scale));
+                    row.add(DoubleTools.format(regression.getIntercept(), scale));
+
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-//                            resultsController.addRow(row);
+                            resultsController.addRow(row);
                         }
                     });
 
@@ -180,7 +151,7 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
     public static Data2DMultipleLinearRegressionCombinationController open(ControlData2DEditTable tableController) {
         try {
             Data2DMultipleLinearRegressionCombinationController controller = (Data2DMultipleLinearRegressionCombinationController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DSimpleLinearRegressionCombinationFxml, false);
+                    tableController.getMyWindow(), Fxmls.Data2DMultipleLinearRegressionCombinationFxml, false);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

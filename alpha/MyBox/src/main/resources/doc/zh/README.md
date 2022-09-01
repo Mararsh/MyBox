@@ -3,6 +3,15 @@
 # MyBox：简易工具集
 这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。          
 
+## 开发中的试用版            
+2022-9-1 a6.6      
+
+* 多重线性回归-组合      
+* 添加新数据行时可以输入数值        
+
+[MyBox-a6.6-2022-9-1-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/alpha/MyBox-a6.6-2022-9-1-win10-x64.zip)          
+
+
 ## 新内容
 2022-8-31 版本6.5.9          
 
@@ -30,7 +39,7 @@
 ### 自包含程序包
 自包含的程序包无需java环境、无需安装、解包可用。     
 
-| 平台 | 链接 | 大小（大约值） | 启动文件 |
+| 平台 | 链接 | 大小 | 启动文件 |
 | --- | --- | --- |  --- |
 | win10 x64 | [MyBox-6.5.9-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.9/MyBox-6.5.9-win10-x64.zip)  | 220MB- | MyBox.exe |
 | CentOS 7 x64 | [MyBox-6.5.9-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.9/MyBox-6.5.9-CentOS7-x64.tar.gz)  | 240MB-  | bin/MyBox  |
@@ -42,7 +51,7 @@
 ### Jar包
 在已安装JRE或者JDK [Oracle jdk](https://www.oracle.com/technetwork/java/javase/downloads/index.html)或[open jdk](http://jdk.java.net/)均可）的环境下，可以下载jar包。       
 
-| 平台 | 链接 | 大小（大约值） | 运行需要 |
+| 平台 | 链接 | 大小 | 运行需要 |
 | --- | --- | --- |  --- |
 | win | [MyBox-6.5.9-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.9/MyBox-6.5.9-win-jar.zip)  | 160MB- | Java 18或更高版本 |
 | linux | [MyBox-6.5.9-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.9/MyBox-6.5.9-linux-jar.zip)  | 180MB-  | Java 18或更高版本 |

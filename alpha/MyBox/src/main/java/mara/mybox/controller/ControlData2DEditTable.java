@@ -176,6 +176,12 @@ public class ControlData2DEditTable extends ControlData2DLoad {
 
     @FXML
     @Override
+    public void addRowsAction() {
+        Data2DAddRowsController.open(this);
+    }
+
+    @FXML
+    @Override
     public void deleteAction() {
         deleteRowsAction();
     }

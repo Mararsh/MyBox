@@ -840,13 +840,6 @@ public class ControlData2D extends BaseController {
             menu.setDisable(empty);
             calMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("SimpleLinearRegressionCombination"), StyleTools.getIconImage("iconLinearPgression.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DSimpleLinearRegressionCombinationController.open(tableController);
-            });
-            menu.setDisable(empty);
-            calMenu.getItems().add(menu);
-
             menu = new MenuItem(message("SimpleLinearRegression"), StyleTools.getIconImage("iconLinearPgression.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DSimpleLinearRegressionController.open(tableController);
@@ -854,9 +847,23 @@ public class ControlData2D extends BaseController {
             menu.setDisable(empty);
             calMenu.getItems().add(menu);
 
+            menu = new MenuItem(message("SimpleLinearRegressionCombination"), StyleTools.getIconImage("iconLinearPgression.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DSimpleLinearRegressionCombinationController.open(tableController);
+            });
+            menu.setDisable(empty);
+            calMenu.getItems().add(menu);
+
             menu = new MenuItem(message("MultipleLinearRegression"), StyleTools.getIconImage("iconLinearPgression.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DMultipleLinearRegressionController.open(tableController);
+            });
+            menu.setDisable(empty);
+            calMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("MultipleLinearRegressionCombination"), StyleTools.getIconImage("iconLinearPgression.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DMultipleLinearRegressionCombinationController.open(tableController);
             });
             menu.setDisable(empty);
             calMenu.getItems().add(menu);

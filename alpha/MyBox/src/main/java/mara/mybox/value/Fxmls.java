@@ -180,7 +180,7 @@ public class Fxmls {
     public static final String DataManufactureSaveFxml = "/fxml/DataManufactureSave.fxml";
     public static final String Data2DSpliceFxml = "/fxml/Data2DSplice.fxml";
 
-    public static final String TableAddRowsFxml = "/fxml/TableAddRows.fxml";
+    public static final String Data2DAddRowsFxml = "/fxml/Data2DAddRows.fxml";
     public static final String Data2DSetValuesFxml = "/fxml/Data2DSetValues.fxml";
     public static final String Data2DCopyFxml = "/fxml/Data2DCopy.fxml";
     public static final String Data2DLoadContentInSystemClipboardFxml = "/fxml/Data2DLoadContentInSystemClipboard.fxml";
@@ -207,6 +207,7 @@ public class Fxmls {
     public static final String Data2DSimpleLinearRegressionFxml = "/fxml/Data2DSimpleLinearRegression.fxml";
     public static final String Data2DSimpleLinearRegressionCombinationFxml = "/fxml/Data2DSimpleLinearRegressionCombination.fxml";
     public static final String Data2DMultipleLinearRegressionFxml = "/fxml/Data2DMultipleLinearRegression.fxml";
+    public static final String Data2DMultipleLinearRegressionCombinationFxml = "/fxml/Data2DMultipleLinearRegressionCombination.fxml";
     public static final String Data2DChartXYOptionsFxml = "/fxml/Data2DChartXYOptions.fxml";
     public static final String Data2DChartPieOptionsFxml = "/fxml/Data2DChartPieOptions.fxml";
     public static final String Data2DSetStylesFxml = "/fxml/Data2DSetStyles.fxml";
@@ -373,6 +374,7 @@ public class Fxmls {
     public static final String TextInputFxml = "/fxml/TextInput.fxml";
     public static final String TextDelimiterFxml = "/fxml/TextDelimiter.fxml";
     public static final String AddressInputFxml = "/fxml/AddressInput.fxml";
+    public static final String TableAddRowsFxml = "/fxml/TableAddRows.fxml";
 
     public static final String MenuFxml = "/fxml/Menu.fxml";
     public static final String MenuTextEditFxml = "/fxml/MenuTextEdit.fxml";

@@ -205,4 +205,20 @@ public class OLSLinearRegression extends OLSMultipleLinearRegression {
         return coefficients;
     }
 
+    public double getrSqure() {
+        return rSqure;
+    }
+
+    public double getAdjustedRSqure() {
+        return adjustedRSqure;
+    }
+
+    public double getStandardError() {
+        return standardError;
+    }
+
+    public double getVariance() {
+        return variance;
+    }
+
 }
