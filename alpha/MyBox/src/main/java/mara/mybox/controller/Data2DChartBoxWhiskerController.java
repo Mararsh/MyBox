@@ -92,9 +92,14 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
         try {
             super.initControls();
 
-            chartController.dataController = this;
             chartMaker = chartController.chartMaker;
             chartMaker.init(ChartType.BoxWhiskerChart, message("BoxWhiskerChart"));
+            chartController.redrawNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    drawChart();
+                }
+            });
 
             initBoxOptions();
 

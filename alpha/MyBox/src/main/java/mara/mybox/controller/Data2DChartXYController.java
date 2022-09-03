@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.util.ArrayList;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -53,8 +54,13 @@ public class Data2DChartXYController extends BaseData2DChartController {
         try {
             super.initControls();
 
-            chartController.dataController = this;
             chartMaker = chartController.chartMaker;
+            chartController.redrawNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    drawChart();
+                }
+            });
 
             checkChartType();
             chartGroup.selectedToggleProperty().addListener(
@@ -182,6 +188,10 @@ public class Data2DChartXYController extends BaseData2DChartController {
 
     @Override
     public void drawChart() {
+        drawXYChart();
+    }
+
+    public void drawXYChart() {
         try {
             if (outputData == null || outputData.isEmpty()) {
                 popError(message("NoData"));

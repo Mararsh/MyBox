@@ -1,6 +1,8 @@
 package mara.mybox.controller;
 
 import java.util.ArrayList;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
@@ -32,8 +34,13 @@ public class Data2DChartPieController extends BaseData2DChartController {
         try {
             super.initControls();
 
-            chartController.dataController = this;
             pieMaker = chartController.pieMaker;
+            chartController.redrawNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    drawChart();
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -84,6 +91,10 @@ public class Data2DChartPieController extends BaseData2DChartController {
 
     @Override
     public void drawChart() {
+        drawPieChart();
+    }
+
+    public void drawPieChart() {
         try {
             if (outputData == null || outputData.isEmpty()) {
                 popError(message("NoData"));

@@ -14,14 +14,10 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Separator;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
-import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.tools.DateTools;
-import mara.mybox.tools.HtmlWriteTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -33,7 +29,6 @@ import mara.mybox.value.UserConfig;
 public class JavaScriptEditor extends TreeNodeEditor {
 
     protected JavaScriptController jsController;
-    protected String outputs = "";
 
     @FXML
     protected Button clearCodesButton;
@@ -60,38 +55,11 @@ public class JavaScriptEditor extends TreeNodeEditor {
     @FXML
     @Override
     public void startAction() {
-        try {
-            if (jsController.htmlWebView == null) {
-                popError(message("InvalidParameters") + ": Source WebView ");
-                return;
-            }
-            String script = valueInput.getText();
-            if (script == null || script.isBlank()) {
-                popError(message("InvalidParameters") + ": JavaScript");
-                return;
-            }
-            jsController.rightPaneCheck.setSelected(true);
-            String ret;
-            try {
-                Object o = jsController.htmlWebView.webEngine.executeScript(script);
-                if (o != null) {
-                    ret = o.toString();
-                } else {
-                    ret = "";
-                }
-            } catch (Exception e) {
-                ret = e.toString();
-            }
+        jsController.runScirpt(getScript());
+    }
 
-            outputs += DateTools.nowString() + "<div class=\"valueText\" >"
-                    + HtmlWriteTools.stringToHtml(script) + "</div>";
-            outputs += "<div class=\"valueBox\">" + HtmlWriteTools.stringToHtml(ret) + "</div><br><br>";
-            String html = HtmlWriteTools.html(null, HtmlStyles.DefaultStyle, "<body>" + outputs + "</body>");
-            jsController.outputController.loadContents(html);
-            TableStringValues.add("JavaScriptHistories", script.trim());
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+    public String getScript() {
+        return valueInput.getText();
     }
 
     @FXML

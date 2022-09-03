@@ -161,7 +161,7 @@ public class ColorCopyController extends ControlColorPaletteSelector {
             colorsManager = ColorsManageController.oneOpen();
         } else {
             colorsManager.colorsController.loadPaletteLast(palette);
-            colorsManager.toFront();
+            colorsManager.requestMouse();
         }
         colorsManager.popInformation(Languages.message("Copied") + ": " + count);
         closeStage();

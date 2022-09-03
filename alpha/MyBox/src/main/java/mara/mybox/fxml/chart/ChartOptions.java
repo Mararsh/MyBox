@@ -379,6 +379,7 @@ public class ChartOptions<X, Y> {
 
     public ChartOptions setDefaultChartTitle(String defaultChartTitle) {
         this.defaultChartTitle = defaultChartTitle;
+        this.chartTitle = defaultChartTitle;
         return this;
     }
 
@@ -388,6 +389,7 @@ public class ChartOptions<X, Y> {
 
     public ChartOptions setDefaultCategoryLabel(String defaultCategoryLabel) {
         this.defaultCategoryLabel = defaultCategoryLabel;
+        this.categoryLabel = defaultCategoryLabel;
         return this;
     }
 
@@ -397,6 +399,7 @@ public class ChartOptions<X, Y> {
 
     public ChartOptions setDefaultValueLabel(String defaultValueLabel) {
         this.defaultValueLabel = defaultValueLabel;
+        this.valueLabel = defaultValueLabel;
         return this;
     }
 

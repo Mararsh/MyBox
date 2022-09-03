@@ -68,13 +68,23 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
         try {
             super.initControls();
 
-            fittingController.dataController = this;
             fittingMaker = fittingController.chartMaker;
             fittingMaker.init(ChartType.SimpleRegressionChart, message("SimpleRegressionChart"));
+            fittingController.redrawNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    drawFittingChart();
+                }
+            });
 
-            residualController.dataController = this;
             residualMaker = residualController.chartMaker;
             residualMaker.init(ChartType.ResidualChart, message("ResidualChart"));
+            residualController.redrawNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    drawResidualChart();
+                }
+            });
 
             initChartTab();
 
@@ -504,16 +514,6 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
     public void makeResidualChart() {
         makeResidualData();
         drawResidualChart();
-    }
-
-    @Override
-    public void drawChart(BaseData2DChartFx chartController) {
-        if (chartController == fittingController) {
-            drawFittingChart();
-        }
-        if (chartController == residualController) {
-            drawResidualChart();
-        }
     }
 
     /*

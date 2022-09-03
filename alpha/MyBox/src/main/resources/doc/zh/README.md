@@ -4,12 +4,13 @@
 这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。          
 
 ## 开发中的试用版            
-2022-9-1 a6.6      
+2022-9-3 a6.6      
 
+* 一元函数      
 * 多重线性回归-组合      
 * 添加新数据行时可以输入数值        
 
-[MyBox-a6.6-2022-9-1-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/alpha/MyBox-a6.6-2022-9-1-win10-x64.zip)          
+[MyBox-a6.6-2022-9-3-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/alpha/MyBox-a6.6-2022-9-3-win10-x64.zip)          
 
 
 ## 新内容

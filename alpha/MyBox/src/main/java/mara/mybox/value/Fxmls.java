@@ -217,6 +217,10 @@ public class Fxmls {
     public static final String JexlFxml = "/fxml/Jexl.fxml";
     public static final String JavaScriptFxml = "/fxml/JavaScript.fxml";
 
+    public static final String FunctionUnaryFxml = "/fxml/FunctionUnary.fxml";
+    public static final String FunctionBinaryFxml = "/fxml/FunctionBinary.fxml";
+    public static final String FunctionMultivariateFxml = "/fxml/FunctionMultivariate.fxml";
+
     public static final String DataFileCSVFxml = "/fxml/DataFileCSV.fxml";
     public static final String DataFileCSVConvertFxml = "/fxml/DataFileCSVConvert.fxml";
     public static final String DataFileCSVMergeFxml = "/fxml/DataFileCSVMerge.fxml";

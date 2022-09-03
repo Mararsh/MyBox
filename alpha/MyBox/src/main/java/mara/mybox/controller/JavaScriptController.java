@@ -4,9 +4,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.HtmlStyles;
+import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -19,6 +22,7 @@ import static mara.mybox.value.Languages.message;
 public class JavaScriptController extends TreeManageController {
 
     protected ControlWebView htmlWebView;
+    protected String outputs = "";
 
     @FXML
     protected Tab htmlTab;
@@ -44,8 +48,10 @@ public class JavaScriptController extends TreeManageController {
             outputController.setParent(this, ControlWebView.ScrollType.Bottom);
 
             htmlWebView = htmlController;
-            htmlController.setParent(this, ControlWebView.ScrollType.Bottom);
-            htmlController.loadContents(HtmlWriteTools.emptyHmtl(message("AppTitle")));
+            if (htmlController != null) {
+                htmlController.setParent(this, ControlWebView.ScrollType.Bottom);
+                htmlController.loadContents(HtmlWriteTools.emptyHmtl(message("AppTitle")));
+            }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -82,7 +88,7 @@ public class JavaScriptController extends TreeManageController {
 
     @FXML
     public void clearResults() {
-        editorController.outputs = "";
+        outputs = "";
         outputController.loadContents("");
     }
 
@@ -91,6 +97,41 @@ public class JavaScriptController extends TreeManageController {
         editorController.valueInput.setText(script);
     }
 
+    public void runScirpt(String script) {
+        try {
+            if (htmlWebView == null) {
+                popError(message("InvalidParameters") + ": Source WebView ");
+                return;
+            }
+            if (script == null || script.isBlank()) {
+                popError(message("InvalidParameters") + ": JavaScript");
+                return;
+            }
+            if (rightPaneCheck != null) {
+                rightPaneCheck.setSelected(true);
+            }
+            String ret;
+            try {
+                Object o = htmlWebView.webEngine.executeScript(script);
+                if (o != null) {
+                    ret = o.toString();
+                } else {
+                    ret = "";
+                }
+            } catch (Exception e) {
+                ret = e.toString();
+            }
+
+            outputs += DateTools.nowString() + "<div class=\"valueText\" >"
+                    + HtmlWriteTools.stringToHtml(script) + "</div>";
+            outputs += "<div class=\"valueBox\">" + HtmlWriteTools.stringToHtml(ret) + "</div><br><br>";
+            String html = HtmlWriteTools.html(null, HtmlStyles.DefaultStyle, "<body>" + outputs + "</body>");
+            outputController.loadContents(html);
+            TableStringValues.add("JavaScriptHistories", script.trim());
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
 
     /*
         static

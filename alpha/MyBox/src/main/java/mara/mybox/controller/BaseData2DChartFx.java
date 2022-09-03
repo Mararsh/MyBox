@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
@@ -32,11 +33,11 @@ import static mara.mybox.value.Languages.message;
  */
 public abstract class BaseData2DChartFx extends BaseController {
 
-    protected BaseData2DChartController dataController;
     protected Chart chart;
     protected List<List<String>> data, checkedData;
     protected List<Data2DColumn> columns, checkedColumns;
     protected ChartType chartType;
+    protected SimpleBooleanProperty redrawNotify;
 
     @FXML
     protected ScrollPane scrollPane;
@@ -45,12 +46,15 @@ public abstract class BaseData2DChartFx extends BaseController {
     @FXML
     protected FlowPane buttonsPane;
 
+    public BaseData2DChartFx() {
+        redrawNotify = new SimpleBooleanProperty(false);
+    }
+
     @Override
     public void initControls() {
         try {
             super.initControls();
             buttonsPane.setDisable(true);
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -70,7 +74,7 @@ public abstract class BaseData2DChartFx extends BaseController {
     }
 
     public void redraw() {
-        dataController.drawChart(this);
+        redrawNotify.set(!redrawNotify.get());
     }
 
     @FXML
