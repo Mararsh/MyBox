@@ -182,6 +182,16 @@ public class ControlData2DEditTable extends ControlData2DLoad {
 
     @FXML
     @Override
+    public void editAction() {
+        int index = tableView.getSelectionModel().getSelectedIndex();
+        if (index < 0) {
+            return;
+        }
+        Data2DRowEditController.open(this, index);
+    }
+
+    @FXML
+    @Override
     public void deleteAction() {
         deleteRowsAction();
     }
@@ -208,6 +218,16 @@ public class ControlData2DEditTable extends ControlData2DLoad {
             return;
         }
         Data2DCopyController.open(this);
+    }
+
+    @FXML
+    @Override
+    public void copyToSystemClipboard() {
+        if (!validateData()) {
+            return;
+        }
+        Data2DCopyController controller = Data2DCopyController.open(this);
+        controller.targetController.systemClipboardRadio.setSelected(true);
     }
 
     public void copyToSystemClipboard(List<String> names, List<List<String>> data) {

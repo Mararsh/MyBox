@@ -75,6 +75,8 @@ License:    Apache License Version 2.0
                 <ComboBox fx:id="randomSelector" editable="true" prefWidth="160.0" />
             </children>
         </HBox>
+      <Label text="%Description" />
+      <TextArea fx:id="descInput" prefHeight="100.0" />
         <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="93.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
             <children>
                 <Label minHeight="-Infinity" text="%UpdateTime" wrapText="true" />

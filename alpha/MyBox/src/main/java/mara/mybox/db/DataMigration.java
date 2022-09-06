@@ -153,6 +153,9 @@ public class DataMigration {
                 if (lastVersion < 6005009) {
                     updateIn659(conn);
                 }
+                if (lastVersion < 6006000) {
+                    updateIn660(conn);
+                }
             }
             TableStringValues.add(conn, "InstalledVersions", AppValues.AppVersion);
             conn.setAutoCommit(true);
@@ -160,6 +163,18 @@ public class DataMigration {
             MyBoxLog.debug(e.toString());
         }
         return true;
+    }
+
+    private static void updateIn660(Connection conn) {
+        try ( Statement statement = conn.createStatement()) {
+            MyBoxLog.info("Updating tables in 6.6...");
+
+            conn.setAutoCommit(true);
+            statement.executeUpdate("ALTER TABLE Data2D_Column ADD COLUMN description VARCHAR(" + StringMaxLength + ")");
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     private static void updateIn659(Connection conn) {

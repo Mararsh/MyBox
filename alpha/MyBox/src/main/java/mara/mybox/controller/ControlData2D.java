@@ -40,7 +40,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -1219,14 +1218,8 @@ public class ControlData2D extends BaseController {
         if (targetIsTextInput()) {
             return false;
         }
-        if (editTab.isSelected()) {
-            if (editController.tableTab.isSelected()) {
-                tableController.copyAction();
-
-            } else if (editController.textTab.isSelected()) {
-                TextClipboardTools.copyToMyBoxClipboard(myController, textController.textArea);
-
-            }
+        if (editTab.isSelected() && editController.tableTab.isSelected()) {
+            tableController.copyToSystemClipboard();
             return true;
         }
         return false;
@@ -1238,7 +1231,7 @@ public class ControlData2D extends BaseController {
             return false;
         }
         if (editTab.isSelected() && editController.tableTab.isSelected()) {
-            Data2DPasteContentInMyBoxClipboardController.open(tableController);
+            tableController.pasteContentInSystemClipboard();
             return true;
 
         }

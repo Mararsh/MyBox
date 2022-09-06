@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" spacing="10.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DColumnEdit">
+    <children>
+        <HBox alignment="CENTER_LEFT" layoutX="30.0" layoutY="55.0" spacing="2.0">
+            <children>
+                <Label text="%ColumnName" />
+                <TextField fx:id="nameInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+            <ImageView fx:id="rightTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../buttons/Red/iconTipsRight.png" />
+               </image>
+            </ImageView>
+            </children>
+        </HBox>
+        <HBox alignment="CENTER_LEFT" layoutX="30.0" layoutY="55.0" minWidth="-Infinity" spacing="2.0">
+            <children>
+                <Label minWidth="-Infinity" text="%Type" />
+                <RadioButton fx:id="stringRadio" minWidth="-Infinity" mnemonicParsing="false" selected="true" text="%String">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="typeGroup" />
+                    </toggleGroup>
+                </RadioButton>
+                <RadioButton fx:id="doubleRadio" layoutX="40.0" layoutY="10.0" minWidth="-Infinity" mnemonicParsing="false" text="%Double" toggleGroup="$typeGroup" />
+                <RadioButton fx:id="floatRadio" layoutX="98.0" layoutY="10.0" minWidth="-Infinity" mnemonicParsing="false" text="%Float" toggleGroup="$typeGroup" />
+                <RadioButton fx:id="longRadio" layoutX="222.0" layoutY="10.0" minWidth="-Infinity" mnemonicParsing="false" text="%Long" toggleGroup="$typeGroup" />
+                <RadioButton fx:id="intRadio" layoutX="40.0" layoutY="10.0" minWidth="-Infinity" mnemonicParsing="false" text="%Integer" toggleGroup="$typeGroup" />
+                <RadioButton fx:id="shortRadio" layoutX="164.0" layoutY="10.0" minWidth="-Infinity" mnemonicParsing="false" text="%Short" toggleGroup="$typeGroup" />
+                <RadioButton fx:id="booleanRadio" layoutX="288.0" layoutY="10.0" minWidth="-Infinity" mnemonicParsing="false" text="%Boolean" toggleGroup="$typeGroup" />
+                <RadioButton fx:id="dateRadio" layoutX="346.0" layoutY="10.0" minWidth="-Infinity" mnemonicParsing="false" text="%Date" toggleGroup="$typeGroup" />
+            </children>
+        </HBox>
+      <HBox alignment="CENTER_LEFT" spacing="2.0">
+         <children>
+            <Label text="%DefaultValue" />
+            <TextField fx:id="defaultInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+        <HBox alignment="CENTER_LEFT" layoutX="30.0" layoutY="89.0" spacing="2.0">
+            <children>
+                <Label text="%Length" />
+                <TextField fx:id="lengthInput" prefWidth="100.0" text="32672" />
+                <Label text="(&lt;= 32672)" />
+            </children>
+        </HBox>
+        <HBox alignment="CENTER_LEFT" layoutX="30.0" layoutY="115.0" spacing="2.0">
+            <children>
+                <Label text="%Width" />
+                <TextField fx:id="widthInput" prefWidth="100.0" text="100" />
+            </children>
+        </HBox>
+        <HBox alignment="CENTER_LEFT" layoutX="30.0" layoutY="115.0" spacing="2.0">
+            <children>
+                <Label text="%Color" />
+                <fx:include fx:id="color" source="ColorSet.fxml" />
+            </children>
+        </HBox>
+        <FlowPane hgap="2.0" vgap="2.0">
+            <children>
+                <CheckBox fx:id="notNullCheck" layoutX="100.0" layoutY="10.0" mnemonicParsing="false" text="%NotNull" />
+                <CheckBox fx:id="editableCheck" layoutX="190.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Editable" />
+            <CheckBox fx:id="formatCheck" layoutX="90.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%SeparateByComma" />
+            </children>
+        </FlowPane>
+      <Label text="%Description" />
+      <TextArea fx:id="descInput" prefHeight="100.0" />
+    </children>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+</VBox>

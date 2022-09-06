@@ -181,6 +181,8 @@ public class Fxmls {
     public static final String Data2DSpliceFxml = "/fxml/Data2DSplice.fxml";
 
     public static final String Data2DAddRowsFxml = "/fxml/Data2DAddRows.fxml";
+    public static final String Data2DRowEditFxml = "/fxml/Data2DRowEdit.fxml";
+    public static final String Data2DColumnEditFxml = "/fxml/Data2DColumnEdit.fxml";
     public static final String Data2DSetValuesFxml = "/fxml/Data2DSetValues.fxml";
     public static final String Data2DCopyFxml = "/fxml/Data2DCopy.fxml";
     public static final String Data2DLoadContentInSystemClipboardFxml = "/fxml/Data2DLoadContentInSystemClipboard.fxml";

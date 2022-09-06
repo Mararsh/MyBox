@@ -10,33 +10,30 @@ import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
- * @CreateDate 2022-2-19
+ * @CreateDate 2022-9-4
  * @License Apache License Version 2.0
- *
  */
-public class Data2DColumnCreateController extends BaseChildController {
+public class Data2DColumnEditController extends BaseChildController {
 
     protected ControlData2DColumns columnsController;
+    protected int index;
 
     @FXML
     protected ControlData2DColumnEdit columnEditController;
     @FXML
-    protected Label buttomLabel;
+    protected Label titleLabel;
 
-    public Data2DColumnCreateController() {
-        baseTitle = message("NewColumn");
-        TipsLabelKey = message("SqlIdentifierComments");
-    }
-
-    protected void setParameters(ControlData2DColumns columnsController) {
+    public void setParameters(ControlData2DColumns columnsController, int index) {
         try {
             this.columnsController = columnsController;
-            buttomLabel.setVisible(columnsController.data2D.isTable() && columnsController.data2D.getSheet() != null);
+            this.index = index;
 
-            columnEditController.setParameters(columnsController);
+            columnEditController.setParameters(columnsController, index);
+            titleLabel.setText(columnsController.data2D.displayName() + "\n"
+                    + message("Column") + " " + (index + 1));
 
         } catch (Exception e) {
-            MyBoxLog.console(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -48,22 +45,23 @@ public class Data2DColumnCreateController extends BaseChildController {
             if (column == null) {
                 return;
             }
-            columnsController.addRow(column);
+            columnsController.tableData.set(index, column);
+            columnsController.tableView.scrollTo(index - 3);
             popSuccessful();
+
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.error(e.toString());
         }
     }
 
     /*
         static
      */
-    public static Data2DColumnCreateController open(ControlData2DColumns columnsController) {
+    public static Data2DColumnEditController open(ControlData2DColumns columnsController, int index) {
         try {
-            Data2DColumnCreateController controller = (Data2DColumnCreateController) WindowTools.openChildStage(
-                    columnsController.getMyWindow(), Fxmls.Data2DColumnCreateFxml, false);
-            controller.setParameters(columnsController);
-            controller.requestMouse();
+            Data2DColumnEditController controller = (Data2DColumnEditController) WindowTools.openChildStage(
+                    columnsController.getMyWindow(), Fxmls.Data2DColumnEditFxml, false);
+            controller.setParameters(columnsController, index);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

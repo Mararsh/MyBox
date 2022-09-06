@@ -191,7 +191,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                 super.finalAction();
                 data2D.stopTask();
                 task = null;
-                valueController.expressionController.calculator.stop();
+                valueController.expressionController.calculator.reset();
             }
 
         };

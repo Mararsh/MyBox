@@ -173,6 +173,8 @@ public class Data2DColumn extends ColumnDefinition {
                 return data.getReferColumn();
             case "values_list":
                 return null;
+            case "description":
+                return data.getDescription();
         }
         return null;
     }
@@ -253,6 +255,9 @@ public class Data2DColumn extends ColumnDefinition {
                     data.setReferColumn(value == null ? null : (String) value);
                     return true;
                 case "values_list":
+                    return true;
+                case "description":
+                    data.setDescription(value == null ? null : (String) value);
                     return true;
             }
         } catch (Exception e) {

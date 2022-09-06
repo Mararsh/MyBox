@@ -9,7 +9,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
-import mara.mybox.data.FindReplaceString;
+import javafx.scene.input.MouseEvent;
 import mara.mybox.data2d.Data2D_Attributes;
 import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.db.data.ColumnDefinition;
@@ -18,6 +18,8 @@ import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.ExpressionCalculator;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.chart.ChartOptions;
 import mara.mybox.fxml.chart.XYChartMaker;
 import mara.mybox.fxml.style.HtmlStyles;
@@ -32,24 +34,27 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-9-2
  * @License Apache License Version 2.0
  */
-public class FunctionUnaryController extends JavaScriptController {
+public class FunctionUnaryController extends BaseJavaScriptReferController {
 
-    protected FindReplaceString findReplace;
     protected XYChartMaker chartMaker;
+    protected String outputs = "";
+    protected ExpressionCalculator calculator;
 
     @FXML
-    protected FunctionUnaryEditor editorController;
+    protected TextField xInput;
     @FXML
-    protected TextField xInput, fromInput, toInput, numberInput;
+    protected ControlDataSplit dataSplitController, chartSplitController;
+    @FXML
+    protected ControlData2DResults dataController;
     @FXML
     protected ControlData2DChartXY chartController;
+    @FXML
+    protected ControlWebView outputController;
 
     public FunctionUnaryController() {
         baseTitle = message("UnaryFunction");
         category = TreeNode.JavaScript;
         TipsLabelKey = "UnaryFunctionTips";
-        nameMsg = message("Name");
-        valueMsg = message("UnaryFunction");
     }
 
     @Override
@@ -57,12 +62,12 @@ public class FunctionUnaryController extends JavaScriptController {
         try {
             super.initControls();
 
-            editorController.setParameters(this);
+            calculator = new ExpressionCalculator();
 
-            findReplace = FindReplaceString.create().setOperation(FindReplaceString.Operation.ReplaceAll)
-                    .setIsRegex(false).setCaseInsensitive(false).setMultiline(false);
+            placeholdersList.getItems().add("#{x}");
 
-            htmlWebView = outputController;
+            dataSplitController.setParameters(baseName + "Data");
+            chartSplitController.setParameters(baseName + "Chart");
 
             chartMaker = chartController.chartMaker;
             chartController.redrawNotify.addListener(new ChangeListener<Boolean>() {
@@ -77,13 +82,48 @@ public class FunctionUnaryController extends JavaScriptController {
         }
     }
 
+    @FXML
+    public void okDataAction() {
+
+    }
+
+    @FXML
+    public void popContextExamples() {
+
+    }
+
+    @FXML
+    public void showContextExamples() {
+
+    }
+
+    @FXML
+    public void showDomainHistories() {
+
+    }
+
+    @FXML
+    public void popContextHistories() {
+
+    }
+
+    @FXML
+    public void clearDomain() {
+
+    }
+
+    @FXML
+    public void okChartAction() {
+
+    }
+
     public String getFunction() {
-        String script = editorController.getScript();
+        String script = scriptInput.getText();
         if (script == null || script.isBlank()) {
             popError(message("InvalidParameters") + ": JavaScript");
             return null;
         }
-        return findReplace.replaceStringAll(script, "#{x}", "x");
+        return calculator.replaceStringAll(script, "#{x}", "x");
     }
 
     @FXML
@@ -94,7 +134,7 @@ public class FunctionUnaryController extends JavaScriptController {
                 popError(message("InvalidParameter") + ": x");
                 return;
             }
-            String script = editorController.getScript();
+            String script = scriptInput.getText();
             if (script == null || script.isBlank()) {
                 popError(message("InvalidParameters") + ": JavaScript");
                 return;
@@ -116,19 +156,8 @@ public class FunctionUnaryController extends JavaScriptController {
 
     public String calculate(String script, double x) {
         try {
-            String filledScript = findReplace.replaceStringAll(script, "#{x}", x + "");
-            String ret;
-            try {
-                Object o = outputController.webEngine.executeScript(filledScript);
-                if (o != null) {
-                    ret = o.toString();
-                } else {
-                    ret = "";
-                }
-            } catch (Exception e) {
-                ret = e.toString();
-            }
-            return ret;
+            String filledScript = calculator.replaceStringAll(script, "#{x}", x + "");
+            return calculator.calculate(filledScript);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
@@ -136,38 +165,27 @@ public class FunctionUnaryController extends JavaScriptController {
     }
 
     @FXML
+    public void popHtmlStyle(MouseEvent mouseEvent) {
+        PopTools.popHtmlStyle(mouseEvent, outputController);
+    }
+
+    @FXML
+    public void editResults() {
+        outputController.editAction();
+    }
+
+    @FXML
+    public void clearResults() {
+        outputs = "";
+        outputController.loadContents("");
+    }
+
+    @FXML
     public void chartAction() {
         try {
-            String script = editorController.getScript();
+            String script = scriptInput.getText();
             if (script == null || script.isBlank()) {
                 popError(message("InvalidParameters") + ": JavaScript");
-                return;
-            }
-            double from = Double.NaN;
-            try {
-                from = Double.valueOf(fromInput.getText());
-            } catch (Exception e) {
-            }
-            if (DoubleTools.invalidDouble(from)) {
-                popError(message("InvalidParameter") + ": " + message("From"));
-                return;
-            }
-            double to = Double.NaN;
-            try {
-                to = Double.valueOf(toInput.getText());
-            } catch (Exception e) {
-            }
-            if (DoubleTools.invalidDouble(to) || to < from) {
-                popError(message("InvalidParameter") + ": " + message("To"));
-                return;
-            }
-            int n = 0;
-            try {
-                n = Integer.valueOf(numberInput.getText());
-            } catch (Exception e) {
-            }
-            if (n < 1) {
-                popError(message("InvalidParameter") + ": " + message("NumberOfData"));
                 return;
             }
 
@@ -184,28 +202,28 @@ public class FunctionUnaryController extends JavaScriptController {
                     .setInvalidAs(InvalidAs.Skip);
 
             List<List<String>> outputData = new ArrayList<>();
-            double interval = (to - from) / n;
-            double x = from;
-            for (int i = 0; i < n; i++) {
-                x = from + i * interval;
-                String y = calculate(script, x);
-                if (y == null) {
-                    continue;
-                }
-                List<String> row = new ArrayList<>();
-                row.add(x + "");
-                row.add(y);
-                outputData.add(row);
-            }
-            if (x != to) {
-                String y = calculate(script, to);
-                if (y != null) {
-                    List<String> row = new ArrayList<>();
-                    row.add(to + "");
-                    row.add(y);
-                    outputData.add(row);
-                }
-            }
+//            double interval = (to - from) / n;
+//            double x = from;
+//            for (int i = 0; i < n; i++) {
+//                x = from + i * interval;
+//                String y = calculate(script, x);
+//                if (y == null) {
+//                    continue;
+//                }
+//                List<String> row = new ArrayList<>();
+//                row.add(x + "");
+//                row.add(y);
+//                outputData.add(row);
+//            }
+//            if (x != to) {
+//                String y = calculate(script, to);
+//                if (y != null) {
+//                    List<String> row = new ArrayList<>();
+//                    row.add(to + "");
+//                    row.add(y);
+//                    outputData.add(row);
+//                }
+//            }
 
             Map<String, String> palette = new HashMap();
             Random random = new Random();

@@ -11,7 +11,6 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
@@ -27,7 +26,7 @@ License:    Apache License Version 2.0
                 <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%AddRows" textAlignment="CENTER" VBox.vgrow="NEVER" />
             </children>
         </HBox>
-        <VBox fx:id="rowsBox" spacing="10.0">
+        <VBox spacing="10.0">
             <children>
                 <HBox alignment="CENTER_LEFT" spacing="2.0">
                     <children>
@@ -74,15 +73,7 @@ License:    Apache License Version 2.0
             </children>
         </HBox>
       <Separator prefWidth="200.0" />
-      <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-         <content>
-            <VBox fx:id="valuesBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-               <padding>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </padding>
-            </VBox>
-         </content>
-      </ScrollPane>
+      <fx:include fx:id="rowEdit" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DRowEdit.fxml" VBox.vgrow="ALWAYS" />
         <HBox alignment="CENTER_RIGHT" spacing="5.0">
             <children>
                 <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">

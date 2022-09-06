@@ -31,7 +31,7 @@ public class Data2DMultipleLinearRegressionCombinationController extends Data2DM
 
     public Data2DMultipleLinearRegressionCombinationController() {
         baseTitle = message("MultipleLinearRegressionCombination");
-        TipsLabelKey = "MultipleLinearRegressionTips";
+        TipsLabelKey = "MultipleLinearRegressionCombinationTips";
         defaultScale = 8;
     }
 

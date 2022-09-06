@@ -56,7 +56,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     }
 
     @FXML
-    protected TableColumn<Data2DColumn, String> nameColumn, typeColumn, defaultColumn;
+    protected TableColumn<Data2DColumn, String> nameColumn, typeColumn, defaultColumn, descColumn;
     @FXML
     protected TableColumn<Data2DColumn, Boolean> editableColumn, notNullColumn, formatColumn,
             primaryColumn, autoColumn;
@@ -376,6 +376,8 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             });
             colorColumn.setEditable(true);
             colorColumn.getStyleClass().add("editable-column");
+
+            descColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
 
             checkButtons();
 
@@ -771,6 +773,16 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
         tableView.scrollTo(row);
         isSettingValues = false;
         tableChanged(true);
+    }
+
+    @FXML
+    @Override
+    public void editAction() {
+        int index = tableView.getSelectionModel().getSelectedIndex();
+        if (index < 0) {
+            return;
+        }
+        Data2DColumnEditController.open(this, index);
     }
 
 }

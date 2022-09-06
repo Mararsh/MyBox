@@ -35,7 +35,8 @@ import static mara.mybox.value.Languages.message;
  */
 public class ColumnDefinition extends BaseData {
 
-    protected String tableName, columnName, label, referName, referTable, referColumn, defaultValue;
+    protected String tableName, columnName, label, referName, referTable, referColumn,
+            defaultValue, description;
     protected ColumnType type;
     protected int index, length, width;
     protected Color color;
@@ -63,6 +64,10 @@ public class ColumnDefinition extends BaseData {
 
     public static enum OnUpdate {
         NoAction, Restrict
+    }
+
+    public static enum DataFormat {
+        ScientificNotation, CommaSeparated, None
     }
 
     public final void initColumnDefinition() {
@@ -451,24 +456,17 @@ public class ColumnDefinition extends BaseData {
             }
         } catch (Exception e) {
         }
-        if (null == invalidAs || null == type || !isNumberType()) {
-            return null;
-        } else {
-            switch (invalidAs) {
-                case Zero:
-                    switch (type) {
-                        case Double:
-                            return 0d;
-                        case Float:
-                            return 0f;
-                        default:
-                            return 0;
-                    }
-                case Blank:
-                    return null;
+        if (isNumberType() && invalidAs == InvalidAs.Zero) {
+            switch (type) {
+                case Double:
+                    return 0d;
+                case Float:
+                    return 0f;
                 default:
-                    return null;
+                    return 0;
             }
+        } else {
+            return null;
         }
     }
 
@@ -494,6 +492,9 @@ public class ColumnDefinition extends BaseData {
                 return null;
             }
             Object o = fromString(string, InvalidAs.Blank);
+            if (o == null) {
+                return string;
+            }
             switch (type) {
                 case Double:
                     if (needFormat) {
@@ -526,6 +527,8 @@ public class ColumnDefinition extends BaseData {
                     } else {
                         return (short) o + "";
                     }
+                case Datetime:
+                    return DateTools.datetimeToString((Date) o);
                 default:
                     return o + "";
             }
@@ -1009,8 +1012,9 @@ public class ColumnDefinition extends BaseData {
         return color;
     }
 
-    public void setColor(Color color) {
+    public ColumnDefinition setColor(Color color) {
         this.color = color;
+        return this;
     }
 
     public DoubleStatistic getStatistic() {
@@ -1019,6 +1023,15 @@ public class ColumnDefinition extends BaseData {
 
     public ColumnDefinition setStatistic(DoubleStatistic statistic) {
         this.statistic = statistic;
+        return this;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public ColumnDefinition setDescription(String description) {
+        this.description = description;
         return this;
     }
 

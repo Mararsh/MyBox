@@ -14,17 +14,16 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" spacing="10.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DColumnCreateController">
+<VBox fx:id="thisPane" prefHeight="500.0" prefWidth="700.0" spacing="10.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DRowEditController">
     <children>
         <HBox alignment="CENTER" VBox.vgrow="NEVER">
             <children>
-                <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%NewColumn" textAlignment="CENTER" VBox.vgrow="NEVER" />
+                <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%DataRow" textAlignment="CENTER" wrapText="true" VBox.vgrow="NEVER" />
             </children>
         </HBox>
-      <fx:include fx:id="columnEdit" source="ControlData2DColumnEdit.fxml" />
-        <HBox alignment="CENTER_LEFT" spacing="5.0">
+      <fx:include fx:id="rowEdit" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DRowEdit.fxml" VBox.vgrow="ALWAYS" />
+        <HBox alignment="CENTER_RIGHT" spacing="5.0">
             <children>
-            <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                 <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -45,7 +44,6 @@ License:    Apache License Version 2.0
                 </Button>
             </children>
         </HBox>
-      <Label fx:id="buttomLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%NewColumnComments" wrapText="true" />
     </children>
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

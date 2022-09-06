@@ -1218,7 +1218,6 @@ public class ControlWebView extends BaseController {
                                 }
 
                             });
-                            menu.setDisable(html == null || html.isBlank());
                             frameItems.add(menu);
                         }
                         if (!frameItems.isEmpty()) {

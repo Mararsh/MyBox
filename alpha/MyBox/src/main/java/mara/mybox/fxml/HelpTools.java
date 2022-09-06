@@ -42,22 +42,34 @@ public class HelpTools {
         }
     }
 
-    public static File aboutLinearRegressionHtml() {
+    public static File AboutDataAnalysisHtml() {
         try {
-            StringTable table = new StringTable(null, message("AboutLinearRegression"));
-            table.newLinkRow(message("Guide"), "https://www.itl.nist.gov/div898/handbook/");
-            table.newLinkRow("", "https://book.douban.com/subject/10956491/");
-            table.newLinkRow(message("Video"), "https://www.bilibili.com/video/BV1Ua4y1e7YG");
-            table.newLinkRow("", "https://www.bilibili.com/video/BV1i7411d7aP");
-            table.newLinkRow(message("Example"), "https://www.xycoon.com/simple_linear_regression.htm");
-            table.newLinkRow("", "https://www.scribbr.com/statistics/simple-linear-regression/");
-            table.newLinkRow("", "http://www.datasetsanalysis.com/regressions/simple-linear-regression.html");
-            table.newLinkRow(message("Dataset"), "http://archive.ics.uci.edu/ml/datasets/Iris");
+            StringTable table = new StringTable(null, message("AboutDataAnalysis"));
+            table.newLinkRow(message("Dataset"), "https://www4.stat.ncsu.edu/~boos/var.select/");
+            table.newLinkRow("", "http://lib.stat.cmu.edu/datasets/");
+            table.newLinkRow("", "http://yann.lecun.com/exdb/mnist/");
+            table.newLinkRow("", "https://docs.microsoft.com/en-us/azure/open-datasets/");
             table.newLinkRow("", "https://github.com/tomsharp/SVR/tree/master/data");
+            table.newLinkRow("", "http://archive.ics.uci.edu/ml/datasets/Iris");
             table.newLinkRow("", "https://github.com/krishnaik06/simple-Linear-Regression");
             table.newLinkRow("", "https://github.com/susanli2016/Machine-Learning-with-Python/tree/master/data");
             table.newLinkRow("Apache-Math", "https://commons.apache.org/proper/commons-math/");
             table.newLinkRow("", "https://commons.apache.org/proper/commons-math/apidocs/index.html");
+            table.newLinkRow(message("Study"), "https://github.com/InfolabAI/DeepLearning");
+            table.newLinkRow("", "https://www.deeplearningbook.org/");
+            table.newLinkRow("", "https://github.com/zsdonghao/deep-learning-book");
+            table.newLinkRow("", "https://github.com/hadrienj/deepLearningBook-Notes");
+            table.newLinkRow("", "https://github.com/janishar/mit-deep-learning-book-pdf");
+            table.newLinkRow("", "https://clauswilke.com/dataviz/");
+            table.newLinkRow("", "https://www.kancloud.cn/apachecn/dataviz-zh/1944809");
+            table.newLinkRow("", "https://www.bilibili.com/video/BV1Ua4y1e7YG");
+            table.newLinkRow("", "https://www.bilibili.com/video/BV1i7411d7aP");
+            table.newLinkRow("", "https://github.com/fengdu78/Coursera-ML-AndrewNg-Notes");
+            table.newLinkRow(message("Tools"), "https://scikit-learn.org/stable/");
+            table.newLinkRow("", "https://www.mathworks.com/help/index.html");
+            table.newLinkRow(message("Example"), "https://www.xycoon.com/simple_linear_regression.htm");
+            table.newLinkRow("", "https://www.scribbr.com/statistics/simple-linear-regression/");
+            table.newLinkRow("", "http://www.datasetsanalysis.com/regressions/simple-linear-regression.html");
 
             File htmFile = HtmlWriteTools.writeHtml(table.html());
             return htmFile;

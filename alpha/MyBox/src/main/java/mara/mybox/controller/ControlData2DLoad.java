@@ -647,7 +647,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 return;
             }
             List<Data2DColumn> columns = data2D.getColumns();
-            int scale = data2D.getScale();
             for (int i = 0; i < columns.size(); i++) {
                 Data2DColumn dataColumn = columns.get(i);
                 String name = dataColumn.getColumnName();
