@@ -54,8 +54,8 @@ public class ExpressionCalculator {
         }
     }
 
-    public String calculate(String expression) {
-        this.expression = expression;
+    public String calculate(String script) {
+        this.expression = script;
         if (executeScript()) {
             return result;
         } else {

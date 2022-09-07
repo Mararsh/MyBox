@@ -1,7 +1,5 @@
 package mara.mybox.controller;
 
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +7,6 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -26,7 +23,6 @@ import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
-import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -57,6 +53,12 @@ public class ImagesPlayController extends BaseImagesListController {
     protected LoadingController loading;
     protected long memoryThreadhold;
     protected Thread loadThread;
+    protected PDDocument pdfDoc;
+    protected ImageType pdfImageType;
+    protected PDFRenderer pdfRenderer;
+    protected SlideShow ppt;
+    protected ImageInputStream imageInputStream;
+    protected ImageReader imageReader;
 
     @FXML
     protected ToggleGroup typeGroup;
@@ -232,75 +234,32 @@ public class ImagesPlayController extends BaseImagesListController {
 
     // Read images as more as possible
     protected boolean loadImageFile() {
+        imageReader = null;
         imageInfos.clear();
         Platform.runLater(() -> {
             imagesRadio.setSelected(true);
         });
-        if (sourceFile == null) {
-            return false;
-        }
-        try ( ImageInputStream iis = ImageIO.createImageInputStream(sourceFile)) {
-            ImageReader reader = ImageFileReaders.getReader(iis, FileNameTools.suffix(sourceFile.getName()));
-            if (reader == null) {
+        try {
+            openImageFile();
+            if (imageReader == null) {
                 return false;
             }
-            reader.setInput(iis, false, false);
             ImageFileInformation fileInfo = new ImageFileInformation(sourceFile);
             if (loading != null) {
                 loading.setInfo(message("Loading") + " " + message("MetaData"));
             }
-            ImageFileReaders.readImageFileMetaData(reader, fileInfo);
+            ImageFileReaders.readImageFileMetaData(imageReader, fileInfo);
             imageInfos.addAll(fileInfo.getImagesInformation());
             if (imageInfos == null) {
-                reader.dispose();
+                imageReader.dispose();
                 return false;
             }
             framesNumber = imageInfos.size();
-            int start = fromFrame;
-            if (start < 0 || start >= framesNumber) {
-                start = 0;
-            }
-            int end = toFrame;
-            if (end <= 0 || end >= framesNumber) {
-                end = framesNumber - 1;
-            }
-            boolean notGif = !fileFormat.equalsIgnoreCase("gif");
-            for (int i = start; i <= end; i++) {
-                ImageInformation imageInfo = imageInfos.get(i);
-                if (task == null || task.isCancelled()) {
-                    reader.dispose();
-                    return false;
-                }
-                if (!checkMemory()) {
-                    if (task != null) {
-                        task.setError(message("OutOfMeomey"));
-                    }
-                    loading.setInfo(message("OutOfMeomey"));
-                    break;
-                }
-                int index = imageInfo.getIndex();
-                if (loading != null) {
-                    loading.setInfo(message("Loading") + " " + index + " / " + framesNumber);
-                }
-                if (notGif) {
-                    imageInfo.setDuration(playController.interval);
-                }
-                ImageInformation.checkMem(imageInfo);
-                if (imageInfo.isNeedSample()) {
-                    if (task != null) {
-                        task.setError(message("OutOfMeomey"));
-                    }
-                    loading.setInfo(message("OutOfMeomey"));
-                    break;
-                }
-                BufferedImage bufferedImage = ImageFileReaders.readFrame(reader, imageInfo);
-                imageInfo.loadBufferedImage(bufferedImage);
-                if (task == null || task.isCancelled()) {
-                    reader.dispose();
-                    return false;
+            if (!fileFormat.equalsIgnoreCase("gif")) {
+                for (int i = 0; i < framesNumber; i++) {
+                    imageInfos.get(i).setDuration(playController.interval);
                 }
             }
-            reader.dispose();
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -309,6 +268,25 @@ public class ImagesPlayController extends BaseImagesListController {
             return false;
         }
         return task != null && !task.isCancelled();
+    }
+
+    protected void openImageFile() {
+        try {
+            closeFile();
+            if (sourceFile == null) {
+                return;
+            }
+            imageInputStream = ImageIO.createImageInputStream(sourceFile);
+            imageReader = ImageFileReaders.getReader(imageInputStream, FileNameTools.suffix(sourceFile.getName()));
+            if (imageReader != null) {
+                imageReader.setInput(imageInputStream, false, false);
+            }
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e.toString());
+        }
     }
 
     protected boolean loadIconFile() {
@@ -337,10 +315,11 @@ public class ImagesPlayController extends BaseImagesListController {
         Platform.runLater(() -> {
             pptRadio.setSelected(true);
         });
-        if (sourceFile == null) {
-            return false;
-        }
-        try ( SlideShow ppt = SlideShowFactory.create(sourceFile)) {
+        try {
+            openPPT();
+            if (ppt == null) {
+                return false;
+            }
             List<Slide> slides = ppt.getSlides();
             int width = ppt.getPageSize().width;
             int height = ppt.getPageSize().height;
@@ -353,52 +332,49 @@ public class ImagesPlayController extends BaseImagesListController {
                 imageInfo.setDuration(playController.interval);
                 imageInfos.add(imageInfo);
             }
-            int start = fromFrame;
-            if (start < 0 || start >= framesNumber) {
-                start = 0;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+        return true;
+    }
+
+    protected void openPPT() {
+        try {
+            closeFile();
+            if (sourceFile == null) {
+                return;
             }
-            int end = toFrame;
-            if (end <= 0 || end >= framesNumber) {
-                end = framesNumber - 1;
+            ppt = SlideShowFactory.create(sourceFile);
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
             }
-            for (int i = start; i <= end; i++) {
-                ImageInformation imageInfo = imageInfos.get(i);
-                if (task == null || task.isCancelled()) {
-                    return false;
-                }
-                if (!checkMemory()) {
-                    if (task != null) {
-                        task.setError(message("OutOfMeomey"));
-                    }
-                    loading.setInfo(message("OutOfMeomey"));
-                    break;
-                }
-                if (loading != null) {
-                    loading.setInfo(message("Loading") + " " + i + " / " + framesNumber);
-                }
-                try {
-                    Slide slide = slides.get(i);
-                    BufferedImage slideImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-                    Graphics2D g = slideImage.createGraphics();
-                    if (AppVariables.imageRenderHints != null) {
-                        g.addRenderingHints(AppVariables.imageRenderHints);
-                    }
-                    slide.draw(g);
-                    if (task == null || task.isCancelled()) {
-                        return false;
-                    }
-                    int targetWidth = loadWidth <= 0 ? width : loadWidth;
-                    if (slideImage.getWidth() != targetWidth) {
-                        slideImage = ScaleTools.scaleImageWidthKeep(slideImage, targetWidth);
-                    }
-                    if (task == null || task.isCancelled()) {
-                        return false;
-                    }
-                    imageInfo.setThumbnail(SwingFXUtils.toFXImage(slideImage, null));
-                    imageInfo.setImageType(slideImage.getType());
-                } catch (Exception e) {
-                    MyBoxLog.debug(e.toString());
-                }
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public boolean loadPDF() {
+        imageInfos.clear();
+        Platform.runLater(() -> {
+            pdfRadio.setSelected(true);
+        });
+        try {
+            openPDF();
+            if (pdfDoc == null) {
+                return false;
+            }
+            pdfImageType = ImageType.RGB;
+            if (transparentBackgroundCheck.isSelected()) {
+                pdfImageType = ImageType.ARGB;
+            }
+            framesNumber = pdfDoc.getNumberOfPages();
+            for (int i = 0; i < framesNumber; i++) {
+                ImageInformation imageInfo = new ImageInformation(sourceFile);
+                imageInfo.setIndex(i);
+                imageInfo.setDuration(playController.interval);
+                imageInfo.setDpi(dpi);
+                imageInfos.add(imageInfo);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -407,78 +383,20 @@ public class ImagesPlayController extends BaseImagesListController {
         return true;
     }
 
-    public boolean loadPDF() {
-        imageInfos.clear();
-        Platform.runLater(() -> {
-            pdfRadio.setSelected(true);
-        });
-        if (sourceFile == null) {
-            return false;
-        }
-        try ( PDDocument doc = PDDocument.load(sourceFile, AppVariables.pdfMemUsage)) {
-            framesNumber = doc.getNumberOfPages();
-            for (int i = 0; i < framesNumber; i++) {
-                ImageInformation imageInfo = new ImageInformation(sourceFile);
-                imageInfo.setIndex(i);
-                imageInfo.setDuration(playController.interval);
-                imageInfo.setDpi(dpi);
-                imageInfos.add(imageInfo);
+    protected void openPDF() {
+        try {
+            closeFile();
+            if (sourceFile == null) {
+                return;
             }
-            PDFRenderer renderer = new PDFRenderer(doc);
-            ImageType type = ImageType.RGB;
-            if (transparentBackgroundCheck.isSelected()) {
-                type = ImageType.ARGB;
-            }
-            int start = fromFrame;
-            if (start < 0 || start >= framesNumber) {
-                start = 0;
-            }
-            int end = toFrame;
-            if (end <= 0 || end >= framesNumber) {
-                end = framesNumber - 1;
-            }
-            for (int i = start; i <= end; i++) {
-                ImageInformation imageInfo = imageInfos.get(i);
-                if (task == null || task.isCancelled()) {
-                    return false;
-                }
-                if (!checkMemory()) {
-                    if (task != null) {
-                        task.setError(message("OutOfMeomey"));
-                    }
-                    loading.setInfo(message("OutOfMeomey"));
-                    break;
-                }
-                if (loading != null) {
-                    loading.setInfo(message("Loading") + " " + i + " / " + framesNumber);
-                }
-                try {
-                    BufferedImage bufferedImage = renderer.renderImageWithDPI(i, dpi, type);
-                    if (task == null || task.isCancelled()) {
-                        return false;
-                    }
-                    int imageWidth = bufferedImage.getWidth();
-                    imageInfo.setWidth(imageWidth);
-                    imageInfo.setHeight(bufferedImage.getHeight());
-                    imageInfo.setImageType(bufferedImage.getType());
-                    int targetWidth = loadWidth <= 0 ? imageWidth : loadWidth;
-                    if (imageWidth != targetWidth) {
-                        bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, targetWidth);
-                    }
-                    if (task == null || task.isCancelled()) {
-                        return false;
-                    }
-                    imageInfo.setThumbnail(SwingFXUtils.toFXImage(bufferedImage, null));
-                } catch (Exception e) {
-                    MyBoxLog.debug(e.toString());
-                }
-            }
-            doc.close();
+            pdfDoc = PDDocument.load(sourceFile, AppVariables.pdfMemUsage);
+            pdfRenderer = new PDFRenderer(pdfDoc);
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e.toString());
         }
-        return true;
     }
 
     public void loadImages(List<ImageInformation> infos) {
@@ -504,31 +422,6 @@ public class ImagesPlayController extends BaseImagesListController {
                             if (info.getDuration() < 0) {
                                 info.setDuration(playController.interval);
                             }
-                            if (!checkMemory()) {
-                                if (task != null) {
-                                    task.setError(message("OutOfMeomey"));
-                                }
-                                loading.setInfo(message("OutOfMeomey"));
-                                break;
-                            }
-                            if (loading != null) {
-                                loading.setInfo(message("Loading") + " " + i + " / " + framesNumber);
-                            }
-
-                            double targetWidth = loadWidth <= 0 ? info.getWidth() : loadWidth;
-                            Image thumb = info.getThumbnail();
-                            if (thumb != null && (int) thumb.getWidth() == (int) targetWidth) {
-                                continue;
-                            }
-                            ImageInformation.checkMem(info);
-                            if (info.isNeedSample()) {
-                                if (task != null) {
-                                    task.setError(message("OutOfMeomey"));
-                                }
-                                loading.setInfo(message("OutOfMeomey"));
-                                break;
-                            }
-                            info.loadThumbnail(loadWidth);
                         }
                         return true;
                     } catch (Exception e) {
@@ -647,7 +540,30 @@ public class ImagesPlayController extends BaseImagesListController {
             if (thumb != null && (int) thumb.getWidth() == (int) targetWidth) {
                 return thumb;
             }
-            return info.loadThumbnail(loadWidth);
+            info.setThumbnail(null);
+            if (fileFormat.equalsIgnoreCase("pdf")) {
+                if (pdfRenderer == null) {
+                    openPDF();
+                }
+                ImageInformation.readPDF(null, pdfRenderer, pdfImageType, info, loadWidth);
+
+            } else if (fileFormat.equalsIgnoreCase("ppt") || fileFormat.equalsIgnoreCase("pptx")) {
+                if (ppt == null) {
+                    openPPT();
+                }
+                ImageInformation.readPPT(null, ppt, info, loadWidth);
+
+            } else if (sourceFile != null) {
+                if (imageReader == null) {
+                    openImageFile();
+                }
+                ImageInformation.readImage(null, imageReader, info, loadWidth);
+
+            } else {
+                info.loadThumbnail(loadWidth);
+            }
+            thumb = info.getThumbnail();
+            return thumb;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
@@ -709,8 +625,43 @@ public class ImagesPlayController extends BaseImagesListController {
             frameIndex = index;
             image = thumb(imageInformation);
             imageView.setImage(image);
+            if (image == null) {
+                playController.pause();
+                return;
+            }
             refinePane();
             updateLabelsTitle();
+
+            imageInformation.setThumbnail(null);
+            int next = playController.nextIndex();
+            if (next >= 0 && index < imageInfos.size()) {
+                thumb(imageInfos.get(next));
+            }
+
+        } catch (Exception e) {
+            playController.clear();
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void closeFile() {
+        try {
+            if (imageInputStream != null) {
+                imageInputStream.close();
+                imageInputStream = null;
+            }
+            imageReader = null;
+
+            if (pdfDoc != null) {
+                pdfDoc.close();
+                pdfDoc = null;
+            }
+            pdfRenderer = null;
+
+            if (ppt != null) {
+                ppt.close();
+                ppt = null;
+            }
 
         } catch (Exception e) {
             playController.clear();
@@ -726,6 +677,7 @@ public class ImagesPlayController extends BaseImagesListController {
                 loading.cancelAction();
                 loading = null;
             }
+            closeFile();
         } catch (Exception e) {
         }
         super.cleanPane();
