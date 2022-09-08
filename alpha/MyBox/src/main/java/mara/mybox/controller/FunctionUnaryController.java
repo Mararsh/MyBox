@@ -34,12 +34,14 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-9-2
  * @License Apache License Version 2.0
  */
-public class FunctionUnaryController extends BaseJavaScriptReferController {
+public class FunctionUnaryController extends TreeManageController {
 
     protected XYChartMaker chartMaker;
     protected String outputs = "";
     protected ExpressionCalculator calculator;
 
+    @FXML
+    protected FunctionUnaryEditor editorController;
     @FXML
     protected TextField xInput;
     @FXML
@@ -53,8 +55,23 @@ public class FunctionUnaryController extends BaseJavaScriptReferController {
 
     public FunctionUnaryController() {
         baseTitle = message("UnaryFunction");
-        category = TreeNode.JavaScript;
+        category = TreeNode.MathFunction;
         TipsLabelKey = "UnaryFunctionTips";
+        nameMsg = message("Title");
+        valueMsg = message("MathFunction");
+        moreMsg = message("FunctionDomain");
+    }
+
+    @Override
+    public void initValues() {
+        try {
+            super.initValues();
+            calculator = new ExpressionCalculator();
+            nodeController = editorController;
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
     }
 
     @Override
@@ -62,13 +79,13 @@ public class FunctionUnaryController extends BaseJavaScriptReferController {
         try {
             super.initControls();
 
-            calculator = new ExpressionCalculator();
+            editorController.setParameters(this);
 
-            placeholdersList.getItems().add("#{x}");
+            outputController.setParent(this, ControlWebView.ScrollType.Bottom);
 
             dataSplitController.setParameters(baseName + "Data");
-            chartSplitController.setParameters(baseName + "Chart");
 
+            chartSplitController.setParameters(baseName + "Chart");
             chartMaker = chartController.chartMaker;
             chartController.redrawNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -82,33 +99,12 @@ public class FunctionUnaryController extends BaseJavaScriptReferController {
         }
     }
 
+    @Override
+    public void itemClicked() {
+    }
+
     @FXML
     public void okDataAction() {
-
-    }
-
-    @FXML
-    public void popContextExamples() {
-
-    }
-
-    @FXML
-    public void showContextExamples() {
-
-    }
-
-    @FXML
-    public void showDomainHistories() {
-
-    }
-
-    @FXML
-    public void popContextHistories() {
-
-    }
-
-    @FXML
-    public void clearDomain() {
 
     }
 
@@ -117,13 +113,21 @@ public class FunctionUnaryController extends BaseJavaScriptReferController {
 
     }
 
+    public String getScript() {
+        return editorController.valueInput.getText();
+    }
+
     public String getFunction() {
-        String script = scriptInput.getText();
+        String script = getScript();
         if (script == null || script.isBlank()) {
             popError(message("InvalidParameters") + ": JavaScript");
             return null;
         }
         return calculator.replaceStringAll(script, "#{x}", "x");
+    }
+
+    public String getDomain() {
+        return editorController.moreInput.getText();
     }
 
     @FXML
@@ -134,12 +138,20 @@ public class FunctionUnaryController extends BaseJavaScriptReferController {
                 popError(message("InvalidParameter") + ": x");
                 return;
             }
-            String script = scriptInput.getText();
+            String script = getScript();
             if (script == null || script.isBlank()) {
                 popError(message("InvalidParameters") + ": JavaScript");
                 return;
             }
+            if (!inDomain(x)) {
+                popError(message("NotInDomain"));
+                return;
+            }
             String ret = calculate(script, x);
+            if (ret == null) {
+                popError(message("Failed"));
+                return;
+            }
             outputs += DateTools.nowString() + "<div class=\"valueText\" >"
                     + HtmlWriteTools.stringToHtml(getFunction())
                     + "<br>x=" + x
@@ -154,6 +166,20 @@ public class FunctionUnaryController extends BaseJavaScriptReferController {
 
     }
 
+    public String calculate(double x) {
+        try {
+            String script = getScript();
+            if (script == null || script.isBlank()) {
+                popError(message("InvalidParameters") + ": JavaScript");
+                return null;
+            }
+            return calculate(script, x);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
     public String calculate(String script, double x) {
         try {
             String filledScript = calculator.replaceStringAll(script, "#{x}", x + "");
@@ -161,6 +187,30 @@ public class FunctionUnaryController extends BaseJavaScriptReferController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
+        }
+    }
+
+    public boolean inDomain(double x) {
+        try {
+            String domain = getDomain();
+            if (domain == null || domain.isBlank()) {
+                return true;
+            }
+            String filledScript = calculator.replaceStringAll(domain, "#{x}", x + "");
+            return calculator.condition(filledScript);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return false;
+        }
+    }
+
+    public boolean inDomain(String script, double x) {
+        try {
+            String filledScript = calculator.replaceStringAll(script, "#{x}", x + "");
+            return calculator.condition(filledScript);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return false;
         }
     }
 
@@ -183,7 +233,7 @@ public class FunctionUnaryController extends BaseJavaScriptReferController {
     @FXML
     public void chartAction() {
         try {
-            String script = scriptInput.getText();
+            String script = getScript();
             if (script == null || script.isBlank()) {
                 popError(message("InvalidParameters") + ": JavaScript");
                 return;

@@ -63,6 +63,11 @@ public class ExpressionCalculator {
         }
     }
 
+    public boolean condition(String script) {
+        calculate(script);
+        return "true".equals(result);
+    }
+
     public void handleError(String e) {
         error = e;
         if (e != null) {

@@ -1,20 +1,20 @@
 ##MyBox#
-Examples > Object
-string
+示例 > 对象
+字串
 String exampleString = "hello";
 exampleString += " world";
-"Contains e:"+ exampleString.contains("e") + "   length:" + exampleString.length();
+"包含e："+ exampleString.contains("e") + "    长度：" + exampleString.length();
 
 ##MyBox#
-Examples > Object
-time
+示例 > 对象
+时间
 import java.util.Date;
 Date exampleDate = new Date();
-"current time:" + exampleDate.toString() + "     value:" + exampleDate.getTime();
+"当前时间：" + exampleDate.toString() + "     值：" + exampleDate.getTime();
 
 ##MyBox#
-Examples > Object
-array
+示例 > 对象
+数组
 import java.util.Arrays;
 double[] exampleArray =  new double[5];
 for (int i=0; i<exampleArray.length; i++ ) {
@@ -23,8 +23,8 @@ for (int i=0; i<exampleArray.length; i++ ) {
 exampleArray[2];
 
 ##MyBox#
-Examples > Object
-list
+示例 > 对象
+列表
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,213 +33,208 @@ exampleList.addAll(Arrays.asList("a", "b", "c", "d", "e"));
 exampleList.toString();
 
 ##MyBox#
-Examples > Expressions > Numeric operations
-e
+示例 > 表达式 > 数值计算
+欧拉数
 Math.E
 
 ##MyBox#
-Examples > Expressions > Numeric operations
-pi
+示例 > 表达式 > 数值计算
+圆周率
 Math.PI
 
 ##MyBox#
-Examples > Expressions > Numeric operations
-absoluate
+示例 > 表达式 > 数值计算
+绝对值
 Math.abs(-5.611)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
-power of e
-Math.exp(2)
-
-##MyBox#
-Examples > Expressions > Numeric operations
-square root
+示例 > 表达式 > 数值计算
+平方根
 Math.sqrt(9)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
-cubic root
+示例 > 表达式 > 数值计算
+三次方根
 Math.cbrt(27)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
-power
+示例 > 表达式 > 数值计算
+幂
 Math.pow(2,5)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
-cosine
-Math.cos(0)
+示例 > 表达式 > 数值计算
+欧拉冥
+Math.exp(2)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
-sine
-Math.sin(9)
-
-##MyBox#
-Examples > Expressions > Numeric operations
-tangent
-Math.tan(5)
-
-##MyBox#
-Examples > Expressions > Numeric operations
-arc tangent
-Math.atan(-7.3)
-
-##MyBox#
-Examples > Expressions > Numeric operations
-arc cosine
-Math.acos(0.5)
-
-##MyBox#
-Examples > Expressions > Numeric operations
-arc sine
-Math.asin(0.3)
-
-##MyBox#
-Examples > Expressions > Numeric operations
-natural logarithm
+示例 > 表达式 > 数值计算
+自然对数（底为e）
 Math.log(6)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
-log10
+示例 > 表达式 > 数值计算
+常用对数（底为10）
 Math.log10(6)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
-log2
-Math.log2(6)
+示例 > 表达式 > 数值计算
+余弦
+Math.cos(0)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
-round up
+示例 > 表达式 > 数值计算
+正弦
+Math.sin(9)
+
+##MyBox#
+示例 > 表达式 > 数值计算
+正切
+Math.tan(5)
+
+##MyBox#
+示例 > 表达式 > 数值计算
+反正切
+Math.atan(-7.3)
+
+##MyBox#
+示例 > 表达式 > 数值计算
+反余弦
+Math.acos(0.5)
+
+##MyBox#
+示例 > 表达式 > 数值计算
+反正弦
+Math.asin(0.3)
+
+##MyBox#
+示例 > 表达式 > 数值计算
+上舍入
 Math.ceil(4.13)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
-round down
+示例 > 表达式 > 数值计算
+下舍入
 Math.floor(4.67)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
-round
+示例 > 表达式 > 数值计算
+四舍五入
 Math.round(4.83)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
-random
+示例 > 表达式 > 数值计算
+随机数
 Math.random()
 
 ##MyBox#
-Examples > Expressions > Numeric operations
-maximum
+示例 > 表达式 > 数值计算
+大值
 Math.max(1,-3)
 
 ##MyBox#
-Examples > Expressions > Numeric operations
-minimum
+示例 > 表达式 > 数值计算
+小值
 Math.min(1,-3)
 
 ##MyBox#
-Examples > Expressions > Strings operations
-equals while ignore case
+示例 > 表达式 > 字符串处理
+忽略大小写的等于
 "Hello".equalsIgnoreCase("hello")
 
 ##MyBox#
-Examples > Expressions > Strings operations
-equals
+示例 > 表达式 > 字符串处理
+等于
 "Hello".equals("hello")
 
 ##MyBox#
-Examples > Expressions > Strings operations
-replace first
+示例 > 表达式 > 字符串处理
+替换首个
 "Hello World! World is yourself.".replace("World", "Feeling");
    
 ##MyBox#
-Examples > Expressions > Strings operations
-replace all
-"Hello World! World is yourself.".replace(/World/g, "Feeling");
+示例 > 表达式 > 字符串处理
+替换所有
+"Hello World! World is yourself.".replaceAll("World", "Feeling");
 
 ##MyBox#
-Examples > Expressions > Strings operations
-starts with
+示例 > 表达式 > 字符串处理
+开始于
 "Hello".startsWith("h")
 
 ##MyBox#
-Examples > Expressions > Strings operations
-end with
+示例 > 表达式 > 字符串处理
+结尾于
 "Hello".endsWith("o")
 
 ##MyBox#
-Examples > Expressions > Strings operations
-subString
+示例 > 表达式 > 字符串处理
+子串
 "Hello".substring(2, 5)
 
 ##MyBox#
-Examples > Expressions > Strings operations
-char at
+示例 > 表达式 > 字符串处理
+字符
 "hello".charAt(2)
 
 ##MyBox#
-Examples > Expressions > Strings operations
-concat
+示例 > 表达式 > 字符串处理
+连接
 "hello".concat(" world")
 
 ##MyBox#
-Examples > Expressions > Strings operations
-split
+示例 > 表达式 > 字符串处理
+分割
 "1,2,3,4".split(",")
 
 ##MyBox#
-Examples > Expressions > Strings operations
-indexOf
+示例 > 表达式 > 字符串处理
+位置
 "hello".indexOf("e")
 
 ##MyBox#
-Examples > Expressions > Strings operations
-lastIndexOf
+示例 > 表达式 > 字符串处理
+最后位置
 "hello".lastIndexOf("l")
 
 ##MyBox#
-Examples > Expressions > Strings operations
-length
+示例 > 表达式 > 字符串处理
+长度
 "hello".length()
 
 ##MyBox#
-Examples > Expressions > Strings operations
-toLowerCase
+示例 > 表达式 > 字符串处理
+小写
 "Hello".toLowerCase()
 
 ##MyBox#
-Examples > Expressions > Strings operations
-toUpperCase
+示例 > 表达式 > 字符串处理
+大写
 "Hello".toUpperCase()
 
 ##MyBox#
-Examples > Expressions > Strings operations
-contains
+示例 > 表达式 > 字符串处理
+包含
 "Hello".contains("el")
 
 ##MyBox#
-Examples > Expressions > Strings operations
-trim
+示例 > 表达式 > 字符串处理
+删除首尾空白字符
 " Hello  ".trim()
 
 ##MyBox#
-Examples > Expressions > Strings operations
-isBlank
+示例 > 表达式 > 字符串处理
+为空白字符串
 "  ".isBlank()
 
 ##MyBox#
-Examples > Expressions > Strings operations
-isEmpty
+示例 > 表达式 > 字符串处理
+为空
 "".isEmpty()
 
 ##MyBox#
-Examples > Expressions > Boolean operations
-list include
+示例 > 表达式 > 布尔运算
+列表包含
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -249,9 +244,9 @@ String exampleStringC = "c";
 exampleListC.contains(exampleStringC);
 
 ##MyBox#
-Examples > Expressions > Boolean operations
-string match
-// MyBox library paths should have been added in JShell environment
+示例 > 表达式 > 布尔运算
+字符串匹配
+// MyBox类路径应当已添加到JShell环境中
 import mara.mybox.tools.StringTools;
 String exampleStringM = "abc1233hello";
 String exampleRegexM = "\\S*3{2,}\\S*";  
@@ -259,9 +254,9 @@ boolean exampleCaseInsensitiveM = true;
 StringTools.match(exampleStringM,exampleRegexM,exampleCaseInsensitiveM);
 
 ##MyBox#
-Examples > Expressions > Boolean operations
-string include
-// MyBox library paths should have been added in JShell environment
+示例 > 表达式 > 布尔运算
+字符串包含
+// MyBox类路径应当已添加到JShell环境中
 import mara.mybox.tools.StringTools;
 String exampleStringI = "abc1233hello";
 String exampleRegexI = "3{2}";
@@ -269,8 +264,8 @@ boolean exampleCaseInsensitiveI = true;
 StringTools.include(exampleStringI,exampleRegexI,exampleCaseInsensitiveI);
 
 ##MyBox#
-Examples > Expressions > Boolean operations
-and/or/not
+示例 > 表达式 > 布尔运算
+与/或/否
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -281,8 +276,8 @@ exampleListB.contains(exampleStringB) &&
 (exampleListB.size() >= 8 || exampleStringB.length() != 1 || !exampleStringB.startsWith("h"));
 
 ##MyBox#
-Examples > Methods
-Area of circle
+示例 > 方法
+圆的面积
 double circleAreaByDiameter(double diameter) {        
     double radius = diameter / 2;        
     return   Math.PI *  radius * radius ;        
@@ -290,8 +285,8 @@ double circleAreaByDiameter(double diameter) {
 circleAreaByDiameter(120) + circleAreaByDiameter(30)  
 
 ##MyBox#
-Examples > Methods
-Round value
+示例 > 方法
+四舍五入
 import java.math.BigDecimal;        
 import java.math.RoundingMode;        
 double scale(double v, int scale) {        
@@ -301,8 +296,8 @@ double scale(double v, int scale) {
 scale(Math.PI, 3) 
 
 ##MyBox#
-Examples > Methods
-Format number
+示例 > 方法
+格式化数值
 import java.math.BigDecimal;        
 import java.math.RoundingMode;        
 double scale(double v, int scale) {        
@@ -331,8 +326,8 @@ double circleAreaByRadius(double radius) {
 formatDouble(circleAreaByRadius(273.4), 4)    
 
 ##MyBox#
-Examples > Methods
-Format date
+示例 > 方法
+格式化时间
 import java.util.Date;
 import java.util.TimeZone;
 import java.text.SimpleDateFormat;
@@ -352,8 +347,8 @@ String datetimeToString(Date theDate, String format, TimeZone theZone) {
 datetimeToString(new Date(), DatetimeFormat, TimeZone.getDefault());
 
 ##MyBox#
-Examples > Methods
-string match
+示例 > 方法
+匹配字符串
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -378,8 +373,8 @@ boolean match(String string, String find, boolean isRegex,
 match("Hello1233World", "\\S*3{2,}\\S*", true, true, true, true);
 
 ##MyBox#
-Examples > Methods
-string include
+示例 > 方法
+包含字符串
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

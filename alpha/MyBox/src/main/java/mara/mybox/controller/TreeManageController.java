@@ -317,18 +317,8 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         if (parent == null || nodes == null || nodes.isEmpty()) {
             return;
         }
-        if (loadedParent != null && parent.getNodeid() == loadedParent.getNodeid()) {
-            loadNodes(parent);
-        }
-        for (TreeNode node : nodes) {
-            if (nodeController.currentNode != null && node.getNodeid() == nodeController.currentNode.getNodeid()) {
-                nodeController.setParentNode(parent);
-            }
-            if (nodeController.parentNode != null && node.getNodeid() == nodeController.parentNode.getNodeid()) {
-                nodeController.setParentNode(node);
-            }
-        }
-        nodesController.loadTree(parent);
+        loadNodes(loadedParent);
+        nodesController.loadTree(null);
     }
 
     public void nodesCopied(TreeNode parent) {

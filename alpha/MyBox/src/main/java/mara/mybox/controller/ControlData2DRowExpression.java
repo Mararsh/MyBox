@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import java.util.Arrays;
 import java.util.List;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ExpressionCalculator;
@@ -15,14 +14,12 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-6-4
  * @License Apache License Version 2.0
  */
-public class ControlData2DRowExpression extends BaseJavaScriptReferController {
+public class ControlData2DRowExpression extends ControlJavaScriptRefer {
 
     protected Data2D data2D;
     public ExpressionCalculator calculator;
 
     public ControlData2DRowExpression() {
-        baseTitle = "JavaScript";
-        category = TreeNode.JavaScript;
         TipsLabelKey = "RowExpressionTips";
     }
 
@@ -88,7 +85,7 @@ public class ControlData2DRowExpression extends BaseJavaScriptReferController {
                     "Math.abs(#{" + col1 + "}) >= 0",
                     "#{" + col1 + "} < 0 || #{" + col1 + "} > 100 ",
                     "#{" + col1 + "} != 6"
-            ));
+            ), true, 2);
 
             PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
                     "'#{" + col1 + "}'.search(/Hello/ig) >= 0",
@@ -98,7 +95,7 @@ public class ControlData2DRowExpression extends BaseJavaScriptReferController {
                     "'#{" + col1 + "}'.endsWith('Hello')",
                     "var array = [ 'A', 'B', 'C', 'D' ];\n"
                     + "array.includes('#{" + col1 + "}')"
-            ));
+            ), true, 2);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

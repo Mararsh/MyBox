@@ -332,7 +332,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
     }
 
     public void itemSelected(TreeItem<P> item) {
-        if (item == null) {
+        if (item == null || !manageMode) {
             return;
         }
         String clickAction = UserConfig.getString(baseName + "TreeWhenClickNode", defaultClickAction);
@@ -344,29 +344,19 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                     popFunctionsMenu(null, item);
                     break;
                 case "Edit":
-                    if (manageMode) {
-                        editNode(item);
-                    }
+                    editNode(item);
                     break;
                 case "Paste":
-                    if (manageMode) {
-                        pasteNode(item);
-                    }
+                    pasteNode(item);
                     break;
                 case "Execute":
-                    if (manageMode) {
-                        executeNode(item);
-                    }
+                    executeNode(item);
                     break;
                 case "LoadChildren":
-                    if (manageMode) {
-                        listChildren(item);
-                    }
+                    listChildren(item);
                     break;
                 case "LoadDescendants":
-                    if (manageMode) {
-                        listDescentants(item);
-                    }
+                    listDescentants(item);
                     break;
                 default:
                     break;
@@ -534,7 +524,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             });
             modifyMenu.getItems().add(menu);
 
-            menu = new RadioMenuItem(message("Paste"), StyleTools.getIconImage("iconPaste.png"));
+            menu = new MenuItem(message("Paste"), StyleTools.getIconImage("iconPaste.png"));
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {

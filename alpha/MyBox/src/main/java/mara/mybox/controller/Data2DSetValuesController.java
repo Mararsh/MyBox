@@ -346,16 +346,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
     public void number() {
         try {
             int num = valueController.setValue.getStart();
-            int digit;
-            if (valueController.setValue.isFillZero()) {
-                if (valueController.setValue.isAotoDigit()) {
-                    digit = (filteredRowsIndices.size() + "").length();
-                } else {
-                    digit = valueController.setValue.getDigit();
-                }
-            } else {
-                digit = 0;
-            }
+            int digit = valueController.setValue.countFinalDigit(filteredRowsIndices.size());
             String currentValue, suffix;
             for (int row : filteredRowsIndices) {
                 List<String> values = tableController.tableData.get(row);

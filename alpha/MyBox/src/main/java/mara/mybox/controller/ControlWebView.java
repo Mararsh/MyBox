@@ -661,7 +661,9 @@ public class ControlWebView extends BaseController {
         items.add(menu);
         items.add(new SeparatorMenuItem());
 
-        items.add(clickMenu());
+        if (!linkInNewTab) {
+            items.add(clickMenu());
+        }
 
         menu = new MenuItem(message("QueryNetworkAddress"), StyleTools.getIconImage("iconQuery.png"));
         menu.setOnAction((ActionEvent event) -> {
@@ -1073,7 +1075,9 @@ public class ControlWebView extends BaseController {
             operationsMenu.getItems().setAll(operationsMenu());
             items.add(operationsMenu);
 
-            items.add(clickMenu());
+            if (!linkInNewTab) {
+                items.add(clickMenu());
+            }
 
             items.add(new SeparatorMenuItem());
 
@@ -1132,28 +1136,35 @@ public class ControlWebView extends BaseController {
                 });
                 viewMenu.getItems().add(menu);
 
-                if (address != null && !address.isBlank()) {
-                    viewMenu.getItems().add(new SeparatorMenuItem());
+                viewMenu.getItems().add(new SeparatorMenuItem());
 
+                if (address != null && !address.isBlank()) {
                     menu = new MenuItem(message("OpenLinkBySystem"), StyleTools.getIconImage("iconWindow.png"));
                     menu.setOnAction((ActionEvent event) -> {
                         browse(address);
                     });
                     viewMenu.getItems().add(menu);
-
-                    menu = new MenuItem(message("OpenLinkInNewTabSwitch"), StyleTools.getIconImage("iconWindow.png"));
-                    menu.setOnAction((ActionEvent event) -> {
-                        WebBrowserController.oneOpen(address, true);
-                    });
-                    viewMenu.getItems().add(menu);
-
-                    menu = new MenuItem(message("OpenLinkInNewTab"), StyleTools.getIconImage("iconWindow.png"));
-                    menu.setOnAction((ActionEvent event) -> {
-                        WebBrowserController.oneOpen(address, false);
-                    });
-                    viewMenu.getItems().add(menu);
-
                 }
+
+                menu = new MenuItem(message("OpenLinkInNewTabSwitch"), StyleTools.getIconImage("iconWindow.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    if (address != null && !address.isBlank()) {
+                        WebBrowserController.oneOpen(address, true);
+                    } else {
+                        WebBrowserController.oneLoad(html, true);
+                    }
+                });
+                viewMenu.getItems().add(menu);
+
+                menu = new MenuItem(message("OpenLinkInNewTab"), StyleTools.getIconImage("iconWindow.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    if (address != null && !address.isBlank()) {
+                        WebBrowserController.oneOpen(address, false);
+                    } else {
+                        WebBrowserController.oneLoad(html, false);
+                    }
+                });
+                viewMenu.getItems().add(menu);
 
                 if (isFrameset) {
                     NodeList frameList = webEngine.getDocument().getElementsByTagName("frame");

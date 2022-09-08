@@ -25,8 +25,9 @@ public class TreeNode extends BaseData {
     public static final String WebFavorite = "WebFavorite";
     public static final String SQL = "SQL";
     public static final String JShellCode = "JShellCode";
-    public static final String JEXL = "JEXLCode";
+    public static final String JEXLCode = "JEXLCode";
     public static final String JavaScript = "JavaScript";
+    public static final String MathFunction = "MathFunction";
 
     protected long nodeid, parentid;
     protected String category, title, value, more, serialNumber;
@@ -130,35 +131,12 @@ public class TreeNode extends BaseData {
     }
 
     public static File exampleFile(String category) {
-        String lang = Languages.isChinese() ? "zh" : "en";
         if (null == category) {
             return null;
         } else {
-            switch (category) {
-                case WebFavorite:
-                    return getInternalFile("/data/examples/WebFavorites_Examples_" + lang + ".txt",
-                            "data", "WebFavorites_Examples_" + lang + ".txt", true);
-                case Notebook:
-                    return getInternalFile("/data/examples/Notes_Examples_" + lang + ".txt",
-                            "data", "Notes_Examples_" + lang + ".txt", true);
-                case JShellCode:
-                    return getInternalFile("/data/examples/JShell_Examples_" + lang + ".txt",
-                            "data", "JShell_Examples_" + lang + ".txt", true);
-                case SQL:
-                    return getInternalFile("/data/examples/Sql_Examples_" + lang + ".txt",
-                            "data", "Sql_Examples_" + lang + ".txt", true);
-                case JavaScript:
-                    return getInternalFile("/data/examples/JavaScript_Examples_" + lang + ".txt",
-                            "data", "JavaScript_Examples_" + lang + ".txt", true);
-                case InformationInTree:
-                    return getInternalFile("/data/examples/Tree_Examples_" + lang + ".txt",
-                            "data", "Tree_Examples_" + lang + ".txt", true);
-                case JEXL:
-                    return getInternalFile("/data/examples/JEXL_Examples_" + lang + ".txt",
-                            "data", "JEXL_Examples_" + lang + ".txt", true);
-                default:
-                    return null;
-            }
+            String lang = Languages.isChinese() ? "zh" : "en";
+            return getInternalFile("/data/examples/" + category + "_Examples_" + lang + ".txt",
+                    "data", category + "_Examples_" + lang + ".txt", true);
         }
     }
 

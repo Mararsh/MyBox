@@ -51,7 +51,7 @@ Math.sqrt(9)
 ##MyBox#
 Examples > Expressions > Numeric operations
 cubic root
-Math.cbrt(27)
+Math.pow(27,-3)
 
 ##MyBox#
 Examples > Expressions > Numeric operations
@@ -95,12 +95,12 @@ Math.log(6)
 
 ##MyBox#
 Examples > Expressions > Numeric operations
-log10
+base 10 logarithm
 Math.log10(6)
 
 ##MyBox#
 Examples > Expressions > Numeric operations
-log2
+base 2 logarithm
 Math.log2(6)
 
 ##MyBox#
