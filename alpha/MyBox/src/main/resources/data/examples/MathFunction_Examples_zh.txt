@@ -32,7 +32,7 @@ Math.random()
 ##MyBox#
 示例 > 一元函数
 绝对值
-Math.abs(#{x})
+Math.abs(x)
 
 ##MyBox#
 示例 > 一元函数
@@ -41,35 +41,35 @@ Math.abs(#{x})
 ##MyBox#
 示例 > 一元函数 > 三角函数
 余弦
-Math.cos(#{x})
+Math.cos(x)
 
 ##MyBox#
 示例 > 一元函数 > 三角函数
 正弦
-Math.sin(#{x})
+Math.sin(x)
 
 ##MyBox#
 示例 > 一元函数 > 三角函数
 正切
-Math.tan(#{x})
-MyBoxTreeNodeMore:( #{x} - Math.PI / 2 ) % Math.PI != 0
+Math.tan(x)
+MyBoxTreeNodeMore:( x - Math.PI / 2 ) % Math.PI != 0
 
 ##MyBox#
 示例 > 一元函数 > 三角函数
 反余弦
-Math.acos(#{x})
-MyBoxTreeNodeMore:#{x} >= -1 && #{x} <= 1
+Math.acos(x)
+MyBoxTreeNodeMore:x >= -1 && x <= 1
 
 ##MyBox#
 示例 > 一元函数 > 三角函数
 反正弦
-Math.asin(#{x})
-MyBoxTreeNodeMore:#{x} >= -1 && #{x} <= 1
+Math.asin(x)
+MyBoxTreeNodeMore:x >= -1 && x <= 1
 
 ##MyBox#
 示例 > 一元函数 > 三角函数
 反正切
-Math.atan(#{x})
+Math.atan(x)
 
 ##MyBox#
 示例 > 一元函数
@@ -78,44 +78,44 @@ Math.atan(#{x})
 ##MyBox#
 示例 > 一元函数 > 幂函数
 平方
-Math.pow(#{x},2)
+Math.pow(x,2)
 
 ##MyBox#
 示例 > 一元函数 > 幂函数
 三次方
-Math.pow(#{x},3)
+Math.pow(x,3)
 
 ##MyBox#
 示例 > 一元函数 > 幂函数
 四次方
-Math.pow(#{x},4)
+Math.pow(x,4)
 
 ##MyBox#
 示例 > 一元函数 > 幂函数
 五次方
-Math.pow(#{x},5)
+Math.pow(x,5)
 
 ##MyBox#
 示例 > 一元函数 > 幂函数
 平方根
-Math.sqrt(#{x})
-MyBoxTreeNodeMore:#{x} >= 0
+Math.sqrt(x)
+MyBoxTreeNodeMore:x >= 0
 
 ##MyBox#
 示例 > 一元函数 > 幂函数
 三次方根
-Math.pow(#{x},-3)
+Math.pow(x,-3)
 
 ##MyBox#
 示例 > 一元函数 > 幂函数
 四次方根
-Math.pow(#{x},-4)
-MyBoxTreeNodeMore:#{x} >= 0
+Math.pow(x,-4)
+MyBoxTreeNodeMore:x >= 0
 
 ##MyBox#
 示例 > 一元函数 > 幂函数
 五次方根
-Math.pow(#{x},-5)
+Math.pow(x,-5)
 
 ##MyBox#
 示例 > 一元函数
@@ -124,13 +124,12 @@ Math.pow(#{x},-5)
 ##MyBox#
 示例 > 一元函数 > 指数函数
 欧拉指数
-Math.exp(#{x})
+Math.exp(x)
 
 ##MyBox#
 示例 > 一元函数 > 指数函数
 指数
-Math.pow(5.9,#{x})
-MyBoxTreeNodeMore:#{x} >= 0
+Math.pow(5.9,x)
 
 ##MyBox#
 示例 > 一元函数
@@ -139,20 +138,8 @@ MyBoxTreeNodeMore:#{x} >= 0
 ##MyBox#
 示例 > 一元函数 > 对数函数
 自然对数（底为e）
-Math.log(#{x})
-MyBoxTreeNodeMore:#{x} > 0
-
-##MyBox#
-示例 > 一元函数 > 对数函数
-常用对数（底为10）
-Math.log10(#{x})
-MyBoxTreeNodeMore:#{x} > 0
-
-##MyBox#
-示例 > 一元函数 > 对数函数
-以2为底的对数
-Math.log2(#{x})
-MyBoxTreeNodeMore:#{x} > 0
+Math.log(x)
+MyBoxTreeNodeMore:x > 0
 
 ##MyBox#
 示例 > 一元函数
@@ -161,46 +148,46 @@ MyBoxTreeNodeMore:#{x} > 0
 ##MyBox#
 示例 > 一元函数 > 截取函数
 上舍入
-Math.ceil(#{x})
+Math.ceil(x)
 
 ##MyBox#
 示例 > 一元函数 > 截取函数
 下舍入
-Math.floor(#{x})
+Math.floor(x)
 
 ##MyBox#
 示例 > 一元函数 > 截取函数
 四舍五入
-Math.round(#{x})
+Math.round(x)
 
 ##MyBox#
 示例 > 一元函数 > 截取函数
 整数部分
-Math.trunc(#{x})
+Math.trunc(x)
 
 ##MyBox#
 示例 > 一元函数
 一次函数
-5 * #{x} + 9
+5 * x + 9
 
 ##MyBox#
 示例 > 一元函数
 二次函数
-5 * Math.pow(#{x},2)  + 3 * #{x} + 9
+5 * Math.pow(x,2)  + 3 * x + 9
 
 ##MyBox#
 示例 > 一元函数
 三次函数
-6 * Math.pow(#{x},3)  + 5 * Math.pow(#{x},2)  + 3 * #{x} + 9
+6 * Math.pow(x,3)  + 5 * Math.pow(x,2)  + 3 * x + 9
 
 ##MyBox#
 示例 > 一元函数
 四次函数
-7 * Math.pow(#{x},4)  + 6 * Math.pow(#{x},3)  + 5 * Math.pow(#{x},2)  + 3 * #{x} + 9
+7 * Math.pow(x,4)  + 6 * Math.pow(x,3)  + 5 * Math.pow(x,2)  + 3 * x + 9
 
 ##MyBox#
 示例 > 一元函数
 五次函数
-8 * Math.pow(#{x},5)  +7 * Math.pow(#{x},4)  + 6 * Math.pow(#{x},3)  + 5 * Math.pow(#{x},2)  + 3 * #{x} + 9
+8 * Math.pow(x,5)  +7 * Math.pow(x,4)  + 6 * Math.pow(x,3)  + 5 * Math.pow(x,2)  + 3 * x + 9
 
 

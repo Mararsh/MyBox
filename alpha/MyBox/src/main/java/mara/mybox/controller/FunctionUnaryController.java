@@ -1,5 +1,7 @@
 package mara.mybox.controller;
 
+import java.io.File;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +14,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data2d.Data2D_Attributes;
 import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
-import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.table.TableStringValues;
@@ -20,14 +23,19 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.chart.ChartOptions;
 import mara.mybox.fxml.chart.XYChartMaker;
 import mara.mybox.fxml.style.HtmlStyles;
+import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.HtmlWriteTools;
+import static mara.mybox.tools.TmpFileTools.getPathTempFile;
+import mara.mybox.value.AppPaths;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
+import org.apache.commons.csv.CSVPrinter;
 
 /**
  * @Author Mara
@@ -35,11 +43,11 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public class FunctionUnaryController extends TreeManageController {
-
+    
     protected XYChartMaker chartMaker;
     protected String outputs = "";
     protected ExpressionCalculator calculator;
-
+    
     @FXML
     protected FunctionUnaryEditor editorController;
     @FXML
@@ -52,7 +60,7 @@ public class FunctionUnaryController extends TreeManageController {
     protected ControlData2DChartXY chartController;
     @FXML
     protected ControlWebView outputController;
-
+    
     public FunctionUnaryController() {
         baseTitle = message("UnaryFunction");
         category = TreeNode.MathFunction;
@@ -61,75 +69,68 @@ public class FunctionUnaryController extends TreeManageController {
         valueMsg = message("MathFunction");
         moreMsg = message("FunctionDomain");
     }
-
+    
     @Override
     public void initValues() {
         try {
             super.initValues();
             calculator = new ExpressionCalculator();
             nodeController = editorController;
-
+            
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
-
+    
     @Override
     public void initControls() {
         try {
             super.initControls();
-
+            
             editorController.setParameters(this);
-
+            
             outputController.setParent(this, ControlWebView.ScrollType.Bottom);
-
+            
             dataSplitController.setParameters(baseName + "Data");
-
+            
             chartSplitController.setParameters(baseName + "Chart");
             chartMaker = chartController.chartMaker;
             chartController.redrawNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    chartAction();
+                    okChartAction();
                 }
             });
-
+            
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
-
+    
     @Override
     public void itemClicked() {
     }
-
-    @FXML
-    public void okDataAction() {
-
-    }
-
-    @FXML
-    public void okChartAction() {
-
-    }
-
+    
     public String getScript() {
         return editorController.valueInput.getText();
     }
-
-    public String getFunction() {
-        String script = getScript();
-        if (script == null || script.isBlank()) {
-            popError(message("InvalidParameters") + ": JavaScript");
-            return null;
-        }
-        return calculator.replaceStringAll(script, "#{x}", "x");
-    }
-
+    
     public String getDomain() {
         return editorController.moreInput.getText();
     }
-
+    
+    public String finalScript(String script, double x) {
+        try {
+            if (script == null || script.isBlank()) {
+                return null;
+            }
+            return "var x=" + x + ";\n" + script;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+    
     @FXML
     public void calculateAction() {
         try {
@@ -153,7 +154,7 @@ public class FunctionUnaryController extends TreeManageController {
                 return;
             }
             outputs += DateTools.nowString() + "<div class=\"valueText\" >"
-                    + HtmlWriteTools.stringToHtml(getFunction())
+                    + HtmlWriteTools.stringToHtml(script)
                     + "<br>x=" + x
                     + "</div>";
             outputs += "<div class=\"valueBox\">" + HtmlWriteTools.stringToHtml(ret) + "</div><br><br>";
@@ -163,130 +164,198 @@ public class FunctionUnaryController extends TreeManageController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-
+        
     }
-
-    public String calculate(double x) {
-        try {
-            String script = getScript();
-            if (script == null || script.isBlank()) {
-                popError(message("InvalidParameters") + ": JavaScript");
-                return null;
-            }
-            return calculate(script, x);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
-    }
-
+    
     public String calculate(String script, double x) {
         try {
-            String filledScript = calculator.replaceStringAll(script, "#{x}", x + "");
-            return calculator.calculate(filledScript);
+            return calculator.calculate(finalScript(script, x));
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
         }
     }
-
+    
     public boolean inDomain(double x) {
+        return inDomain(getDomain(), x);
+    }
+    
+    public boolean inDomain(String domain, double x) {
         try {
-            String domain = getDomain();
             if (domain == null || domain.isBlank()) {
                 return true;
             }
-            String filledScript = calculator.replaceStringAll(domain, "#{x}", x + "");
-            return calculator.condition(filledScript);
+            return calculator.condition(finalScript(domain, x));
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return false;
         }
     }
-
-    public boolean inDomain(String script, double x) {
-        try {
-            String filledScript = calculator.replaceStringAll(script, "#{x}", x + "");
-            return calculator.condition(filledScript);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return false;
-        }
-    }
-
+    
     @FXML
     public void popHtmlStyle(MouseEvent mouseEvent) {
         PopTools.popHtmlStyle(mouseEvent, outputController);
     }
-
+    
     @FXML
     public void editResults() {
         outputController.editAction();
     }
-
+    
     @FXML
     public void clearResults() {
         outputs = "";
         outputController.loadContents("");
     }
-
-    @FXML
-    public void chartAction() {
+    
+    protected DataFileCSV generateData(ControlDataSplit splitController) {
         try {
-            String script = getScript();
-            if (script == null || script.isBlank()) {
-                popError(message("InvalidParameters") + ": JavaScript");
-                return;
+            File csvFile = getPathTempFile(AppPaths.getGeneratedPath(), interfaceName, ".csv");
+            long count = 0;
+            List<Data2DColumn> db2Columns = new ArrayList<>();
+            List<String> fileRow = new ArrayList<>();
+            try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
+                List<String> names = new ArrayList<>();
+                names.add("x");
+                names.add("y");
+                csvPrinter.printRecord(names);
+                db2Columns.add(new Data2DColumn("x", ColumnType.Double, true));
+                db2Columns.add(new Data2DColumn("y", ColumnType.Double, true));
+                int scale = splitController.scale;
+                double interval;
+                if (splitController.byInterval) {
+                    interval = splitController.interval;
+                } else {
+                    interval = (splitController.to - splitController.from) / splitController.number;
+                }
+                interval = DoubleTools.scale(interval, scale);
+                String script = getScript();
+                String domain = getDomain();
+                for (double d = splitController.from; d <= splitController.to; d += interval) {
+                    double x = DoubleTools.scale(d, scale);
+                    if (!inDomain(domain, x)) {
+                        continue;
+                    }
+                    
+                    String fx = calculate(script, x);
+                    if (fx == null) {
+                        continue;
+                    }
+                    double y = DoubleTools.scale(fx, InvalidAs.Blank, scale);
+//                    if (DoubleTools.invalidDouble(y)) {
+//                        continue;
+//                    }
+                    count++;
+                    fileRow.add(x + "");
+                    fileRow.add(y + "");
+                    csvPrinter.printRecord(fileRow);
+                    fileRow.clear();
+                }
+            } catch (Exception e) {
+                if (task != null) {
+                    task.setError(e.toString());
+                }
+                MyBoxLog.error(e);
+                return null;
             }
-
-            List<Data2DColumn> outputColumns = new ArrayList<>();
-            outputColumns.add(new Data2DColumn("x", ColumnDefinition.ColumnType.Double));
-            outputColumns.add(new Data2DColumn("y", ColumnDefinition.ColumnType.Double));
-
-            String chartName = message("LineChart");
-            UserConfig.setBoolean(chartName + "CategoryIsNumbers", true);
-            chartMaker.init(ChartOptions.ChartType.Line, chartName)
-                    .setDefaultChartTitle(getFunction())
-                    .setDefaultCategoryLabel("x")
-                    .setDefaultValueLabel("y")
-                    .setInvalidAs(InvalidAs.Skip);
-
-            List<List<String>> outputData = new ArrayList<>();
-//            double interval = (to - from) / n;
-//            double x = from;
-//            for (int i = 0; i < n; i++) {
-//                x = from + i * interval;
-//                String y = calculate(script, x);
-//                if (y == null) {
-//                    continue;
-//                }
-//                List<String> row = new ArrayList<>();
-//                row.add(x + "");
-//                row.add(y);
-//                outputData.add(row);
-//            }
-//            if (x != to) {
-//                String y = calculate(script, to);
-//                if (y != null) {
-//                    List<String> row = new ArrayList<>();
-//                    row.add(to + "");
-//                    row.add(y);
-//                    outputData.add(row);
-//                }
-//            }
-
-            Map<String, String> palette = new HashMap();
-            Random random = new Random();
-            for (int i = 0; i < outputColumns.size(); i++) {
-                Data2DColumn column = outputColumns.get(i);
-                String rgb = FxColorTools.color2rgb(FxColorTools.randomColor(random));
-                palette.put(column.getColumnName(), rgb);
-            }
-            chartMaker.setPalette(palette);
-            chartController.writeXYChart(outputColumns, outputData, null, false);
+            DataFileCSV data = new DataFileCSV();
+            data.setFile(csvFile).setDataName(interfaceName)
+                    .setCharset(Charset.forName("UTF-8"))
+                    .setDelimiter(",").setHasHeader(true)
+                    .setColsNumber(2).setRowsNumber(count);
+            data.setColumns(db2Columns);
+            return data;
         } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
             MyBoxLog.error(e);
+            return null;
         }
     }
-
+    
+    @FXML
+    public void okDataAction() {
+        if (!dataSplitController.checkInputs()) {
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+            
+            private DataFileCSV data;
+            
+            @Override
+            protected boolean handle() {
+                data = generateData(dataSplitController);
+                return data != null;
+            }
+            
+            @Override
+            protected void whenSucceeded() {
+                dataController.loadDef(data);
+            }
+            
+        };
+        start(task);
+    }
+    
+    @FXML
+    public void okChartAction() {
+        if (!chartSplitController.checkInputs()) {
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+            
+            private List<List<String>> outputData;
+            private List<Data2DColumn> outputColumns;
+            
+            @Override
+            protected boolean handle() {
+                try {
+                    DataFileCSV data = generateData(chartSplitController);
+                    if (data == null) {
+                        return false;
+                    }
+                    data.setTask(this);
+                    outputData = data.allRows(false);
+                    if (outputData == null) {
+                        return false;
+                    }
+                    outputColumns = data.getColumns();
+                    String chartName = message("LineChart");
+                    UserConfig.setBoolean(chartName + "CategoryIsNumbers", true);
+                    chartMaker.init(ChartOptions.ChartType.Line, chartName)
+                            .setDefaultChartTitle(getScript())
+                            .setDefaultCategoryLabel("x")
+                            .setDefaultValueLabel("y")
+                            .setInvalidAs(InvalidAs.Skip);
+                    Map<String, String> palette = new HashMap();
+                    Random random = new Random();
+                    for (int i = 0; i < outputColumns.size(); i++) {
+                        Data2DColumn column = outputColumns.get(i);
+                        String rgb = FxColorTools.color2rgb(FxColorTools.randomColor(random));
+                        palette.put(column.getColumnName(), rgb);
+                    }
+                    chartMaker.setPalette(palette);
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+            
+            @Override
+            protected void whenSucceeded() {
+                chartController.writeXYChart(outputColumns, outputData, null, false);
+            }
+            
+        };
+        start(task);
+    }
+    
 }

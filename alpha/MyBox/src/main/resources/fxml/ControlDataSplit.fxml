@@ -7,6 +7,7 @@ License:    Apache License Version 2.0
 -->
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
@@ -34,7 +35,7 @@ License:    Apache License Version 2.0
       </FlowPane>
       <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
          <children>
-            <RadioButton fx:id="numberRadio" mnemonicParsing="false" selected="true" text="%NumberOfData">
+            <RadioButton fx:id="numberRadio" mnemonicParsing="false" selected="true" text="%NumberOfSplit">
                <toggleGroup>
                   <ToggleGroup fx:id="splitGroup" />
                </toggleGroup>
@@ -46,6 +47,12 @@ License:    Apache License Version 2.0
          <children>
             <RadioButton fx:id="intervalRadio" mnemonicParsing="false" text="%DataInterval" toggleGroup="$splitGroup" />
             <TextField fx:id="intervalInput" prefWidth="100.0" />
+         </children>
+      </FlowPane>
+      <FlowPane alignment="CENTER_LEFT" hgap="2.0" layoutX="15.0" layoutY="35.0" prefWrapLength="200.0" vgap="2.0">
+         <children>
+            <Label text="%DecimalScale" wrapText="true" />
+            <ComboBox fx:id="scaleSelector" editable="true" prefWidth="100.0" />
          </children>
       </FlowPane>
    </children>

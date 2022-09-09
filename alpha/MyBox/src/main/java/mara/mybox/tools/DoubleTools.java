@@ -16,7 +16,9 @@ import static mara.mybox.value.Languages.message;
 public class DoubleTools {
 
     public static boolean invalidDouble(double value) {
-        return Double.isNaN(value) || value == AppValues.InvalidDouble;
+
+        return Double.isNaN(value) || Double.isInfinite(value)
+                || value == AppValues.InvalidDouble;
     }
 
     public static double value(InvalidAs invalidAs) {

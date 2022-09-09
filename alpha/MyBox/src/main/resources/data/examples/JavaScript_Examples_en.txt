@@ -95,16 +95,6 @@ Math.log(6)
 
 ##MyBox#
 Examples > Expressions > Numeric operations
-base 10 logarithm
-Math.log10(6)
-
-##MyBox#
-Examples > Expressions > Numeric operations
-base 2 logarithm
-Math.log2(6)
-
-##MyBox#
-Examples > Expressions > Numeric operations
 round up
 Math.ceil(4.13)
 

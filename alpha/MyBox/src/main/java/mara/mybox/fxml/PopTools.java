@@ -1013,11 +1013,11 @@ public class PopTools {
             CheckBox popCheck = new CheckBox();
             popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
             NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
-            popCheck.setSelected(UserConfig.getBoolean(name + "JavaScriptExamplesPopWhenMouseHovering", true));
+            popCheck.setSelected(UserConfig.getBoolean(name + "PopWhenMouseHovering", true));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(name + "JavaScriptExamplesPopWhenMouseHovering", popCheck.isSelected());
+                    UserConfig.setBoolean(name + "PopWhenMouseHovering", popCheck.isSelected());
                 }
             });
             topButtons.add(popCheck);
@@ -1026,14 +1026,16 @@ public class PopTools {
             controller.addNode(new Separator());
 
             PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
-                    " '' == ", " == ", " '' != ", " != ",
-                    " === ", " !== ", " true ", " false ", " null ", " undefined ",
-                    " >= ", " > ", " <= ", " < ", " && ", " || ", " ! "
+                    " + ", " - ", " * ", " / ", " % ",
+                    "''", "( )", ";", " = ", " += ", " -= ", " *= ", " /= ", " %= ",
+                    "++ ", "-- ", " , ", " { } ", "[ ]", "\" \"", ".",
+                    " var ", " this"
             ));
+
             PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
-                    "''", " var ", " = ", ";", " += ", " -= ", " *= ", " /= ", " %= ",
-                    " + ", " - ", " * ", " / ", " % ", "++ ", "-- ",
-                    " , ", "( )", " { } ", "[ ]", "\" \"", ".", " this"
+                    " >= ", " > ", " <= ", " < ", " != ", " && ", " || ", " !",
+                    " '' == ", " == ", " '' != ", " === ", " !== ",
+                    " true ", " false ", " null ", " undefined "
             ));
 
             Hyperlink jlink = new Hyperlink("Learn JavaScript ");

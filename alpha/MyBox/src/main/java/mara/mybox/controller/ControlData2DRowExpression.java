@@ -95,7 +95,7 @@ public class ControlData2DRowExpression extends ControlJavaScriptRefer {
                     "'#{" + col1 + "}'.endsWith('Hello')",
                     "var array = [ 'A', 'B', 'C', 'D' ];\n"
                     + "array.includes('#{" + col1 + "}')"
-            ), true, 2);
+            ), true, 3);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
