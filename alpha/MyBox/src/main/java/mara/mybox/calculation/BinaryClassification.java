@@ -7,12 +7,12 @@ package mara.mybox.calculation;
  */
 public class BinaryClassification {
 
-    public static double sigMoid(double d) {
-        return 1 / (1 + Math.pow(Math.E, -d));
+    public static double sigMoid(double x) {
+        return 1 / (1 + Math.exp(-x));
     }
 
-    public static double sigMoidDerivative(double d) {
-        return sigMoid(d) * (1 - sigMoid(d));
+    public static double sigMoidDerivative(double x) {
+        return sigMoid(x) * (1 - sigMoid(x));
     }
 
 }

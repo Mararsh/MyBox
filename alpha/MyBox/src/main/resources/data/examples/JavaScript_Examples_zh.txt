@@ -51,7 +51,7 @@ Math.sqrt(9)
 ##MyBox#
 示例 > 表达式 > 数值计算
 三次方根
-Math.pow(27,-3)
+Math.pow(27,1/3)
 
 ##MyBox#
 示例 > 表达式 > 数值计算

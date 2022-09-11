@@ -25,7 +25,7 @@ cat1.name
 
 ##MyBox#
 Examples > Expressions > Numeric operations
-e
+Euler number
 Math.E
 
 ##MyBox#

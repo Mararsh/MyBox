@@ -1038,25 +1038,25 @@ public class PopTools {
                     " true ", " false ", " null ", " undefined "
             ));
 
-            Hyperlink jlink = new Hyperlink("Learn JavaScript ");
+            Hyperlink jlink = new Hyperlink("JavaScript language specification");
             jlink.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    parent.openLink("https://www.tutorialsteacher.com/javascript");
+                    parent.openLink("https://www.ecma-international.org/publications-and-standards/standards/ecma-262/");
                 }
             });
             controller.addNode(jlink);
 
-            Hyperlink nlink = new Hyperlink("JavaScript Tutorial - English");
-            nlink.setOnAction(new EventHandler<ActionEvent>() {
+            Hyperlink mlink = new Hyperlink("JavaScript Tutorial - " + message("English"));
+            mlink.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
                     parent.openLink("https://developer.mozilla.org/en-US/docs/Web/JavaScript");
                 }
             });
-            controller.addNode(nlink);
+            controller.addNode(mlink);
 
-            Hyperlink alink = new Hyperlink("JavaScript Tutorial - Chinese");
+            Hyperlink alink = new Hyperlink("JavaScript Tutorial - " + message("Chinese"));
             alink.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -1064,6 +1064,15 @@ public class PopTools {
                 }
             });
             controller.addNode(alink);
+
+            Hyperlink nlink = new Hyperlink("Nashorn User's Guide");
+            nlink.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    parent.openLink("https://docs.oracle.com/javase/10/nashorn/toc.htm");
+                }
+            });
+            controller.addNode(nlink);
 
             return controller;
 

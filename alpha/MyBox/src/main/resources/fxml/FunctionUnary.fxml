@@ -409,24 +409,15 @@ License:    Apache License Version 2.0
                                                    <children>
                                                       <Label text="x = " wrapText="true" />
                                                       <TextField maxWidth="1.7976931348623157E308" fx:id="xInput" />
-                                                      <Button fx:id="calculateButton" mnemonicParsing="false" onAction="#calculateAction">
-                                                         <graphic>
-                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@../buttons/Red/iconCalculator.png" />
-                                                               </image>
-                                                            </ImageView>
-                                                         </graphic>
-                                                      </Button>
                                                    </children>
                                                 </FlowPane>
                                                 <FlowPane hgap="2.0" vgap="2.0">
                                                    <children>
-                                                      <Button fx:id="clearResultsButton" mnemonicParsing="false" onAction="#clearResults">
+                                                      <Button fx:id="styleButton" mnemonicParsing="false" onMouseEntered="#popHtmlStyle">
                                                          <graphic>
-                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                <image>
-                                                                  <Image url="@../buttons/Red/iconClear.png" />
+                                                                  <Image url="@../buttons/Red/iconStyle.png" />
                                                                </image>
                                                             </ImageView>
                                                          </graphic>
@@ -440,11 +431,20 @@ License:    Apache License Version 2.0
                                                             </ImageView>
                                                          </graphic>
                                                       </Button>
-                                                      <Button fx:id="styleButton" mnemonicParsing="false" onMouseEntered="#popHtmlStyle">
+                                                      <Button fx:id="clearResultsButton" mnemonicParsing="false" onAction="#clearResults">
                                                          <graphic>
-                                                            <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                <image>
-                                                                  <Image url="@../buttons/Red/iconStyle.png" />
+                                                                  <Image url="@../buttons/Red/iconClear.png" />
+                                                               </image>
+                                                            </ImageView>
+                                                         </graphic>
+                                                      </Button>
+                                                      <Button fx:id="calculateButton" mnemonicParsing="false" onAction="#calculateAction">
+                                                         <graphic>
+                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                               <image>
+                                                                  <Image url="@../buttons/Red/iconCalculator.png" />
                                                                </image>
                                                             </ImageView>
                                                          </graphic>
@@ -466,7 +466,13 @@ License:    Apache License Version 2.0
                                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                              </padding>
                                              <children>
-                                                <fx:include fx:id="dataSplit" source="ControlDataSplit.fxml" />
+                                                <fx:include source="ControlDataSplit.fxml" fx:id="xDataSplit" />
+                                                <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
+                                                   <children>
+                                                      <Label text="%DecimalScale" wrapText="true" />
+                                                      <ComboBox fx:id="dataScaleSelector" editable="true" prefWidth="100.0" />
+                                                   </children>
+                                                </FlowPane>
                                                 <Button fx:id="okDataButton" mnemonicParsing="false" onAction="#okDataAction">
                                                    <graphic>
                                                       <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -488,7 +494,13 @@ License:    Apache License Version 2.0
                                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                              </padding>
                                              <children>
-                                                <fx:include fx:id="chartSplit" source="ControlDataSplit.fxml" />
+                                                <fx:include source="ControlDataSplit.fxml" fx:id="xChartSplit" />
+                                                <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
+                                                   <children>
+                                                      <Label text="%DecimalScale" wrapText="true" />
+                                                      <ComboBox fx:id="chartScaleSelector" editable="true" prefWidth="100.0" />
+                                                   </children>
+                                                </FlowPane>
                                                 <Button fx:id="okChartButton" mnemonicParsing="false" onAction="#okChartAction">
                                                    <graphic>
                                                       <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

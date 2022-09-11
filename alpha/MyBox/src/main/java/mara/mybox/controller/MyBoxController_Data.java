@@ -199,6 +199,26 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
                 jshell, jexl, JavaScript
         );
 
+        MenuItem UnaryFunction = new MenuItem(message("UnaryFunction"));
+        UnaryFunction.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.FunctionUnaryFxml);
+        });
+
+        MenuItem BinaryFunction = new MenuItem(message("BinaryFunction"));
+        BinaryFunction.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.FunctionBinaryFxml);
+        });
+
+        MenuItem MultivariateFunction = new MenuItem("MultivariateFunction");
+        MultivariateFunction.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.FunctionMultivariateFxml);
+        });
+
+        Menu MathFunction = new Menu(message("MathFunction"));
+        MathFunction.getItems().addAll(
+                UnaryFunction, BinaryFunction, MultivariateFunction
+        );
+
         MenuItem barcodeCreator = new MenuItem(message("BarcodeCreator"));
         barcodeCreator.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.BarcodeCreatorFxml);
@@ -237,6 +257,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
                 DataManufacture, ManageData, SpliceData, new SeparatorMenuItem(),
                 DataFile, matrix, database, DataInSystemClipboard, DataInMyBoxClipboard, new SeparatorMenuItem(),
                 calculation, new SeparatorMenuItem(),
+                MathFunction, new SeparatorMenuItem(),
                 Location, new SeparatorMenuItem(),
                 miscellaneousMenu
         );

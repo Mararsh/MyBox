@@ -22,8 +22,63 @@ Math.E
 
 ##MyBox#
 示例 > 常数
+2的自然对数
+Math.LN2
+
+##MyBox#
+示例 > 常数
+10 的自然对数
+Math.LN10
+
+##MyBox#
+示例 > 常数
+e的以2为底的对数
+Math.LOG2E
+
+##MyBox#
+示例 > 常数
+e的以10为底的对数
+Math.LOG10E
+
+##MyBox#
+示例 > 常数
+2的平方根
+Math.SQRT2
+
+##MyBox#
+示例 > 常数
+0.5的平方根
+Math.SQRT1_2
+
+##MyBox#
+示例 > 常数
 随机数
 Math.random()
+
+##MyBox#
+示例 > 常数
+数值类型的最大正有限值
+Number.MAX_VALUE
+
+##MyBox#
+示例 > 常数
+数值类型的最小正有限值
+Number.MIN_VALUE
+
+##MyBox#
+示例 > 常数
+正无穷大
+Number.POSITIVE_INFINITY
+
+##MyBox#
+示例 > 常数
+负无穷大
+Number.NEGATIVE_INFINITY
+
+##MyBox#
+示例 > 常数
+非数字
+Number.NaN
 
 ##MyBox#
 示例
@@ -40,36 +95,79 @@ Math.abs(x)
 
 ##MyBox#
 示例 > 一元函数 > 三角函数
-余弦
+余弦-弧度
 Math.cos(x)
 
 ##MyBox#
 示例 > 一元函数 > 三角函数
-正弦
+正弦-弧度
 Math.sin(x)
 
 ##MyBox#
 示例 > 一元函数 > 三角函数
-正切
+正切-弧度
 Math.tan(x)
 MyBoxTreeNodeMore:( x - Math.PI / 2 ) % Math.PI != 0
 
 ##MyBox#
 示例 > 一元函数 > 三角函数
-反余弦
+反余弦-弧度
 Math.acos(x)
 MyBoxTreeNodeMore:x >= -1 && x <= 1
 
 ##MyBox#
 示例 > 一元函数 > 三角函数
-反正弦
+反正弦-弧度
 Math.asin(x)
 MyBoxTreeNodeMore:x >= -1 && x <= 1
 
 ##MyBox#
 示例 > 一元函数 > 三角函数
-反正切
+反正切-弧度
 Math.atan(x)
+
+##MyBox#
+示例 > 一元函数 > 三角函数
+角度转换为弧度
+x * Math.PI / 180
+
+##MyBox#
+示例 > 一元函数 > 三角函数
+弧度转换为角度
+x * 180 / Math.PI
+
+##MyBox#
+示例 > 一元函数 > 三角函数
+余弦-角度
+Math.cos(x * Math.PI / 180)
+
+##MyBox#
+示例 > 一元函数 > 三角函数
+正弦-角度
+Math.sin(x * Math.PI / 180)
+
+##MyBox#
+示例 > 一元函数 > 三角函数
+正切-角度
+Math.tan(x * Math.PI / 180)
+MyBoxTreeNodeMore:( x - 90 ) % 180 != 0
+
+##MyBox#
+示例 > 一元函数 > 三角函数
+反余弦-角度
+Math.acos(x) * 180 / Math.PI
+MyBoxTreeNodeMore:x >= -1 && x <= 1
+
+##MyBox#
+示例 > 一元函数 > 三角函数
+反正弦-角度
+Math.asin(x) * 180 / Math.PI
+MyBoxTreeNodeMore:x >= -1 && x <= 1
+
+##MyBox#
+示例 > 一元函数 > 三角函数
+反正切-角度
+Math.atan(x) * 180 / Math.PI
 
 ##MyBox#
 示例 > 一元函数
@@ -104,18 +202,20 @@ MyBoxTreeNodeMore:x >= 0
 ##MyBox#
 示例 > 一元函数 > 幂函数
 三次方根
-Math.pow(x,-3)
+Math.pow(x,1/3)
+MyBoxTreeNodeMore:x >= 0
 
 ##MyBox#
 示例 > 一元函数 > 幂函数
 四次方根
-Math.pow(x,-4)
+Math.pow(x,1/4)
 MyBoxTreeNodeMore:x >= 0
 
 ##MyBox#
 示例 > 一元函数 > 幂函数
 五次方根
-Math.pow(x,-5)
+Math.pow(x,1/5)
+MyBoxTreeNodeMore:x >= 0
 
 ##MyBox#
 示例 > 一元函数
@@ -167,27 +267,67 @@ Math.trunc(x)
 
 ##MyBox#
 示例 > 一元函数
-一次函数
+一元多项式
+
+##MyBox#
+示例 > 一元函数 > 一元多项式
+一元线性函数
 5 * x + 9
 
 ##MyBox#
-示例 > 一元函数
-二次函数
+示例 > 一元函数 > 一元多项式
+一元二次函数
 5 * Math.pow(x,2)  + 3 * x + 9
 
 ##MyBox#
-示例 > 一元函数
-三次函数
+示例 > 一元函数 > 一元多项式
+一元三次函数
 6 * Math.pow(x,3)  + 5 * Math.pow(x,2)  + 3 * x + 9
 
 ##MyBox#
-示例 > 一元函数
-四次函数
+示例 > 一元函数 > 一元多项式
+一元四次函数
 7 * Math.pow(x,4)  + 6 * Math.pow(x,3)  + 5 * Math.pow(x,2)  + 3 * x + 9
 
 ##MyBox#
-示例 > 一元函数
-五次函数
+示例 > 一元函数 > 一元多项式
+一元五次函数
 8 * Math.pow(x,5)  +7 * Math.pow(x,4)  + 6 * Math.pow(x,3)  + 5 * Math.pow(x,2)  + 3 * x + 9
+
+##MyBox#
+示例 > 一元函数
+一元分段函数
+if ( x > 1 ) 
+    6 * x - 5.9;
+else if ( x == 1)
+    38; 
+else 
+    Math.pow(x, 2) + 2.7; 
+
+##MyBox#
+示例 > 一元函数
+数值分析
+
+##MyBox#
+示例 > 一元函数 > 数值分析
+标准正态分布概率密度函数
+Math.exp(- x * x / 2) / Math.sqrt(2 * Math.PI)
+
+##MyBox#
+示例 > 一元函数 > 数值分析
+正态分布概率密度函数
+var mean = 2, stdDeviation = 3; 
+Math.exp(- (x - mean) * ( x - mean ) / ( 2 * stdDeviation * stdDeviation ) ) / ( Math.sqrt(2 * Math.PI) * stdDeviation )
+
+##MyBox#
+示例 > 一元函数 > 数值分析
+sigmoid
+1 / (1 + Math.exp(-x))
+
+##MyBox#
+示例 > 一元函数 > 数值分析
+sigmoid的导数
+var s = 1 / (1 + Math.exp(-x));
+s * (1 - s);
 
 

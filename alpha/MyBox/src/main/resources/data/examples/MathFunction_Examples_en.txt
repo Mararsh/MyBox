@@ -1,0 +1,335 @@
+##MyBox#
+MyBoxTreeRoot;;;
+Math Function
+
+##MyBox#
+Math Function
+
+##MyBox#
+Examples
+Constants
+
+##MyBox#
+Examples > Constants
+pi
+Math.PI
+
+##MyBox#
+Examples > Constants
+Euler number
+Math.E
+
+##MyBox#
+Examples > Constants
+natural logarithm of 2
+Math.LN2
+
+##MyBox#
+Examples > Constants
+natural logarithm of 10
+Math.LN10
+
+##MyBox#
+Examples > Constants
+base-2 logarithm of e
+Math.LOG2E
+
+##MyBox#
+Examples > Constants
+base-10 logarithm of e
+Math.LOG10E
+
+##MyBox#
+Examples > Constants
+square root of 2
+Math.SQRT2
+
+##MyBox#
+Examples > Constants
+square root of 0.5
+Math.SQRT1_2
+
+##MyBox#
+Examples > Constants
+Random
+Math.random()
+
+##MyBox#
+Examples > Constants
+largest positive finite value of the number type
+Number.MAX_VALUE
+
+##MyBox#
+Examples > Constants
+smallest positive nonzero value of the number type
+Number.MIN_VALUE
+
+##MyBox#
+Examples > Constants
+positive infinite value
+Number.POSITIVE_INFINITY
+
+##MyBox#
+Examples > Constants
+negative infinite value
+Number.NEGATIVE_INFINITY
+
+##MyBox#
+Examples > Constants
+non-numeric
+Number.NaN
+
+##MyBox#
+Examples
+Unary Function
+
+##MyBox#
+Examples > Unary Function
+absoluate
+Math.abs(x)
+
+##MyBox#
+Examples > Unary Function
+Trigonometry
+
+##MyBox#
+Examples > Unary Function > Trigonometry
+cosine - radian
+Math.cos(x)
+
+##MyBox#
+Examples > Unary Function > Trigonometry
+sine - radian
+Math.sin(x)
+
+##MyBox#
+Examples > Unary Function > Trigonometry
+tangent - radian
+Math.tan(x)
+MyBoxTreeNodeMore:( x - Math.PI / 2 ) % Math.PI != 0
+
+##MyBox#
+Examples > Unary Function > Trigonometry
+arc cosine - radian
+Math.acos(x)
+MyBoxTreeNodeMore:x >= -1 && x <= 1
+
+##MyBox#
+Examples > Unary Function > Trigonometry
+arc sine - radian
+Math.asin(x)
+MyBoxTreeNodeMore:x >= -1 && x <= 1
+
+##MyBox#
+Examples > Unary Function > Trigonometry
+arc tangent - radian
+Math.atan(x)
+
+##MyBox#
+Examples > Unary Function > Trigonometry
+convert angle to radian
+x * Math.PI / 180
+
+##MyBox#
+Examples > Unary Function > Trigonometry
+convert radian to angle
+x * 180 / Math.PI
+
+##MyBox#
+Examples > Unary Function > Trigonometry
+cosine - angle
+Math.cos(x * Math.PI / 180)
+
+##MyBox#
+Examples > Unary Function > Trigonometry
+sine - angle
+Math.sin(x * Math.PI / 180)
+
+##MyBox#
+Examples > Unary Function > Trigonometry
+tangent - angle
+Math.tan(x * Math.PI / 180)
+MyBoxTreeNodeMore:( x - 90 ) % 180 != 0
+
+##MyBox#
+Examples > Unary Function > Trigonometry
+arc cosine - angle
+Math.acos(x) * 180 / Math.PI
+MyBoxTreeNodeMore:x >= -1 && x <= 1
+
+##MyBox#
+Examples > Unary Function > Trigonometry
+arc sine - angle
+Math.asin(x) * 180 / Math.PI
+MyBoxTreeNodeMore:x >= -1 && x <= 1
+
+##MyBox#
+Examples > Unary Function > Trigonometry
+arc tangent - angle
+Math.atan(x) * 180 / Math.PI
+
+##MyBox#
+Examples > Unary Function
+Power Function
+
+##MyBox#
+Examples > Unary Function > Power Function
+square
+Math.pow(x,2)
+
+##MyBox#
+Examples > Unary Function > Power Function
+cubic
+Math.pow(x,3)
+
+##MyBox#
+Examples > Unary Function > Power Function
+quartic
+Math.pow(x,4)
+
+##MyBox#
+Examples > Unary Function > Power Function
+quintic
+Math.pow(x,5)
+
+##MyBox#
+Examples > Unary Function > Power Function
+square root
+Math.sqrt(x)
+MyBoxTreeNodeMore:x >= 0
+
+##MyBox#
+Examples > Unary Function > Power Function
+cubic root
+Math.pow(x,1/3)
+MyBoxTreeNodeMore:x >= 0
+
+##MyBox#
+Examples > Unary Function > Power Function
+quartic root
+Math.pow(x,1/4)
+MyBoxTreeNodeMore:x >= 0
+MyBoxTreeNodeMore:x >= 0
+
+##MyBox#
+Examples > Unary Function > Power Function
+quintic root
+Math.pow(x,1/5)
+MyBoxTreeNodeMore:x >= 0
+
+##MyBox#
+Examples > Unary Function
+Exponential Function
+
+##MyBox#
+Examples > Unary Function > Exponential Function
+power of e
+Math.exp(x)
+
+##MyBox#
+Examples > Unary Function > Exponential Function
+power
+Math.pow(5.9,x)
+
+##MyBox#
+Examples > Unary Function
+Logarithmic Function
+
+##MyBox#
+Examples > Unary Function > Logarithmic Function
+natural logarithm
+Math.log(x)
+MyBoxTreeNodeMore:x > 0
+
+##MyBox#
+Examples > Unary Function
+Intercept Function
+
+##MyBox#
+Examples > Unary Function > Intercept Function
+round up
+Math.ceil(x)
+
+##MyBox#
+Examples > Unary Function > Intercept Function
+round down
+Math.floor(x)
+
+##MyBox#
+Examples > Unary Function > Intercept Function
+round
+Math.round(x)
+
+##MyBox#
+Examples > Unary Function > Intercept Function
+trunc
+Math.trunc(x)
+
+##MyBox#
+Examples > Unary Function
+Unary Multinomial
+
+##MyBox#
+Examples > Unary Function > Unary Multinomial
+unary linear function
+5 * x + 9
+
+##MyBox#
+Examples > Unary Function > Unary Multinomial
+unary quadratic function
+5 * Math.pow(x,2)  + 3 * x + 9
+
+##MyBox#
+Examples > Unary Function > Unary Multinomial
+unary cubic function
+6 * Math.pow(x,3)  + 5 * Math.pow(x,2)  + 3 * x + 9
+
+##MyBox#
+Examples > Unary Function > Unary Multinomial
+unary quartic function
+7 * Math.pow(x,4)  + 6 * Math.pow(x,3)  + 5 * Math.pow(x,2)  + 3 * x + 9
+
+##MyBox#
+Examples > Unary Function > Unary Multinomial
+unary quintic function
+8 * Math.pow(x,5)  +7 * Math.pow(x,4)  + 6 * Math.pow(x,3)  + 5 * Math.pow(x,2)  + 3 * x + 9
+
+##MyBox#
+Examples > Unary Function
+unary piecewise function
+if ( x > 1 ) 
+    6 * x - 5.9;
+else if ( x == 1)
+    38; 
+else 
+    Math.pow(x, 2) + 2.7; 
+
+
+##MyBox#
+Examples > Unary Function
+Numerical Analysis 
+
+##MyBox#
+Examples > Unary Function > Numerical Analysis 
+Standard normal probability density function
+Math.exp(- x * x / 2) / Math.sqrt(2 * Math.PI)
+
+##MyBox#
+Examples > Unary Function > Numerical Analysis 
+Normal probability density function
+var mean = 2, stdDeviation = 3; 
+Math.exp(- (x - mean) * ( x - mean ) / ( 2 * stdDeviation * stdDeviation ) ) / ( Math.sqrt(2 * Math.PI) * stdDeviation )
+
+##MyBox#
+Examples > Unary Function > Numerical Analysis 
+sigmoid
+1 / (1 + Math.exp(-x))
+
+##MyBox#
+Examples > Unary Function > Numerical Analysis 
+derivative of sigmoid
+var s = 1 / (1 + Math.exp(-x));
+s * (1 - s);
+
+
+

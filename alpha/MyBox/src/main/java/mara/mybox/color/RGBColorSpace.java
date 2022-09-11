@@ -12,7 +12,6 @@ import mara.mybox.color.Illuminant.Observer;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleMatrixTools;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -555,7 +554,7 @@ public class RGBColorSpace extends CIEData {
         if (v <= 0.0031308) {
             return v * 12.92;
         } else {
-            return 1.055 * Math.pow(v, 1 / 2.4) - 0.055;
+            return 1.055 * Math.pow(v, 1d / 2.4) - 0.055;
         }
     }
 
