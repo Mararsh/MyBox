@@ -160,92 +160,91 @@ License:    Apache License Version 2.0
                                                 </ScrollPane>
                                             </content>
                                         </Tab>
-                              <Tab fx:id="optionsTab" text="%Options">
-                                 <content>
-                                    <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                                       <content>
-                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                             <children>
-                                                        <VBox fx:id="dataOptionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                        <Tab fx:id="optionsTab" text="%Options">
+                                            <content>
+                                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                                                    <content>
+                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                             <children>
-                                                                <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="500.0" vgap="5.0">
+                                                                <VBox fx:id="dataOptionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                                     <children>
-                                                                        <Label text="%AccordingTo" />
-                                                                        <RadioButton fx:id="columnsRadio" mnemonicParsing="false" selected="true" text="%Columns">
+                                                                        <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="500.0" vgap="5.0">
+                                                                            <children>
+                                                                                <Label text="%AccordingTo" />
+                                                                                <RadioButton fx:id="columnsRadio" mnemonicParsing="false" selected="true" text="%Columns">
+                                                                                    <toggleGroup>
+                                                                                        <ToggleGroup fx:id="objectGroup" />
+                                                                                    </toggleGroup>
+                                                                                </RadioButton>
+                                                                                <RadioButton fx:id="rowsRadio" mnemonicParsing="false" text="%Rows" toggleGroup="$objectGroup" />
+                                                                                <RadioButton fx:id="allRadio" mnemonicParsing="false" text="%All" toggleGroup="$objectGroup" />
+                                                                            </children>
+                                                                        </FlowPane>
+                                                                        <FlowPane fx:id="categoryColumnsPane" hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+                                                                            <children>
+                                                                                <Label minHeight="-Infinity" minWidth="-Infinity" text="%CategoryColumn" />
+                                                                                <ComboBox fx:id="categoryColumnSelector" prefWidth="200.0" />
+                                                                            </children>
+                                                                        </FlowPane>
+                                                                    </children>
+                                                                    <padding>
+                                                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                                    </padding>
+                                                                </VBox>
+                                                                <VBox fx:id="columnCheckBoxsBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                                    <children>
+                                                                        <FlowPane hgap="2.0" vgap="2.0">
+                                                                            <children>
+                                                                                <Label text="%ColumnsCalculated" />
+                                                                                <Button fx:id="selectAllColumnsButton" mnemonicParsing="false" onAction="#selectAllColumns">
+                                                                                    <graphic>
+                                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                                            <image>
+                                                                                                <Image url="@../buttons/Red/iconSelectAll.png" />
+                                                                                            </image>
+                                                                                        </ImageView>
+                                                                                    </graphic>
+                                                                                </Button>
+                                                                                <Button fx:id="selectNoneColumnsButton" mnemonicParsing="false" onAction="#selectNoneColumn">
+                                                                                    <graphic>
+                                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                                            <image>
+                                                                                                <Image url="@../buttons/Red/iconSelectNone.png" />
+                                                                                            </image>
+                                                                                        </ImageView>
+                                                                                    </graphic>
+                                                                                </Button>
+                                                                            </children>
+                                                                        </FlowPane>
+                                                                        <FlowPane fx:id="columnsPane" hgap="2.0" vgap="2.0" />
+                                                                    </children>
+                                                                </VBox>
+                                                                <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+                                                                    <children>
+                                                                        <Label text="%ToInvalidNumber">
+                                                                            <FlowPane.margin>
+                                                                                <Insets />
+                                                                            </FlowPane.margin>
+                                                                        </Label>
+                                                                        <RadioButton fx:id="skipNonnumericRadio" mnemonicParsing="false" selected="true" text="%Skip">
                                                                             <toggleGroup>
-                                                                                <ToggleGroup fx:id="objectGroup" />
+                                                                                <ToggleGroup fx:id="nonnumericGroup" />
                                                                             </toggleGroup>
                                                                         </RadioButton>
-                                                                        <RadioButton fx:id="rowsRadio" mnemonicParsing="false" text="%Rows" toggleGroup="$objectGroup" />
-                                                                        <RadioButton fx:id="allRadio" mnemonicParsing="false" text="%All" toggleGroup="$objectGroup" />
+                                                                        <RadioButton fx:id="zeroNonnumericRadio" layoutX="120.0" layoutY="10.0" mnemonicParsing="false" text="%CountAsZero" toggleGroup="$nonnumericGroup" />
                                                                     </children>
                                                                 </FlowPane>
-                                                                <FlowPane fx:id="categoryColumnsPane" hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
-                                                                    <children>
-                                                                        <Label minHeight="-Infinity" minWidth="-Infinity" text="%CategoryColumn" />
-                                                                        <ComboBox fx:id="categoryColumnSelector" prefWidth="200.0" />
-                                                                    </children>
-                                                                </FlowPane>
+                                                                <Label fx:id="noticeLabel" minHeight="-Infinity" text="%AllRowsLoadComments" wrapText="true">
+                                                                    <VBox.margin>
+                                                                        <Insets top="10.0" />
+                                                                    </VBox.margin>
+                                                                </Label>
                                                             </children>
-                                                   <padding>
-                                                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                                   </padding>
                                                         </VBox>
-                                                <VBox fx:id="columnCheckBoxsBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                                   <children>
-                                                      <FlowPane hgap="2.0" vgap="2.0">
-                                                         <children>
-                                                            <Label fx:id="valuesLabel" text="%ValueColumns" />
-                                                            <Button fx:id="selectAllColumnsButton" mnemonicParsing="false" onAction="#selectAllColumns">
-                                                               <graphic>
-                                                                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                     <image>
-                                                                        <Image url="@../buttons/Red/iconSelectAll.png" />
-                                                                     </image>
-                                                                  </ImageView>
-                                                               </graphic>
-                                                            </Button>
-                                                            <Button fx:id="selectNoneColumnsButton" mnemonicParsing="false" onAction="#selectNoneColumn">
-                                                               <graphic>
-                                                                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                     <image>
-                                                                        <Image url="@../buttons/Red/iconSelectNone.png" />
-                                                                     </image>
-                                                                  </ImageView>
-                                                               </graphic>
-                                                            </Button>
-                                                            <Label text="%StyleColumnComments" />
-                                                         </children>
-                                                      </FlowPane>
-                                                      <FlowPane fx:id="columnsPane" hgap="2.0" vgap="2.0" />
-                                                   </children>
-                                                </VBox>
-                                                <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
-                                                   <children>
-                                                      <Label text="%ToInvalidNumber">
-                                                         <FlowPane.margin>
-                                                            <Insets />
-                                                         </FlowPane.margin>
-                                                      </Label>
-                                                      <RadioButton fx:id="skipNonnumericRadio" mnemonicParsing="false" selected="true" text="%Skip">
-                                                         <toggleGroup>
-                                                            <ToggleGroup fx:id="nonnumericGroup" />
-                                                         </toggleGroup>
-                                                      </RadioButton>
-                                                      <RadioButton fx:id="zeroNonnumericRadio" layoutX="120.0" layoutY="10.0" mnemonicParsing="false" text="%CountAsZero" toggleGroup="$nonnumericGroup" />
-                                                   </children>
-                                                </FlowPane>
-                                                <Label fx:id="noticeLabel" minHeight="-Infinity" text="%AllRowsLoadComments" wrapText="true">
-                                                   <VBox.margin>
-                                                      <Insets top="10.0" />
-                                                   </VBox.margin>
-                                                </Label>
-                                             </children>
-                                          </VBox>
-                                       </content>
-                                    </ScrollPane>
-                                 </content>
-                              </Tab>
+                                                    </content>
+                                                </ScrollPane>
+                                            </content>
+                                        </Tab>
                                     </tabs>
                                 </TabPane>
                                 <HBox alignment="CENTER_LEFT" spacing="2.0"> 
@@ -322,15 +321,6 @@ License:    Apache License Version 2.0
                                                             </FlowPane.margin>
                                                         </CheckBox>
                                                         <CheckBox fx:id="meanCheck" layoutX="273.0" layoutY="16.0" mnemonicParsing="false" selected="true" text="%Mean" />
-                                                        <Button fx:id="randomColorsButton" mnemonicParsing="false" onAction="#randomColors">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/Red/iconRandom.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
                                                     </children>
                                                 </FlowPane>
                                             </children>

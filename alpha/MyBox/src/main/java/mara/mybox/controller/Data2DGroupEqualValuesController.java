@@ -479,11 +479,6 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
                 popError(message("NoData"));
                 return;
             }
-            for (int i = 0; i < xyColumns.size(); i++) {
-                Data2DColumn column = xyColumns.get(i);
-                column.setColor(null);
-            }
-            chartMaker.setPalette(makePalette());
             xyChartController.writeXYChart(xyColumns, xyData, null, false);
         } catch (Exception e) {
             MyBoxLog.error(e);

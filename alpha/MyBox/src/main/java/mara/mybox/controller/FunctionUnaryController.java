@@ -32,6 +32,7 @@ import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.HtmlWriteTools;
 import static mara.mybox.tools.TmpFileTools.getPathTempFile;
 import mara.mybox.value.AppPaths;
@@ -279,7 +280,6 @@ public class FunctionUnaryController extends TreeManageController {
                     .setDelimiter(",").setHasHeader(true)
                     .setColsNumber(2).setRowsNumber(count);
             data.setColumns(db2Columns);
-            data.saveAttributes();
             return data;
         } catch (Exception e) {
             if (task != null) {
@@ -321,7 +321,11 @@ public class FunctionUnaryController extends TreeManageController {
             @Override
             protected boolean handle() {
                 data = generateData(xDataSplitController, dataScale);
-                return data != null;
+                if (data == null) {
+                    return false;
+                }
+                data.saveAttributes();
+                return true;
             }
 
             @Override
@@ -374,6 +378,7 @@ public class FunctionUnaryController extends TreeManageController {
                     if (outputData == null) {
                         return false;
                     }
+                    FileDeleteTools.delete(data.getFile());
                     outputColumns = data.getColumns();
                     String chartName = message("LineChart");
                     UserConfig.setBoolean(chartName + "CategoryIsNumbers", true);

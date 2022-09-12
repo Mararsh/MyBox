@@ -187,6 +187,8 @@ MyBox is based on following open sources:
 | commons-math | Calculation | https://commons.apache.org/proper/commons-math/index.html |
 | JEXL | Calculation | https://commons.apache.org/proper/commons-jexl |
 | OpenOffice | Document | [http://www.openoffice.org/](http://www.openoffice.org/) |
+| nashorn | JavaScript | [https://openjdk.org/projects/nashorn/](https://openjdk.org/projects/nashorn/) |
+| echarts-gl | WebGL | [https://github.com/ecomfe/echarts-gl](https://github.com/ecomfe/echarts-gl) |
 
 # Features        
 ## Cross Platforms <a id="Cross-platform"></a>        

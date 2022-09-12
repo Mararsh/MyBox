@@ -1,10 +1,8 @@
 package mara.mybox.controller;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -12,14 +10,12 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.paint.Color;
 import mara.mybox.calculation.SimpleLinearRegression;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.chart.ChartOptions.ChartType;
 import mara.mybox.fxml.chart.ResidualChart;
@@ -434,54 +430,8 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
         }
     }
 
-    @Override
-    public Map<String, String> makePalette() {
-        try {
-            Random random = new Random();
-            if (palette == null) {
-                palette = new HashMap();
-            } else {
-                palette.clear();
-            }
-            for (int i = 0; i < outputColumns.size(); i++) {
-                Data2DColumn column = outputColumns.get(i);
-                Color color = column.getColor();
-                if (i > 2 || color == null) {
-                    color = FxColorTools.randomColor(random);
-                }
-                String rgb = FxColorTools.color2rgb(color);
-                palette.put(column.getColumnName(), rgb);
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-        return palette;
-    }
-
-    public Map<String, String> makeResidualPalette() {
-        try {
-            Random random = new Random();
-            residualPalette = new HashMap();
-            for (int i = 0; i < residualColumns.size(); i++) {
-                Data2DColumn column = residualColumns.get(i);
-                Color color = column.getColor();
-                if (i > 1 || color == null) {
-                    color = FxColorTools.randomColor(random);
-                }
-                String rgb = FxColorTools.color2rgb(color);
-                residualPalette.put(column.getColumnName(), rgb);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-        return residualPalette;
-    }
-
-    @FXML
     public void randomColorsFitting() {
         try {
-            fittingMaker.setPalette(makePalette());
             fittingMaker.setChartStyle();
 
             fittingMaker.getSimpleRegressionChart()
@@ -495,10 +445,8 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
         }
     }
 
-    @FXML
     public void randomColorResidual() {
         try {
-            residualMaker.setPalette(makeResidualPalette());
             residualMaker.setChartStyle();
 
             ResidualChart residualChart = residualMaker.getResidualChart();

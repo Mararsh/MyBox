@@ -3,7 +3,10 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
@@ -13,9 +16,11 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.paint.Color;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.chart.ChartOptions.ChartType;
@@ -37,6 +42,7 @@ public abstract class BaseData2DChartFx extends BaseController {
     protected List<List<String>> data, checkedData;
     protected List<Data2DColumn> columns, checkedColumns;
     protected ChartType chartType;
+    protected Map<String, String> palette;
     protected SimpleBooleanProperty redrawNotify;
 
     @FXML
@@ -75,6 +81,40 @@ public abstract class BaseData2DChartFx extends BaseController {
 
     public void redraw() {
         redrawNotify.set(!redrawNotify.get());
+    }
+
+    public Map<String, String> makePalette() {
+        try {
+            boolean asColumns;
+            if (palette == null) {
+                palette = new HashMap();
+                asColumns = true;
+            } else {
+                palette.clear();
+                asColumns = false;
+            }
+            if (columns == null) {
+                return palette;
+            }
+            Random random = new Random();
+            for (int i = 0; i < columns.size(); i++) {
+                Data2DColumn column = columns.get(i);
+                Color color = asColumns ? column.getColor() : null;
+                if (color == null) {
+                    color = FxColorTools.randomColor(random);
+                }
+                String rgb = FxColorTools.color2rgb(color);
+                palette.put(column.getColumnName(), rgb);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+        return palette;
+    }
+
+    @FXML
+    public void randomColors() {
+        redraw();
     }
 
     @FXML

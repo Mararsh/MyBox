@@ -1,21 +1,16 @@
 package mara.mybox.controller;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.SingletonTask;
 import static mara.mybox.value.Languages.message;
 
@@ -28,7 +23,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
     protected String selectedCategory, selectedValue;
     protected List<Integer> dataColsIndices;
-    protected Map<String, String> palette;
 
     @FXML
     protected ComboBox<String> categoryColumnSelector, valueColumnSelector;
@@ -41,8 +35,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             super.initControls();
 
             initDataTab();
-
-            palette = new HashMap();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -242,31 +234,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         }
     }
 
-    public Map<String, String> makePalette() {
-        try {
-            Random random = new Random();
-            if (palette == null) {
-                palette = new HashMap();
-            } else {
-                palette.clear();
-            }
-            if (outputColumns != null) {
-                for (int i = 0; i < outputColumns.size(); i++) {
-                    Data2DColumn column = outputColumns.get(i);
-                    Color color = column.getColor();
-                    if (color == null) {
-                        color = FxColorTools.randomColor(random);
-                    }
-                    String rgb = FxColorTools.color2rgb(color);
-                    palette.put(column.getColumnName(), rgb);
-                }
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-        return palette;
-    }
-
     public void redrawChart() {
         drawChart();
     }
@@ -302,10 +269,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
      */
     public int getScale() {
         return scale;
-    }
-
-    public Map<String, String> getPalette() {
-        return palette;
     }
 
 }

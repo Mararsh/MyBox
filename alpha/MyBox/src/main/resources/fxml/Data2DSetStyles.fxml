@@ -163,7 +163,7 @@ License:    Apache License Version 2.0
                                                                     <children>
                                                                         <FlowPane hgap="2.0" vgap="2.0">
                                                                             <children>
-                                                                                <Label text="%Columns" />
+                                                                                <Label text="%ColumnsCalculated" />
                                                                                 <Button fx:id="selectAllColumnsButton" mnemonicParsing="false" onAction="#selectAllColumns">
                                                                                     <graphic>
                                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -182,10 +182,9 @@ License:    Apache License Version 2.0
                                                                                         </ImageView>
                                                                                     </graphic>
                                                                                 </Button>
-                                                                                <Label text="%StyleColumnComments" />
                                                                             </children>
                                                                         </FlowPane>
-                                                      <FlowPane fx:id="columnsPane" hgap="2.0" layoutX="15.0" layoutY="15.0" vgap="2.0" />
+                                                                        <FlowPane fx:id="columnsPane" hgap="2.0" layoutX="15.0" layoutY="15.0" vgap="2.0" />
                                                                     </children>
                                                                 </VBox>
                                                             </children>
