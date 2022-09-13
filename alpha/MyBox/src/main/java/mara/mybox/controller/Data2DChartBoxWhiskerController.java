@@ -343,6 +343,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
             if (!super.initData()) {
                 return false;
             }
+            chartController.palette = null;
             categorysCol = -1;
             if (rowsRadio.isSelected() && selectedCategory != null
                     && categoryColumnSelector.getSelectionModel().getSelectedIndex() != 0) {

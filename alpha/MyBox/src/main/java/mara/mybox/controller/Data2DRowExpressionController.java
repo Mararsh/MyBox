@@ -185,16 +185,18 @@ public class Data2DRowExpressionController extends BaseData2DHandleController {
                 }
                 outputData.set(i, checkedRow);
             }
+            outputColumns = data2D.targetColumns(checkedColsIndices, null, showRowNumber(), null);
             String name = nameInput.getText().trim();
+            outputColumns.add(new Data2DColumn(name, ColumnDefinition.ColumnType.String));
+
             if (showColNames()) {
-                List<String> names = checkedColsNames;
-                if (showRowNumber) {
-                    names.add(0, message("SourceRowNumber"));
+                List<String> names = new ArrayList<>();
+                for (Data2DColumn column : outputColumns) {
+                    names.add(column.getColumnName());
                 }
-                names.add(name);
                 outputData.add(0, names);
             }
-            outputColumns.add(new Data2DColumn(name, ColumnDefinition.ColumnType.String));
+
             return true;
         } catch (Exception e) {
             if (task != null) {

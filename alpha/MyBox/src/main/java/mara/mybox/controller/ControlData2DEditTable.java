@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -110,13 +111,14 @@ public class ControlData2DEditTable extends ControlData2DLoad {
                 return;
             }
             List<String> names = new ArrayList<>();
+            Random random = new Random();
             for (int i = 1; i < row.size(); i++) {
                 String name = row.get(i);
                 if (name == null || name.isBlank()) {
                     name = message("Column") + i;
                 }
                 while (names.contains(name)) {
-                    name += "m";
+                    name += random.nextInt(10);
                 }
                 names.add(name);
             }

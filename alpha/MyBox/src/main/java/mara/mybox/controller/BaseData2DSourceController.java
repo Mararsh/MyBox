@@ -29,10 +29,10 @@ import mara.mybox.value.UserConfig;
 public class BaseData2DSourceController extends ControlData2DLoad {
 
     protected ControlData2DEditTable tableController;
-    protected List<Integer> selectedRowsIndices, filteredRowsIndices, checkedColsIndices;
-    protected List<String> checkedColsNames;
-    protected List<Data2DColumn> checkedColumns;
-    protected boolean idExclude = false, noColumnSelection = false;
+    protected List<Integer> selectedRowsIndices, filteredRowsIndices, checkedColsIndices, otherColsIndices;
+    protected List<String> checkedColsNames, otherColsNames;
+    protected List<Data2DColumn> checkedColumns, otherColumns;
+    protected boolean idExclude = false, NotSelectColumnsInTable = false;
     protected ChangeListener<Boolean> tableLoadListener, tableStatusListener;
 
     @FXML
@@ -46,7 +46,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
     @FXML
     protected ControlData2DFilter filterController;
     @FXML
-    protected FlowPane columnsPane;
+    protected FlowPane columnsPane, otherColumnsPane;
 
 
     /*
@@ -142,7 +142,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
     }
 
     public void noColumnSelection(boolean noColumnSelection) {
-        this.noColumnSelection = noColumnSelection;
+        this.NotSelectColumnsInTable = noColumnSelection;
     }
 
     public void sourceLoaded() {
@@ -199,6 +199,18 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                 isSettingValues = false;
             }
 
+            if (otherColumnsPane != null) {
+                isSettingValues = true;
+                otherColumnsPane.getChildren().clear();
+                List<String> names = data2D.columnNames();
+                if (names != null) {
+                    for (String name : names) {
+                        otherColumnsPane.getChildren().add(new CheckBox(name));
+                    }
+                }
+                isSettingValues = false;
+            }
+
             restoreSelections();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -223,7 +235,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
 
             if (checkedColsIndices != null && !checkedColsIndices.isEmpty()
                     && checkedColsIndices.size() != tableView.getColumns().size() - 2) {
-                if (noColumnSelection) {
+                if (NotSelectColumnsInTable) {
                     if (columnsPane != null) {
                         for (Node node : columnsPane.getChildren()) {
                             CheckBox cb = (CheckBox) node;
@@ -241,6 +253,19 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                 }
             } else {
                 selectNoneColumn();
+            }
+
+            if (otherColumnsPane != null) {
+                if (otherColsIndices != null && !otherColsIndices.isEmpty()
+                        && otherColsIndices.size() != tableView.getColumns().size() - 2) {
+                    for (Node node : otherColumnsPane.getChildren()) {
+                        CheckBox cb = (CheckBox) node;
+                        int col = data2D.colOrder(cb.getText());
+                        cb.setSelected(col >= 0 && otherColsIndices.contains(col));
+                    }
+                } else {
+                    selectNoneOtherColumn();
+                }
             }
 
             isSettingValues = false;
@@ -277,7 +302,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
 
     public void setColumnsSelected(boolean select) {
         try {
-            if (noColumnSelection) {
+            if (NotSelectColumnsInTable) {
                 if (columnsPane != null) {
                     isSettingValues = true;
                     for (Node node : columnsPane.getChildren()) {
@@ -296,6 +321,32 @@ public class BaseData2DSourceController extends ControlData2DLoad {
             }
             isSettingValues = false;
             columnSelected();
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    @FXML
+    public void selectAllOtherColumns() {
+        setOtherColumnsSelected(true);
+    }
+
+    @FXML
+    public void selectNoneOtherColumn() {
+        setOtherColumnsSelected(false);
+    }
+
+    public void setOtherColumnsSelected(boolean select) {
+        try {
+            if (otherColumnsPane == null) {
+                return;
+            }
+            isSettingValues = true;
+            for (Node node : otherColumnsPane.getChildren()) {
+                CheckBox cb = (CheckBox) node;
+                cb.setSelected(select);
+            }
+            isSettingValues = false;
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -332,7 +383,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                 return;
             }
             super.makeColumns();
-            if (noColumnSelection) {
+            if (NotSelectColumnsInTable) {
                 return;
             }
             for (int i = 2; i < tableView.getColumns().size(); i++) {
@@ -358,11 +409,16 @@ public class BaseData2DSourceController extends ControlData2DLoad {
             checkedColsIndices = new ArrayList<>();
             checkedColsNames = new ArrayList<>();
             checkedColumns = new ArrayList<>();
+            otherColsIndices = new ArrayList<>();
+            otherColsNames = new ArrayList<>();
+            otherColumns = new ArrayList<>();
             List<Integer> allIndices = new ArrayList<>();
             List<String> allNames = new ArrayList<>();
             List<Data2DColumn> allCols = new ArrayList<>();
-            if (noColumnSelection) {
+            boolean needSelection = false;
+            if (NotSelectColumnsInTable) {
                 if (columnsPane != null) {
+                    needSelection = true;
                     for (Node node : columnsPane.getChildren()) {
                         CheckBox cb = (CheckBox) node;
                         String name = cb.getText();
@@ -379,10 +435,9 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                             }
                         }
                     }
-                } else {
-                    return true;
                 }
             } else {
+                needSelection = true;
                 int idOrder = -1;
                 if (idExclude) {
                     idOrder = data2D.idOrder();
@@ -411,9 +466,24 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                 checkedColsNames = allNames;
                 checkedColumns = allCols;
             }
-            if (checkedColsIndices.isEmpty()) {
+            if (needSelection && checkedColsIndices.isEmpty()) {
                 popError(message("SelectToHandle") + ": " + message("Columns"));
                 return false;
+            }
+            if (otherColumnsPane != null) {
+                for (Node node : otherColumnsPane.getChildren()) {
+                    CheckBox cb = (CheckBox) node;
+                    String name = cb.getText();
+                    int col = data2D.colOrder(name);
+                    if (col >= 0) {
+                        Data2DColumn dcol = data2D.getColumns().get(col).cloneAll();
+                        if (cb.isSelected()) {
+                            otherColsIndices.add(col);
+                            otherColsNames.add(name);
+                            otherColumns.add(dcol);
+                        }
+                    }
+                }
             }
             return true;
         } catch (Exception e) {
@@ -424,12 +494,11 @@ public class BaseData2DSourceController extends ControlData2DLoad {
 
     public void selectColumns(List<String> names) {
         try {
-            MyBoxLog.console(names);
             selectNoneColumn();
             if (names == null || names.isEmpty()) {
                 return;
             }
-            if (noColumnSelection) {
+            if (NotSelectColumnsInTable) {
                 if (columnsPane != null) {
                     for (Node node : columnsPane.getChildren()) {
                         CheckBox cb = (CheckBox) node;

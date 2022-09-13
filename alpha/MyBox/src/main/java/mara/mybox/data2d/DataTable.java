@@ -535,7 +535,9 @@ public class DataTable extends Data2D {
                 for (int i = 1; i < columns.size(); i++) {
                     dataColumns.add(columns.get(i));
                 }
-            }    // skip id column
+            }
+            Random random = new Random();
+            // skip id column
             for (int i = 0; i < dataColumns.size(); i++) {
                 if (task == null || task.isCancelled()) {
                     break;
@@ -567,7 +569,7 @@ public class DataTable extends Data2D {
                                 name = message("Columns") + (c + 1);
                             }
                             while (names.contains(name)) {
-                                name += "m";
+                                name += random.nextInt(10);
                             }
                             names.add(name);
                         }
@@ -579,7 +581,7 @@ public class DataTable extends Data2D {
                     if (showColNames) {
                         String name = message("ColumnName");
                         while (names.contains(name)) {
-                            name += "m";
+                            name += random.nextInt(10);
                         }
                         names.add(0, name);
                     }

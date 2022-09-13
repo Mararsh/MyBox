@@ -142,12 +142,11 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                 selectedValue = valueColumnSelector.getSelectionModel().getSelectedItem();
             }
             dataColsIndices = new ArrayList<>();
-            if (!noColumnSelection && (checkedColsIndices == null || checkedColsIndices.isEmpty())) {
+            if (!NotSelectColumnsInTable && (checkedColsIndices == null || checkedColsIndices.isEmpty())) {
                 outOptionsError(message("SelectToHandle") + ": " + message("Columns"));
                 return false;
             }
             dataColsIndices.addAll(checkedColsIndices);
-
             outputColumns = new ArrayList<>();
             outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
             outputColumns.addAll(checkedColumns);

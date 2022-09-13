@@ -4,10 +4,7 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -22,7 +19,6 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
@@ -383,19 +379,15 @@ public class FunctionUnaryController extends TreeManageController {
                     String chartName = message("LineChart");
                     UserConfig.setBoolean(chartName + "CategoryIsNumbers", true);
                     ChartType chartType = getScript().contains("Math.random()") ? ChartType.Scatter : ChartType.Line;
+                    String title = editorController.nameInput.getText();
+                    if (title == null || title.isBlank()) {
+                        title = getScript();
+                    }
                     chartMaker.init(chartType, chartName)
-                            .setDefaultChartTitle(getScript())
+                            .setDefaultChartTitle(title)
                             .setDefaultCategoryLabel("x")
                             .setDefaultValueLabel("y")
                             .setInvalidAs(InvalidAs.Skip);
-                    Map<String, String> palette = new HashMap();
-                    Random random = new Random();
-                    for (int i = 0; i < outputColumns.size(); i++) {
-                        Data2DColumn column = outputColumns.get(i);
-                        String rgb = FxColorTools.color2rgb(FxColorTools.randomColor(random));
-                        palette.put(column.getColumnName(), rgb);
-                    }
-                    chartMaker.setPalette(palette);
                     return true;
                 } catch (Exception e) {
                     error = e.toString();

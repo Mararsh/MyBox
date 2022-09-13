@@ -127,6 +127,15 @@ public class Data2DNormalize extends Data2DOperator {
                     }
                 }
             }
+            if (otherCols != null) {
+                for (int c : otherCols) {
+                    if (c < 0 || c >= sourceRow.size()) {
+                        row.add(null);
+                    } else {
+                        row.add(sourceRow.get(c));
+                    }
+                }
+            }
             csvPrinter.printRecord(row);
         } catch (Exception e) {
         }
@@ -160,6 +169,15 @@ public class Data2DNormalize extends Data2DOperator {
                     } else {
                         v = v * colValues[c];
                         row.add(DoubleTools.scale(v, scale) + "");
+                    }
+                }
+            }
+            if (otherCols != null) {
+                for (int c : otherCols) {
+                    if (c < 0 || c >= sourceRow.size()) {
+                        row.add(null);
+                    } else {
+                        row.add(sourceRow.get(c));
                     }
                 }
             }
@@ -203,6 +221,15 @@ public class Data2DNormalize extends Data2DOperator {
                     }
                 }
             }
+            if (otherCols != null) {
+                for (int c : otherCols) {
+                    if (c < 0 || c >= sourceRow.size()) {
+                        row.add(null);
+                    } else {
+                        row.add(sourceRow.get(c));
+                    }
+                }
+            }
             csvPrinter.printRecord(row);
         } catch (Exception e) {
         }
@@ -239,6 +266,15 @@ public class Data2DNormalize extends Data2DOperator {
                     }
                 }
             }
+            if (otherCols != null) {
+                for (int c : otherCols) {
+                    if (c < 0 || c >= sourceRow.size()) {
+                        row.add(null);
+                    } else {
+                        row.add(sourceRow.get(c));
+                    }
+                }
+            }
             csvPrinter.printRecord(row);
         } catch (Exception e) {
         }
@@ -272,6 +308,15 @@ public class Data2DNormalize extends Data2DOperator {
                     } else {
                         v = v * tValue;
                         row.add(DoubleTools.scale(v, scale) + "");
+                    }
+                }
+            }
+            if (otherCols != null) {
+                for (int c : otherCols) {
+                    if (c < 0 || c >= sourceRow.size()) {
+                        row.add(null);
+                    } else {
+                        row.add(sourceRow.get(c));
                     }
                 }
             }
@@ -312,6 +357,15 @@ public class Data2DNormalize extends Data2DOperator {
                         }
                         v = (v - statisticAll.mean) / k;
                         row.add(DoubleTools.scale(v, scale) + "");
+                    }
+                }
+            }
+            if (otherCols != null) {
+                for (int c : otherCols) {
+                    if (c < 0 || c >= sourceRow.size()) {
+                        row.add(null);
+                    } else {
+                        row.add(sourceRow.get(c));
                     }
                 }
             }
@@ -358,6 +412,15 @@ public class Data2DNormalize extends Data2DOperator {
                     }
                 } else {
                     row.add(DoubleTools.scale(d, scale) + "");
+                }
+            }
+            if (otherCols != null) {
+                for (int c : otherCols) {
+                    if (c < 0 || c >= sourceRow.size()) {
+                        row.add(null);
+                    } else {
+                        row.add(sourceRow.get(c));
+                    }
                 }
             }
             csvPrinter.printRecord(row);

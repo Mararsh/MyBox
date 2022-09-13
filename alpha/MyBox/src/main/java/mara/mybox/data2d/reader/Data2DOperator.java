@@ -17,7 +17,7 @@ public abstract class Data2DOperator {
     protected Data2DReader reader;
     protected Data2D data2D;
     protected SingletonTask task;
-    protected List<Integer> cols;
+    protected List<Integer> cols, otherCols;
     protected int colsLen, scale = -1;
     protected boolean includeRowNumber;
     protected List<String> sourceRow;
@@ -80,6 +80,11 @@ public abstract class Data2DOperator {
         } else {
             colsLen = cols.size();
         }
+        return this;
+    }
+
+    public Data2DOperator setOtherCols(List<Integer> otherCols) {
+        this.otherCols = otherCols;
         return this;
     }
 

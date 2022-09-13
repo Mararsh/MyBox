@@ -27,6 +27,7 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
 
     protected int barWidth = 100, categorysCol;
     protected EventListener clickListener;
+    protected boolean randomColor;
 
     @FXML
     protected ToggleGroup compareGroup;
@@ -152,6 +153,7 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
         if (data2D != null) {
             categorysCol = data2D.colOrder(selectedCategory);
         }
+        randomColor = false;
         return true;
     }
 
@@ -162,15 +164,41 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
         }
         task = new SingletonTask<Void>(this) {
 
-            private String html;
-
             @Override
             protected boolean handle() {
                 try {
                     data2D.startTask(task, filterController.filter);
                     readData();
                     data2D.stopFilter();
-                    html = handleData();
+                    return outputData != null;
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                writeHtml();
+            }
+
+        };
+        start(task);
+    }
+
+    protected void writeHtml() {
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+
+            private String html;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    html = makeHtml();
                     return html != null;
                 } catch (Exception e) {
                     MyBoxLog.error(e);
@@ -188,7 +216,7 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
         start(task);
     }
 
-    protected String handleData() {
+    protected String makeHtml() {
         return null;
     }
 
@@ -205,6 +233,7 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
                 + "      showClass('DataValue', document.getElementById('DataValueCheck').checked);  \n"
                 + "      showClass('Percentage', document.getElementById('PercentageCheck').checked);  \n"
                 + "      showClass('Category', document.getElementById('CategoryCheck').checked);  \n"
+                + "      showClass('Others', document.getElementById('OthersCheck').checked);  \n"
                 + "      showClass('Calculated', document.getElementById('CalculatedCheck').checked);  \n"
                 + "    }\n"
                 + "    function showClass(className, show) {\n"
@@ -236,10 +265,19 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
                 .append(" onclick=\"showClass('Percentage', this.checked);\">")
                 .append(message("Percentage")).append("</INPUT>\n");
 
-        s.append("    <INPUT id=\"CategoryCheck\"  type=\"checkbox\" ")
-                .append(UserConfig.getBoolean(baseName + "ShowCategory", true) ? "checked" : "")
-                .append(" onclick=\"showClass('Category', this.checked);\">")
-                .append(message("Category")).append("</INPUT>\n");
+        if (categoryColumnSelector != null) {
+            s.append("    <INPUT id=\"CategoryCheck\"  type=\"checkbox\" ")
+                    .append(UserConfig.getBoolean(baseName + "ShowCategory", true) ? "checked" : "")
+                    .append(" onclick=\"showClass('Category', this.checked);\">")
+                    .append(message("Category")).append("</INPUT>\n");
+        }
+
+        if (otherColumnsPane != null) {
+            s.append("    <INPUT id=\"OthersCheck\"  type=\"checkbox\" ")
+                    .append(UserConfig.getBoolean(baseName + "ShowOthers", true) ? "checked" : "")
+                    .append(" onclick=\"showClass('Others', this.checked);\">")
+                    .append(message("Others")).append("</INPUT>\n");
+        }
 
         s.append("    <INPUT id=\"CalculatedCheck\"  type=\"checkbox\" ")
                 .append(UserConfig.getBoolean(baseName + "ShowCalculatedValues", true) ? "checked" : "")
@@ -251,6 +289,12 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
 
     protected String jsComments() {
         return "\n<HR/>\n<P align=left style=\"font-size:0.8em;\">* " + message("HtmlEditableComments") + "</P>\n";
+    }
+
+    @FXML
+    public void randomColors() {
+        randomColor = true;
+        writeHtml();
     }
 
     public void pageLoaded() {

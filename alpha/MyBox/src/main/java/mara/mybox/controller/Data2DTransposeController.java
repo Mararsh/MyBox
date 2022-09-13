@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -61,6 +62,7 @@ public class Data2DTransposeController extends BaseData2DHandleController {
             outputColumns = new ArrayList<>();
             int nameIndex = showRowNumber ? 1 : 0;
             List<String> names = new ArrayList<>();
+            Random random = new Random();
             if (firstCheck.isSelected()) {
                 for (int c = 0; c < rowsNumber; ++c) {
                     String name = outputData.get(c).get(nameIndex);
@@ -68,7 +70,7 @@ public class Data2DTransposeController extends BaseData2DHandleController {
                         name = message("Columns") + (c + 1);
                     }
                     while (names.contains(name)) {
-                        name += "m";
+                        name += random.nextInt(10);
                     }
                     names.add(name);
                 }
@@ -80,7 +82,7 @@ public class Data2DTransposeController extends BaseData2DHandleController {
             if (showColNames) {
                 String name = message("ColumnName");
                 while (names.contains(name)) {
-                    name += "m";
+                    name += random.nextInt(10);
                 }
                 names.add(0, name);
             }

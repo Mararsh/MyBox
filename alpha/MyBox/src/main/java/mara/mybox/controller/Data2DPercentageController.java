@@ -6,14 +6,10 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.DataFileCSV;
-import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DoubleTools;
@@ -29,10 +25,7 @@ import mara.mybox.value.UserConfig;
 public class Data2DPercentageController extends BaseData2DHandleController {
 
     protected File handleFile;
-    protected List<String> handledNames;
 
-    @FXML
-    protected CheckBox valuesCheck;
     @FXML
     protected ToggleGroup negativeGroup;
     @FXML
@@ -46,14 +39,6 @@ public class Data2DPercentageController extends BaseData2DHandleController {
     public void initControls() {
         try {
             super.initControls();
-
-            valuesCheck.setSelected(UserConfig.getBoolean(baseName + "WithDataValues", false));
-            valuesCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "WithDataValues", valuesCheck.isSelected());
-                }
-            });
 
             String toNegative = UserConfig.getString(baseName + "ToNegative", "skip");
             if ("zero".equals(toNegative)) {
@@ -87,91 +72,10 @@ public class Data2DPercentageController extends BaseData2DHandleController {
             if (!super.initData()) {
                 return false;
             }
-            switch (objectType) {
-                case Rows:
-                    return prepareByRows();
-                case All:
-                    return prepareByColumns(message("PercentageInAll"));
-                default:
-                    return prepareByColumns(message("PercentageInColumn"));
-            }
+            outputColumns = data2D.makePercentageColumns(checkedColsIndices, otherColsIndices, objectType);
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return false;
-        }
-    }
-
-    public boolean prepareByColumns(String suffix) {
-        try {
-            if (checkedColumns == null || checkedColumns.isEmpty()) {
-                return false;
-            }
-            handledNames = new ArrayList<>();
-            outputColumns = new ArrayList<>();
-            String cName = message("SourceRowNumber");
-            while (handledNames.contains(cName)) {
-                cName += "m";
-            }
-            handledNames.add(cName);
-            outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.String));
-            for (Data2DColumn column : checkedColumns) {
-                if (valuesCheck.isSelected()) {
-                    outputColumns.add(column.cloneAll());
-                    handledNames.add(column.getColumnName());
-                }
-                cName = column.getColumnName() + "_" + suffix;
-                while (handledNames.contains(cName)) {
-                    cName += "m";
-                }
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
-                handledNames.add(cName);
-            }
-            return true;
-        } catch (Exception e) {
-            popError(e.toString());
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-    public boolean prepareByRows() {
-        try {
-            if (checkedColumns == null || checkedColumns.isEmpty()) {
-                return false;
-            }
-            handledNames = new ArrayList<>();
-            outputColumns = new ArrayList<>();
-
-            String cName = message("SourceRowNumber");
-            while (handledNames.contains(cName)) {
-                cName += "m";
-            }
-            handledNames.add(cName);
-            outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.String));
-
-            cName = message("Row") + "-" + message("Summation");
-            while (handledNames.contains(cName)) {
-                cName += "m";
-            }
-            handledNames.add(cName);
-            outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
-
-            for (Data2DColumn column : checkedColumns) {
-                if (valuesCheck.isSelected()) {
-                    outputColumns.add(column.cloneAll());
-                    handledNames.add(column.getColumnName());
-                }
-                cName = column.getColumnName() + "_" + message("PercentageInRow");
-                while (handledNames.contains(cName)) {
-                    cName += "m";
-                }
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
-                handledNames.add(cName);
-            }
-            return true;
-        } catch (Exception e) {
-            popError(e.toString());
-            MyBoxLog.error(e);
             return false;
         }
     }
@@ -226,8 +130,11 @@ public class Data2DPercentageController extends BaseData2DHandleController {
             row.add(message("Column") + "-" + message("Summation"));
             for (int c = 0; c < colsLen; c++) {
                 row.add(DoubleTools.format(sum[c], scale));
-                if (valuesCheck.isSelected()) {
-                    row.add("100");
+            }
+            int otherColsNumber = otherColsIndices != null ? otherColsIndices.size() : 0;
+            if (otherColsNumber > 0) {
+                for (int c = 0; c < otherColsNumber; c++) {
+                    row.add(null);
                 }
             }
             outputData.add(row);
@@ -238,17 +145,6 @@ public class Data2DPercentageController extends BaseData2DHandleController {
                 for (int c = 0; c < colsLen; c++) {
                     String s = tableRow.get(colIndices.get(c) + 1);
                     double d = DoubleTools.toDouble(s, invalidAs);
-                    if (valuesCheck.isSelected()) {
-                        if (DoubleTools.invalidDouble(d)) {
-                            if (invalidAs == InvalidAs.Skip) {
-                                row.add(s);
-                            } else {
-                                row.add(Double.NaN + "");
-                            }
-                        } else {
-                            row.add(DoubleTools.format(d, scale));
-                        }
-                    }
                     if (DoubleTools.invalidDouble(d)) {
                         row.add(Double.NaN + "");
                     } else if (sum[c] == 0) {
@@ -267,6 +163,11 @@ public class Data2DPercentageController extends BaseData2DHandleController {
                         row.add(DoubleTools.percentage(d, sum[c], scale));
                     }
                 }
+                if (otherColsNumber > 0) {
+                    for (int c = 0; c < otherColsNumber; c++) {
+                        row.add(tableRow.get(otherColsIndices.get(c) + 1));
+                    }
+                }
                 outputData.add(row);
             }
             return true;
@@ -283,6 +184,7 @@ public class Data2DPercentageController extends BaseData2DHandleController {
         try {
             List<Integer> colIndices = checkedColsIndices;
             outputData = new ArrayList<>();
+            int otherColsNumber = otherColsIndices != null ? otherColsIndices.size() : 0;
             for (int r : filteredRowsIndices) {
                 double sum = 0d;
                 List<String> row = new ArrayList<>();
@@ -303,17 +205,6 @@ public class Data2DPercentageController extends BaseData2DHandleController {
                 for (int c : colIndices) {
                     String s = tableRow.get(c + 1);
                     double d = DoubleTools.toDouble(s, invalidAs);
-                    if (valuesCheck.isSelected()) {
-                        if (DoubleTools.invalidDouble(d)) {
-                            if (invalidAs == InvalidAs.Skip) {
-                                row.add(s);
-                            } else {
-                                row.add(Double.NaN + "");
-                            }
-                        } else {
-                            row.add(DoubleTools.format(d, scale));
-                        }
-                    }
                     if (DoubleTools.invalidDouble(d)) {
                         row.add(Double.NaN + "");
                     } else if (sum == 0) {
@@ -330,6 +221,11 @@ public class Data2DPercentageController extends BaseData2DHandleController {
                             }
                         }
                         row.add(DoubleTools.percentage(d, sum, scale));
+                    }
+                }
+                if (otherColsNumber > 0) {
+                    for (int c = 0; c < otherColsNumber; c++) {
+                        row.add(tableRow.get(otherColsIndices.get(c) + 1));
                     }
                 }
                 outputData.add(row);
@@ -366,12 +262,12 @@ public class Data2DPercentageController extends BaseData2DHandleController {
             List<String> row = new ArrayList<>();
             row.add(message("All") + "-" + message("Summation"));
             row.add(DoubleTools.format(sum, scale));
-            if (valuesCheck.isSelected()) {
-                row.add("100");
-            }
             for (int c : colIndices) {
                 row.add(null);
-                if (valuesCheck.isSelected()) {
+            }
+            int otherColsNumber = otherColsIndices != null ? otherColsIndices.size() : 0;
+            if (otherColsNumber > 0) {
+                for (int c = 0; c < otherColsNumber; c++) {
                     row.add(null);
                 }
             }
@@ -383,17 +279,6 @@ public class Data2DPercentageController extends BaseData2DHandleController {
                 for (int c : colIndices) {
                     String s = tableRow.get(c + 1);
                     double d = DoubleTools.toDouble(s, invalidAs);
-                    if (valuesCheck.isSelected()) {
-                        if (DoubleTools.invalidDouble(d)) {
-                            if (invalidAs == InvalidAs.Skip) {
-                                row.add(s);
-                            } else {
-                                row.add(Double.NaN + "");
-                            }
-                        } else {
-                            row.add(DoubleTools.format(d, scale));
-                        }
-                    }
                     if (DoubleTools.invalidDouble(d)) {
                         row.add(Double.NaN + "");
                     } else if (sum == 0) {
@@ -410,6 +295,11 @@ public class Data2DPercentageController extends BaseData2DHandleController {
                             }
                         }
                         row.add(DoubleTools.percentage(d, sum, scale));
+                    }
+                }
+                if (otherColsNumber > 0) {
+                    for (int c = 0; c < otherColsNumber; c++) {
+                        row.add(tableRow.get(otherColsIndices.get(c) + 1));
                     }
                 }
                 outputData.add(row);
@@ -437,14 +327,14 @@ public class Data2DPercentageController extends BaseData2DHandleController {
         String name = targetController.name();
         switch (objectType) {
             case Rows:
-                return data2D.percentageRows(name, handledNames, checkedColsIndices,
-                        scale, valuesCheck.isSelected(), toNegative, invalidAs);
+                return data2D.percentageRows(name, checkedColsIndices, otherColsIndices,
+                        scale, toNegative, invalidAs);
             case All:
-                return data2D.percentageAll(name, handledNames, checkedColsIndices,
-                        scale, valuesCheck.isSelected(), toNegative, invalidAs);
+                return data2D.percentageAll(name, checkedColsIndices, otherColsIndices,
+                        scale, toNegative, invalidAs);
             default:
-                return data2D.percentageColumns(name, handledNames, checkedColsIndices,
-                        scale, valuesCheck.isSelected(), toNegative, invalidAs);
+                return data2D.percentageColumns(name, checkedColsIndices, otherColsIndices,
+                        scale, toNegative, invalidAs);
         }
     }
 

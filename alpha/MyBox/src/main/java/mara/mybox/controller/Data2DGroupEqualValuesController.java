@@ -253,6 +253,7 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
             }
             checkedColsNames = colsNames;
 
+            xyChartController.palette = null;
             return initChart(groups.toString(), false);
         } catch (Exception e) {
             MyBoxLog.error(e);
