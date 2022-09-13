@@ -919,6 +919,13 @@ public class ControlData2D extends BaseController {
             menu.setDisable(empty);
             chartMenu.getItems().add(menu);
 
+            menu = new MenuItem(message("XYZChart"), StyleTools.getIconImage("iconXYZChart.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DChartXYZController.open(tableController);
+            });
+            menu.setDisable(empty);
+            chartMenu.getItems().add(menu);
+
             popMenu.getItems().add(new SeparatorMenuItem());
 
             if (data2D.isDataFile() || data2D.isUserTable() || data2D.isClipboard()) {
