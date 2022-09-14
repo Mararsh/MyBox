@@ -115,7 +115,7 @@ public class ControlJavaScriptRefer extends TreeNodesController {
 
     protected void scriptExamples(Event event) {
         try {
-            MenuController controller = PopTools.popJavaScriptExamples(this, event, scriptInput, interfaceName);
+            MenuController controller = PopTools.popJavaScriptExamples(this, event, scriptInput, interfaceName + "Examples");
             moreExampleButtons(controller);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

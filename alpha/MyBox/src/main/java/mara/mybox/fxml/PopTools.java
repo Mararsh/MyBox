@@ -1065,14 +1065,16 @@ public class PopTools {
             });
             controller.addNode(alink);
 
-            Hyperlink nlink = new Hyperlink("Nashorn User's Guide");
-            nlink.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    parent.openLink("https://docs.oracle.com/javase/10/nashorn/toc.htm");
-                }
-            });
-            controller.addNode(nlink);
+            if (!"JavaScriptEditor".equals(name)) {
+                Hyperlink nlink = new Hyperlink("Nashorn User's Guide");
+                nlink.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        parent.openLink("https://docs.oracle.com/javase/10/nashorn/toc.htm");
+                    }
+                });
+                controller.addNode(nlink);
+            }
 
             return controller;
 

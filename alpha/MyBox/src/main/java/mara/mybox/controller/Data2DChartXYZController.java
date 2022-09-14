@@ -5,11 +5,16 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
 import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -34,20 +39,24 @@ import mara.mybox.value.UserConfig;
 public class Data2DChartXYZController extends BaseData2DHandleController {
 
     protected XYChartMaker chartMaker;
-    protected Data2DColumn xColumn, yColumn, zColumn;
     protected List<Integer> dataColsIndices;
-    protected String title, xName, yName, zName;
+    protected int seriesSize;
     protected double width, height, pointSize;
     protected File chartFile;
 
     @FXML
     protected ToggleGroup typeGroup;
     @FXML
-    protected RadioButton scatterRadio, surfaceRadio, perspectiveRadio, orthographicRadio;
+    protected VBox zBox, columnsBox;
+    @FXML
+    protected FlowPane zColumnPane, zlabelPane;
+    @FXML
+    protected RadioButton scatterRadio, surfaceRadio, perspectiveRadio, orthographicRadio,
+            colorGradientRadio, colorColumnsRadio, colorRandomRadio;
     @FXML
     protected ComboBox<String> xSelector, ySelector, zSelector, wdithSelector, HeightSelector, pointSelector;
     @FXML
-    protected CheckBox xCategoryCheck, yCategoryCheck, zCategoryCheck, gradientCheck;
+    protected CheckBox xCategoryCheck, yCategoryCheck, zCategoryCheck, darkCheck;
 
     public Data2DChartXYZController() {
         baseTitle = message("XYZChart");
@@ -58,6 +67,14 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
     public void initControls() {
         try {
             super.initControls();
+
+            typeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    typeChanged();
+                }
+            });
+            typeChanged();
 
             width = UserConfig.getDouble(baseName + "Width", 800);
             if (width < 0) {
@@ -86,10 +103,25 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
             );
             pointSelector.setValue(pointSize + "");
 
-            gradientCheck.setSelected(UserConfig.getBoolean(baseName + "Gradient", true));
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void typeChanged() {
+        zBox.getChildren().clear();
+        if (scatterRadio.isSelected()) {
+            if (!zlabelPane.getChildren().contains(zCategoryCheck)) {
+                zlabelPane.getChildren().add(zCategoryCheck);
+            }
+            zBox.getChildren().add(columnsBox);
+            colorColumnsRadio.setSelected(true);
+        } else {
+            if (!zColumnPane.getChildren().contains(zCategoryCheck)) {
+                zColumnPane.getChildren().add(zCategoryCheck);
+            }
+            zBox.getChildren().add(zColumnPane);
+            colorGradientRadio.setSelected(true);
         }
     }
 
@@ -134,7 +166,6 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
     public boolean initData() {
         try {
             invalidAs = InvalidAs.Skip;
-            UserConfig.setBoolean(baseName + "Gradient", gradientCheck.isSelected());
             try {
                 double v = Double.valueOf(wdithSelector.getValue());
                 if (v > 0) {
@@ -192,38 +223,55 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
 
             dataColsIndices = new ArrayList<>();
             outputColumns = new ArrayList<>();
-            xName = xSelector.getSelectionModel().getSelectedItem();
+            String xName = xSelector.getSelectionModel().getSelectedItem();
             int xCol = data2D.colOrder(xName);
             if (xCol < 0) {
                 outOptionsError(message("SelectToHandle") + ": " + message("AxisX"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
-            xColumn = data2D.column(xCol);
+            outputColumns.add(data2D.column(xCol));
             dataColsIndices.add(xCol);
 
-            yName = ySelector.getSelectionModel().getSelectedItem();
+            String yName = ySelector.getSelectionModel().getSelectedItem();
             int yCol = data2D.colOrder(yName);
             if (yCol < 0) {
                 outOptionsError(message("SelectToHandle") + ": " + message("AxisY"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
-            yColumn = data2D.column(yCol);
+            outputColumns.add(data2D.column(yCol));
             dataColsIndices.add(yCol);
 
-            zName = zSelector.getSelectionModel().getSelectedItem();
-            int zCol = data2D.colOrder(zName);
-            if (zCol < 0) {
-                outOptionsError(message("SelectToHandle") + ": " + message("AxisZ"));
-                tabPane.getSelectionModel().select(optionsTab);
-                return false;
+            if (scatterRadio.isSelected()) {
+                if (checkedColsIndices == null || checkedColsIndices.isEmpty()) {
+                    outOptionsError(message("SelectToHandle") + ": " + message("AxisZ"));
+                    tabPane.getSelectionModel().select(optionsTab);
+                    return false;
+                }
+                dataColsIndices.addAll(checkedColsIndices);
+                outputColumns.addAll(checkedColumns);
+                seriesSize = checkedColsIndices.size();
+            } else {
+                String zName = zSelector.getSelectionModel().getSelectedItem();
+                int zCol = data2D.colOrder(zName);
+                if (zCol < 0) {
+                    outOptionsError(message("SelectToHandle") + ": " + message("AxisZ"));
+                    tabPane.getSelectionModel().select(optionsTab);
+                    return false;
+                }
+                outputColumns.add(data2D.column(zCol));
+                dataColsIndices.add(zCol);
+                seriesSize = 1;
             }
-            zColumn = data2D.column(zCol);
-            dataColsIndices.add(zCol);
-
-            title = xName + " - " + yName + " - " + zName;
-
+            if (otherColsIndices != null) {
+                for (int c : otherColsIndices) {
+                    if (!dataColsIndices.contains(c)) {
+                        dataColsIndices.add(c);
+                        outputColumns.add(data2D.column(c));
+                    }
+                }
+            }
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -282,6 +330,12 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
             }
             File echartsFile = FxFileTools.getInternalFile("/js/echarts.min.js", "js", "echarts.min.js");
             File echartsGLFile = FxFileTools.getInternalFile("/js/echarts-gl.min.js", "js", "echarts-gl.min.js");
+            String xName = outputColumns.get(0).getColumnName();
+            String yName = outputColumns.get(1).getColumnName();
+            String z1Name = outputColumns.get(2).getColumnName();
+            String title = data2D.shortName() + "_"
+                    + (scatterRadio.isSelected() ? message("ScatterChart") : message("SurfaceChart"))
+                    + "_" + xName + "-" + yName;
             String html = "<!DOCTYPE html>\n"
                     + "<html>\n"
                     + "  <head>\n"
@@ -293,38 +347,73 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
                     + "  <body>\n"
                     + "    <div id=\"chart\" style=\"width: " + width + "px;height: " + height + "px;\"></div>\n"
                     + "    <script type=\"text/javascript\">\n"
-                    + "      var myChart = echarts.init(document.getElementById('chart'));\n";
+                    + "		var myChart = echarts.init(document.getElementById('chart')"
+                    + (darkCheck.isSelected() ? ", 'dark'" : "") + ");\n";
             html += "		var srcData = [];\n";
             double min = Double.MAX_VALUE, max = -Double.MAX_VALUE;
+            String s;
+            double d;
             for (List<String> row : outputData) {
-                int size = row.size();
-                if (size < 3) {
+                int rowLen = row.size();
+                if (rowLen < 3) {
                     continue;
                 }
-                double x = DoubleTools.scale(row.get(0), InvalidAs.Skip, scale);
-                if (DoubleTools.invalidDouble(x)) {
-                    continue;
+                String push = "		srcData.push([";
+                s = row.get(0);
+                if (xCategoryCheck.isSelected()) {
+                    push += "'" + s + "'";
+                } else {
+                    d = DoubleTools.scale(s, InvalidAs.Skip, scale);
+                    if (DoubleTools.invalidDouble(d)) {
+                        continue;
+                    }
+                    push += d;
                 }
-                double y = DoubleTools.scale(row.get(1), InvalidAs.Skip, scale);
-                if (DoubleTools.invalidDouble(x)) {
-                    continue;
+                s = row.get(1);
+                if (yCategoryCheck.isSelected()) {
+                    push += ", '" + s + "'";
+                } else {
+                    d = DoubleTools.scale(s, InvalidAs.Skip, scale);
+                    if (DoubleTools.invalidDouble(d)) {
+                        continue;
+                    }
+                    push += ", " + d;
                 }
-                double z = DoubleTools.scale(row.get(2), InvalidAs.Skip, scale);
-                if (DoubleTools.invalidDouble(z)) {
-                    continue;
+                for (int i = 2; i < 2 + seriesSize; i++) {
+                    s = row.get(i);
+                    if (zCategoryCheck.isSelected()) {
+                        push += ", '" + s + "'";
+                    } else {
+                        d = DoubleTools.scale(s, InvalidAs.Skip, scale);
+                        if (DoubleTools.invalidDouble(d)) {
+                            push += ", Number.NaN";
+                        } else {
+                            push += ", " + d;
+                            if (d > max) {
+                                max = d;
+                            }
+                            if (d < min) {
+                                min = d;
+                            }
+                        }
+                    }
                 }
-                if (z > max) {
-                    max = z;
+                for (int i = 2 + seriesSize; i < rowLen; i++) {
+                    push += ", '" + row.get(i) + "'";
                 }
-                if (z < min) {
-                    min = z;
-                }
-                html += "				srcData.push([" + x + ", " + y + ", " + z + "]);\n";
+                html += push + "]);\n";
             }
-            html += "\n\n		option = {\n"
-                    + "			backgroundColor: '#ffffff',\n"
-                    + "			darkMode: true,\n";
-            if (gradientCheck.isSelected()) {
+            if (min == Double.MAX_VALUE) {
+                min = -10;
+            }
+            if (max == -Double.MAX_VALUE) {
+                max = 10;
+            }
+            html += "\n\n		option = {\n";
+            if (!darkCheck.isSelected()) {
+                html += "			backgroundColor: '#ffffff',\n";
+            }
+            if (colorGradientRadio.isSelected()) {
                 html += "			visualMap: {\n"
                         + "				show: true,\n"
                         + "				dimension: 2,\n"
@@ -347,17 +436,33 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
                         + "				}\n"
                         + "			},\n";
             }
+            String dimensions;
+            if (scatterRadio.isSelected()) {
+                dimensions = "'" + xName + "', '" + yName + "', '" + z1Name + "'";
+            } else {
+                dimensions = "'x', 'y', 'z'";  // looks surface ndoes not accpet customized names for xyz. Bug?
+            }
+            for (int i = 3; i < outputColumns.size(); i++) {
+                dimensions += ",'" + outputColumns.get(i).getColumnName() + "'";
+            }
+            if (scatterRadio.isSelected()) {
+                html += "			dataset: {\n"
+                        + "				dimensions: [\n"
+                        + "				" + dimensions + "\n"
+                        + "				],\n"
+                        + "				source: srcData\n"
+                        + "			},\n";
+            }
             html += "			xAxis3D: {\n"
                     + "				type: '" + (xCategoryCheck.isSelected() ? "category" : "value") + "',\n"
                     + "				name: 'X: " + xName + "'\n"
-                    + "			},\n"
-                    + "			yAxis3D: {\n"
+                    + "			},\n" + "			yAxis3D: {\n"
                     + "				type: '" + (yCategoryCheck.isSelected() ? "category" : "value") + "',\n"
                     + "				name: 'Y: " + yName + "'\n"
                     + "			},\n"
                     + "			zAxis3D: {\n"
                     + "				type: '" + (zCategoryCheck.isSelected() ? "category" : "value") + "',\n"
-                    + "				name: 'Z: " + zName + "'\n"
+                    + "				name: 'Z" + (seriesSize == 1 ? ": " + z1Name : "") + "'\n"
                     + "			},\n"
                     + "			grid3D: {\n"
                     + "				viewControl: {\n"
@@ -365,27 +470,72 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
                     + "				}\n"
                     + "			},\n"
                     + "			tooltip: {},\n"
-                    + "			series: [{\n"
-                    + "				type: '" + (scatterRadio.isSelected() ? "scatter3D" : "surface") + "',\n"
-                    + "				symbolSize: " + pointSize + ",\n"
-                    + "				wireframe: {\n"
-                    + "					show: true\n"
-                    + "				},\n"
-                    + "				itemStyle: {\n"
-                    + "					color: '" + FxColorTools.randomRGB() + "'\n"
-                    + "				},\n"
-                    + "				data: srcData\n"
-                    + "			}]\n"
-                    + "		}\n\n";
-            html += "		myChart.setOption(option);\n"
+                    + "			series: [\n";
+            if (scatterRadio.isSelected()) {
+                for (int i = 0; i < seriesSize; i++) {
+                    if (i > 0) {
+                        html += "				,\n";
+                    }
+                    Data2DColumn column = outputColumns.get(i + 2);
+                    String zName = column.getColumnName();
+                    String color = color(i);
+                    html += "				{\n"
+                            + "					type: 'scatter3D',\n"
+                            + "					name: '" + zName + "',\n"
+                            + "					symbolSize: " + pointSize + ",\n"
+                            + color
+                            + "					wireframe: {\n"
+                            + "						show: true\n"
+                            + "					},\n"
+                            + "					encode: {\n"
+                            + "						x: '" + xName + "',\n"
+                            + "						y: '" + yName + "',\n"
+                            + "						z: '" + zName + "'\n"
+                            + "					}\n"
+                            + "				}\n";
+                }
+            } else {
+                Data2DColumn column = outputColumns.get(2);
+                String zName = column.getColumnName();
+                String color = color(0);
+                html += "				{\n"
+                        + "					type: 'surface',\n"
+                        + "					name: '" + zName + "',\n"
+                        + "					symbolSize: " + pointSize + ",\n"
+                        + color
+                        + "					wireframe: {\n"
+                        + "						show: true\n"
+                        + "					},\n"
+                        + "					dimensions: [" + dimensions + "],\n"
+                        + "					data: srcData\n"
+                        + "				}\n";
+            }
+            html += "			]\n"
+                    + "		}\n\n"
+                    + "		myChart.setOption(option);\n"
                     + "    </script>\n"
                     + "  </body>\n"
                     + "</html>";
 
-            chartFile = getPathTempFile(AppPaths.getGeneratedPath(), ".html");
+            chartFile = getPathTempFile(AppPaths.getGeneratedPath(), title, ".html");
             TextFileTools.writeFile(chartFile, html, Charset.forName("UTF-8"));
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    private String color(int seriesIndex) {
+        Data2DColumn column = outputColumns.get(seriesIndex + 2);
+        if (colorColumnsRadio.isSelected()) {
+            return "					itemStyle: {\n"
+                    + "						color: '" + FxColorTools.color2rgb(column.getColor()) + "'\n"
+                    + "					},\n";
+        } else if (colorRandomRadio.isSelected()) {
+            return "					itemStyle: {\n"
+                    + "						color: '" + FxColorTools.randomRGB() + "'\n"
+                    + "					},\n";
+        } else {
+            return "";
         }
     }
 

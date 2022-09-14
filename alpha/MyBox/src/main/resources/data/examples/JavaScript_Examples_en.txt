@@ -90,8 +90,20 @@ Math.asin(0.3)
 
 ##MyBox#
 Examples > Expressions > Numeric operations
-natural logarithm
+natural logarithm(base-e)
 Math.log(6)
+
+##MyBox#
+Examples > Expressions > Numeric operations
+common logarithm(base-10)
+// ECMAScript 6 supports while ECMAScript 5.1 not support
+Math.log10(6)
+
+##MyBox#
+Examples > Expressions > Numeric operations
+base-2 logarithm
+// ECMAScript 6 supports while ECMAScript 5.1 not support
+Math.log2(6)
 
 ##MyBox#
 Examples > Expressions > Numeric operations

@@ -56,7 +56,7 @@ public class JavaScriptEditor extends TreeNodeEditor {
 
     @FXML
     protected void popExamplesMenu(MouseEvent event) {
-        if (UserConfig.getBoolean(interfaceName + "JavaScriptExamplesPopWhenMouseHovering", true)) {
+        if (UserConfig.getBoolean(interfaceName + "ExamplesPopWhenMouseHovering", true)) {
             examplesMenu(event);
         }
     }
@@ -68,7 +68,7 @@ public class JavaScriptEditor extends TreeNodeEditor {
 
     protected void examplesMenu(Event event) {
         try {
-            MenuController controller = PopTools.popJavaScriptExamples(this, event, valueInput, interfaceName);
+            MenuController controller = PopTools.popJavaScriptExamples(this, event, valueInput, interfaceName + "Examples");
 
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
                     "''.search(//ig) >= 0", "''.length > 0", "''.indexOf('') >= 0",
@@ -92,14 +92,14 @@ public class JavaScriptEditor extends TreeNodeEditor {
 
     @FXML
     protected void popHistories(MouseEvent mouseEvent) {
-        if (UserConfig.getBoolean("JavaScriptHistoriesPopWhenMouseHovering", true)) {
-            PopTools.popStringValues(this, valueInput, mouseEvent, "JavaScriptHistories", false, true);
+        if (UserConfig.getBoolean(interfaceName + "HistoriesPopWhenMouseHovering", true)) {
+            PopTools.popStringValues(this, valueInput, mouseEvent, interfaceName + "Histories", false, true);
         }
     }
 
     @FXML
     protected void showHistories(ActionEvent event) {
-        PopTools.popStringValues(this, valueInput, event, "JavaScriptHistories", false, true);
+        PopTools.popStringValues(this, valueInput, event, interfaceName + "Histories", false, true);
     }
 
     @Override

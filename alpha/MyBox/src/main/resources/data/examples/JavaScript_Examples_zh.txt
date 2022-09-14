@@ -95,6 +95,18 @@ Math.log(6)
 
 ##MyBox#
 示例 > 表达式 > 数值计算
+常用对数（底为10）
+// ECMAScript 6支持，而ECMAScript 5.1不支持
+Math.log10(6)
+
+##MyBox#
+示例 > 表达式 > 数值计算
+以2为底的对数
+// ECMAScript 6支持，而ECMAScript 5.1不支持
+Math.log2(6)
+
+##MyBox#
+示例 > 表达式 > 数值计算
 上舍入
 Math.ceil(4.13)
 

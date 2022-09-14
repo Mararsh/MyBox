@@ -296,7 +296,11 @@ unary quintic function
 
 ##MyBox#
 Examples > Unary Function
-unary piecewise function
+piecewise values
+
+##MyBox#
+Examples > Unary Function > piecewise values
+direct values
 if ( x > 1 ) 
     6 * x - 5.9;
 else if ( x == 1)
@@ -304,6 +308,29 @@ else if ( x == 1)
 else 
     Math.pow(x, 2) + 2.7; 
 
+##MyBox#
+Examples > Unary Function > piecewise values
+define functions
+function f1(x) {
+    var multiply = 1;
+    for (var i = 1; i <= Math.abs(x); i++) {
+        multiply = multiply * i;
+    }
+    return multiply ;
+}
+function f2(x) {
+    var sum = 0;
+    for (var i = 1; i > x; i--) {
+        sum += f1(i);
+    }
+    return sum;
+}
+if ( x > 1 ) 
+    f1(x);
+else if ( x == 1)
+    38; 
+else 
+    f2(x);
 
 ##MyBox#
 Examples > Unary Function

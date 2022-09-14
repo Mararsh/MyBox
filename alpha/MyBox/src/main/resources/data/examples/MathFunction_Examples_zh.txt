@@ -296,13 +296,41 @@ Math.trunc(x)
 
 ##MyBox#
 示例 > 一元函数
-一元分段函数
+分段取值
+
+##MyBox#
+示例 > 一元函数 > 分段取值
+直接取值
 if ( x > 1 ) 
     6 * x - 5.9;
 else if ( x == 1)
     38; 
 else 
     Math.pow(x, 2) + 2.7; 
+
+##MyBox#
+示例 > 一元函数 > 分段取值
+定义函数
+function f1(x) {
+    var multiply = 1;
+    for (var i = 1; i <= Math.abs(x); i++) {
+        multiply = multiply * i;
+    }
+    return multiply ;
+}
+function f2(x) {
+    var sum = 0;
+    for (var i = 1; i > x; i--) {
+        sum += f1(i);
+    }
+    return sum;
+}
+if ( x > 1 ) 
+    f1(x);
+else if ( x == 1)
+    38; 
+else 
+    f2(x);
 
 ##MyBox#
 示例 > 一元函数

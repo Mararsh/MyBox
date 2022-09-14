@@ -6,11 +6,15 @@ This is desktop application based on JavaFx to provide simple and easy functions
 ## Alpha Being Developed            
 2022-9-3 a6.6      
 
-* UnaryFunction    
+* XYZ charts: 3D scatter chart, surface chart.       
+* "Columns to copy" can be set along with "Columns to calculate" for Normalization, Percentage, and Comparison Bars.      
+* Except for JavaScript manager, calculation of JavaScript uses Nashorn as engine.       
+* Performance: Images Player only pre-read one frame.      
+* Unary Function: calculate, data set, xy chart    
 * Multiple Linear Regression – Combination    
 * Input values when add new rows for data 2D.         
 
-[MyBox-a6.6-2022-9-3-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/alpha/MyBox-a6.6-2022-9-3-win10-x64.zip)           
+[MyBox-a6.6-2022-9-14-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/alpha/MyBox-a6.6-2022-9-14-win10-x64.zip)           
 
 
 ## What's New          
@@ -187,6 +191,8 @@ MyBox is based on following open sources:
 | commons-math | Calculation | https://commons.apache.org/proper/commons-math/index.html |
 | JEXL | Calculation | https://commons.apache.org/proper/commons-jexl |
 | OpenOffice | Document | [http://www.openoffice.org/](http://www.openoffice.org/) |
+| nashorn | JavaScript | [https://openjdk.org/projects/nashorn/](https://openjdk.org/projects/nashorn/) |
+| echarts-gl | WebGL | [https://github.com/ecomfe/echarts-gl](https://github.com/ecomfe/echarts-gl) |
 
 # Features        
 ## Cross Platforms <a id="Cross-platform"></a>        

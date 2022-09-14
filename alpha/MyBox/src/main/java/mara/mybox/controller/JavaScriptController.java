@@ -33,6 +33,7 @@ public class JavaScriptController extends TreeManageController {
 
     public JavaScriptController() {
         baseTitle = "JavaScript";
+        TipsLabelKey = "JavaScriptTips";
         category = TreeNode.JavaScript;
         nameMsg = message("Name");
         valueMsg = "JavaScript";

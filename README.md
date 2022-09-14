@@ -4,13 +4,17 @@
 这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。          
 
 ## 开发中的试用版            
-2022-9-3 a6.6      
+2022-9-14 a6.6      
 
-* 一元函数      
+* 数据的xyz图：三维散点图、曲面图      
+* 归一化/百分比/比较条图可以分别设置“要计算的列”和“要复制的列”      
+* 除了JavaScript管理界面，JavaScript的计算采用Nashorn作为引擎        
+* 性能：图像播放器只预读一帧。      
+* 一元函数：计算、数据集、xy图      
 * 多重线性回归-组合      
 * 添加新数据行时可以输入数值        
 
-[MyBox-a6.6-2022-9-3-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/alpha/MyBox-a6.6-2022-9-3-win10-x64.zip)          
+[MyBox-a6.6-2022-9-14-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/alpha/MyBox-a6.6-2022-9-14-win10-x64.zip)          
 
 
 ## 新内容
@@ -180,6 +184,8 @@ MyBox基于以下开放资源：
 | commons-math | 计算 | [https://commons.apache.org/proper/commons-math/index.html](https://commons.apache.org/proper/commons-math/index.html) |
 | JEXL | 计算 | [https://commons.apache.org/proper/commons-jexl](https://commons.apache.org/proper/commons-jexl) |
 | OpenOffice | 文档 | [http://www.openoffice.org/](http://www.openoffice.org/) |
+| nashorn | JavaScript | [https://openjdk.org/projects/nashorn/](https://openjdk.org/projects/nashorn/) |
+| echarts-gl | WebGL | [https://github.com/ecomfe/echarts-gl](https://github.com/ecomfe/echarts-gl) |
 
 
 # 特点
