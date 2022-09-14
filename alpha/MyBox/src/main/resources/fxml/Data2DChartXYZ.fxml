@@ -182,14 +182,14 @@ License:    Apache License Version 2.0
                                                     <children>
                                                         <Label minHeight="-Infinity" minWidth="-Infinity" text="%AxisX" />
                                                         <ComboBox prefWidth="200.0" fx:id="xSelector" />
-                                    <CheckBox mnemonicParsing="false" text="%Category" fx:id="xCategoryCheck" />
+                                    <CheckBox mnemonicParsing="false" text="%CountValuesAsStrings" fx:id="xCategoryCheck" />
                                                     </children>
                                                 </FlowPane>
                                                 <FlowPane fx:id="valueColumnPane" hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
                                                     <children>
                                                         <Label minHeight="-Infinity" minWidth="-Infinity" text="%AxisY" />
                                                         <ComboBox fx:id="ySelector" prefWidth="200.0" />
-                                    <CheckBox fx:id="yCategoryCheck" mnemonicParsing="false" text="%Category" />
+                                    <CheckBox fx:id="yCategoryCheck" mnemonicParsing="false" text="%CountValuesAsStrings" />
                                                     </children>
                                                 </FlowPane>
                               <VBox fx:id="zBox">
@@ -198,7 +198,7 @@ License:    Apache License Version 2.0
                                        <children>
                                           <Label minHeight="-Infinity" minWidth="-Infinity" text="%AxisZ" />
                                           <ComboBox fx:id="zSelector" prefWidth="200.0" />
-                                          <CheckBox fx:id="zCategoryCheck" mnemonicParsing="false" text="%Category" />
+                                          <CheckBox fx:id="zCategoryCheck" mnemonicParsing="false" text="%CountValuesAsStrings" />
                                        </children>
                                     </FlowPane>
                                     <VBox fx:id="columnsBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">

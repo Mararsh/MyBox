@@ -336,6 +336,8 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
             String title = data2D.shortName() + "_"
                     + (scatterRadio.isSelected() ? message("ScatterChart") : message("SurfaceChart"))
                     + "_" + xName + "-" + yName;
+            String[] colors = new String[seriesSize];
+            String[] symbols = new String[seriesSize];
             String html = "<!DOCTYPE html>\n"
                     + "<html>\n"
                     + "  <head>\n"
@@ -344,8 +346,70 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
                     + "    <script src=\"" + echartsFile.toURI().toString() + "\"></script>\n"
                     + "    <script src=\"" + echartsGLFile.toURI().toString() + "\"></script>\n"
                     + "  </head>\n"
-                    + "  <body>\n"
-                    + "    <div id=\"chart\" style=\"width: " + width + "px;height: " + height + "px;\"></div>\n"
+                    + "  <body style=\"width:" + (width + 50) + "px; margin:0 auto;\">\n";
+            if (scatterRadio.isSelected()) {
+                html += "	<style type=\"text/css\">\n";
+                String[] presymbols = {"circle", "triangle", "diamond", "arrow", "rect"};
+                for (int i = 0; i < seriesSize; i++) {
+                    String color;
+                    if (colorColumnsRadio.isSelected()) {
+                        color = FxColorTools.color2rgb(outputColumns.get(i + 2).getColor());
+                    } else {
+                        color = FxColorTools.randomRGB();
+                    }
+                    colors[i] = color;
+                    String symbol = presymbols[i % presymbols.length];
+                    symbols[i] = symbol;
+                    if ("circle".equals(symbol)) {
+                        html += "		.symbol" + i + " {\n"
+                                + "			width: 20px;\n"
+                                + "			height: 20px;\n"
+                                + "			background-color: " + color + ";\n"
+                                + "			border-radius: 50%;\n"
+                                + "			display: inline-block;\n"
+                                + "		}\n";
+                    } else if ("rect".equals(symbol)) {
+                        html += "		.symbol" + i + " {\n"
+                                + "			width: 20px;\n"
+                                + "			height: 20px;\n"
+                                + "			background-color: " + color + ";\n"
+                                + "			display: inline-block;\n"
+                                + "		}\n";
+                    } else if ("triangle".equals(symbol)) {
+                        html += "		.symbol" + i + " {\n"
+                                + "			width: 0;\n"
+                                + "			height: 0;\n"
+                                + "			border-left: 10px solid transparent;\n"
+                                + "			border-right: 10px solid transparent;\n"
+                                + "			border-bottom: 20px solid " + color + ";\n"
+                                + "			display: inline-block;\n"
+                                + "		}\n";
+                    } else if ("diamond".equals(symbol)) {
+                        html += "		.symbol" + i + " {\n"
+                                + "			width: 16px;   \n"
+                                + "			height: 16px;   \n"
+                                + "			background-color: " + color + ";   \n"
+                                + "			transform:rotate(45deg);   \n"
+                                + "			display: inline-block;\n"
+                                + "		}\n";
+                    } else if ("arrow".equals(symbol)) {
+                        html += "		.symbol" + i + " {\n"
+                                + "			width: 0;\n"
+                                + "			height: 0;\n"
+                                + "			border: 10px solid;\n"
+                                + "			border-color: white white " + color + " white;\n"
+                                + "			display: inline-block;\n"
+                                + "		}\n";
+                    }
+                }
+                html += "	</style>\n";
+                html += "    <P><div style=\"text-align: center; margin:0 auto;\">\n";
+                for (int i = 0; i < seriesSize; i++) {
+                    html += "		<div class=\"symbol" + i + "\"></div><span>" + outputColumns.get(i + 2).getColumnName() + " </span>\n";
+                }
+                html += "	</div></P>\n";
+            }
+            html += "    <div id=\"chart\" style=\"width: " + width + "px;height: " + height + "px;\"></div>\n"
                     + "    <script type=\"text/javascript\">\n"
                     + "		var myChart = echarts.init(document.getElementById('chart')"
                     + (darkCheck.isSelected() ? ", 'dark'" : "") + ");\n";
@@ -478,14 +542,13 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
                     }
                     Data2DColumn column = outputColumns.get(i + 2);
                     String zName = column.getColumnName();
-                    String color = color(i);
                     html += "				{\n"
                             + "					type: 'scatter3D',\n"
                             + "					name: '" + zName + "',\n"
+                            + "					symbol: '" + symbols[i] + "',\n"
                             + "					symbolSize: " + pointSize + ",\n"
-                            + color
-                            + "					wireframe: {\n"
-                            + "						show: true\n"
+                            + "					itemStyle: {\n"
+                            + "						color: '" + colors[i] + "'\n"
                             + "					},\n"
                             + "					encode: {\n"
                             + "						x: '" + xName + "',\n"
@@ -497,12 +560,19 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
             } else {
                 Data2DColumn column = outputColumns.get(2);
                 String zName = column.getColumnName();
-                String color = color(0);
+                String color;
+                if (colorColumnsRadio.isSelected()) {
+                    color = FxColorTools.color2rgb(column.getColor());
+                } else {
+                    color = FxColorTools.randomRGB();
+                }
                 html += "				{\n"
                         + "					type: 'surface',\n"
                         + "					name: '" + zName + "',\n"
                         + "					symbolSize: " + pointSize + ",\n"
-                        + color
+                        + "					itemStyle: {\n"
+                        + "						color: '" + color + "'\n"
+                        + "					},\n"
                         + "					wireframe: {\n"
                         + "						show: true\n"
                         + "					},\n"
@@ -524,20 +594,6 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
         }
     }
 
-    private String color(int seriesIndex) {
-        Data2DColumn column = outputColumns.get(seriesIndex + 2);
-        if (colorColumnsRadio.isSelected()) {
-            return "					itemStyle: {\n"
-                    + "						color: '" + FxColorTools.color2rgb(column.getColor()) + "'\n"
-                    + "					},\n";
-        } else if (colorRandomRadio.isSelected()) {
-            return "					itemStyle: {\n"
-                    + "						color: '" + FxColorTools.randomRGB() + "'\n"
-                    + "					},\n";
-        } else {
-            return "";
-        }
-    }
 
     /*
         static
