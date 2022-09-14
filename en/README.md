@@ -4,7 +4,7 @@
 This is desktop application based on JavaFx to provide simple and easy functions. It's free and open sources.
 
 ## Alpha Being Developed            
-2022-9-3 a6.6      
+2022-9-14 a6.6      
 
 * XYZ charts: 3D scatter chart, surface chart.       
 * "Columns to copy" can be set along with "Columns to calculate" for Normalization, Percentage, and Comparison Bars.      
