@@ -16,7 +16,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
 import mara.mybox.data.StringTable;
@@ -38,9 +37,11 @@ import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DoubleMatrixTools;
+import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -621,6 +622,80 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         }
     }
 
+    @FXML
+    @Override
+    public void copyAction() {
+        if (!validateData()) {
+            return;
+        }
+        Data2DCopyController.open(this);
+    }
+
+    @FXML
+    @Override
+    public void copyToSystemClipboard() {
+        if (!validateData()) {
+            return;
+        }
+        Data2DCopyController controller = Data2DCopyController.open(this);
+        controller.targetController.systemClipboardRadio.setSelected(true);
+    }
+
+    public void copyToSystemClipboard(List<String> names, List<List<String>> data) {
+        try {
+            if (data == null || data.isEmpty()) {
+                popError(message("NoData"));
+                return;
+            }
+            String text = TextTools.dataText(data, ",", names, null);
+            TextClipboardTools.copyToSystemClipboard(this, text);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void copyToMyBoxClipboard(List<String> names, List<List<String>> data) {
+        try {
+            if (data == null || data.isEmpty()) {
+                popError(message("NoData"));
+                return;
+            }
+            toMyBoxClipboard(null, data2D.toColumns(names), data);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void toMyBoxClipboard(String name, List<Data2DColumn> cols, List<List<String>> data) {
+        try {
+            if (data == null || data.isEmpty()) {
+                popError(message("NoData"));
+                return;
+            }
+            SingletonTask copyTask = new SingletonTask<Void>(this) {
+
+                private DataClipboard clip;
+
+                @Override
+                protected boolean handle() {
+                    clip = DataClipboard.create(task, name, cols, data);
+                    return clip != null;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    DataInMyBoxClipboardController controller = DataInMyBoxClipboardController.oneOpen();
+                    controller.loadDef(clip);
+                    popDone();
+                }
+
+            };
+            start(copyTask, false);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
 
     /*
         table
@@ -1036,26 +1111,22 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
 
 
     /*
-        get/set
+        set
      */
-    public ObservableList<List<String>> getTableData() {
-        return tableData;
-    }
-
-    public void setTableData(ObservableList<List<String>> tableData) {
-        this.tableData = tableData;
-    }
-
-    public TableView<List<String>> getTableView() {
-        return tableView;
-    }
-
-    public void setTableView(TableView<List<String>> tableView) {
-        this.tableView = tableView;
-    }
-
     public void setNotUpdateTitle(boolean notUpdateTitle) {
         this.notUpdateTitle = notUpdateTitle;
+    }
+
+
+    /*
+        get
+     */
+    public Data2D getData2D() {
+        return data2D;
+    }
+
+    public ObservableList<List<String>> getTableData() {
+        return tableData;
     }
 
 }

@@ -143,7 +143,7 @@ public class Data2DTransposeController extends BaseData2DHandleController {
     /*
         static
      */
-    public static Data2DTransposeController open(ControlData2DEditTable tableController) {
+    public static Data2DTransposeController open(ControlData2DLoad tableController) {
         try {
             Data2DTransposeController controller = (Data2DTransposeController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DTransposeFxml, false);

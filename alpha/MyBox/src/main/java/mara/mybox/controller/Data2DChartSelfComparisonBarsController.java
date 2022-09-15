@@ -341,7 +341,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
     /*
         static
      */
-    public static Data2DChartSelfComparisonBarsController open(ControlData2DEditTable tableController) {
+    public static Data2DChartSelfComparisonBarsController open(ControlData2DLoad tableController) {
         try {
             Data2DChartSelfComparisonBarsController controller = (Data2DChartSelfComparisonBarsController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DChartSelfComparisonBarsFxml, false);

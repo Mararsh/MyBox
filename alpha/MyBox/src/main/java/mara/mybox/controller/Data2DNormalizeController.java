@@ -170,7 +170,7 @@ public class Data2DNormalizeController extends BaseData2DHandleController {
     /*
         static
      */
-    public static Data2DNormalizeController open(ControlData2DEditTable tableController) {
+    public static Data2DNormalizeController open(ControlData2DLoad tableController) {
         try {
             Data2DNormalizeController controller = (Data2DNormalizeController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DNormalizeFxml, false);

@@ -44,7 +44,7 @@ import static mara.mybox.value.Languages.message;
 public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> {
 
     protected ControlData2D dataController;
-    protected ControlData2DEditTable tableController;
+    protected ControlData2DLoad tableController;
     protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;
     protected Data2D data2D;

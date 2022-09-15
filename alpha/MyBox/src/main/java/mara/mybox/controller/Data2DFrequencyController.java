@@ -136,7 +136,7 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
     /*
         static
      */
-    public static Data2DFrequencyController open(ControlData2DEditTable tableController) {
+    public static Data2DFrequencyController open(ControlData2DLoad tableController) {
         try {
             Data2DFrequencyController controller = (Data2DFrequencyController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DFrequencyFxml, false);

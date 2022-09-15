@@ -66,7 +66,7 @@ public class Data2DExportController extends BaseData2DHandleController {
     }
 
     @Override
-    public void setParameters(ControlData2DEditTable editController) {
+    public void setParameters(ControlData2DLoad editController) {
         try {
             convertController.setControls(taskController);
             taskController.setParameters(this);
@@ -176,7 +176,7 @@ public class Data2DExportController extends BaseData2DHandleController {
     /*
         static
      */
-    public static Data2DExportController open(ControlData2DEditTable tableController) {
+    public static Data2DExportController open(ControlData2DLoad tableController) {
         try {
             Data2DExportController controller = (Data2DExportController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DExportFxml, false);

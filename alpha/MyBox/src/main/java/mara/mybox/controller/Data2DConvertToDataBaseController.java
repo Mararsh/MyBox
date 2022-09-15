@@ -58,16 +58,6 @@ public class Data2DConvertToDataBaseController extends BaseData2DHandleControlle
     }
 
     @Override
-    public void setParameters(ControlData2DEditTable editController) {
-        try {
-            super.setParameters(editController);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
     public void sourceChanged() {
         if (tableController == null) {
             return;

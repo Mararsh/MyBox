@@ -32,7 +32,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
     }
 
     @Override
-    public void setParameters(ControlData2DEditTable tableController) {
+    public void setParameters(ControlData2DLoad tableController) {
         try {
             super.setParameters(tableController);
 
@@ -511,7 +511,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
     /*
         static
      */
-    public static Data2DSetValuesController open(ControlData2DEditTable tableController) {
+    public static Data2DSetValuesController open(ControlData2DLoad tableController) {
         try {
             Data2DSetValuesController controller = (Data2DSetValuesController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DSetValuesFxml, false);

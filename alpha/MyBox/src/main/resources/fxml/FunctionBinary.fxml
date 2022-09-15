@@ -384,7 +384,8 @@ License:    Apache License Version 2.0
                                                 </FlowPane>
                                             </children>
                                         </HBox>
-                                        <fx:include fx:id="editor" source="FunctionBinaryEditor.fxml" />
+                                        <fx:include fx:id="editor" source="FunctionEditor.fxml" 
+                                                    maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
                                     </children>
                                     <padding>
                                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -486,12 +487,12 @@ License:    Apache License Version 2.0
                                                                         </Tab>
                                                                     </tabs>
                                                                 </TabPane>
-                                                <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
-                                                   <children>
-                                                      <Label text="%DecimalScale" wrapText="true" />
-                                                      <ComboBox fx:id="dataScaleSelector" editable="true" prefWidth="100.0" />
-                                                   </children>
-                                                </FlowPane>
+                                                                <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
+                                                                    <children>
+                                                                        <Label text="%DecimalScale" wrapText="true" />
+                                                                        <ComboBox fx:id="dataScaleSelector" editable="true" prefWidth="100.0" />
+                                                                    </children>
+                                                                </FlowPane>
                                                                 <Button fx:id="okDataButton" mnemonicParsing="false" onAction="#okDataAction">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -508,7 +509,7 @@ License:    Apache License Version 2.0
                                                 </Tab>
                                                 <Tab fx:id="chartTab" text="%Chart">
                                                     <content>
-                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                             <padding>
                                                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                                             </padding>
@@ -527,21 +528,31 @@ License:    Apache License Version 2.0
                                                                         </Tab>
                                                                     </tabs>
                                                                 </TabPane>
-                                                <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
-                                                   <children>
-                                                      <Label text="%DecimalScale" wrapText="true" />
-                                                      <ComboBox fx:id="chartScaleSelector" editable="true" prefWidth="100.0" />
-                                                   </children>
-                                                </FlowPane>
-                                                                <Button fx:id="okChartButton" mnemonicParsing="false" onAction="#okChartAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconOK.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
+                                                                <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
+                                                                    <children>
+                                                                        <Label text="%DecimalScale" wrapText="true" />
+                                                                        <ComboBox fx:id="chartScaleSelector" editable="true" prefWidth="100.0" />
+                                                                    </children>
+                                                                </FlowPane>
+                                                                <FlowPane fx:id="typesPane" alignment="CENTER_LEFT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0">
+                                                                    <children>
+                                                                        <RadioButton fx:id="scatterChartRadio" layoutX="51.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%ScatterChart">
+                                                                            <toggleGroup>
+                                                                                <ToggleGroup fx:id="chartGroup" />
+                                                                            </toggleGroup>
+                                                                        </RadioButton>
+                                                                        <RadioButton fx:id="lineChartRadio" mnemonicParsing="false" text="%LineChart" toggleGroup="$chartGroup" />
+                                                                        <Button fx:id="okChartButton" mnemonicParsing="false" onAction="#okChartAction">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/Red/iconOK.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                    </children>
+                                                                </FlowPane>
                                                                 <fx:include fx:id="chart" maxWidth="1.7976931348623157E308" source="ControlData2DChartXY.fxml" VBox.vgrow="ALWAYS" />
                                                             </children>
                                                         </VBox>

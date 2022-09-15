@@ -109,7 +109,7 @@ public class Data2DChartPieController extends BaseData2DChartController {
     /*
         static
      */
-    public static Data2DChartPieController open(ControlData2DEditTable tableController) {
+    public static Data2DChartPieController open(ControlData2DLoad tableController) {
         try {
             Data2DChartPieController controller = (Data2DChartPieController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DChartPieFxml, false);

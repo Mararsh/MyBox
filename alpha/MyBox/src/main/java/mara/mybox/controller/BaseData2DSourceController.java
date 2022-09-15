@@ -28,7 +28,7 @@ import mara.mybox.value.UserConfig;
  */
 public class BaseData2DSourceController extends ControlData2DLoad {
 
-    protected ControlData2DEditTable tableController;
+    protected ControlData2DLoad tableController;
     protected List<Integer> selectedRowsIndices, filteredRowsIndices, checkedColsIndices, otherColsIndices;
     protected List<String> checkedColsNames, otherColsNames;
     protected List<Data2DColumn> checkedColumns, otherColumns;
@@ -84,7 +84,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
         }
     }
 
-    public void setParameters(BaseController parent, ControlData2DEditTable tableController) {
+    public void setParameters(BaseController parent, ControlData2DLoad tableController) {
         try {
             if (tableController == null) {
                 return;

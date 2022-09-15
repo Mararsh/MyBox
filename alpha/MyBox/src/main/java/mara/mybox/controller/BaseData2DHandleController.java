@@ -13,7 +13,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
-import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.Data2D_Operations.ObjectType;
 import mara.mybox.data2d.DataFileCSV;
@@ -129,7 +128,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         return false;
     }
 
-    public void setParameters(ControlData2DEditTable tableController) {
+    public void setParameters(ControlData2DLoad tableController) {
         try {
             setParameters(this, tableController);
 
@@ -590,25 +589,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             outputColumns = null;
         } catch (Exception e) {
         }
-    }
-
-    /*
-        get/set
-     */
-    public ControlData2DEditTable getTableController() {
-        return tableController;
-    }
-
-    public Data2D getData2D() {
-        return data2D;
-    }
-
-    public List<Data2DColumn> getOutputColumns() {
-        return outputColumns;
-    }
-
-    public ControlData2DTarget getTargetController() {
-        return targetController;
     }
 
 }

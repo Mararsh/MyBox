@@ -9,13 +9,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.Clipboard;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.DataClipboard;
-import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -211,80 +206,6 @@ public class ControlData2DEditTable extends ControlData2DLoad {
     @Override
     protected long clearData() {
         return data2D.clearData();
-    }
-
-    @FXML
-    @Override
-    public void copyAction() {
-        if (!validateData()) {
-            return;
-        }
-        Data2DCopyController.open(this);
-    }
-
-    @FXML
-    @Override
-    public void copyToSystemClipboard() {
-        if (!validateData()) {
-            return;
-        }
-        Data2DCopyController controller = Data2DCopyController.open(this);
-        controller.targetController.systemClipboardRadio.setSelected(true);
-    }
-
-    public void copyToSystemClipboard(List<String> names, List<List<String>> data) {
-        try {
-            if (data == null || data.isEmpty()) {
-                popError(message("NoData"));
-                return;
-            }
-            String text = TextTools.dataText(data, ",", names, null);
-            TextClipboardTools.copyToSystemClipboard(this, text);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    public void copyToMyBoxClipboard(List<String> names, List<List<String>> data) {
-        try {
-            if (data == null || data.isEmpty()) {
-                popError(message("NoData"));
-                return;
-            }
-            toMyBoxClipboard(null, data2D.toColumns(names), data);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    public void toMyBoxClipboard(String name, List<Data2DColumn> cols, List<List<String>> data) {
-        try {
-            if (data == null || data.isEmpty()) {
-                popError(message("NoData"));
-                return;
-            }
-            SingletonTask copyTask = new SingletonTask<Void>(this) {
-
-                private DataClipboard clip;
-
-                @Override
-                protected boolean handle() {
-                    clip = DataClipboard.create(task, name, cols, data);
-                    return clip != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    DataInMyBoxClipboardController controller = DataInMyBoxClipboardController.oneOpen();
-                    controller.loadDef(clip);
-                    popDone();
-                }
-
-            };
-            start(copyTask, false);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
     }
 
     @FXML

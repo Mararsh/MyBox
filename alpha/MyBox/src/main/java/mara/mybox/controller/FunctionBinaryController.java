@@ -3,10 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import mara.mybox.data2d.Data2D_Attributes;
@@ -16,9 +13,7 @@ import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.chart.ChartOptions.ChartType;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DateTools;
@@ -27,7 +22,6 @@ import mara.mybox.tools.HtmlWriteTools;
 import static mara.mybox.tools.TmpFileTools.getPathTempFile;
 import mara.mybox.value.AppPaths;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 import org.apache.commons.csv.CSVPrinter;
 
 /**
@@ -37,8 +31,6 @@ import org.apache.commons.csv.CSVPrinter;
  */
 public class FunctionBinaryController extends FunctionUnaryController {
 
-    @FXML
-    protected FunctionBinaryEditor editorController;
     @FXML
     protected TextField yInput;
     @FXML
@@ -80,21 +72,19 @@ public class FunctionBinaryController extends FunctionUnaryController {
     @Override
     public void calculateAction() {
         try {
-            double x = DoubleTools.toDouble(xInput.getText(), Data2D_Attributes.InvalidAs.Blank);
-            if (DoubleTools.invalidDouble(x)) {
-                popError(message("InvalidParameter") + ": x");
-                return;
-            }
             String script = getScript();
             if (script == null || script.isBlank()) {
                 popError(message("InvalidParameters") + ": JavaScript");
                 return;
             }
-            if (!inDomain(x)) {
+            double x = DoubleTools.toDouble(xInput.getText(), Data2D_Attributes.InvalidAs.Blank);
+            double y = DoubleTools.toDouble(yInput.getText(), Data2D_Attributes.InvalidAs.Blank);
+
+            if (!inDomain(x, y)) {
                 popError(message("NotInDomain"));
                 return;
             }
-            String ret = calculate(script, x);
+            String ret = calculate(script, x, y);
             if (ret == null) {
                 popError(message("Failed"));
                 return;
@@ -102,6 +92,7 @@ public class FunctionBinaryController extends FunctionUnaryController {
             outputs += DateTools.nowString() + "<div class=\"valueText\" >"
                     + HtmlWriteTools.stringToHtml(script)
                     + "<br>x=" + x
+                    + "<br>y=" + y
                     + "</div>";
             outputs += "<div class=\"valueBox\">" + HtmlWriteTools.stringToHtml(ret) + "</div><br><br>";
             String html = HtmlWriteTools.html(null, HtmlStyles.DefaultStyle, "<body>" + outputs + "</body>");
@@ -266,23 +257,23 @@ public class FunctionBinaryController extends FunctionUnaryController {
                     if (outputData == null) {
                         return false;
                     }
-                    outputColumns = data.getColumns();
-                    String chartName = message("LineChart");
-                    UserConfig.setBoolean(chartName + "CategoryIsNumbers", true);
-                    ChartType chartType = getScript().contains("Math.random()") ? ChartType.Scatter : ChartType.Line;
-                    chartMaker.init(chartType, chartName)
-                            .setDefaultChartTitle(getScript())
-                            .setDefaultCategoryLabel("x")
-                            .setDefaultValueLabel("y")
-                            .setInvalidAs(InvalidAs.Skip);
-                    Map<String, String> palette = new HashMap();
-                    Random random = new Random();
-                    for (int i = 0; i < outputColumns.size(); i++) {
-                        Data2DColumn column = outputColumns.get(i);
-                        String rgb = FxColorTools.color2rgb(FxColorTools.randomColor(random));
-                        palette.put(column.getColumnName(), rgb);
-                    }
-                    chartMaker.setPalette(palette);
+//                    outputColumns = data.getColumns();
+//                    String chartName = message("LineChart");
+//                    UserConfig.setBoolean(chartName + "CategoryIsNumbers", true);
+//                    ChartType chartType = getScript().contains("Math.random()") ? ChartType.Scatter : ChartType.Line;
+//                    chartMaker.init(chartType, chartName)
+//                            .setDefaultChartTitle(getScript())
+//                            .setDefaultCategoryLabel("x")
+//                            .setDefaultValueLabel("y")
+//                            .setInvalidAs(InvalidAs.Skip);
+//                    Map<String, String> palette = new HashMap();
+//                    Random random = new Random();
+//                    for (int i = 0; i < outputColumns.size(); i++) {
+//                        Data2DColumn column = outputColumns.get(i);
+//                        String rgb = FxColorTools.color2rgb(FxColorTools.randomColor(random));
+//                        palette.put(column.getColumnName(), rgb);
+//                    }
+//                    chartMaker.setPalette(palette);
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
@@ -292,7 +283,7 @@ public class FunctionBinaryController extends FunctionUnaryController {
 
             @Override
             protected void whenSucceeded() {
-                chartController.writeXYChart(outputColumns, outputData, null, false);
+//                chartController.writeXYChart(outputColumns, outputData, null, false);
             }
 
         };

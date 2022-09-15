@@ -9,6 +9,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data2d.Data2D_Attributes;
@@ -23,6 +24,7 @@ import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.chart.ChartOptions.ChartType;
+import mara.mybox.fxml.chart.ChartOptions.LabelType;
 import mara.mybox.fxml.chart.XYChartMaker;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.CsvTools;
@@ -49,7 +51,7 @@ public class FunctionUnaryController extends TreeManageController {
     protected int dataScale, chartScale;
 
     @FXML
-    protected FunctionUnaryEditor editorController;
+    protected FunctionEditor editorController;
     @FXML
     protected TextField xInput;
     @FXML
@@ -62,6 +64,8 @@ public class FunctionUnaryController extends TreeManageController {
     protected ControlData2DChartXY chartController;
     @FXML
     protected ControlWebView outputController;
+    @FXML
+    protected RadioButton scatterChartRadio;
 
     public FunctionUnaryController() {
         baseTitle = message("UnaryFunction");
@@ -378,12 +382,14 @@ public class FunctionUnaryController extends TreeManageController {
                     outputColumns = data.getColumns();
                     String chartName = message("LineChart");
                     UserConfig.setBoolean(chartName + "CategoryIsNumbers", true);
-                    ChartType chartType = getScript().contains("Math.random()") ? ChartType.Scatter : ChartType.Line;
+                    ChartType chartType = scatterChartRadio.isSelected() ? ChartType.Scatter : ChartType.Line;
+                    LabelType labelType = scatterChartRadio.isSelected() ? LabelType.Point : LabelType.NotDisplay;
                     String title = editorController.nameInput.getText();
                     if (title == null || title.isBlank()) {
                         title = getScript();
                     }
                     chartMaker.init(chartType, chartName)
+                            .setLabelType(labelType)
                             .setDefaultChartTitle(title)
                             .setDefaultCategoryLabel("x")
                             .setDefaultValueLabel("y")

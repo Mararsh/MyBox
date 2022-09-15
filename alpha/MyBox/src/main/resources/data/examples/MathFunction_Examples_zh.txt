@@ -95,6 +95,16 @@ Math.abs(x)
 
 ##MyBox#
 示例 > 一元函数 > 三角函数
+角度转换为弧度
+x * Math.PI / 180
+
+##MyBox#
+示例 > 一元函数 > 三角函数
+弧度转换为角度
+x * 180 / Math.PI
+
+##MyBox#
+示例 > 一元函数 > 三角函数
 余弦-弧度
 Math.cos(x)
 
@@ -128,16 +138,6 @@ Math.atan(x)
 
 ##MyBox#
 示例 > 一元函数 > 三角函数
-角度转换为弧度
-x * Math.PI / 180
-
-##MyBox#
-示例 > 一元函数 > 三角函数
-弧度转换为角度
-x * 180 / Math.PI
-
-##MyBox#
-示例 > 一元函数 > 三角函数
 余弦-角度
 Math.cos(x * Math.PI / 180)
 
@@ -168,6 +168,17 @@ MyBoxTreeNodeMore:x >= -1 && x <= 1
 示例 > 一元函数 > 三角函数
 反正切-角度
 Math.atan(x) * 180 / Math.PI
+
+##MyBox#
+示例 > 一元函数 > 三角函数
+圆的面积-半径
+Math.PI * x * x
+
+##MyBox#
+示例 > 一元函数 > 三角函数
+圆的面积-直径
+var r = x / 2.0;
+Math.PI * r * r
 
 ##MyBox#
 示例 > 一元函数
@@ -218,18 +229,41 @@ Math.pow(x,1/5)
 MyBoxTreeNodeMore:x >= 0
 
 ##MyBox#
+示例 > 一元函数 > 幂函数
+一次倒数
+Math.pow(x,-1)
+MyBoxTreeNodeMore:x != 0
+
+##MyBox#
+示例 > 一元函数 > 幂函数
+二次倒数
+Math.pow(x,-2)
+MyBoxTreeNodeMore:x != 0
+
+##MyBox#
+示例 > 一元函数 > 幂函数
+三次倒数
+Math.pow(x,-3)
+MyBoxTreeNodeMore:x != 0
+
+##MyBox#
 示例 > 一元函数
 指数函数
 
 ##MyBox#
 示例 > 一元函数 > 指数函数
 欧拉指数
-Math.exp(x)
+Math.exp(x + 5)
 
 ##MyBox#
 示例 > 一元函数 > 指数函数
-指数
+底数大于1的指数
 Math.pow(5.9,x)
+
+##MyBox#
+示例 > 一元函数 > 指数函数
+底数小于1的指数
+Math.pow(0.7,x)
 
 ##MyBox#
 示例 > 一元函数
@@ -338,14 +372,18 @@ else
 
 ##MyBox#
 示例 > 一元函数 > 数值分析
-标准正态分布概率密度函数
-Math.exp(- x * x / 2) / Math.sqrt(2 * Math.PI)
+一元正态分布概率密度函数
+var mean = 1; 
+var stdDeviation = 2; 
+var dx = x - mean;
+var expP = - dx * dx / ( 2 * stdDeviation * stdDeviation );
+var div = Math.sqrt(2 * Math.PI) * stdDeviation;
+Math.exp(expP) / div
 
 ##MyBox#
 示例 > 一元函数 > 数值分析
-正态分布概率密度函数
-var mean = 2, stdDeviation = 3; 
-Math.exp(- (x - mean) * ( x - mean ) / ( 2 * stdDeviation * stdDeviation ) ) / ( Math.sqrt(2 * Math.PI) * stdDeviation )
+一元标准正态分布概率密度函数
+Math.exp(- x * x / 2) / Math.sqrt(2 * Math.PI)
 
 ##MyBox#
 示例 > 一元函数 > 数值分析
@@ -358,4 +396,137 @@ sigmoid的导数
 var s = 1 / (1 + Math.exp(-x));
 s * (1 - s);
 
+##MyBox#
+示例
+二元函数
+
+##MyBox#
+示例 > 二元函数 > 三角函数
+椭圆的面积-半轴
+Math.PI * x * y
+
+##MyBox#
+示例 > 二元函数 > 三角函数
+椭圆的面积-轴
+Math.PI * x * y / 4
+
+##MyBox#
+示例 > 二元函数 > 数值分析
+二元正态分布概率密度函数
+var xMean = 1;
+var xStd = 2; 
+var yMean = 2;
+var yStd = 1; 
+var coefficient = 0.2; 
+var dx = x - xMean;
+var dy = y - yMean;
+var xyStd = xStd * yStd;
+var dco = 1 - coefficient * coefficient;
+var px = dx * dx / ( xStd * xStd );
+var py = dy * dy / ( yStd * yStd );
+var pxy = 2 * coefficient * dx * dy / xyStd;
+var expP = - (px + py - pxy) / ( 2 * dco)
+var div = 2 * Math.PI * xyStd * Math.sqrt(dco);
+Math.exp(expP) / div
+
+##MyBox#
+示例 > 二元函数 > 数值分析
+二元标准正态分布概率密度函数
+var xMean = 1;
+var xStd = 2; 
+var yMean = 2;
+var yStd = 1; 
+var dx = x - xMean;
+var dy = y - yMean;
+var xyStd = xStd * yStd;
+var px = dx * dx / ( xStd * xStd );
+var py = dy * dy / ( yStd * yStd );
+var expP = - (px + py) / 2
+var div = 2 * Math.PI * xyStd;
+Math.exp(expP) / div
+
+
+##MyBox#
+示例
+三元函数
+
+##MyBox#
+示例 > 三元函数 > 三角函数
+正弦定理-求角（弧度）
+// x1: 角A（弧度）
+// x2: 边a
+// x3: 边b
+// 计算: 角B（弧度）
+var sinB = sinA * x2 / x3;
+Math.asin(sinB)
+
+##MyBox#
+示例 > 三元函数 > 三角函数
+正弦定理-求角（角度）
+// x1: 角A（角度）
+// x2: 边a
+// x3: 边b
+// 计算: 角B（角度）
+var sinA = Math.sin(x1 * Math.PI / 180);
+var sinB = sinA * x2 / x3;
+Math.asin( sinB ) * 180 / Math.PI
+
+##MyBox#
+示例 > 三元函数 > 三角函数
+正弦定理-求边（弧度）
+// x1: 角A（弧度）
+// x2: 边a
+// x3: 角B（弧度）
+// 计算: 边b
+x2 * Math.sin(x3) / Math.sin(x1)
+
+##MyBox#
+示例 > 三元函数 > 三角函数
+正弦定理-求边（角度）
+// x1: 角A（角度）
+// x2: 边a
+// x3: 角B（角度）
+// 计算: 边b
+var sinA = Math.sin(x1 * Math.PI / 180);
+var sinB = Math.sin(x3 * Math.PI / 180);
+x2 * sinB / sinA
+
+##MyBox#
+示例 > 三元函数 > 三角函数
+余弦定理-求边（弧度）
+// x1: 角A（弧度）
+// x2: 边b
+// x3: 边c
+// 计算: 边a
+Math.sqrt(x2 * x2 + x3 * x3 - 2 * x2 * x3 * Math.cos(x1))
+
+##MyBox#
+示例 > 三元函数 > 三角函数
+余弦定理-求边（角度）
+// x1: 角A（角度）
+// x2: 边b
+// x3: 边c
+// 计算: 边a
+var cosA = Math.cos(x1 * Math.PI / 180);
+Math.sqrt(x2 * x2 + x3 * x3 - 2 * x2 * x3 * cosA)
+
+##MyBox#
+示例 > 三元函数 > 三角函数
+余弦定理-求角（弧度）
+// x1: 边a
+// x2: 边b
+// x3: 边c
+// 计算: 角A（弧度）
+var cosA = (x2 * x2 + x3 * x3 - x1 * x1) / (2 * x2 * x3);
+Math.acos( cosA )
+
+##MyBox#
+示例 > 三元函数 > 三角函数
+余弦定理-求角（角度）
+// x1: 边a
+// x2: 边b
+// x3: 边c
+// 计算: 角A（角度）
+var cosA = (x2 * x2 + x3 * x3 - x1 * x1) / (2 * x2 * x3);
+Math.acos( cosA ) * 180 / Math.PI
 

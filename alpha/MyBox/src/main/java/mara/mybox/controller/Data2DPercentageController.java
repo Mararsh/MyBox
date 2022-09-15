@@ -341,7 +341,7 @@ public class Data2DPercentageController extends BaseData2DHandleController {
     /*
         static
      */
-    public static Data2DPercentageController open(ControlData2DEditTable tableController) {
+    public static Data2DPercentageController open(ControlData2DLoad tableController) {
         try {
             Data2DPercentageController controller = (Data2DPercentageController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DPercentageFxml, false);

@@ -26,7 +26,7 @@ public class Data2DCopyController extends BaseData2DHandleController {
     /*
         static
      */
-    public static Data2DCopyController open(ControlData2DEditTable tableController) {
+    public static Data2DCopyController open(ControlData2DLoad tableController) {
         try {
             Data2DCopyController controller = (Data2DCopyController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DCopyFxml, false);

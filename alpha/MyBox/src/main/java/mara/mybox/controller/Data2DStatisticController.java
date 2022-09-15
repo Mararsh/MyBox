@@ -576,7 +576,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
     /*
         static
      */
-    public static Data2DStatisticController open(ControlData2DEditTable tableController) {
+    public static Data2DStatisticController open(ControlData2DLoad tableController) {
         try {
             Data2DStatisticController controller = (Data2DStatisticController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DStatisticFxml, false);

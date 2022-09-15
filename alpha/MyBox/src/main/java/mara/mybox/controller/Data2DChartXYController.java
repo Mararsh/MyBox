@@ -207,7 +207,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
     /*
         static
      */
-    public static Data2DChartXYController open(ControlData2DEditTable tableController) {
+    public static Data2DChartXYController open(ControlData2DLoad tableController) {
         try {
             Data2DChartXYController controller = (Data2DChartXYController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DChartXYFxml, false);

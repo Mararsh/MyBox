@@ -218,9 +218,10 @@ public class ChartOptions<X, Y> {
         return labelType;
     }
 
-    public void setLabelType(LabelType labelType) {
+    public ChartOptions setLabelType(LabelType labelType) {
         this.labelType = labelType;
         UserConfig.setString(chartName + "LabelType", getLabelType().name());
+        return this;
     }
 
     public String getChartTitle() {

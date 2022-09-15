@@ -229,7 +229,7 @@ public class Data2DRowExpressionController extends BaseData2DHandleController {
     /*
         static
      */
-    public static Data2DRowExpressionController open(ControlData2DEditTable tableController) {
+    public static Data2DRowExpressionController open(ControlData2DLoad tableController) {
         try {
             Data2DRowExpressionController controller = (Data2DRowExpressionController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DRowExpressionFxml, false);

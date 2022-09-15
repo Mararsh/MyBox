@@ -33,7 +33,7 @@ import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
- * @CreateDate 2022-1-19
+ * @CreateDate 2022-9-13
  * @License Apache License Version 2.0
  */
 public class Data2DChartXYZController extends BaseData2DHandleController {
@@ -75,6 +75,19 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
                 }
             });
             typeChanged();
+
+            xSelector.valueProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    adjustColumnsPane();
+                }
+            });
+            ySelector.valueProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    adjustColumnsPane();
+                }
+            });
 
             width = UserConfig.getDouble(baseName + "Width", 800);
             if (width < 0) {
@@ -129,11 +142,12 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
     public void refreshControls() {
         try {
             super.refreshControls();
+            isSettingValues = true;
+            xSelector.getItems().clear();
+            ySelector.getItems().clear();
+            zSelector.getItems().clear();
             List<String> names = data2D.columnNames();
             if (names == null || names.isEmpty()) {
-                xSelector.getItems().clear();
-                ySelector.getItems().clear();
-                zSelector.getItems().clear();
                 return;
             }
             String xCol = xSelector.getSelectionModel().getSelectedItem();
@@ -150,13 +164,41 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
             } else {
                 ySelector.getSelectionModel().select(names.size() > 1 ? 1 : 0);
             }
+            isSettingValues = false;
+            adjustColumnsPane();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void adjustColumnsPane() {
+        try {
+            if (isSettingValues) {
+                return;
+            }
+            isSettingValues = true;
+            columnsPane.getChildren().clear();
+            isSettingValues = false;
+            List<String> names = data2D.columnNames();
+            if (names == null) {
+                return;
+            }
+            String xName = xSelector.getValue();
+            String yName = ySelector.getValue();
+            names.remove(xName);
+            names.remove(yName);
+            isSettingValues = true;
+            for (String name : names) {
+                columnsPane.getChildren().add(new CheckBox(name));
+            }
             String zCol = zSelector.getSelectionModel().getSelectedItem();
             zSelector.getItems().setAll(names);
             if (zCol != null && names.contains(zCol)) {
                 zSelector.setValue(zCol);
             } else {
-                zSelector.getSelectionModel().select(names.size() > 2 ? 2 : 0);
+                zSelector.getSelectionModel().select(0);
             }
+            isSettingValues = false;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -333,9 +375,8 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
             String xName = outputColumns.get(0).getColumnName();
             String yName = outputColumns.get(1).getColumnName();
             String z1Name = outputColumns.get(2).getColumnName();
-            String title = data2D.shortName() + "_"
-                    + (scatterRadio.isSelected() ? message("ScatterChart") : message("SurfaceChart"))
-                    + "_" + xName + "-" + yName;
+            String chartName = scatterRadio.isSelected() ? message("ScatterChart") : message("SurfaceChart");
+            String title = data2D.shortName() + "_" + chartName + "_" + xName + "-" + yName;
             String[] colors = new String[seriesSize];
             String[] symbols = new String[seriesSize];
             String html = "<!DOCTYPE html>\n"
@@ -346,7 +387,9 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
                     + "    <script src=\"" + echartsFile.toURI().toString() + "\"></script>\n"
                     + "    <script src=\"" + echartsGLFile.toURI().toString() + "\"></script>\n"
                     + "  </head>\n"
-                    + "  <body style=\"width:" + (width + 50) + "px; margin:0 auto;\">\n";
+                    + "  <body style=\"width:" + (width + 50) + "px; margin:0 auto;\">\n"
+                    + "    <h3 align=center>" + data2D.displayName() + "</h2>\n"
+                    + "    <h2 align=center>" + chartName + "</h2>\n";
             if (scatterRadio.isSelected()) {
                 html += "	<style type=\"text/css\">\n";
                 String[] presymbols = {"circle", "triangle", "diamond", "arrow", "rect"};
@@ -405,7 +448,7 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
                 html += "	</style>\n";
                 html += "    <P><div style=\"text-align: center; margin:0 auto;\">\n";
                 for (int i = 0; i < seriesSize; i++) {
-                    html += "		<div class=\"symbol" + i + "\"></div><span>" + outputColumns.get(i + 2).getColumnName() + " </span>\n";
+                    html += "		<div class=\"symbol" + i + "\"></div><span> " + outputColumns.get(i + 2).getColumnName() + " </span>\n";
                 }
                 html += "	</div></P>\n";
             }
@@ -598,7 +641,7 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
     /*
         static
      */
-    public static Data2DChartXYZController open(ControlData2DEditTable tableController) {
+    public static Data2DChartXYZController open(ControlData2DLoad tableController) {
         try {
             Data2DChartXYZController controller = (Data2DChartXYZController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DChartXYZFxml, false);

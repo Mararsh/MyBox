@@ -499,6 +499,10 @@ public abstract class BaseTableViewController<P> extends BaseController {
         viewNull();
     }
 
+    public boolean isDataSizeLoaded() {
+        return dataSizeLoaded;
+    }
+
     /*
         columns
      */

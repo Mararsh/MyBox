@@ -58,7 +58,7 @@ public class DataTableQueryEditor extends TreeNodeEditor {
         }
     }
 
-    public void setParameters(ControlData2DEditTable tableController) {
+    public void setParameters(ControlData2DLoad tableController) {
         try {
             setDataTable(tableController.data2D);
 
