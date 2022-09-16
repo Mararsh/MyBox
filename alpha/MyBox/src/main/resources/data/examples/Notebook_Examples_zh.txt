@@ -99,6 +99,8 @@ Tags:待补充;;;0xfff2dfff
 笔记本 > 笔记示例 > 网址
 学习-中文
 Tags:待补充;;;0xfff2dfff;;;重要;;;0x003472ff
+<a target=_blank href="https://github.com/QSCTech/zju-icicles">浙江大学课程</a><br>
+<a target=_blank href="https://github.com/PKUanonym/REKCARC-TSC-UHT">清华大学计算机系课程</a><br>
 <a target=_blank href="http://math.ecnu.edu.cn/~jypan/Teaching/NA/index.html">数值分析</a><br>
 <a target=_blank href="https://www.bilibili.com/video/BV1pW411J7s8">形象展示傅里叶变换</a><br>
 <a target=_blank href="https://www.bilibili.com/video/BV1BW411n7gw">北京大学 离散数学</a><br>

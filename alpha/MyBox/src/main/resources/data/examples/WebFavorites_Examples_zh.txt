@@ -203,6 +203,14 @@ Learning From Data
 https://open.163.com/newview/movie/courseintro?newurl=M8FH262HJ
 
 示例 > 学习 > 中文
+浙江大学课程
+https://github.com/QSCTech/zju-icicles
+
+示例 > 学习 > 中文
+清华大学计算机系课程
+https://github.com/PKUanonym/REKCARC-TSC-UHT
+
+示例 > 学习 > 中文
 数值分析
 http://math.ecnu.edu.cn/~jypan/Teaching/NA/index.html
 

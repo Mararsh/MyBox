@@ -171,18 +171,8 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
     }
 
     @FXML
-    protected void UnaryFunction(ActionEvent event) {
-        loadScene(Fxmls.FunctionUnaryFxml);
-    }
-
-    @FXML
-    protected void BinaryFunction(ActionEvent event) {
-        loadScene(Fxmls.FunctionBinaryFxml);
-    }
-
-    @FXML
-    protected void MultivariateFunction(ActionEvent event) {
-        loadScene(Fxmls.FunctionMultivariateFxml);
+    protected void MathFunction(ActionEvent event) {
+        loadScene(Fxmls.MathFunctionFxml);
     }
 
 }

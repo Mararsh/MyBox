@@ -87,6 +87,7 @@ Number.NaN
 ##MyBox#
 示例 > 一元函数
 绝对值
+Names:::绝对值,x
 Math.abs(x)
 
 ##MyBox#
@@ -96,88 +97,104 @@ Math.abs(x)
 ##MyBox#
 示例 > 一元函数 > 三角函数
 角度转换为弧度
-x * Math.PI / 180
+Names:::弧度,角度
+角度 * Math.PI / 180
 
 ##MyBox#
 示例 > 一元函数 > 三角函数
 弧度转换为角度
-x * 180 / Math.PI
+Names:::角度,弧度
+弧度 * 180 / Math.PI
 
 ##MyBox#
 示例 > 一元函数 > 三角函数
-余弦-弧度
-Math.cos(x)
+余弦_弧度
+Names:::余弦,弧度
+Math.cos(弧度)
 
 ##MyBox#
 示例 > 一元函数 > 三角函数
-正弦-弧度
-Math.sin(x)
+正弦_弧度
+Names:::正弦,弧度
+Math.sin(弧度)
 
 ##MyBox#
 示例 > 一元函数 > 三角函数
-正切-弧度
-Math.tan(x)
-MyBoxTreeNodeMore:( x - Math.PI / 2 ) % Math.PI != 0
+正切_弧度
+Names:::正切,弧度
+Math.tan(弧度)
+MyBoxTreeNodeMore:( 弧度 - Math.PI / 2 ) % Math.PI != 0
 
 ##MyBox#
 示例 > 一元函数 > 三角函数
-反余弦-弧度
+反余弦_弧度
+Names:::反余弦_弧度,x
 Math.acos(x)
 MyBoxTreeNodeMore:x >= -1 && x <= 1
 
 ##MyBox#
 示例 > 一元函数 > 三角函数
-反正弦-弧度
+反正弦_弧度
+Names:::反正弦_弧度,x
 Math.asin(x)
 MyBoxTreeNodeMore:x >= -1 && x <= 1
 
 ##MyBox#
 示例 > 一元函数 > 三角函数
-反正切-弧度
+反正切_弧度
+Names:::反正切_弧度,x
 Math.atan(x)
 
 ##MyBox#
 示例 > 一元函数 > 三角函数
-余弦-角度
-Math.cos(x * Math.PI / 180)
+余弦_角度
+Names:::余弦_角度,角度
+Math.cos(角度 * Math.PI / 180)
 
 ##MyBox#
 示例 > 一元函数 > 三角函数
-正弦-角度
-Math.sin(x * Math.PI / 180)
+正弦_角度
+Names:::正弦_角度,角度
+Math.sin(角度 * Math.PI / 180)
 
 ##MyBox#
 示例 > 一元函数 > 三角函数
-正切-角度
-Math.tan(x * Math.PI / 180)
-MyBoxTreeNodeMore:( x - 90 ) % 180 != 0
+正切_角度
+Names:::正切_角度,角度
+Math.tan(角度 * Math.PI / 180)
+MyBoxTreeNodeMore:( 角度 - 90 ) % 180 != 0
 
 ##MyBox#
 示例 > 一元函数 > 三角函数
-反余弦-角度
+反余弦_角度
+Names:::反余弦_角度,x
 Math.acos(x) * 180 / Math.PI
 MyBoxTreeNodeMore:x >= -1 && x <= 1
 
 ##MyBox#
 示例 > 一元函数 > 三角函数
-反正弦-角度
+反正弦_角度
+Names:::反正弦_角度,x
 Math.asin(x) * 180 / Math.PI
 MyBoxTreeNodeMore:x >= -1 && x <= 1
 
 ##MyBox#
 示例 > 一元函数 > 三角函数
-反正切-角度
+反正切_角度
+Names:::反正切_角度,x
 Math.atan(x) * 180 / Math.PI
 
 ##MyBox#
 示例 > 一元函数 > 三角函数
 圆的面积-半径
-Math.PI * x * x
+Names:::圆的面积,半径
+Math.PI * 半径 * 半径
 
 ##MyBox#
 示例 > 一元函数 > 三角函数
 圆的面积-直径
-var r = x / 2.0;
+Names:::圆的面积,直径
+var r = 直径 / 2.0;
 Math.PI * r * r
 
 ##MyBox#
@@ -187,62 +204,73 @@ Math.PI * r * r
 ##MyBox#
 示例 > 一元函数 > 幂函数
 平方
+Names:::平方,x
 Math.pow(x,2)
 
 ##MyBox#
 示例 > 一元函数 > 幂函数
 三次方
+Names:::三次方,x
 Math.pow(x,3)
 
 ##MyBox#
 示例 > 一元函数 > 幂函数
 四次方
+Names:::四次方,x
 Math.pow(x,4)
 
 ##MyBox#
 示例 > 一元函数 > 幂函数
 五次方
+Names:::五次方,x
 Math.pow(x,5)
 
 ##MyBox#
 示例 > 一元函数 > 幂函数
 平方根
+Names:::平方根,x
 Math.sqrt(x)
 MyBoxTreeNodeMore:x >= 0
 
 ##MyBox#
 示例 > 一元函数 > 幂函数
 三次方根
+Names:::三次方根,x
 Math.pow(x,1/3)
 MyBoxTreeNodeMore:x >= 0
 
 ##MyBox#
 示例 > 一元函数 > 幂函数
 四次方根
+Names:::四次方根,x
 Math.pow(x,1/4)
 MyBoxTreeNodeMore:x >= 0
 
 ##MyBox#
 示例 > 一元函数 > 幂函数
 五次方根
+Names:::五次方根,x
 Math.pow(x,1/5)
 MyBoxTreeNodeMore:x >= 0
 
 ##MyBox#
 示例 > 一元函数 > 幂函数
 一次倒数
+Names:::一次倒数,x
 Math.pow(x,-1)
 MyBoxTreeNodeMore:x != 0
 
 ##MyBox#
 示例 > 一元函数 > 幂函数
 二次倒数
+Names:::二次倒数,x
 Math.pow(x,-2)
 MyBoxTreeNodeMore:x != 0
 
 ##MyBox#
 示例 > 一元函数 > 幂函数
 三次倒数
+Names:::三次倒数,x
 Math.pow(x,-3)
 MyBoxTreeNodeMore:x != 0
 
@@ -253,16 +281,19 @@ MyBoxTreeNodeMore:x != 0
 ##MyBox#
 示例 > 一元函数 > 指数函数
 欧拉指数
+Names:::欧拉指数,x
 Math.exp(x + 5)
 
 ##MyBox#
 示例 > 一元函数 > 指数函数
 底数大于1的指数
+Names:::数5.9的指数,x
 Math.pow(5.9,x)
 
 ##MyBox#
 示例 > 一元函数 > 指数函数
 底数小于1的指数
+Names:::数0.7的指数,x
 Math.pow(0.7,x)
 
 ##MyBox#
@@ -272,6 +303,7 @@ Math.pow(0.7,x)
 ##MyBox#
 示例 > 一元函数 > 对数函数
 自然对数（底为e）
+Names:::自然对数,x
 Math.log(x)
 MyBoxTreeNodeMore:x > 0
 
@@ -282,21 +314,25 @@ MyBoxTreeNodeMore:x > 0
 ##MyBox#
 示例 > 一元函数 > 截取函数
 上舍入
+Names:::上舍入,x
 Math.ceil(x)
 
 ##MyBox#
 示例 > 一元函数 > 截取函数
 下舍入
+Names:::下舍入,x
 Math.floor(x)
 
 ##MyBox#
 示例 > 一元函数 > 截取函数
 四舍五入
+Names:::四舍五入,x
 Math.round(x)
 
 ##MyBox#
 示例 > 一元函数 > 截取函数
 整数部分
+Names:::整数部分,x
 Math.trunc(x)
 
 ##MyBox#
@@ -306,26 +342,31 @@ Math.trunc(x)
 ##MyBox#
 示例 > 一元函数 > 一元多项式
 一元线性函数
+Names:::一元线性函数,x
 5 * x + 9
 
 ##MyBox#
 示例 > 一元函数 > 一元多项式
 一元二次函数
+Names:::一元二次函数,x
 5 * Math.pow(x,2)  + 3 * x + 9
 
 ##MyBox#
 示例 > 一元函数 > 一元多项式
 一元三次函数
+Names:::一元三次函数数,x
 6 * Math.pow(x,3)  + 5 * Math.pow(x,2)  + 3 * x + 9
 
 ##MyBox#
 示例 > 一元函数 > 一元多项式
 一元四次函数
+Names:::一元四次函数,x
 7 * Math.pow(x,4)  + 6 * Math.pow(x,3)  + 5 * Math.pow(x,2)  + 3 * x + 9
 
 ##MyBox#
 示例 > 一元函数 > 一元多项式
 一元五次函数
+Names:::一元五次函数,x
 8 * Math.pow(x,5)  +7 * Math.pow(x,4)  + 6 * Math.pow(x,3)  + 5 * Math.pow(x,2)  + 3 * x + 9
 
 ##MyBox#
@@ -335,6 +376,7 @@ Math.trunc(x)
 ##MyBox#
 示例 > 一元函数 > 分段取值
 直接取值
+Names:::分段直接取值,x
 if ( x > 1 ) 
     6 * x - 5.9;
 else if ( x == 1)
@@ -345,6 +387,7 @@ else
 ##MyBox#
 示例 > 一元函数 > 分段取值
 定义函数
+Names:::分段函数取值,x
 function f1(x) {
     var multiply = 1;
     for (var i = 1; i <= Math.abs(x); i++) {
@@ -373,7 +416,8 @@ else
 ##MyBox#
 示例 > 一元函数 > 数值分析
 一元正态分布概率密度函数
-var mean = 1; 
+Names:::一元正态分布概率密度函数,x
+fvar mean = 1; 
 var stdDeviation = 2; 
 var dx = x - mean;
 var expP = - dx * dx / ( 2 * stdDeviation * stdDeviation );
@@ -383,16 +427,19 @@ Math.exp(expP) / div
 ##MyBox#
 示例 > 一元函数 > 数值分析
 一元标准正态分布概率密度函数
+Names:::一元标准正态分布概率密度函数,x
 Math.exp(- x * x / 2) / Math.sqrt(2 * Math.PI)
 
 ##MyBox#
 示例 > 一元函数 > 数值分析
 sigmoid
+Names:::sigmoid,x
 1 / (1 + Math.exp(-x))
 
 ##MyBox#
 示例 > 一元函数 > 数值分析
 sigmoid的导数
+Names:::sigmoid的导数,x
 var s = 1 / (1 + Math.exp(-x));
 s * (1 - s);
 
@@ -403,16 +450,19 @@ s * (1 - s);
 ##MyBox#
 示例 > 二元函数 > 三角函数
 椭圆的面积-半轴
-Math.PI * x * y
+Names:::椭圆的面积,长半轴,短半轴
+Math.PI * 长半轴 * 短半轴
 
 ##MyBox#
 示例 > 二元函数 > 三角函数
 椭圆的面积-轴
-Math.PI * x * y / 4
+Names:::椭圆的面积,长轴,短轴
+Math.PI * 长轴 * 短轴 / 4
 
 ##MyBox#
 示例 > 二元函数 > 数值分析
 二元正态分布概率密度函数
+Names:::二元正态分布概率密度函数,x,y
 var xMean = 1;
 var xStd = 2; 
 var yMean = 2;
@@ -432,6 +482,7 @@ Math.exp(expP) / div
 ##MyBox#
 示例 > 二元函数 > 数值分析
 二元标准正态分布概率密度函数
+Names:::二元标准正态分布概率密度函数,x,y
 var xMean = 1;
 var xStd = 2; 
 var yMean = 2;
@@ -453,80 +504,56 @@ Math.exp(expP) / div
 ##MyBox#
 示例 > 三元函数 > 三角函数
 正弦定理-求角（弧度）
-// x1: 角A（弧度）
-// x2: 边a
-// x3: 边b
-// 计算: 角B（弧度）
-var sinB = sinA * x2 / x3;
-Math.asin(sinB)
+Names:::角B_弧度,角A_弧度,边a,边b
+var 正弦B = Math.sin(角A_弧度) * 边b / 边a;
+Math.asin(正弦B)
 
 ##MyBox#
 示例 > 三元函数 > 三角函数
 正弦定理-求角（角度）
-// x1: 角A（角度）
-// x2: 边a
-// x3: 边b
-// 计算: 角B（角度）
-var sinA = Math.sin(x1 * Math.PI / 180);
-var sinB = sinA * x2 / x3;
-Math.asin( sinB ) * 180 / Math.PI
+Names:::角B_角度,角A_角度,边a,边b
+var 正弦A = Math.sin(角A_角度 * Math.PI / 180);
+var 正弦B = 正弦A * 边b / 边a;
+Math.asin(正弦B) * 180 / Math.PI
 
 ##MyBox#
 示例 > 三元函数 > 三角函数
 正弦定理-求边（弧度）
-// x1: 角A（弧度）
-// x2: 边a
-// x3: 角B（弧度）
-// 计算: 边b
-x2 * Math.sin(x3) / Math.sin(x1)
+Names:::边b,角A_弧度,边a,角B_弧度
+边a * Math.sin(角B_弧度) / Math.sin(角A_弧度)
 
 ##MyBox#
 示例 > 三元函数 > 三角函数
 正弦定理-求边（角度）
-// x1: 角A（角度）
-// x2: 边a
-// x3: 角B（角度）
-// 计算: 边b
-var sinA = Math.sin(x1 * Math.PI / 180);
-var sinB = Math.sin(x3 * Math.PI / 180);
-x2 * sinB / sinA
+Names:::边b,角A_角度,边a,角B_角度
+var 正弦A = Math.sin(角A_角度 * Math.PI / 180);
+var 正弦B = Math.sin(角B_角度 * Math.PI / 180);
+边a * 正弦B / 正弦A
 
 ##MyBox#
 示例 > 三元函数 > 三角函数
 余弦定理-求边（弧度）
-// x1: 角A（弧度）
-// x2: 边b
-// x3: 边c
-// 计算: 边a
-Math.sqrt(x2 * x2 + x3 * x3 - 2 * x2 * x3 * Math.cos(x1))
+Names:::边a,角A_弧度,边b,边c
+Math.sqrt(边b * 边b + 边c * 边c - 2 * 边b * 边c * Math.cos(角A_弧度))
 
 ##MyBox#
 示例 > 三元函数 > 三角函数
 余弦定理-求边（角度）
-// x1: 角A（角度）
-// x2: 边b
-// x3: 边c
-// 计算: 边a
-var cosA = Math.cos(x1 * Math.PI / 180);
-Math.sqrt(x2 * x2 + x3 * x3 - 2 * x2 * x3 * cosA)
+Names:::边a,角A_角度,边b,边c
+var 余弦A = Math.cos(角A_角度 * Math.PI / 180);
+Math.sqrt(边b * 边b + 边c * 边c - 2 * 边b * 边c * 余弦A)
 
 ##MyBox#
 示例 > 三元函数 > 三角函数
 余弦定理-求角（弧度）
-// x1: 边a
-// x2: 边b
-// x3: 边c
-// 计算: 角A（弧度）
-var cosA = (x2 * x2 + x3 * x3 - x1 * x1) / (2 * x2 * x3);
-Math.acos( cosA )
+Names:::角A_弧度,边a,边b,边c
+var 余弦A = (边b * 边b + 边c * 边c - 边a * 边a) / (2 * 边b * 边c);
+Math.acos( 余弦A )
 
 ##MyBox#
 示例 > 三元函数 > 三角函数
 余弦定理-求角（角度）
-// x1: 边a
-// x2: 边b
-// x3: 边c
-// 计算: 角A（角度）
-var cosA = (x2 * x2 + x3 * x3 - x1 * x1) / (2 * x2 * x3);
-Math.acos( cosA ) * 180 / Math.PI
+Names:::角A_角度,边a,边b,边c
+var 余弦A = (边b * 边b + 边c * 边c - 边a * 边a) / (2 * 边b * 边c);
+Math.acos( 余弦A ) * 180 / Math.PI
 

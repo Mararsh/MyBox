@@ -199,25 +199,10 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
                 jshell, jexl, JavaScript
         );
 
-        MenuItem UnaryFunction = new MenuItem(message("UnaryFunction"));
-        UnaryFunction.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.FunctionUnaryFxml);
+        MenuItem MathFunction = new MenuItem(message("MathFunction"));
+        MathFunction.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.MathFunctionFxml);
         });
-
-        MenuItem BinaryFunction = new MenuItem(message("BinaryFunction"));
-        BinaryFunction.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.FunctionBinaryFxml);
-        });
-
-        MenuItem MultivariateFunction = new MenuItem("MultivariateFunction");
-        MultivariateFunction.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.FunctionMultivariateFxml);
-        });
-
-        Menu MathFunction = new Menu(message("MathFunction"));
-        MathFunction.getItems().addAll(
-                UnaryFunction, BinaryFunction, MultivariateFunction
-        );
 
         MenuItem barcodeCreator = new MenuItem(message("BarcodeCreator"));
         barcodeCreator.setOnAction((ActionEvent event1) -> {
@@ -256,8 +241,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
         popMenu.getItems().addAll(
                 DataManufacture, ManageData, SpliceData, new SeparatorMenuItem(),
                 DataFile, matrix, database, DataInSystemClipboard, DataInMyBoxClipboard, new SeparatorMenuItem(),
-                calculation, new SeparatorMenuItem(),
-                MathFunction, new SeparatorMenuItem(),
+                calculation, MathFunction, new SeparatorMenuItem(),
                 Location, new SeparatorMenuItem(),
                 miscellaneousMenu
         );

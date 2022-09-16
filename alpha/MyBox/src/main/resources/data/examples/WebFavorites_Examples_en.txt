@@ -204,6 +204,14 @@ Learning From Data
 https://open.163.com/newview/movie/courseintro?newurl=M8FH262HJ
 
 Examples > Study > Chinese
+浙江大学课程
+https://github.com/QSCTech/zju-icicles
+
+Examples > Study > Chinese
+清华大学计算机系课程
+https://github.com/PKUanonym/REKCARC-TSC-UHT
+
+Examples > Study > Chinese
 数值分析
 http://math.ecnu.edu.cn/~jypan/Teaching/NA/index.html
 

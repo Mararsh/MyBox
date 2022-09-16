@@ -26,6 +26,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
@@ -230,6 +231,18 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         isSettingValues = false;
         if (show) {
             leftPaneCheck.setSelected(true);
+        }
+    }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (!super.keyEventsFilter(event)) {
+            if (nodeController != null) {
+                return nodeController.keyEventsFilter(event); // pass event to editor
+            }
+            return false;
+        } else {
+            return true;
         }
     }
 

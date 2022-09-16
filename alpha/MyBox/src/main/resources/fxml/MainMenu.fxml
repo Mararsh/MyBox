@@ -245,13 +245,7 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#JavaScript" text="JavaScript" />
                                     </items>
                                 </Menu>   
-                                <Menu mnemonicParsing="false" text="%MathFunction">
-                                    <items>
-                                        <MenuItem mnemonicParsing="false" onAction="#UnaryFunction" text="%UnaryFunction" />
-                                        <MenuItem mnemonicParsing="false" onAction="#BinaryFunction" text="%BinaryFunction" />
-                                        <MenuItem mnemonicParsing="false" onAction="#MultivariateFunction" text="%MultivariateFunction" />
-                                    </items>
-                                </Menu>   
+                                <MenuItem mnemonicParsing="false" onAction="#MathFunction" text="%MathFunction" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <Menu mnemonicParsing="false" text="%Location">
                                     <items>
