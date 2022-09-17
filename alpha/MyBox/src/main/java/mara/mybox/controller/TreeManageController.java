@@ -150,7 +150,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             initFind();
 
             if (nodesListCheck != null) {
-                nodesListCheck.setSelected(UserConfig.getBoolean(baseName + "NodesList", true));
+                nodesListCheck.setSelected(UserConfig.getBoolean(baseName + "NodesList", false));
                 showNodesList(nodesListCheck.isSelected());
                 nodesListCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override

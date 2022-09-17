@@ -103,7 +103,7 @@ public class ControlJavaScriptRefer extends TreeNodesController {
 
     @FXML
     protected void popScriptExamples(MouseEvent mouseEvent) {
-        if (UserConfig.getBoolean(interfaceName + "ExamplesPopWhenMouseHovering", true)) {
+        if (UserConfig.getBoolean(interfaceName + "ExamplesPopWhenMouseHovering", false)) {
             scriptExamples(mouseEvent);
         }
     }
@@ -128,7 +128,7 @@ public class ControlJavaScriptRefer extends TreeNodesController {
 
     @FXML
     protected void popScriptHistories(MouseEvent event) {
-        if (UserConfig.getBoolean(interfaceName + "HistoriesPopWhenMouseHovering", true)) {
+        if (UserConfig.getBoolean(interfaceName + "HistoriesPopWhenMouseHovering", false)) {
             PopTools.popStringValues(this, scriptInput, event, interfaceName + "Histories", false, true);
         }
     }

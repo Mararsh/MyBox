@@ -44,6 +44,10 @@ public class JavaScriptEditor extends TreeNodeEditor {
         this.jsController = jsController;
     }
 
+    @Override
+    protected void showEditorPane() {
+    }
+
     @FXML
     @Override
     public void startAction() {
@@ -56,7 +60,7 @@ public class JavaScriptEditor extends TreeNodeEditor {
 
     @FXML
     protected void popExamplesMenu(MouseEvent event) {
-        if (UserConfig.getBoolean(interfaceName + "ExamplesPopWhenMouseHovering", true)) {
+        if (UserConfig.getBoolean(interfaceName + "ExamplesPopWhenMouseHovering", false)) {
             examplesMenu(event);
         }
     }
@@ -92,7 +96,7 @@ public class JavaScriptEditor extends TreeNodeEditor {
 
     @FXML
     protected void popHistories(MouseEvent mouseEvent) {
-        if (UserConfig.getBoolean(interfaceName + "HistoriesPopWhenMouseHovering", true)) {
+        if (UserConfig.getBoolean(interfaceName + "HistoriesPopWhenMouseHovering", false)) {
             PopTools.popStringValues(this, valueInput, mouseEvent, interfaceName + "Histories", false, true);
         }
     }

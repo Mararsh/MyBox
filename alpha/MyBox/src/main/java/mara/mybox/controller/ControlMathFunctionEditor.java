@@ -3,6 +3,8 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -11,7 +13,6 @@ import javafx.scene.input.MouseEvent;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -32,14 +33,35 @@ public class ControlMathFunctionEditor extends TreeNodeEditor {
         defaultExt = "txt";
     }
 
-    protected void setParameters(MathFunctionController functionController) {
-        this.functionController = functionController;
+    protected void setParameters(MathFunctionController controller) {
+        try {
+            this.functionController = controller;
+
+            variablesInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                    MyBoxLog.console(isSettingValues + " " + nv);
+                    if (isSettingValues || nv) {
+                        return;
+                    }
+                    functionController.calculateController.variablesChanged();
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    @Override
+    protected void showEditorPane() {
     }
 
     @Override
     protected synchronized void editNode(TreeNode node) {
         super.editNode(node);
         if (node == null) {
+            functionController.calculateController.variablesChanged();
             return;
         }
         isSettingValues = true;
@@ -71,6 +93,7 @@ public class ControlMathFunctionEditor extends TreeNodeEditor {
             resultNameInput.setText("f");
         }
         isSettingValues = false;
+        functionController.calculateController.variablesChanged();
     }
 
     @Override
@@ -130,7 +153,7 @@ public class ControlMathFunctionEditor extends TreeNodeEditor {
 
     @FXML
     protected void popScriptExamples(MouseEvent event) {
-        if (UserConfig.getBoolean("FunctionScriptExamplesPopWhenMouseHovering", true)) {
+        if (UserConfig.getBoolean("FunctionScriptExamplesPopWhenMouseHovering", false)) {
             scriptExamples(event);
         }
     }
@@ -158,7 +181,7 @@ public class ControlMathFunctionEditor extends TreeNodeEditor {
 
     @FXML
     protected void popScriptHistories(MouseEvent mouseEvent) {
-        if (UserConfig.getBoolean("FunctionScriptHistoriesPopWhenMouseHovering", true)) {
+        if (UserConfig.getBoolean("FunctionScriptHistoriesPopWhenMouseHovering", false)) {
             PopTools.popStringValues(this, valueInput, mouseEvent, "FunctionScriptHistories", false, true);
         }
     }
@@ -175,7 +198,7 @@ public class ControlMathFunctionEditor extends TreeNodeEditor {
 
     @FXML
     protected void popDomainExamples(MouseEvent event) {
-        if (UserConfig.getBoolean("FunctionDomainExamplesPopWhenMouseHovering", true)) {
+        if (UserConfig.getBoolean("FunctionDomainExamplesPopWhenMouseHovering", false)) {
             domainExamples(event);
         }
     }
@@ -201,7 +224,7 @@ public class ControlMathFunctionEditor extends TreeNodeEditor {
 
     @FXML
     protected void popDomainHistories(MouseEvent mouseEvent) {
-        if (UserConfig.getBoolean("FunctionDomainHistoriesPopWhenMouseHovering", true)) {
+        if (UserConfig.getBoolean("FunctionDomainHistoriesPopWhenMouseHovering", false)) {
             PopTools.popStringValues(this, moreInput, mouseEvent, "FunctionDomainHistories", false, true);
         }
     }
@@ -209,17 +232,6 @@ public class ControlMathFunctionEditor extends TreeNodeEditor {
     @FXML
     protected void showDomainHistories(ActionEvent event) {
         PopTools.popStringValues(this, moreInput, event, "FunctionDomainHistories", false, true);
-    }
-
-    @FXML
-    @Override
-    public void startAction() {
-        String script = valueInput.getText();
-        if (script == null || script.isBlank()) {
-            popError(message("InvalidParameters") + ": " + message("Expression"));
-            return;
-        }
-        MathFunctionCalculator.open(this);
     }
 
 }

@@ -606,7 +606,7 @@ public class PopTools {
                 CheckBox popCheck = new CheckBox();
                 popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
                 NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
-                popCheck.setSelected(UserConfig.getBoolean(name + "PopWhenMouseHovering", true));
+                popCheck.setSelected(UserConfig.getBoolean(name + "PopWhenMouseHovering", false));
                 popCheck.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
@@ -870,7 +870,7 @@ public class PopTools {
             CheckBox popCheck = new CheckBox();
             popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
             NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
-            popCheck.setSelected(UserConfig.getBoolean("SqlExamplesPopWhenMouseHovering", true));
+            popCheck.setSelected(UserConfig.getBoolean("SqlExamplesPopWhenMouseHovering", false));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -1013,7 +1013,7 @@ public class PopTools {
             CheckBox popCheck = new CheckBox();
             popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
             NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
-            popCheck.setSelected(UserConfig.getBoolean(name + "PopWhenMouseHovering", true));
+            popCheck.setSelected(UserConfig.getBoolean(name + "PopWhenMouseHovering", false));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {

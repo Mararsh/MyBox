@@ -14,6 +14,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlDataSplit extends BaseController {
 
+    protected String name;
     protected double from, to, interval;
     protected int number;
     protected boolean byInterval;
@@ -23,9 +24,10 @@ public class ControlDataSplit extends BaseController {
     @FXML
     protected RadioButton numberRadio, intervalRadio;
 
-    public void setParameters(String name) {
+    @Override
+    public void initControls() {
         try {
-            baseName = baseName + "_" + name;
+            super.initControls();
 
             from = UserConfig.getDouble(baseName + "From", -10);
             fromInput.setText(from + "");
@@ -53,13 +55,12 @@ public class ControlDataSplit extends BaseController {
 
     public boolean checkInputs() {
         try {
-            super.initControls();
             try {
                 from = Double.valueOf(fromInput.getText().trim());
                 fromInput.setStyle(null);
             } catch (Exception e) {
                 fromInput.setStyle(UserConfig.badStyle());
-                popError(message("InvalidParamter") + ": " + message("From"));
+                popError(message("InvalidParamter") + ": " + name + " - " + message("From"));
                 return false;
             }
 
@@ -67,14 +68,14 @@ public class ControlDataSplit extends BaseController {
                 double t = Double.valueOf(toInput.getText().trim());
                 if (t < from) {
                     toInput.setStyle(UserConfig.badStyle());
-                    popError(message("InvalidParamter") + ": " + message("To"));
+                    popError(message("InvalidParamter") + ": " + name + " - " + message("To"));
                     return false;
                 }
                 to = t;
                 toInput.setStyle(null);
             } catch (Exception e) {
                 toInput.setStyle(UserConfig.badStyle());
-                popError(message("InvalidParamter") + ": " + message("To"));
+                popError(message("InvalidParamter") + ": " + name + " - " + message("To"));
                 return false;
             }
 
@@ -87,7 +88,7 @@ public class ControlDataSplit extends BaseController {
                     intervalInput.setStyle(null);
                 } catch (Exception e) {
                     intervalInput.setStyle(UserConfig.badStyle());
-                    popError(message("InvalidParamter") + ": " + message("DataInterval"));
+                    popError(message("InvalidParamter") + ": " + name + " - " + message("DataInterval"));
                     return false;
                 }
             } else {
@@ -96,14 +97,14 @@ public class ControlDataSplit extends BaseController {
                     int n = Integer.valueOf(numberInput.getText().trim());
                     if (n <= 0) {
                         numberInput.setStyle(UserConfig.badStyle());
-                        popError(message("InvalidParamter") + ": " + message("NumberOfSplit"));
+                        popError(message("InvalidParamter") + ": " + name + " - " + message("NumberOfSplit"));
                         return false;
                     }
                     number = n;
                     numberInput.setStyle(null);
                 } catch (Exception e) {
                     numberInput.setStyle(UserConfig.badStyle());
-                    popError(message("InvalidParamter") + ": " + message("NumberOfSplit"));
+                    popError(message("InvalidParamter") + ": " + name + " - " + message("NumberOfSplit"));
                     return false;
                 }
             }
@@ -117,6 +118,16 @@ public class ControlDataSplit extends BaseController {
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
+        }
+    }
+
+    public double interval() {
+        if (byInterval) {
+            return interval;
+        } else if (number > 0) {
+            return (to - from) / number;
+        } else {
+            return Double.NaN;
         }
     }
 

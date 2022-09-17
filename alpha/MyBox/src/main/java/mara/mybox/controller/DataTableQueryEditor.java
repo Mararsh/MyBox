@@ -144,7 +144,7 @@ public class DataTableQueryEditor extends TreeNodeEditor {
 
     @FXML
     protected void popExamplesMenu(MouseEvent mouseEvent) {
-        if (UserConfig.getBoolean("SqlExamplesPopWhenMouseHovering", true)) {
+        if (UserConfig.getBoolean("SqlExamplesPopWhenMouseHovering", false)) {
             examplesMenu(mouseEvent);
         }
     }
@@ -162,7 +162,7 @@ public class DataTableQueryEditor extends TreeNodeEditor {
 
     @FXML
     protected void popHistories(MouseEvent mouseEvent) {
-        if (UserConfig.getBoolean("DataTableQueryHistoriesPopWhenMouseHovering", true)) {
+        if (UserConfig.getBoolean("DataTableQueryHistoriesPopWhenMouseHovering", false)) {
             PopTools.popStringValues(this, valueInput, mouseEvent, "DataTableQueryHistories", false, true);
         }
     }

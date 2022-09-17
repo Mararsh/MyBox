@@ -173,7 +173,7 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
 
     @FXML
     protected void popExamplesMenu(MouseEvent mouseEvent) {
-        if (UserConfig.getBoolean("SqlExamplesPopWhenMouseHovering", true)) {
+        if (UserConfig.getBoolean("SqlExamplesPopWhenMouseHovering", false)) {
             PopTools.popSqlExamples(this, valueInput, null, false, mouseEvent);
         }
     }
@@ -186,7 +186,7 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
     @FXML
     protected void popHistories(MouseEvent mouseEvent) {
         String name = "SQLHistories" + (internal ? "Internal" : "");
-        if (UserConfig.getBoolean(name + "PopWhenMouseHovering", true)) {
+        if (UserConfig.getBoolean(name + "PopWhenMouseHovering", false)) {
             PopTools.popStringValues(this, valueInput, mouseEvent, name, false, true);
         }
     }

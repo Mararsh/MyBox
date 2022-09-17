@@ -30,11 +30,11 @@ License:    Apache License Version 2.0
 <BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MathFunctionController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
-    </top>
+    </top> 
     <center>
         <VBox>
             <children>
-                <SplitPane fx:id="splitPane" dividerPositions="0.4" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                <SplitPane fx:id="splitPane" dividerPositions="0.4, 0.8" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <items>
                         <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                             <content>
@@ -391,6 +391,11 @@ License:    Apache License Version 2.0
                                     </padding>
                                 </VBox>
                             </content>
+                        </ScrollPane>
+                        <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" pannable="true">
+                     <content>
+                        <fx:include fx:id="calculate" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlMathFunctionCalculator.fxml" VBox.vgrow="ALWAYS" />
+                     </content>
                         </ScrollPane>
                     </items>
                 </SplitPane>

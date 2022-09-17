@@ -32,26 +32,9 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                     <children>
-                              <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
-                                 <children>
-                                              <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%FunctionVariablesComments" wrapText="true" HBox.hgrow="ALWAYS" />
-                                    <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction">
-                                       <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconStart.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
-                                 </children>
-                              </HBox>
-                              <HBox alignment="CENTER_LEFT" spacing="2.0">
-                                 <children>                                      
-                                              <Label text="%VariablesSeparatedByComma" wrapText="true" />
-                                              <TextField fx:id="variablesInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                 </children>
-                              </HBox>
+                              <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0" />                                      
+                                        <Label text="%VariablesSeparatedByComma" wrapText="true" />
+                                        <TextField fx:id="variablesInput" maxWidth="1.7976931348623157E308" />
                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
                                             <children>
                                                 <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Expression" wrapText="true" HBox.hgrow="ALWAYS" />

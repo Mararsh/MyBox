@@ -202,7 +202,7 @@ public class JShellEditor extends TreeNodeEditor {
     // https://stackoverflow.com/questions/53867043/what-are-the-limits-to-jshell?r=SearchResults
     @FXML
     protected void popSyntaxMenu(MouseEvent mouseEvent) {
-        if (UserConfig.getBoolean(interfaceName + "SyntaxPopWhenMouseHovering", true)) {
+        if (UserConfig.getBoolean(interfaceName + "SyntaxPopWhenMouseHovering", false)) {
             syntaxMenu(mouseEvent);
         }
     }
@@ -244,7 +244,7 @@ public class JShellEditor extends TreeNodeEditor {
             CheckBox popCheck = new CheckBox();
             popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
             NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
-            popCheck.setSelected(UserConfig.getBoolean(interfaceName + "SyntaxPopWhenMouseHovering", true));
+            popCheck.setSelected(UserConfig.getBoolean(interfaceName + "SyntaxPopWhenMouseHovering", false));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -317,7 +317,7 @@ public class JShellEditor extends TreeNodeEditor {
 
     @FXML
     protected void popHistories(MouseEvent mouseEvent) {
-        if (UserConfig.getBoolean("JShellHistoriesPopWhenMouseHovering", true)) {
+        if (UserConfig.getBoolean("JShellHistoriesPopWhenMouseHovering", false)) {
             PopTools.popStringValues(this, valueInput, mouseEvent, "JShellHistories", false, true);
         }
     }

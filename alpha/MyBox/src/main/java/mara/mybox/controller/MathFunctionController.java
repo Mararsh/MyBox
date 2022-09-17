@@ -14,6 +14,8 @@ public class MathFunctionController extends TreeManageController {
 
     @FXML
     protected ControlMathFunctionEditor editorController;
+    @FXML
+    protected ControlMathFunctionCalculator calculateController;
 
     public MathFunctionController() {
         baseTitle = message("MathFunction");
@@ -41,6 +43,7 @@ public class MathFunctionController extends TreeManageController {
             super.initControls();
 
             editorController.setParameters(this);
+            calculateController.setParameters(editorController);
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
