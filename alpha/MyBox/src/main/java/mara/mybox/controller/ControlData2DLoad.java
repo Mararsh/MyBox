@@ -23,12 +23,10 @@ import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataClipboard;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileExcel;
-import mara.mybox.data2d.DataFileText;
 import mara.mybox.data2d.DataFilter;
 import mara.mybox.data2d.DataMatrix;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
@@ -189,12 +187,10 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             protected boolean handle() {
                 try ( Connection conn = DerbyBase.getConnection()) {
                     data2D.startTask(task, null);
-                    List<ColumnDefinition.ColumnType> types = data2D.getInitColumnTypes();
                     data2D.readDataDefinition(conn);
                     if (isCancelled()) {
                         return false;
                     }
-                    data2D.setInitColumnTypes(types);
                     return data2D.readColumns(conn);
                 } catch (Exception e) {
                     error = e.toString();
@@ -372,55 +368,48 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             @Override
             protected boolean handle() {
                 try {
-                    if (data2D.getType() == Data2D.Type.Texts) {
-                        targetData = new DataFileText();
-                        targetData.setColumns(csvData.getColumns())
-                                .setFile(csvData.getFile())
-                                .setDataName(csvData.dataName())
-                                .setDelimiter(csvData.getDelimiter())
-                                .setCharset(csvData.getCharset());
-                        targetData.saveAttributes();
-                        recordFileWritten(targetData.getFile(), VisitHistory.FileType.Text);
-                    } else {
-                        switch (data2D.getType()) {
-                            case CSV:
-                                targetData = csvData;
-                                targetData.saveAttributes();
-                                recordFileWritten(targetData.getFile(), VisitHistory.FileType.CSV);
-                                break;
-                            case Excel: {
-                                DataFileExcel excelData = DataFileExcel.toExcel(task, csvData);
-                                if (excelData != null) {
-                                    recordFileWritten(excelData.getFile(), VisitHistory.FileType.Excel);
-                                }
-                                targetData = excelData;
-                                break;
+                    csvData.loadColumns();
+                    switch (data2D.getType()) {
+                        case Texts:
+                            targetData = csvData.cloneAll();
+                            targetData.setType(Data2DDefinition.Type.Texts).setD2did(-1);
+                            targetData.saveAttributes();
+                            recordFileWritten(targetData.getFile(), VisitHistory.FileType.Text);
+                            break;
+                        case CSV:
+                            targetData = csvData;
+                            targetData.saveAttributes();
+                            recordFileWritten(targetData.getFile(), VisitHistory.FileType.CSV);
+                            break;
+                        case Excel: {
+                            DataFileExcel excelData = DataFileExcel.toExcel(task, csvData);
+                            if (excelData != null) {
+                                recordFileWritten(excelData.getFile(), VisitHistory.FileType.Excel);
                             }
-                            case DatabaseTable: {
-                                String name = csvData.dataName();
-                                if (name.startsWith(Data2D.TmpTablePrefix)) {
-                                    name = name.substring(Data2D.TmpTablePrefix.length());
-                                }
-                                DataTable dataTable = csvData.toTable(task, name, true);
-                                targetData = dataTable;
-                                break;
-                            }
-                            case MyBoxClipboard: {
-                                DataClipboard clip = DataClipboard.toClip(task, csvData);
-                                targetData = clip;
-                                break;
-                            }
-                            case Matrix: {
-                                DataMatrix matrix = DataMatrix.toMatrix(task, csvData);
-                                targetData = matrix;
-                                break;
-                            }
+                            targetData = excelData;
+                            break;
                         }
-                        if (targetData == null) {
-                            return false;
+                        case DatabaseTable: {
+                            String name = csvData.dataName();
+                            if (name.startsWith(Data2D.TmpTablePrefix)) {
+                                name = name.substring(Data2D.TmpTablePrefix.length());
+                            }
+
+                            DataTable dataTable = csvData.toTable(task, name, true);
+                            targetData = dataTable;
+                            break;
+                        }
+                        case MyBoxClipboard: {
+                            DataClipboard clip = DataClipboard.toClip(task, csvData);
+                            targetData = clip;
+                            break;
+                        }
+                        case Matrix: {
+                            DataMatrix matrix = DataMatrix.toMatrix(task, csvData);
+                            targetData = matrix;
+                            break;
                         }
                     }
-
                     return targetData != null;
                 } catch (Exception e) {
                     error = e.toString();
@@ -430,7 +419,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
 
             @Override
             protected void whenSucceeded() {
-                targetData.setInitColumnTypes(csvData.getInitColumnTypes());
                 loadDef(targetData);
                 if (dataController != null && dataController.manageController != null) {
                     dataController.manageController.refreshAction();

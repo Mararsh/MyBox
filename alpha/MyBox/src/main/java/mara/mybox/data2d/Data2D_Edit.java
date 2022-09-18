@@ -8,9 +8,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import mara.mybox.data.SetValue;
+import mara.mybox.data2d.reader.Data2DOperator;
 import mara.mybox.data2d.reader.Data2DReadPage;
 import mara.mybox.data2d.reader.Data2DReadTotal;
-import mara.mybox.data2d.reader.Data2DOperator;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
@@ -124,28 +124,21 @@ public abstract class Data2D_Edit extends Data2D_Filter {
                     }
                     if (isMatrix()) {
                         column.setType(ColumnDefinition.ColumnType.Double);
-                    } else if (initColumnTypes != null) {
-                        try {
-                            column.setType(initColumnTypes.get(i));
-                        } catch (Exception e) {
-                            MyBoxLog.debug(e);
-                        }
                     }
                 }
                 colsNumber = columns.size();
-                if (d2did >= 0) {
+                if (d2did >= 0 && conn != null) {
                     tableData2DColumn.save(conn, d2did, columns);
                     tableData2DDefinition.updateData(conn, this);
                 }
             } else {
                 colsNumber = 0;
-                if (d2did >= 0) {
+                if (d2did >= 0 && conn != null) {
                     tableData2DColumn.clear(conn, d2did);
                     tableData2DDefinition.updateData(conn, this);
                     tableData2DStyle.clear(conn, d2did);
                 }
             }
-            initColumnTypes = null;
             return true;
         } catch (Exception e) {
             if (task != null) {
@@ -154,6 +147,11 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             MyBoxLog.debug(e);
             return false;
         }
+    }
+
+    public boolean loadColumns() {
+        savedColumns = columns;
+        return readColumns(null);
     }
 
     public long readTotal() {

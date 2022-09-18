@@ -2,7 +2,6 @@ package mara.mybox.data2d;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Menu;
@@ -35,7 +34,8 @@ import mara.mybox.controller.Data2DSortController;
 import mara.mybox.controller.Data2DStatisticController;
 import mara.mybox.controller.Data2DTransposeController;
 import mara.mybox.controller.DataTableQueryController;
-import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -351,11 +351,18 @@ public class Data2DTools {
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaPopulation_" + lang + ".csv",
                         "data", "ChinaPopulation_" + lang + ".csv", true);
-                List<ColumnDefinition.ColumnType> columnTypes = Arrays.asList(
-                        ColumnDefinition.ColumnType.String, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double,
-                        ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double
-                );
-                controller.loadCSVFile(file, columnTypes);
+                DataFileCSV data = new DataFileCSV(file);
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("year_", ColumnType.String, true));
+                columns.add(new Data2DColumn("population", ColumnType.Double));
+                columns.add(new Data2DColumn("male", ColumnType.Double));
+                columns.add(new Data2DColumn("female", ColumnType.Double));
+                columns.add(new Data2DColumn("urban", ColumnType.Double));
+                columns.add(new Data2DColumn("rural", ColumnType.Double));
+                data.setColumns(columns)
+                        .setHasHeader(true)
+                        .setComments("https://data.stats.gov.cn/index.htm");
+                controller.loadCSVFile(data);
             });
             chinaMenu.getItems().add(menu);
 
@@ -363,16 +370,37 @@ public class Data2DTools {
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaCensus_" + lang + ".csv",
                         "data", "ChinaCensus_" + lang + ".csv", true);
-                List<ColumnDefinition.ColumnType> columnTypes = Arrays.asList(
-                        ColumnDefinition.ColumnType.String, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double,
-                        ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double,
-                        ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double,
-                        ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double,
-                        ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double,
-                        ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double,
-                        ColumnDefinition.ColumnType.Double
-                );
-                controller.loadCSVFile(file, columnTypes);
+                DataFileCSV data = new DataFileCSV(file);
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("year_", ColumnType.String, true));
+                columns.add(new Data2DColumn("total", ColumnType.Double));
+                columns.add(new Data2DColumn("male", ColumnType.Double));
+                columns.add(new Data2DColumn("female", ColumnType.Double));
+                columns.add(new Data2DColumn("sex", ColumnType.Double));
+                columns.add(new Data2DColumn("urban", ColumnType.Double));
+                columns.add(new Data2DColumn("rural", ColumnType.Double));
+                columns.add(new Data2DColumn("family", ColumnType.Double));
+                columns.add(new Data2DColumn("aged 0-14", ColumnType.Double));
+                columns.add(new Data2DColumn("aged 15-64", ColumnType.Double));
+                columns.add(new Data2DColumn("aged over 65", ColumnType.Double));
+                columns.add(new Data2DColumn("han", ColumnType.Double));
+                columns.add(new Data2DColumn("han precentage", ColumnType.Double));
+                columns.add(new Data2DColumn("minority", ColumnType.Double));
+                columns.add(new Data2DColumn("minority precentage", ColumnType.Double));
+                columns.add(new Data2DColumn("junior college", ColumnType.Double));
+                columns.add(new Data2DColumn("high school", ColumnType.Double));
+                columns.add(new Data2DColumn("junior high school", ColumnType.Double));
+                columns.add(new Data2DColumn("primary school", ColumnType.Double));
+                columns.add(new Data2DColumn("illiteracy", ColumnType.Double));
+                columns.add(new Data2DColumn("illiteracy percentage", ColumnType.Double));
+                columns.add(new Data2DColumn("urbanization", ColumnType.Double));
+                columns.add(new Data2DColumn("life expectancy", ColumnType.Double));
+                columns.add(new Data2DColumn("male life expectancy", ColumnType.Double));
+                columns.add(new Data2DColumn("female life expectancy", ColumnType.Double));
+                data.setColumns(columns)
+                        .setHasHeader(true)
+                        .setComments("https://data.stats.gov.cn/index.htm");
+                controller.loadCSVFile(data);
             });
             chinaMenu.getItems().add(menu);
 
@@ -380,11 +408,19 @@ public class Data2DTools {
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaGDP_" + lang + ".csv",
                         "data", "ChinaGDP_" + lang + ".csv", true);
-                List<ColumnDefinition.ColumnType> columnTypes = Arrays.asList(
-                        ColumnDefinition.ColumnType.String, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double,
-                        ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double
-                );
-                controller.loadCSVFile(file, columnTypes);
+                DataFileCSV data = new DataFileCSV(file);
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("year_", ColumnType.String, true));
+                columns.add(new Data2DColumn("GNI", ColumnType.Double));
+                columns.add(new Data2DColumn("GDP", ColumnType.Double));
+                columns.add(new Data2DColumn("VA1", ColumnType.Double));
+                columns.add(new Data2DColumn("VA2", ColumnType.Double));
+                columns.add(new Data2DColumn("VA3", ColumnType.Double));
+                columns.add(new Data2DColumn("GDP per capita", ColumnType.Double));
+                data.setColumns(columns)
+                        .setHasHeader(true)
+                        .setComments("https://data.stats.gov.cn/index.htm");
+                controller.loadCSVFile(data);
             });
             chinaMenu.getItems().add(menu);
 
@@ -392,11 +428,20 @@ public class Data2DTools {
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaCPI_" + lang + ".csv",
                         "data", "ChinaCPI_" + lang + ".csv", true);
-                List<ColumnDefinition.ColumnType> columnTypes = Arrays.asList(
-                        ColumnDefinition.ColumnType.String, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double,
-                        ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double
-                );
-                controller.loadCSVFile(file, columnTypes);
+                DataFileCSV data = new DataFileCSV(file);
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("year_", ColumnType.String, true));
+                columns.add(new Data2DColumn("CPI", ColumnType.Double));
+                columns.add(new Data2DColumn("urban", ColumnType.Double));
+                columns.add(new Data2DColumn("rural", ColumnType.Double));
+                columns.add(new Data2DColumn("RPI", ColumnType.Double));
+                columns.add(new Data2DColumn("PPI", ColumnType.Double));
+                columns.add(new Data2DColumn("PPIRM", ColumnType.Double));
+                columns.add(new Data2DColumn("investment", ColumnType.Double));
+                data.setColumns(columns)
+                        .setHasHeader(true)
+                        .setComments("https://data.stats.gov.cn/index.htm");
+                controller.loadCSVFile(data);
             });
             chinaMenu.getItems().add(menu);
 
@@ -404,12 +449,21 @@ public class Data2DTools {
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaFoods_" + lang + ".csv",
                         "data", "ChinaFoods_" + lang + ".csv", true);
-                List<ColumnDefinition.ColumnType> columnTypes = Arrays.asList(
-                        ColumnDefinition.ColumnType.String, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double,
-                        ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double,
-                        ColumnDefinition.ColumnType.Double
-                );
-                controller.loadCSVFile(file, columnTypes);
+                DataFileCSV data = new DataFileCSV(file);
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("item", ColumnType.String, true));
+                columns.add(new Data2DColumn("2020", ColumnType.Double));
+                columns.add(new Data2DColumn("2019", ColumnType.Double));
+                columns.add(new Data2DColumn("2018", ColumnType.Double));
+                columns.add(new Data2DColumn("2017", ColumnType.Double));
+                columns.add(new Data2DColumn("2016", ColumnType.Double));
+                columns.add(new Data2DColumn("2015", ColumnType.Double));
+                columns.add(new Data2DColumn("2014", ColumnType.Double));
+                columns.add(new Data2DColumn("2013", ColumnType.Double));
+                data.setColumns(columns)
+                        .setHasHeader(true)
+                        .setComments("https://data.stats.gov.cn/index.htm");
+                controller.loadCSVFile(data);
             });
             chinaMenu.getItems().add(menu);
 
@@ -417,11 +471,20 @@ public class Data2DTools {
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaGraduates_" + lang + ".csv",
                         "data", "ChinaGraduates_" + lang + ".csv", true);
-                List<ColumnDefinition.ColumnType> columnTypes = Arrays.asList(
-                        ColumnDefinition.ColumnType.String, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double,
-                        ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double
-                );
-                controller.loadCSVFile(file, columnTypes);
+                DataFileCSV data = new DataFileCSV(file);
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("year_", ColumnType.String, true));
+                columns.add(new Data2DColumn("college", ColumnType.Double));
+                columns.add(new Data2DColumn("middle", ColumnType.Double));
+                columns.add(new Data2DColumn("high", ColumnType.Double));
+                columns.add(new Data2DColumn("junior", ColumnType.Double));
+                columns.add(new Data2DColumn("vocational", ColumnType.Double));
+                columns.add(new Data2DColumn("primary", ColumnType.Double));
+                columns.add(new Data2DColumn("special", ColumnType.Double));
+                data.setColumns(columns)
+                        .setHasHeader(true)
+                        .setComments("https://data.stats.gov.cn/index.htm");
+                controller.loadCSVFile(data);
             });
             chinaMenu.getItems().add(menu);
 
@@ -429,12 +492,22 @@ public class Data2DTools {
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaMuseums_" + lang + ".csv",
                         "data", "ChinaMuseums_" + lang + ".csv", true);
-                List<ColumnDefinition.ColumnType> columnTypes = Arrays.asList(
-                        ColumnDefinition.ColumnType.String, ColumnDefinition.ColumnType.Long, ColumnDefinition.ColumnType.Long, ColumnDefinition.ColumnType.Long,
-                        ColumnDefinition.ColumnType.Long, ColumnDefinition.ColumnType.Long, ColumnDefinition.ColumnType.Long, ColumnDefinition.ColumnType.Long,
-                        ColumnDefinition.ColumnType.Long, ColumnDefinition.ColumnType.Double
-                );
-                controller.loadCSVFile(file, columnTypes);
+                DataFileCSV data = new DataFileCSV(file);
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("year_", ColumnType.String, true));
+                columns.add(new Data2DColumn("institutions", ColumnType.Long));
+                columns.add(new Data2DColumn("employed", ColumnType.Long));
+                columns.add(new Data2DColumn("relics", ColumnType.Long));
+                columns.add(new Data2DColumn("received", ColumnType.Long));
+                columns.add(new Data2DColumn("fixed", ColumnType.Long));
+                columns.add(new Data2DColumn("projects", ColumnType.Long));
+                columns.add(new Data2DColumn("basical", ColumnType.Long));
+                columns.add(new Data2DColumn("special", ColumnType.Long));
+                columns.add(new Data2DColumn("visits", ColumnType.Double));
+                data.setColumns(columns)
+                        .setHasHeader(true)
+                        .setComments("https://data.stats.gov.cn/index.htm");
+                controller.loadCSVFile(data);
             });
             chinaMenu.getItems().add(menu);
 
@@ -442,12 +515,23 @@ public class Data2DTools {
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaHealthPersonnel_" + lang + ".csv",
                         "data", "ChinaHealthPersonnel_" + lang + ".csv", true);
-                List<ColumnDefinition.ColumnType> columnTypes = Arrays.asList(
-                        ColumnDefinition.ColumnType.String, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double,
-                        ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double,
-                        ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double
-                );
-                controller.loadCSVFile(file, columnTypes);
+                DataFileCSV data = new DataFileCSV(file);
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("year_", ColumnType.String, true));
+                columns.add(new Data2DColumn("health", ColumnType.Double));
+                columns.add(new Data2DColumn("medical", ColumnType.Double));
+                columns.add(new Data2DColumn("assistant", ColumnType.Double));
+                columns.add(new Data2DColumn("practitioner", ColumnType.Double));
+                columns.add(new Data2DColumn("nurse", ColumnType.Double));
+                columns.add(new Data2DColumn("pharmacist", ColumnType.Double));
+                columns.add(new Data2DColumn("rural", ColumnType.Double));
+                columns.add(new Data2DColumn("other", ColumnType.Double));
+                columns.add(new Data2DColumn("managerial", ColumnType.Double));
+                columns.add(new Data2DColumn("worker", ColumnType.Double));
+                data.setColumns(columns)
+                        .setHasHeader(true)
+                        .setComments("https://data.stats.gov.cn/index.htm");
+                controller.loadCSVFile(data);
             });
             chinaMenu.getItems().add(menu);
 
@@ -455,11 +539,20 @@ public class Data2DTools {
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaMarriage_" + lang + ".csv",
                         "data", "ChinaMarriage_" + lang + ".csv", true);
-                List<ColumnDefinition.ColumnType> columnTypes = Arrays.asList(
-                        ColumnDefinition.ColumnType.String, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double,
-                        ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double
-                );
-                controller.loadCSVFile(file, columnTypes);
+                DataFileCSV data = new DataFileCSV(file);
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("year_", ColumnType.String, true));
+                columns.add(new Data2DColumn("married", ColumnType.Double));
+                columns.add(new Data2DColumn("mainland", ColumnType.Double));
+                columns.add(new Data2DColumn("newly", ColumnType.Double));
+                columns.add(new Data2DColumn("remarried", ColumnType.Double));
+                columns.add(new Data2DColumn("foreigners", ColumnType.Double));
+                columns.add(new Data2DColumn("divorced", ColumnType.Double));
+                columns.add(new Data2DColumn("ratio", ColumnType.Double));
+                data.setColumns(columns)
+                        .setHasHeader(true)
+                        .setComments("https://data.stats.gov.cn/index.htm");
+                controller.loadCSVFile(data);
             });
             chinaMenu.getItems().add(menu);
 
@@ -467,11 +560,19 @@ public class Data2DTools {
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaSportWorldChampions_" + lang + ".csv",
                         "data", "ChinaSportWorldChampions_" + lang + ".csv", true);
-                List<ColumnDefinition.ColumnType> columnTypes = Arrays.asList(
-                        ColumnDefinition.ColumnType.String, ColumnDefinition.ColumnType.Integer, ColumnDefinition.ColumnType.Integer, ColumnDefinition.ColumnType.Integer,
-                        ColumnDefinition.ColumnType.Integer, ColumnDefinition.ColumnType.Integer, ColumnDefinition.ColumnType.Integer
-                );
-                controller.loadCSVFile(file, columnTypes);
+                DataFileCSV data = new DataFileCSV(file);
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("year_", ColumnType.String, true));
+                columns.add(new Data2DColumn("categories", ColumnType.Integer));
+                columns.add(new Data2DColumn("female categories", ColumnType.Integer));
+                columns.add(new Data2DColumn("athletes", ColumnType.Integer));
+                columns.add(new Data2DColumn("female athletes", ColumnType.Integer));
+                columns.add(new Data2DColumn("champions", ColumnType.Integer));
+                columns.add(new Data2DColumn("female champions", ColumnType.Integer));
+                data.setColumns(columns)
+                        .setHasHeader(true)
+                        .setComments("https://data.stats.gov.cn/index.htm");
+                controller.loadCSVFile(data);
             });
             chinaMenu.getItems().add(menu);
 
@@ -479,12 +580,24 @@ public class Data2DTools {
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaCrimesFiledByPolice_" + lang + ".csv",
                         "data", "ChinaCrimesFiledByPolice_" + lang + ".csv", true);
-                List<ColumnDefinition.ColumnType> columnTypes = Arrays.asList(
-                        ColumnDefinition.ColumnType.String, ColumnDefinition.ColumnType.Integer, ColumnDefinition.ColumnType.Integer, ColumnDefinition.ColumnType.Integer,
-                        ColumnDefinition.ColumnType.Integer, ColumnDefinition.ColumnType.Integer, ColumnDefinition.ColumnType.Integer, ColumnDefinition.ColumnType.Integer,
-                        ColumnDefinition.ColumnType.Integer, ColumnDefinition.ColumnType.Integer, ColumnDefinition.ColumnType.Integer, ColumnDefinition.ColumnType.Integer
-                );
-                controller.loadCSVFile(file, columnTypes);
+                DataFileCSV data = new DataFileCSV(file);
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("year_", ColumnType.String, true));
+                columns.add(new Data2DColumn("filed", ColumnType.Integer));
+                columns.add(new Data2DColumn("murder", ColumnType.Integer));
+                columns.add(new Data2DColumn("injure", ColumnType.Integer));
+                columns.add(new Data2DColumn("rob", ColumnType.Integer));
+                columns.add(new Data2DColumn("rape", ColumnType.Integer));
+                columns.add(new Data2DColumn("trafficking", ColumnType.Integer));
+                columns.add(new Data2DColumn("steal", ColumnType.Integer));
+                columns.add(new Data2DColumn("scam", ColumnType.Integer));
+                columns.add(new Data2DColumn("smuggle", ColumnType.Integer));
+                columns.add(new Data2DColumn("counterfeit", ColumnType.Integer));
+                columns.add(new Data2DColumn("others", ColumnType.Integer));
+                data.setColumns(columns)
+                        .setHasHeader(true)
+                        .setComments("https://data.stats.gov.cn/index.htm");
+                controller.loadCSVFile(data);
             });
             chinaMenu.getItems().add(menu);
 
@@ -492,13 +605,26 @@ public class Data2DTools {
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ChinaCrimesFiledByProcuratorate_" + lang + ".csv",
                         "data", "ChinaCrimesFiledByProcuratorate_" + lang + ".csv", true);
-                List<ColumnDefinition.ColumnType> columnTypes = Arrays.asList(
-                        ColumnDefinition.ColumnType.String, ColumnDefinition.ColumnType.Integer, ColumnDefinition.ColumnType.Integer, ColumnDefinition.ColumnType.Integer,
-                        ColumnDefinition.ColumnType.Integer, ColumnDefinition.ColumnType.Integer, ColumnDefinition.ColumnType.Integer, ColumnDefinition.ColumnType.Integer,
-                        ColumnDefinition.ColumnType.Integer, ColumnDefinition.ColumnType.Integer, ColumnDefinition.ColumnType.Integer, ColumnDefinition.ColumnType.Integer,
-                        ColumnDefinition.ColumnType.Integer, ColumnDefinition.ColumnType.Integer
-                );
-                controller.loadCSVFile(file, columnTypes);
+                DataFileCSV data = new DataFileCSV(file);
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("year_", ColumnType.String, true));
+                columns.add(new Data2DColumn("filed", ColumnType.Integer));
+                columns.add(new Data2DColumn("corruption and bribery", ColumnType.Integer));
+                columns.add(new Data2DColumn("corruption", ColumnType.Integer));
+                columns.add(new Data2DColumn("bribery", ColumnType.Integer));
+                columns.add(new Data2DColumn("embezzlement", ColumnType.Integer));
+                columns.add(new Data2DColumn("without permission", ColumnType.Integer));
+                columns.add(new Data2DColumn("huge", ColumnType.Integer));
+                columns.add(new Data2DColumn("other corruption", ColumnType.Integer));
+                columns.add(new Data2DColumn("malfeasance", ColumnType.Integer));
+                columns.add(new Data2DColumn("abuses", ColumnType.Integer));
+                columns.add(new Data2DColumn("neglecting", ColumnType.Integer));
+                columns.add(new Data2DColumn("favoritism", ColumnType.Integer));
+                columns.add(new Data2DColumn("other malfeasance", ColumnType.Integer));
+                data.setColumns(columns)
+                        .setHasHeader(true)
+                        .setComments("https://data.stats.gov.cn/index.htm");
+                controller.loadCSVFile(data);
             });
             chinaMenu.getItems().add(menu);
 
@@ -514,57 +640,133 @@ public class Data2DTools {
             Menu regressionMenu = new Menu(message("Regression"), StyleTools.getIconImage("iconLinearPgression.png"));
             items.add(regressionMenu);
 
-            // https://www.scribbr.com/statistics/simple-linear-regression/
             menu = new MenuItem(message("IncomeHappiness"));
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/IncomeHappiness_" + lang + ".csv",
                         "data", "IncomeHappiness_" + lang + ".csv", true);
-                List<ColumnDefinition.ColumnType> columnTypes = Arrays.asList(
-                        ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double
-                );
-                controller.loadCSVFile(file, columnTypes);
+                DataFileCSV data = new DataFileCSV(file);
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("income", ColumnType.Double, true));
+                columns.add(new Data2DColumn("happiness", ColumnType.Double, true));
+                data.setColumns(columns)
+                        .setHasHeader(true)
+                        .setComments("https://www.scribbr.com/statistics/simple-linear-regression/");
+                controller.loadCSVFile(data);
             });
             regressionMenu.getItems().add(menu);
 
-            // https://github.com/krishnaik06/simple-Linear-Regression
             menu = new MenuItem(message("ExperienceSalary"));
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ExperienceSalary_" + lang + ".csv",
                         "data", "ExperienceSalary_" + lang + ".csv", true);
-                List<ColumnDefinition.ColumnType> columnTypes = Arrays.asList(
-                        ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double
-                );
-                controller.loadCSVFile(file, columnTypes);
+                DataFileCSV data = new DataFileCSV(file);
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("Experience", ColumnType.Double, true));
+                columns.add(new Data2DColumn("Salary", ColumnType.Double, true));
+                data.setColumns(columns)
+                        .setHasHeader(true)
+                        .setComments("https://github.com/krishnaik06/simple-Linear-Regression");
+                controller.loadCSVFile(data);
             });
             regressionMenu.getItems().add(menu);
 
-            // http://archive.ics.uci.edu/ml/datasets/Iris
             menu = new MenuItem(message("IrisSpecies"));
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/IrisSpecies_" + lang + ".csv",
                         "data", "IrisSpecies_" + lang + ".csv", true);
-                List<ColumnDefinition.ColumnType> columnTypes = Arrays.asList(
-                        ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double,
-                        ColumnDefinition.ColumnType.String
-                );
-                controller.loadCSVFile(file, columnTypes);
+                DataFileCSV data = new DataFileCSV(file);
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("SepalLengthCm", ColumnType.Double, true));
+                columns.add(new Data2DColumn("SepalWidthCm", ColumnType.Double, true));
+                columns.add(new Data2DColumn("PetalLengthCm", ColumnType.Double, true));
+                columns.add(new Data2DColumn("PetalWidthCm", ColumnType.Double, true));
+                columns.add(new Data2DColumn("Species", ColumnType.String, true));
+                data.setColumns(columns)
+                        .setHasHeader(true)
+                        .setComments("http://archive.ics.uci.edu/ml/datasets/Iris");
+                controller.loadCSVFile(data);
             });
             regressionMenu.getItems().add(menu);
 
-            // https://github.com/tomsharp/SVR/tree/master/data
             menu = new MenuItem(message("BostonHousingPrices"));
             menu.setOnAction((ActionEvent event) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/BostonHousingPrices_" + lang + ".csv",
                         "data", "BostonHousingPrices_" + lang + ".csv", true);
-                List<ColumnDefinition.ColumnType> columnTypes = Arrays.asList(
-                        ColumnDefinition.ColumnType.String, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double,
-                        ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.String, ColumnDefinition.ColumnType.Double,
-                        ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double,
-                        ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double, ColumnDefinition.ColumnType.Double
-                );
-                controller.loadCSVFile(file, columnTypes);
+                DataFileCSV data = new DataFileCSV(file);
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("c1", ColumnType.String, true));
+                columns.add(new Data2DColumn("c2", ColumnType.Double));
+                columns.add(new Data2DColumn("c3", ColumnType.Double));
+                columns.add(new Data2DColumn("c4", ColumnType.Double));
+                columns.add(new Data2DColumn("c5", ColumnType.Double));
+                columns.add(new Data2DColumn("c6", ColumnType.Double));
+                columns.add(new Data2DColumn("c7", ColumnType.Double));
+                columns.add(new Data2DColumn("c8", ColumnType.Double));
+                columns.add(new Data2DColumn("c9", ColumnType.Double));
+                columns.add(new Data2DColumn("c10", ColumnType.Double));
+                columns.add(new Data2DColumn("c11", ColumnType.Double));
+                columns.add(new Data2DColumn("c12", ColumnType.Double));
+                columns.add(new Data2DColumn("c13", ColumnType.Double));
+                columns.add(new Data2DColumn("c14", ColumnType.Double));
+                columns.add(new Data2DColumn("c15", ColumnType.Double));
+                columns.add(new Data2DColumn("c16", ColumnType.Double));
+                data.setColumns(columns)
+                        .setHasHeader(true)
+                        .setComments("https://github.com/tomsharp/SVR/tree/master/data");
+                controller.loadCSVFile(data);
             });
             regressionMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("DiabetesPrediction"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/DiabetesPrediction_" + lang + ".csv",
+                        "data", "DiabetesPrediction_" + lang + ".csv", true);
+                DataFileCSV data = new DataFileCSV(file);
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("c1", ColumnType.Double));
+                columns.add(new Data2DColumn("c2", ColumnType.Double));
+                columns.add(new Data2DColumn("c3", ColumnType.Double));
+                columns.add(new Data2DColumn("c4", ColumnType.Double));
+                columns.add(new Data2DColumn("c5", ColumnType.Double));
+                columns.add(new Data2DColumn("c6", ColumnType.Double));
+                columns.add(new Data2DColumn("c7", ColumnType.Double));
+                columns.add(new Data2DColumn("c8", ColumnType.Double));
+                columns.add(new Data2DColumn("c9", ColumnType.Double));
+                columns.add(new Data2DColumn("c10", ColumnType.Double));
+                columns.add(new Data2DColumn("c11", ColumnType.Double));
+                data.setColumns(columns)
+                        .setHasHeader(true)
+                        .setComments("https://hastie.su.domains/Papers/LARS/");
+                controller.loadCSVFile(data);
+            });
+            regressionMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("DiabetesPredictionStandardized"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/DiabetesPrediction_standardized_" + lang + ".csv",
+                        "data", "DiabetesPrediction_standardized_" + lang + ".csv", true);
+                DataFileCSV data = new DataFileCSV(file);
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("c1", ColumnType.Double));
+                columns.add(new Data2DColumn("c2", ColumnType.Double));
+                columns.add(new Data2DColumn("c3", ColumnType.Double));
+                columns.add(new Data2DColumn("c4", ColumnType.Double));
+                columns.add(new Data2DColumn("c5", ColumnType.Double));
+                columns.add(new Data2DColumn("c6", ColumnType.Double));
+                columns.add(new Data2DColumn("c7", ColumnType.Double));
+                columns.add(new Data2DColumn("c8", ColumnType.Double));
+                columns.add(new Data2DColumn("c9", ColumnType.Double));
+                columns.add(new Data2DColumn("c10", ColumnType.Double));
+                columns.add(new Data2DColumn("c11", ColumnType.Double));
+                data.setColumns(columns)
+                        .setHasHeader(true)
+                        .setComments("https://hastie.su.domains/Papers/LARS/ \n"
+                                + "first 10 columns have been normalized to have mean 0 and "
+                                + "Euclidean norm 1 and the last column y has been centered (mean 0).");
+                controller.loadCSVFile(data);
+            });
+            regressionMenu.getItems().add(menu);
+
             return items;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

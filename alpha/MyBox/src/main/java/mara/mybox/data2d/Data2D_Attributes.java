@@ -98,7 +98,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
             if (d == null) {
                 return;
             }
-            super.cloneAttributes(d);
+            cloneDefinitionAttributes(d);
             loadController = d.loadController;
             tableData2DDefinition = d.tableData2DDefinition;
             tableData2DColumn = d.tableData2DColumn;

@@ -29,7 +29,6 @@ import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2DTools;
 import mara.mybox.data2d.DataClipboard;
 import mara.mybox.data2d.DataFileCSV;
-import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
@@ -583,9 +582,9 @@ public class ControlData2D extends BaseController {
         }
     }
 
-    public void loadCSVFile(File csvFile, List<ColumnType> columnTypes) {
+    public void loadCSVFile(DataFileCSV csvData) {
         try {
-            if (csvFile == null || !csvFile.exists()) {
+            if (csvData == null) {
                 popError("Nonexistent");
                 return;
             }
@@ -593,8 +592,6 @@ public class ControlData2D extends BaseController {
                 return;
             }
             setData(Data2D.create(type));
-            DataFileCSV csvData = new DataFileCSV(csvFile);
-            csvData.setInitColumnTypes(columnTypes);
             tableController.loadCSVData(csvData);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
