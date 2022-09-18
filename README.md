@@ -4,17 +4,17 @@
 这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。          
 
 ## 开发中的试用版            
-2022-9-14 a6.6      
+2022-9-18 a6.6      
 
+* 数学函数：计算、数据集、图      
 * 数据的xyz图：三维散点图、曲面图      
 * 归一化/百分比/比较条图可以分别设置“要计算的列”和“要复制的列”      
 * 除了JavaScript管理界面，JavaScript的计算采用Nashorn作为引擎        
 * 性能：图像播放器只预读一帧。      
-* 一元函数：计算、数据集、xy图      
 * 多重线性回归-组合      
 * 添加新数据行时可以输入数值        
 
-[MyBox-a6.6-2022-9-14-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/alpha/MyBox-a6.6-2022-9-14-win10-x64.zip)          
+[MyBox-a6.6-2022-9-18-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/alpha/MyBox-a6.6-2022-9-18-win10-x64.zip)          
 
 
 ## 新内容
