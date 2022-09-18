@@ -104,6 +104,10 @@ Study in Chinese
 Tags:Need supplementary;;;0xfff2dfff;;;Important;;;0x003472ff
 <a target=_blank href="https://github.com/QSCTech/zju-icicles">浙江大学课程</a><br>
 <a target=_blank href="https://github.com/PKUanonym/REKCARC-TSC-UHT">清华大学计算机系课程</a><br>
+<a target=_blank href="https://github.com/BUCTBASE/BUCTBASE">北京化工大学课程资料整理开源项目</a><br>
+<a target=_blank href="https://github.com/bljx/BFU-leaf">北京林业大学信息学院课程攻略</a><br>
+<a target=_blank href="https://github.com/TheBloodthirster/BUAA_Course_Sharing">北京航空航天大学(北航)课程作业资料共享计划</a><br>
+<a target=_blank href="https://github.com/ningzimu/See_you_in_BUPT">北京邮电大学计算机考研信息汇总</a><br>
 <a target=_blank href="http://math.ecnu.edu.cn/~jypan/Teaching/NA/index.html">数值分析</a><br>
 <a target=_blank href="https://www.bilibili.com/video/BV1pW411J7s8">形象展示傅里叶变换</a><br>
 <a target=_blank href="https://www.bilibili.com/video/BV1BW411n7gw">北京大学 离散数学</a><br>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlChartXYZ">
+    <children>
+        <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+            <children>
+                <Label text="%Type">
+                    <FlowPane.margin>
+                        <Insets />
+                    </FlowPane.margin>
+                </Label>
+                <RadioButton fx:id="scatterRadio" mnemonicParsing="false" selected="true" text="%ScatterChart">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="typeGroup" />
+                    </toggleGroup>
+                </RadioButton>
+                <RadioButton fx:id="surfaceRadio" layoutX="120.0" layoutY="10.0" mnemonicParsing="false" text="%SurfaceChart" toggleGroup="$typeGroup" />
+            </children>
+        </FlowPane>
+        <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+            <children>
+                <Label text="%Projection">
+                    <FlowPane.margin>
+                        <Insets />
+                    </FlowPane.margin>
+                </Label>
+                <RadioButton fx:id="perspectiveRadio" mnemonicParsing="false" selected="true" text="%Perspective">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="projectionGroup" />
+                    </toggleGroup>
+                </RadioButton>
+                <RadioButton fx:id="orthographicRadio" layoutX="120.0" layoutY="10.0" mnemonicParsing="false" text="%Orthographic" toggleGroup="$projectionGroup" />
+            </children>
+        </FlowPane>
+        <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+            <children>
+                <Label text="%Color">
+                    <FlowPane.margin>
+                        <Insets />
+                    </FlowPane.margin>
+                </Label>
+            <RadioButton fx:id="colorColumnsRadio" layoutX="36.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Column">
+               <toggleGroup>
+                        <ToggleGroup fx:id="colorGroup" />
+               </toggleGroup>
+            </RadioButton>
+                <RadioButton fx:id="colorGradientRadio" layoutX="120.0" layoutY="10.0" mnemonicParsing="false" text="%Gradient" toggleGroup="$colorGroup" />
+                <RadioButton fx:id="colorRandomRadio" layoutX="72.0" layoutY="10.0" mnemonicParsing="false" text="%Random" toggleGroup="$colorGroup" />
+            </children>
+        </FlowPane>
+        <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+            <children>
+                <Label minHeight="-Infinity" minWidth="-Infinity" text="%Width" />
+                <ComboBox fx:id="widthSelector" editable="true" prefWidth="100.0" />
+                <Label minHeight="-Infinity" minWidth="-Infinity" text="px" />
+            </children>
+        </FlowPane>
+        <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+            <children>
+                <Label layoutX="10.0" layoutY="14.0" minHeight="-Infinity" minWidth="-Infinity" text="%Height">
+                    <FlowPane.margin>
+                        <Insets />
+                    </FlowPane.margin>
+                </Label>
+                <ComboBox fx:id="HeightSelector" editable="true" layoutX="36.0" layoutY="10.0" prefWidth="100.0" />
+                <Label layoutX="238.0" layoutY="14.0" minHeight="-Infinity" minWidth="-Infinity" text="px" />
+            </children>
+        </FlowPane>
+        <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+            <children>
+                <Label minHeight="-Infinity" minWidth="-Infinity" text="%PointSize" />
+                <ComboBox fx:id="pointSelector" editable="true" prefWidth="100.0" />
+            </children>
+        </FlowPane>
+        <CheckBox fx:id="darkCheck" mnemonicParsing="false" text="%DarkMode" />
+    </children>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+</VBox>

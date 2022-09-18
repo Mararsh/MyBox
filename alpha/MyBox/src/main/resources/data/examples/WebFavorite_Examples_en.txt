@@ -212,6 +212,22 @@ Examples > Study > Chinese
 https://github.com/PKUanonym/REKCARC-TSC-UHT
 
 Examples > Study > Chinese
+北京化工大学课程资料整理开源项目
+https://github.com/BUCTBASE/BUCTBASE
+
+Examples > Study > Chinese
+北京林业大学信息学院课程攻略
+https://github.com/bljx/BFU-leaf
+
+Examples > Study > Chinese
+北京航空航天大学(北航)课程作业资料共享计划
+https://github.com/TheBloodthirster/BUAA_Course_Sharing
+
+Examples > Study > Chinese
+北京邮电大学计算机考研信息汇总
+https://github.com/ningzimu/See_you_in_BUPT
+
+Examples > Study > Chinese
 数值分析
 http://math.ecnu.edu.cn/~jypan/Teaching/NA/index.html
 

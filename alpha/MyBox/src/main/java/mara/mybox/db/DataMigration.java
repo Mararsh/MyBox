@@ -1503,17 +1503,19 @@ public class DataMigration {
                 try {
                     MyBoxLog.info("Reloading internal data...");
                     List<String> names = Arrays.asList(
-                            "Notes_Examples_en.txt", "Notes_Examples_zh.txt",
-                            "Sql_Examples_en.txt", "Sql_Examples_zh.txt",
-                            "Tree_Examples_en.txt", "Tree_Examples_zh.txt",
+                            "Notebook_Examples_en.txt", "Notebook_Examples_zh.txt",
+                            "SQL_Examples_en.txt", "SQL_Examples_zh.txt",
+                            "InformationInTree_Examples_en.txt", "InformationInTree_Examples_zh.txt",
                             "JavaScript_Examples_en.txt", "JavaScript_Examples_zh.txt",
-                            "JShell_Examples_en.txt", "JShell_Examples_zh.txt",
-                            "JEXL_Examples_en.txt", "JEXL_Examples_zh.txt",
-                            "WebFavorites_Examples_en.txt", "WebFavorites_Examples_zh.txt"
+                            "JShellCode_Examples_en.txt", "JShellCode_Examples_zh.txt",
+                            "JEXLCode_Examples_en.txt", "JEXLCode_Examples_zh.txt",
+                            "MathFunction_Examples_en.txt", "MathFunction_Examples_zh.txt",
+                            "WebFavorite_Examples_en.txt", "WebFavorite_Examples_zh.txt"
                     );
                     for (String name : names) {
                         FxFileTools.getInternalFile("/data/examples/" + name, "data", name, true);
                     }
+
                     MyBoxLog.info("Internal data loaded.");
                 } catch (Exception e) {
                 }

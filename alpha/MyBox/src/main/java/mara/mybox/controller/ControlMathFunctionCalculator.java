@@ -74,6 +74,8 @@ public class ControlMathFunctionCalculator extends BaseController {
     protected VBox xyzChartBox;
     @FXML
     protected Button calculateButton, dataButton, xyChartButton;
+    @FXML
+    protected ControlChartXYZ xyzController;
 
     public ControlMathFunctionCalculator() {
         baseTitle = message("MathFunction");
@@ -116,6 +118,8 @@ public class ControlMathFunctionCalculator extends BaseController {
             );
             dataScaleSelector.getSelectionModel().select(dataScale + "");
 
+            xyzController.colorGradientRadio.setSelected(true);
+            xyzController.colorColumnsRadio.setDisable(true);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -236,7 +240,7 @@ public class ControlMathFunctionCalculator extends BaseController {
                 if (!split.checkInputs()) {
                     return false;
                 }
-                num *= Math.ceil((split.to - split.from) / split.interval());
+                num *= (int) ((split.to - split.from) / split.interval()) + 2;
             }
             return num <= 5000 || PopTools.askSure(myController, null,
                     message("SureContinueGenerateLotsData") + "\n"
@@ -534,24 +538,24 @@ public class ControlMathFunctionCalculator extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                try {
-                    String title = editorController.nameInput.getText();
-                    if (title == null || title.isBlank()) {
-                        title = expression;
-                    }
-                    MathFunctionXYChartController.open(columns, rows, title);
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
+                MathFunctionXYChartController.open(columns, rows, title());
             }
 
         };
         start(task);
     }
 
+    public String title() {
+        String title = editorController.nameInput.getText();
+        if (title == null || title.isBlank()) {
+            title = expression;
+        }
+        return title;
+    }
+
     @FXML
     public void xyzChartAction() {
-        if (!initData()) {
+        if (!initData() || !xyzController.checkParameters()) {
             return;
         }
         if (task != null) {
@@ -559,17 +563,34 @@ public class ControlMathFunctionCalculator extends BaseController {
         }
         task = new SingletonTask<Void>(this) {
 
-            private DataFileCSV data;
+            private File chartFile;
 
             @Override
             protected boolean handle() {
-                data = generateData();
-                return data != null && data.saveAttributes();
+                try {
+                    DataFileCSV dataFile = generateData();
+                    dataFile.setTask(this);
+                    List<List<String>> rows = dataFile.allRows(false);
+                    if (rows == null) {
+                        return false;
+                    }
+                    FileDeleteTools.delete(dataFile.getFile());
+                    List<Data2DColumn> columns = dataFile.getColumns();
+                    if (columns == null || columns.size() != 3) {
+                        return false;
+                    }
+
+                    chartFile = xyzController.makeChart(columns, rows, 1, title(), dataScale, false, false, false);
+                    return chartFile != null && chartFile.exists();
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
             }
 
             @Override
             protected void whenSucceeded() {
-                DataFileCSVController.loadCSV(data);
+                browse(chartFile);
             }
 
         };

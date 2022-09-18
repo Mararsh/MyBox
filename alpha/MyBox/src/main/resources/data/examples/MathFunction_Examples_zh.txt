@@ -417,7 +417,7 @@ else
 示例 > 一元函数 > 数值分析
 一元正态分布概率密度函数
 Names:::一元正态分布概率密度函数,x
-fvar mean = 1; 
+var mean = 1; 
 var stdDeviation = 2; 
 var dx = x - mean;
 var expP = - dx * dx / ( 2 * stdDeviation * stdDeviation );
@@ -452,12 +452,14 @@ s * (1 - s);
 椭圆的面积-半轴
 Names:::椭圆的面积,长半轴,短半轴
 Math.PI * 长半轴 * 短半轴
+MyBoxTreeNodeMore:长半轴 > 0 && 短半轴 > 0
 
 ##MyBox#
 示例 > 二元函数 > 三角函数
 椭圆的面积-轴
 Names:::椭圆的面积,长轴,短轴
 Math.PI * 长轴 * 短轴 / 4
+MyBoxTreeNodeMore:长轴 > 0 && 短轴 > 0
 
 ##MyBox#
 示例 > 二元函数 > 数值分析
@@ -507,6 +509,7 @@ Math.exp(expP) / div
 Names:::角B_弧度,角A_弧度,边a,边b
 var 正弦B = Math.sin(角A_弧度) * 边b / 边a;
 Math.asin(正弦B)
+MyBoxTreeNodeMore:角A_弧度 > 0 && 边a > 0 && 边b > 0
 
 ##MyBox#
 示例 > 三元函数 > 三角函数
@@ -515,12 +518,14 @@ Names:::角B_角度,角A_角度,边a,边b
 var 正弦A = Math.sin(角A_角度 * Math.PI / 180);
 var 正弦B = 正弦A * 边b / 边a;
 Math.asin(正弦B) * 180 / Math.PI
+MyBoxTreeNodeMore:角A_角度 > 0 && 边a > 0 && 边b > 0
 
 ##MyBox#
 示例 > 三元函数 > 三角函数
 正弦定理-求边（弧度）
 Names:::边b,角A_弧度,边a,角B_弧度
 边a * Math.sin(角B_弧度) / Math.sin(角A_弧度)
+MyBoxTreeNodeMore:角A_弧度 > 0 && 角B_弧度 > 0 && 边a > 0
 
 ##MyBox#
 示例 > 三元函数 > 三角函数
@@ -529,12 +534,14 @@ Names:::边b,角A_角度,边a,角B_角度
 var 正弦A = Math.sin(角A_角度 * Math.PI / 180);
 var 正弦B = Math.sin(角B_角度 * Math.PI / 180);
 边a * 正弦B / 正弦A
+MyBoxTreeNodeMore:角A_角度 > 0 && 角B_角度 > 0 && 边a > 0
 
 ##MyBox#
 示例 > 三元函数 > 三角函数
 余弦定理-求边（弧度）
 Names:::边a,角A_弧度,边b,边c
 Math.sqrt(边b * 边b + 边c * 边c - 2 * 边b * 边c * Math.cos(角A_弧度))
+MyBoxTreeNodeMore:角A_弧度 > 0 && 边b > 0 && 边c > 0
 
 ##MyBox#
 示例 > 三元函数 > 三角函数
@@ -542,6 +549,7 @@ Math.sqrt(边b * 边b + 边c * 边c - 2 * 边b * 边c * Math.cos(角A_弧度))
 Names:::边a,角A_角度,边b,边c
 var 余弦A = Math.cos(角A_角度 * Math.PI / 180);
 Math.sqrt(边b * 边b + 边c * 边c - 2 * 边b * 边c * 余弦A)
+MyBoxTreeNodeMore:角A_角度 > 0 && 边b > 0 && 边c > 0
 
 ##MyBox#
 示例 > 三元函数 > 三角函数
@@ -549,6 +557,7 @@ Math.sqrt(边b * 边b + 边c * 边c - 2 * 边b * 边c * 余弦A)
 Names:::角A_弧度,边a,边b,边c
 var 余弦A = (边b * 边b + 边c * 边c - 边a * 边a) / (2 * 边b * 边c);
 Math.acos( 余弦A )
+MyBoxTreeNodeMore:边a > 0 && 边b > 0 && 边c > 0
 
 ##MyBox#
 示例 > 三元函数 > 三角函数
@@ -556,4 +565,5 @@ Math.acos( 余弦A )
 Names:::角A_角度,边a,边b,边c
 var 余弦A = (边b * 边b + 边c * 边c - 边a * 边a) / (2 * 边b * 边c);
 Math.acos( 余弦A ) * 180 / Math.PI
+MyBoxTreeNodeMore:边a > 0 && 边b > 0 && 边c > 0
 
