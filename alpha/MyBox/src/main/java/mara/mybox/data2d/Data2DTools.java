@@ -767,6 +767,60 @@ public class Data2DTools {
             });
             regressionMenu.getItems().add(menu);
 
+            menu = new MenuItem(message("DogRadiographsDataset"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/DogRadiographs_" + lang + ".csv",
+                        "data", "DogRadiographs_" + lang + ".csv", true);
+                DataFileCSV data = new DataFileCSV(file);
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("c1", ColumnType.Short).setDescription("changed(1) or not changed(0)"));
+                columns.add(new Data2DColumn("c2", ColumnType.Short));
+                columns.add(new Data2DColumn("c3", ColumnType.Double));
+                columns.add(new Data2DColumn("c4", ColumnType.Double));
+                columns.add(new Data2DColumn("c5", ColumnType.Double));
+                columns.add(new Data2DColumn("c6", ColumnType.Double));
+                columns.add(new Data2DColumn("c7", ColumnType.Short));
+                columns.add(new Data2DColumn("c8", ColumnType.Short).setDescription("bilateral surgery(1) or unilateral surgery(0)"));
+                data.setColumns(columns)
+                        .setHasHeader(true)
+                        .setComments("https://www4.stat.ncsu.edu/~boos/var.select/lucency.html \n"
+                                + "Radiographic and Clinical Changes of the Tibial Tuberosity after Tibial Plateau Leveling Osteomtomy.");
+                controller.loadCSVFile(data);
+            });
+            regressionMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("BaseballSalaries"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/BaseballSalaries_" + lang + ".csv",
+                        "data", "BaseballSalaries_" + lang + ".csv", true);
+                DataFileCSV data = new DataFileCSV(file);
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("c1", ColumnType.Double));
+                columns.add(new Data2DColumn("c2", ColumnType.Double));
+                columns.add(new Data2DColumn("c3", ColumnType.Double));
+                columns.add(new Data2DColumn("c4", ColumnType.Short));
+                columns.add(new Data2DColumn("c5", ColumnType.Short));
+                columns.add(new Data2DColumn("c6", ColumnType.Short));
+                columns.add(new Data2DColumn("c7", ColumnType.Short));
+                columns.add(new Data2DColumn("c8", ColumnType.Short));
+                columns.add(new Data2DColumn("c9", ColumnType.Short));
+                columns.add(new Data2DColumn("c10", ColumnType.Short));
+                columns.add(new Data2DColumn("c11", ColumnType.Short));
+                columns.add(new Data2DColumn("c12", ColumnType.Short));
+                columns.add(new Data2DColumn("c13", ColumnType.Short));
+                columns.add(new Data2DColumn("c14", ColumnType.Short));
+                columns.add(new Data2DColumn("c15", ColumnType.Short));
+                columns.add(new Data2DColumn("c16", ColumnType.Short));
+                columns.add(new Data2DColumn("c17", ColumnType.Short));
+                data.setColumns(columns)
+                        .setHasHeader(true)
+                        .setComments("https://www4.stat.ncsu.edu/~boos/var.select/baseball.html \n"
+                                + "Salary information for 337 Major League Baseball (MLB) players who are not pitchers "
+                                + "and played at least one game during both the 1991 and 1992 seasons.");
+                controller.loadCSVFile(data);
+            });
+            regressionMenu.getItems().add(menu);
+
             return items;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

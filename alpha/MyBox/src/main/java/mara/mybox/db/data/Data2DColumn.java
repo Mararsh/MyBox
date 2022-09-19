@@ -380,4 +380,10 @@ public class Data2DColumn extends ColumnDefinition {
         return this;
     }
 
+    @Override
+    public Data2DColumn setDescription(String description) {
+        this.description = description;
+        return this;
+    }
+
 }

@@ -35,7 +35,7 @@ public class ControlDataSplit extends BaseController {
             to = UserConfig.getDouble(baseName + "To", 10);
             toInput.setText(to + "");
 
-            number = UserConfig.getInt(baseName + "Number", 100);
+            number = UserConfig.getInt(baseName + "Number", 50);
             numberInput.setText(number + "");
 
             interval = UserConfig.getDouble(baseName + "Inteval", 0.1);

@@ -185,17 +185,51 @@ Names:::反正切_角度,x
 Math.atan(x) * 180 / Math.PI
 
 ##MyBox#
-示例 > 一元函数 > 三角函数
+示例 > 一元函数
+几何
+
+##MyBox#
+示例 > 一元函数 > 几何
 圆的面积-半径
 Names:::圆的面积,半径
 Math.PI * 半径 * 半径
+MyBoxTreeNodeMore:半径 > 0
 
 ##MyBox#
-示例 > 一元函数 > 三角函数
+示例 > 一元函数 > 几何
 圆的面积-直径
 Names:::圆的面积,直径
 var r = 直径 / 2.0;
 Math.PI * r * r
+MyBoxTreeNodeMore:直径 > 0
+
+##MyBox#
+示例 > 一元函数 > 几何
+球的面积-半径
+Names:::球的面积,半径
+4 * Math.PI * 半径 * 半径
+MyBoxTreeNodeMore:半径 > 0
+
+##MyBox#
+示例 > 一元函数 > 几何
+球的面积-直径
+Names:::球的面积,直径
+Math.PI * 直径 * 直径
+MyBoxTreeNodeMore:直径 > 0
+
+##MyBox#
+示例 > 一元函数 > 几何
+球的体积-半径
+Names:::球的体积,半径
+4 * Math.PI * Math.pow(半径,3) / 3
+MyBoxTreeNodeMore:半径 > 0
+
+##MyBox#
+示例 > 一元函数 > 几何
+球的体积-直径
+Names:::球的体积,直径
+Math.PI * Math.pow(直径,3) / 6
+MyBoxTreeNodeMore:直径 > 0
 
 ##MyBox#
 示例 > 一元函数
@@ -448,18 +482,101 @@ s * (1 - s);
 二元函数
 
 ##MyBox#
-示例 > 二元函数 > 三角函数
+示例 > 二元函数
+二元多项式
+
+##MyBox#
+示例 > 二元函数 > 二元多项式
+二元线性函数
+Names:::二元线性函数,x,y
+5 * x + 9 * y - 4
+
+##MyBox#
+示例 > 二元函数 > 二元多项式
+二元二次函数
+Names:::二元线性函数,x,y
+5 * x * x  + 3 * y * y + y + 9
+
+##MyBox#
+示例 > 二元函数 > 二元多项式
+二元三次函数
+Names:::二元三次函数数,x,y
+6 * Math.pow(x,3)  + 5 * Math.pow(y,2)  + 3 * y + 9
+
+##MyBox#
+示例 > 二元函数 > 二元多项式
+二元四次函数
+Names:::二元四次函数,x,y
+7 * Math.pow(x,4)  + 6 * Math.pow(y,3)  + 5 * Math.pow(x,2)  + 3 * y + 9
+
+##MyBox#
+示例 > 二元函数 > 二元多项式
+二元五次函数
+Names:::二元五次函数,x,y
+8 * Math.pow(x,5)  +7 * Math.pow(y,5)  + 6 * Math.pow(x,3)  + 5 * Math.pow(y,2)  + 3 * x + 9
+
+##MyBox#
+示例 > 二元函数
+几何
+
+##MyBox#
+示例 > 二元函数 > 几何
+圆柱的体积
+Names:::圆柱的体积,半径,高度
+Math.PI * 半径 * 半径 * 高度
+
+##MyBox#
+示例 > 二元函数 > 几何
 椭圆的面积-半轴
 Names:::椭圆的面积,长半轴,短半轴
 Math.PI * 长半轴 * 短半轴
 MyBoxTreeNodeMore:长半轴 > 0 && 短半轴 > 0
 
 ##MyBox#
-示例 > 二元函数 > 三角函数
+示例 > 二元函数 > 几何
 椭圆的面积-轴
 Names:::椭圆的面积,长轴,短轴
 Math.PI * 长轴 * 短轴 / 4
 MyBoxTreeNodeMore:长轴 > 0 && 短轴 > 0
+
+##MyBox#
+示例 > 二元函数
+二次曲面
+
+##MyBox#
+示例 > 二元函数
+三角函数
+
+##MyBox#
+示例 > 二元函数 > 三角函数
+二元一次三角函数
+Names:::二元一次三角函数,x,y
+5 * Math.sin(x) + 3 * y + 9
+
+##MyBox#
+示例 > 二元函数 > 三角函数
+二元二次三角函数
+Names:::二元二次三角函数,x,y
+5 * Math.cos(x * x) + 3 * Math.sin(y) * Math.sin(y) + 9
+
+##MyBox#
+示例 > 二元函数 > 三角函数
+二元三次三角函数
+Names:::二元三次三角函数,x,y
+5 * Math.tan(x * x * x) + 3 * Math.cos(x) * Math.sin(y) + 9
+
+##MyBox#
+示例 > 二元函数 > 指数函数
+二元指数函数
+Names:::二元指数函数,x,y
+5 * Math.exp(x - 2 * y) + 3 * x - y + 9
+
+##MyBox#
+示例 > 二元函数 > 对数函数
+二元对数函数
+Names:::二元对数函数,x,y
+5 * Math.log(x  * y) - 9
+MyBoxTreeNodeMore:x * y > 0
 
 ##MyBox#
 示例 > 二元函数 > 数值分析
@@ -497,7 +614,6 @@ var py = dy * dy / ( yStd * yStd );
 var expP = - (px + py) / 2
 var div = 2 * Math.PI * xyStd;
 Math.exp(expP) / div
-
 
 ##MyBox#
 示例
@@ -567,3 +683,44 @@ var 余弦A = (边b * 边b + 边c * 边c - 边a * 边a) / (2 * 边b * 边c);
 Math.acos( 余弦A ) * 180 / Math.PI
 MyBoxTreeNodeMore:边a > 0 && 边b > 0 && 边c > 0
 
+##MyBox#
+示例 > 三元函数 > 几何
+椭球的面积-半轴
+Names:::椭球的面积,半轴a,半轴b,半轴c
+4 * Math.PI * ( 半轴a * 半轴b + 半轴a * 半轴c + 半轴b * 半轴c )/ 3
+MyBoxTreeNodeMore:半轴a > 0 && 半轴b > 0 && 半轴c > 0
+
+##MyBox#
+示例 > 三元函数 > 几何
+椭球的面积-轴
+Names:::椭球的面积,轴a,轴b,轴c
+Math.PI * ( 轴a * 轴b + 轴a * 轴c + 轴b * 轴c )/ 3
+MyBoxTreeNodeMore:轴a > 0 && 轴b > 0 && 轴c > 0
+
+##MyBox#
+示例 > 三元函数 > 几何
+椭球的体积-半轴
+Names:::椭球的体积,半轴a,半轴b,半轴c
+4 * Math.PI * 半轴a * 半轴b * 半轴c / 3
+MyBoxTreeNodeMore:半轴a > 0 && 半轴b > 0 && 半轴c > 0
+
+##MyBox#
+示例 > 三元函数 > 几何
+椭球的体积-轴
+Names:::椭球的体积,轴a,轴b,轴c
+Math.PI * 轴a * 轴b * 轴c / 6
+MyBoxTreeNodeMore:轴a > 0 && 轴b > 0 && 轴c > 0
+
+##MyBox#
+示例 > 三元函数 > 几何
+立方体的面积
+Names:::立方体的面积,长,宽,高
+2 * ( 长 * 宽 + 长 * 高 + 宽 * 高 )
+MyBoxTreeNodeMore:长 > 0 && 宽 > 0 && 高 > 0
+
+##MyBox#
+示例 > 三元函数 > 几何
+立方体的体积
+Names:::立方体的体积,长,宽,高
+长 * 宽 * 高
+MyBoxTreeNodeMore:长 > 0 && 宽 > 0 && 高 > 0

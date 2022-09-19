@@ -21,10 +21,11 @@ public class ControlData2DMultipleLinearRegressionTable extends ControlData2DSim
     public List<Data2DColumn> createColumns() {
         try {
             List<Data2DColumn> cols = new ArrayList<>();
+            cols.add(new Data2DColumn(message("DependentVariable"), ColumnType.String, 100));
             cols.add(new Data2DColumn(message("IndependentVariable"), ColumnType.String, 200));
-            cols.add(new Data2DColumn(message("Coefficients"), ColumnType.Double, 80));
-            cols.add(new Data2DColumn(message("CoefficientOfDetermination"), ColumnType.Double, 80));
             cols.add(new Data2DColumn(message("AdjustedRSquared"), ColumnType.Double, 80));
+            cols.add(new Data2DColumn(message("CoefficientOfDetermination"), ColumnType.Double, 80));
+            cols.add(new Data2DColumn(message("Coefficients"), ColumnType.Double, 80));
             cols.add(new Data2DColumn(message("Intercept"), ColumnType.Double, 100));
 
             return cols;
@@ -47,9 +48,9 @@ public class ControlData2DMultipleLinearRegressionTable extends ControlData2DSim
             try {
                 Data2DMultipleLinearRegressionController controller = (Data2DMultipleLinearRegressionController) WindowTools.openChildStage(
                         regressController.parentController.getMyWindow(), Fxmls.Data2DMultipleLinearRegressionFxml, false);
-                controller.colSelector.setValue(regressController.colSelector.getValue());
+                controller.colSelector.setValue(selected.get(1));
                 List<Integer> cols = new ArrayList<>();
-                List<String> names = ((Data2DMultipleLinearRegressionCombinationController) regressController).namesMap.get(selected.get(1));
+                List<String> names = ((Data2DMultipleLinearRegressionCombinationController) regressController).namesMap.get(selected.get(2));
                 for (String name : names) {
                     cols.add(regressController.data2D.colOrder(name));
                 }

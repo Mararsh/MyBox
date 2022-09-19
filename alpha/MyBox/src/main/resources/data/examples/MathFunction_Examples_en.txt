@@ -4,6 +4,7 @@ Math Function
 
 ##MyBox#
 Math Function
+Examples
 
 ##MyBox#
 Examples
@@ -86,6 +87,7 @@ Unary Function
 ##MyBox#
 Examples > Unary Function
 absoluate
+Names:::absoluate,x
 Math.abs(x)
 
 ##MyBox#
@@ -183,17 +185,51 @@ Names:::arcTangent_angle,x
 Math.atan(x) * 180 / Math.PI
 
 ##MyBox#
-Examples > Unary Function > Trigonometry
+Examples > Unary Function
+Geometry
+
+##MyBox#
+Examples > Unary Function > Geometry
 area of circle - radius
 Names:::area_of_circle,radius
 Math.PI * radius * radius
+MyBoxTreeNodeMore:radius > 0
 
 ##MyBox#
-Examples > Unary Function > Trigonometry
+Examples > Unary Function > Geometry
 area of circle - diameter
 Names:::area_of_circle,diameter
 var r = diameter / 2.0;
 Math.PI * r * r
+MyBoxTreeNodeMore:diameter > 0
+
+##MyBox#
+Examples > Unary Function > Geometry
+area of sphere - radius
+Names:::area of sphere,radius
+4 * Math.PI * radius * radius
+MyBoxTreeNodeMore:radius > 0
+
+##MyBox#
+Examples > Unary Function > Geometry
+area of sphere - diameter
+Names:::area of sphere,diameter
+Math.PI * diameter * diameter
+MyBoxTreeNodeMore:diameter > 0
+
+##MyBox#
+Examples > Unary Function > Geometry
+volume of sphere - radius
+Names:::volume of sphere,radius
+4 * Math.PI * Math.pow(radius,3) / 3
+MyBoxTreeNodeMore:radius > 0
+
+##MyBox#
+Examples > Unary Function > Geometry
+volume of sphere - diameter
+Names:::volume of sphere,diameter
+Math.PI * Math.pow(diameter,3) / 6
+MyBoxTreeNodeMore:diameter > 0
 
 ##MyBox#
 Examples > Unary Function
@@ -335,36 +371,36 @@ Math.trunc(x)
 
 ##MyBox#
 Examples > Unary Function
-Unary Multinomial
+Unitary Polynomial
 
 ##MyBox#
-Examples > Unary Function > Unary Multinomial
-unary_linear_function
-Names:::unary_linear_function,x
+Examples > Unary Function > Unitary Polynomial
+unitary_linear_function
+Names:::unitary_linear_function,x
 5 * x + 9
 
 ##MyBox#
-Examples > Unary Function > Unary Multinomial
-unary_quadratic_function
-Names:::unary_quadratic_function,x
+Examples > Unary Function > Unitary Polynomial
+unitary_quadratic_function
+Names:::unitary_quadratic_function,x
 5 * Math.pow(x,2)  + 3 * x + 9
 
 ##MyBox#
-Examples > Unary Function > Unary Multinomial
-unary_cubic_function
-Names:::unary_cubic_function,x
+Examples > Unary Function > Unitary Polynomial
+unitary_cubic_function
+Names:::unitary_cubic_function,x
 6 * Math.pow(x,3)  + 5 * Math.pow(x,2)  + 3 * x + 9
 
 ##MyBox#
-Examples > Unary Function > Unary Multinomial
-unary_quartic_function
-Names:::unary_quartic_function,x
+Examples > Unary Function > Unitary Polynomial
+unitary_quartic_function
+Names:::unitary_quartic_function,x
 7 * Math.pow(x,4)  + 6 * Math.pow(x,3)  + 5 * Math.pow(x,2)  + 3 * x + 9
 
 ##MyBox#
-Examples > Unary Function > Unary Multinomial
-unary_quintic_function
-Names:::unary_quintic_function,x
+Examples > Unary Function > Unitary Polynomial
+unitary_quintic_function
+Names:::unitary_quintic_function,x
 8 * Math.pow(x,5)  +7 * Math.pow(x,4)  + 6 * Math.pow(x,3)  + 5 * Math.pow(x,2)  + 3 * x + 9
 
 ##MyBox#
@@ -446,23 +482,106 @@ Examples
 Binary Function
 
 ##MyBox#
-Examples > Binary Function > Trigonometry
-area of ellipse - half-axle
+Examples > Binary Function
+Univariate Polynomial
+
+##MyBox#
+Examples > Binary Function > Univariate Polynomial
+univariate linear polynomial
+Names:::univariate linear polynomial,x,y
+5 * x + 9 * y - 4
+
+##MyBox#
+Examples > Binary Function > Univariate Polynomial
+univariate quadratic polynomial
+Names:::univariate quadratic polynomial,x,y
+5 * x * x  + 3 * y * y + y + 9
+
+##MyBox#
+Examples > Binary Function > Univariate Polynomial
+univariate cubic polynomial
+Names:::univariate cubic polynomial,x,y
+6 * Math.pow(x,3)  + 5 * Math.pow(y,2)  + 3 * y + 9
+
+##MyBox#
+Examples > Binary Function > Univariate Polynomial
+univariate quartic polynomial
+Names:::univariate quartic polynomial,x,y
+7 * Math.pow(x,4)  + 6 * Math.pow(y,3)  + 5 * Math.pow(x,2)  + 3 * y + 9
+
+##MyBox#
+Examples > Binary Function > Univariate Polynomial
+univariate quintic polynomial
+Names:::univariate quintic polynomial,x,y
+8 * Math.pow(x,5)  +7 * Math.pow(y,5)  + 6 * Math.pow(x,3)  + 5 * Math.pow(y,2)  + 3 * x + 9
+
+##MyBox#
+Examples > Binary Function
+Geometry
+
+##MyBox#
+Examples > Binary Function > Geometry
+volume of cylinder
+Names:::volume of cylinder,radius,height
+Math.PI * radius * radius * height
+
+##MyBox#
+Examples > Binary Function > Geometry
+area of ellipse - half_axle
 Names:::area of ellipse,long_half_axle,short_half_axle
 Math.PI * long_half_axle * short_half_axle
 MyBoxTreeNodeMore:long_half_axle > 0 && short_half_axle > 0
 
 ##MyBox#
-Examples > Binary Function > Trigonometry
+Examples > Binary Function > Geometry
 area of ellipse - axle
 Names:::area of ellipse,long_axle,short_axle
 Math.PI * long_axle * short_axle / 4
 MyBoxTreeNodeMore:long_axle > 0 && short_axle > 0
 
 ##MyBox#
+Examples > Binary Function
+Quadric Surface
+
+##MyBox#
+Examples > Binary Function
+Trigonometry
+
+##MyBox#
+Examples > Binary Function > Trigonometry
+univariate linear trigonometry
+Names:::univariate linear trigonometry,x,y
+5 * Math.sin(x) + 3 * y + 9
+
+##MyBox#
+Examples > Binary Function > Trigonometry
+univariate quadratic trigonometry
+Names:::univariate quadratic trigonometry,x,y
+5 * Math.cos(x * x) + 3 * Math.sin(y) * Math.sin(y) + 9
+
+##MyBox#
+Examples > Binary Function > Trigonometry
+univariate cubic trigonometry
+Names:::univariate cubic trigonometry,x,y
+5 * Math.tan(x * x * x) + 3 * Math.cos(x) * Math.sin(y) + 9
+
+##MyBox#
+Examples > Binary Function > Exponential Function
+univariate exponential
+Names:::univariate exponential,x,y
+5 * Math.exp(x - 2 * y) + 3 * x - y + 9
+
+##MyBox#
+Examples > Binary Function > Logarithmic Function
+univariate logarithmic
+Names:::univariate logarithmic,x,y
+5 * Math.log(x  * y) - 9
+MyBoxTreeNodeMore:x * y > 0
+
+##MyBox#
 Examples > Binary Function > Numerical Analysis 
-Binary Normal probability density function
-Names:::Binary Normal probability density function,x,y
+Univariate Normal probability density function
+Names:::Univariate Normal probability density function,x,y
 var xMean = 1;
 var xStd = 2; 
 var yMean = 2;
@@ -481,8 +600,8 @@ Math.exp(expP) / div
 
 ##MyBox#
 Examples > Binary Function > Numerical Analysis 
-Binary Standard normal probability density function
-Names:::Binary Standard normal probability density function,x,y
+Univariate Standard normal probability density function
+Names:::Univariate Standard normal probability density function,x,y
 var xMean = 1;
 var xStd = 2; 
 var yMean = 2;
@@ -563,3 +682,45 @@ Names:::angleA_angle ,edge_a,edge_b,edge_c
 var cosA = (edge_b * edge_b + edge_c * edge_c - edge_a * edge_a) / (2 * edge_b * edge_c);
 Math.acos( cosA ) * 180 / Math.PI
 MyBoxTreeNodeMore:edge_a > 0 && edge_b > 0 && edge_c > 0
+
+##MyBox#
+Examples > Ternary Function > Geometry
+area of ellipsoid - half_axie
+Names:::area of ellipsoid,half_axie_a,half_axie_b,half_axie_c
+4 * Math.PI * ( half_axie_a * half_axie_b + half_axie_a * half_axie_c + half_axie_b * half_axie_c )/ 3
+MyBoxTreeNodeMore:half_axie_a > 0 && half_axie_b > 0 && half_axie_c > 0
+
+##MyBox#
+Examples > Ternary Function > Geometry
+area of ellipsoid - axie
+Names:::area of ellipsoid,axie_a,axie_b,axie_c
+Math.PI * ( axie_a * axie_b + axie_a * axie_c + axie_b * axie_c )/ 3
+MyBoxTreeNodeMore:axie_a > 0 && axie_b > 0 && _axie_c > 0
+
+##MyBox#
+Examples > Ternary Function > Geometry
+volumn of ellipsoid - half_axie
+Names:::volumn of ellipsoid,half_axie_a,half_axie_b,half_axie_c
+4 * Math.PI * half_axie_a * half_axie_b * half_axie_c / 3
+MyBoxTreeNodeMore:half_axie_a > 0 && half_axie_b > 0 && half_axie_c > 0
+
+##MyBox#
+Examples > Ternary Function > Geometry
+volumn of ellipsoid - axie
+Names:::volumn of ellipsoid,axie_a,axie_b,axie_c
+Math.PI * axie_a * axie_b * axie_c / 6
+MyBoxTreeNodeMore:axie_a > 0 && axie_b > 0 && axie_c > 0
+
+##MyBox#
+Examples > Ternary Function > Geometry
+area of cube
+Names:::area of cube,length,width,height
+2 * ( length * width + length * height + width * height )
+MyBoxTreeNodeMore:length > 0 && width > 0 && height > 0
+
+##MyBox#
+Examples > Ternary Function > Geometry
+volumn of cube
+Names:::volumn of cube,length,width,height
+length * width * height
+MyBoxTreeNodeMore:length > 0 && width > 0 && height > 0

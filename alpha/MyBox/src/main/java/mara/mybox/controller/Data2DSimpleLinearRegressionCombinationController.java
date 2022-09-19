@@ -54,7 +54,10 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
             protected boolean handle() {
                 try {
                     data2D.startTask(task, filterController.filter);
-                    for (int yIndex : checkedColsIndices) {
+                    if (otherColsIndices.isEmpty()) {
+                        otherColsIndices = data2D.columnIndices();
+                    }
+                    for (int yIndex : otherColsIndices) {
                         for (int xIndex : checkedColsIndices) {
                             if (xIndex == yIndex) {
                                 continue;

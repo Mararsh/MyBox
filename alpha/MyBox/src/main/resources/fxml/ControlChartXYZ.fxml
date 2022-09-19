@@ -81,13 +81,18 @@ License:    Apache License Version 2.0
                 <Label layoutX="238.0" layoutY="14.0" minHeight="-Infinity" minWidth="-Infinity" text="px" />
             </children>
         </FlowPane>
-        <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+      <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
+         <children>
+              <CheckBox fx:id="darkCheck" mnemonicParsing="false" text="%DarkMode" />
+            <CheckBox fx:id="wireframeCheck" mnemonicParsing="false" selected="true" text="%Wireframe" />
+         </children>
+      </FlowPane>
+        <FlowPane fx:id="sizePane" hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
             <children>
                 <Label minHeight="-Infinity" minWidth="-Infinity" text="%PointSize" />
                 <ComboBox fx:id="pointSelector" editable="true" prefWidth="100.0" />
             </children>
         </FlowPane>
-        <CheckBox fx:id="darkCheck" mnemonicParsing="false" text="%DarkMode" />
     </children>
     <padding>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

@@ -503,7 +503,7 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
     /*
         static
      */
-    public static Data2DGroupEqualValuesController open(ControlData2DEditTable tableController) {
+    public static Data2DGroupEqualValuesController open(ControlData2DLoad tableController) {
         try {
             Data2DGroupEqualValuesController controller = (Data2DGroupEqualValuesController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DGroupEqualValuesFxml, false);

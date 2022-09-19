@@ -16,7 +16,7 @@ import mara.mybox.fxml.cell.TableBooleanCell;
 public class ControlData2DStyleList extends BaseSysTableController<Data2DStyle> {
 
     protected Data2DSetStylesController manageController;
-    protected ControlData2DEditTable tableController;
+    protected ControlData2DLoad tableController;
     protected TableData2DStyle tableData2DStyle;
 
     @FXML

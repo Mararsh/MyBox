@@ -12,6 +12,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.FlowPane;
 import mara.mybox.data2d.Data2D_Attributes;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -41,7 +42,9 @@ public class ControlChartXYZ extends BaseController {
     @FXML
     protected ComboBox<String> widthSelector, HeightSelector, pointSelector;
     @FXML
-    protected CheckBox darkCheck;
+    protected CheckBox darkCheck, wireframeCheck;
+    @FXML
+    protected FlowPane sizePane;
 
     public ControlChartXYZ() {
         baseTitle = message("XYZChart");
@@ -98,8 +101,12 @@ public class ControlChartXYZ extends BaseController {
             if (!colorColumnsRadio.isDisabled()) {
                 colorColumnsRadio.setSelected(true);
             }
+            wireframeCheck.setVisible(false);
+            sizePane.setVisible(true);
         } else {
             colorGradientRadio.setSelected(true);
+            wireframeCheck.setVisible(true);
+            sizePane.setVisible(false);
         }
     }
 
@@ -412,12 +419,11 @@ public class ControlChartXYZ extends BaseController {
                 html += "				{\n"
                         + "					type: 'surface',\n"
                         + "					name: '" + zName + "',\n"
-                        + "					symbolSize: " + pointSize + ",\n"
                         + "					itemStyle: {\n"
                         + "						color: '" + color + "'\n"
                         + "					},\n"
                         + "					wireframe: {\n"
-                        + "						show: true\n"
+                        + "						show: " + wireframeCheck.isSelected() + "\n"
                         + "					},\n"
                         + "					dimensions: [" + dimensions + "],\n"
                         + "					data: srcData\n"

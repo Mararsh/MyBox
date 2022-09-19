@@ -32,22 +32,13 @@ public class OLSLinearRegression extends OLSMultipleLinearRegression {
         this.setNoIntercept(!includeIntercept);
     }
 
-    public boolean calculate(List<List<String>> data) {
+    public boolean calculate(String[] sy, String[][] sx) {
         try {
-            n = data.size();
-            k = xNames.size();
-            String[] sy = new String[n];
-            String[][] sx = new String[n][k];
+            n = sy.length;
+            k = sx[0].length;
             Normalization normalization = Normalization.create()
                     .setA(Normalization.Algorithm.ZScore)
                     .setInvalidAs(invalidAs);
-            for (int i = 0; i < n; i++) {
-                List<String> row = data.get(i);
-                sy[i] = row.get(0);
-                for (int j = 0; j < k; j++) {
-                    sx[i][j] = row.get(j + 1);
-                }
-            }
             sy = normalization.setSourceVector(sy).calculate();
             sx = normalization.setSourceMatrix(sx).columnsNormalize();
             y = new double[n];

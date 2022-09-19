@@ -240,7 +240,7 @@ public class ControlMathFunctionCalculator extends BaseController {
                 if (!split.checkInputs()) {
                     return false;
                 }
-                num *= (int) ((split.to - split.from) / split.interval()) + 2;
+                num *= Math.ceil((split.to - split.from) / split.interval()) + 1;
             }
             return num <= 5000 || PopTools.askSure(myController, null,
                     message("SureContinueGenerateLotsData") + "\n"
@@ -548,7 +548,8 @@ public class ControlMathFunctionCalculator extends BaseController {
     public String title() {
         String title = editorController.nameInput.getText();
         if (title == null || title.isBlank()) {
-            title = expression;
+            int pos = expression.indexOf("\n");
+            title = pos < 0 ? expression : expression.substring(0, pos);
         }
         return title;
     }
