@@ -245,9 +245,10 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
                         return false;
                     }
                     data2D.stopFilter();
-
+                    String dataName = data2D.getDataName();
+                    dataName = dataName == null || dataName.isBlank() ? data2D.shortName() : dataName;
                     chartFile = chartController.makeChart(data2D.getColumns(), outputData,
-                            seriesSize, data2D.shortName(), scale,
+                            seriesSize, dataName, scale,
                             xCategoryCheck.isSelected(), yCategoryCheck.isSelected(), zCategoryCheck.isSelected());
                     return chartFile != null && chartFile.exists();
                 } catch (Exception e) {

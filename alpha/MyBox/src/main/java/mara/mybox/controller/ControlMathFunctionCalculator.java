@@ -184,7 +184,11 @@ public class ControlMathFunctionCalculator extends BaseController {
     }
 
     public String domain() {
-        return editorController.moreInput.getText();
+        String d = editorController.moreInput.getText();
+        if (d == null || d.isBlank()) {
+            return null;
+        }
+        return d.replaceAll("\n", "  ");
     }
 
     public String resultName() {
@@ -208,13 +212,52 @@ public class ControlMathFunctionCalculator extends BaseController {
         return calculator.condition(domain);
     }
 
-    public String checkScript() {
+    public String fillDummy(String script) {
+        try {
+            if (script == null || script.isBlank() || variables == null) {
+                return script;
+            }
+            String vars = "";
+            for (int i = 0; i < variables.size(); i++) {
+                vars += "var " + variables.get(i) + "=" + 1 + ";\n";
+            }
+            return vars + script;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public boolean checkScripts() {
         String script = script();
         if (script == null || script.isBlank()) {
             popError(message("InvalidParameters") + ": " + message("Expression"));
-            return null;
+            return false;
         }
-        return script.trim();
+        script = script.trim();
+        String ret = eval(fillDummy(script));
+        if (ret == null) {
+            if (calculator.getError() != null) {
+                popError(calculator.getError());
+            } else {
+                popError(message("InvalidParameters") + ": " + message("Expression"));
+            }
+            return false;
+        }
+        String domain = domain();
+        if (domain == null) {
+            return true;
+        }
+        ret = eval(fillDummy(domain));
+        if (ret == null) {
+            if (calculator.getError() != null) {
+                popError(calculator.getError());
+            } else {
+                popError(message("InvalidParameters") + ": " + message("FunctionDomain"));
+            }
+            return false;
+        }
+        return true;
     }
 
     public int checkScale(ComboBox<String> selector) {
@@ -257,6 +300,9 @@ public class ControlMathFunctionCalculator extends BaseController {
     @FXML
     public void calculateAction() {
         try {
+            if (!checkScripts()) {
+                return;
+            }
             int v = checkScale(calculateScaleSelector);
             if (v >= 0) {
                 calculateScale = v;
@@ -265,10 +311,7 @@ public class ControlMathFunctionCalculator extends BaseController {
                 popError(message("InvalidParamter") + ": " + message("DecimalScale"));
                 return;
             }
-            expression = checkScript();
-            if (expression == null) {
-                return;
-            }
+            expression = script();
             domain = domain();
             if (!inDomain(fillInputs(domain))) {
                 popError(message("NotInDomain"));
@@ -361,15 +404,15 @@ public class ControlMathFunctionCalculator extends BaseController {
                 makeRow(values);
                 csvPrinter.close();
                 csvPrinter = null;
-                if (task == null || task.isCancelled()) {
-                    return null;
-                }
             } catch (Exception e) {
                 if (task != null) {
                     task.setError(e.toString());
                 }
                 MyBoxLog.error(e);
                 csvPrinter = null;
+                return null;
+            }
+            if (task == null || task.isCancelled()) {
                 return null;
             }
             DataFileCSV data = new DataFileCSV();
@@ -459,7 +502,7 @@ public class ControlMathFunctionCalculator extends BaseController {
     }
 
     public boolean initData() {
-        if (!checkSplits()) {
+        if (!checkScripts() || !checkSplits()) {
             return false;
         }
         int v = checkScale(dataScaleSelector);
@@ -470,10 +513,7 @@ public class ControlMathFunctionCalculator extends BaseController {
             popError(message("InvalidParamter") + ": " + message("DecimalScale"));
             return false;
         }
-        expression = checkScript();
-        if (expression == null) {
-            return false;
-        }
+        expression = script();
         domain = domain();
         return true;
     }

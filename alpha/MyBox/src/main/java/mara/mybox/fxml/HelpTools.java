@@ -45,12 +45,12 @@ public class HelpTools {
     public static File AboutDataAnalysisHtml() {
         try {
             StringTable table = new StringTable(null, message("AboutDataAnalysis"));
-            table.newLinkRow(message("Dataset"), "https://www4.stat.ncsu.edu/~boos/var.select/");
+            table.newLinkRow(message("Dataset"), "http://archive.ics.uci.edu/ml/datasets.php");
+            table.newLinkRow("", "https://www4.stat.ncsu.edu/~boos/var.select/");
             table.newLinkRow("", "http://lib.stat.cmu.edu/datasets/");
             table.newLinkRow("", "http://yann.lecun.com/exdb/mnist/");
             table.newLinkRow("", "https://docs.microsoft.com/en-us/azure/open-datasets/");
             table.newLinkRow("", "https://github.com/tomsharp/SVR/tree/master/data");
-            table.newLinkRow("", "http://archive.ics.uci.edu/ml/datasets/Iris");
             table.newLinkRow("", "https://github.com/krishnaik06/simple-Linear-Regression");
             table.newLinkRow("", "https://github.com/susanli2016/Machine-Learning-with-Python/tree/master/data");
             table.newLinkRow("Apache-Math", "https://commons.apache.org/proper/commons-math/");

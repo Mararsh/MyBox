@@ -41,7 +41,16 @@ public class DoubleTools {
     public static double toDouble(String string, InvalidAs invalidAs) {
         try {
             double d = Double.valueOf(string.replaceAll(",", ""));
-            return invalidDouble(d) ? value(invalidAs) : d;
+            if (invalidDouble(d)) {
+                if ("true".equalsIgnoreCase(string) || "yes".equalsIgnoreCase(string)) {
+                    return 1;
+                } else if ("false".equalsIgnoreCase(string) || "no".equalsIgnoreCase(string)) {
+                    return 0;
+                }
+                return value(invalidAs);
+            } else {
+                return d;
+            }
         } catch (Exception e) {
             return value(invalidAs);
         }
@@ -125,18 +134,7 @@ public class DoubleTools {
     }
 
     public static int compare(String s1, String s2, boolean desc) {
-        double d1, d2;
-        try {
-            d1 = Double.valueOf(s1.replaceAll(",", ""));
-        } catch (Exception e) {
-            d1 = Double.NaN;
-        }
-        try {
-            d2 = Double.valueOf(s2.replaceAll(",", ""));
-        } catch (Exception e) {
-            d2 = Double.NaN;
-        }
-        return compare(d1, d2, desc);
+        return compare(toDouble(s1, InvalidAs.Blank), toDouble(s2, InvalidAs.Blank), desc);
     }
 
     // invalid values are counted as smaller

@@ -33,6 +33,7 @@ import mara.mybox.fxml.cell.TableBooleanCell;
 import mara.mybox.fxml.cell.TableCheckboxCell;
 import mara.mybox.fxml.cell.TableColorCommitCell;
 import mara.mybox.fxml.cell.TableComboBoxCell;
+import mara.mybox.fxml.cell.TableTextAreaCommitCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
 
@@ -377,23 +378,47 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             });
 
             descColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
-            descColumn.setCellFactory(TableAutoCommitCell.forStringColumn());
-            descColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Data2DColumn, String>>() {
+            descColumn.setCellFactory(new Callback<TableColumn<Data2DColumn, String>, TableCell<Data2DColumn, String>>() {
                 @Override
-                public void handle(TableColumn.CellEditEvent<Data2DColumn, String> t) {
-                    if (t == null) {
-                        return;
-                    }
-                    Data2DColumn column = t.getRowValue();
-                    if (column == null) {
-                        return;
-                    }
-                    String v = t.getNewValue();
-                    if ((v == null && column.getDescription() != null)
-                            || (v != null && !v.equals(column.getDescription()))) {
-                        column.setDescription(v);
-                        status(Status.Modified);
-                    }
+                public TableCell<Data2DColumn, String> call(TableColumn<Data2DColumn, String> param) {
+                    TableTextAreaCommitCell<Data2DColumn> cell = new TableTextAreaCommitCell<Data2DColumn>(myController) {
+
+                        @Override
+                        protected String name(int rowIndex) {
+                            try {
+                                Data2DColumn column = tableData.get(rowIndex);
+                                return column.getColumnName() + " - " + message("Description");
+                            } catch (Exception e) {
+                                return null;
+                            }
+                        }
+
+                        @Override
+                        protected String getCellValue(int rowIndex) {
+                            try {
+                                return tableData.get(rowIndex).getDescription();
+                            } catch (Exception e) {
+                                return null;
+                            }
+                        }
+
+                        @Override
+                        protected void setCellValue(int rowIndex, String value) {
+                            if (isSettingValues || rowIndex < 0 || rowIndex >= tableData.size()) {
+                                return;
+                            }
+                            Data2DColumn column = tableData.get(rowIndex);
+                            String currentValue = column.getDescription();
+                            if ((currentValue == null && value == null)
+                                    || (currentValue != null && currentValue.equals(value))) {
+                                return;
+                            }
+                            column.setDescription(value);
+                            tableData.set(rowIndex, column);
+                            status(Status.Modified);
+                        }
+                    };
+                    return cell;
                 }
             });
             descColumn.setEditable(true);

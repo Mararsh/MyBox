@@ -21,7 +21,7 @@ License:    Apache License Version 2.0
                 <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Column" textAlignment="CENTER" wrapText="true" VBox.vgrow="NEVER" />
             </children>
         </HBox>
-      <fx:include fx:id="columnEdit" source="ControlData2DColumnEdit.fxml" />
+      <fx:include fx:id="columnEdit" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DColumnEdit.fxml" VBox.vgrow="ALWAYS" />
         <HBox alignment="CENTER_RIGHT" spacing="5.0">
             <children>
                 <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">

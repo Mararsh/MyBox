@@ -22,7 +22,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MyBoxLanguagesController">
+<BorderPane fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MyBoxLanguagesController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -37,16 +37,7 @@ License:    Apache License Version 2.0
                                     <children>
                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                                             <children>
-                                                <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconAdd.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="useButton" disable="true" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#useAction">
+                                                <Button fx:id="useButton" disable="true" mnemonicParsing="false" onAction="#useAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -99,15 +90,15 @@ License:    Apache License Version 2.0
                                             </image>
                                         </ImageView>
                                         <Label fx:id="langLabel" maxWidth="1.7976931348623157E308" styleClass="bold-blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
-                                        <Button fx:id="copyEnglishButton" disable="true" mnemonicParsing="false" onAction="#copyEnglish">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconCopy.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
+                                          <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction">
+                                              <graphic>
+                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                      <image>
+                                                          <Image url="@../buttons/Red/iconAdd.png" />
+                                                      </image>
+                                                  </ImageView>
+                                              </graphic>
+                                          </Button>
                                         <Button fx:id="saveButton" disable="true" layoutX="964.0" layoutY="10.0" mnemonicParsing="false" onAction="#saveAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -125,9 +116,10 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <TableView fx:id="interfaceView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                                                     <columns>
-                                                        <TableColumn fx:id="keyColumn" editable="false" prefWidth="150.0" text="%Key" />
-                                                        <TableColumn fx:id="valueColumn" prefWidth="400.0" text="%Translation" />
-                                                        <TableColumn fx:id="englishColumn" editable="false" prefWidth="400.0" text="%English" />
+                                                        <TableColumn fx:id="keyColumn" editable="false" prefWidth="100.0" text="%Key" />
+                                                        <TableColumn fx:id="valueColumn" editable="false" prefWidth="200.0" text="%Translation" />
+                                                        <TableColumn fx:id="englishColumn" editable="false" prefWidth="200.0" text="%English" />
+                                          <TableColumn fx:id="chineseColumn" editable="false" prefWidth="200.0" text="%Chinese" />
                                                     </columns>
                                                 </TableView>
                                             </content>
@@ -136,9 +128,10 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                                                     <columns>
-                                                        <TableColumn fx:id="tableKeyColumn" editable="false" prefWidth="150.0" text="%Key" />
-                                                        <TableColumn fx:id="tableValueColumn" prefWidth="400.0" text="%Translation" />
-                                                        <TableColumn fx:id="tableEnglishColumn" editable="false" prefWidth="400.0" text="%English" />
+                                                        <TableColumn fx:id="tableKeyColumn" editable="false" prefWidth="100.0" text="%Key" />
+                                                        <TableColumn fx:id="tableValueColumn" editable="false" prefWidth="200.0" text="%Translation" />
+                                                        <TableColumn fx:id="tableEnglishColumn" editable="false" prefWidth="200.0" text="%English" />
+                                          <TableColumn fx:id="tableChineseColumn" editable="false" prefWidth="200.0" text="%Chinese" />
                                                     </columns>
                                                 </TableView>
                                             </content>

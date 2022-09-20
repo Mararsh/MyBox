@@ -184,21 +184,20 @@ public class ControlChartXYZ extends BaseController {
             String z1Name = columns.get(2).getColumnName();
             String[] colors = new String[seriesSize];
             String[] symbols = new String[seriesSize];
-            String chartName = (scatterRadio.isSelected() ? message("ScatterChart") : message("SurfaceChart"))
-                    + "_" + xName + "-" + yName;
+            String chartName = (scatterRadio.isSelected() ? message("ScatterChart") : message("SurfaceChart"));
             String html = "<!DOCTYPE html>\n"
                     + "<html>\n"
                     + "  <head>\n"
                     + "    <meta charset=\"utf-8\" />\n"
-                    + "    <title>" + dataName + " - " + chartName + "</title>\n"
+                    + "    <title>" + dataName + " - " + chartName + "_" + xName + "-" + yName + "</title>\n"
                     + "    <script src=\"" + echartsFile.toURI().toString() + "\"></script>\n"
                     + "    <script src=\"" + echartsGLFile.toURI().toString() + "\"></script>\n"
                     + "  </head>\n"
                     + "  <body style=\"width:" + (width + 50) + "px; margin:0 auto;\">\n"
-                    + "    <h3 align=center>" + dataName + "</h2>\n"
-                    + "    <h2 align=center>" + chartName + "</h2>\n";
+                    + "    <h3 align=center>" + dataName + " - " + chartName + "</h3>\n";
             if (scatterRadio.isSelected()) {
-                html += "	<style type=\"text/css\">\n";
+                html += "    <P>x:" + xName + "  y:" + yName + "</P>\n"
+                        + "	<style type=\"text/css\">\n";
                 String[] presymbols = {"circle", "triangle", "diamond", "arrow", "rect"};
                 for (int i = 0; i < seriesSize; i++) {
                     String color;
@@ -253,11 +252,13 @@ public class ControlChartXYZ extends BaseController {
                     }
                 }
                 html += "	</style>\n";
-                html += "    <P><div style=\"text-align: center; margin:0 auto;\">\n";
+                html += "    <P><div style=\"display: inline-block;\">z: </div>\n";
                 for (int i = 0; i < seriesSize; i++) {
                     html += "		<div class=\"symbol" + i + "\"></div><span> " + columns.get(i + 2).getColumnName() + " </span>\n";
                 }
-                html += "	</div></P>\n";
+                html += "	</P>\n";
+            } else {
+                html += "    <P>x:" + xName + "  y:" + yName + "  z:" + z1Name + "</P>\n";
             }
             html += "    <div id=\"chart\" style=\"width: " + width + "px;height: " + height + "px;\"></div>\n"
                     + "    <script type=\"text/javascript\">\n"

@@ -368,7 +368,8 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             @Override
             protected boolean handle() {
                 try {
-                    csvData.loadColumns();
+//                    csvData.savedColumns = csvData.columns;
+//                    csvData.readColumns(null);
                     switch (data2D.getType()) {
                         case Texts:
                             targetData = csvData.cloneAll();

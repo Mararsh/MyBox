@@ -16,9 +16,9 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.TextInputController">
+<VBox fx:id="thisPane" spacing="10.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.TextInputController">
     <children>
-        <Label fx:id="titleLabel" alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%Value" textAlignment="CENTER" VBox.vgrow="NEVER" />
+        <Label fx:id="titleLabel" alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Value" textAlignment="CENTER" wrapText="true" VBox.vgrow="NEVER" />
         <TextArea fx:id="textArea" prefHeight="300.0" prefWidth="400.0" />
         <HBox alignment="CENTER_RIGHT" spacing="5.0">
             <children>
