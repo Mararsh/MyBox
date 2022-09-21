@@ -685,7 +685,7 @@ public class Data2DTools {
                 DataFileCSV data = new DataFileCSV();
                 List<Data2DColumn> columns = new ArrayList<>();
                 columns.add(new Data2DColumn("zh".equals(lang) ? "年龄" : "age", ColumnType.Double));
-                columns.add(new Data2DColumn("zh".equals(lang) ? "性别" : "sex", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "性别" : "sex", ColumnType.Short));
                 columns.add(new Data2DColumn("zh".equals(lang) ? "BMI(体质指数)" : "BMI(body mass index)", ColumnType.Double));
                 columns.add(new Data2DColumn("zh".equals(lang) ? "BP(平均血压)" : "BP(average blood pressure)", ColumnType.Double));
                 columns.add(new Data2DColumn("zh".equals(lang) ? "S1(血清指标1)" : "S1(blood serum measurement 1)", ColumnType.Double));
@@ -708,7 +708,7 @@ public class Data2DTools {
                 DataFileCSV data = new DataFileCSV();
                 List<Data2DColumn> columns = new ArrayList<>();
                 columns.add(new Data2DColumn("zh".equals(lang) ? "年龄" : "age", ColumnType.Double));
-                columns.add(new Data2DColumn("zh".equals(lang) ? "性别" : "sex", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "性别" : "sex", ColumnType.Short));
                 columns.add(new Data2DColumn("zh".equals(lang) ? "BMI(体质指数)" : "BMI(body mass index)", ColumnType.Double));
                 columns.add(new Data2DColumn("zh".equals(lang) ? "BP(平均血压)" : "BP(average blood pressure)", ColumnType.Double));
                 columns.add(new Data2DColumn("zh".equals(lang) ? "S1(血清指标1)" : "S1(blood serum measurement 1)", ColumnType.Double));
@@ -733,20 +733,20 @@ public class Data2DTools {
                 DataFileCSV data = new DataFileCSV();
                 List<Data2DColumn> columns = new ArrayList<>();
                 columns.add(new Data2DColumn("zh".equals(lang) ? "年龄" : "age", ColumnType.Integer));
-                columns.add(new Data2DColumn("zh".equals(lang) ? "贫血" : "anaemia", ColumnType.Short)
+                columns.add(new Data2DColumn("zh".equals(lang) ? "贫血" : "anaemia", ColumnType.Boolean)
                         .setDescription("decrease of red blood cells or hemoglobin (boolean)"));
                 columns.add(new Data2DColumn("zh".equals(lang) ? "肌酐磷酸激酶(CPK_mcg/L)" : "creatinine_phosphokinase(CPK_mcg/L)", ColumnType.Integer));
-                columns.add(new Data2DColumn("zh".equals(lang) ? "糖尿病" : "diabetes", ColumnType.Short));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "糖尿病" : "diabetes", ColumnType.Boolean));
                 columns.add(new Data2DColumn("zh".equals(lang) ? "喷血分数" : "ejection fraction", ColumnType.Integer)
                         .setDescription("percentage of blood leaving the heart at each contraction (percentage)"));
                 columns.add(new Data2DColumn("zh".equals(lang) ? "高血压" : "high blood pressure", ColumnType.Integer));
                 columns.add(new Data2DColumn("zh".equals(lang) ? "血小板(kiloplatelets/mL)" : "platelets(kiloplatelets/mL)", ColumnType.Double));
                 columns.add(new Data2DColumn("zh".equals(lang) ? "血清肌酸酐(mg/dL)" : "serum creatinine(mg/dL)", ColumnType.Double));
                 columns.add(new Data2DColumn("zh".equals(lang) ? "血清钠(mEq/L)" : "serum sodium(mEq/L)", ColumnType.Integer));
-                columns.add(new Data2DColumn("zh".equals(lang) ? "性别" : "sex", ColumnType.Short));
-                columns.add(new Data2DColumn("zh".equals(lang) ? "抽烟" : "smoking", ColumnType.Short));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "性别" : "sex", ColumnType.Boolean));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "抽烟" : "smoking", ColumnType.Boolean));
                 columns.add(new Data2DColumn("zh".equals(lang) ? "观察期" : "follow-up period(days)", ColumnType.Short));
-                columns.add(new Data2DColumn("zh".equals(lang) ? "死亡" : "death event", ColumnType.Short));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "死亡" : "death event", ColumnType.Boolean));
                 data.setColumns(columns).setDataName(message("HeartFailure"))
                         .setComments("http://archive.ics.uci.edu/ml/datasets/Heart+failure+clinical+records \n"
                                 + "Davide Chicco, Giuseppe Jurman: \"Machine learning can predict survival of patients with heart failure "
@@ -783,15 +783,15 @@ public class Data2DTools {
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = new DataFileCSV();
                 List<Data2DColumn> columns = new ArrayList<>();
-                columns.add(new Data2DColumn("zh".equals(lang) ? "透亮度有改变" : "lucency changed", ColumnType.Short)
+                columns.add(new Data2DColumn("zh".equals(lang) ? "透亮度有改变" : "lucency changed", ColumnType.Boolean)
                         .setDescription("changed(1) or not changed(0)"));
                 columns.add(new Data2DColumn("zh".equals(lang) ? "刀片尺寸" : "blade size", ColumnType.Short));
                 columns.add(new Data2DColumn("zh".equals(lang) ? "胫骨结节面积" : "tibial tuberosity area", ColumnType.Double));
                 columns.add(new Data2DColumn("zh".equals(lang) ? "胫骨结节宽度" : "tibial tuberosity width", ColumnType.Double));
                 columns.add(new Data2DColumn("zh".equals(lang) ? "年龄(年)" : "age in years", ColumnType.Double));
                 columns.add(new Data2DColumn("zh".equals(lang) ? "重量(公斤)" : "weight in kilograms", ColumnType.Double));
-                columns.add(new Data2DColumn("zh".equals(lang) ? "抗滚针的位置" : "location of the anti-rotational pin", ColumnType.Short));
-                columns.add(new Data2DColumn("zh".equals(lang) ? "双侧手术" : "bilateral surgery", ColumnType.Short)
+                columns.add(new Data2DColumn("zh".equals(lang) ? "抗滚针的位置" : "location of the anti-rotational pin", ColumnType.Boolean));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "双侧手术" : "bilateral surgery", ColumnType.Boolean)
                         .setDescription("bilateral surgery(1) or unilateral surgery(0)"));
                 data.setColumns(columns).setDataName(message("DogRadiographsDataset"))
                         .setComments("https://www4.stat.ncsu.edu/~boos/var.select/lucency.html \n"
@@ -821,10 +821,10 @@ public class Data2DTools {
                 columns.add(new Data2DColumn("zh".equals(lang) ? "三振出局数" : "Number of strike-outs", ColumnType.Short));
                 columns.add(new Data2DColumn("zh".equals(lang) ? "盗垒数" : "Number of stolen bases", ColumnType.Short));
                 columns.add(new Data2DColumn("zh".equals(lang) ? "失误数" : "Number of errors", ColumnType.Short));
-                columns.add(new Data2DColumn("zh".equals(lang) ? "自由球员资格" : "free agency eligibility", ColumnType.Short));
-                columns.add(new Data2DColumn("zh".equals(lang) ? "1991/2的自由球员" : "free agent in 1991/2", ColumnType.Short));
-                columns.add(new Data2DColumn("zh".equals(lang) ? "仲裁资格" : "arbitration eligibility", ColumnType.Short));
-                columns.add(new Data2DColumn("zh".equals(lang) ? "于1991/2仲裁" : "arbitration in 1991/2", ColumnType.Short));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "自由球员资格" : "free agency eligibility", ColumnType.Boolean));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "1991/2的自由球员" : "free agent in 1991/2", ColumnType.Boolean));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "仲裁资格" : "arbitration eligibility", ColumnType.Boolean));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "于1991/2仲裁" : "arbitration in 1991/2", ColumnType.Boolean));
                 data.setColumns(columns).setDataName(message("BaseballSalaries"))
                         .setComments("https://www4.stat.ncsu.edu/~boos/var.select/baseball.html \n"
                                 + "Salary information for 337 Major League Baseball (MLB) players who are not pitchers "

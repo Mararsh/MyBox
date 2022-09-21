@@ -446,7 +446,7 @@ public class ColumnDefinition extends BaseData {
                     }
                     String v = string.toLowerCase();
                     return "1".equals(v) || "true".equalsIgnoreCase(v) || "yes".equalsIgnoreCase(v)
-                            || message("true").equals(v) || message("yes").equals(v);
+                            || message("true").equals(v) || message("Yes").equals(v);
                 case Short:
                     return (short) Math.round(Double.parseDouble(string.replaceAll(",", "")));
                 case Datetime:

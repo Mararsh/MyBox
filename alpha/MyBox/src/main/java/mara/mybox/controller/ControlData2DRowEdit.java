@@ -6,10 +6,11 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputControl;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -27,6 +28,7 @@ import static mara.mybox.value.Languages.message;
 public class ControlData2DRowEdit extends BaseController {
 
     protected ControlData2DEditTable dataEditController;
+    protected List<TextInputControl> inputs;
 
     @FXML
     protected VBox valuesBox;
@@ -35,6 +37,7 @@ public class ControlData2DRowEdit extends BaseController {
         try {
             this.dataEditController = editController;
 
+            inputs = new ArrayList<>();
             addInput(message("DataRowNumber"), ColumnType.Long, false);
             for (Data2DColumn column : editController.data2D.getColumns()) {
                 addInput(column.getColumnName(), column.getType(), column.isEditable());
@@ -45,35 +48,57 @@ public class ControlData2DRowEdit extends BaseController {
         }
     }
 
-    public void addInput(String name, ColumnType type, boolean editable) {
+    public TextInputControl addInput(String name, ColumnType type, boolean editable) {
         try {
-            HBox line = new HBox();
-            line.setAlignment(Pos.TOP_CENTER);
-            line.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-            line.setSpacing(5);
-            HBox.setHgrow(line, Priority.ALWAYS);
-            valuesBox.getChildren().add(line);
+            if (type == ColumnType.String || type == ColumnType.Text) {
+                Label label = new Label(name);
+                label.setWrapText(true);
+                valuesBox.getChildren().add(label);
 
-            line.getChildren().add(new Label(name));
-            TextField input = new TextField();
-            input.setMaxWidth(Double.MAX_VALUE);
-            HBox.setHgrow(input, Priority.ALWAYS);
-            line.getChildren().add(input);
-            input.setDisable(!editable);
+                TextArea input = new TextArea();
+                input.setPrefHeight(100);
+                input.setMinHeight(80);
+                input.setMaxWidth(Double.MAX_VALUE);
+                HBox.setHgrow(input, Priority.ALWAYS);
+                input.setDisable(!editable);
+                valuesBox.getChildren().add(input);
+                inputs.add(input);
 
-            if (editable && (type == ColumnType.Datetime || type == ColumnType.Date)) {
-                Button dateButton = new Button(message("Now"));
-                dateButton.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        input.setText(DateTools.nowString());
-                    }
-                });
-                line.getChildren().add(dateButton);
+                return input;
+
+            } else {
+                HBox line = new HBox();
+                line.setAlignment(Pos.CENTER_LEFT);
+                line.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+                line.setSpacing(5);
+                HBox.setHgrow(line, Priority.ALWAYS);
+                valuesBox.getChildren().add(line);
+
+                Label label = new Label(name);
+                label.setWrapText(true);
+                TextField input = new TextField();
+                input.setMaxWidth(Double.MAX_VALUE);
+                HBox.setHgrow(input, Priority.ALWAYS);
+                input.setDisable(!editable);
+                line.getChildren().addAll(label, input);
+                inputs.add(input);
+
+                if (editable && (type == ColumnType.Datetime || type == ColumnType.Date)) {
+                    Button dateButton = new Button(message("Now"));
+                    dateButton.setOnAction(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent event) {
+                            input.setText(DateTools.nowString());
+                        }
+                    });
+                    line.getChildren().add(dateButton);
+                }
+                return input;
             }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+            return null;
         }
     }
 
@@ -88,10 +113,8 @@ public class ControlData2DRowEdit extends BaseController {
             if (row == null) {
                 return;
             }
-            List<Node> nodes = valuesBox.getChildren();
-            for (int i = 0; i < nodes.size(); i++) {
-                HBox line = (HBox) (nodes.get(i));
-                TextField input = (TextField) (line.getChildren().get(1));
+            for (int i = 0; i < inputs.size(); i++) {
+                TextInputControl input = (TextInputControl) (inputs.get(i));
                 input.setText(row.get(i));
             }
         } catch (Exception e) {
@@ -102,9 +125,7 @@ public class ControlData2DRowEdit extends BaseController {
     public List<String> pickValues() {
         try {
             List<String> row = new ArrayList<>();
-            for (Node node : valuesBox.getChildren()) {
-                HBox line = (HBox) node;
-                TextField input = (TextField) (line.getChildren().get(1));
+            for (TextInputControl input : inputs) {
                 row.add(input.getText());
             }
             return row;

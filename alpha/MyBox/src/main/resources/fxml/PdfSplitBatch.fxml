@@ -38,7 +38,7 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox fx:id="optionsVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
-                                        <fx:include fx:id="splitWay" source="ControlFileSplit.fxml" />      
+                                        <fx:include fx:id="split" source="ControlSplit.fxml" />      
                                         <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction"
                                                 styleClass="halfBig" stylesheets="@../styles/MyBox.css" >
                                             <graphic>

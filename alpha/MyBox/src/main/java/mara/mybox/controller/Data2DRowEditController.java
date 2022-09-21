@@ -48,7 +48,9 @@ public class Data2DRowEditController extends BaseChildController {
 
             dataEditController.tableData.set(index, row);
             dataEditController.tableView.scrollTo(index - 3);
-            popSuccessful();
+            dataEditController.popSuccessful();
+
+            close();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
