@@ -32,11 +32,11 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import javafx.util.converter.DefaultStringConverter;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
-import mara.mybox.fxml.cell.TableTextAreaCommitCell;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.AppVariables;
@@ -112,6 +112,86 @@ public class MyBoxLanguagesController extends BaseController {
         }
     }
 
+    public class TableLanguageCell extends TableAutoCommitCell {
+
+        private final boolean isInterface;
+        private ChangeListener<Boolean> getListener;
+
+        public TableLanguageCell(boolean isInterface) {
+            super(new DefaultStringConverter());
+            this.isInterface = isInterface;
+        }
+
+        protected ObservableList<LanguageItem> data() {
+            return isInterface ? interfaceData : tableData;
+        }
+
+        protected String name(int rowIndex) {
+            try {
+                LanguageItem item = data().get(rowIndex);
+                return item.getKey() + "\n" + message("English") + ":\n" + item.getEnglish();
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        protected String getCellValue(int rowIndex) {
+            try {
+                return data().get(rowIndex).getValue();
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        protected void setCellValue(int rowIndex, String value) {
+            if (isSettingValues || rowIndex < 0 || rowIndex >= data().size()) {
+                return;
+            }
+            LanguageItem item = data().get(rowIndex);
+            String currentValue = item.getValue();
+            if ((currentValue == null && value == null)
+                    || (currentValue != null && currentValue.equals(value))) {
+                return;
+            }
+            item.setValue(value);
+            data().set(rowIndex, item);
+            if (isInterface) {
+                interfaceChanged(true);
+            } else {
+                tableChanged(true);
+            }
+        }
+
+        @Override
+        public void editText() {
+            int row = rowIndex();
+            if (row < 0) {
+                return;
+            }
+            LanguageItem item = data().get(row);
+            String en = item.getEnglish();
+            String value = item.getValue();
+            if (value != null && value.contains("\n") || en != null && en.contains("\n")) {
+                MyBoxLanguageInputController inputController
+                        = MyBoxLanguageInputController.open((MyBoxLanguagesController) myController, item);
+                getListener = new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                        String value = inputController.getInput();
+                        inputController.getNotify().removeListener(getListener);
+                        getListener = null;
+                        setCellValue(row, value);
+                        inputController.closeStage();
+                    }
+                };
+                inputController.getNotify().addListener(getListener);
+            } else {
+                super.editText();
+            }
+        }
+
+    }
+
     public void initIntefaceView() {
         try {
             interfaceData = FXCollections.observableArrayList();
@@ -120,6 +200,14 @@ public class MyBoxLanguagesController extends BaseController {
             englishColumn.setCellValueFactory(new PropertyValueFactory<>("english"));
             chineseColumn.setCellValueFactory(new PropertyValueFactory<>("chinese"));
             valueColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
+            valueColumn.setCellFactory(new Callback<TableColumn<LanguageItem, String>, TableCell<LanguageItem, String>>() {
+                @Override
+                public TableCell<LanguageItem, String> call(TableColumn<LanguageItem, String> param) {
+                    return new TableLanguageCell(true);
+                }
+            });
+            valueColumn.setEditable(true);
+            valueColumn.getStyleClass().add("editable-column");
 
             interfaceView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
             interfaceView.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -127,8 +215,6 @@ public class MyBoxLanguagesController extends BaseController {
                 public void handle(MouseEvent event) {
                     if (event.getButton() == MouseButton.SECONDARY) {
                         popMenu(interfaceView, event);
-                    } else {
-                        editInterfaceItem(interfaceView.getSelectionModel().getSelectedIndex());
                     }
                 }
             });
@@ -147,92 +233,12 @@ public class MyBoxLanguagesController extends BaseController {
             tableKeyColumn.setCellValueFactory(new PropertyValueFactory<>("key"));
             tableEnglishColumn.setCellValueFactory(new PropertyValueFactory<>("english"));
             tableChineseColumn.setCellValueFactory(new PropertyValueFactory<>("chinese"));
-            tableValueColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
-            tableValueColumn.setCellFactory(TableAutoCommitCell.forStringColumn());
-            tableValueColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<LanguageItem, String>>() {
-                @Override
-                public void handle(TableColumn.CellEditEvent<LanguageItem, String> t) {
-                    if (t == null) {
-                        return;
-                    }
-                    LanguageItem row = t.getRowValue();
-                    if (row == null) {
-                        return;
-                    }
-                    String v = t.getNewValue();
-                    String o = row.getValue();
-                    if (v == null && o == null
-                            || v != null && v.equals(o)) {
-                        return;
-                    }
-                    row.setValue(v);
-                    tableChanged(true);
-                }
-            });
-            tableValueColumn.getStyleClass().add("editable-column");
 
             tableValueColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
             tableValueColumn.setCellFactory(new Callback<TableColumn<LanguageItem, String>, TableCell<LanguageItem, String>>() {
                 @Override
                 public TableCell<LanguageItem, String> call(TableColumn<LanguageItem, String> param) {
-                    TableTextAreaCommitCell<LanguageItem> cell = new TableTextAreaCommitCell<LanguageItem>(myController) {
-                        @Override
-                        protected String name(int rowIndex) {
-                            try {
-                                LanguageItem item = tableData.get(rowIndex);
-                                return item.getKey() + "\n" + message("English") + ":\n" + item.getEnglish();
-                            } catch (Exception e) {
-                                return null;
-                            }
-                        }
-
-                        @Override
-                        protected String getCellValue(int rowIndex) {
-                            try {
-                                return tableData.get(rowIndex).getValue();
-                            } catch (Exception e) {
-                                return null;
-                            }
-                        }
-
-                        @Override
-                        protected void setCellValue(int rowIndex, String value) {
-                            if (isSettingValues || rowIndex < 0 || rowIndex >= tableData.size()) {
-                                return;
-                            }
-                            LanguageItem item = tableData.get(rowIndex);
-                            String currentValue = item.getValue();
-                            if ((currentValue == null && value == null)
-                                    || (currentValue != null && currentValue.equals(value))) {
-                                return;
-                            }
-                            item.setValue(value);
-                            tableData.set(rowIndex, item);
-                            interfaceChanged(true);
-                        }
-
-                        @Override
-                        public void editText() {
-                            int row = rowIndex();
-                            if (row < 0) {
-                                return;
-                            }
-                            LanguageItem item = tableData.get(row);
-                            MyBoxLanguageInputController inputController
-                                    = MyBoxLanguageInputController.open((MyBoxLanguagesController) myController, item);
-                            getListener = new ChangeListener<Boolean>() {
-                                @Override
-                                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                                    String value = inputController.getInput();
-                                    inputController.getNotify().removeListener(getListener);
-                                    setCellValue(row, value);
-                                    inputController.closeStage();
-                                }
-                            };
-                            inputController.getNotify().addListener(getListener);
-                        }
-                    };
-                    return cell;
+                    return new TableLanguageCell(false);
                 }
             });
             tableValueColumn.setEditable(true);
@@ -244,8 +250,6 @@ public class MyBoxLanguagesController extends BaseController {
                 public void handle(MouseEvent event) {
                     if (event.getButton() == MouseButton.SECONDARY) {
                         popMenu(tableView, event);
-                    } else {
-                        editTableItem(tableView.getSelectionModel().getSelectedIndex());
                     }
                 }
             });
@@ -255,60 +259,6 @@ public class MyBoxLanguagesController extends BaseController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-    }
-
-    public void editInterfaceItem(int rowIndex) {
-        if (isSettingValues || rowIndex < 0 || rowIndex >= interfaceData.size()) {
-            return;
-        }
-        LanguageItem item = interfaceData.get(rowIndex);
-        MyBoxLanguageInputController inputController
-                = MyBoxLanguageInputController.open((MyBoxLanguagesController) myController, item);
-        getListener = new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                String value = inputController.getInput();
-                inputController.getNotify().removeListener(getListener);
-                LanguageItem item = interfaceData.get(rowIndex);
-                String currentValue = item.getValue();
-                if ((currentValue == null && value == null)
-                        || (currentValue != null && currentValue.equals(value))) {
-                    return;
-                }
-                item.setValue(value);
-                interfaceData.set(rowIndex, item);
-                interfaceChanged(true);
-                inputController.closeStage();
-            }
-        };
-        inputController.getNotify().addListener(getListener);
-    }
-
-    public void editTableItem(int rowIndex) {
-        if (isSettingValues || rowIndex < 0 || rowIndex >= tableData.size()) {
-            return;
-        }
-        LanguageItem item = tableData.get(rowIndex);
-        MyBoxLanguageInputController inputController
-                = MyBoxLanguageInputController.open((MyBoxLanguagesController) myController, item);
-        getListener = new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                String value = inputController.getInput();
-                inputController.getNotify().removeListener(getListener);
-                LanguageItem item = tableData.get(rowIndex);
-                String currentValue = item.getValue();
-                if ((currentValue == null && value == null)
-                        || (currentValue != null && currentValue.equals(value))) {
-                    return;
-                }
-                item.setValue(value);
-                tableData.set(rowIndex, item);
-                tableChanged(true);
-                inputController.closeStage();
-            }
-        };
-        inputController.getNotify().addListener(getListener);
     }
 
     protected void interfaceChanged(boolean changed) {

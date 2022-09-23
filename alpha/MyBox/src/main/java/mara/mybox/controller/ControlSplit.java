@@ -59,9 +59,9 @@ public class ControlSplit extends BaseController {
             parentController = parent;
             baseName = baseName + "_" + parent.baseName;
 
-            valid.bind(sizeInput.styleProperty().isEqualTo(UserConfig.badStyle())
-                    .or(numberInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-                    .or(listInput.styleProperty().isEqualTo(UserConfig.badStyle())));
+            valid.bind(sizeInput.styleProperty().isNotEqualTo(UserConfig.badStyle())
+                    .and(numberInput.styleProperty().isNotEqualTo(UserConfig.badStyle()))
+                    .and(listInput.styleProperty().isNotEqualTo(UserConfig.badStyle())));
 
             splitGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override

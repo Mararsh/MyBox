@@ -67,7 +67,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         try {
             super.initControls();
 
-            noColumnSelection(true);
+            notSelectColumnsInTable(true);
 
             objectType = ObjectType.Columns;
             if (objectGroup != null) {

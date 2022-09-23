@@ -15,10 +15,12 @@ import mara.mybox.data2d.reader.Data2DFrequency;
 import mara.mybox.data2d.reader.Data2DNormalize;
 import mara.mybox.data2d.reader.Data2DOperator;
 import mara.mybox.data2d.reader.Data2DPrecentage;
+import mara.mybox.data2d.reader.Data2DRange;
 import mara.mybox.data2d.reader.Data2DReadColumns;
 import mara.mybox.data2d.reader.Data2DReadRows;
 import mara.mybox.data2d.reader.Data2DRowExpression;
 import mara.mybox.data2d.reader.Data2DSimpleLinearRegression;
+import mara.mybox.data2d.reader.Data2DSplit;
 import mara.mybox.data2d.reader.Data2DStatistic;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
@@ -294,6 +296,80 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         } else {
             return null;
         }
+    }
+
+    public List<DataFileCSV> splitBySize(List<Integer> cols, boolean includeRowNumber, int splitSize) {
+        if (cols == null || cols.isEmpty()) {
+            return null;
+        }
+        Data2DSplit reader = Data2DSplit.create(this).setSplitSize(splitSize);
+        reader.setIncludeRowNumber(includeRowNumber)
+                .setCols(cols).setTask(task).start();
+        return reader.getFiles();
+    }
+
+    public List<DataFileCSV> splitByList(List<Integer> cols, boolean includeRowNumber, List<Integer> list) {
+        if (cols == null || cols.isEmpty() || list == null || list.isEmpty()) {
+            return null;
+        }
+        try {
+            String prefix = dataName();
+            List<Data2DColumn> targetColumns = targetColumns(cols, null, includeRowNumber, null);
+            List<String> names = new ArrayList<>();
+            if (includeRowNumber) {
+                targetColumns.add(0, new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
+            }
+            for (int c : cols) {
+                Data2DColumn column = column(c);
+                names.add(column.getColumnName());
+                targetColumns.add(column.cloneAll().setD2cid(-1).setD2id(-1));
+            }
+            List<DataFileCSV> files = new ArrayList<>();
+            for (int i = 0; i < list.size();) {
+                long start = list.get(i++);
+                long end = list.get(i++);
+                if (start <= 0) {
+                    start = 1;
+                }
+                if (end > dataSize) {
+                    end = dataSize;
+                }
+                File csvfile = tmpFile(prefix + "_" + start + "-" + end, null, ".csv");
+                try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvfile)) {
+                    csvPrinter.printRecord(names);
+                    Data2DRange reader = Data2DRange.create(this).setStart(start).setEnd(end);
+                    reader.setIncludeRowNumber(includeRowNumber).setCsvPrinter(csvPrinter)
+                            .setCols(cols).setTask(task).start();
+                } catch (Exception e) {
+                    if (task != null) {
+                        task.setError(e.toString());
+                    }
+                    MyBoxLog.error(e);
+                    return null;
+                }
+                DataFileCSV dataFileCSV = new DataFileCSV();
+                dataFileCSV.setTask(task);
+                dataFileCSV.setColumns(targetColumns)
+                        .setFile(csvfile)
+                        .setCharset(Charset.forName("UTF-8"))
+                        .setDelimiter(",")
+                        .setHasHeader(true)
+                        .setColsNumber(targetColumns.size())
+                        .setRowsNumber(end - start + 1);
+                dataFileCSV.saveAttributes();
+                dataFileCSV.stopTask();
+                files.add(dataFileCSV);
+            }
+            return files;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
+            return null;
+        }
+
     }
 
     public DataFileCSV rowExpression(String dname, String script, String name, boolean errorContinue,

@@ -48,7 +48,7 @@ public class Data2DExportController extends BaseData2DHandleController {
         try {
             super.initControls();
 
-            noColumnSelection(false);
+            notSelectColumnsInTable(false);
 
             openCheck.setSelected(UserConfig.getBoolean(baseName + "OpenGenerated", false));
             openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {

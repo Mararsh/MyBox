@@ -142,7 +142,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                 selectedValue = valueColumnSelector.getSelectionModel().getSelectedItem();
             }
             dataColsIndices = new ArrayList<>();
-            if (!NotSelectColumnsInTable && (checkedColsIndices == null || checkedColsIndices.isEmpty())) {
+            if (!notSelectColumnsInTable && (checkedColsIndices == null || checkedColsIndices.isEmpty())) {
                 outOptionsError(message("SelectToHandle") + ": " + message("Columns"));
                 return false;
             }

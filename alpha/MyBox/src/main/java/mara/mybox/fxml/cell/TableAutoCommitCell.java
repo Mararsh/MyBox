@@ -64,13 +64,17 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
         this.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                TableView<S> table = getTableView();
-                if (table != null) {
-                    table.edit(rowIndex(), getTableColumn());
-                }
+                editText();
             }
         });
 
+    }
+
+    public void editText() {
+        TableView<S> table = getTableView();
+        if (table != null) {
+            table.edit(rowIndex(), getTableColumn());
+        }
     }
 
     public boolean valid() {

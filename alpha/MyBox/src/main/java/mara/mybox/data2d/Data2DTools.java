@@ -36,6 +36,7 @@ import mara.mybox.controller.Data2DSetValuesController;
 import mara.mybox.controller.Data2DSimpleLinearRegressionCombinationController;
 import mara.mybox.controller.Data2DSimpleLinearRegressionController;
 import mara.mybox.controller.Data2DSortController;
+import mara.mybox.controller.Data2DSplitController;
 import mara.mybox.controller.Data2DStatisticController;
 import mara.mybox.controller.Data2DTransposeController;
 import mara.mybox.controller.DataTableQueryController;
@@ -221,6 +222,13 @@ public class Data2DTools {
             menu = new MenuItem(message("Normalize"), StyleTools.getIconImage("iconBinary.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DNormalizeController.open(controller);
+            });
+            menu.setDisable(empty);
+            trimMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Split"), StyleTools.getIconImage("iconSplit.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DSplitController.open(controller);
             });
             menu.setDisable(empty);
             trimMenu.getItems().add(menu);
