@@ -138,6 +138,7 @@ public class Fxmls {
     public static final String ImageAlphaAddBatchFxml = "/fxml/ImageAlphaAddBatch.fxml";
     public static final String ImageOCRFxml = "/fxml/ImageOCR.fxml";
     public static final String ImageOCRBatchFxml = "/fxml/ImageOCRBatch.fxml";
+    public static final String ImageRepeatFxml = "/fxml/ImageRepeat.fxml";
 
     public static final String ColorsManageFxml = "/fxml/ColorsManage.fxml";
     public static final String ColorSetFxml = "/fxml/ColorSet.fxml";

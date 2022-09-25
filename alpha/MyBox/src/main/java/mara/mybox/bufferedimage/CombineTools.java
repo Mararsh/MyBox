@@ -19,7 +19,8 @@ import mara.mybox.value.AppVariables;
  */
 public class CombineTools {
 
-    public static Image combineSingleRow(ImageCombine imageCombine, List<ImageInformation> images, boolean isPart, boolean careTotal) {
+    public static Image combineSingleRow(ImageCombine imageCombine, List<ImageInformation> images,
+            boolean isPart, boolean careTotal) {
         if (imageCombine == null || images == null) {
             return null;
         }
@@ -55,7 +56,8 @@ public class CombineTools {
             List<Integer> ys = new ArrayList<>();
             List<Integer> widths = new ArrayList<>();
             List<Integer> heights = new ArrayList<>();
-            for (ImageInformation imageInfo : images) {
+            for (int i = 0; i < images.size(); i++) {
+                ImageInformation imageInfo = images.get(i);
                 imageWidth = imageInfo.getWidth();
                 imageHeight = imageInfo.getHeight();
                 if (sizeType == ImageCombine.CombineSizeType.KeepSize
@@ -136,7 +138,8 @@ public class CombineTools {
         }
     }
 
-    public static Image combineSingleColumn(ImageCombine imageCombine, List<ImageInformation> imageInfos, boolean isPart, boolean careTotal) {
+    public static Image combineSingleColumn(ImageCombine imageCombine,
+            List<ImageInformation> imageInfos, boolean isPart, boolean careTotal) {
         if (imageCombine == null || imageInfos == null) {
             return null;
         }
@@ -172,7 +175,9 @@ public class CombineTools {
             for (ImageInformation imageInfo : imageInfos) {
                 imageWidth = imageInfo.getWidth();
                 imageHeight = imageInfo.getHeight();
-                if (sizeType == ImageCombine.CombineSizeType.KeepSize || sizeType == ImageCombine.CombineSizeType.TotalWidth || sizeType == ImageCombine.CombineSizeType.TotalHeight) {
+                if (sizeType == ImageCombine.CombineSizeType.KeepSize
+                        || sizeType == ImageCombine.CombineSizeType.TotalWidth
+                        || sizeType == ImageCombine.CombineSizeType.TotalHeight) {
                 } else if (sizeType == ImageCombine.CombineSizeType.EachWidth) {
                     if (!isPart) {
                         imageHeight = (imageHeight * imageCombine.getEachWidthValue()) / imageWidth;
@@ -203,8 +208,10 @@ public class CombineTools {
             totalWidth += 2 * imageCombine.getMarginsValue();
             totalHeight = y + imageCombine.getMarginsValue() - imageCombine.getIntervalValue();
             Image newImage = combineImages(imageInfos, (int) totalWidth, (int) totalHeight,
-                    FxColorTools.toAwtColor(imageCombine.getBgColor()), xs, ys, widths, heights, imageCombine.getTotalWidthValue(), imageCombine.getTotalHeightValue(),
-                    careTotal && (sizeType == ImageCombine.CombineSizeType.TotalWidth), careTotal && (sizeType == ImageCombine.CombineSizeType.TotalHeight));
+                    FxColorTools.toAwtColor(imageCombine.getBgColor()), xs, ys,
+                    widths, heights, imageCombine.getTotalWidthValue(), imageCombine.getTotalHeightValue(),
+                    careTotal && (sizeType == ImageCombine.CombineSizeType.TotalWidth),
+                    careTotal && (sizeType == ImageCombine.CombineSizeType.TotalHeight));
             return newImage;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

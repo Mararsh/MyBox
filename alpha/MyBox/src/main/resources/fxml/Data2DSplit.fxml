@@ -13,6 +13,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
@@ -195,6 +196,8 @@ License:    Apache License Version 2.0
                               <VBox layoutX="20.0" layoutY="20.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                  <children>
                                     <fx:include fx:id="split" source="ControlSplit.fxml" />
+                                    <Separator prefWidth="200.0" />
+                                    <Label minHeight="-Infinity" text="%DataSplitComments" wrapText="true" />
                                  </children>
                               </VBox>
                            </children>

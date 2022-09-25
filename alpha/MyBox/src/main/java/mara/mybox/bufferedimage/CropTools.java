@@ -86,6 +86,10 @@ public class CropTools {
         return cropOutside(source, new DoubleRectangle(x1, y1, x2, y2), Color.WHITE);
     }
 
+    public static BufferedImage cropOutside(BufferedImage source, double x1, double y1, double x2, double y2, Color bgColor) {
+        return cropOutside(source, new DoubleRectangle(x1, y1, x2, y2), bgColor);
+    }
+
     public static BufferedImage sample(BufferedImage source, DoubleRectangle rectangle, int xscale, int yscale) {
         try {
             if (rectangle == null) {

@@ -130,7 +130,7 @@ public class BufferedImageTools {
         return Arrays.equals(MessageDigestTools.MD5(imageA), MessageDigestTools.MD5(imageB));
     }
 
-    // This way may be more quicker than comparing digests
+    // This way may be quicker than comparing digests
     public static boolean same(BufferedImage imageA, BufferedImage imageB) {
         try {
             if (imageA == null || imageB == null
@@ -169,7 +169,7 @@ public class BufferedImageTools {
         }
     }
 
-    // This way may be more quicker than comparing digests
+    // This way may be  quicker than comparing digests
     public static boolean sameImage(BufferedImage imageA, BufferedImage imageB) {
         if (imageA == null || imageB == null
                 || imageA.getWidth() != imageB.getWidth()

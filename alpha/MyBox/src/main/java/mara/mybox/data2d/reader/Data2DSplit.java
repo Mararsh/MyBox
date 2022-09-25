@@ -78,9 +78,6 @@ public class Data2DSplit extends Data2DOperator {
             if (row.isEmpty()) {
                 return;
             }
-            if (currentSize % splitSize == 0) {
-                closeFile();
-            }
             if (currentFile == null) {
                 currentFile = TmpFileTools.getTempFile(".csv");
                 csvPrinter = CsvTools.csvPrinter(currentFile);
@@ -92,6 +89,9 @@ public class Data2DSplit extends Data2DOperator {
             }
             csvPrinter.printRecord(row);
             currentSize++;
+            if (currentSize % splitSize == 0) {
+                closeFile();
+            }
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());

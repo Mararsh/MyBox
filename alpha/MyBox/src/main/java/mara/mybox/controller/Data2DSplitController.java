@@ -1,5 +1,7 @@
 package mara.mybox.controller;
 
+import java.io.File;
+import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,8 +10,13 @@ import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.tools.CsvTools;
+import mara.mybox.tools.FileDeleteTools;
+import mara.mybox.tools.FileTools;
+import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import org.apache.commons.csv.CSVPrinter;
 
 /**
  * @Author Mara
@@ -19,6 +26,10 @@ import static mara.mybox.value.Languages.message;
 public class Data2DSplitController extends BaseData2DHandleController {
 
     protected List<DataFileCSV> files;
+    protected File currentFile;
+    protected CSVPrinter csvPrinter;
+    protected long rowIndex, startIndex, currentSize;
+    protected String prefix;
 
     @FXML
     protected ControlSplit splitController;
@@ -59,15 +70,11 @@ public class Data2DSplitController extends BaseData2DHandleController {
     @Override
     public boolean handleRows() {
         try {
-            outputData = filtered(showRowNumber());
-            if (outputData == null) {
-                return false;
-            }
             switch (splitController.splitType) {
                 case Size:
                     return handleRowsBySize(splitController.size);
                 case Number:
-                    return handleRowsBySize(splitController.size(outputData.size(), splitController.number));
+                    return handleRowsBySize(splitController.size(tableData.size(), splitController.number));
                 case List:
                     return handleRowsByList();
             }
@@ -80,22 +87,64 @@ public class Data2DSplitController extends BaseData2DHandleController {
         }
     }
 
-    public boolean handleRowsBySize(int size) {
+    public boolean handleRowsBySize(int splitSize) {
         try {
-            String prefix = data2D.dataName();
-            int total = outputData.size();
-            int start = 0, end = size;
-            files = new ArrayList<>();
-            while (start < total) {
-                if (end > total) {
-                    end = total;
-                }
-                DataFileCSV file = DataFileCSV.save(prefix + "_" + (start + 1) + "-" + end, task,
-                        outputColumns, outputData.subList(start, end));
-                files.add(file);
-                start = end;
-                end = start + size;
+            if (selectedRowsIndices == null || selectedRowsIndices.isEmpty()
+                    || checkedColsIndices == null || checkedColsIndices.isEmpty()) {
+                return false;
             }
+            int total = tableData.size();
+            boolean showRowNumber = showRowNumber();
+            prefix = data2D.dataName();
+            startIndex = 1;
+            currentSize = 0;
+            files = new ArrayList<>();
+            currentFile = null;
+            csvPrinter = null;
+            data2D.resetFilterNumber();
+            for (int r : selectedRowsIndices) {
+                if (r < 0 || r >= total) {
+                    continue;
+                }
+                List<String> tableRow = tableData.get(r);
+                if (!data2D.filterTableRow(tableRow, r)) {
+                    continue;
+                }
+                if (data2D.filterReachMaxPassed()) {
+                    break;
+                }
+                List<String> row = new ArrayList<>();
+                if (data2D.isTmpData()) {
+                    rowIndex = r + 1;
+                } else {
+                    rowIndex = Long.valueOf(tableRow.get(0));
+                }
+                if (showRowNumber) {
+                    row.add(rowIndex + "");
+                }
+                for (int c : checkedColsIndices) {
+                    int index = c + 1;
+                    if (index < 0 || index >= tableRow.size()) {
+                        continue;
+                    }
+                    row.add(tableRow.get(index));
+                }
+                if (csvPrinter == null) {
+                    currentFile = TmpFileTools.getTempFile(".csv");
+                    csvPrinter = CsvTools.csvPrinter(currentFile);
+                    csvPrinter.printRecord(checkedColsNames);
+                    startIndex = rowIndex;
+                }
+                if (showRowNumber) {
+                    row.add(0, rowIndex + "");
+                }
+                csvPrinter.printRecord(row);
+                currentSize++;
+                if (currentSize % splitSize == 0) {
+                    closeFile();
+                }
+            }
+            closeFile();
             return true;
         } catch (Exception e) {
             if (task != null) {
@@ -107,23 +156,125 @@ public class Data2DSplitController extends BaseData2DHandleController {
         }
     }
 
+    public void closeFile() {
+        try {
+            if (csvPrinter == null) {
+                return;
+            }
+            csvPrinter.close();
+            csvPrinter = null;
+            File file = data2D.tmpFile(prefix + "_" + startIndex + "-" + rowIndex, null, ".csv");
+            if (FileTools.rename(currentFile, file) && file.exists()) {
+                DataFileCSV dataFileCSV = new DataFileCSV();
+                dataFileCSV.setTask(task);
+                dataFileCSV.setColumns(outputColumns)
+                        .setFile(file)
+                        .setCharset(Charset.forName("UTF-8"))
+                        .setDelimiter(",")
+                        .setHasHeader(true)
+                        .setColsNumber(outputColumns.size())
+                        .setRowsNumber(currentSize);
+                dataFileCSV.saveAttributes();
+                dataFileCSV.stopTask();
+                files.add(dataFileCSV);
+            }
+            currentFile = null;
+            currentSize = 0;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
+        }
+    }
+
     public boolean handleRowsByList() {
         try {
-            String prefix = data2D.dataName();
+            if (selectedRowsIndices == null || selectedRowsIndices.isEmpty()
+                    || checkedColsIndices == null || checkedColsIndices.isEmpty()) {
+                return false;
+            }
+            int total = tableData.size();
+            boolean showRowNumber = showRowNumber();
+            prefix = data2D.dataName();
             files = new ArrayList<>();
-            int total = outputData.size();
+            data2D.resetFilterNumber();
+            dataSize = data2D.isTmpData() ? total : data2D.dataSize;
             for (int i = 0; i < splitController.list.size();) {
-                int start = splitController.list.get(i++);
-                int end = splitController.list.get(i++);
+                long start = splitController.list.get(i++);
+                long end = splitController.list.get(i++);
                 if (start <= 0) {
                     start = 1;
                 }
-                if (end > total) {
-                    end = total;
+                if (end > dataSize) {
+                    end = dataSize;
                 }
-                DataFileCSV file = DataFileCSV.save(prefix + "_" + start + "-" + end, task,
-                        outputColumns, outputData.subList(start - 1, end));
-                files.add(file);
+                if (start > end) {
+                    continue;
+                }
+                File csvfile = data2D.tmpFile(prefix + "_" + start + "-" + end, null, ".csv");
+                boolean empty = true;
+                try ( CSVPrinter printer = CsvTools.csvPrinter(csvfile)) {
+                    printer.printRecord(checkedColsNames);
+                    for (int r : selectedRowsIndices) {
+                        if (r < 0 || r >= total) {
+                            continue;
+                        }
+                        List<String> tableRow = tableData.get(r);
+                        if (data2D.isTmpData()) {
+                            rowIndex = r + 1;
+                        } else {
+                            rowIndex = Long.valueOf(tableRow.get(0));
+                        }
+                        if (rowIndex < start) {
+                            continue;
+                        }
+                        if (rowIndex > end) {
+                            break;
+                        }
+                        if (!data2D.filterTableRow(tableRow, r)) {
+                            continue;
+                        }
+                        if (data2D.filterReachMaxPassed()) {
+                            break;
+                        }
+                        List<String> row = new ArrayList<>();
+                        if (showRowNumber) {
+                            row.add(rowIndex + "");
+                        }
+                        for (int c : checkedColsIndices) {
+                            int index = c + 1;
+                            if (index < 0 || index >= tableRow.size()) {
+                                continue;
+                            }
+                            row.add(tableRow.get(index));
+                        }
+                        printer.printRecord(row);
+                        empty = false;
+                    }
+                } catch (Exception e) {
+                    if (task != null) {
+                        task.setError(e.toString());
+                    }
+                    MyBoxLog.error(e);
+                }
+                if (empty) {
+                    FileDeleteTools.delete(csvfile);
+                } else {
+                    DataFileCSV dataFileCSV = new DataFileCSV();
+                    dataFileCSV.setTask(task);
+                    dataFileCSV.setColumns(outputColumns)
+                            .setFile(csvfile)
+                            .setCharset(Charset.forName("UTF-8"))
+                            .setDelimiter(",")
+                            .setHasHeader(true)
+                            .setColsNumber(outputColumns.size())
+                            .setRowsNumber(end - start + 1);
+                    dataFileCSV.saveAttributes();
+                    dataFileCSV.stopTask();
+                    files.add(dataFileCSV);
+                }
             }
             return true;
         } catch (Exception e) {

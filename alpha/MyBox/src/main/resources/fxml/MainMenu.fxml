@@ -164,6 +164,7 @@ License:    Apache License Version 2.0
                                     <SeparatorMenuItem mnemonicParsing="false" />
                                     <MenuItem mnemonicParsing="false" onAction="#ImagesEditor" text="%ImagesEditor" />
                                     <MenuItem mnemonicParsing="false" onAction="#ImagesSplice" text="%ImagesSplice" />
+                                    <MenuItem mnemonicParsing="false" onAction="#ImageRepeat" text="%ImageRepeatTile" />
                                     <MenuItem mnemonicParsing="false" onAction="#openImageAlphaAdd" text="%ImageAlphaAdd" />
                                     <SeparatorMenuItem mnemonicParsing="false" />
                                     <MenuItem mnemonicParsing="false" onAction="#openImageSplit" text="%ImageSplit" />

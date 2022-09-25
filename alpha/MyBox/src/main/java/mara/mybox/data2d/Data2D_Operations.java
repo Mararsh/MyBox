@@ -334,6 +334,9 @@ public abstract class Data2D_Operations extends Data2D_Convert {
                 if (end > dataSize) {
                     end = dataSize;
                 }
+                if (start > end) {
+                    continue;
+                }
                 File csvfile = tmpFile(prefix + "_" + start + "-" + end, null, ".csv");
                 try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvfile)) {
                     csvPrinter.printRecord(names);

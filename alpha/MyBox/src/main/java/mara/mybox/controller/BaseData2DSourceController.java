@@ -635,7 +635,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                     continue;
                 }
                 List<String> tableRow = tableData.get(row);
-                if (!data2D.filterTableRow(tableData.get(row), row)) {
+                if (!data2D.filterTableRow(tableRow, row)) {
                     continue;
                 }
                 if (data2D.filterReachMaxPassed()) {
