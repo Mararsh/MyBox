@@ -38,7 +38,7 @@ public class Data2DLoadContentInSystemClipboardController extends BaseChildContr
             popError(message("NoData"));
             return;
         }
-        loadController.loadTmpData(null, inputController.dataFileText.getColumns(), inputController.data);
+        loadController.loadTmpData(null, inputController.dataFileCSV.getColumns(), inputController.data);
         close();
     }
 

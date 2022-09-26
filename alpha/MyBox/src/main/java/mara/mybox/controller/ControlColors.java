@@ -740,7 +740,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
                 protected void whenSucceeded() {
                     if (file.exists()) {
                         recordFileWritten(file, FileType.Text);
-                        DataFileCSVController.open(file, Charset.forName("UTF-8"), true, ',');
+                        DataFileCSVController.open(file, Charset.forName("UTF-8"), true, ",");
                     }
                 }
             };

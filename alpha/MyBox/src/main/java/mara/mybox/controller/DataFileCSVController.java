@@ -19,6 +19,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.TextFileTools;
+import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -33,7 +34,7 @@ public class DataFileCSVController extends BaseData2DFileController {
     protected DataFileCSV dataFileCSV;
 
     @FXML
-    protected ControlCsvOptions csvReadController, csvWriteController;
+    protected ControlTextOptions csvReadController, csvWriteController;
     @FXML
     protected VBox mainBox;
 
@@ -53,7 +54,7 @@ public class DataFileCSVController extends BaseData2DFileController {
 
     @Override
     public void setFileType() {
-        setFileType(VisitHistory.FileType.CSV);
+        setFileType(VisitHistory.FileType.Text);
     }
 
     @Override
@@ -61,8 +62,8 @@ public class DataFileCSVController extends BaseData2DFileController {
         try {
             super.initControls();
 
-            csvReadController.setControls(baseName + "Read");
-            csvWriteController.setControls(baseName + "Write");
+            csvReadController.setControls(baseName + "Read", true);
+            csvWriteController.setControls(baseName + "Write", false);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -78,7 +79,7 @@ public class DataFileCSVController extends BaseData2DFileController {
             charset = csvReadController.charset;
         }
         dataFileCSV.setOptions(csvReadController.withNamesCheck.isSelected(),
-                charset, csvReadController.delimiter + "");
+                charset, csvReadController.getDelimiterValue());
     }
 
     @Override
@@ -90,20 +91,20 @@ public class DataFileCSVController extends BaseData2DFileController {
         DataFileCSV targetData = new DataFileCSV();
         targetData.initFile(file)
                 .setCharset(csvWriteController.charset)
-                .setDelimiter(csvWriteController.delimiter + "")
+                .setDelimiter(csvWriteController.getDelimiterValue())
                 .setHasHeader(csvWriteController.withNamesCheck.isSelected());
         return targetData;
     }
 
-    public void setFile(File file, Charset charset, boolean withName, char delimiter) {
+    public void setFile(File file, Charset charset, boolean withName, String delimiterName) {
         if (file == null || !checkBeforeNextAction()) {
             return;
         }
         csvReadController.withNamesCheck.setSelected(withName);
-        csvReadController.setDelimiter(delimiter);
+        csvReadController.setDelimiterName(delimiterName);
         csvReadController.setCharset(charset);
         dataFileCSV.initFile(file);
-        dataFileCSV.setOptions(withName, charset, delimiter + "");
+        dataFileCSV.setOptions(withName, charset, TextTools.delimiterValue(delimiterName));
         dataController.readDefinition();
     }
 
@@ -133,7 +134,7 @@ public class DataFileCSVController extends BaseData2DFileController {
                 protected void whenSucceeded() {
                     Iterator<File> iterator = files.keySet().iterator();
                     File csvFile = iterator.next();
-                    setFile(csvFile, Charset.forName("UTF-8"), files.get(csvFile), ',');
+                    setFile(csvFile, Charset.forName("UTF-8"), files.get(csvFile), ",");
                     if (count > 1) {
                         browseURI(filePath.toURI());
                         String info = MessageFormat.format(message("GeneratedFilesResult"),
@@ -159,7 +160,7 @@ public class DataFileCSVController extends BaseData2DFileController {
     /*
         static
      */
-    public static DataFileCSVController open(File file, Charset charset, boolean withNames, char delimiter) {
+    public static DataFileCSVController open(File file, Charset charset, boolean withNames, String delimiter) {
         DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
         controller.setFile(file, charset, withNames, delimiter);
         controller.requestMouse();

@@ -31,6 +31,12 @@ import thridparty.EncodingDetect;
  */
 public class TextTools {
 
+    public final static String BlankName = "Blank";
+    public final static String Blank4Name = "Blank4";
+    public final static String Blank8Name = "Blank8";
+    public final static String BlanksName = "Blanks";
+    public final static String TabName = "Tab";
+
     public static List<Charset> getCharsets() {
         List<Charset> sets = new ArrayList<>();
         sets.addAll(Arrays.asList(Charset.forName("UTF-8"),
@@ -503,20 +509,20 @@ public class TextTools {
             return null;
         }
         String delimiter;
-        switch (delimiterName.toLowerCase()) {
-            case "tab":
+        switch (delimiterName) {
+            case TabName:
                 delimiter = "\t";
                 break;
-            case "blank":
+            case BlankName:
                 delimiter = " ";
                 break;
-            case "blank4":
+            case Blank4Name:
                 delimiter = "    ";
                 break;
-            case "blank8":
+            case Blank8Name:
                 delimiter = "        ";
                 break;
-            case "blanks":
+            case BlanksName:
                 delimiter = " ";
                 break;
             default:
@@ -531,24 +537,24 @@ public class TextTools {
             return null;
         }
         String msg;
-        switch (delimiterName.toLowerCase()) {
-            case "tab":
+        switch (delimiterName) {
+            case TabName:
             case "\t":
                 msg = message("Tab");
                 break;
-            case "blank":
+            case BlankName:
             case " ":
                 msg = message("Blank");
                 break;
-            case "blank4":
+            case Blank4Name:
             case "    ":
                 msg = message("Blank4");
                 break;
-            case "blank8":
+            case Blank8Name:
             case "        ":
                 msg = message("Blank8");
                 break;
-            case "blanks":
+            case BlanksName:
                 msg = message("BlankCharacters");
                 break;
             default:
@@ -661,7 +667,7 @@ public class TextTools {
                 }
                 for (int c = 0; c <= colEnd; c++) {
                     v = rowValues.get(c);
-                    s.append(v == null ? "" : v);
+                    s.append(v == null ? "" : v.toString().replaceAll("\n", "\\\\n"));
                     if (c < colEnd) {
                         s.append(delimiter);
                     }
@@ -683,24 +689,24 @@ public class TextTools {
                 return null;
             }
             String[] values;
-            switch (delimiterName.toLowerCase()) {
-                case "tab":
+            switch (delimiterName) {
+                case TabName:
                 case "\t":
                     values = line.split("\t", -1);
                     break;
-                case "blank":
+                case BlankName:
                 case " ":
                     values = line.split("\\s", -1);
                     break;
-                case "blank4":
+                case Blank4Name:
                 case "    ":
                     values = line.split("\\s{4}", -1);
                     break;
-                case "blank8":
+                case Blank8Name:
                 case "        ":
                     values = line.split("\\s{8}", -1);
                     break;
-                case "blanks":
+                case BlanksName:
                     values = line.split("\\s+", -1);
                     break;
                 case "|":
@@ -732,6 +738,7 @@ public class TextTools {
             }
             List<String> row = new ArrayList<>();
             row.addAll(Arrays.asList(values));
+            MyBoxLog.console(delimiterName + "   ---- " + row);
             return row;
         } catch (Exception e) {
             MyBoxLog.console(e.toString());

@@ -18,7 +18,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableDateCell;
-import mara.mybox.fxml.cell.TableTextCell;
+import mara.mybox.fxml.cell.TableTextTruncCell;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 
@@ -59,7 +59,7 @@ public class ControlNamedValues extends BaseSysTableController<NamedValues> {
 
             nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
             valueColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
-            valueColumn.setCellFactory(new TableTextCell());
+            valueColumn.setCellFactory(new TableTextTruncCell());
             modifyColumn.setCellValueFactory(new PropertyValueFactory<>("time"));
             modifyColumn.setCellFactory(new TableDateCell());
 

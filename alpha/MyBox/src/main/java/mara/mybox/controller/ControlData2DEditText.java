@@ -193,8 +193,16 @@ public class ControlData2DEditText extends BaseController {
                             row.add(null);
                         }
                     }
-                    row.add(0, (data2D.getStartRowOfCurrentPage() + rowIndex++) + "");
-                    rows.add(row);
+                    List<String> nrow = new ArrayList<>();
+                    for (String s : row) {
+                        if (s == null) {
+                            nrow.add(s);
+                        } else {
+                            nrow.add(s.replaceAll("\\\\n", "\n"));
+                        }
+                    }
+                    nrow.add(0, (data2D.getStartRowOfCurrentPage() + rowIndex++) + "");
+                    rows.add(nrow);
                 }
             }
             isSettingValues = true;

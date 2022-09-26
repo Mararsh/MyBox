@@ -12,12 +12,12 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
-import javafx.util.converter.DefaultStringConverter;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataClipboard;
@@ -36,7 +36,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
-import mara.mybox.fxml.cell.TableAutoCommitCell;
+import mara.mybox.fxml.cell.TableTextEditCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DoubleMatrixTools;
 import mara.mybox.tools.TextTools;
@@ -368,8 +368,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             @Override
             protected boolean handle() {
                 try {
-//                    csvData.savedColumns = csvData.columns;
-//                    csvData.readColumns(null);
                     switch (data2D.getType()) {
                         case Texts:
                             targetData = csvData.cloneAll();
@@ -446,11 +444,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 try {
                     switch (data2D.getType()) {
                         case Texts:
-                            targetData = DataTable.toText(task, dataTable);
-                            if (targetData != null) {
-                                recordFileWritten(targetData.getFile(), VisitHistory.FileType.Text);
-                            }
-                            break;
                         case CSV:
                             targetData = DataTable.toCSV(task, dataTable);
                             if (targetData != null) {
@@ -718,14 +711,14 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 tableColumn.setPrefWidth(dataColumn.getWidth());
                 tableColumn.setEditable(!readOnly && dataColumn.isEditable() && !dataColumn.isId());
                 tableColumn.setUserData(dataColumn.getIndex());
-                int col = i + 1;
+                int colIndex = i + 1;
 
                 tableColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<List<String>, String>, ObservableValue<String>>() {
                     @Override
                     public ObservableValue<String> call(TableColumn.CellDataFeatures<List<String>, String> param) {
                         try {
                             List<String> row = (List<String>) param.getValue();
-                            return new SimpleStringProperty(row.get(col));
+                            return new SimpleStringProperty(row.get(colIndex));
                         } catch (Exception e) {
                             return null;
                         }
@@ -737,8 +730,8 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                         @Override
                         public TableCell<List<String>, String> call(TableColumn<List<String>, String> param) {
                             try {
-                                TableAutoCommitCell<List<String>, String> cell
-                                        = new TableAutoCommitCell<List<String>, String>(new DefaultStringConverter()) {
+                                TableTextEditCell<List<String>> cell
+                                        = new TableTextEditCell<List<String>>(myController, dataColumn.isTextType()) {
                                     @Override
                                     public void updateItem(String item, boolean empty) {
                                         super.updateItem(item, empty);
@@ -760,37 +753,29 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                         return dataColumn.validValue(value);
                                     }
 
-                                    @Override
-                                    public void commitEdit(String value) {
-                                        try {
-                                            int rowIndex = rowIndex();
-                                            if (rowIndex < 0 || !valid(value)) {
-                                                cancelEdit();
-                                                return;
-                                            }
-                                            List<String> row = tableData.get(rowIndex);
-                                            if (row == null || row.size() <= col) {
-                                                cancelEdit();
-                                                return;
-                                            }
-                                            String oldValue = row.get(col);
-                                            if ((value == null && oldValue != null)
-                                                    || (value != null && !value.equals(oldValue))) {
-                                                super.commitEdit(value);
-                                                row.set(col, dataColumn.display(value));
-                                                tableData.set(rowIndex, row);
-                                            }
-                                        } catch (Exception e) {
-                                            MyBoxLog.debug(e);
-                                        }
-                                    }
-
                                 };
 
                                 return cell;
                             } catch (Exception e) {
                                 return null;
                             }
+                        }
+                    });
+
+                    tableColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<List<String>, String>>() {
+                        @Override
+                        public void handle(TableColumn.CellEditEvent<List<String>, String> e) {
+                            if (e == null) {
+                                return;
+                            }
+                            int rowIndex = e.getTablePosition().getRow();
+                            if (rowIndex < 0 || rowIndex >= tableData.size()) {
+                                return;
+                            }
+                            List<String> row = tableData.get(rowIndex);
+                            String value = e.getNewValue();
+                            row.set(colIndex, dataColumn.display(value));
+                            tableData.set(rowIndex, row);
                         }
                     });
                     tableColumn.getStyleClass().add("editable-column");
@@ -839,7 +824,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                         public void changed(ObservableValue<? extends Number> o, Number ov, Number nv) {
                             int w = nv.intValue();
                             dataColumn.setWidth(w);
-                            dataController.columnsController.setWidth(col - 1, w);
+                            dataController.columnsController.setWidth(colIndex - 1, w);
                         }
                     });
                 }

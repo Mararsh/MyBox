@@ -170,6 +170,7 @@ public class DataMigration {
             MyBoxLog.info("Updating tables in 6.6...");
 
             conn.setAutoCommit(true);
+            statement.executeUpdate("UPDATE Data2D_Definition SET data_type=1 WHERE data_type=0");
             statement.executeUpdate("ALTER TABLE Data2D_Column ADD COLUMN description VARCHAR(" + StringMaxLength + ")");
 
         } catch (Exception e) {

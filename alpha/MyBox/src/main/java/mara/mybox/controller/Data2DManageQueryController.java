@@ -27,7 +27,7 @@ public class Data2DManageQueryController extends BaseChildController {
     @FXML
     protected ToggleGroup orderGroup;
     @FXML
-    protected CheckBox csvCheck, excelCheck, textsCheck, matrixCheck, databaseCheck,
+    protected CheckBox csvCheck, excelCheck, matrixCheck, databaseCheck,
             myBoxClipboardCheck, descCheck;
     @FXML
     protected RadioButton idRadio, nameRadio, rowsRadio, colsRadio, timeRadio, fileRadio;
@@ -46,14 +46,6 @@ public class Data2DManageQueryController extends BaseChildController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "CSV", csvCheck.isSelected());
-                }
-            });
-
-            textsCheck.setSelected(UserConfig.getBoolean(baseName + "Text", true));
-            textsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "Text", textsCheck.isSelected());
                 }
             });
 
@@ -132,11 +124,8 @@ public class Data2DManageQueryController extends BaseChildController {
     public void okAction() {
         try {
             String condition = "";
-            if (textsCheck.isSelected()) {
-                condition += " data_type=0 ";
-            }
             if (csvCheck.isSelected()) {
-                condition += (condition.isEmpty() ? "" : " OR ") + " data_type=1 ";
+                condition += " data_type=1 ";
             }
             if (excelCheck.isSelected()) {
                 condition += (condition.isEmpty() ? "" : " OR ") + " data_type=2 ";

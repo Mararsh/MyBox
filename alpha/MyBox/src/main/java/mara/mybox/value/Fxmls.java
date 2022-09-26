@@ -235,10 +235,6 @@ public class Fxmls {
     public static final String DataFileExcelConvertFxml = "/fxml/DataFileExcelConvert.fxml";
     public static final String DataFileExcelMergeFxml = "/fxml/DataFileExcelMerge.fxml";
 
-    public static final String DataFileTextFxml = "/fxml/DataFileText.fxml";
-    public static final String DataFileTextConvertFxml = "/fxml/DataFileTextConvert.fxml";
-    public static final String DataFileTextMergeFxml = "/fxml/DataFileTextMerge.fxml";
-
     public static final String MatricesManageFxml = "/fxml/MatricesManage.fxml";
     public static final String MatrixUnaryCalculationFxml = "/fxml/MatrixUnaryCalculation.fxml";
     public static final String MatricesBinaryCalculationFxml = "/fxml/MatricesBinaryCalculation.fxml";

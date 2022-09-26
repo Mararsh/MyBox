@@ -163,7 +163,7 @@ public class MyBoxLanguagesController extends BaseController {
         }
 
         @Override
-        public void editText() {
+        public void startEdit() {
             int row = rowIndex();
             if (row < 0) {
                 return;
@@ -186,7 +186,7 @@ public class MyBoxLanguagesController extends BaseController {
                 };
                 inputController.getNotify().addListener(getListener);
             } else {
-                super.editText();
+                super.startEdit();
             }
         }
 

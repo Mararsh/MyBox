@@ -169,9 +169,6 @@ public class TestCase {
             cases.add(new TestCase(index++, message("EditExcel"), Fxmls.DataFileExcelFxml));
             cases.add(new TestCase(index++, message("ExcelConvert"), Fxmls.DataFileExcelConvertFxml));
             cases.add(new TestCase(index++, message("ExcelMerge"), Fxmls.DataFileExcelMergeFxml));
-            cases.add(new TestCase(index++, message("EditTextDataFile"), Fxmls.DataFileTextFxml));
-            cases.add(new TestCase(index++, message("TextDataConvert"), Fxmls.DataFileTextConvertFxml));
-            cases.add(new TestCase(index++, message("TextDataMerge"), Fxmls.DataFileTextMergeFxml));
             cases.add(new TestCase(index++, message("DataInSystemClipboard"), Fxmls.DataInMyBoxClipboardFxml));
             cases.add(new TestCase(index++, message("DataInMyBoxClipboard"), Fxmls.DataInSystemClipboardFxml));
             cases.add(new TestCase(index++, message("MatricesManage"), Fxmls.MatricesManageFxml));

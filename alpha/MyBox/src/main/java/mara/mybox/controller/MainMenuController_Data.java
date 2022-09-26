@@ -128,24 +128,6 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
     }
 
     @FXML
-    protected void openDataText(ActionEvent event) {
-        DataFileTextController c = (DataFileTextController) loadScene(Fxmls.DataFileTextFxml);
-        if (c != null) {
-            c.createAction();
-        }
-    }
-
-    @FXML
-    protected void openTextDataConvert(ActionEvent event) {
-        loadScene(Fxmls.DataFileTextConvertFxml);
-    }
-
-    @FXML
-    protected void openTextDataMerge(ActionEvent event) {
-        loadScene(Fxmls.DataFileTextMergeFxml);
-    }
-
-    @FXML
     protected void DatabaseSQL(ActionEvent event) {
         loadScene(Fxmls.DatabaseSqlFxml);
     }

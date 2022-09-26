@@ -196,7 +196,8 @@ public class ControlChartXYZ extends BaseController {
                     + "  <body style=\"width:" + (width + 50) + "px; margin:0 auto;\">\n"
                     + "    <h3 align=center>" + dataName + " - " + chartName + "</h3>\n";
             if (scatterRadio.isSelected()) {
-                html += "    <P>x:" + xName + "  y:" + yName + "</P>\n"
+                html += "    <P>" + message("AxisX") + ": \"" + xName + "\"  "
+                        + message("AxisY") + ": \"" + yName + "\"</P>\n"
                         + "	<style type=\"text/css\">\n";
                 String[] presymbols = {"circle", "triangle", "diamond", "arrow", "rect"};
                 for (int i = 0; i < seriesSize; i++) {
@@ -252,13 +253,15 @@ public class ControlChartXYZ extends BaseController {
                     }
                 }
                 html += "	</style>\n";
-                html += "    <P><div style=\"display: inline-block;\">z: </div>\n";
+                html += "    <P><div style=\"display: inline-block;\">" + message("AxisZ") + ": </div>\n";
                 for (int i = 0; i < seriesSize; i++) {
                     html += "		<div class=\"symbol" + i + "\"></div><span> " + columns.get(i + 2).getColumnName() + " </span>\n";
                 }
                 html += "	</P>\n";
             } else {
-                html += "    <P>x:" + xName + "  y:" + yName + "  z:" + z1Name + "</P>\n";
+                html += "    <P>" + message("AxisX") + ": \"" + xName + "\"  "
+                        + message("AxisY") + ": \"" + yName + "\"  "
+                        + message("AxisZ") + ": \"" + z1Name + "\"</P>\n";
             }
             html += "    <div id=\"chart\" style=\"width: " + width + "px;height: " + height + "px;\"></div>\n"
                     + "    <script type=\"text/javascript\">\n"
@@ -370,14 +373,14 @@ public class ControlChartXYZ extends BaseController {
             }
             html += "			xAxis3D: {\n"
                     + "				type: '" + (xCategory ? "category" : "value") + "',\n"
-                    + "				name: 'X: " + xName + "'\n"
+                    + "				name: '" + message("AxisX") + ": " + xName + "'\n"
                     + "			},\n" + "			yAxis3D: {\n"
                     + "				type: '" + (yCategory ? "category" : "value") + "',\n"
-                    + "				name: 'Y: " + yName + "'\n"
+                    + "				name: '" + message("AxisY") + ": " + yName + "'\n"
                     + "			},\n"
                     + "			zAxis3D: {\n"
                     + "				type: '" + (zCategory ? "category" : "value") + "',\n"
-                    + "				name: 'Z" + (seriesSize == 1 ? ": " + z1Name : "") + "'\n"
+                    + "				name: '" + message("AxisZ") + (seriesSize == 1 ? ": " + z1Name : "") + "'\n"
                     + "			},\n"
                     + "			grid3D: {\n"
                     + "				viewControl: {\n"

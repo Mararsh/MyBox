@@ -85,12 +85,14 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             if (columns == null || columns.isEmpty()) {
                 return null;
             }
-            DataTable dataTable = createTable(task, conn, targetName, columns, null, null, dropExisted);
+            MyBoxLog.console(getComments());
+            DataTable dataTable = createTable(task, conn, targetName, columns, null, comments, null, dropExisted);
             if (dataTable == null) {
                 return null;
             }
             dataTable.cloneDefinitionAttributes(this);
             dataTable.setDataName(targetName);
+            MyBoxLog.console(dataTable.getComments());
             return dataTable;
         } catch (Exception e) {
             if (task != null) {
@@ -160,7 +162,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                     sourceColumns.add(column);
                 }
             }
-            return createTable(task, conn, targetName, sourceColumns, null, null, true);
+            return createTable(task, conn, targetName, sourceColumns, null, comments, null, true);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -233,7 +235,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             }
             column.setD2cid(-1).setD2id(-1);
             sourceColumns.add(column);
-            DataTable dataTable = createTable(task, conn, tmpTableName(), sourceColumns, null, null, true);
+            DataTable dataTable = createTable(task, conn, tmpTableName(), sourceColumns, null, comments, null, true);
             dataTable.cloneDefinitionAttributes(this);
             if (cols == null || cols.isEmpty()) {
                 cols = new ArrayList<>();
@@ -260,7 +262,8 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         }
     }
 
-    public static DataTable makeTable(SingletonTask task, String tname, List<Data2DColumn> sourceColumns, List<String> keys, String idName) {
+    public static DataTable makeTable(SingletonTask task, String tname,
+            List<Data2DColumn> sourceColumns, List<String> keys, String idName) {
         try {
             if (sourceColumns == null || sourceColumns.isEmpty()) {
                 return null;
@@ -322,7 +325,8 @@ public abstract class Data2D_Convert extends Data2D_Edit {
     }
 
     public static DataTable createTable(SingletonTask task, Connection conn,
-            String name, List<Data2DColumn> sourceColumns, List<String> keys, String idName, boolean dropExisted) {
+            String name, List<Data2DColumn> sourceColumns, List<String> keys, String comments,
+            String idName, boolean dropExisted) {
         try {
             if (conn == null || sourceColumns == null || sourceColumns.isEmpty()) {
                 return null;
@@ -345,12 +349,11 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                 return null;
             }
             tableData2D = dataTable.getTableData2D();
-//            MyBoxLog.console(tableData2D.createTableStatement());
             if (conn.createStatement().executeUpdate(tableData2D.createTableStatement()) < 0) {
                 return null;
             }
             conn.commit();
-            dataTable.recordTable(conn, tableName, dataTable.getColumns());
+            dataTable.recordTable(conn, tableName, dataTable.getColumns(), comments);
             return dataTable;
         } catch (Exception e) {
             if (task != null) {
@@ -372,7 +375,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         try ( Connection conn = DerbyBase.getConnection();
                  PreparedStatement statement = conn.prepareStatement(tableData2D.queryAllStatement());
                  ResultSet results = statement.executeQuery();
-                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(file, Charset.forName("UTF-8")), CsvTools.csvFormat(',', true))) {
+                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(file, Charset.forName("UTF-8")), CsvTools.csvFormat(",", true))) {
             csvPrinter.printRecord(dataTable.columnNames());
             while (results.next() && task != null && !task.isCancelled()) {
                 try {
@@ -414,27 +417,6 @@ public abstract class Data2D_Convert extends Data2D_Edit {
     public static DataFileCSV toCSV(SingletonTask task, DataTable dataTable) {
         File csvFile = TmpFileTools.getPathTempFile(AppPaths.getGeneratedPath(), dataTable.dataName(), ".csv");
         return toCSV(task, dataTable, csvFile, true);
-    }
-
-    public static DataFileText toText(SingletonTask task, DataTable dataTable) {
-        if (task == null || dataTable == null || !dataTable.isValid()) {
-            return null;
-        }
-        File txtFile = TmpFileTools.getPathTempFile(AppPaths.getGeneratedPath(), dataTable.dataName(), ".txt");
-        DataFileCSV csvData = toCSV(task, dataTable, txtFile, false);
-        if (csvData != null && txtFile != null && txtFile.exists()) {
-            DataFileText targetData = new DataFileText();
-            targetData.setColumns(csvData.getColumns())
-                    .setFile(txtFile).setDataName(csvData.getDataName())
-                    .setCharset(Charset.forName("UTF-8")).setDelimiter(",")
-                    .setHasHeader(true)
-                    .setColsNumber(csvData.getColsNumber())
-                    .setRowsNumber(csvData.getRowsNumber());
-            targetData.saveAttributes();
-            return targetData;
-        } else {
-            return null;
-        }
     }
 
     public static DataFileExcel toExcel(SingletonTask task, DataTable dataTable) {
@@ -703,26 +685,6 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                     .setHasHeader(targetHasHeader)
                     .cloneDefinitionAttributes(csvData);
             targetData.setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
-            targetData.saveAttributes();
-            return targetData;
-        } else {
-            return null;
-        }
-    }
-
-    public static DataFileText toText(DataFileCSV csvData) {
-        if (csvData == null) {
-            return null;
-        }
-        File csvFile = csvData.getFile();
-        if (csvFile == null || !csvFile.exists() || csvFile.length() == 0) {
-            return null;
-        }
-        File txtFile = getPathTempFile(AppPaths.getGeneratedPath(), csvData.dataName(), ".txt");
-        if (FileCopyTools.copyFile(csvFile, txtFile)) {
-            DataFileText targetData = new DataFileText();
-            targetData.cloneAll(csvData);
-            targetData.setType(Type.Texts).setFile(txtFile);
             targetData.saveAttributes();
             return targetData;
         } else {

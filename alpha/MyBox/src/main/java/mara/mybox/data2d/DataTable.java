@@ -88,7 +88,7 @@ public class DataTable extends Data2D {
                     dataColumns.add(dataColumn);
                 }
             }
-            return recordTable(conn, referredName, dataColumns);
+            return recordTable(conn, referredName, dataColumns, null);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -99,11 +99,13 @@ public class DataTable extends Data2D {
         }
     }
 
-    public boolean recordTable(Connection conn, String tableName, List<Data2DColumn> dataColumns) {
+    public boolean recordTable(Connection conn, String tableName, List<Data2DColumn> dataColumns, String comments) {
         try {
             sheet = DerbyBase.savedName(tableName);
             dataName = tableName;
             colsNumber = dataColumns.size();
+            this.comments = comments;
+            MyBoxLog.console(comments);
             tableData2DDefinition.insertData(conn, this);
             conn.commit();
 

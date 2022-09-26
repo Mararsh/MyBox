@@ -38,7 +38,7 @@ public class DataFileCSVMergeController extends FilesMergeController {
     protected boolean sourceWithName, targetWithName;
 
     @FXML
-    protected ControlCsvOptions csvSourceController, csvTargetController;
+    protected ControlTextOptions csvSourceController, csvTargetController;
 
     public DataFileCSVMergeController() {
         baseTitle = Languages.message("CsvMerge");
@@ -46,7 +46,7 @@ public class DataFileCSVMergeController extends FilesMergeController {
 
     @Override
     public void setFileType() {
-        setFileType(VisitHistory.FileType.CSV);
+        setFileType(VisitHistory.FileType.Text);
     }
 
     @Override
@@ -57,8 +57,8 @@ public class DataFileCSVMergeController extends FilesMergeController {
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(tableData)
                     .or(targetFileController.valid.not())
-                    .or(csvSourceController.delimiterInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-                    .or(csvTargetController.delimiterInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(csvSourceController.delimiterController.delimiterInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+                    .or(csvTargetController.delimiterController.delimiterInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
         } catch (Exception e) {
@@ -69,8 +69,8 @@ public class DataFileCSVMergeController extends FilesMergeController {
     @Override
     public void initOptionsSection() {
         try {
-            csvSourceController.setControls(baseName + "Source");
-            csvTargetController.setControls(baseName + "Target");
+            csvSourceController.setControls(baseName + "Source", true);
+            csvTargetController.setControls(baseName + "Target", false);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -81,17 +81,17 @@ public class DataFileCSVMergeController extends FilesMergeController {
     @Override
     protected boolean openWriter() {
         try {
-            if (csvSourceController.delimiterInput.getStyle().equals(UserConfig.badStyle())
+            if (csvSourceController.delimiterController.delimiterInput.getStyle().equals(UserConfig.badStyle())
                     || (!csvSourceController.autoDetermine && csvSourceController.charset == null)) {
                 return false;
             }
             sourceCharset = csvSourceController.charset;
             sourceWithName = csvSourceController.withNamesCheck.isSelected();
-            sourceFormat = CsvTools.csvFormat(csvSourceController.delimiter, sourceWithName);
+            sourceFormat = CsvTools.csvFormat(csvSourceController.getDelimiterValue(), sourceWithName);
 
             targetCharset = csvTargetController.charset;
             targetWithName = csvTargetController.withNamesCheck.isSelected();
-            targetFormat = CsvTools.csvFormat(csvTargetController.delimiter, targetWithName);
+            targetFormat = CsvTools.csvFormat(csvTargetController.getDelimiterValue(), targetWithName);
 
             csvPrinter = new CSVPrinter(new FileWriter(targetFile, targetCharset), targetFormat);
 
@@ -156,7 +156,7 @@ public class DataFileCSVMergeController extends FilesMergeController {
                         .setDataName(targetFile.getName())
                         .setCharset(targetCharset)
                         .setHasHeader(csvTargetController.withNamesCheck.isSelected())
-                        .setDelimiter(csvTargetController.delimiter + "");
+                        .setDelimiter(csvTargetController.getDelimiterValue());
                 if (def.getD2did() < 0) {
                     tableData2DDefinition.insertData(conn, def);
                 } else {

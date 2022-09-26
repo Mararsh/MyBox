@@ -7,7 +7,6 @@ import mara.mybox.controller.BaseController;
 import mara.mybox.controller.Data2DManageController;
 import mara.mybox.controller.DataFileCSVController;
 import mara.mybox.controller.DataFileExcelController;
-import mara.mybox.controller.DataFileTextController;
 import mara.mybox.controller.DataInMyBoxClipboardController;
 import mara.mybox.controller.DataTablesController;
 import mara.mybox.controller.MatricesManageController;
@@ -386,7 +385,7 @@ public class Data2DDefinition extends BaseData {
             case Excel:
                 return DataFileExcelController.open(def);
             case Texts:
-                return DataFileTextController.open(def);
+                return DataFileCSVController.open(def);
             case MyBoxClipboard:
                 return DataInMyBoxClipboardController.open(def);
             case Matrix:

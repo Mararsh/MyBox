@@ -21,7 +21,7 @@ import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableNumberCell;
-import mara.mybox.fxml.cell.TableTextCell;
+import mara.mybox.fxml.cell.TableTextTruncCell;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -63,7 +63,7 @@ public class TextInMyBoxClipboardController extends BaseSysTableController<TextC
         try {
             super.initColumns();
             textColumn.setCellValueFactory(new PropertyValueFactory<>("text"));
-            textColumn.setCellFactory(new TableTextCell());
+            textColumn.setCellFactory(new TableTextTruncCell());
 
             lengthColumn.setCellValueFactory(new PropertyValueFactory<>("length"));
             lengthColumn.setCellFactory(new TableNumberCell());

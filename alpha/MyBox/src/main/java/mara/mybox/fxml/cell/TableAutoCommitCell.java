@@ -16,7 +16,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
@@ -61,20 +60,6 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
 
     public TableAutoCommitCell(final StringConverter<T> conv) {
         super(conv);
-        this.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                editText();
-            }
-        });
-
-    }
-
-    public void editText() {
-        TableView<S> table = getTableView();
-        if (table != null) {
-            table.edit(rowIndex(), getTableColumn());
-        }
     }
 
     public boolean valid() {
@@ -89,12 +74,33 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
         return true;
     }
 
-    public int rowIndex() {
-        TableRow row = getTableRow();
-        return row == null ? -1 : row.getIndex();
+    public boolean changed(final T value) {
+        T oValue = getItem();
+        if (oValue == null) {
+            return value != null;
+        } else {
+            return !oValue.equals(value);
+        }
     }
 
-    public S row() {
+    public int rowIndex() {
+        try {
+            TableRow row = getTableRow();
+            if (row == null) {
+                return -1;
+            }
+            int index = row.getIndex();
+            if (index >= 0 && index < size()) {
+                return index;
+            } else {
+                return -2;
+            }
+        } catch (Exception e) {
+            return -3;
+        }
+    }
+
+    public S dataRow() {
         try {
             int index = rowIndex();
             if (index < 0) {
@@ -108,10 +114,22 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
         }
     }
 
+    public int size() {
+        try {
+            return getTableView().getItems().size();
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return -1;
+        }
+    }
+
     @Override
     public void startEdit() {
         super.startEdit();
+        initEditor();
+    }
 
+    public void initEditor() {
         isEdit = true;
         if (focusListener == null) {
             initListeners();
@@ -193,43 +211,70 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
         };
     }
 
+    public void clearEditor() {
+        if (textFieldRef != null) {
+            textFieldRef.focusedProperty().removeListener(focusListener);
+            textFieldRef.setOnKeyPressed(null);
+            textFieldRef.textProperty().removeListener(editListener);
+            textFieldRef.setStyle(null);
+        }
+    }
+
     @Override
-    public void commitEdit(final T value) {
+    public void commitEdit(T value) {
         try {
+            clearEditor();
             boolean valid = valid(value);
+            boolean changed = changed(value);
             if (isEditing()) {
-                if (valid) {
+                if (changed && valid) {
                     super.commitEdit(value);
+                    refreshDataRow();
                 } else {
                     cancelEdit();
                 }
             } else {
-                TableView<S> table = getTableView();
-                TableRow<S> row = getTableRow();
-                TableColumn<S, T> column = getTableColumn();
-                if (valid && table != null && row != null && column != null) {
-                    final TablePosition<S, T> pos = new TablePosition<>(table, row.getIndex(), column); // instead of tbl.getEditingCell()
-                    final CellEditEvent<S, T> ev = new CellEditEvent<>(table, pos, TableColumn.editCommitEvent(), value);
-                    Event.fireEvent(column, ev);
-                    updateItem(value, false);
-                } else {
-                    cancelEdit();
-                }
-                if (table != null) {
-                    table.edit(-1, null);
-                }
-            }
-            if (textFieldRef != null) {
-                textFieldRef.focusedProperty().removeListener(focusListener);
-                textFieldRef.setOnKeyPressed(null);
-                textFieldRef.textProperty().removeListener(editListener);
-                textFieldRef.setStyle(null);
+                commit(value, valid, changed);
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
     }
 
+    public void commit(T value, boolean valid, boolean changed) {
+        try {
+            TableView<S> table = getTableView();
+            if (valid && valid && table != null) {
+                TableRow<S> row = getTableRow();
+                TableColumn<S, T> column = getTableColumn();
+                if (row == null || column == null) {
+                    cancelEdit();
+                } else {
+                    TablePosition<S, T> pos = new TablePosition<>(table, row.getIndex(), column); // instead of tbl.getEditingCell()
+                    CellEditEvent<S, T> ev = new CellEditEvent<>(table, pos, TableColumn.editCommitEvent(), value);
+                    Event.fireEvent(column, ev);
+                    updateItem(value, false);
+                    refreshDataRow();
+                }
+            } else {
+                cancelEdit();
+            }
+            if (table != null) {
+                table.edit(-1, null);
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    public void refreshDataRow() {
+        try {
+            int rowIndex = rowIndex();
+            getTableView().getItems().set(rowIndex, getTableView().getItems().get(rowIndex));
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
 
     /*
         static 

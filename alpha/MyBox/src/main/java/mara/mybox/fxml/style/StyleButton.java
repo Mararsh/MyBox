@@ -318,6 +318,9 @@ public class StyleButton {
         if (id.startsWith("cat")) {
             return new StyleData(id, message("Meow"), "", "iconCat.png");
         }
+        if (id.startsWith("help")) {
+            return new StyleData(id, message("HelpMe"), "", "iconClaw.png");
+        }
         if (id.startsWith("edit")) {
             switch (id) {
                 case "editOkButton":
@@ -357,9 +360,7 @@ public class StyleButton {
         if (id.startsWith("refresh")) {
             return new StyleData(id, message("Refresh"), "", "iconRefresh.png");
         }
-        if (id.startsWith("help")) {
-            return new StyleData(id, message("HelpMe"), "", "iconCatFoot.png");
-        }
+
         if (id.startsWith("manufacture")) {
             return new StyleData(id, message("Manufacture"), "", "iconEdit.png");
         }

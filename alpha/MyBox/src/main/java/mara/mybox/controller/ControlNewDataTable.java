@@ -155,6 +155,7 @@ public class ControlNewDataTable extends BaseController {
             if (dataTable == null) {
                 return false;
             }
+            dataTable.setComments(data2D.getComments());
             tableData2D = dataTable.getTableData2D();
             return true;
         } catch (Exception e) {
@@ -182,7 +183,7 @@ public class ControlNewDataTable extends BaseController {
                 taskController.updateLogs(message("Failed"));
                 return false;
             }
-            dataTable.recordTable(conn, tableData2D.getTableName(), dataTable.getColumns());
+            dataTable.recordTable(conn, tableData2D.getTableName(), dataTable.getColumns(), dataTable.getComments());
             taskController.updateLogs(message("Record"));
             return true;
         } catch (Exception e) {

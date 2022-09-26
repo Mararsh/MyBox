@@ -31,8 +31,6 @@ import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.JsonTools;
-import mara.mybox.tools.TextFileTools;
-import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.apache.commons.csv.CSVPrinter;
@@ -55,12 +53,12 @@ public class ControlDataConvert extends BaseController {
     protected List<String> names;
     protected List<Data2DColumn> columns;
     protected boolean firstRow, skip;
-    protected File csvFile, textFile, xmlFile, jsonFile, htmlFile, pdfFile, xlsxFile, dataClipboardFile;
+    protected File csvFile, xmlFile, jsonFile, htmlFile, pdfFile, xlsxFile, dataClipboardFile;
     protected CSVPrinter csvPrinter, dataClipboardPrinter;
-    protected BufferedWriter textWriter, htmlWriter, xmlWriter, jsonWriter;
+    protected BufferedWriter htmlWriter, xmlWriter, jsonWriter;
     protected XSSFWorkbook xssfBook;
     protected XSSFSheet xssfSheet;
-    protected String indent = "    ", filePrefix, textDelimiter;
+    protected String indent = "    ", filePrefix, csvDelimiter;
     protected List<Integer> columnWidths;
     protected PaginatedPdfTable pdfTable;
     protected List<List<String>> pageRows;
@@ -71,16 +69,14 @@ public class ControlDataConvert extends BaseController {
     @FXML
     protected ComboBox<String> maxLinesSelector;
     @FXML
-    protected CheckBox csvCheck, textsCheck, pdfCheck, htmlCheck, xmlCheck, jsonCheck, excelCheck,
+    protected CheckBox csvCheck, pdfCheck, htmlCheck, xmlCheck, jsonCheck, excelCheck,
             myBoxClipboardCheck, rowNumberCheck, excelWithNamesCheck;
     @FXML
     protected TextArea cssArea;
     @FXML
     protected TextField widthList;
     @FXML
-    protected ControlCsvOptions csvWriteController;
-    @FXML
-    protected ControlTextOptions textWriteOptionsController;
+    protected ControlTextOptions csvWriteController;
     @FXML
     protected ControlPdfWriteOptions pdfOptionsController;
 
@@ -98,7 +94,6 @@ public class ControlDataConvert extends BaseController {
         initChecks();
         initCSV();
         initExcel();
-        initTexts();
         initPDF();
         initHtml();
         initOthers();
@@ -110,14 +105,6 @@ public class ControlDataConvert extends BaseController {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                 UserConfig.setBoolean(baseName + "CSV", csvCheck.isSelected());
-            }
-        });
-
-        textsCheck.setSelected(UserConfig.getBoolean(baseName + "Text", true));
-        textsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                UserConfig.setBoolean(baseName + "Text", textsCheck.isSelected());
             }
         });
 
@@ -171,7 +158,7 @@ public class ControlDataConvert extends BaseController {
     }
 
     private void initCSV() {
-        csvWriteController.setControls(baseName + "Write");
+        csvWriteController.setControls(baseName + "CSVWrite", false);
     }
 
     private void initExcel() {
@@ -181,10 +168,6 @@ public class ControlDataConvert extends BaseController {
                 UserConfig.setBoolean(baseName + "ExcelTargetWithNames", newValue);
             }
         });
-    }
-
-    private void initTexts() {
-        textWriteOptionsController.setControls(baseName + "Write", false);
     }
 
     private void initHtml() {
@@ -248,7 +231,6 @@ public class ControlDataConvert extends BaseController {
     @Override
     public void selectAllAction() {
         csvCheck.setSelected(true);
-        textsCheck.setSelected(true);
         pdfCheck.setSelected(true);
         htmlCheck.setSelected(true);
         xmlCheck.setSelected(true);
@@ -261,7 +243,6 @@ public class ControlDataConvert extends BaseController {
     @Override
     public void selectNoneAction() {
         csvCheck.setSelected(false);
-        textsCheck.setSelected(false);
         pdfCheck.setSelected(false);
         htmlCheck.setSelected(false);
         xmlCheck.setSelected(false);
@@ -313,11 +294,7 @@ public class ControlDataConvert extends BaseController {
             if (htmlCheck.isSelected()) {
                 UserConfig.setString(baseName + "Css", cssArea.getText());
             }
-            if (csvCheck.isSelected() && csvWriteController.delimiterInput.getStyle().equals(UserConfig.badStyle())) {
-                return false;
-            }
-            if (textsCheck.isSelected()
-                    && textWriteOptionsController.delimiterController.delimiterInput.getStyle().equals(UserConfig.badStyle())) {
+            if (csvCheck.isSelected() && csvWriteController.delimiterController.delimiterInput.getStyle().equals(UserConfig.badStyle())) {
                 return false;
             }
             return true;
@@ -362,7 +339,6 @@ public class ControlDataConvert extends BaseController {
 
     private void initWriters() {
         csvPrinter = null;
-        textWriter = null;
         htmlWriter = null;
         xmlWriter = null;
         jsonWriter = null;
@@ -370,7 +346,6 @@ public class ControlDataConvert extends BaseController {
         dataClipboardPrinter = null;
 
         csvFile = null;
-        textFile = null;
         htmlFile = null;
         xmlFile = null;
         xlsxFile = null;
@@ -399,23 +374,11 @@ public class ControlDataConvert extends BaseController {
                 csvFile = parent.makeTargetFile(currentPrefix, ".csv", targetPath);
                 if (csvFile != null) {
                     updateLogs(message("Writing") + " " + csvFile.getAbsolutePath());
+                    csvDelimiter = csvWriteController.delimiterController.getDelimiterValue();
                     csvPrinter = new CSVPrinter(new FileWriter(csvFile, csvWriteController.charset),
-                            CsvTools.csvFormat(csvWriteController.delimiter));
+                            CsvTools.csvFormat(csvDelimiter));
                     if (csvWriteController.withNamesCheck.isSelected()) {
                         csvPrinter.printRecord(names);
-                    }
-                } else if (skip) {
-                    updateLogs(message("Skipped"));
-                }
-            }
-            if (textsCheck.isSelected()) {
-                textFile = parent.makeTargetFile(currentPrefix, ".txt", targetPath);
-                if (textFile != null) {
-                    updateLogs(message("Writing") + " " + textFile.getAbsolutePath());
-                    textWriter = new BufferedWriter(new FileWriter(textFile, textWriteOptionsController.charset));
-                    textDelimiter = TextTools.delimiterValue(textWriteOptionsController.delimiterName);
-                    if (textWriteOptionsController.withNamesCheck.isSelected()) {
-                        TextFileTools.writeLine(textWriter, names, textDelimiter);
                     }
                 } else if (skip) {
                     updateLogs(message("Skipped"));
@@ -537,10 +500,6 @@ public class ControlDataConvert extends BaseController {
                 csvPrinter.printRecord(row);
             }
 
-            if (textWriter != null) {
-                TextFileTools.writeLine(textWriter, row, textDelimiter);
-            }
-
             if (htmlWriter != null) {
                 htmlWriter.write(StringTable.tableRow(row));
             }
@@ -627,25 +586,8 @@ public class ControlDataConvert extends BaseController {
                 Data2D d = Data2D.create(Data2DDefinition.Type.CSV);
                 d.setTask(task).setFile(csvFile)
                         .setCharset(csvWriteController.charset)
-                        .setDelimiter(csvWriteController.delimiter + "")
+                        .setDelimiter(csvDelimiter)
                         .setHasHeader(csvWriteController.withNamesCheck.isSelected())
-                        .setDataName(d.dataName())
-                        .setColsNumber(columns.size())
-                        .setRowsNumber(dataRowIndex);
-                Data2D.saveAttributes(conn, d, columns);
-                conn.commit();
-            }
-
-            if (textWriter != null && textFile != null) {
-                textWriter.flush();
-                textWriter.close();
-                parent.targetFileGenerated(textFile, VisitHistory.FileType.Text);
-                textWriter = null;
-                Data2D d = Data2D.create(Data2DDefinition.Type.Texts);
-                d.setTask(task).setFile(textFile)
-                        .setCharset(textWriteOptionsController.charset)
-                        .setDelimiter(textDelimiter)
-                        .setHasHeader(textWriteOptionsController.withNamesCheck.isSelected())
                         .setDataName(d.dataName())
                         .setColsNumber(columns.size())
                         .setRowsNumber(dataRowIndex);
@@ -739,14 +681,10 @@ public class ControlDataConvert extends BaseController {
     public void openFiles() {
         if (csvFile != null && csvFile.exists()) {
             DataFileCSVController.open(csvFile, csvWriteController.charset,
-                    csvWriteController.withNamesCheck.isSelected(), csvWriteController.delimiter);
+                    csvWriteController.withNamesCheck.isSelected(), csvDelimiter);
         }
         if (xlsxFile != null && xlsxFile.exists()) {
             DataFileExcelController.open(xlsxFile, excelWithNamesCheck.isSelected());
-        }
-        if (textFile != null && textFile.exists()) {
-            DataFileTextController.open(textFile, textWriteOptionsController.charset,
-                    textWriteOptionsController.withNamesCheck.isSelected(), textWriteOptionsController.delimiterName);
         }
         if (pdfFile != null && pdfFile.exists()) {
             PdfViewController.open(pdfFile);

@@ -159,6 +159,7 @@ public class ColumnDefinition extends BaseData {
             minValue = c.minValue;
             columnValues = c.columnValues;
             statistic = c.statistic;
+            description = c.description;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -295,6 +296,10 @@ public class ColumnDefinition extends BaseData {
     public boolean isNumberType() {
         return type == ColumnType.Double || type == ColumnType.Float
                 || type == ColumnType.Integer || type == ColumnType.Long || type == ColumnType.Short;
+    }
+
+    public boolean isTextType() {
+        return type == ColumnType.String || type == ColumnType.Text;
     }
 
     public String random(Random random, int maxRandom, short scale, boolean nonNegative) {

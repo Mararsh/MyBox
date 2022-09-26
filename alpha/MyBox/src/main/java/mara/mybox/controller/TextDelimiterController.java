@@ -32,7 +32,7 @@ public class TextDelimiterController extends BaseController {
             delimiterName = initName;
 
             delimiterController.setControls(baseName, hasBlanks);
-            delimiterController.setDelimiter(initName);
+            delimiterController.setDelimiterName(initName);
             delimiterController.changedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {

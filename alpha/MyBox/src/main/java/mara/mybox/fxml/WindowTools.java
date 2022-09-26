@@ -261,7 +261,9 @@ public class WindowTools {
             newStage.initStyle(StageStyle.DECORATED);
             newStage.initOwner(null);
             BaseController controller = initScene(newStage, newFxml, stageStyle);
-            closeWindow(parent);
+            if (controller != null) {
+                closeWindow(parent);
+            }
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

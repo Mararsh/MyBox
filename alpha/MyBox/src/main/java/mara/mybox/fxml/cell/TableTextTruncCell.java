@@ -9,7 +9,7 @@ import javafx.util.Callback;
  * @CreateDate 2021-7-3
  * @License Apache License Version 2.0
  */
-public class TableTextCell<T> extends TableCell<T, String>
+public class TableTextTruncCell<T> extends TableCell<T, String>
         implements Callback<TableColumn<T, String>, TableCell<T, String>> {
 
     @Override

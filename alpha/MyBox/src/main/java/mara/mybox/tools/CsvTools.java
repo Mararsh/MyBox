@@ -14,13 +14,13 @@ import org.apache.commons.csv.CSVPrinter;
  */
 public class CsvTools {
 
-    public static Builder builder(char delimiter) {
+    public static Builder builder(String delimiter) {
         return CSVFormat.Builder.create()
                 .setIgnoreEmptyLines(true).setTrim(true).setNullString("")
                 .setDelimiter(delimiter);
     }
 
-    public static CSVFormat csvFormat(char delimiter, boolean hasHeader) {
+    public static CSVFormat csvFormat(String delimiter, boolean hasHeader) {
         Builder builder = builder(delimiter);
         if (hasHeader) {
             builder.setHeader().setSkipHeaderRecord(true);
@@ -30,12 +30,12 @@ public class CsvTools {
         return builder.build();
     }
 
-    public static CSVFormat csvFormat(char delimiter) {
+    public static CSVFormat csvFormat(String delimiter) {
         return csvFormat(delimiter, true);
     }
 
     public static CSVFormat csvFormat() {
-        return csvFormat(',', true);
+        return csvFormat(",", true);
     }
 
     public static CSVPrinter csvPrinter(File csvFile) {

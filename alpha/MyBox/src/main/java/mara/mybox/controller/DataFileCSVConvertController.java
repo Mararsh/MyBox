@@ -23,7 +23,7 @@ import org.apache.commons.csv.CSVRecord;
 public class DataFileCSVConvertController extends BaseDataConvertController {
 
     @FXML
-    protected ControlCsvOptions csvReadController;
+    protected ControlTextOptions csvReadController;
 
     public DataFileCSVConvertController() {
         baseTitle = message("CsvConvert");
@@ -31,7 +31,7 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
 
     @Override
     public void setFileType() {
-        setFileType(VisitHistory.FileType.CSV, VisitHistory.FileType.All);
+        setFileType(VisitHistory.FileType.Text, VisitHistory.FileType.All);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
         try {
             super.initOptionsSection();
 
-            csvReadController.setControls(baseName + "Read");
+            csvReadController.setControls(baseName + "Read", true);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -47,7 +47,7 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
 
     @Override
     public boolean makeMoreParameters() {
-        if (csvReadController.delimiterInput.getStyle().equals(UserConfig.badStyle())
+        if (csvReadController.delimiterController.delimiterInput.getStyle().equals(UserConfig.badStyle())
                 || (!csvReadController.autoDetermine && csvReadController.charset == null)) {
             return false;
         }
@@ -73,7 +73,7 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
         }
         File validFile = FileTools.removeBOM(srcFile);
         try ( CSVParser parser = CSVParser.parse(validFile, fileCharset,
-                CsvTools.csvFormat(csvReadController.delimiter, true))) {
+                CsvTools.csvFormat(csvReadController.getDelimiterValue(), true))) {
             List<String> names = new ArrayList<>();
             names.addAll(parser.getHeaderNames());
             convertController.setParameters(targetPath, names, filePrefix(srcFile), skip);
@@ -105,7 +105,7 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
         }
         File validFile = FileTools.removeBOM(srcFile);
         try ( CSVParser parser = CSVParser.parse(validFile, fileCharset,
-                CsvTools.csvFormat(csvReadController.delimiter, false))) {
+                CsvTools.csvFormat(csvReadController.getDelimiterValue(), false))) {
             List<String> names = null;
             for (CSVRecord record : parser) {
                 if (task == null || task.isCancelled()) {
