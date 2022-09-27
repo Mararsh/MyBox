@@ -39,7 +39,7 @@ License:    Apache License Version 2.0
                 </Button>
          </children>
       </HBox>
-        <FlowPane hgap="2.0" vgap="2.0">
+        <FlowPane fx:id="specialPane" hgap="2.0" vgap="2.0">
             <children>
             <RadioButton fx:id="tabRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Tab" toggleGroup="$delimiterGroup" />
                 <RadioButton fx:id="blankRadio" mnemonicParsing="false" text="%Blank" toggleGroup="$delimiterGroup" />

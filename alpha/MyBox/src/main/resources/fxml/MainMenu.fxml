@@ -217,6 +217,10 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#openDataExcel" text="%EditExcel" />
                                         <MenuItem mnemonicParsing="false" onAction="#openExcelConvert" text="%ExcelConvert" />
                                         <MenuItem mnemonicParsing="false" onAction="#openExcelMerge" text="%ExcelMerge" />
+                                        <SeparatorMenuItem mnemonicParsing="false" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openDataText" text="%EditTextDataFile" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openTextDataConvert" text="%TextDataConvert" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openTextDataMerge" text="%TextDataMerge" />
                                     </items>
                                 </Menu>
                                 <Menu mnemonicParsing="false" text="%Matrix">

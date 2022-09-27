@@ -444,6 +444,11 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 try {
                     switch (data2D.getType()) {
                         case Texts:
+                            targetData = DataTable.toText(task, dataTable);
+                            if (targetData != null) {
+                                recordFileWritten(targetData.getFile(), VisitHistory.FileType.Text);
+                            }
+                            break;
                         case CSV:
                             targetData = DataTable.toCSV(task, dataTable);
                             if (targetData != null) {

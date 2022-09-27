@@ -21,7 +21,6 @@ import mara.mybox.value.UserConfig;
 public class ControlTextOptions extends BaseController {
 
     protected Charset charset;
-    protected String delimiterName;
     protected boolean autoDetermine;
 
     @FXML
@@ -35,9 +34,9 @@ public class ControlTextOptions extends BaseController {
     @FXML
     protected RadioButton autoCharsetRadio, charsetKnownRadio;
 
-    public void setControls(String baseName, boolean hasBlanks) {
+    public void setControls(String name, boolean isRead, boolean canRegx) {
         try {
-            this.baseName = baseName;
+            baseName = baseName + "_" + name;
 
             if (charsetGroup == null) {
                 autoDetermine = false;
@@ -65,14 +64,7 @@ public class ControlTextOptions extends BaseController {
                 }
             });
 
-            delimiterController.setControls(baseName, hasBlanks);
-            delimiterName = delimiterController.delimiterName;
-            delimiterController.changedNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    delimiterName = delimiterController.delimiterName;
-                }
-            });
+            delimiterController.setControls(baseName, isRead, canRegx);
 
             withNamesCheck.setSelected(UserConfig.getBoolean(baseName + "TextWithNames", true));
             withNamesCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -115,6 +107,10 @@ public class ControlTextOptions extends BaseController {
 
     protected void setDelimiterName(String delimiter) {
         delimiterController.setDelimiterName(delimiter);
+    }
+
+    public String getDelimiterName() {
+        return delimiterController.getDelimiterName();
     }
 
     public String getDelimiterValue() {

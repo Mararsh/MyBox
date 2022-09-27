@@ -32,11 +32,13 @@ public abstract class Data2D extends Data2D_Operations {
         Data2D data;
         switch (type) {
             case CSV:
-            case Texts:
                 data = new DataFileCSV();
                 break;
             case Excel:
                 data = new DataFileExcel();
+                break;
+            case Texts:
+                data = new DataFileText();
                 break;
             case Matrix:
                 data = new DataMatrix();

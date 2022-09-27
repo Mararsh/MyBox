@@ -4,11 +4,13 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.FlowPane;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.TextTools;
@@ -20,10 +22,10 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public class ControlTextDelimiter extends BaseController {
-    
+
     protected String delimiterName;
     protected SimpleBooleanProperty changedNotify;
-    
+
     @FXML
     protected ToggleGroup delimiterGroup;
     @FXML
@@ -34,17 +36,21 @@ public class ControlTextDelimiter extends BaseController {
             underlineRadio, equalRadio, lessRadio, greateRadio, singleQuoteRadio;
     @FXML
     protected TextField delimiterInput;
-    
+    @FXML
+    protected Button exampleButton;
+    @FXML
+    protected FlowPane specialPane;
+
     public ControlTextDelimiter() {
         changedNotify = new SimpleBooleanProperty(false);
     }
-    
-    public void setControls(String baseName, boolean hasBlanks) {
+
+    public void setControls(String name, boolean isRead, boolean canRegx) {
         try {
-            this.baseName = baseName;
-            
+            baseName = baseName + "_" + name;
+
             setDelimiterName(UserConfig.getString(baseName + "TextDelimiter", ","));
-            
+
             delimiterGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
@@ -115,7 +121,7 @@ public class ControlTextDelimiter extends BaseController {
                     changedNotify.set(!changedNotify.get());
                 }
             });
-            
+
             delimiterInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -132,19 +138,20 @@ public class ControlTextDelimiter extends BaseController {
                     changedNotify.set(!changedNotify.get());
                 }
             });
-            
-            if (!hasBlanks) {
+
+            if (!isRead) {
                 if (blanksRadio.isSelected()) {
                     blankRadio.setSelected(true);
                 }
-                blanksRadio.setDisable(true);
+                specialPane.getChildren().remove(blanksRadio);
             }
-            
+            exampleButton.setVisible(isRead && canRegx);
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     public void setDelimiterName(String name) {
         try {
             if (name == null) {
@@ -153,21 +160,26 @@ public class ControlTextDelimiter extends BaseController {
             delimiterName = name;
             switch (delimiterName) {
                 case TextTools.BlankName:
+                case "blank":
                 case " ":
                     blankRadio.setSelected(true);
                     break;
                 case TextTools.Blank4Name:
+                case "blank4":
                 case "    ":
                     blank4Radio.setSelected(true);
                     break;
                 case TextTools.Blank8Name:
+                case "blank8":
                 case "        ":
                     blank8Radio.setSelected(true);
                     break;
                 case TextTools.BlanksName:
+                case "blanks":
                     blanksRadio.setSelected(true);
                     break;
                 case TextTools.TabName:
+                case "tab":
                 case "\t":
                     tabRadio.setSelected(true);
                     break;
@@ -245,25 +257,25 @@ public class ControlTextDelimiter extends BaseController {
                         delimiterInput.setText(delimiterName);
                     }
             }
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     public String getDelimiterName() {
         return delimiterName;
     }
-    
+
     public String getDelimiterValue() {
         return TextTools.delimiterValue(delimiterName);
     }
-    
+
     @FXML
     public void popRegexExample(MouseEvent mouseEvent) {
         PopTools.popRegexExample(this, delimiterInput, mouseEvent);
     }
-    
+
     @Override
     public void cleanPane() {
         try {
@@ -273,5 +285,5 @@ public class ControlTextDelimiter extends BaseController {
         }
         super.cleanPane();
     }
-    
+
 }

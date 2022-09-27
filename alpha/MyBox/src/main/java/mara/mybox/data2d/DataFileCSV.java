@@ -1,23 +1,20 @@
 package mara.mybox.data2d;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.DataFileCSVController;
 import mara.mybox.controller.DataFileExcelController;
+import mara.mybox.controller.DataFileTextController;
 import mara.mybox.controller.DataInMyBoxClipboardController;
 import mara.mybox.controller.DataTablesController;
 import mara.mybox.controller.MatricesManageController;
-import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -39,7 +36,7 @@ import org.apache.commons.csv.CSVRecord;
  * @CreateDate 2021-10-17
  * @License Apache License Version 2.0
  */
-public class DataFileCSV extends DataFile {
+public class DataFileCSV extends DataFileText {
 
     public DataFileCSV() {
         type = Type.CSV;
@@ -51,76 +48,11 @@ public class DataFileCSV extends DataFile {
         this.delimiter = guessDelimiter();
     }
 
+    @Override
     public String[] delimters() {
-        String[] delimiters = {",", " ", "    ", "        ", "\t", "|", "@",
-            "#", ";", ":", "*", "%", "$", "_", "&", "-", "=", "!", "\"",
-            "'", "<", ">"};
+        String[] delimiters = {",", " ", "|", "@", "#", ";", ":", "*",
+            "%", "$", "_", "&", "-", "=", "!", "\"", "'", "<", ">"};
         return delimiters;
-    }
-
-    public final String guessDelimiter() {
-        if (file == null) {
-            return null;
-        }
-        String[] delimiters = delimters();
-        if (charset == null) {
-            charset = TextFileTools.charset(file);
-        }
-        if (charset == null) {
-            charset = Charset.forName("UTF-8");
-        }
-        File validFile = FileTools.removeBOM(file);
-        try ( BufferedReader reader = new BufferedReader(new FileReader(validFile, charset))) {
-            String line1 = reader.readLine();
-            if (line1 == null) {
-                return null;
-            }
-            int[] count1 = new int[delimiters.length];
-            int maxCount1 = 0, maxCountIndex1 = -1;
-            for (int i = 0; i < delimiters.length; i++) {
-                count1[i] = FindReplaceString.count(line1, delimiters[i]);
-//                MyBoxLog.console(">>" + values[i] + "<<<   " + count1[i]);
-                if (count1[i] > maxCount1) {
-                    maxCount1 = count1[i];
-                    maxCountIndex1 = i;
-                }
-            }
-//            MyBoxLog.console(maxCount1);
-            String line2 = reader.readLine();
-            if (line2 == null) {
-                if (maxCountIndex1 >= 0) {
-                    return delimiters[maxCountIndex1];
-                } else {
-                    hasHeader = false;
-                    return null;
-                }
-            }
-            int[] count2 = new int[delimiters.length];
-            int maxCount2 = 0, maxCountIndex2 = -1;
-            for (int i = 0; i < delimiters.length; i++) {
-                count2[i] = FindReplaceString.count(line2, delimiters[i]);
-//                MyBoxLog.console(">>" + values[i] + "<<<   " + count1[i]);
-                if (count1[i] == count2[i] && count2[i] > maxCount2) {
-                    maxCount2 = count2[i];
-                    maxCountIndex2 = i;
-                }
-            }
-//            MyBoxLog.console(maxCount2);
-            if (maxCountIndex2 >= 0) {
-                return delimiters[maxCountIndex2];
-            } else {
-                if (maxCountIndex1 >= 0) {
-                    return delimiters[maxCountIndex1];
-                } else {
-                    hasHeader = false;
-                    return null;
-                }
-            }
-        } catch (Exception e) {
-//            MyBoxLog.console(e.toString());
-        }
-        hasHeader = false;
-        return null;
     }
 
     public CSVFormat cvsFormat() {
@@ -128,49 +60,6 @@ public class DataFileCSV extends DataFile {
             delimiter = ",";
         }
         return CsvTools.csvFormat(delimiter, hasHeader);
-    }
-
-    public void setOptions(boolean hasHeader, Charset charset, String delimiter) {
-        options = new HashMap<>();
-        options.put("hasHeader", hasHeader);
-        options.put("charset", charset);
-        options.put("delimiter", delimiter);
-    }
-
-    @Override
-    public void applyOptions() {
-        try {
-            if (options == null) {
-                return;
-            }
-            if (options.containsKey("hasHeader")) {
-                hasHeader = (boolean) (options.get("hasHeader"));
-            }
-            if (options.containsKey("charset")) {
-                charset = (Charset) (options.get("charset"));
-            }
-            if (options.containsKey("delimiter")) {
-                delimiter = (String) (options.get("delimiter"));
-            }
-        } catch (Exception e) {
-        }
-    }
-
-    @Override
-    public boolean checkForLoad() {
-        if (charset == null && file != null) {
-            charset = TextFileTools.charset(file);
-        }
-        if (charset == null) {
-            charset = Charset.forName("UTF-8");
-        }
-        if (delimiter == null || delimiter.isEmpty()) {
-            delimiter = guessDelimiter();
-        }
-        if (delimiter == null || delimiter.isEmpty()) {
-            delimiter = ",";
-        }
-        return super.checkForLoad();
     }
 
     @Override
@@ -305,6 +194,7 @@ public class DataFileCSV extends DataFile {
         }
     }
 
+    @Override
     public File tmpFile(String dname, List<String> cols, List<List<String>> data) {
         if (cols == null || cols.isEmpty()) {
             if (data == null || data.isEmpty()) {
@@ -455,10 +345,12 @@ public class DataFileCSV extends DataFile {
         if (csvFile == null || target == null) {
             return;
         }
-        if ("csv".equals(target) || "texts".equals(target)) {
+        if ("csv".equals(target)) {
             DataFileCSVController.loadCSV(csvFile);
         } else if ("excel".equals(target)) {
             DataFileExcelController.loadCSV(csvFile);
+        } else if ("texts".equals(target)) {
+            DataFileTextController.loadCSV(csvFile);
         } else if ("matrix".equals(target)) {
             MatricesManageController.loadCSV(csvFile);
         } else if ("systemClipboard".equals(target)) {
@@ -474,10 +366,12 @@ public class DataFileCSV extends DataFile {
         if (dataTable == null || target == null) {
             return;
         }
-        if ("csv".equals(target) || "texts".equals(target)) {
+        if ("csv".equals(target)) {
             DataFileCSVController.loadTable(dataTable);
         } else if ("excel".equals(target)) {
             DataFileExcelController.loadTable(dataTable);
+        } else if ("texts".equals(target)) {
+            DataFileTextController.loadTable(dataTable);
         } else if ("matrix".equals(target)) {
             MatricesManageController.loadTable(dataTable);
         } else if ("systemClipboard".equals(target)) {

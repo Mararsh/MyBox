@@ -46,7 +46,7 @@ public class DataFileCSVMergeController extends FilesMergeController {
 
     @Override
     public void setFileType() {
-        setFileType(VisitHistory.FileType.Text);
+        setFileType(VisitHistory.FileType.CSV);
     }
 
     @Override
@@ -69,8 +69,8 @@ public class DataFileCSVMergeController extends FilesMergeController {
     @Override
     public void initOptionsSection() {
         try {
-            csvSourceController.setControls(baseName + "Source", true);
-            csvTargetController.setControls(baseName + "Target", false);
+            csvSourceController.setControls(baseName + "Source", true, false);
+            csvTargetController.setControls(baseName + "Target", false, false);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -87,11 +87,11 @@ public class DataFileCSVMergeController extends FilesMergeController {
             }
             sourceCharset = csvSourceController.charset;
             sourceWithName = csvSourceController.withNamesCheck.isSelected();
-            sourceFormat = CsvTools.csvFormat(csvSourceController.getDelimiterValue(), sourceWithName);
+            sourceFormat = CsvTools.csvFormat(csvSourceController.getDelimiterName(), sourceWithName);
 
             targetCharset = csvTargetController.charset;
             targetWithName = csvTargetController.withNamesCheck.isSelected();
-            targetFormat = CsvTools.csvFormat(csvTargetController.getDelimiterValue(), targetWithName);
+            targetFormat = CsvTools.csvFormat(csvTargetController.getDelimiterName(), targetWithName);
 
             csvPrinter = new CSVPrinter(new FileWriter(targetFile, targetCharset), targetFormat);
 
@@ -156,7 +156,7 @@ public class DataFileCSVMergeController extends FilesMergeController {
                         .setDataName(targetFile.getName())
                         .setCharset(targetCharset)
                         .setHasHeader(csvTargetController.withNamesCheck.isSelected())
-                        .setDelimiter(csvTargetController.getDelimiterValue());
+                        .setDelimiter(csvTargetController.getDelimiterName());
                 if (def.getD2did() < 0) {
                     tableData2DDefinition.insertData(conn, def);
                 } else {

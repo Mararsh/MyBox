@@ -48,7 +48,6 @@ public abstract class BaseData2DController extends BaseController {
     protected Label nameLabel;
 
     public BaseData2DController() {
-        TipsLabelKey = "Data2DTips";
         type = Data2DDefinition.Type.Texts;
     }
 

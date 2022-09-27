@@ -19,7 +19,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -40,6 +39,7 @@ public class DataFileCSVController extends BaseData2DFileController {
 
     public DataFileCSVController() {
         baseTitle = message("EditCSV");
+        TipsLabelKey = "DataFileCSVTips";
     }
 
     @Override
@@ -54,7 +54,7 @@ public class DataFileCSVController extends BaseData2DFileController {
 
     @Override
     public void setFileType() {
-        setFileType(VisitHistory.FileType.Text);
+        setFileType(VisitHistory.FileType.CSV);
     }
 
     @Override
@@ -62,8 +62,8 @@ public class DataFileCSVController extends BaseData2DFileController {
         try {
             super.initControls();
 
-            csvReadController.setControls(baseName + "Read", true);
-            csvWriteController.setControls(baseName + "Write", false);
+            csvReadController.setControls(baseName + "Read", true, false);
+            csvWriteController.setControls(baseName + "Write", false, false);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -79,7 +79,7 @@ public class DataFileCSVController extends BaseData2DFileController {
             charset = csvReadController.charset;
         }
         dataFileCSV.setOptions(csvReadController.withNamesCheck.isSelected(),
-                charset, csvReadController.getDelimiterValue());
+                charset, csvReadController.getDelimiterName());
     }
 
     @Override
@@ -91,20 +91,20 @@ public class DataFileCSVController extends BaseData2DFileController {
         DataFileCSV targetData = new DataFileCSV();
         targetData.initFile(file)
                 .setCharset(csvWriteController.charset)
-                .setDelimiter(csvWriteController.getDelimiterValue())
+                .setDelimiter(csvWriteController.getDelimiterName())
                 .setHasHeader(csvWriteController.withNamesCheck.isSelected());
         return targetData;
     }
 
-    public void setFile(File file, Charset charset, boolean withName, String delimiterName) {
+    public void setFile(File file, Charset charset, boolean withName, String delimiter) {
         if (file == null || !checkBeforeNextAction()) {
             return;
         }
         csvReadController.withNamesCheck.setSelected(withName);
-        csvReadController.setDelimiterName(delimiterName);
+        csvReadController.setDelimiterName(delimiter);
         csvReadController.setCharset(charset);
         dataFileCSV.initFile(file);
-        dataFileCSV.setOptions(withName, charset, TextTools.delimiterValue(delimiterName));
+        dataFileCSV.setOptions(withName, charset, delimiter + "");
         dataController.readDefinition();
     }
 

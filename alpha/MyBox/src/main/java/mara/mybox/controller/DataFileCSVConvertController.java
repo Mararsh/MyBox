@@ -31,7 +31,7 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
 
     @Override
     public void setFileType() {
-        setFileType(VisitHistory.FileType.Text, VisitHistory.FileType.All);
+        setFileType(VisitHistory.FileType.CSV, VisitHistory.FileType.All);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
         try {
             super.initOptionsSection();
 
-            csvReadController.setControls(baseName + "Read", true);
+            csvReadController.setControls(baseName + "Read", true, false);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -73,7 +73,7 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
         }
         File validFile = FileTools.removeBOM(srcFile);
         try ( CSVParser parser = CSVParser.parse(validFile, fileCharset,
-                CsvTools.csvFormat(csvReadController.getDelimiterValue(), true))) {
+                CsvTools.csvFormat(csvReadController.getDelimiterName(), true))) {
             List<String> names = new ArrayList<>();
             names.addAll(parser.getHeaderNames());
             convertController.setParameters(targetPath, names, filePrefix(srcFile), skip);
@@ -105,7 +105,7 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
         }
         File validFile = FileTools.removeBOM(srcFile);
         try ( CSVParser parser = CSVParser.parse(validFile, fileCharset,
-                CsvTools.csvFormat(csvReadController.getDelimiterValue(), false))) {
+                CsvTools.csvFormat(csvReadController.getDelimiterName(), false))) {
             List<String> names = null;
             for (CSVRecord record : parser) {
                 if (task == null || task.isCancelled()) {

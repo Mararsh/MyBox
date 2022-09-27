@@ -527,11 +527,13 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                 tableController.toMyBoxClipboard(name, outputColumns, outputData);
                 break;
             case "csv":
-            case "texts":
                 DataFileCSVController.open(name, outputColumns, outputData);
                 break;
             case "excel":
                 DataFileExcelController.open(name, outputColumns, outputData);
+                break;
+            case "texts":
+                DataFileTextController.open(name, outputColumns, outputData);
                 break;
             case "matrix":
                 MatricesManageController.open(name, outputColumns, outputData);

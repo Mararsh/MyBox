@@ -419,6 +419,27 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         return toCSV(task, dataTable, csvFile, true);
     }
 
+    public static DataFileText toText(SingletonTask task, DataTable dataTable) {
+        if (task == null || dataTable == null || !dataTable.isValid()) {
+            return null;
+        }
+        File txtFile = TmpFileTools.getPathTempFile(AppPaths.getGeneratedPath(), dataTable.dataName(), ".txt");
+        DataFileCSV csvData = toCSV(task, dataTable, txtFile, false);
+        if (csvData != null && txtFile != null && txtFile.exists()) {
+            DataFileText targetData = new DataFileText();
+            targetData.setColumns(csvData.getColumns())
+                    .setFile(txtFile).setDataName(csvData.getDataName())
+                    .setCharset(Charset.forName("UTF-8")).setDelimiter(",")
+                    .setHasHeader(true)
+                    .setColsNumber(csvData.getColsNumber())
+                    .setRowsNumber(csvData.getRowsNumber());
+            targetData.saveAttributes();
+            return targetData;
+        } else {
+            return null;
+        }
+    }
+
     public static DataFileExcel toExcel(SingletonTask task, DataTable dataTable) {
         if (task == null || dataTable == null || !dataTable.isValid()) {
             return null;
@@ -685,6 +706,26 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                     .setHasHeader(targetHasHeader)
                     .cloneDefinitionAttributes(csvData);
             targetData.setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
+            targetData.saveAttributes();
+            return targetData;
+        } else {
+            return null;
+        }
+    }
+
+    public static DataFileText toText(DataFileCSV csvData) {
+        if (csvData == null) {
+            return null;
+        }
+        File csvFile = csvData.getFile();
+        if (csvFile == null || !csvFile.exists() || csvFile.length() == 0) {
+            return null;
+        }
+        File txtFile = getPathTempFile(AppPaths.getGeneratedPath(), csvData.dataName(), ".txt");
+        if (FileCopyTools.copyFile(csvFile, txtFile)) {
+            DataFileText targetData = new DataFileText();
+            targetData.cloneAll(csvData);
+            targetData.setType(Type.Texts).setFile(txtFile);
             targetData.saveAttributes();
             return targetData;
         } else {

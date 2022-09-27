@@ -49,6 +49,7 @@ public class DataFileExcelController extends BaseData2DFileController {
 
     public DataFileExcelController() {
         baseTitle = message("EditExcel");
+        TipsLabelKey = "DataFileExcelTips";
     }
 
     @Override

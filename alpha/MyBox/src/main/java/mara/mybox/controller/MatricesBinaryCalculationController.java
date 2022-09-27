@@ -53,7 +53,6 @@ public class MatricesBinaryCalculationController extends BaseController {
 
     public MatricesBinaryCalculationController() {
         baseTitle = message("MatricesBinaryCalculation");
-        TipsLabelKey = "Data2DTips";
     }
 
     @Override

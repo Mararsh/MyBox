@@ -82,10 +82,27 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
             loadScene(Fxmls.DataFileCSVMergeFxml);
         });
 
+        MenuItem TextData = new MenuItem(message("EditTextDataFile"));
+        TextData.setOnAction((ActionEvent event1) -> {
+            DataFileTextController c = (DataFileTextController) loadScene(Fxmls.DataFileTextFxml);
+            c.createAction();
+        });
+
+        MenuItem TextDataConvert = new MenuItem(message("TextDataConvert"));
+        TextDataConvert.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.DataFileTextConvertFxml);
+        });
+
+        MenuItem TextDataMerge = new MenuItem(message("TextDataMerge"));
+        TextDataMerge.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.DataFileTextMergeFxml);
+        });
+
         Menu DataFile = new Menu(message("DataFile"));
         DataFile.getItems().addAll(
                 EditCSV, CsvConvert, CsvMerge, new SeparatorMenuItem(),
-                EditExcel, ExcelConvert, ExcelMerge
+                EditExcel, ExcelConvert, ExcelMerge, new SeparatorMenuItem(),
+                TextData, TextDataConvert, TextDataMerge
         );
 
         MenuItem Dataset = new MenuItem(message("Dataset"));

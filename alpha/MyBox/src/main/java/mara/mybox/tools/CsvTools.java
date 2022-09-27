@@ -14,10 +14,17 @@ import org.apache.commons.csv.CSVPrinter;
  */
 public class CsvTools {
 
+    public static final char CommentsMarker = '#';
+
     public static Builder builder(String delimiter) {
         return CSVFormat.Builder.create()
-                .setIgnoreEmptyLines(true).setTrim(true).setNullString("")
-                .setDelimiter(delimiter);
+                .setDelimiter(TextTools.delimiterValue(delimiter))
+                .setIgnoreEmptyLines(true)
+                .setTrim(true)
+                .setNullString("")
+                .setCommentMarker(CommentsMarker)
+                .setAllowDuplicateHeaderNames(false)
+                .setAutoFlush(true);
     }
 
     public static CSVFormat csvFormat(String delimiter, boolean hasHeader) {

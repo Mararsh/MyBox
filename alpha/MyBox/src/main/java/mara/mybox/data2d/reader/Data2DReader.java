@@ -7,6 +7,7 @@ import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileExcel;
+import mara.mybox.data2d.DataFileText;
 import mara.mybox.data2d.DataFilter;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.dev.MyBoxLog;
@@ -50,6 +51,8 @@ public abstract class Data2DReader {
             return new DataFileExcelReader((DataFileExcel) data);
         } else if (data instanceof DataFileCSV) {
             return new DataFileCSVReader((DataFileCSV) data);
+        } else if (data instanceof DataFileText) {
+            return new DataFileTextReader((DataFileText) data);
         } else if (data instanceof DataTable) {
             return new DataTableReader((DataTable) data);
         }

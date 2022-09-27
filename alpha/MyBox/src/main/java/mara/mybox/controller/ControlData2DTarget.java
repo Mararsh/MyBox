@@ -32,7 +32,7 @@ public class ControlData2DTarget extends BaseController {
     @FXML
     protected ToggleGroup targetGroup;
     @FXML
-    protected RadioButton csvRadio, excelRadio, matrixRadio, databaseRadio,
+    protected RadioButton csvRadio, excelRadio, textsRadio, matrixRadio, databaseRadio,
             systemClipboardRadio, myBoxClipboardRadio, replaceRadio, insertRadio, appendRadio;
     @FXML
     protected ComboBox<String> rowSelector, colSelector;
@@ -111,6 +111,8 @@ public class ControlData2DTarget extends BaseController {
                 target = "csv";
             } else if (excelRadio.isSelected()) {
                 target = "excel";
+            } else if (textsRadio.isSelected()) {
+                target = "texts";
             } else if (matrixRadio.isSelected()) {
                 target = "matrix";
             } else if (systemClipboardRadio.isSelected()) {
@@ -179,6 +181,9 @@ public class ControlData2DTarget extends BaseController {
                     break;
                 case "excel":
                     excelRadio.setSelected(true);
+                    break;
+                case "texts":
+                    textsRadio.setSelected(true);
                     break;
                 case "matrix":
                     matrixRadio.setSelected(true);
