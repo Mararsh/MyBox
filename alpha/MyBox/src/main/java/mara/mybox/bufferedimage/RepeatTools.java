@@ -20,7 +20,7 @@ public class RepeatTools {
             if (source == null || scaleWidth <= 0 || scaleHeight <= 0 || repeatH <= 0 || repeatV <= 0) {
                 return source;
             }
-            BufferedImage scaled = ScaleTools.scaleImage(source, scaleWidth, scaleHeight);
+            BufferedImage scaled = ScaleTools.scaleImage(source, scaleWidth, scaleHeight, bgColor);
             int width = scaled.getWidth();
             int height = scaled.getHeight();
             int imageType = BufferedImage.TYPE_INT_ARGB;

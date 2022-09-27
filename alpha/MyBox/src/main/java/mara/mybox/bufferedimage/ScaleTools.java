@@ -1,5 +1,6 @@
 package mara.mybox.bufferedimage;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import mara.mybox.value.AppVariables;
@@ -12,7 +13,7 @@ import mara.mybox.value.Colors;
  */
 public class ScaleTools {
 
-    public static BufferedImage scaleImage(BufferedImage source, int width, int height) {
+    public static BufferedImage scaleImage(BufferedImage source, int width, int height, Color bgColor) {
         if (width <= 0 || height <= 0 || (width == source.getWidth() && height == source.getHeight())) {
             return source;
         }
@@ -22,10 +23,14 @@ public class ScaleTools {
         if (AppVariables.imageRenderHints != null) {
             g.addRenderingHints(AppVariables.imageRenderHints);
         }
-        g.setBackground(Colors.TRANSPARENT);
+        g.setBackground(bgColor);
         g.drawImage(source, 0, 0, width, height, null);
         g.dispose();
         return target;
+    }
+
+    public static BufferedImage scaleImage(BufferedImage source, int width, int height) {
+        return scaleImage(source, width, height, Colors.TRANSPARENT);
     }
 
     public static BufferedImage scaleImage(BufferedImage source, int targetW, int targetH, boolean keepRatio, int keepType) {

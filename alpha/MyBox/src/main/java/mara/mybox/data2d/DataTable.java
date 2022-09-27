@@ -105,7 +105,6 @@ public class DataTable extends Data2D {
             dataName = tableName;
             colsNumber = dataColumns.size();
             this.comments = comments;
-            MyBoxLog.console(comments);
             tableData2DDefinition.insertData(conn, this);
             conn.commit();
 
@@ -113,7 +112,7 @@ public class DataTable extends Data2D {
                 column.setD2id(d2did);
             }
             columns = dataColumns;
-            tableData2DColumn.save(conn, d2did, columns);
+            tableData2DColumn.save(conn, d2did, dataColumns);
             conn.commit();
             return true;
         } catch (Exception e) {
@@ -174,6 +173,7 @@ public class DataTable extends Data2D {
                             if (dbColumn.getDefaultValue() == null) {
                                 dbColumn.setDefaultValue(scolumn.getDefaultValue());
                             }
+                            dbColumn.setDescription(scolumn.getDescription());
                             break;
                         }
                     }

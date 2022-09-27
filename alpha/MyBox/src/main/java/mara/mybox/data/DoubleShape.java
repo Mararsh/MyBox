@@ -13,7 +13,7 @@ public interface DoubleShape {
 
     boolean isValid();
 
-    boolean include(double x, double y);
+    boolean contains(double x, double y);
 
     DoubleRectangle getBound();
 

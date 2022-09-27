@@ -471,7 +471,7 @@ public class Data2DTools {
                 columns.add(new Data2DColumn("zh".equals(lang) ? "2013年" : "year 2013", ColumnType.Double));
                 data.setColumns(columns).setDataName(message("ChinaFoodConsumption"))
                         .setComments("https://data.stats.gov.cn/index.htm");
-                if (makeExampleFile(lang, "ChinaFoods", data)) {
+                if (makeExampleFile(lang, "ChinaFoods_" + lang, data)) {
                     controller.loadCSVFile(data);
                 }
             });

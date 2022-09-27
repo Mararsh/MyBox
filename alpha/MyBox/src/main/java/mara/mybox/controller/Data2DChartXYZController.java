@@ -247,7 +247,7 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
                     data2D.stopFilter();
                     String dataName = data2D.getDataName();
                     dataName = dataName == null || dataName.isBlank() ? data2D.shortName() : dataName;
-                    chartFile = chartController.makeChart(data2D.getColumns(), outputData,
+                    chartFile = chartController.makeChart(outputColumns, outputData,
                             seriesSize, dataName, scale,
                             xCategoryCheck.isSelected(), yCategoryCheck.isSelected(), zCategoryCheck.isSelected());
                     return chartFile != null && chartFile.exists();

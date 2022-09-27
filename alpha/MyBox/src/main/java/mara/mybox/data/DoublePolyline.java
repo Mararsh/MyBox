@@ -106,7 +106,7 @@ public class DoublePolyline implements DoubleShape {
     }
 
     @Override
-    public boolean include(double x, double y) {
+    public boolean contains(double x, double y) {
         if (!isValid()) {
             return false;
         }

@@ -155,7 +155,8 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                     <children>
-                                        <fx:include fx:id="csvWrite" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlTextOptions.fxml" VBox.vgrow="ALWAYS" />
+                                        <fx:include fx:id="csvWrite" source="ControlTextWriteOptions.fxml" 
+                                                    maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
                                     </children>
                                     <padding>
                                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

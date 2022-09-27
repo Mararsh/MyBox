@@ -3,33 +3,27 @@
 # MyBox: Set of Easy Tools
 This is desktop application based on JavaFx to provide simple and easy functions. It's free and open sources.
 
-## Alpha Being Developed            
-2022-9-18 a6.6      
-
-* Math Function: calculate, data set, chart    
-* XYZ charts: 3D scatter chart, surface chart.       
-* "Columns to copy" can be set along with "Columns to calculate" for Normalization, Percentage, and Comparison Bars.      
-* Except for JavaScript manager, calculation of JavaScript uses Nashorn as engine.       
-* Performance: Images Player only pre-read one frame.      
-* Multiple Linear Regression – Combination    
-* Input values when add new rows for data 2D.         
-
-[MyBox-a6.6-2022-9-18-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/alpha/MyBox-a6.6-2022-9-18-win10-x64.zip)           
-
-
 ## What's New          
-2022-8-31 v6.5.9           
+2022-9-28 v6.6                
 
-* Data. Simple Linear Regression – Combination. Multiple Linear Regression.  Group by Equal Values. Sort By multiple columns. Save example data in suitable types. 
-Data name can be set when create data. New options for Set Values. Options for invalid numbers. 
-* Codes. Seperate operations logic from data read/write.
-* Documentation. ReadMe does not include mentions of tools. Update user guides for tools.
-* Solved. Endless errors popped and user has to reboot computer when close window while “Play Images” is running(!! Sorry). 
-Statistic for integer/long may fail. Some operations may fail when row filter includes statistic name. 
-Offset one column when edit results of Simple Linear Regression. No results in Box-and-whisker chart when calculate by rows for all pages. 
-File/Path should be null  instead of saved value when input is empty. Auto-backup of files may be cancelled by itself.。        
+* Add:             
+     - Math Function: calculate, data set, chart.                
+     - XYZ charts: 3D scatter chart, surface chart.                   
+     - Multiple Linear Regression – Combination.                
+     - Split data by size, number, or start-end list.            
+     - Repeat/tile image.            
+* Enhance:            
+     - "Columns to copy" can be set along with "Columns to calculate" for Normalization, Percentage, and Comparison Bars.                  
+     - Input values when add new rows for data 2D.              
+     - Except for text data file, string values can be edited and saved in multiple lines.                  
+     - Descriptions can be set for data and columns. Descriptions are imported for examples.            
+     - Boolean values are counted as 0/1.            
+     - Except for JavaScript manager, calculation of JavaScript uses Nashorn as engine.                
+     - Languages can be edited and saved in multiple lines.               
+* Performance: Images Player only pre-read one frame.                  
+* Solved. Some delimiters are handled wrongly when save text data file. Tree is not updated when node is deleted.                    
 
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.9)                    
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.6)                    
 
 ## Download and Execution
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. 
@@ -37,7 +31,7 @@ You can find them by clicking `releases` tab in main page of this project.
 
 
 ### Source Codes
-[MyBox-6.5.9-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.9/MyBox-6.5.9-src.zip)   52MB-        
+[MyBox-6.6-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.6/MyBox-6.6-src.zip)   52MB-        
 
 About structure, editing, and building of source codes, please refer to [Developement Guide](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-DevGuide-2.1-en.pdf) and
 [Packing Steps](https://mararsh.github.io/MyBox/pack_steps_en.html)        
@@ -48,9 +42,9 @@ Self-contain packages include all files and need not java env nor installation.
 
 | Platform | Link | Size  | Launcher |        
 | --- | --- | ---  | ---  |
-| win10 x64 | [MyBox-6.5.9-win-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.9/MyBox-6.5.9-win10-x64.zip)  | 220MB- | MyBox.exe |
-| CentOS 7 x64 | [MyBox-6.5.9-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.5.9/MyBox-6.5.9-CentOS7-x64.tar.gz)  | 240MB-  | bin/MyBox  |
-| mac | [MyBox-6.5.9-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.5.9/MyBox-6.5.9-mac.dmg)  | 240MB-  |  MyBox-6.5.9.app   |        
+| win10 x64 | [MyBox-6.6-win-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.6/MyBox-6.6-win10-x64.zip)  | 240MB- | MyBox.exe |
+| CentOS 7 x64 | [MyBox-6.6-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.6/MyBox-6.6-CentOS7-x64.tar.gz)  | 260MB-  | bin/MyBox  |
+| mac | [MyBox-6.6-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.6/MyBox-6.6-mac.dmg)  | 260MB-  |  MyBox-6.6.app   |        
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.        
 
@@ -59,16 +53,16 @@ When JRE or JDK([Oracle jdk](https://www.oracle.com/technetwork/java/javase/down
    
 | Platform | Link | Size  | Requirements |        
 | --- | --- | ---  | ---  |
-| win | [MyBox-6.5.9-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.9/MyBox-6.5.9-win-jar.zip)  | 160MB- | Java 18 or higher |
-| linux | [MyBox-6.5.9-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.9/MyBox-6.5.9-linux-jar.zip)  | 180MB-  | Java 18 or higher |
-| mac | [MyBox-6.5.9-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.5.9/MyBox-6.5.9-mac-jar.zip)  |  170MB-  | Java 18 or higher |        
+| win | [MyBox-6.6-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.6/MyBox-6.6-win-jar.zip)  | 170MB- | Java 18 or higher |
+| linux | [MyBox-6.6-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.6/MyBox-6.6-linux-jar.zip)  | 190MB-  | Java 18 or higher |
+| mac | [MyBox-6.6-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.6/MyBox-6.6-mac-jar.zip)  |  180MB-  | Java 18 or higher |        
 
 
 Run following command to launch this program with Jar package:        
-<PRE><CODE>     java   -jar   MyBox-6.5.9.jar</CODE></PRE>        
+<PRE><CODE>     java   -jar   MyBox-6.6.jar</CODE></PRE>        
 
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:        
-<PRE><CODE>     java   -jar   MyBox-6.5.9.jar   /tmp/a1.jpg</CODE></PRE>        
+<PRE><CODE>     java   -jar   MyBox-6.6.jar   /tmp/a1.jpg</CODE></PRE>        
 
 ### Other addresses to download
 Download from cloud storage: [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)               
@@ -89,9 +83,9 @@ Configuration file is under "User Home":
 
 | Platform | Path of MyBox Configuration File |        
 | --- | --- |
-| win | `C:\users\UserName\mybox\MyBox_v6.5.9.ini`  |
-| linux | `/home/UserName/mybox/MyBox_v6.5.9.ini` |
-| mac | `/Users/UserName/mybox/MyBox_v6.5.9.ini` |        
+| win | `C:\users\UserName\mybox\MyBox_v6.6.ini`  |
+| linux | `/home/UserName/mybox/MyBox_v6.6.ini` |
+| mac | `/Users/UserName/mybox/MyBox_v6.6.ini` |        
 
 Add parameter "config=\"FilePath\"" when run jar to change configuration file temporarily.        
 Function "Settings" can be used to change configuration values.        
@@ -99,32 +93,29 @@ Function "Settings" can be used to change configuration values.
 # Resource Addresses        
 | Contents | Link |        
 | --- | --- |
-| Project Main Page | https://github.com/Mararsh/MyBox |
-| Source Codes and Compiled Packages | https://github.com/Mararsh/MyBox/releases |
-| Submit Software Requirements and Problem Reports | https://github.com/Mararsh/MyBox/issues |
-| Data | https://github.com/Mararsh/MyBox_data |
-| Documents | https://github.com/Mararsh/MyBox_documents |
-| Mirror Site | https://sourceforge.net/projects/mara-mybox/files/ |
-| Cloud Storage | https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F |        
-
-
+| Project Main Page | [https://github.com/Mararsh/MyBoxl](https://github.com/Mararsh/MyBox)   |
+| Source Codes and Compiled Packages |  [https://github.com/Mararsh/MyBox/releases](https://github.com/Mararsh/MyBox/releases)  |
+| Submit Software Requirements and Problem Reports | [https://github.com/Mararsh/MyBox/issues](https://github.com/Mararsh/MyBox/issues) |
+| Data | [https://github.com/Mararsh/MyBox_data](https://github.com/Mararsh/MyBox_data) |
+| Documents | [https://github.com/Mararsh/MyBoxDoc](https://github.com/Mararsh/MyBoxDoc) |
+| Mirror Site | [https://sourceforge.net/projects/mara-mybox/files/](https://sourceforge.net/projects/mara-mybox/files/) |
+| Cloud Storage | [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F) |       
+   
 # Documents        
 |              Name              | Version |   Time    |                                                                                                                                            English                                                                                                                                            |                                                                                                                                            Chinese                                                                                                                                            |
 |--------------------------------|---------|-----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Development Logs               | 6.5.9   | 2022-8-31 | [html](https://mararsh.github.io/MyBox/mybox_devLogs_en.html)                                                                                                                                                                                                                                 | [html](https://mararsh.github.io/MyBox/mybox_devLogs.html)                                                                                                                                                                                                                                    |
+| Development Logs               | 6.6   | 2022-9-28 | [html](https://mararsh.github.io/MyBox/mybox_devLogs_en.html)                                                                                                                                                                                                                                 | [html](https://mararsh.github.io/MyBox/mybox_devLogs.html)                                                                                                                                                                                                                                    |
 | Shortcuts                      | 6.5.6   | 2022-6-11 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html)                                                                                                                                                                                                                               | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html)                                                                                                                                                                                                                                  |
 | Packing Steps                  | 6.3.3   | 2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps_en.html)                                                                                                                                                                                                                                    | [html](https://mararsh.github.io/MyBox/pack_steps.html)                                                                                                                                                                                                                                       |
-| Development Guide              | 2.1     | 2020-8-27 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf)                                                                                                                                                                                                                 | [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf)                                                                                                                                                                                                                 |
-| User Guide - Overview          | 6.5.9   | 2022-8-31 | [html](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-Overview-en/MyBox-6.5.9-Overview-en.html) [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-Overview-en.pdf) [odt](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-Overview-en.odt)                     | [html](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-Overview-zh/MyBox-6.5.9-Overview-zh.html) [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-Overview-zh.pdf) [odt](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-Overview-zh.odt)                     |
-| User Guide - Document Tools    | 6.5.9   | 2022-8-31 | [html](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-DocumentTools-en/MyBox-6.5.9-DocumentTools-en.html) [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-DocumentTools-en.pdf) [odt](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-DocumentTools-en.odt) | [html](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-DocumentTools-zh/MyBox-6.5.9-DocumentTools-zh.html) [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-DocumentTools-zh.pdf) [odt](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-DocumentTools-zh.odt) |
-| User Guide - Image Tools       | 6.5.9   | 2022-8-31 | [html](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-ImageTools-en/MyBox-6.5.9-ImageTools-en.html) [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-ImageTools-en.pdf) [odt](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-ImageTools-en.odt)             | [html](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-ImageTools-zh/MyBox-6.5.9-ImageTools-zh.html) [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-ImageTools-zh.pdf) [odt](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-ImageTools-zh.odt)             |
-| User Guide - File Tools        | 6.5.9   | 2022-8-31 | [html](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-FileTools-en/MyBox-6.5.9-FileTools-en.html) [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-FileTools-en.pdf) [odt](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-FileTools-en.odt)                 | [html](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-FileTools-zh/MyBox-6.5.9-FileTools-zh.html) [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-FileTools-zh.pdf) [odt](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-FileTools-zh.odt)                 |
-| User Guide - Network Tools     | 6.5.9   | 2022-8-31 | [html](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-NetworkTools-en/MyBox-6.5.9-NetworkTools-en.html) [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-NetworkTools-en.pdf) [odt](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-NetworkTools-en.odt)     | [html](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-NetworkTools-zh/MyBox-6.5.9-NetworkTools-zh.html) [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-NetworkTools-zh.pdf) [odt](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-NetworkTools-zh.odt)     |
-| User Guide - Data Tools        | 6.5.9   | 2022-8-31 | [html](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-DataTools-en/MyBox-6.5.9-DataTools-en.html) [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-DataTools-en.pdf) [odt](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-DataTools-en.odt)                 | [html](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-DataTools-zh/MyBox-6.5.9-DataTools-zh.html) [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-DataTools-zh.pdf) [odt](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-DataTools-zh.odt)                 |
-| User Guide - Media Tools       | 6.5.9   | 2022-8-31 | [html](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-MediaTools-en/MyBox-6.5.9-MediaTools-en.html) [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-MediaTools-en.pdf) [odt](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-MediaTools-en.odt)             | [html](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-MediaTools-zh/MyBox-6.5.9-MediaTools-zh.html) [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-MediaTools-zh.pdf) [odt](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-MediaTools-zh.odt)             |
-| User Guide - Development Tools | 6.5.9   | 2022-8-31 | [html](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-DevTools-en/MyBox-6.5.9-DevTools-en.html) [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-DevTools-en.pdf) [odt](https://mararsh.github.io/MyBox_documents/en/MyBox-6.5.9-DevTools-en.odt)                     | [html](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-DevTools-zh/MyBox-6.5.9-DevTools-zh.html) [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-DevTools-zh.pdf) [odt](https://mararsh.github.io/MyBox_documents/zh/MyBox-6.5.9-DevTools-zh.odt)                     |
-
-
+| Development Guide              | 2.1     | 2020-8-27 | [PDF](https://mararsh.github.io/MyBoxDoc/en/MyBox-DevGuide-2.1-en.pdf)                                                                                                                                                                                                                 | [PDF](https://mararsh.github.io/MyBoxDoc/zh/MyBox-DevGuide-2.1-zh.pdf)                                                                                                                                                                                                                 |
+| User Guide - Overview          | 6.6   | 2022-9-28 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6-Overview-en/MyBox-6.6-Overview-en.html) [PDF](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6-Overview-en.pdf) [odt](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6-Overview-en.odt)                     | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6-Overview-zh/MyBox-6.6-Overview-zh.html) [PDF](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6-Overview-zh.pdf) [odt](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6-Overview-zh.odt)                     |
+| User Guide - Document Tools    | 6.6   | 2022-9-28 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6-DocumentTools-en/MyBox-6.6-DocumentTools-en.html) [PDF](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6-DocumentTools-en.pdf) [odt](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6-DocumentTools-en.odt) | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6-DocumentTools-zh/MyBox-6.6-DocumentTools-zh.html) [PDF](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6-DocumentTools-zh.pdf) [odt](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6-DocumentTools-zh.odt) |
+| User Guide - Image Tools       | 6.6   | 2022-9-28 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6-ImageTools-en/MyBox-6.6-ImageTools-en.html) [PDF](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6-ImageTools-en.pdf) [odt](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6-ImageTools-en.odt)             | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6-ImageTools-zh/MyBox-6.6-ImageTools-zh.html) [PDF](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6-ImageTools-zh.pdf) [odt](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6-ImageTools-zh.odt)             |
+| User Guide - File Tools        | 6.6   | 2022-9-28 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6-FileTools-en/MyBox-6.6-FileTools-en.html) [PDF](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6-FileTools-en.pdf) [odt](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6-FileTools-en.odt)                 | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6-FileTools-zh/MyBox-6.6-FileTools-zh.html) [PDF](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6-FileTools-zh.pdf) [odt](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6-FileTools-zh.odt)                 |
+| User Guide - Network Tools     | 6.6   | 2022-9-28 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6-NetworkTools-en/MyBox-6.6-NetworkTools-en.html) [PDF](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6-NetworkTools-en.pdf) [odt](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6-NetworkTools-en.odt)     | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6-NetworkTools-zh/MyBox-6.6-NetworkTools-zh.html) [PDF](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6-NetworkTools-zh.pdf) [odt](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6-NetworkTools-zh.odt)     |
+| User Guide - Data Tools        | 6.6   | 2022-9-28 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6-DataTools-en/MyBox-6.6-DataTools-en.html) [PDF](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6-DataTools-en.pdf) [odt](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6-DataTools-en.odt)                 | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6-DataTools-zh/MyBox-6.6-DataTools-zh.html) [PDF](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6-DataTools-zh.pdf) [odt](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6-DataTools-zh.odt)                 |
+| User Guide - Media Tools       | 6.6   | 2022-9-28 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6-MediaTools-en/MyBox-6.6-MediaTools-en.html) [PDF](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6-MediaTools-en.pdf) [odt](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6-MediaTools-en.odt)             | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6-MediaTools-zh/MyBox-6.6-MediaTools-zh.html) [PDF](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6-MediaTools-zh.pdf) [odt](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6-MediaTools-zh.odt)             |
+| User Guide - Development Tools | 6.6   | 2022-9-28 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6-DevTools-en/MyBox-6.6-DevTools-en.html) [PDF](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6-DevTools-en.pdf) [odt](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6-DevTools-en.odt)                     | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6-DevTools-zh/MyBox-6.6-DevTools-zh.html) [PDF](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6-DevTools-zh.pdf) [odt](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6-DevTools-zh.odt)                     |
 
 
 # Implementation        

@@ -160,11 +160,10 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         }
         if (data2D == null || data2D.getType() != def.getType()) {
             data2D = Data2D.create(def.getType());
-            data2D.cloneAll(def);
         } else if (data2D != def) {
             data2D.resetData();
-            data2D.cloneAll(def);
         }
+        data2D.cloneAll(def);
         readDefinition();
     }
 
@@ -424,10 +423,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 }
             }
 
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-            }
         };
         start(task);
     }

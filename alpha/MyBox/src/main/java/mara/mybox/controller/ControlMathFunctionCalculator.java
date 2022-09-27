@@ -402,8 +402,8 @@ public class ControlMathFunctionCalculator extends BaseController {
                 }
                 List<Object> values = new ArrayList<>();
                 makeRow(values);
+                csvPrinter.flush();
                 csvPrinter.close();
-                csvPrinter = null;
             } catch (Exception e) {
                 if (task != null) {
                     task.setError(e.toString());

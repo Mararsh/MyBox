@@ -77,9 +77,9 @@ public class ImageScopeTools {
 
     public static boolean inShape(DoubleShape shape, boolean areaExcluded, int x, int y) {
         if (areaExcluded) {
-            return !shape.include(x, y);
+            return !shape.contains(x, y);
         } else {
-            return shape.include(x, y);
+            return shape.contains(x, y);
         }
     }
 

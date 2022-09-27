@@ -63,18 +63,18 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         to/from database table
      */
     public DataTable toTable(SingletonTask task, String targetName, boolean dropExisted) {
+        DataTable dataTable = null;
         try ( Connection conn = DerbyBase.getConnection()) {
-            DataTable dataTable = createTable(task, conn, targetName, dropExisted);
+            dataTable = createTable(task, conn, targetName, dropExisted);
             writeTableData(task, conn, dataTable);
-            return dataTable;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
             } else {
                 MyBoxLog.error(e.toString());
             }
-            return null;
         }
+        return dataTable;
     }
 
     public DataTable createTable(SingletonTask task, Connection conn, String targetName, boolean dropExisted) {
@@ -85,14 +85,12 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             if (columns == null || columns.isEmpty()) {
                 return null;
             }
-            MyBoxLog.console(getComments());
             DataTable dataTable = createTable(task, conn, targetName, columns, null, comments, null, dropExisted);
             if (dataTable == null) {
                 return null;
             }
             dataTable.cloneDefinitionAttributes(this);
             dataTable.setDataName(targetName);
-            MyBoxLog.console(dataTable.getComments());
             return dataTable;
         } catch (Exception e) {
             if (task != null) {

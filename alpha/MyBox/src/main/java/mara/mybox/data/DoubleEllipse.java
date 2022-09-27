@@ -118,7 +118,7 @@ public class DoubleEllipse implements DoubleShape {
     }
 
     @Override
-    public boolean include(double x, double y) {
+    public boolean contains(double x, double y) {
         double distanceA = DoublePoint.distance(focalBig.getX(), focalBig.getY(), x, y);
         double distanceB = DoublePoint.distance(focalSmall.getX(), focalSmall.getY(), x, y);
         return distanceA + distanceB <= sumLength;

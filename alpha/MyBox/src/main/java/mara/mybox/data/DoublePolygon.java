@@ -120,7 +120,7 @@ public class DoublePolygon implements DoubleShape {
     }
 
     @Override
-    public boolean include(double x, double y) {
+    public boolean contains(double x, double y) {
         return isValid() && polygon.contains(x, y);
     }
 

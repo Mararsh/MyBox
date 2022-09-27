@@ -69,7 +69,7 @@ public class ImageRepeatController extends ImageViewerController {
                 }
             });
 
-            intervalSelector.getItems().addAll(Arrays.asList("5", "10", "15", "20", "1", "3", "30", "0"));
+            intervalSelector.getItems().addAll(Arrays.asList("0", "1", "2", "3", "5", "-1", "-3", "-5", "10", "15", "20", "30"));
             intervalSelector.getSelectionModel().select(UserConfig.getString(baseName + "Interval", "5"));
             intervalSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -254,15 +254,9 @@ public class ImageRepeatController extends ImageViewerController {
 
         try {
             int v = Integer.valueOf(intervalSelector.getValue());
-            if (v >= 0) {
-                interval = v;
-                UserConfig.setString(baseName + "Interval", v + "");
-                ValidationTools.setEditorNormal(intervalSelector);
-            } else {
-                ValidationTools.setEditorBadStyle(intervalSelector);
-                popError(message("InvalidParameter") + ": " + message("Interval"));
-                return;
-            }
+            interval = v;
+            UserConfig.setString(baseName + "Interval", v + "");
+            ValidationTools.setEditorNormal(intervalSelector);
 
         } catch (Exception e) {
             ValidationTools.setEditorBadStyle(intervalSelector);

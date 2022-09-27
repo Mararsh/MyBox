@@ -161,6 +161,7 @@ public class Data2DSplitController extends BaseData2DHandleController {
             if (csvPrinter == null) {
                 return;
             }
+            csvPrinter.flush();
             csvPrinter.close();
             csvPrinter = null;
             File file = data2D.tmpFile(prefix + "_" + startIndex + "-" + rowIndex, null, ".csv");

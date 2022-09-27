@@ -3,9 +3,38 @@
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
     </head>
 <html><head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    </head>
-<body contenteditable="false"  style="width: 900px; margin:0 auto;" ><h1>开发日志</h1>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head>
+
+        
+    
+<body contenteditable="false" style="width: 900px; margin:0 auto;"><h1>开发日志</h1>
+<p>2022-9-28 版本6.6</p>
+<ul>
+    <li>新增：
+        <ul>
+            <li>数学函数：计算、数据集、图</li>
+            <li>数据的xyz图：三维散点图、曲面图</li>
+            <li>多重线性回归-组合</li>
+            <li>按尺寸、数量、或起止列表分割数据。</li>
+            <li>重复/平铺图片。</li>
+        </ul>
+    </li>
+    <li>增强：
+        <ul>
+            <li>归一化/百分比/比较条图可以分别设置“要计算的列”和“要复制的列”。</li>
+            <li>添加新数据行时可以输入数值。</li>
+            <li>除了文本数据文件，编辑和保存字符串值时支持多行。</li>
+            <li>数据和列可以设置描述。示例导入描述。</li>
+            <li>布尔值被解析为0/1。</li>
+            <li>除了JavaScript管理界面，JavaScript的计算采用Nashorn作为引擎。</li>
+            <li>编辑和保存语言时支持多行。</li>
+        </ul>
+    </li>
+    <li>性能：图像播放器只预读一帧。</li>
+    <li>解决：保存文本数据文件时若干分隔符处理错误；树形在删除节点后没有更新。</li>
+</ul>
+<p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.6">此版本关闭的需求/问题列表</a></p>
 <p>2022-8-31 版本6.5.9</p>
 <ul>
     <li>数据：简单线性回归-组合；多重线性回归；等值分组；按多列排序；示例数据保存为合适的类型；生成数据时可设置数据名；
@@ -508,6 +537,7 @@ PDF工具：标签（目录）和缩略图；可修改PDF文件的属性，如�
 感谢 “https://shuge.org/” 的帮助：书格提出tiff转换的需求。</p>
 <p>2018-06-12 版本1.0 实现功能：将PDF文件的每页转换为一张图片，包含图像密度、类型、格式等选项，并且可以暂停/继续转换过程。</p>
 <p><a href="https://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+no%3Amilestone">未定义版本的已关闭的需求/问题列表</a></p>
+
 
 </body></html>
 </html>

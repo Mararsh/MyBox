@@ -271,7 +271,7 @@ public class FxImageTools {
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
                 if (isExcluded) {
-                    if (shape.include(x, y)) {
+                    if (shape.contains(x, y)) {
                         pixelWriter.setColor(x, y, pixelReader.getColor(x, y));
                     } else {
                         if (isMosaic) {
@@ -285,7 +285,7 @@ public class FxImageTools {
                         }
                     }
                 } else {
-                    if (shape.include(x, y)) {
+                    if (shape.contains(x, y)) {
                         if (isMosaic) {
                             int mx = Math.max(0, Math.min(w - 1, x - x % size));
                             int my = Math.max(0, Math.min(h - 1, y - y % size));

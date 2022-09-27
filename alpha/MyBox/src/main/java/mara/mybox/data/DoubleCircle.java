@@ -38,7 +38,7 @@ public class DoubleCircle implements DoubleShape {
     }
 
     @Override
-    public boolean include(double x, double y) {
+    public boolean contains(double x, double y) {
         double distanceX = centerX - x;
         double distaneY = centerY - y;
         return distanceX * distanceX + distaneY * distaneY <= radius2;

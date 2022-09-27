@@ -23,8 +23,7 @@ public class CsvTools {
                 .setTrim(true)
                 .setNullString("")
                 .setCommentMarker(CommentsMarker)
-                .setAllowDuplicateHeaderNames(false)
-                .setAutoFlush(true);
+                .setAllowDuplicateHeaderNames(false);
     }
 
     public static CSVFormat csvFormat(String delimiter, boolean hasHeader) {
