@@ -40,6 +40,15 @@ License:    Apache License Version 2.0
                                                 <VBox spacing="2.0">
                                                     <children>
                                                         <Label fx:id="infoLabel" minHeight="-Infinity" wrapText="true" />
+                                                          <Button fx:id="txtButton" mnemonicParsing="false" onAction="#editTextFile">
+                                                              <graphic>
+                                                                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                      <image>
+                                                                          <Image url="@../buttons/Red/iconTxt.png" />
+                                                                      </image>
+                                                                  </ImageView>
+                                                              </graphic>
+                                                          </Button>
                                                     </children>
                                                 </VBox>
                                             </content>
@@ -48,18 +57,9 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <VBox fx:id="formatBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                     <children>
-                                                        <fx:include fx:id="csvRead" source="ControlCsvRead.fxml" />
+                                                        <fx:include fx:id="csvRead" source="ControlTextReadOptions.fxml" />
                                                         <HBox alignment="CENTER_LEFT" spacing="2.0">
                                                             <children>
-                                                                <Button fx:id="txtButton" mnemonicParsing="false" onAction="#editTextFile">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconTxt.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
                                                                 <Button fx:id="refreshFileButton" mnemonicParsing="false" onAction="#refreshFile">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -90,7 +90,7 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <VBox minHeight="-Infinity" spacing="2.0">
                                                     <children>
-                                                        <fx:include fx:id="csvWrite" source="ControlCsvWrite.fxml" />
+                                                        <fx:include fx:id="csvWrite" source="ControlTextWriteOptions.fxml" />
                                                         <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                             <children>
                                                                 <RadioButton fx:id="saveLoadRadio" mnemonicParsing="false" selected="true" text="%LoadAfterSaveAs">

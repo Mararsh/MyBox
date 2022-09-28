@@ -1487,8 +1487,12 @@ public class DataMigration {
             public void run() {
                 try {
                     MyBoxLog.info("Reloading internal doc...");
-                    FxFileTools.getInternalFile("/doc/en/README.md", "doc", "README-en.md", true);
                     FxFileTools.getInternalFile("/doc/zh/README.md", "doc", "README-zh.md", true);
+                    FxFileTools.getInternalFile("/doc/zh/MyBox-Documents-zh.html", "doc", "MyBox-Documents-zh.html", true);
+                    FxFileTools.getInternalFile("/doc/zh/MyBox-Overview-zh.pdf", "doc", "MyBox-Overview-zh.pdf", true);
+                    FxFileTools.getInternalFile("/doc/en/README.md", "doc", "README-en.md", true);
+                    FxFileTools.getInternalFile("/doc/en/MyBox-Documents-en.html", "doc", "MyBox-Documents-en.html", true);
+                    FxFileTools.getInternalFile("/doc/en/MyBox-Overview-en.pdf", "doc", "MyBox-Overview-en.pdf", true);
                     MyBoxLog.info("Internal doc loaded.");
                 } catch (Exception e) {
                 }

@@ -70,8 +70,8 @@ public class DataFileTextMergeController extends FilesMergeController {
     @Override
     public void initOptionsSection() {
         try {
-            readOptionsController.setControls(baseName + "Read", true);
-            writeOptionsController.setControls(baseName + "Write", false);
+            readOptionsController.setControls(baseName + "Read", true, true);
+            writeOptionsController.setControls(baseName + "Write", false, true);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -83,11 +83,11 @@ public class DataFileTextMergeController extends FilesMergeController {
     protected boolean openWriter() {
         try {
             sourceCharset = readOptionsController.charset;
-            sourceDelimiterName = readOptionsController.delimiterName;
+            sourceDelimiterName = readOptionsController.getDelimiterName();
             sourceWithName = readOptionsController.withNamesCheck.isSelected();
 
             targetCharset = writeOptionsController.charset;
-            targetDelimiter = TextTools.delimiterValue(writeOptionsController.delimiterName);
+            targetDelimiter = TextTools.delimiterValue(writeOptionsController.getDelimiterName());
             targetWithName = writeOptionsController.withNamesCheck.isSelected();
             writer = new BufferedWriter(new FileWriter(targetFile, targetCharset));
 

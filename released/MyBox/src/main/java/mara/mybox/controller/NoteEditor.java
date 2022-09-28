@@ -34,6 +34,9 @@ public class NoteEditor extends HtmlEditorController {
 
             attributesController.setEditor(this);
             notesController.nodeController = attributesController;
+
+            webViewController.linkInNewTab = true;
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

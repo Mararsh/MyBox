@@ -31,7 +31,7 @@ import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPa
 public class PdfSplitBatchController extends BaseBatchPdfController {
 
     @FXML
-    protected ControlFileSplit splitWayController;
+    protected ControlSplit splitController;
 
     public PdfSplitBatchController() {
         baseTitle = Languages.message("PdfSplitBatch");
@@ -42,10 +42,12 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
         try {
             super.initControls();
 
+            splitController.setParameters(this);
+
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
                     Bindings.isEmpty(tableView.getItems())
-                            .or(splitWayController.valid)
+                            .or(splitController.valid)
                             .or(targetPathController.valid.not())
             );
 
@@ -73,7 +75,6 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
                 if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {
                     currentParameters.toPage = doc.getNumberOfPages();
                 }
-                MyBoxLog.console(currentParameters.fromPage + " " + currentParameters.toPage);
                 currentParameters.currentTargetPath = targetPath;
                 if (currentParameters.targetSubDir) {
                     currentParameters.currentTargetPath = new File(targetPath.getAbsolutePath() + "/"
@@ -82,15 +83,15 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
                         currentParameters.currentTargetPath.mkdirs();
                     }
                 }
-                if (null != splitWayController.splitType) {
-                    switch (splitWayController.splitType) {
-                        case PagesNumber:
+                if (null != splitController.splitType) {
+                    switch (splitController.splitType) {
+                        case Size:
                             splitByPagesSize(doc);
                             break;
-                        case FilesNumber:
+                        case Number:
                             splitByFilesNumber(doc);
                             break;
-                        case StartEndList:
+                        case List:
                             splitByList(doc);
                             break;
                         default:
@@ -107,14 +108,29 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
                 currentParameters.toPage - currentParameters.fromPage, targetFiles.size());
     }
 
-    private int splitByPagesSize(PDDocument source) {
+    private Splitter splitter(int from, int to, int size) {
         try {
-            MyBoxLog.console(currentParameters.fromPage + " " + currentParameters.toPage);
+            if (from < 1 || to < 1 || to < from || size <= 0) {
+                return null;
+            }
             Splitter splitter = new Splitter();
-            splitter.setStartPage(currentParameters.fromPage);  // 1-based
-            splitter.setEndPage(currentParameters.toPage);
+            splitter.setStartPage(from);  // 1-based
+            splitter.setEndPage(to);
             splitter.setMemoryUsageSetting(AppVariables.pdfMemUsage);
-            splitter.setSplitAtPage(splitWayController.pagesNumber);
+            splitter.setSplitAtPage(size);
+            return splitter;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    private int split(PDDocument source, int from, int to, int size) {
+        try {
+            Splitter splitter = splitter(from, to, size);
+            if (splitter == null) {
+                return 0;
+            }
             List<PDDocument> docs = splitter.split(source);
             return writeFiles(docs);
         } catch (Exception e) {
@@ -123,22 +139,15 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
         }
     }
 
+    private int splitByPagesSize(PDDocument source) {
+        return split(source, currentParameters.fromPage, currentParameters.toPage, splitController.size);
+    }
+
     private int splitByFilesNumber(PDDocument source) {
         try {
             int total = currentParameters.toPage - currentParameters.fromPage + 1;
-            int len;
-            if (total % splitWayController.filesNumber == 0) {
-                len = total / splitWayController.filesNumber;
-            } else {
-                len = total / splitWayController.filesNumber + 1;
-            }
-            Splitter splitter = new Splitter();
-            splitter.setStartPage(currentParameters.fromPage);  // 1-based
-            splitter.setEndPage(currentParameters.toPage);  // 1-based
-            splitter.setMemoryUsageSetting(AppVariables.pdfMemUsage);
-            splitter.setSplitAtPage(len);
-            List<PDDocument> docs = splitter.split(source);
-            return writeFiles(docs);
+            int size = splitController.size(total, splitController.number);
+            return split(source, currentParameters.fromPage, currentParameters.toPage, size);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return 0;
@@ -148,20 +157,19 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
     private int splitByList(PDDocument source) {
         try {
             List<PDDocument> docs = new ArrayList<>();
-            for (int i = 0; i < splitWayController.startEndList.size();) {
-                int start = splitWayController.startEndList.get(i++);
-                int end = splitWayController.startEndList.get(i++);
+            for (int i = 0; i < splitController.list.size();) {
+                int start = splitController.list.get(i++);
+                int end = splitController.list.get(i++);
                 if (start < currentParameters.fromPage) {
                     start = currentParameters.fromPage;
                 }
                 if (end > currentParameters.toPage) {
                     end = currentParameters.toPage;
                 }
-                Splitter splitter = new Splitter();
-                splitter.setStartPage(start);  // 1-based start
-                splitter.setEndPage(end);
-                splitter.setMemoryUsageSetting(AppVariables.pdfMemUsage);
-                splitter.setSplitAtPage(end - start + 1);
+                Splitter splitter = splitter(start, end, end - start + 1);
+                if (splitter == null) {
+                    continue;
+                }
                 docs.add(splitter.split(source).get(0));
             }
             return writeFiles(docs);

@@ -63,7 +63,7 @@ License:    Apache License Version 2.0
                                 <fx:include fx:id="dataPath" source="ControlFileInput.fxml" VBox.vgrow="NEVER" />
                                 <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                     <children>
-                                      <Label fx:id="currentOCRFilesLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" />
+                                        <Label fx:id="currentOCRFilesLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" />
                                         <Button fx:id="refreshButton" layoutX="132.0" layoutY="10.0" mnemonicParsing="false" onAction="#refreshAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -75,7 +75,7 @@ License:    Apache License Version 2.0
                                         </Button>
                                     </children>
                                 </HBox>
-                        <fx:include fx:id="languages" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlSelection.fxml" VBox.vgrow="ALWAYS" />
+                                <fx:include fx:id="languages" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlSelection.fxml" VBox.vgrow="ALWAYS" />
                                 <Label minHeight="-Infinity" text="%OCRLanguagesComments" wrapText="true" />
                             </children>
                             <padding>
@@ -130,7 +130,7 @@ License:    Apache License Version 2.0
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
-                                                        <Image url="@../buttons/Red/iconCatFoot.png" />
+                                                        <Image url="@../buttons/iconClaw.png" />
                                                     </image>
                                                 </ImageView>
                                             </graphic>

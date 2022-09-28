@@ -34,9 +34,19 @@ public class JShellController extends TreeManageController {
     }
 
     @Override
+    public void initValues() {
+        try {
+            super.initValues();
+            nodeController = editorController;
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    @Override
     public void initControls() {
         try {
-            nodeController = editorController;
             super.initControls();
 
             webViewController.setParent(this, ControlWebView.ScrollType.Bottom);
@@ -50,11 +60,6 @@ public class JShellController extends TreeManageController {
 
     @Override
     public void itemClicked() {
-    }
-
-    @Override
-    public void itemDoubleClicked() {
-        editAction();
     }
 
     @FXML

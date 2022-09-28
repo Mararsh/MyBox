@@ -352,7 +352,7 @@ public class ControlData2DView extends BaseController {
                 if (v == null) {
                     continue;
                 }
-                s.append(v).append("\n");
+                s.append(v.replaceAll("\n", "\\\\n")).append("\n");
             }
             s.append("\n");
             textArea.setText(s.toString());

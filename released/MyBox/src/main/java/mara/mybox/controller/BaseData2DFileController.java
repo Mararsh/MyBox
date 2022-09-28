@@ -33,7 +33,6 @@ public abstract class BaseData2DFileController extends BaseData2DController {
     protected Label infoLabel;
 
     public BaseData2DFileController() {
-        TipsLabelKey = "DataFileTips";
     }
 
     /*

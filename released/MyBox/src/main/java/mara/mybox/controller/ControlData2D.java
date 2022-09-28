@@ -1,8 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -28,19 +26,17 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.Data2DTools;
 import mara.mybox.data2d.DataClipboard;
 import mara.mybox.data2d.DataFileCSV;
-import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -586,9 +582,9 @@ public class ControlData2D extends BaseController {
         }
     }
 
-    public void loadCSVFile(File csvFile, List<ColumnType> columnTypes) {
+    public void loadCSVFile(DataFileCSV csvData) {
         try {
-            if (csvFile == null || !csvFile.exists()) {
+            if (csvData == null) {
                 popError("Nonexistent");
                 return;
             }
@@ -596,8 +592,6 @@ public class ControlData2D extends BaseController {
                 return;
             }
             setData(Data2D.create(type));
-            DataFileCSV csvData = new DataFileCSV(csvFile);
-            csvData.setInitColumnTypes(columnTypes);
             tableController.loadCSVData(csvData);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -668,256 +662,17 @@ public class ControlData2D extends BaseController {
             popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
 
-            boolean invalidData = data2D == null || !data2D.isValid();
-            boolean empty = invalidData || tableController.tableData.isEmpty();
-            MenuItem menu;
-
-            Menu dataMenu = new Menu(message("Data"), StyleTools.getIconImage("iconData.png"));
-            popMenu.getItems().add(dataMenu);
-
-            menu = new MenuItem(message("Save"), StyleTools.getIconImage("iconSave.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                save();
-            });
-            menu.setDisable(invalidData || !tableController.dataSizeLoaded);
-            dataMenu.getItems().add(menu);
-
-            dataMenu.getItems().add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("Recover"), StyleTools.getIconImage("iconRecover.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                recover();
-            });
-            menu.setDisable(invalidData || data2D.isTmpData());
-            dataMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("Refresh"), StyleTools.getIconImage("iconRefresh.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                refreshAction();
-            });
-            menu.setDisable(invalidData || data2D.isTmpData());
-            dataMenu.getItems().add(menu);
-
-            dataMenu.getItems().add(new SeparatorMenuItem());
-
-            if (data2D.isDataFile()) {
-                menu = new MenuItem(message("Open"), StyleTools.getIconImage("iconOpen.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    selectSourceFile();
-                });
-                dataMenu.getItems().add(menu);
-            }
-
-            menu = new MenuItem(message("CreateData"), StyleTools.getIconImage("iconAdd.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                create();
-            });
-            dataMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("LoadContentInSystemClipboard"), StyleTools.getIconImage("iconImageSystem.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                loadContentInSystemClipboard();
-            });
-            dataMenu.getItems().add(menu);
-
-            dataMenu.getItems().add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("Export"), StyleTools.getIconImage("iconExport.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DExportController.open(tableController);
-            });
-            menu.setDisable(empty);
-            dataMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ConvertToDatabaseTable"), StyleTools.getIconImage("iconDatabase.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DConvertToDataBaseController.open(tableController);
-            });
-            menu.setDisable(invalidData);
-            dataMenu.getItems().add(menu);
+            popMenu.getItems().addAll(Data2DTools.editMenu(this));
 
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            Menu modifyMenu = new Menu(message("Modify"), StyleTools.getIconImage("iconEdit.png"));
-            popMenu.getItems().add(modifyMenu);
-
-            menu = new MenuItem(message("SetValues"), StyleTools.getIconImage("iconEqual.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DSetValuesController.open(tableController);
-            });
-            menu.setDisable(empty);
-            modifyMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("Delete"), StyleTools.getIconImage("iconDelete.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DDeleteController.open(tableController);
-            });
-            menu.setDisable(empty);
-            modifyMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("SetStyles"), StyleTools.getIconImage("iconColor.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DSetStylesController.open(tableController);
-            });
-            menu.setDisable(empty || data2D.isTmpData());
-            modifyMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("PasteContentInSystemClipboard"), StyleTools.getIconImage("iconPasteSystem.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                tableController.pasteContentInSystemClipboard();
-            });
-            menu.setDisable(invalidData);
-            modifyMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("PasteContentInMyBoxClipboard"), StyleTools.getIconImage("iconPaste.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                tableController.pasteContentInMyboxClipboard();
-            });
-            menu.setDisable(invalidData);
-            modifyMenu.getItems().add(menu);
-
-            Menu trimMenu = new Menu(message("Trim"), StyleTools.getIconImage("iconClean.png"));
-            popMenu.getItems().add(trimMenu);
-
-            if (data2D.isTable()) {
-                menu = new MenuItem(message("Query"), StyleTools.getIconImage("iconQuery.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    DataTableQueryController.open(tableController);
-                });
-                menu.setDisable(empty);
-                trimMenu.getItems().add(menu);
-            }
-
-            menu = new MenuItem(message("CopyFilterQuery"), StyleTools.getIconImage("iconCopy.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                tableController.copyAction();
-            });
-            menu.setDisable(empty);
-            trimMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("Sort"), StyleTools.getIconImage("iconSort.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DSortController.open(tableController);
-            });
-            menu.setDisable(empty);
-            trimMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("Transpose"), StyleTools.getIconImage("iconRotateRight.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DTransposeController.open(tableController);
-            });
-            menu.setDisable(empty);
-            trimMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("Normalize"), StyleTools.getIconImage("iconBinary.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DNormalizeController.open(tableController);
-            });
-            menu.setDisable(empty);
-            trimMenu.getItems().add(menu);
-
-            Menu calMenu = new Menu(message("Calculation"), StyleTools.getIconImage("iconCalculator.png"));
-            popMenu.getItems().add(calMenu);
-
-            menu = new MenuItem(message("RowExpression"), StyleTools.getIconImage("iconCalculate.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DRowExpressionController.open(tableController);
-            });
-            menu.setDisable(empty);
-            calMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("DescriptiveStatistics"), StyleTools.getIconImage("iconStatistic.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DStatisticController.open(tableController);
-            });
-            menu.setDisable(empty);
-            calMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("GroupEqualValues"), StyleTools.getIconImage("iconAnalyse.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DGroupEqualValuesController.open(tableController);
-            });
-            menu.setDisable(empty);
-            calMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("SimpleLinearRegressionCombination"), StyleTools.getIconImage("iconLinearPgression.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DSimpleLinearRegressionCombinationController.open(tableController);
-            });
-            menu.setDisable(empty);
-            calMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("SimpleLinearRegression"), StyleTools.getIconImage("iconLinearPgression.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DSimpleLinearRegressionController.open(tableController);
-            });
-            menu.setDisable(empty);
-            calMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("MultipleLinearRegression"), StyleTools.getIconImage("iconLinearPgression.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DMultipleLinearRegressionController.open(tableController);
-            });
-            menu.setDisable(empty);
-            calMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("FrequencyDistributions"), StyleTools.getIconImage("iconDistribution.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DFrequencyController.open(tableController);
-            });
-            menu.setDisable(empty);
-            calMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ValuePercentage"), StyleTools.getIconImage("iconPercentage.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DPercentageController.open(tableController);
-            });
-            menu.setDisable(empty);
-            calMenu.getItems().add(menu);
-
-            Menu chartMenu = new Menu(message("Charts"), StyleTools.getIconImage("iconGraph.png"));
-            popMenu.getItems().add(chartMenu);
-
-            menu = new MenuItem(message("XYChart"), StyleTools.getIconImage("iconXYChart.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DChartXYController.open(tableController);
-            });
-            menu.setDisable(empty);
-            chartMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("PieChart"), StyleTools.getIconImage("iconPieChart.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DChartPieController.open(tableController);
-            });
-            menu.setDisable(empty);
-            chartMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("BoxWhiskerChart"), StyleTools.getIconImage("iconBoxWhiskerChart.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DChartBoxWhiskerController.open(tableController);
-            });
-            menu.setDisable(empty);
-            chartMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("SelfComparisonBarsChart"), StyleTools.getIconImage("iconBarChartH.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DChartSelfComparisonBarsController.open(tableController);
-            });
-            menu.setDisable(empty);
-            chartMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ComparisonBarsChart"), StyleTools.getIconImage("iconComparisonBarsChart.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DChartComparisonBarsController.open(tableController);
-            });
-            menu.setDisable(empty);
-            chartMenu.getItems().add(menu);
+            popMenu.getItems().addAll(Data2DTools.operationsMenu(tableController));
 
             popMenu.getItems().add(new SeparatorMenuItem());
 
             if (data2D.isDataFile() || data2D.isUserTable() || data2D.isClipboard()) {
                 Menu examplesMenu = new Menu(message("Examples"), StyleTools.getIconImage("iconExamples.png"));
-                examplesMenu.getItems().addAll(examplesMenu());
+                examplesMenu.getItems().addAll(Data2DTools.examplesMenu(this));
                 popMenu.getItems().add(examplesMenu);
                 popMenu.getItems().add(new SeparatorMenuItem());
             }
@@ -933,7 +688,7 @@ public class ControlData2D extends BaseController {
             popMenu.getItems().add(passPop);
 
             popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
+            MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -946,242 +701,6 @@ public class ControlData2D extends BaseController {
             LocateTools.locateBelow((Region) menuEvent.getSource(), popMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-        }
-    }
-
-    public List<MenuItem> examplesMenu() {
-        try {
-            List<MenuItem> items = new ArrayList<>();
-
-            MenuItem menu;
-            String lang = Languages.isChinese() ? "zh" : "en";
-
-            // https://data.stats.gov.cn/index.htm
-            Menu chinaMenu = new Menu(message("StatisticDataOfChina"), StyleTools.getIconImage("iconChina.png"));
-            items.add(chinaMenu);
-
-            menu = new MenuItem(message("ChinaPopulation"));
-            menu.setOnAction((ActionEvent event) -> {
-                File file = FxFileTools.getInternalFile("/data/examples/ChinaPopulation_" + lang + ".csv",
-                        "data", "ChinaPopulation_" + lang + ".csv", true);
-                List<ColumnType> columnTypes = Arrays.asList(
-                        ColumnType.String, ColumnType.Double, ColumnType.Double,
-                        ColumnType.Double, ColumnType.Double, ColumnType.Double
-                );
-                loadCSVFile(file, columnTypes);
-            });
-            chinaMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ChinaCensus"));
-            menu.setOnAction((ActionEvent event) -> {
-                File file = FxFileTools.getInternalFile("/data/examples/ChinaCensus_" + lang + ".csv",
-                        "data", "ChinaCensus_" + lang + ".csv", true);
-                List<ColumnType> columnTypes = Arrays.asList(
-                        ColumnType.String, ColumnType.Double, ColumnType.Double, ColumnType.Double,
-                        ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double,
-                        ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double,
-                        ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double,
-                        ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double,
-                        ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double,
-                        ColumnType.Double
-                );
-                loadCSVFile(file, columnTypes);
-            });
-            chinaMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ChinaGDP"));
-            menu.setOnAction((ActionEvent event) -> {
-                File file = FxFileTools.getInternalFile("/data/examples/ChinaGDP_" + lang + ".csv",
-                        "data", "ChinaGDP_" + lang + ".csv", true);
-                List<ColumnType> columnTypes = Arrays.asList(
-                        ColumnType.String, ColumnType.Double, ColumnType.Double, ColumnType.Double,
-                        ColumnType.Double, ColumnType.Double, ColumnType.Double
-                );
-                loadCSVFile(file, columnTypes);
-            });
-            chinaMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ChinaCPI"));
-            menu.setOnAction((ActionEvent event) -> {
-                File file = FxFileTools.getInternalFile("/data/examples/ChinaCPI_" + lang + ".csv",
-                        "data", "ChinaCPI_" + lang + ".csv", true);
-                List<ColumnType> columnTypes = Arrays.asList(
-                        ColumnType.String, ColumnType.Double, ColumnType.Double, ColumnType.Double,
-                        ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double
-                );
-                loadCSVFile(file, columnTypes);
-            });
-            chinaMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ChinaFoodConsumption"));
-            menu.setOnAction((ActionEvent event) -> {
-                File file = FxFileTools.getInternalFile("/data/examples/ChinaFoods_" + lang + ".csv",
-                        "data", "ChinaFoods_" + lang + ".csv", true);
-                List<ColumnType> columnTypes = Arrays.asList(
-                        ColumnType.String, ColumnType.Double, ColumnType.Double, ColumnType.Double,
-                        ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double,
-                        ColumnType.Double
-                );
-                loadCSVFile(file, columnTypes);
-            });
-            chinaMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ChinaGraduates"));
-            menu.setOnAction((ActionEvent event) -> {
-                File file = FxFileTools.getInternalFile("/data/examples/ChinaGraduates_" + lang + ".csv",
-                        "data", "ChinaGraduates_" + lang + ".csv", true);
-                List<ColumnType> columnTypes = Arrays.asList(
-                        ColumnType.String, ColumnType.Double, ColumnType.Double, ColumnType.Double,
-                        ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double
-                );
-                loadCSVFile(file, columnTypes);
-            });
-            chinaMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ChinaMuseums"));
-            menu.setOnAction((ActionEvent event) -> {
-                File file = FxFileTools.getInternalFile("/data/examples/ChinaMuseums_" + lang + ".csv",
-                        "data", "ChinaMuseums_" + lang + ".csv", true);
-                List<ColumnType> columnTypes = Arrays.asList(
-                        ColumnType.String, ColumnType.Long, ColumnType.Long, ColumnType.Long,
-                        ColumnType.Long, ColumnType.Long, ColumnType.Long, ColumnType.Long,
-                        ColumnType.Long, ColumnType.Double
-                );
-                loadCSVFile(file, columnTypes);
-            });
-            chinaMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ChinaHealthPersonnel"));
-            menu.setOnAction((ActionEvent event) -> {
-                File file = FxFileTools.getInternalFile("/data/examples/ChinaHealthPersonnel_" + lang + ".csv",
-                        "data", "ChinaHealthPersonnel_" + lang + ".csv", true);
-                List<ColumnType> columnTypes = Arrays.asList(
-                        ColumnType.String, ColumnType.Double, ColumnType.Double, ColumnType.Double,
-                        ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double,
-                        ColumnType.Double, ColumnType.Double, ColumnType.Double
-                );
-                loadCSVFile(file, columnTypes);
-            });
-            chinaMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ChinaMarriage"));
-            menu.setOnAction((ActionEvent event) -> {
-                File file = FxFileTools.getInternalFile("/data/examples/ChinaMarriage_" + lang + ".csv",
-                        "data", "ChinaMarriage_" + lang + ".csv", true);
-                List<ColumnType> columnTypes = Arrays.asList(
-                        ColumnType.String, ColumnType.Double, ColumnType.Double, ColumnType.Double,
-                        ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double
-                );
-                loadCSVFile(file, columnTypes);
-            });
-            chinaMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ChinaSportWorldChampions"));
-            menu.setOnAction((ActionEvent event) -> {
-                File file = FxFileTools.getInternalFile("/data/examples/ChinaSportWorldChampions_" + lang + ".csv",
-                        "data", "ChinaSportWorldChampions_" + lang + ".csv", true);
-                List<ColumnType> columnTypes = Arrays.asList(
-                        ColumnType.String, ColumnType.Integer, ColumnType.Integer, ColumnType.Integer,
-                        ColumnType.Integer, ColumnType.Integer, ColumnType.Integer
-                );
-                loadCSVFile(file, columnTypes);
-            });
-            chinaMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("CrimesFiledByChinaPolice"));
-            menu.setOnAction((ActionEvent event) -> {
-                File file = FxFileTools.getInternalFile("/data/examples/ChinaCrimesFiledByPolice_" + lang + ".csv",
-                        "data", "ChinaCrimesFiledByPolice_" + lang + ".csv", true);
-                List<ColumnType> columnTypes = Arrays.asList(
-                        ColumnType.String, ColumnType.Integer, ColumnType.Integer, ColumnType.Integer,
-                        ColumnType.Integer, ColumnType.Integer, ColumnType.Integer, ColumnType.Integer,
-                        ColumnType.Integer, ColumnType.Integer, ColumnType.Integer, ColumnType.Integer
-                );
-                loadCSVFile(file, columnTypes);
-            });
-            chinaMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("CrimesFiledByChinaProcuratorate"));
-            menu.setOnAction((ActionEvent event) -> {
-                File file = FxFileTools.getInternalFile("/data/examples/ChinaCrimesFiledByProcuratorate_" + lang + ".csv",
-                        "data", "ChinaCrimesFiledByProcuratorate_" + lang + ".csv", true);
-                List<ColumnType> columnTypes = Arrays.asList(
-                        ColumnType.String, ColumnType.Integer, ColumnType.Integer, ColumnType.Integer,
-                        ColumnType.Integer, ColumnType.Integer, ColumnType.Integer, ColumnType.Integer,
-                        ColumnType.Integer, ColumnType.Integer, ColumnType.Integer, ColumnType.Integer,
-                        ColumnType.Integer, ColumnType.Integer
-                );
-                loadCSVFile(file, columnTypes);
-            });
-            chinaMenu.getItems().add(menu);
-
-            chinaMenu.getItems().add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("ChinaNationalBureauOfStatistics"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent event) -> {
-                browse("https://data.stats.gov.cn/");
-            });
-            chinaMenu.getItems().add(menu);
-
-            Menu regressionMenu = new Menu(message("Regression"), StyleTools.getIconImage("iconLinearPgression.png"));
-            items.add(regressionMenu);
-
-            // https://www.scribbr.com/statistics/simple-linear-regression/
-            menu = new MenuItem(message("IncomeHappiness"));
-            menu.setOnAction((ActionEvent event) -> {
-                File file = FxFileTools.getInternalFile("/data/examples/IncomeHappiness_" + lang + ".csv",
-                        "data", "IncomeHappiness_" + lang + ".csv", true);
-                List<ColumnType> columnTypes = Arrays.asList(
-                        ColumnType.Double, ColumnType.Double
-                );
-                loadCSVFile(file, columnTypes);
-            });
-            regressionMenu.getItems().add(menu);
-
-            // https://github.com/krishnaik06/simple-Linear-Regression
-            menu = new MenuItem(message("ExperienceSalary"));
-            menu.setOnAction((ActionEvent event) -> {
-                File file = FxFileTools.getInternalFile("/data/examples/ExperienceSalary_" + lang + ".csv",
-                        "data", "ExperienceSalary_" + lang + ".csv", true);
-                List<ColumnType> columnTypes = Arrays.asList(
-                        ColumnType.Double, ColumnType.Double
-                );
-                loadCSVFile(file, columnTypes);
-            });
-            regressionMenu.getItems().add(menu);
-
-            // http://archive.ics.uci.edu/ml/datasets/Iris
-            menu = new MenuItem(message("IrisSpecies"));
-            menu.setOnAction((ActionEvent event) -> {
-                File file = FxFileTools.getInternalFile("/data/examples/IrisSpecies_" + lang + ".csv",
-                        "data", "IrisSpecies_" + lang + ".csv", true);
-                List<ColumnType> columnTypes = Arrays.asList(
-                        ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double,
-                        ColumnType.String
-                );
-                loadCSVFile(file, columnTypes);
-            });
-            regressionMenu.getItems().add(menu);
-
-            // https://github.com/tomsharp/SVR/tree/master/data
-            menu = new MenuItem(message("BostonHousingPrices"));
-            menu.setOnAction((ActionEvent event) -> {
-                File file = FxFileTools.getInternalFile("/data/examples/BostonHousingPrices_" + lang + ".csv",
-                        "data", "BostonHousingPrices_" + lang + ".csv", true);
-                List<ColumnType> columnTypes = Arrays.asList(
-                        ColumnType.String, ColumnType.Double, ColumnType.Double, ColumnType.Double,
-                        ColumnType.Double, ColumnType.Double, ColumnType.String, ColumnType.Double,
-                        ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double,
-                        ColumnType.Double, ColumnType.Double, ColumnType.Double, ColumnType.Double
-                );
-                loadCSVFile(file, columnTypes);
-            });
-            regressionMenu.getItems().add(menu);
-            return items;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
         }
     }
 
@@ -1212,14 +731,8 @@ public class ControlData2D extends BaseController {
         if (targetIsTextInput()) {
             return false;
         }
-        if (editTab.isSelected()) {
-            if (editController.tableTab.isSelected()) {
-                tableController.copyAction();
-
-            } else if (editController.textTab.isSelected()) {
-                TextClipboardTools.copyToMyBoxClipboard(myController, textController.textArea);
-
-            }
+        if (editTab.isSelected() && editController.tableTab.isSelected()) {
+            tableController.copyToSystemClipboard();
             return true;
         }
         return false;
@@ -1231,7 +744,7 @@ public class ControlData2D extends BaseController {
             return false;
         }
         if (editTab.isSelected() && editController.tableTab.isSelected()) {
-            Data2DPasteContentInMyBoxClipboardController.open(tableController);
+            tableController.pasteContentInSystemClipboard();
             return true;
 
         }
@@ -1295,6 +808,17 @@ public class ControlData2D extends BaseController {
         } catch (Exception e) {
         }
         super.cleanPane();
+    }
+
+    /*
+        get
+     */
+    public Data2D getData2D() {
+        return data2D;
+    }
+
+    public ControlData2DEditTable getTableController() {
+        return tableController;
     }
 
 }

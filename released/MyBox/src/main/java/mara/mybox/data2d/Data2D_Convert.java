@@ -63,18 +63,18 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         to/from database table
      */
     public DataTable toTable(SingletonTask task, String targetName, boolean dropExisted) {
+        DataTable dataTable = null;
         try ( Connection conn = DerbyBase.getConnection()) {
-            DataTable dataTable = createTable(task, conn, targetName, dropExisted);
+            dataTable = createTable(task, conn, targetName, dropExisted);
             writeTableData(task, conn, dataTable);
-            return dataTable;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
             } else {
                 MyBoxLog.error(e.toString());
             }
-            return null;
         }
+        return dataTable;
     }
 
     public DataTable createTable(SingletonTask task, Connection conn, String targetName, boolean dropExisted) {
@@ -85,7 +85,13 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             if (columns == null || columns.isEmpty()) {
                 return null;
             }
-            return createTable(task, conn, targetName, columns, null, null, dropExisted);
+            DataTable dataTable = createTable(task, conn, targetName, columns, null, comments, null, dropExisted);
+            if (dataTable == null) {
+                return null;
+            }
+            dataTable.cloneDefinitionAttributes(this);
+            dataTable.setDataName(targetName);
+            return dataTable;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -154,7 +160,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                     sourceColumns.add(column);
                 }
             }
-            return createTable(task, conn, targetName, sourceColumns, null, null, true);
+            return createTable(task, conn, targetName, sourceColumns, null, comments, null, true);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -227,7 +233,8 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             }
             column.setD2cid(-1).setD2id(-1);
             sourceColumns.add(column);
-            DataTable dataTable = createTable(task, conn, tmpTableName(), sourceColumns, null, null, true);
+            DataTable dataTable = createTable(task, conn, tmpTableName(), sourceColumns, null, comments, null, true);
+            dataTable.cloneDefinitionAttributes(this);
             if (cols == null || cols.isEmpty()) {
                 cols = new ArrayList<>();
                 for (int i = 0; i < columns.size(); i++) {
@@ -253,7 +260,8 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         }
     }
 
-    public static DataTable makeTable(SingletonTask task, String tname, List<Data2DColumn> sourceColumns, List<String> keys, String idName) {
+    public static DataTable makeTable(SingletonTask task, String tname,
+            List<Data2DColumn> sourceColumns, List<String> keys, String idName) {
         try {
             if (sourceColumns == null || sourceColumns.isEmpty()) {
                 return null;
@@ -315,7 +323,8 @@ public abstract class Data2D_Convert extends Data2D_Edit {
     }
 
     public static DataTable createTable(SingletonTask task, Connection conn,
-            String name, List<Data2DColumn> sourceColumns, List<String> keys, String idName, boolean dropExisted) {
+            String name, List<Data2DColumn> sourceColumns, List<String> keys, String comments,
+            String idName, boolean dropExisted) {
         try {
             if (conn == null || sourceColumns == null || sourceColumns.isEmpty()) {
                 return null;
@@ -338,12 +347,11 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                 return null;
             }
             tableData2D = dataTable.getTableData2D();
-//            MyBoxLog.console(tableData2D.createTableStatement());
             if (conn.createStatement().executeUpdate(tableData2D.createTableStatement()) < 0) {
                 return null;
             }
             conn.commit();
-            dataTable.recordTable(conn, tableName, dataTable.getColumns());
+            dataTable.recordTable(conn, tableName, dataTable.getColumns(), comments);
             return dataTable;
         } catch (Exception e) {
             if (task != null) {
@@ -365,7 +373,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         try ( Connection conn = DerbyBase.getConnection();
                  PreparedStatement statement = conn.prepareStatement(tableData2D.queryAllStatement());
                  ResultSet results = statement.executeQuery();
-                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(file, Charset.forName("UTF-8")), CsvTools.csvFormat(',', true))) {
+                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(file, Charset.forName("UTF-8")), CsvTools.csvFormat(",", true))) {
             csvPrinter.printRecord(dataTable.columnNames());
             while (results.next() && task != null && !task.isCancelled()) {
                 try {
@@ -495,7 +503,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         List<List<String>> rows = new ArrayList<>();
         TableData2D tableData2D = dataTable.getTableData2D();
         List<Data2DColumn> dataColumns = dataTable.getColumns();
-        int tcolsNumber = dataColumns.size(), trowsNumber = 0;
+        int tcolsNumber = dataColumns.size();
         try ( Connection conn = DerbyBase.getConnection();
                  PreparedStatement statement = conn.prepareStatement(tableData2D.queryAllStatement());
                  ResultSet results = statement.executeQuery()) {
@@ -508,7 +516,6 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                         row.add(column.toString(v));
                     }
                     rows.add(row);
-                    trowsNumber++;
                 } catch (Exception e) {  // skip  bad lines
                     MyBoxLog.error(e);
                 }
@@ -522,7 +529,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             return null;
         }
         DataMatrix matrix = new DataMatrix();
-        matrix.setDataName(dataTable.dataName());
+        matrix.cloneDefinitionAttributes(dataTable);
         if (DataMatrix.save(task, matrix, dataColumns, rows)) {
             return matrix;
         } else {
@@ -537,8 +544,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         File clipFile = DataClipboard.newFile();
         DataFileCSV csvData = toCSV(task, dataTable, clipFile, false);
         if (csvData != null && clipFile != null && clipFile.exists()) {
-            return DataClipboard.create(task, csvData.getDataName(),
-                    csvData.getColumns(), clipFile, csvData.getRowsNumber(), csvData.getColsNumber());
+            return DataClipboard.create(task, csvData, clipFile);
         } else {
             return null;
         }
@@ -696,7 +702,8 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             targetData.setColumns(csvData.getColumns())
                     .setFile(excelFile).setSheet(targetSheetName)
                     .setHasHeader(targetHasHeader)
-                    .setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
+                    .cloneDefinitionAttributes(csvData);
+            targetData.setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
             targetData.saveAttributes();
             return targetData;
         } else {
@@ -751,7 +758,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             }
         }
         DataMatrix matrix = new DataMatrix();
-        matrix.setDataName(csvData.dataName());
+        matrix.cloneDefinitionAttributes(csvData);
         if (DataMatrix.save(task, matrix, cols, data)) {
             return matrix;
         } else {
@@ -786,14 +793,8 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         }
         File dFile = DataClipboard.newFile();
         if (FileCopyTools.copyFile(csvFile, dFile, true, true)) {
-            return DataClipboard.create(task, csvData.dataName(),
-                    cols, dFile, csvData.getRowsNumber(), cols.size());
+            return DataClipboard.create(task, csvData, dFile);
         } else {
-            if (task != null) {
-                task.setError(message("Failed"));
-            } else {
-                MyBoxLog.error(message("Failed"));
-            }
             return null;
         }
     }

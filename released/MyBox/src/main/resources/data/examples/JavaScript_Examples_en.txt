@@ -25,7 +25,7 @@ cat1.name
 
 ##MyBox#
 Examples > Expressions > Numeric operations
-e
+Euler number
 Math.E
 
 ##MyBox#
@@ -51,7 +51,7 @@ Math.sqrt(9)
 ##MyBox#
 Examples > Expressions > Numeric operations
 cubic root
-Math.cbrt(27)
+Math.pow(27,-3)
 
 ##MyBox#
 Examples > Expressions > Numeric operations
@@ -90,17 +90,19 @@ Math.asin(0.3)
 
 ##MyBox#
 Examples > Expressions > Numeric operations
-natural logarithm
+natural logarithm(base-e)
 Math.log(6)
 
 ##MyBox#
 Examples > Expressions > Numeric operations
-log10
+common logarithm(base-10)
+// ECMAScript 6 supports while ECMAScript 5.1 not support
 Math.log10(6)
 
 ##MyBox#
 Examples > Expressions > Numeric operations
-log2
+base-2 logarithm
+// ECMAScript 6 supports while ECMAScript 5.1 not support
 Math.log2(6)
 
 ##MyBox#

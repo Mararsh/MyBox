@@ -1,0 +1,245 @@
+##MyBox#
+示例 > 对象
+双精度
+var d = new('java.lang.Double', 0d);
+return '最小正值=' + d.MIN_VALUE + ' 最大值=' + d.MAX_VALUE;
+
+##MyBox#
+示例 > 对象
+字串
+var s = new('java.lang.String', 'Hello');
+return '包含e：'+ s.contains('e') + '  长度：' + s.length();
+
+##MyBox#
+示例 > 对象
+时间
+var date = new('java.util.Date');
+return '当前时间：' + date.toString() + '  值：' + date.getTime();
+
+##MyBox#
+示例 > Math
+欧拉数
+Math.E
+MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
+
+##MyBox#
+示例 > Math
+圆周率
+Math.PI
+MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
+
+##MyBox#
+示例 > Math
+绝对值
+Math.abs(-5.611)
+MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
+
+##MyBox#
+示例 > Math
+平方根
+Math.sqrt(9)
+MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
+
+##MyBox#
+示例 > Math
+三次方根
+Math.cbrt(27)
+MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
+
+##MyBox#
+示例 > Math
+幂
+Math.pow(2,5)
+MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
+
+##MyBox#
+示例 > Math
+欧拉冥
+Math.exp(2)
+MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
+
+##MyBox#
+示例 > Math
+自然对数（底为e）
+Math.log(6)
+MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
+
+##MyBox#
+示例 > Math
+常用对数（底为10）
+Math.log10(6)
+MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
+
+##MyBox#
+示例 > Math
+余弦
+Math.cos(0)
+MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
+
+##MyBox#
+示例 > Math
+正弦
+Math.sin(9)
+MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
+
+##MyBox#
+示例 > Math
+正切
+Math.tan(5)
+MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
+
+##MyBox#
+示例 > Math
+反正切
+Math.atan(-7.3)
+MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
+
+##MyBox#
+示例 > Math
+反余弦
+Math.acos(0.5)
+MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
+
+##MyBox#
+示例 > Math
+反正弦
+Math.asin(0.3)
+MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
+
+##MyBox#
+示例 > Math
+上舍入
+Math.ceil(4.13)
+MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
+
+##MyBox#
+示例 > Math
+下舍入
+Math.floor(4.67)
+MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
+
+##MyBox#
+示例 > Math
+四舍五入
+Math.round(4.83)
+MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
+
+##MyBox#
+示例 > Math
+随机数
+Math.random( )
+MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
+
+##MyBox#
+示例 > Math
+大值
+Math.max(1,-3)
+MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
+
+##MyBox#
+示例 > Math
+小值
+Math.min(1,-3)
+MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);
+
+##MyBox#
+示例 > 布尔表达式
+数组包含
+var value = 3;
+var array = [1,'2',3, 'hello'];
+value =~ array;
+
+##MyBox#
+示例 > 布尔表达式
+集合不包含
+var value = 2;
+var set = {1,'2',3, 'hello'};
+value !~ set;
+
+##MyBox#
+示例 > 布尔表达式
+字符串匹配
+var s = 'abc1233hello';
+var regex = '\\S*3{2,}\\S*';
+var caseInsensitive = true;
+StringTools.match(s,regex,caseInsensitive);
+MyBoxTreeNodeMore:jexlContext.set("StringTools", mara.mybox.tools.StringTools.class);
+
+##MyBox#
+示例 > 布尔表达式
+字符串包含
+var s = 'abc1233hello';
+var regex = '3{2}';
+var caseInsensitive = true;
+StringTools.include(s,regex,caseInsensitive);
+MyBoxTreeNodeMore:jexlContext.set("StringTools", mara.mybox.tools.StringTools.class);
+
+##MyBox#
+示例 > 布尔表达式
+与/或/否
+var a = 5;
+var b = 2;
+'hello'.startsWith('hell') and ( a < 9 or b >= 6  ) and not ( a == b );
+
+##MyBox#
+示例 > 数值处理
+小数位数
+var d = 52362.18903;
+var scale = 2;
+DoubleTools.scale(d, scale);
+MyBoxTreeNodeMore:jexlContext.set("DoubleTools", mara.mybox.tools.DoubleTools.class);
+
+##MyBox#
+示例 > 数值处理
+格式
+var d = 52362.18903;
+var scale = 2;
+DoubleTools.format(d, scale);
+MyBoxTreeNodeMore:jexlContext.set("DoubleTools", mara.mybox.tools.DoubleTools.class);
+
+##MyBox#
+示例 > 数值处理
+百分数
+var number = 37;
+var total = 518;
+var scale = 2;
+DoubleTools.percentage(number, total, scale);
+MyBoxTreeNodeMore:jexlContext.set("DoubleTools", mara.mybox.tools.DoubleTools.class);
+
+##MyBox#
+示例 > 时间
+现在
+DateTools.nowString();
+MyBoxTreeNodeMore:jexlContext.set("DateTools", mara.mybox.tools.DateTools.class);
+
+##MyBox#
+示例 > 时间
+格式
+var date = new('java.util.Date');
+var format = 'yyyy-MM-dd HH:mm:ss.SSS';
+DateTools.datetimeToString(date, format);
+MyBoxTreeNodeMore:jexlContext.set("DateTools", mara.mybox.tools.DateTools.class);
+
+##MyBox#
+示例 > 语句
+循环
+var array = [ 'A', 'B', 'C', 'D' ];
+var arrayString = '';
+for (var i : 1 .. size (array)) {
+    if (empty (arrayString)) {
+         arrayString = array[i-1];
+    } else {
+         arrayString += ' , ' + array[i-1];
+    }
+}
+return arrayString;
+
+##MyBox#
+示例 > 语句
+函数
+var circleArea = function(r) {
+    Math.PI * r * r 
+}
+var r = 9.42;
+return circleArea(r);
+MyBoxTreeNodeMore:jexlContext.set("Math", Math.class);

@@ -16,7 +16,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class DataTableQueryController extends TreeManageController {
 
-    protected ControlData2DEditTable tableController;
+    protected ControlData2DLoad tableController;
     protected ChangeListener<Boolean> tableStatusListener;
 
     @FXML
@@ -29,7 +29,7 @@ public class DataTableQueryController extends TreeManageController {
         valueMsg = "SQL";
     }
 
-    public void setParameters(ControlData2DEditTable tableController) {
+    public void setParameters(ControlData2DLoad tableController) {
         try {
             this.tableController = tableController;
             nodeController.setParameters(tableController);
@@ -63,7 +63,7 @@ public class DataTableQueryController extends TreeManageController {
     /*
         static
      */
-    public static DataTableQueryController open(ControlData2DEditTable tableController) {
+    public static DataTableQueryController open(ControlData2DLoad tableController) {
         try {
             DataTableQueryController controller = (DataTableQueryController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.DataTableQueryFxml, false);

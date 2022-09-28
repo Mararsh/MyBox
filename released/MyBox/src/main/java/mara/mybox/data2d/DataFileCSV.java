@@ -59,7 +59,7 @@ public class DataFileCSV extends DataFileText {
         if (delimiter == null || delimiter.isEmpty()) {
             delimiter = ",";
         }
-        return CsvTools.csvFormat(delimiter.charAt(0), hasHeader);
+        return CsvTools.csvFormat(delimiter, hasHeader);
     }
 
     @Override

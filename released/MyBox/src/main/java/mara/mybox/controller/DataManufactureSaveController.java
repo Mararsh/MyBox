@@ -15,7 +15,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class DataManufactureSaveController extends BaseChildController {
 
-    protected ControlData2DEditTable tableController;
+    protected ControlData2DLoad tableController;
 
     @FXML
     protected ControlData2DTarget targetController;
@@ -24,7 +24,7 @@ public class DataManufactureSaveController extends BaseChildController {
         baseTitle = message("DataManufacture");
     }
 
-    public void setParameters(ControlData2DEditTable tableController) {
+    public void setParameters(ControlData2DLoad tableController) {
         try {
             this.tableController = tableController;
 
@@ -92,7 +92,7 @@ public class DataManufactureSaveController extends BaseChildController {
     /*
         static
      */
-    public static DataManufactureSaveController open(ControlData2DEditTable tableController) {
+    public static DataManufactureSaveController open(ControlData2DLoad tableController) {
         try {
             DataManufactureSaveController controller = (DataManufactureSaveController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.DataManufactureSaveFxml, true);

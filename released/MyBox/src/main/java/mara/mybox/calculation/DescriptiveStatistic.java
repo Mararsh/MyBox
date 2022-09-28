@@ -3,6 +3,7 @@ package mara.mybox.calculation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import mara.mybox.controller.BaseData2DHandleController;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
@@ -191,8 +192,9 @@ public class DescriptiveStatistic {
                 return false;
             }
             String cName = prefix + message("Calculation");
+            Random random = new Random();
             while (names.contains(cName)) {
-                cName += "m";
+                cName += random.nextInt(10);
             }
             outputNames = new ArrayList<>();
             outputNames.add(cName);

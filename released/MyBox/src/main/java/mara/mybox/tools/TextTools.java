@@ -18,6 +18,7 @@ import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.data.TextEditInformation;
 import mara.mybox.data2d.Data2D;
+import static mara.mybox.data2d.DataFileText.CommentsMarker;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
 import thridparty.EncodingDetect;
@@ -30,6 +31,12 @@ import thridparty.EncodingDetect;
  * @License Apache License Version 2.0
  */
 public class TextTools {
+
+    public final static String BlankName = "Blank";
+    public final static String Blank4Name = "Blank4";
+    public final static String Blank8Name = "Blank8";
+    public final static String BlanksName = "Blanks";
+    public final static String TabName = "Tab";
 
     public static List<Charset> getCharsets() {
         List<Charset> sets = new ArrayList<>();
@@ -503,19 +510,24 @@ public class TextTools {
             return null;
         }
         String delimiter;
-        switch (delimiterName.toLowerCase()) {
+        switch (delimiterName) {
+            case TabName:
             case "tab":
                 delimiter = "\t";
                 break;
+            case BlankName:
             case "blank":
                 delimiter = " ";
                 break;
+            case Blank4Name:
             case "blank4":
                 delimiter = "    ";
                 break;
+            case Blank8Name:
             case "blank8":
                 delimiter = "        ";
                 break;
+            case BlanksName:
             case "blanks":
                 delimiter = " ";
                 break;
@@ -531,23 +543,28 @@ public class TextTools {
             return null;
         }
         String msg;
-        switch (delimiterName.toLowerCase()) {
+        switch (delimiterName) {
+            case TabName:
             case "tab":
             case "\t":
                 msg = message("Tab");
                 break;
+            case BlankName:
             case "blank":
             case " ":
                 msg = message("Blank");
                 break;
+            case Blank4Name:
             case "blank4":
             case "    ":
                 msg = message("Blank4");
                 break;
+            case Blank8Name:
             case "blank8":
             case "        ":
                 msg = message("Blank8");
                 break;
+            case BlanksName:
             case "blanks":
                 msg = message("BlankCharacters");
                 break;
@@ -661,7 +678,7 @@ public class TextTools {
                 }
                 for (int c = 0; c <= colEnd; c++) {
                     v = rowValues.get(c);
-                    s.append(v == null ? "" : v);
+                    s.append(v == null ? "" : v.toString().replaceAll("\n", "\\\\n"));
                     if (c < colEnd) {
                         s.append(delimiter);
                     }
@@ -677,29 +694,39 @@ public class TextTools {
         }
     }
 
+    public static boolean validLine(String line) {
+        return line != null && !line.isBlank() && !line.startsWith(CommentsMarker);
+
+    }
+
     public static List<String> parseLine(String line, String delimiterName) {
         try {
-            if (line == null || delimiterName == null) {
+            if (!validLine(line) || delimiterName == null) {
                 return null;
             }
             String[] values;
-            switch (delimiterName.toLowerCase()) {
+            switch (delimiterName) {
+                case TabName:
                 case "tab":
                 case "\t":
                     values = line.split("\t", -1);
                     break;
+                case BlankName:
                 case "blank":
                 case " ":
                     values = line.split("\\s", -1);
                     break;
+                case Blank4Name:
                 case "blank4":
                 case "    ":
                     values = line.split("\\s{4}", -1);
                     break;
+                case Blank8Name:
                 case "blank8":
                 case "        ":
                     values = line.split("\\s{8}", -1);
                     break;
+                case BlanksName:
                 case "blanks":
                     values = line.split("\\s+", -1);
                     break;

@@ -1,0 +1,1058 @@
+package mara.mybox.data2d;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import javafx.event.ActionEvent;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
+import mara.mybox.controller.ControlData2D;
+import mara.mybox.controller.ControlData2DEditTable;
+import mara.mybox.controller.ControlData2DLoad;
+import mara.mybox.controller.Data2DChartBoxWhiskerController;
+import mara.mybox.controller.Data2DChartComparisonBarsController;
+import mara.mybox.controller.Data2DChartPieController;
+import mara.mybox.controller.Data2DChartSelfComparisonBarsController;
+import mara.mybox.controller.Data2DChartXYController;
+import mara.mybox.controller.Data2DChartXYZController;
+import mara.mybox.controller.Data2DConvertToDataBaseController;
+import mara.mybox.controller.Data2DDeleteController;
+import mara.mybox.controller.Data2DExportController;
+import mara.mybox.controller.Data2DFrequencyController;
+import mara.mybox.controller.Data2DGroupEqualValuesController;
+import mara.mybox.controller.Data2DMultipleLinearRegressionCombinationController;
+import mara.mybox.controller.Data2DMultipleLinearRegressionController;
+import mara.mybox.controller.Data2DNormalizeController;
+import mara.mybox.controller.Data2DPercentageController;
+import mara.mybox.controller.Data2DRowExpressionController;
+import mara.mybox.controller.Data2DSetStylesController;
+import mara.mybox.controller.Data2DSetValuesController;
+import mara.mybox.controller.Data2DSimpleLinearRegressionCombinationController;
+import mara.mybox.controller.Data2DSimpleLinearRegressionController;
+import mara.mybox.controller.Data2DSortController;
+import mara.mybox.controller.Data2DSplitController;
+import mara.mybox.controller.Data2DStatisticController;
+import mara.mybox.controller.Data2DTransposeController;
+import mara.mybox.controller.DataTableQueryController;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxFileTools;
+import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.FileDeleteTools;
+import mara.mybox.value.AppVariables;
+import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
+
+/**
+ * @Author Mara
+ * @CreateDate 2022-9-15
+ * @License Apache License Version 2.0
+ */
+public class Data2DTools {
+
+    public static List<MenuItem> editMenu(ControlData2D controller) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+            ControlData2DEditTable tableController = controller.getTableController();
+            Data2D data2D = tableController.getData2D();
+            boolean invalidData = data2D == null || !data2D.isValid();
+            boolean isTmpData = data2D != null && data2D.isTmpData();
+            boolean empty = invalidData || tableController.getTableData().isEmpty();
+
+            Menu dataMenu = new Menu(message("Data"), StyleTools.getIconImage("iconData.png"));
+            items.add(dataMenu);
+
+            menu = new MenuItem(message("Save"), StyleTools.getIconImage("iconSave.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                controller.save();
+            });
+            menu.setDisable(invalidData || !tableController.isDataSizeLoaded());
+            dataMenu.getItems().add(menu);
+
+            dataMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("Recover"), StyleTools.getIconImage("iconRecover.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                controller.recover();
+            });
+            menu.setDisable(invalidData || isTmpData);
+            dataMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Refresh"), StyleTools.getIconImage("iconRefresh.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                controller.refreshAction();
+            });
+            menu.setDisable(invalidData || isTmpData);
+            dataMenu.getItems().add(menu);
+
+            dataMenu.getItems().add(new SeparatorMenuItem());
+
+            if (data2D != null && data2D.isDataFile()) {
+                menu = new MenuItem(message("Open"), StyleTools.getIconImage("iconOpen.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    controller.selectSourceFile();
+                });
+                dataMenu.getItems().add(menu);
+            }
+
+            menu = new MenuItem(message("CreateData"), StyleTools.getIconImage("iconAdd.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                controller.create();
+            });
+            dataMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("LoadContentInSystemClipboard"), StyleTools.getIconImage("iconImageSystem.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                controller.loadContentInSystemClipboard();
+            });
+            dataMenu.getItems().add(menu);
+
+            dataMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("Export"), StyleTools.getIconImage("iconExport.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DExportController.open(tableController);
+            });
+            menu.setDisable(empty);
+            dataMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ConvertToDatabaseTable"), StyleTools.getIconImage("iconDatabase.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DConvertToDataBaseController.open(tableController);
+            });
+            menu.setDisable(invalidData);
+            dataMenu.getItems().add(menu);
+
+            items.add(new SeparatorMenuItem());
+
+            Menu modifyMenu = new Menu(message("Modify"), StyleTools.getIconImage("iconEdit.png"));
+            items.add(modifyMenu);
+
+            menu = new MenuItem(message("SetValues"), StyleTools.getIconImage("iconEqual.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DSetValuesController.open(tableController);
+            });
+            menu.setDisable(empty);
+            modifyMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Delete"), StyleTools.getIconImage("iconDelete.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DDeleteController.open(tableController);
+            });
+            menu.setDisable(empty);
+            modifyMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("SetStyles"), StyleTools.getIconImage("iconColor.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DSetStylesController.open(tableController);
+            });
+            menu.setDisable(empty || isTmpData);
+            modifyMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("PasteContentInSystemClipboard"), StyleTools.getIconImage("iconPasteSystem.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                tableController.pasteContentInSystemClipboard();
+            });
+            menu.setDisable(invalidData);
+            modifyMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("PasteContentInMyBoxClipboard"), StyleTools.getIconImage("iconPaste.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                tableController.pasteContentInMyboxClipboard();
+            });
+            menu.setDisable(invalidData);
+            modifyMenu.getItems().add(menu);
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static List<MenuItem> operationsMenu(ControlData2DLoad controller) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+            Data2D data2D = controller.getData2D();
+            boolean invalidData = data2D == null || !data2D.isValid();
+            boolean empty = invalidData || controller.getTableData().isEmpty();
+
+            Menu trimMenu = new Menu(message("Trim"), StyleTools.getIconImage("iconClean.png"));
+            items.add(trimMenu);
+
+            if (data2D != null && data2D.isTable()) {
+                menu = new MenuItem(message("Query"), StyleTools.getIconImage("iconQuery.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    DataTableQueryController.open(controller);
+                });
+                menu.setDisable(empty);
+                trimMenu.getItems().add(menu);
+            }
+
+            menu = new MenuItem(message("CopyFilterQuery"), StyleTools.getIconImage("iconCopy.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                controller.copyAction();
+            });
+            menu.setDisable(empty);
+            trimMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Sort"), StyleTools.getIconImage("iconSort.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DSortController.open(controller);
+            });
+            menu.setDisable(empty);
+            trimMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Transpose"), StyleTools.getIconImage("iconRotateRight.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DTransposeController.open(controller);
+            });
+            menu.setDisable(empty);
+            trimMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Normalize"), StyleTools.getIconImage("iconBinary.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DNormalizeController.open(controller);
+            });
+            menu.setDisable(empty);
+            trimMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Split"), StyleTools.getIconImage("iconSplit.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DSplitController.open(controller);
+            });
+            menu.setDisable(empty);
+            trimMenu.getItems().add(menu);
+
+            Menu calMenu = new Menu(message("Calculation"), StyleTools.getIconImage("iconCalculator.png"));
+            items.add(calMenu);
+
+            menu = new MenuItem(message("RowExpression"), StyleTools.getIconImage("iconCalculate.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DRowExpressionController.open(controller);
+            });
+            menu.setDisable(empty);
+            calMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("DescriptiveStatistics"), StyleTools.getIconImage("iconStatistic.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DStatisticController.open(controller);
+            });
+            menu.setDisable(empty);
+            calMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("GroupEqualValues"), StyleTools.getIconImage("iconAnalyse.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DGroupEqualValuesController.open(controller);
+            });
+            menu.setDisable(empty);
+            calMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("SimpleLinearRegression"), StyleTools.getIconImage("iconLinearPgression.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DSimpleLinearRegressionController.open(controller);
+            });
+            menu.setDisable(empty);
+            calMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("SimpleLinearRegressionCombination"), StyleTools.getIconImage("iconLinearPgression.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DSimpleLinearRegressionCombinationController.open(controller);
+            });
+            menu.setDisable(empty);
+            calMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("MultipleLinearRegression"), StyleTools.getIconImage("iconLinearPgression.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DMultipleLinearRegressionController.open(controller);
+            });
+            menu.setDisable(empty);
+            calMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("MultipleLinearRegressionCombination"), StyleTools.getIconImage("iconLinearPgression.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DMultipleLinearRegressionCombinationController.open(controller);
+            });
+            menu.setDisable(empty);
+            calMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("FrequencyDistributions"), StyleTools.getIconImage("iconDistribution.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DFrequencyController.open(controller);
+            });
+            menu.setDisable(empty);
+            calMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ValuePercentage"), StyleTools.getIconImage("iconPercentage.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DPercentageController.open(controller);
+            });
+            menu.setDisable(empty);
+            calMenu.getItems().add(menu);
+
+            Menu chartMenu = new Menu(message("Charts"), StyleTools.getIconImage("iconGraph.png"));
+            items.add(chartMenu);
+
+            menu = new MenuItem(message("XYChart"), StyleTools.getIconImage("iconXYChart.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DChartXYController.open(controller);
+            });
+            menu.setDisable(empty);
+            chartMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("PieChart"), StyleTools.getIconImage("iconPieChart.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DChartPieController.open(controller);
+            });
+            menu.setDisable(empty);
+            chartMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("BoxWhiskerChart"), StyleTools.getIconImage("iconBoxWhiskerChart.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DChartBoxWhiskerController.open(controller);
+            });
+            menu.setDisable(empty);
+            chartMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("SelfComparisonBarsChart"), StyleTools.getIconImage("iconBarChartH.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DChartSelfComparisonBarsController.open(controller);
+            });
+            menu.setDisable(empty);
+            chartMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ComparisonBarsChart"), StyleTools.getIconImage("iconComparisonBarsChart.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DChartComparisonBarsController.open(controller);
+            });
+            menu.setDisable(empty);
+            chartMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("XYZChart"), StyleTools.getIconImage("iconXYZChart.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DChartXYZController.open(controller);
+            });
+            menu.setDisable(data2D == null || data2D.columnsNumber() < 3);
+            chartMenu.getItems().add(menu);
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static List<MenuItem> examplesMenu(ControlData2D controller) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+
+            MenuItem menu;
+            String lang = Languages.isChinese() ? "zh" : "en";
+
+            // https://data.stats.gov.cn/index.htm
+            Menu chinaMenu = new Menu(message("StatisticDataOfChina"), StyleTools.getIconImage("iconChina.png"));
+            items.add(chinaMenu);
+
+            menu = new MenuItem(message("ChinaPopulation"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("zh".equals(lang) ? "年" : "year_", ColumnType.String, true));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "年末总人口(万人)" : "population at year-end(ten thousand)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "男性人口(万人)" : "male(ten thousand)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "女性人口(万人)" : "female(ten thousand)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "城镇人口(万人)" : "urban(ten thousand)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "乡村人口(万人)" : "rural(ten thousand)   ", ColumnType.Double));
+                data.setColumns(columns).setDataName(message("ChinaPopulation"))
+                        .setComments("https://data.stats.gov.cn/index.htm");
+                if (makeExampleFile(lang, "ChinaPopulation", data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ChinaCensus"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("zh".equals(lang) ? "年" : "year_", ColumnType.String, true));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "人口普查总人口(万人)" : "total population of census(ten thousand)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "男性(万人)" : "male(ten thousand)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "女性(万人)" : "female(ten thousand)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "性别比(女=100)" : "sex ratio(female=100)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "城镇(万人)" : "urban(ten thousand)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "乡村(万人)" : "rural(ten thousand)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "家庭户规模(人/户)" : "family size", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "0-14岁占比(%)" : "aged 0-14(%)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "15-64岁占比(%)" : ",aged 15-64(%)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "65岁及以上占比(%)" : "aged over 65(%)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "汉族(万人)" : "han nationality population(ten thousand)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "汉族占比(%)" : "han nationality precentage(%)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "少数民族(万人)" : "minority nationality population(ten thousand)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "少数民族占比(%)" : "minority nationality precentage(%)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "每十万人口中受大专及以上教育人口数(人)" : "junior college or above education per one hundred thousand", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "每十万人口中受高中和中专教育人口数(人)" : "high school and secondary education per hundred thousand", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "每十万人口中受初中教育人口数(人)" : "junior high school education per hundred thousand", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "每十万人口中受小学教育人口数(人)" : "primary school education per hundred thousand", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "文盲人口数(万人)" : "illiteracy(ten thousand)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "文盲率(%)" : "illiteracy percentage(%)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "城镇化率(%)" : "urbanization rate(%)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "平均预期寿命(岁)" : "average life expectancy(years)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "男性平均预期寿命(岁)" : "male average life expectancy(years)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "女性平均预期寿命(岁)" : "female average life expectancy(years)", ColumnType.Double));
+                data.setColumns(columns).setDataName(message("ChinaCensus"))
+                        .setComments("https://data.stats.gov.cn/index.htm");
+                if (makeExampleFile(lang, "ChinaCensus", data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ChinaGDP"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("zh".equals(lang) ? "年" : "year_", ColumnType.String, true));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "国民总收入(GNI 亿元)" : "gross national income(GNI hundred million yuan)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "国内生产总值(GDP 亿元)" : "gross domestic product(GDP hundred million yuan)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "第一产业增加值(VA1 亿元)" : "value-added of first industry(VA1 hundred million yuan)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "第二产业增加值(VA2 亿元)" : "value-added of secondary industry(VA2 hundred million yuan)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "第三产业增加值(VA3 亿元)" : "value-added of tertiary industry(VA3 hundred million yuan)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "人均国内生产总值(元)" : "GDP per capita(yuan)", ColumnType.Double));
+                data.setColumns(columns).setDataName(message("ChinaGDP"))
+                        .setComments("https://data.stats.gov.cn/index.htm");
+                if (makeExampleFile(lang, "ChinaGDP", data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ChinaCPI"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("zh".equals(lang) ? "年" : "year_", ColumnType.String, true));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "居民消费价格指数(CPI 上年=100)" : "consumer price index(CPI last_year=100)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "城市居民消费价格指数(上年=100)" : "urban consumer price index(last_year=100)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "农村居民消费价格指数(上年=100)" : "rural consumer price index(last_year=100)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "商品零售价格指数(RPI 上年=100)" : "retail price index(RPI last_year=100)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "工业生产者出厂价格指数(PPI 上年=100)" : "producer price index(PPI last_year=100)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "工业生产者购进价格指数(PPIRM 上年=100)" : "producer price pndices of raw material(PPIRM last_year=100)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "固定资产投资价格指数(上年=100)" : "price indices of investment in fixed assets(last_year=100)", ColumnType.Double));
+                data.setColumns(columns).setDataName(message("ChinaCPI"))
+                        .setComments("https://data.stats.gov.cn/index.htm");
+                if (makeExampleFile(lang, "ChinaCPI", data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ChinaFoodConsumption"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("zh".equals(lang) ? "指标" : "item", ColumnType.String, true));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "2020年" : "year 2020", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "2019年" : "year 2019", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "2018年" : "year 2018", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "2017年" : "year 2017", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "2016年" : "year 2016", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "2015年" : "year 2015", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "2014年" : "year 2014", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "2013年" : "year 2013", ColumnType.Double));
+                data.setColumns(columns).setDataName(message("ChinaFoodConsumption"))
+                        .setComments("https://data.stats.gov.cn/index.htm");
+                if (makeExampleFile(lang, "ChinaFoods_" + lang, data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ChinaGraduates"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("zh".equals(lang) ? "年" : "year_", ColumnType.String, true));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "普通高等学校毕业生数(万人)" : "college graduates(ten thousand)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "普通中学毕业生数(万人)" : "middle school graduates(ten thousand)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "普通高中毕业生数(万人)" : "high school graduates(ten thousand)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "初中毕业生数(万人)" : "junior high school graduates(ten thousand)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "职业中学毕业生数(万人)" : "vocational high school graduates(ten thousand)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "普通小学毕业生数(万人)" : "primary school graduates(ten thousand)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "特殊教育学校毕业生数(万人)" : "special education school graduates(ten thousand)", ColumnType.Double));
+                data.setColumns(columns).setDataName(message("ChinaGraduates"))
+                        .setComments("https://data.stats.gov.cn/index.htm");
+                if (makeExampleFile(lang, "ChinaGraduates", data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ChinaMuseums"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("zh".equals(lang) ? "年" : "year_", ColumnType.String, true));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "博物馆机构数(个)" : "museum institutions", ColumnType.Long));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "博物馆从业人员(人)" : "employed", ColumnType.Long));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "博物馆文物藏品(件/套)" : "relics", ColumnType.Long));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "本年博物馆从有关部门接收文物数(件/套)" : "received in the year", ColumnType.Long));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "本年博物馆修复文物数(件/套)" : "fixed in the year", ColumnType.Long));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "博物馆考古发掘项目(个)" : "archaeology projects", ColumnType.Long));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "博物馆基本陈列(个)" : "basical exhibition", ColumnType.Long));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "博物馆举办展览(个)" : "special exhibition", ColumnType.Long));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "博物馆参观人次(万人次)" : "visits(ten thousand)", ColumnType.Double));
+                data.setColumns(columns).setDataName(message("ChinaMuseums"))
+                        .setComments("https://data.stats.gov.cn/index.htm");
+                if (makeExampleFile(lang, "ChinaMuseums", data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ChinaHealthPersonnel"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("zh".equals(lang) ? "年" : "year_", ColumnType.String, true));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "卫生人员数(万人)" : "health personnel(ten thousand)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "卫生技术人员数(万人)" : "medical personnel(ten thousand)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "执业(助理)医师数(万人)" : "practitioner(assistant)(ten thousand)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "执业医师数(万人)" : "practitioner(ten thousand)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "注册护士数(万人)" : "registered nurse(ten thousand)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "药师数(万人)" : "pharmacist(ten thousand)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "乡村医生和卫生员数(万人)" : "rural(ten thousand)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "其他技术人员数(万人)" : "other technical personnel(ten thousand)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "管理人员数(万人)" : "managerial personnel(ten thousand)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "工勤技能人员数(万人)" : "worker(ten thousand)", ColumnType.Double));
+                data.setColumns(columns).setDataName(message("ChinaHealthPersonnel"))
+                        .setComments("https://data.stats.gov.cn/index.htm");
+                if (makeExampleFile(lang, "ChinaHealthPersonnel", data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ChinaMarriage"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("zh".equals(lang) ? "年" : "year_", ColumnType.String, true));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "结婚登记(万对)" : "married(ten thousand pairs)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "内地居民登记结婚(万对)" : "mainland residents married(ten thousand pairs)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "内地居民初婚登记(万人)" : "mainland residents newly married(ten thousand persons)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "内地居民再婚登记(万人)" : "mainland residents remarried(ten thousand persons)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "涉外及港澳台居民登记结婚(万对)" : "foreigners/HongKong/Macao/Taiwan married(ten thousand pairs)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "离婚登记(万对)" : "divorced(ten thousand pairs)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "粗离婚率(千分比)" : "divorced ratio(permillage)", ColumnType.Double));
+                data.setColumns(columns).setDataName(message("ChinaMarriage"))
+                        .setComments("https://data.stats.gov.cn/index.htm");
+                if (makeExampleFile(lang, "ChinaMarriage", data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ChinaSportWorldChampions"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("zh".equals(lang) ? "年" : "year_", ColumnType.String, true));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "世界冠军项数" : "categories of world champions", ColumnType.Integer));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "女子世界冠军项数" : "categories of female world champions", ColumnType.Integer));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "世界冠军人数" : "athletes of world champions", ColumnType.Integer));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "女子世界冠军人数" : "female athletes of world champions", ColumnType.Integer));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "世界冠军个数" : "number of world champions", ColumnType.Integer));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "女子世界冠军个数" : "number of female world champions", ColumnType.Integer));
+                data.setColumns(columns).setDataName(message("ChinaSportWorldChampions"))
+                        .setComments("https://data.stats.gov.cn/index.htm");
+                if (makeExampleFile(lang, "ChinaSportWorldChampions", data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("CrimesFiledByChinaPolice"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("zh".equals(lang) ? "年" : "year_", ColumnType.String, true));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "立案的刑事案件" : "filed crimes", ColumnType.Integer));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "杀人" : "murder", ColumnType.Integer));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "伤害" : "injure", ColumnType.Integer));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "抢劫" : "rob", ColumnType.Integer));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "强奸" : "rape", ColumnType.Integer));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "拐卖妇女儿童" : "trafficking", ColumnType.Integer));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "盗窃" : "steal", ColumnType.Integer));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "诈骗" : "scam", ColumnType.Integer));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "走私" : "smuggle", ColumnType.Integer));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "假币" : "counterfeit money", ColumnType.Integer));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "其他" : "others", ColumnType.Integer));
+                data.setColumns(columns).setDataName(message("CrimesFiledByChinaPolice"))
+                        .setComments("https://data.stats.gov.cn/index.htm");
+                if (makeExampleFile(lang, "CrimesFiledByChinaPolice", data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            chinaMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("CrimesFiledByChinaProcuratorate"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("zh".equals(lang) ? "年" : "year_", ColumnType.String, true));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "受案数" : "filed crimes", ColumnType.Integer));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "贪污贿赂" : "corruption and bribery", ColumnType.Integer));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "贪污" : "corruption", ColumnType.Integer));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "贿赂" : "bribery", ColumnType.Integer));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "挪用公款" : "embezzlement", ColumnType.Integer));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "集体私分" : "collectively dividing up state-owned properties without permission", ColumnType.Integer));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "巨额财产来源不明" : "huge unidentified property", ColumnType.Integer));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "其他贪污贿赂" : "other corruption and bribery", ColumnType.Integer));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "渎职" : "malfeasance", ColumnType.Integer));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "滥用职权" : "abuses of power", ColumnType.Integer));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "玩忽职守" : "neglecting of duty", ColumnType.Integer));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "徇私舞弊" : "favoritism", ColumnType.Integer));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "其他渎职" : "other malfeasance", ColumnType.Integer));
+                data.setColumns(columns).setDataName(message("CrimesFiledByChinaProcuratorate"))
+                        .setComments("https://data.stats.gov.cn/index.htm");
+                if (makeExampleFile(lang, "ChinaCrimesFiledByProcuratorate", data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            chinaMenu.getItems().add(menu);
+
+            chinaMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("ChinaNationalBureauOfStatistics"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction((ActionEvent event) -> {
+                controller.browse("https://data.stats.gov.cn/");
+            });
+            chinaMenu.getItems().add(menu);
+
+            Menu regressionMenu = new Menu(message("Regression"), StyleTools.getIconImage("iconLinearPgression.png"));
+            items.add(regressionMenu);
+
+            menu = new MenuItem(message("IncomeHappiness"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("zh".equals(lang) ? "收入" : "income", ColumnType.Double, true));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "快乐" : "happiness", ColumnType.Double, true));
+                data.setColumns(columns).setDataName(message("IncomeHappiness"))
+                        .setComments("https://www.scribbr.com/statistics/simple-linear-regression/");
+                if (makeExampleFile(lang, "IncomeHappiness", data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            regressionMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ExperienceSalary"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("zh".equals(lang) ? "工作经验" : "YearsExperience", ColumnType.Double, true));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "薪资" : "Salary", ColumnType.Double, true));
+                data.setColumns(columns).setDataName(message("ExperienceSalary"))
+                        .setComments("https://github.com/krishnaik06/simple-Linear-Regression");
+                if (makeExampleFile(lang, "ExperienceSalary", data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            regressionMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("IrisSpecies"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("zh".equals(lang) ? "花萼长度(cm)" : "SepalLengthCm", ColumnType.Double, true));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "花萼宽度(cm)" : "SepalWidthCm", ColumnType.Double, true));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "花瓣长度(cm)" : "PetalLengthCm", ColumnType.Double, true));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "花瓣宽度(cm)" : "PetalWidthCm", ColumnType.Double, true));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "种类" : "Species", ColumnType.String, true));
+                data.setColumns(columns).setDataName(message("IrisSpecies"))
+                        .setComments("http://archive.ics.uci.edu/ml/datasets/Iris");
+                if (makeExampleFile(lang, "IrisSpecies", data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            regressionMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("DiabetesPrediction"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("zh".equals(lang) ? "年龄" : "age", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "性别" : "sex", ColumnType.Short));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "BMI(体质指数)" : "BMI(body mass index)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "BP(平均血压)" : "BP(average blood pressure)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "S1(血清指标1)" : "S1(blood serum measurement 1)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "S2(血清指标2)" : "S2(blood serum measurement 2)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "S3(血清指标3)" : "S3(blood serum measurement 3)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "S4(血清指标4)" : "S4(blood serum measurement 4)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "S5(血清指标5)" : "S5(blood serum measurement 5)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "S6(血清指标6)" : "S6(blood serum measurement 6)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "一年后病情进展" : "disease progression one year after baseline", ColumnType.Double));
+                data.setColumns(columns).setDataName(message("DiabetesPrediction"))
+                        .setComments("https://hastie.su.domains/Papers/LARS/");
+                if (makeExampleFile(lang, "DiabetesPrediction", data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            regressionMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("DiabetesPredictionStandardized"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("zh".equals(lang) ? "年龄" : "age", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "性别" : "sex", ColumnType.Short));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "BMI(体质指数)" : "BMI(body mass index)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "BP(平均血压)" : "BP(average blood pressure)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "S1(血清指标1)" : "S1(blood serum measurement 1)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "S2(血清指标2)" : "S2(blood serum measurement 2)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "S3(血清指标3)" : "S3(blood serum measurement 3)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "S4(血清指标4)" : "S4(blood serum measurement 4)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "S5(血清指标5)" : "S5(blood serum measurement 5)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "S6(血清指标6)" : "S6(blood serum measurement 6)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "一年后病情进展" : "disease progression one year after baseline", ColumnType.Double));
+                data.setColumns(columns).setDataName(message("DiabetesPredictionStandardized"))
+                        .setComments("https://hastie.su.domains/Papers/LARS/ \n"
+                                + "first 10 columns have been normalized to have mean 0 and "
+                                + "Euclidean norm 1 and the last column y has been centered (mean 0).");
+                if (makeExampleFile(lang, "DiabetesPrediction_standardized", data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            regressionMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("HeartFailure"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("zh".equals(lang) ? "年龄" : "age", ColumnType.Integer));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "贫血" : "anaemia", ColumnType.Boolean)
+                        .setDescription("decrease of red blood cells or hemoglobin (boolean)"));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "肌酐磷酸激酶(CPK_mcg/L)" : "creatinine_phosphokinase(CPK_mcg/L)", ColumnType.Integer));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "糖尿病" : "diabetes", ColumnType.Boolean));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "喷血分数" : "ejection fraction", ColumnType.Integer)
+                        .setDescription("percentage of blood leaving the heart at each contraction (percentage)"));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "高血压" : "high blood pressure", ColumnType.Integer));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "血小板(kiloplatelets/mL)" : "platelets(kiloplatelets/mL)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "血清肌酸酐(mg/dL)" : "serum creatinine(mg/dL)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "血清钠(mEq/L)" : "serum sodium(mEq/L)", ColumnType.Integer));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "性别" : "sex", ColumnType.Boolean));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "抽烟" : "smoking", ColumnType.Boolean));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "观察期" : "follow-up period(days)", ColumnType.Short));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "死亡" : "death event", ColumnType.Boolean));
+                data.setColumns(columns).setDataName(message("HeartFailure"))
+                        .setComments("http://archive.ics.uci.edu/ml/datasets/Heart+failure+clinical+records \n"
+                                + "Davide Chicco, Giuseppe Jurman: \"Machine learning can predict survival of patients with heart failure "
+                                + "from serum creatinine and ejection fraction alone\". BMC Medical Informatics and Decision Making 20, 16 (2020)");
+                if (makeExampleFile(lang, "HeartFailure", data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            regressionMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ConcreteCompressiveStrength"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("zh".equals(lang) ? "水泥(公斤)" : "Cement(kg)", ColumnType.Short));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "矿渣(公斤)" : "Blast Furnace Slag(kg)", ColumnType.Short));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "煤灰(公斤)" : "Fly Ash(kg)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "水(公斤)" : "Water(kg)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "塑化剂(公斤)" : "Superplasticizer(kg)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "粗颗粒(公斤)" : "Coarse Aggregate(kg)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "细颗料(公斤)" : "Fine Aggregate(kg)", ColumnType.Short));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "已使用天数" : "Age(days)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "1立方米混凝土抗压强度(兆帕)" : "Concrete compressive strength(MPa)", ColumnType.Double));
+                data.setColumns(columns).setDataName(message("ConcreteCompressiveStrength"))
+                        .setComments("http://archive.ics.uci.edu/ml/datasets/Concrete+Compressive+Strength \n"
+                                + "https://zhuanlan.zhihu.com/p/168747748");
+                if (makeExampleFile(lang, "ConcreteCompressiveStrength", data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            regressionMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("DogRadiographsDataset"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("zh".equals(lang) ? "透亮度有改变" : "lucency changed", ColumnType.Boolean)
+                        .setDescription("changed(1) or not changed(0)"));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "刀片尺寸" : "blade size", ColumnType.Short));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "胫骨结节面积" : "tibial tuberosity area", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "胫骨结节宽度" : "tibial tuberosity width", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "年龄(年)" : "age in years", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "重量(公斤)" : "weight in kilograms", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "抗滚针的位置" : "location of the anti-rotational pin", ColumnType.Boolean));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "双侧手术" : "bilateral surgery", ColumnType.Boolean)
+                        .setDescription("bilateral surgery(1) or unilateral surgery(0)"));
+                data.setColumns(columns).setDataName(message("DogRadiographsDataset"))
+                        .setComments("https://www4.stat.ncsu.edu/~boos/var.select/lucency.html \n"
+                                + "Radiographic and Clinical Changes of the Tibial Tuberosity after Tibial Plateau Leveling Osteomtomy.");
+                if (makeExampleFile(lang, "DogRadiographs", data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            regressionMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("BaseballSalaries"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/BaseballSalaries_" + lang + ".csv",
+                        "data", "BaseballSalaries_" + lang + ".csv", true);
+                DataFileCSV data = new DataFileCSV(file);
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("zh".equals(lang) ? "薪水(千美元)" : "Salary (thousands of dollars)", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "击球平均得分数" : "Batting average", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "上垒率" : "On-base percentage", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "跑动数" : "Number of runs", ColumnType.Short));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "击球数" : "Number of hits", ColumnType.Short));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "二垒数" : "Number of doubles", ColumnType.Short));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "三垒数" : "Number of triples", ColumnType.Short));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "全垒数" : "Number of home runs", ColumnType.Short));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "打点数" : "Number of runs batted in", ColumnType.Short));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "走动数" : "Number of walks", ColumnType.Short));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "三振出局数" : "Number of strike-outs", ColumnType.Short));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "盗垒数" : "Number of stolen bases", ColumnType.Short));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "失误数" : "Number of errors", ColumnType.Short));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "自由球员资格" : "free agency eligibility", ColumnType.Boolean));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "1991/2的自由球员" : "free agent in 1991/2", ColumnType.Boolean));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "仲裁资格" : "arbitration eligibility", ColumnType.Boolean));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "于1991/2仲裁" : "arbitration in 1991/2", ColumnType.Boolean));
+                data.setColumns(columns).setDataName(message("BaseballSalaries"))
+                        .setComments("https://www4.stat.ncsu.edu/~boos/var.select/baseball.html \n"
+                                + "Salary information for 337 Major League Baseball (MLB) players who are not pitchers "
+                                + "and played at least one game during both the 1991 and 1992 seasons.");
+                if (makeExampleFile(lang, "BaseballSalaries", data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            regressionMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("SouthGermanCredit"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("zh".equals(lang) ? "状态" : "status", ColumnType.Short)
+                        .setDescription("status of the debtor's checking account with the bank\n"
+                                + "1:no checking account   \n"
+                                + "2: ... < 0 DM    \n"
+                                + "3: 0<= ... < 200 DM   \n"
+                                + "4: >= 200 DM \n"
+                                + "salary for at least 1 year"));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "持续时间(月)" : "duration(months)", ColumnType.Short)
+                        .setDescription("credit duration in months"));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "信用卡历史" : "credit_history", ColumnType.Short)
+                        .setDescription("history of compliance with previous or concurrent credit contracts\n"
+                                + " 0 : delay in paying off in the past   \n"
+                                + " 1 : critical account/other credits elsewhere \n"
+                                + " 2 : no credits taken/all credits paid back duly\n"
+                                + " 3 : existing credits paid back duly till now   \n"
+                                + " 4 : all credits at this bank paid back duly "));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "用途" : "purpose", ColumnType.Short)
+                        .setDescription("purpose for which the credit is needed\n"
+                                + " 0 : others             \n"
+                                + " 1 : car (new)          \n"
+                                + " 2 : car (used)         \n"
+                                + " 3 : furniture/equipment\n"
+                                + " 4 : radio/television   \n"
+                                + " 5 : domestic appliances\n"
+                                + " 6 : repairs            \n"
+                                + " 7 : education          \n"
+                                + " 8 : vacation           \n"
+                                + " 9 : retraining         \n"
+                                + " 10 : business  "));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "金额" : "amount", ColumnType.Short)
+                        .setDescription("credit amount in DM (quantitative; result of monotonic transformation; "
+                                + "actual data and type of transformation unknown)"));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "储蓄" : "savings", ColumnType.Short)
+                        .setDescription("debtor's savings\n"
+                                + " 1 : unknown/no savings account\n"
+                                + " 2 : ... <  100 DM             \n"
+                                + " 3 : 100 <= ... <  500 DM      \n"
+                                + " 4 : 500 <= ... < 1000 DM      \n"
+                                + " 5 : ... >= 1000 DM   "));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "职业年限" : "employment_duration", ColumnType.Short)
+                        .setDescription("duration of debtor's employment with current employer\n"
+                                + " 1 : unemployed      \n"
+                                + " 2 : < 1 yr          \n"
+                                + " 3 : 1 <= ... < 4 yrs\n"
+                                + " 4 : 4 <= ... < 7 yrs\n"
+                                + " 5 : >= 7 yrs "));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "信贷率" : "installment_rate", ColumnType.Short)
+                        .setDescription("credit installments as a percentage of debtor's disposable income\n"
+                                + "1 : >= 35         \n"
+                                + " 2 : 25 <= ... < 35\n"
+                                + " 3 : 20 <= ... < 25\n"
+                                + " 4 : < 20  "));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "个人状态" : "personal_status_sex", ColumnType.Short)
+                        .setDescription("combined information on sex and marital status\n"
+                                + " 1 : male : divorced/separated           \n"
+                                + " 2 : female : non-single or male : single\n"
+                                + " 3 : male : married/widowed              \n"
+                                + " 4 : female : single "));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "其他债务人" : "other_debtors", ColumnType.Short)
+                        .setDescription("Is there another debtor or a guarantor for the credit\n"
+                                + " 1 : none        \n"
+                                + " 2 : co-applicant\n"
+                                + " 3 : guarantor "));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "当前居住年限(年)" : "present_residence", ColumnType.Short)
+                        .setDescription("length of time (in years) the debtor lives in the present residence\n"
+                                + " 1 : < 1 yr          \n"
+                                + " 2 : 1 <= ... < 4 yrs\n"
+                                + " 3 : 4 <= ... < 7 yrs\n"
+                                + " 4 : >= 7 yrs "));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "财产" : "property", ColumnType.Short)
+                        .setDescription("the debtor's most valuable property\n"
+                                + " 1 : unknown / no property                    \n"
+                                + " 2 : car or other                             \n"
+                                + " 3 : building soc. savings agr./life insurance\n"
+                                + " 4 : real estate   "));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "年龄" : "age", ColumnType.Short));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "其它贷款计划" : "other_installment_plans", ColumnType.Short)
+                        .setDescription("installment plans from providers other than the credit-giving bank\n"
+                                + " 1 : bank  \n"
+                                + " 2 : stores\n"
+                                + " 3 : none"));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "居所类型" : "housing", ColumnType.Short)
+                        .setDescription("type of housing the debtor lives in\n"
+                                + " 1 : for free\n"
+                                + " 2 : rent    \n"
+                                + " 3 : own "));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "信用卡数目" : "number_credits", ColumnType.Short)
+                        .setDescription("number of credits including the current one the debtor has (or had) at this bank\n"
+                                + " 1 : 1   \n"
+                                + " 2 : 2-3 \n"
+                                + " 3 : 4-5 \n"
+                                + " 4 : >= 6"));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "工作类型" : "job", ColumnType.Short)
+                        .setDescription(" 1 : unemployed/unskilled - non-resident       \n"
+                                + " 2 : unskilled - resident                      \n"
+                                + " 3 : skilled employee/official                 \n"
+                                + " 4 : manager/self-empl./highly qualif. employee"));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "被依赖人数" : "people_liable", ColumnType.Short)
+                        .setDescription("number of persons who financially depend on the debtor\n"
+                                + " 1 : 3 or more\n"
+                                + " 2 : 0 to 2"));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "有电话" : "telephone", ColumnType.Short)
+                        .setDescription("Is there a telephone landline registered on the debtor's name? "
+                                + "(binary; remember that the data are from the 1970s)\n"
+                                + " 1 : no                       \n"
+                                + " 2 : yes (under customer name)"));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "是外籍雇员" : "foreign_worker", ColumnType.Short)
+                        .setDescription("Is the debtor a foreign worker\n"
+                                + " 1 : yes\n"
+                                + " 2 : no "));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "信用风险" : "credit_risk", ColumnType.Short)
+                        .setDescription("Has the credit contract been complied with (good) or not (bad) ?\n"
+                                + " 0 : bad \n"
+                                + " 1 : good"));
+
+                data.setColumns(columns).setDataName(message("SouthGermanCredit"))
+                        .setComments("http://archive.ics.uci.edu/ml/datasets/South+German+Credit\n"
+                                + "700 good and 300 bad credits with 20 predictor variables. Data from 1973 to 1975. "
+                                + "Stratified sample from actual credits with bad credits heavily oversampled. A cost matrix can be used.");
+                if (makeExampleFile(lang, "SouthGermanCredit", data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            regressionMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("BostonHousingPrices"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn("zh".equals(lang) ? "镇" : "town", ColumnType.String, true));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "经度" : "longitude", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "纬度" : "latitude", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "犯罪率" : "crime_ratio", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "超过25000平米的区" : "zoned_bigger_25000", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "工业用地" : "industrial_land", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "靠近查理斯河" : "near_Charies_River", ColumnType.Boolean));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "一氧化氮浓度" : "nitrogen_density", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "平均房间数" : "average_room_number", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "早于1940建成比率" : "built_before_1940_ratio", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "到达市中心的距离" : "distance_to_centre", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "公路可达性" : "accessbility_to_hightway", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "税率" : "tax_rate", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "学生教师比" : "pupil_teacher_ratio", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "低收入比" : "lower_class_ratio", ColumnType.Double));
+                columns.add(new Data2DColumn("zh".equals(lang) ? "价格中位数" : "median_price", ColumnType.Double));
+                data.setColumns(columns).setDataName(message("BostonHousingPrices"))
+                        .setComments("https://github.com/tomsharp/SVR/tree/master/data");
+                if (makeExampleFile(lang, "BostonHousingPrices", data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            regressionMenu.getItems().add(menu);
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static boolean makeExampleFile(String lang, String fileName, DataFileCSV targetData) {
+        try {
+            if (fileName == null || targetData == null) {
+                return false;
+            }
+            File srcFile = FxFileTools.getInternalFile("/data/examples/" + fileName + ".csv");
+            File targetFile = new File(AppVariables.MyboxDataPath + File.separator + "data" + File.separator
+                    + fileName + "_" + lang + ".csv");
+            if (targetFile.exists()) {
+                targetFile.delete();
+            }
+            Charset charset = Charset.forName("utf-8");
+            try ( BufferedReader reader = new BufferedReader(new FileReader(srcFile, charset));
+                     BufferedWriter writer = new BufferedWriter(new FileWriter(targetFile, charset, false))) {
+                String line = reader.readLine();
+                if (line != null) {
+                    List<Data2DColumn> columns = targetData.getColumns();
+                    if (columns != null) {
+                        String header = "";
+                        for (Data2DColumn column : columns) {
+                            if (!header.isBlank()) {
+                                header += ",";
+                            }
+                            header += column.getColumnName();
+                        }
+                        writer.write(header + System.lineSeparator());
+                    } else {
+                        writer.write(line + System.lineSeparator());
+                    }
+                    while ((line = reader.readLine()) != null) {
+                        writer.write(line + System.lineSeparator());
+                    }
+                }
+                writer.flush();
+            } catch (Exception e) {
+                MyBoxLog.error(e.toString());
+                return false;
+            }
+            targetData.setFile(targetFile).setHasHeader(true).setCharset(charset).setDelimiter(",");
+            targetData.saveAttributes();
+            FileDeleteTools.delete(srcFile);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return false;
+        }
+    }
+
+}

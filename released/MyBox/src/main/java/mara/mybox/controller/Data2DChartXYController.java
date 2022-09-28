@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.util.ArrayList;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -53,8 +54,13 @@ public class Data2DChartXYController extends BaseData2DChartController {
         try {
             super.initControls();
 
-            chartController.dataController = this;
             chartMaker = chartController.chartMaker;
+            chartController.redrawNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    drawChart();
+                }
+            });
 
             checkChartType();
             chartGroup.selectedToggleProperty().addListener(
@@ -79,11 +85,11 @@ public class Data2DChartXYController extends BaseData2DChartController {
 
             if (bubbleChartRadio != null && bubbleChartRadio.isSelected()) {
                 columnsBox.getChildren().addAll(categoryColumnsPane, valueColumnPane, columnCheckBoxsBox);
-                valuesLabel.setText(message("SizeColumns"));
+                valuesLabel.setText(message("SizeColumns") + " " + message("NoSelectionMeansAll"));
 
             } else {
                 columnsBox.getChildren().addAll(categoryColumnsPane, columnCheckBoxsBox);
-                valuesLabel.setText(message("ValueColumns"));
+                valuesLabel.setText(message("ValueColumns") + " " + message("NoSelectionMeansAll"));
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -129,6 +135,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
             outputColumns.addAll(checkedColumns);
             title += " - " + checkedColsNames;
 
+            chartController.palette = null;
             return initChart(title, categoryColumn.isNumberType());
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -182,12 +189,15 @@ public class Data2DChartXYController extends BaseData2DChartController {
 
     @Override
     public void drawChart() {
+        drawXYChart();
+    }
+
+    public void drawXYChart() {
         try {
             if (outputData == null || outputData.isEmpty()) {
                 popError(message("NoData"));
                 return;
             }
-            chartMaker.setPalette(makePalette());
             chartController.writeXYChart(outputColumns, outputData);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -197,7 +207,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
     /*
         static
      */
-    public static Data2DChartXYController open(ControlData2DEditTable tableController) {
+    public static Data2DChartXYController open(ControlData2DLoad tableController) {
         try {
             Data2DChartXYController controller = (Data2DChartXYController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DChartXYFxml, false);

@@ -310,6 +310,11 @@ License:    Apache License Version 2.0
                                       <children>
                                           <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                                               <children>
+                                    <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconTips.png" />
+                                       </image>
+                                    </ImageView>
                                                   <FlowPane alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
                                                       <children>
                                                           <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">

@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.data2d.DataFileCSV;
@@ -56,15 +57,16 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
             handledNames.add(freName);
 
             String cName = freName + "_" + message("Count");
+            Random random = new Random();
             while (handledNames.contains(cName)) {
-                cName += "m";
+                cName += random.nextInt(10);
             }
             outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Long));
             handledNames.add(cName);
 
             cName = freName + "_" + message("CountPercentage");
             while (handledNames.contains(cName)) {
-                cName += "m";
+                cName += random.nextInt(10);
             }
             outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
             handledNames.add(cName);
@@ -134,7 +136,7 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
     /*
         static
      */
-    public static Data2DFrequencyController open(ControlData2DEditTable tableController) {
+    public static Data2DFrequencyController open(ControlData2DLoad tableController) {
         try {
             Data2DFrequencyController controller = (Data2DFrequencyController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DFrequencyFxml, false);

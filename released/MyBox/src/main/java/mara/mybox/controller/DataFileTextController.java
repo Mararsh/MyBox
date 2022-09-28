@@ -32,6 +32,7 @@ public class DataFileTextController extends BaseData2DFileController {
 
     public DataFileTextController() {
         baseTitle = message("EditTextDataFile");
+        TipsLabelKey = "DataFileTextTips";
     }
 
     @Override
@@ -54,8 +55,8 @@ public class DataFileTextController extends BaseData2DFileController {
         try {
             super.initControls();
 
-            readOptionsController.setControls(baseName + "Read", true);
-            writeOptionsController.setControls(baseName + "Write", false);
+            readOptionsController.setControls(baseName + "Read", true, true);
+            writeOptionsController.setControls(baseName + "Write", false, true);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -71,7 +72,7 @@ public class DataFileTextController extends BaseData2DFileController {
             charset = readOptionsController.charset;
         }
         dataFileText.setOptions(readOptionsController.withNamesCheck.isSelected(),
-                charset, readOptionsController.delimiterName);
+                charset, readOptionsController.getDelimiterName());
     }
 
     @Override
@@ -83,7 +84,7 @@ public class DataFileTextController extends BaseData2DFileController {
         DataFileText targetData = new DataFileText();
         targetData.initFile(file)
                 .setCharset(writeOptionsController.charset)
-                .setDelimiter(writeOptionsController.delimiterName)
+                .setDelimiter(writeOptionsController.getDelimiterName())
                 .setHasHeader(writeOptionsController.withNamesCheck.isSelected());
         return targetData;
     }
@@ -93,7 +94,7 @@ public class DataFileTextController extends BaseData2DFileController {
             return;
         }
         readOptionsController.withNamesCheck.setSelected(withName);
-        readOptionsController.setDelimiter(delimiter);
+        readOptionsController.setDelimiterName(delimiter);
         readOptionsController.setCharset(charset);
         dataFileText.initFile(file);
         dataFileText.setOptions(withName, charset, delimiter + "");

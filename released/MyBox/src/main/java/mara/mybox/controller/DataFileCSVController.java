@@ -33,12 +33,13 @@ public class DataFileCSVController extends BaseData2DFileController {
     protected DataFileCSV dataFileCSV;
 
     @FXML
-    protected ControlCsvOptions csvReadController, csvWriteController;
+    protected ControlTextOptions csvReadController, csvWriteController;
     @FXML
     protected VBox mainBox;
 
     public DataFileCSVController() {
         baseTitle = message("EditCSV");
+        TipsLabelKey = "DataFileCSVTips";
     }
 
     @Override
@@ -61,8 +62,8 @@ public class DataFileCSVController extends BaseData2DFileController {
         try {
             super.initControls();
 
-            csvReadController.setControls(baseName + "Read");
-            csvWriteController.setControls(baseName + "Write");
+            csvReadController.setControls(baseName + "Read", true, false);
+            csvWriteController.setControls(baseName + "Write", false, false);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -78,7 +79,7 @@ public class DataFileCSVController extends BaseData2DFileController {
             charset = csvReadController.charset;
         }
         dataFileCSV.setOptions(csvReadController.withNamesCheck.isSelected(),
-                charset, csvReadController.delimiter + "");
+                charset, csvReadController.getDelimiterName());
     }
 
     @Override
@@ -90,17 +91,17 @@ public class DataFileCSVController extends BaseData2DFileController {
         DataFileCSV targetData = new DataFileCSV();
         targetData.initFile(file)
                 .setCharset(csvWriteController.charset)
-                .setDelimiter(csvWriteController.delimiter + "")
+                .setDelimiter(csvWriteController.getDelimiterName())
                 .setHasHeader(csvWriteController.withNamesCheck.isSelected());
         return targetData;
     }
 
-    public void setFile(File file, Charset charset, boolean withName, char delimiter) {
+    public void setFile(File file, Charset charset, boolean withName, String delimiter) {
         if (file == null || !checkBeforeNextAction()) {
             return;
         }
         csvReadController.withNamesCheck.setSelected(withName);
-        csvReadController.setDelimiter(delimiter);
+        csvReadController.setDelimiterName(delimiter);
         csvReadController.setCharset(charset);
         dataFileCSV.initFile(file);
         dataFileCSV.setOptions(withName, charset, delimiter + "");
@@ -133,7 +134,7 @@ public class DataFileCSVController extends BaseData2DFileController {
                 protected void whenSucceeded() {
                     Iterator<File> iterator = files.keySet().iterator();
                     File csvFile = iterator.next();
-                    setFile(csvFile, Charset.forName("UTF-8"), files.get(csvFile), ',');
+                    setFile(csvFile, Charset.forName("UTF-8"), files.get(csvFile), ",");
                     if (count > 1) {
                         browseURI(filePath.toURI());
                         String info = MessageFormat.format(message("GeneratedFilesResult"),
@@ -159,7 +160,7 @@ public class DataFileCSVController extends BaseData2DFileController {
     /*
         static
      */
-    public static DataFileCSVController open(File file, Charset charset, boolean withNames, char delimiter) {
+    public static DataFileCSVController open(File file, Charset charset, boolean withNames, String delimiter) {
         DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
         controller.setFile(file, charset, withNames, delimiter);
         controller.requestMouse();

@@ -105,7 +105,18 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
                             .setTask(task).setScale(scale)
                             .setInvalidAs(invalidAs)
                             .setyName(yName).setxNames(xNames);
-                    return regression.calculate(data);
+                    int n = data.size();
+                    int k = xNames.size();
+                    String[] sy = new String[data.size()];
+                    String[][] sx = new String[n][k];
+                    for (int i = 0; i < n; i++) {
+                        List<String> row = data.get(i);
+                        sy[i] = row.get(0);
+                        for (int j = 0; j < k; j++) {
+                            sx[i][j] = row.get(j + 1);
+                        }
+                    }
+                    return regression.calculate(sy, sx);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -262,7 +273,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
     /*
         static
      */
-    public static Data2DMultipleLinearRegressionController open(ControlData2DEditTable tableController) {
+    public static Data2DMultipleLinearRegressionController open(ControlData2DLoad tableController) {
         try {
             Data2DMultipleLinearRegressionController controller = (Data2DMultipleLinearRegressionController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DMultipleLinearRegressionFxml, false);

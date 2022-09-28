@@ -499,6 +499,10 @@ public abstract class BaseTableViewController<P> extends BaseController {
         viewNull();
     }
 
+    public boolean isDataSizeLoaded() {
+        return dataSizeLoaded;
+    }
+
     /*
         columns
      */
@@ -574,13 +578,19 @@ public abstract class BaseTableViewController<P> extends BaseController {
         if (number < 1) {
             return;
         }
-        if (index < 0) {
-            index = tableData.size();
-        }
-        isSettingValues = true;
         List<P> list = new ArrayList<>();
         for (int i = 0; i < number; i++) {
             list.add(newData());
+        }
+        addRows(index, list);
+    }
+
+    public void addRows(int index, List<P> list) {
+        if (list == null || list.isEmpty()) {
+            return;
+        }
+        if (index < 0) {
+            index = tableData.size();
         }
         tableData.addAll(index, list);
         tableView.scrollTo(index - 5);

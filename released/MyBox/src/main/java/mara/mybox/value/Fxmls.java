@@ -138,6 +138,7 @@ public class Fxmls {
     public static final String ImageAlphaAddBatchFxml = "/fxml/ImageAlphaAddBatch.fxml";
     public static final String ImageOCRFxml = "/fxml/ImageOCR.fxml";
     public static final String ImageOCRBatchFxml = "/fxml/ImageOCRBatch.fxml";
+    public static final String ImageRepeatFxml = "/fxml/ImageRepeat.fxml";
 
     public static final String ColorsManageFxml = "/fxml/ColorsManage.fxml";
     public static final String ColorSetFxml = "/fxml/ColorSet.fxml";
@@ -180,7 +181,9 @@ public class Fxmls {
     public static final String DataManufactureSaveFxml = "/fxml/DataManufactureSave.fxml";
     public static final String Data2DSpliceFxml = "/fxml/Data2DSplice.fxml";
 
-    public static final String TableAddRowsFxml = "/fxml/TableAddRows.fxml";
+    public static final String Data2DAddRowsFxml = "/fxml/Data2DAddRows.fxml";
+    public static final String Data2DRowEditFxml = "/fxml/Data2DRowEdit.fxml";
+    public static final String Data2DColumnEditFxml = "/fxml/Data2DColumnEdit.fxml";
     public static final String Data2DSetValuesFxml = "/fxml/Data2DSetValues.fxml";
     public static final String Data2DCopyFxml = "/fxml/Data2DCopy.fxml";
     public static final String Data2DLoadContentInSystemClipboardFxml = "/fxml/Data2DLoadContentInSystemClipboard.fxml";
@@ -197,6 +200,7 @@ public class Fxmls {
     public static final String Data2DFrequencyFxml = "/fxml/Data2DFrequency.fxml";
     public static final String Data2DChartPieFxml = "/fxml/Data2DChartPie.fxml";
     public static final String Data2DChartXYFxml = "/fxml/Data2DChartXY.fxml";
+    public static final String Data2DChartXYZFxml = "/fxml/Data2DChartXYZ.fxml";
     public static final String Data2DChartBoxWhiskerFxml = "/fxml/Data2DChartBoxWhisker.fxml";
     public static final String Data2DChartSelfComparisonBarsFxml = "/fxml/Data2DChartSelfComparisonBars.fxml";
     public static final String Data2DChartComparisonBarsFxml = "/fxml/Data2DChartComparisonBars.fxml";
@@ -207,14 +211,21 @@ public class Fxmls {
     public static final String Data2DSimpleLinearRegressionFxml = "/fxml/Data2DSimpleLinearRegression.fxml";
     public static final String Data2DSimpleLinearRegressionCombinationFxml = "/fxml/Data2DSimpleLinearRegressionCombination.fxml";
     public static final String Data2DMultipleLinearRegressionFxml = "/fxml/Data2DMultipleLinearRegression.fxml";
+    public static final String Data2DMultipleLinearRegressionCombinationFxml = "/fxml/Data2DMultipleLinearRegressionCombination.fxml";
     public static final String Data2DChartXYOptionsFxml = "/fxml/Data2DChartXYOptions.fxml";
     public static final String Data2DChartPieOptionsFxml = "/fxml/Data2DChartPieOptions.fxml";
     public static final String Data2DSetStylesFxml = "/fxml/Data2DSetStyles.fxml";
     public static final String Data2DGroupEqualValuesFxml = "/fxml/Data2DGroupEqualValues.fxml";
+    public static final String Data2DSplitFxml = "/fxml/Data2DSplit.fxml";
 
     public static final String JShellFxml = "/fxml/JShell.fxml";
     public static final String JexlFxml = "/fxml/Jexl.fxml";
     public static final String JavaScriptFxml = "/fxml/JavaScript.fxml";
+
+    public static final String MathFunctionFxml = "/fxml/MathFunction.fxml";
+    public static final String MathFunctionCalculatorFxml = "/fxml/MathFunctionCalculator.fxml";
+    public static final String ControlDataSplitFxml = "/fxml/ControlDataSplit.fxml";
+    public static final String MathFunctionXYChartFxml = "/fxml/MathFunctionXYChart.fxml";
 
     public static final String DataFileCSVFxml = "/fxml/DataFileCSV.fxml";
     public static final String DataFileCSVConvertFxml = "/fxml/DataFileCSVConvert.fxml";
@@ -272,6 +283,7 @@ public class Fxmls {
 
     public static final String DataQueryFxml = "/fxml/DataQuery.fxml";
     public static final String DataExportFxml = "/fxml/DataExport.fxml";
+
 
     /*
         file
@@ -360,6 +372,7 @@ public class Fxmls {
     public static final String MyBoxIconsFxml = "/fxml/MyBoxIcons.fxml";
     public static final String MyBoxPropertiesFxml = "/fxml/MyBoxProperties.fxml";
     public static final String MyBoxLanguagesFxml = "/fxml/MyBoxLanguages.fxml";
+    public static final String MyBoxLanguageInputFxml = "/fxml/MyBoxLanguageInput.fxml";
     public static final String AutoTestingCasesFxml = "/fxml/AutoTestingCases.fxml";
     public static final String AutoTestingExecutionFxml = "/fxml/AutoTestingExecution.fxml";
     public static final String RunCommandFxml = "/fxml/RunCommand.fxml";
@@ -373,6 +386,7 @@ public class Fxmls {
     public static final String TextInputFxml = "/fxml/TextInput.fxml";
     public static final String TextDelimiterFxml = "/fxml/TextDelimiter.fxml";
     public static final String AddressInputFxml = "/fxml/AddressInput.fxml";
+    public static final String TableAddRowsFxml = "/fxml/TableAddRows.fxml";
 
     public static final String MenuFxml = "/fxml/Menu.fxml";
     public static final String MenuTextEditFxml = "/fxml/MenuTextEdit.fxml";

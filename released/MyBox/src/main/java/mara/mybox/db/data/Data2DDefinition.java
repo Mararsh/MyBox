@@ -3,7 +3,6 @@ package mara.mybox.db.data;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.Date;
-import java.util.List;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.Data2DManageController;
 import mara.mybox.controller.DataFileCSVController;
@@ -35,7 +34,6 @@ public class Data2DDefinition extends BaseData {
     protected short scale;
     protected int maxRandom;
     protected Date modifyTime;
-    public List<ColumnDefinition.ColumnType> initColumnTypes;
 
     public static enum Type {
         Texts, CSV, Excel, MyBoxClipboard, Matrix, DatabaseTable, InternalTable
@@ -59,7 +57,7 @@ public class Data2DDefinition extends BaseData {
     public void cloneAll(Data2DDefinition d) {
         try {
             cloneBase(d);
-            cloneAttributes(d);
+            cloneDefinitionAttributes(d);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -72,7 +70,6 @@ public class Data2DDefinition extends BaseData {
             }
             d2did = d.getD2did();
             type = d.getType();
-            dataName = d.getDataName();
             file = d.getFile();
             sheet = d.getSheet();
             modifyTime = d.getModifyTime();
@@ -80,21 +77,22 @@ public class Data2DDefinition extends BaseData {
             charset = d.getCharset();
             hasHeader = d.isHasHeader();
             comments = d.getComments();
-            initColumnTypes = d.getInitColumnTypes();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
 
-    public void cloneAttributes(Data2DDefinition d) {
+    public void cloneDefinitionAttributes(Data2DDefinition d) {
         try {
             if (d == null) {
                 return;
             }
+            dataName = d.getDataName();
             scale = d.getScale();
             maxRandom = d.getMaxRandom();
             colsNumber = d.getColsNumber();
             rowsNumber = d.getRowsNumber();
+            comments = d.getComments();
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -113,7 +111,6 @@ public class Data2DDefinition extends BaseData {
         maxRandom = 1000;
         modifyTime = new Date();
         comments = null;
-        initColumnTypes = null;
     }
 
     public boolean isValid() {
@@ -466,15 +463,6 @@ public class Data2DDefinition extends BaseData {
 
     public Data2DDefinition setComments(String comments) {
         this.comments = comments;
-        return this;
-    }
-
-    public List<ColumnDefinition.ColumnType> getInitColumnTypes() {
-        return initColumnTypes;
-    }
-
-    public Data2DDefinition setInitColumnTypes(List<ColumnDefinition.ColumnType> initColumnTypes) {
-        this.initColumnTypes = initColumnTypes;
         return this;
     }
 

@@ -4,13 +4,16 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.FlowPane;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.tools.TextTools;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -33,16 +36,20 @@ public class ControlTextDelimiter extends BaseController {
             underlineRadio, equalRadio, lessRadio, greateRadio, singleQuoteRadio;
     @FXML
     protected TextField delimiterInput;
+    @FXML
+    protected Button exampleButton;
+    @FXML
+    protected FlowPane specialPane;
 
     public ControlTextDelimiter() {
         changedNotify = new SimpleBooleanProperty(false);
     }
 
-    public void setControls(String baseName, boolean hasBlanks) {
+    public void setControls(String name, boolean isRead, boolean canRegx) {
         try {
-            this.baseName = baseName;
+            baseName = baseName + "_" + name;
 
-            setDelimiter(UserConfig.getString(baseName + "TextDelimiter", ","));
+            setDelimiterName(UserConfig.getString(baseName + "TextDelimiter", ","));
 
             delimiterGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -56,15 +63,15 @@ public class ControlTextDelimiter extends BaseController {
                         }
                         delimiterName = v;
                     } else if (blankRadio.isSelected()) {
-                        delimiterName = "Blank";
+                        delimiterName = TextTools.BlankName;
                     } else if (blank4Radio.isSelected()) {
-                        delimiterName = "Blank4";
+                        delimiterName = TextTools.Blank4Name;
                     } else if (blank8Radio.isSelected()) {
-                        delimiterName = "Blank8";
+                        delimiterName = TextTools.Blank8Name;
                     } else if (blanksRadio.isSelected()) {
-                        delimiterName = "Blanks";
+                        delimiterName = TextTools.BlanksName;
                     } else if (tabRadio.isSelected()) {
-                        delimiterName = "Tab";
+                        delimiterName = TextTools.TabName;
                     } else if (commaRadio.isSelected()) {
                         delimiterName = ",";
                     } else if (lineRadio.isSelected()) {
@@ -132,40 +139,46 @@ public class ControlTextDelimiter extends BaseController {
                 }
             });
 
-            if (!hasBlanks) {
+            if (!isRead) {
                 if (blanksRadio.isSelected()) {
                     blankRadio.setSelected(true);
                 }
-                blanksRadio.setDisable(true);
+                specialPane.getChildren().remove(blanksRadio);
             }
+            exampleButton.setVisible(isRead && canRegx);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    public void setDelimiter(String name) {
+    public void setDelimiterName(String name) {
         try {
             if (name == null) {
                 return;
             }
             delimiterName = name;
-            switch (delimiterName.toLowerCase()) {
+            switch (delimiterName) {
+                case TextTools.BlankName:
                 case "blank":
                 case " ":
                     blankRadio.setSelected(true);
                     break;
+                case TextTools.Blank4Name:
                 case "blank4":
                 case "    ":
                     blank4Radio.setSelected(true);
                     break;
+                case TextTools.Blank8Name:
                 case "blank8":
                 case "        ":
                     blank8Radio.setSelected(true);
                     break;
+                case TextTools.BlanksName:
                 case "blanks":
                     blanksRadio.setSelected(true);
                     break;
+                case TextTools.TabName:
                 case "tab":
                 case "\t":
                     tabRadio.setSelected(true);
@@ -250,8 +263,12 @@ public class ControlTextDelimiter extends BaseController {
         }
     }
 
-    public String getDelimiter() {
+    public String getDelimiterName() {
         return delimiterName;
+    }
+
+    public String getDelimiterValue() {
+        return TextTools.delimiterValue(delimiterName);
     }
 
     @FXML

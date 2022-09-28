@@ -54,7 +54,10 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
             protected boolean handle() {
                 try {
                     data2D.startTask(task, filterController.filter);
-                    for (int yIndex : checkedColsIndices) {
+                    if (otherColsIndices.isEmpty()) {
+                        otherColsIndices = data2D.columnIndices();
+                    }
+                    for (int yIndex : otherColsIndices) {
                         for (int xIndex : checkedColsIndices) {
                             if (xIndex == yIndex) {
                                 continue;
@@ -124,10 +127,11 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
     /*
         static
      */
-    public static Data2DSimpleLinearRegressionCombinationController open(ControlData2DEditTable tableController) {
+    public static Data2DSimpleLinearRegressionCombinationController open(ControlData2DLoad tableController) {
         try {
-            Data2DSimpleLinearRegressionCombinationController controller = (Data2DSimpleLinearRegressionCombinationController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DSimpleLinearRegressionCombinationFxml, false);
+            Data2DSimpleLinearRegressionCombinationController controller
+                    = (Data2DSimpleLinearRegressionCombinationController) WindowTools.openChildStage(
+                            tableController.getMyWindow(), Fxmls.Data2DSimpleLinearRegressionCombinationFxml, false);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

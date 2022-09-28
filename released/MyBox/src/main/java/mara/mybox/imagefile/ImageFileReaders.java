@@ -314,15 +314,17 @@ public class ImageFileReaders {
                 case "gif":
                     // Read Gif with JDK api normally. When broken, use DhyanB's API.
                     // if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException: 4096")) {
-                    if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException")) {
-                        image = ImageGifFile.readBrokenGifFile(imageInfo);
-                    }
+                    image = ImageGifFile.readBrokenGifFile(imageInfo);
+//                    if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException")) {
+//                        image = ImageGifFile.readBrokenGifFile(imageInfo);
+//                    }
                     break;
                 case "jpg":
                 case "jpeg":
-                    if (e.toString().contains("Unsupported Image Type")) {
-                        image = ImageJpgFile.readBrokenJpgFile(imageInfo);
-                    }
+                    image = ImageJpgFile.readBrokenJpgFile(imageInfo);
+//                    if (e.toString().contains("Unsupported Image Type")) {
+//                        image = ImageJpgFile.readBrokenJpgFile(imageInfo);
+//                    }
                     break;
                 default:
 //                MyBoxLog.error(e.toString());

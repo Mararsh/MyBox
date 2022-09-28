@@ -18,6 +18,7 @@ import javafx.scene.control.TextInputControl;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Tag;
 import mara.mybox.db.data.TreeNode;
+import static mara.mybox.db.data.TreeNode.NodeSeparater;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -284,6 +285,10 @@ public class TreeNodeEditor extends TreeTagsController {
             if (tabPane != null && attributesTab != null) {
                 tabPane.getSelectionModel().select(attributesTab);
             }
+            return null;
+        }
+        if (name.contains(NodeSeparater)) {
+            popError(message("NameShouldNotInclude") + " \"" + NodeSeparater + "\"");
             return null;
         }
         TreeNode node = TreeNode.create()

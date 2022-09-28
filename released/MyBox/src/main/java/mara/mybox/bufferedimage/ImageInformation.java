@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
+import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import mara.mybox.controller.LoadingController;
 import mara.mybox.data.DoubleRectangle;
@@ -285,32 +286,101 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
 
     public static BufferedImage readPDF(ImageInformation imageInfo, int width) {
         BufferedImage bufferedImage = null;
-        try ( PDDocument doc = PDDocument.load(imageInfo.getFile(), AppVariables.pdfMemUsage)) {
-            PDFRenderer renderer = new PDFRenderer(doc);
-            int dpi = imageInfo.getDpi();
-            if (dpi <= 0) {
-                dpi = 72;
-            }
-            bufferedImage = renderer.renderImageWithDPI(imageInfo.getIndex(), dpi, ImageType.RGB);
-            doc.close();
-            Rectangle region = imageInfo.getRegion();
-            if (region != null) {
-                bufferedImage = mara.mybox.bufferedimage.CropTools.cropOutside(bufferedImage, new DoubleRectangle(region));
-            }
-            if (width > 0 && bufferedImage.getWidth() != width) {
-                bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, width);
-            } else if (imageRenderHints != null) {
-                bufferedImage = BufferedImageTools.applyRenderHints(bufferedImage, imageRenderHints);
-            }
+        try ( PDDocument pdfDoc = PDDocument.load(imageInfo.getFile(), AppVariables.pdfMemUsage)) {
+            bufferedImage = readPDF(null, new PDFRenderer(pdfDoc), ImageType.RGB, imageInfo, width);
+            pdfDoc.close();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
         return bufferedImage;
     }
 
+    public static BufferedImage readPDF(SingletonTask<Void> task, PDFRenderer renderer, ImageType imageType,
+            ImageInformation imageInfo, int targetWidth) {
+        if (renderer == null || imageInfo == null) {
+            return null;
+        }
+        BufferedImage bufferedImage = null;
+        try {
+            int dpi = imageInfo.getDpi();
+            if (dpi <= 0) {
+                dpi = 72;
+            }
+            if (imageType == null) {
+                imageType = ImageType.RGB;
+            }
+            bufferedImage = renderer.renderImageWithDPI(imageInfo.getIndex(), dpi, imageType);
+            if (task != null && task.isCancelled()) {
+                return null;
+            }
+            bufferedImage = scaleImage(task, bufferedImage, imageInfo, targetWidth);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            if (task != null) {
+                task.setError(e.toString());
+            }
+        }
+        return bufferedImage;
+    }
+
+    public static BufferedImage scaleImage(SingletonTask<Void> task, BufferedImage inImage,
+            ImageInformation imageInfo, int targetWidth) {
+        if (imageInfo == null) {
+            return null;
+        }
+        try {
+            imageInfo.setThumbnail(null);
+            BufferedImage bufferedImage = inImage;
+            int imageWidth = bufferedImage.getWidth();
+            imageInfo.setWidth(imageWidth);
+            imageInfo.setHeight(bufferedImage.getHeight());
+            imageInfo.setImageType(bufferedImage.getType());
+            Rectangle region = imageInfo.getRegion();
+            if (region != null) {
+                bufferedImage = mara.mybox.bufferedimage.CropTools.cropOutside(inImage, new DoubleRectangle(region));
+                if (task != null && task.isCancelled()) {
+                    return null;
+                }
+            }
+            if (targetWidth > 0 && imageWidth != targetWidth) {
+                bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, targetWidth);
+                if (task != null && task.isCancelled()) {
+                    return null;
+                }
+            }
+            if (imageRenderHints != null) {
+                bufferedImage = BufferedImageTools.applyRenderHints(bufferedImage, imageRenderHints);
+                if (task != null && task.isCancelled()) {
+                    return null;
+                }
+            }
+            imageInfo.setThumbnail(SwingFXUtils.toFXImage(bufferedImage, null));
+            return bufferedImage;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            return inImage;
+        }
+    }
+
     public static BufferedImage readPPT(ImageInformation imageInfo, int width) {
         BufferedImage bufferedImage = null;
         try ( SlideShow ppt = SlideShowFactory.create(imageInfo.getFile())) {
+            bufferedImage = readPPT(null, ppt, imageInfo, width);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+        return bufferedImage;
+    }
+
+    public static BufferedImage readPPT(SingletonTask<Void> task, SlideShow ppt, ImageInformation imageInfo, int targetWidth) {
+        if (ppt == null || imageInfo == null) {
+            return null;
+        }
+        BufferedImage bufferedImage = null;
+        try {
             List<Slide> slides = ppt.getSlides();
             int pptWidth = ppt.getPageSize().width;
             int pptHeight = ppt.getPageSize().height;
@@ -320,16 +390,40 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             if (AppVariables.imageRenderHints != null) {
                 g.addRenderingHints(AppVariables.imageRenderHints);
             }
-            slide.draw(g);
-            Rectangle region = imageInfo.getRegion();
-            if (region != null) {
-                bufferedImage = mara.mybox.bufferedimage.CropTools.cropOutside(bufferedImage, new DoubleRectangle(region));
+            if (task != null && task.isCancelled()) {
+                return null;
             }
-            if (width > 0 && bufferedImage.getWidth() != width) {
-                bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, width);
+            slide.draw(g);
+            if (task != null && task.isCancelled()) {
+                return null;
+            }
+            bufferedImage = scaleImage(task, bufferedImage, imageInfo, targetWidth);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            if (task != null) {
+                task.setError(e.toString());
+            }
+        }
+        return bufferedImage;
+    }
+
+    public static BufferedImage readImage(SingletonTask<Void> task, ImageReader reader, ImageInformation imageInfo, int targetWidth) {
+        if (reader == null || imageInfo == null) {
+            return null;
+        }
+        BufferedImage bufferedImage = null;
+        try {
+            imageInfo.setThumbnail(null);
+            imageInfo.setRequiredWidth(targetWidth);
+            bufferedImage = ImageFileReaders.readFrame(reader, imageInfo);
+            if (bufferedImage != null) {
+                imageInfo.setThumbnail(SwingFXUtils.toFXImage(bufferedImage, null));
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+            if (task != null) {
+                task.setError(e.toString());
+            }
         }
         return bufferedImage;
     }

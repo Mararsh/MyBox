@@ -27,7 +27,7 @@ import mara.mybox.value.UserConfig;
 public class ControlPlay extends BaseController {
 
     protected ImagesPlayController imagesController;
-    protected int interval, framesNumber, frameIndex, fromFrame, toFrame;
+    protected int interval, framesNumber, currentIndex, fromFrame, toFrame;
     protected double speed;
     protected long currentDelay;
 
@@ -143,7 +143,7 @@ public class ControlPlay extends BaseController {
             if (timer != null) {
                 timer.cancel();
             }
-            frameIndex = 0;
+            currentIndex = 0;
             frameSelector.getItems().clear();
             totalLabel.setText("");
             framesNumber = total;
@@ -185,7 +185,7 @@ public class ControlPlay extends BaseController {
     }
 
     // start is 0-based
-    public synchronized void startFrame(int start) {
+    public synchronized void startFrame(int startIndex) {
         try {
             if (timer != null) {
                 timer.cancel();
@@ -194,65 +194,77 @@ public class ControlPlay extends BaseController {
             if (framesNumber < 1) {
                 return;
             }
-            displayFrame(start);
-            int index;
-            long delay;
-            if (reverseCheck.isSelected()) {
-                index = frameIndex - 1;
-                if (index < fromFrame && !loopCheck.isSelected()) {
-                    setPauseButton(true);
-                    return;
-                }
-            } else {
-                index = frameIndex + 1;
-                if (index > toFrame && !loopCheck.isSelected()) {
-                    setPauseButton(true);
-                    return;
-                }
+            displayFrame(startIndex);
+            int nextIndex = nextIndex();
+            if (nextIndex < 0) {
+                setPauseButton(true);
+                return;
             }
-
-            delay = currentDelay;
             timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
                     Platform.runLater(() -> {
-                        startFrame(index);
+                        startFrame(nextIndex);
                     });
                 }
-            }, delay);
+            }, currentDelay);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
+    public int correctIndex(int index) {
+        if (framesNumber < 1) {
+            return -1;
+        }
+        int end = toFrame;
+        if (end < 0 || end >= framesNumber) {
+            end = framesNumber - 1;
+        }
+        int start = fromFrame;
+        if (start < 0 || start >= framesNumber) {
+            start = 0;
+        }
+        if (index > end) {
+            return start;
+        }
+        if (index < start) {
+            return end;
+        }
+        return index;
+    }
+
+    public synchronized int nextIndex() {
+        int index;
+        if (reverseCheck.isSelected()) {
+            index = currentIndex - 1;
+            if (index < fromFrame && !loopCheck.isSelected()) {
+                return -1;
+            }
+        } else {
+            index = currentIndex + 1;
+            if (index > toFrame && !loopCheck.isSelected()) {
+                return -1;
+            }
+        }
+        return correctIndex(index);
+    }
+
     // index is 0-based
     protected void displayFrame(int index) {
         try {
-            if (framesNumber < 1) {
+            currentIndex = correctIndex(index);
+            if (currentIndex < 0) {
+                setPauseButton(true);
                 return;
             }
-            int end = toFrame;
-            if (end < 0 || end >= framesNumber) {
-                end = framesNumber - 1;
-            }
-            int start = fromFrame;
-            if (start < 0 || start >= framesNumber) {
-                start = 0;
-            }
-            frameIndex = index;
-            if (frameIndex > end) {
-                frameIndex = start;
-            }
-            if (frameIndex < start) {
-                frameIndex = end;
-            }
             isSettingValues = true;
-            frameSelector.getSelectionModel().select((frameIndex + 1) + "");
+            frameSelector.getSelectionModel().select((currentIndex + 1) + "");
             isSettingValues = false;
             speed = speed <= 0 ? 1 : speed;
             if (imagesController != null) {
-                imagesController.displayFrame(frameIndex);
+                imagesController.displayFrame(currentIndex);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -265,6 +277,9 @@ public class ControlPlay extends BaseController {
             previousButton.setDisable(false);
             nextButton.setDisable(false);
             pauseButton.setUserData("Paused");
+            if (imagesController != null) {
+                imagesController.closeFile();
+            }
         } else {
             StyleTools.setNameIcon(pauseButton, Languages.message("Pause"), "iconPause.png");
             previousButton.setDisable(true);
@@ -278,10 +293,10 @@ public class ControlPlay extends BaseController {
     public void pauseAction() {
         try {
             if (pauseButton.getUserData().equals("Playing")) {
-                pauseFrame(frameIndex);
+                pauseFrame(currentIndex);
 
             } else if (pauseButton.getUserData().equals("Paused")) {
-                startFrame(frameIndex);
+                startFrame(currentIndex);
 
             }
         } catch (Exception e) {
@@ -291,11 +306,19 @@ public class ControlPlay extends BaseController {
 
     public void pauseFrame(int frame) {
         try {
+            pause();
+            displayFrame(frame);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void pause() {
+        try {
             if (timer != null) {
                 timer.cancel();
             }
             setPauseButton(true);
-            displayFrame(frame);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -304,13 +327,13 @@ public class ControlPlay extends BaseController {
     @FXML
     @Override
     public void previousAction() {
-        pauseFrame(--frameIndex);
+        pauseFrame(--currentIndex);
     }
 
     @FXML
     @Override
     public void nextAction() {
-        pauseFrame(++frameIndex);
+        pauseFrame(++currentIndex);
     }
 
     @FXML
@@ -333,7 +356,7 @@ public class ControlPlay extends BaseController {
             task.cancel();
         }
         framesNumber = 0;
-        frameIndex = 0;
+        currentIndex = 0;
         fromFrame = 0;
         toFrame = -1;
     }
@@ -342,7 +365,10 @@ public class ControlPlay extends BaseController {
     public void cleanPane() {
         try {
             clear();
-            imagesController = null;
+            if (imagesController != null) {
+                imagesController.closeFile();
+                imagesController = null;
+            }
         } catch (Exception e) {
         }
         super.cleanPane();

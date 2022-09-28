@@ -293,6 +293,15 @@ License:    Apache License Version 2.0
                                                                                 </ImageView>
                                                                             </graphic>
                                                                         </CheckBox>
+                                                      <Button fx:id="settingsButton" mnemonicParsing="false" onAction="#settings">
+                                                         <graphic>
+                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                               <image>
+                                                                  <Image url="@../buttons/Red/iconSetting.png" />
+                                                               </image>
+                                                            </ImageView>
+                                                         </graphic>
+                                                      </Button>
                                                                     </children>
                                                                 </FlowPane>
                                                             </children>

@@ -75,7 +75,7 @@ public class DoubleRectangle implements DoubleShape {
     }
 
     @Override
-    public boolean include(double x, double y) {
+    public boolean contains(double x, double y) {
         return x >= smallX && y >= smallY && x <= bigX && y <= bigY;
     }
 
@@ -104,7 +104,7 @@ public class DoubleRectangle implements DoubleShape {
         return new Rectangle((int) smallX, (int) smallY, (int) getWidth(), (int) getHeight());
     }
 
-    public double getWidth() {
+    public final double getWidth() {
         width = Math.abs(bigX - smallX + 1);
         return width;
     }
@@ -113,7 +113,7 @@ public class DoubleRectangle implements DoubleShape {
         this.width = width;
     }
 
-    public double getHeight() {
+    public final double getHeight() {
         height = Math.abs(bigY - smallY + 1);
         return height;
     }

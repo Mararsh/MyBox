@@ -58,16 +58,6 @@ public class Data2DConvertToDataBaseController extends BaseData2DHandleControlle
     }
 
     @Override
-    public void setParameters(ControlData2DEditTable editController) {
-        try {
-            super.setParameters(editController);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
     public void sourceChanged() {
         if (tableController == null) {
             return;
@@ -105,7 +95,7 @@ public class Data2DConvertToDataBaseController extends BaseData2DHandleControlle
     /*
         static
      */
-    public static Data2DConvertToDataBaseController open(ControlData2DEditTable tableController) {
+    public static Data2DConvertToDataBaseController open(ControlData2DLoad tableController) {
         try {
             Data2DConvertToDataBaseController controller = (Data2DConvertToDataBaseController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DConvertToDatabaseFxml, false);

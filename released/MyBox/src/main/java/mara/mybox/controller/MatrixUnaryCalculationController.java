@@ -74,7 +74,6 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
 
     public MatrixUnaryCalculationController() {
         baseTitle = message("MatrixUnaryCalculation");
-        TipsLabelKey = "Data2DTips";
     }
 
     @Override

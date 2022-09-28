@@ -26,6 +26,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
@@ -149,7 +150,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             initFind();
 
             if (nodesListCheck != null) {
-                nodesListCheck.setSelected(UserConfig.getBoolean(baseName + "NodesList", true));
+                nodesListCheck.setSelected(UserConfig.getBoolean(baseName + "NodesList", false));
                 showNodesList(nodesListCheck.isSelected());
                 nodesListCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
@@ -230,6 +231,18 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         isSettingValues = false;
         if (show) {
             leftPaneCheck.setSelected(true);
+        }
+    }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (!super.keyEventsFilter(event)) {
+            if (nodeController != null) {
+                return nodeController.keyEventsFilter(event); // pass event to editor
+            }
+            return false;
+        } else {
+            return true;
         }
     }
 
@@ -317,18 +330,8 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         if (parent == null || nodes == null || nodes.isEmpty()) {
             return;
         }
-        if (loadedParent != null && parent.getNodeid() == loadedParent.getNodeid()) {
-            loadNodes(parent);
-        }
-        for (TreeNode node : nodes) {
-            if (nodeController.currentNode != null && node.getNodeid() == nodeController.currentNode.getNodeid()) {
-                nodeController.setParentNode(parent);
-            }
-            if (nodeController.parentNode != null && node.getNodeid() == nodeController.parentNode.getNodeid()) {
-                nodeController.setParentNode(node);
-            }
-        }
-        nodesController.loadTree(parent);
+        loadNodes(loadedParent);
+        nodesController.loadTree(null);
     }
 
     public void nodesCopied(TreeNode parent) {

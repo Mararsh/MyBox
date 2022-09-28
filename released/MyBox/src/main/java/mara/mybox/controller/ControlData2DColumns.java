@@ -33,6 +33,7 @@ import mara.mybox.fxml.cell.TableBooleanCell;
 import mara.mybox.fxml.cell.TableCheckboxCell;
 import mara.mybox.fxml.cell.TableColorCommitCell;
 import mara.mybox.fxml.cell.TableComboBoxCell;
+import mara.mybox.fxml.cell.TableTextAreaCommitCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
 
@@ -44,7 +45,7 @@ import static mara.mybox.value.Languages.message;
 public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> {
 
     protected ControlData2D dataController;
-    protected ControlData2DEditTable tableController;
+    protected ControlData2DLoad tableController;
     protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;
     protected Data2D data2D;
@@ -56,7 +57,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     }
 
     @FXML
-    protected TableColumn<Data2DColumn, String> nameColumn, typeColumn, defaultColumn;
+    protected TableColumn<Data2DColumn, String> nameColumn, typeColumn, defaultColumn, descColumn;
     @FXML
     protected TableColumn<Data2DColumn, Boolean> editableColumn, notNullColumn, formatColumn,
             primaryColumn, autoColumn;
@@ -103,27 +104,6 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
                 }
             });
             indexColumn.setEditable(false);
-
-            defaultColumn.setCellValueFactory(new PropertyValueFactory<>("defaultValue"));
-            defaultColumn.setCellFactory(TableAutoCommitCell.forStringColumn());
-            defaultColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Data2DColumn, String>>() {
-                @Override
-                public void handle(TableColumn.CellEditEvent<Data2DColumn, String> t) {
-                    if (t == null) {
-                        return;
-                    }
-                    Data2DColumn column = t.getRowValue();
-                    if (column == null) {
-                        return;
-                    }
-                    String v = t.getNewValue();
-                    if ((v == null && column.getDefaultValue() != null)
-                            || (v != null && !v.equals(column.getDefaultValue()))) {
-                        column.setDefaultValue(v);
-                        status(Status.Modified);
-                    }
-                }
-            });
 
             nameColumn.setCellValueFactory(new PropertyValueFactory<>("columnName"));
             nameColumn.setCellFactory(TableAutoCommitCell.forStringColumn());
@@ -308,7 +288,6 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             autoColumn.setCellFactory(new TableBooleanCell());
 
             lengthColumn.setCellValueFactory(new PropertyValueFactory<>("length"));
-
             lengthColumn.setCellFactory(TableAutoCommitCell.forIntegerColumn());
             lengthColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Data2DColumn, Integer>>() {
                 @Override
@@ -377,6 +356,74 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             colorColumn.setEditable(true);
             colorColumn.getStyleClass().add("editable-column");
 
+            defaultColumn.setCellValueFactory(new PropertyValueFactory<>("defaultValue"));
+            defaultColumn.setCellFactory(TableAutoCommitCell.forStringColumn());
+            defaultColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Data2DColumn, String>>() {
+                @Override
+                public void handle(TableColumn.CellEditEvent<Data2DColumn, String> t) {
+                    if (t == null) {
+                        return;
+                    }
+                    Data2DColumn column = t.getRowValue();
+                    if (column == null) {
+                        return;
+                    }
+                    String v = t.getNewValue();
+                    if ((v == null && column.getDefaultValue() != null)
+                            || (v != null && !v.equals(column.getDefaultValue()))) {
+                        column.setDefaultValue(v);
+                        status(Status.Modified);
+                    }
+                }
+            });
+
+            descColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+            descColumn.setCellFactory(new Callback<TableColumn<Data2DColumn, String>, TableCell<Data2DColumn, String>>() {
+                @Override
+                public TableCell<Data2DColumn, String> call(TableColumn<Data2DColumn, String> param) {
+                    TableTextAreaCommitCell<Data2DColumn> cell = new TableTextAreaCommitCell<Data2DColumn>(myController) {
+
+                        @Override
+                        protected String name(int rowIndex) {
+                            try {
+                                Data2DColumn column = tableData.get(rowIndex);
+                                return column.getColumnName() + " - " + message("Description");
+                            } catch (Exception e) {
+                                return null;
+                            }
+                        }
+
+                        @Override
+                        protected String getCellValue(int rowIndex) {
+                            try {
+                                return tableData.get(rowIndex).getDescription();
+                            } catch (Exception e) {
+                                return null;
+                            }
+                        }
+
+                        @Override
+                        protected void setCellValue(int rowIndex, String value) {
+                            if (isSettingValues || rowIndex < 0 || rowIndex >= tableData.size()) {
+                                return;
+                            }
+                            Data2DColumn column = tableData.get(rowIndex);
+                            String currentValue = column.getDescription();
+                            if ((currentValue == null && value == null)
+                                    || (currentValue != null && currentValue.equals(value))) {
+                                return;
+                            }
+                            column.setDescription(value);
+                            tableData.set(rowIndex, column);
+                            status(Status.Modified);
+                        }
+                    };
+                    return cell;
+                }
+            });
+            descColumn.setEditable(true);
+            descColumn.getStyleClass().add("editable-column");
+
             checkButtons();
 
         } catch (Exception e) {
@@ -435,6 +482,11 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
 
                 lengthColumn.setEditable(false);
                 lengthColumn.getStyleClass().clear();
+
+                if (!tableView.getColumns().contains(primaryColumn)) {
+                    tableView.getColumns().add(primaryColumn);
+                    tableView.getColumns().add(autoColumn);
+                }
 
             } else {
                 if (data2D.isMatrix()) {
@@ -495,6 +547,12 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
 
                 defaultColumn.setEditable(true);
                 defaultColumn.getStyleClass().add("editable-column");
+
+                if (tableView.getColumns().contains(primaryColumn)) {
+                    tableView.getColumns().remove(primaryColumn);
+                    tableView.getColumns().remove(autoColumn);
+                }
+
             }
 
             checkButtons();
@@ -771,6 +829,16 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
         tableView.scrollTo(row);
         isSettingValues = false;
         tableChanged(true);
+    }
+
+    @FXML
+    @Override
+    public void editAction() {
+        int index = tableView.getSelectionModel().getSelectedIndex();
+        if (index < 0) {
+            return;
+        }
+        Data2DColumnEditController.open(this, index);
     }
 
 }

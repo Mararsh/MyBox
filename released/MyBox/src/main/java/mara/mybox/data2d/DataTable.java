@@ -88,7 +88,7 @@ public class DataTable extends Data2D {
                     dataColumns.add(dataColumn);
                 }
             }
-            return recordTable(conn, referredName, dataColumns);
+            return recordTable(conn, referredName, dataColumns, null);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -99,11 +99,12 @@ public class DataTable extends Data2D {
         }
     }
 
-    public boolean recordTable(Connection conn, String tableName, List<Data2DColumn> dataColumns) {
+    public boolean recordTable(Connection conn, String tableName, List<Data2DColumn> dataColumns, String comments) {
         try {
             sheet = DerbyBase.savedName(tableName);
             dataName = tableName;
             colsNumber = dataColumns.size();
+            this.comments = comments;
             tableData2DDefinition.insertData(conn, this);
             conn.commit();
 
@@ -111,7 +112,7 @@ public class DataTable extends Data2D {
                 column.setD2id(d2did);
             }
             columns = dataColumns;
-            tableData2DColumn.save(conn, d2did, columns);
+            tableData2DColumn.save(conn, d2did, dataColumns);
             conn.commit();
             return true;
         } catch (Exception e) {
@@ -172,6 +173,7 @@ public class DataTable extends Data2D {
                             if (dbColumn.getDefaultValue() == null) {
                                 dbColumn.setDefaultValue(scolumn.getDefaultValue());
                             }
+                            dbColumn.setDescription(scolumn.getDescription());
                             break;
                         }
                     }
@@ -535,7 +537,9 @@ public class DataTable extends Data2D {
                 for (int i = 1; i < columns.size(); i++) {
                     dataColumns.add(columns.get(i));
                 }
-            }    // skip id column
+            }
+            Random random = new Random();
+            // skip id column
             for (int i = 0; i < dataColumns.size(); i++) {
                 if (task == null || task.isCancelled()) {
                     break;
@@ -567,7 +571,7 @@ public class DataTable extends Data2D {
                                 name = message("Columns") + (c + 1);
                             }
                             while (names.contains(name)) {
-                                name += "m";
+                                name += random.nextInt(10);
                             }
                             names.add(name);
                         }
@@ -579,7 +583,7 @@ public class DataTable extends Data2D {
                     if (showColNames) {
                         String name = message("ColumnName");
                         while (names.contains(name)) {
-                            name += "m";
+                            name += random.nextInt(10);
                         }
                         names.add(0, name);
                     }

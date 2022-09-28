@@ -489,6 +489,26 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         return toColumns(names);
     }
 
+    public List<Data2DColumn> fixColumnNames(List<Data2DColumn> inColumns) {
+        if (inColumns == null || inColumns.isEmpty()) {
+            return inColumns;
+        }
+        List<String> validNames = new ArrayList<>();
+        List<Data2DColumn> targetColumns = new ArrayList<>();
+        Random random = new Random();
+        for (Data2DColumn column : inColumns) {
+            Data2DColumn tcolumn = column.cloneAll();
+            String name = tcolumn.getColumnName();
+            while (validNames.contains(name)) {
+                name += random.nextInt(10);
+            }
+            tcolumn.setColumnName(name);
+            targetColumns.add(tcolumn);
+            validNames.add(name);
+        }
+        return targetColumns;
+    }
+
     public void resetStatistic() {
         if (!isValid()) {
             return;

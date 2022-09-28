@@ -13,11 +13,9 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
-import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.Data2D_Operations.ObjectType;
 import mara.mybox.data2d.DataFileCSV;
-import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -69,7 +67,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         try {
             super.initControls();
 
-            noColumnSelection(true);
+            notSelectColumnsInTable(true);
 
             objectType = ObjectType.Columns;
             if (objectGroup != null) {
@@ -130,7 +128,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         return false;
     }
 
-    public void setParameters(ControlData2DEditTable tableController) {
+    public void setParameters(ControlData2DLoad tableController) {
         try {
             setParameters(this, tableController);
 
@@ -284,10 +282,8 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             checkObject();
             checkInvalidAs();
 
-            outputColumns = checkedColumns;
-            if (showRowNumber()) {
-                outputColumns.add(0, new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
-            }
+            outputColumns = data2D.targetColumns(checkedColsIndices, otherColsIndices, showRowNumber(), null);
+
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -443,9 +439,9 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                 return false;
             }
             if (showColNames()) {
-                List<String> names = checkedColsNames;
-                if (showRowNumber()) {
-                    names.add(0, message("SourceRowNumber"));
+                List<String> names = new ArrayList<>();
+                for (Data2DColumn column : outputColumns) {
+                    names.add(column.getColumnName());
                 }
                 outputData.add(0, names);
             }
@@ -593,25 +589,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             outputColumns = null;
         } catch (Exception e) {
         }
-    }
-
-    /*
-        get/set
-     */
-    public ControlData2DEditTable getTableController() {
-        return tableController;
-    }
-
-    public Data2D getData2D() {
-        return data2D;
-    }
-
-    public List<Data2DColumn> getOutputColumns() {
-        return outputColumns;
-    }
-
-    public ControlData2DTarget getTargetController() {
-        return targetController;
     }
 
 }

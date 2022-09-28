@@ -69,6 +69,7 @@ public class ControlData2DInput extends BaseController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "WithNames", nameCheck.isSelected());
+                    goAction();
                 }
             });
 

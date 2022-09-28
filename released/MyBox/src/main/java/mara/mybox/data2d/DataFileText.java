@@ -13,6 +13,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
+import static mara.mybox.tools.TextTools.validLine;
 import mara.mybox.tools.TmpFileTools;
 
 /**
@@ -21,6 +22,8 @@ import mara.mybox.tools.TmpFileTools;
  * @License Apache License Version 2.0
  */
 public class DataFileText extends DataFile {
+
+    public static final String CommentsMarker = "#";
 
     public DataFileText() {
         type = Type.Texts;
@@ -96,6 +99,9 @@ public class DataFileText extends DataFile {
         File validFile = FileTools.removeBOM(file);
         try ( BufferedReader reader = new BufferedReader(new FileReader(validFile, charset))) {
             String line1 = reader.readLine();
+            while (!validLine(line1)) {
+                line1 = reader.readLine();
+            }
             if (line1 == null) {
                 return null;
             }
@@ -111,6 +117,9 @@ public class DataFileText extends DataFile {
             }
 //            MyBoxLog.console(maxCount1);
             String line2 = reader.readLine();
+            while (!validLine(line2)) {
+                line2 = reader.readLine();
+            }
             if (line2 == null) {
                 if (maxCountIndex1 >= 0) {
                     return delimiters[maxCountIndex1];

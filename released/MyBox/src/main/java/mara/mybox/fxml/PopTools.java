@@ -260,11 +260,20 @@ public class PopTools {
         buttons
      */
     public static void addButtonsPane(MenuController controller, TextInputControl input, List<String> values) {
-        addButtonsPane(controller, input, values, true);
+        addButtonsPane(controller, input, values, true, -1);
+    }
+
+    public static void addButtonsPane(int index, MenuController controller, TextInputControl input, List<String> values) {
+        addButtonsPane(controller, input, values, true, index);
     }
 
     public static void addButtonsPane(MenuController controller, TextInputControl input,
             List<String> values, boolean replace) {
+        addButtonsPane(controller, input, values, replace, -1);
+    }
+
+    public static void addButtonsPane(MenuController controller, TextInputControl input,
+            List<String> values, boolean replace, int index) {
         try {
             List<Node> buttons = new ArrayList<>();
             for (String value : values) {
@@ -286,7 +295,7 @@ public class PopTools {
                 });
                 buttons.add(button);
             }
-            controller.addFlowPane(buttons);
+            controller.addFlowPane(index, buttons);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -597,7 +606,7 @@ public class PopTools {
                 CheckBox popCheck = new CheckBox();
                 popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
                 NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
-                popCheck.setSelected(UserConfig.getBoolean(name + "PopWhenMouseHovering", true));
+                popCheck.setSelected(UserConfig.getBoolean(name + "PopWhenMouseHovering", false));
                 popCheck.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
@@ -861,7 +870,7 @@ public class PopTools {
             CheckBox popCheck = new CheckBox();
             popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
             NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
-            popCheck.setSelected(UserConfig.getBoolean("SqlExamplesPopWhenMouseHovering", true));
+            popCheck.setSelected(UserConfig.getBoolean("SqlExamplesPopWhenMouseHovering", false));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -967,6 +976,111 @@ public class PopTools {
             parent.setPopMenu(popMenu);
             LocateTools.locateMouse(scriptInput, popMenu);
         } catch (Exception e) {
+        }
+    }
+
+    public static MenuController popJavaScriptExamples(BaseController parent, Event event,
+            TextInputControl scriptInput, String name) {
+        try {
+            MenuController controller = MenuController.open(parent, scriptInput, event);
+
+            controller.setTitleLabel(message("Examples"));
+
+            List<Node> topButtons = new ArrayList<>();
+            Button newLineButton = new Button();
+            newLineButton.setGraphic(StyleTools.getIconImage("iconTurnOver.png"));
+            NodeStyleTools.setTooltip(newLineButton, new Tooltip(message("Newline")));
+            newLineButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    scriptInput.replaceText(scriptInput.getSelection(), "\n");
+                    scriptInput.requestFocus();
+                }
+            });
+            topButtons.add(newLineButton);
+
+            Button clearInputButton = new Button();
+            clearInputButton.setGraphic(StyleTools.getIconImage("iconClear.png"));
+            NodeStyleTools.setTooltip(clearInputButton, new Tooltip(message("ClearInputArea")));
+            clearInputButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    scriptInput.clear();
+                }
+            });
+            topButtons.add(clearInputButton);
+
+            CheckBox popCheck = new CheckBox();
+            popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
+            popCheck.setSelected(UserConfig.getBoolean(name + "PopWhenMouseHovering", false));
+            popCheck.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(name + "PopWhenMouseHovering", popCheck.isSelected());
+                }
+            });
+            topButtons.add(popCheck);
+
+            controller.addFlowPane(topButtons);
+            controller.addNode(new Separator());
+
+            PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
+                    " + ", " - ", " * ", " / ", " % ",
+                    "''", "( )", ";", " = ", " += ", " -= ", " *= ", " /= ", " %= ",
+                    "++ ", "-- ", " , ", " { } ", "[ ]", "\" \"", ".",
+                    " var ", " this"
+            ));
+
+            PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
+                    " >= ", " > ", " <= ", " < ", " != ", " && ", " || ", " !",
+                    " '' == ", " == ", " '' != ", " === ", " !== ",
+                    " true ", " false ", " null ", " undefined "
+            ));
+
+            Hyperlink jlink = new Hyperlink("JavaScript language specification");
+            jlink.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    parent.openLink("https://www.ecma-international.org/publications-and-standards/standards/ecma-262/");
+                }
+            });
+            controller.addNode(jlink);
+
+            Hyperlink mlink = new Hyperlink("JavaScript Tutorial - " + message("English"));
+            mlink.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    parent.openLink("https://developer.mozilla.org/en-US/docs/Web/JavaScript");
+                }
+            });
+            controller.addNode(mlink);
+
+            Hyperlink alink = new Hyperlink("JavaScript Tutorial - " + message("Chinese"));
+            alink.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    parent.openLink("https://www.w3school.com.cn/js/index.asp");
+                }
+            });
+            controller.addNode(alink);
+
+            if (!"JavaScriptEditor".equals(name)) {
+                Hyperlink nlink = new Hyperlink("Nashorn User's Guide");
+                nlink.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        parent.openLink("https://docs.oracle.com/javase/10/nashorn/toc.htm");
+                    }
+                });
+                controller.addNode(nlink);
+            }
+
+            return controller;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
         }
     }
 

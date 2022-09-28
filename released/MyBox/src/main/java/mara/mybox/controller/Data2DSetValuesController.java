@@ -32,7 +32,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
     }
 
     @Override
-    public void setParameters(ControlData2DEditTable tableController) {
+    public void setParameters(ControlData2DLoad tableController) {
         try {
             super.setParameters(tableController);
 
@@ -191,7 +191,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                 super.finalAction();
                 data2D.stopTask();
                 task = null;
-                valueController.expressionController.calculator.stop();
+                valueController.expressionController.calculator.reset();
             }
 
         };
@@ -346,16 +346,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
     public void number() {
         try {
             int num = valueController.setValue.getStart();
-            int digit;
-            if (valueController.setValue.isFillZero()) {
-                if (valueController.setValue.isAotoDigit()) {
-                    digit = (filteredRowsIndices.size() + "").length();
-                } else {
-                    digit = valueController.setValue.getDigit();
-                }
-            } else {
-                digit = 0;
-            }
+            int digit = valueController.setValue.countFinalDigit(filteredRowsIndices.size());
             String currentValue, suffix;
             for (int row : filteredRowsIndices) {
                 List<String> values = tableController.tableData.get(row);
@@ -520,7 +511,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
     /*
         static
      */
-    public static Data2DSetValuesController open(ControlData2DEditTable tableController) {
+    public static Data2DSetValuesController open(ControlData2DLoad tableController) {
         try {
             Data2DSetValuesController controller = (Data2DSetValuesController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DSetValuesFxml, false);

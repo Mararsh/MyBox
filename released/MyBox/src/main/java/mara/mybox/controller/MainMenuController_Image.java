@@ -107,13 +107,18 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
     }
 
     @FXML
+    protected void ImagesEditor(ActionEvent event) {
+        loadScene(Fxmls.ImagesEditorFxml);
+    }
+
+    @FXML
     protected void ImagesSplice(ActionEvent event) {
         loadScene(Fxmls.ImagesSpliceFxml);
     }
 
     @FXML
-    protected void ImagesEditor(ActionEvent event) {
-        loadScene(Fxmls.ImagesEditorFxml);
+    protected void ImageRepeat(ActionEvent event) {
+        loadScene(Fxmls.ImageRepeatFxml);
     }
 
     @FXML

@@ -27,135 +27,144 @@ License:    Apache License Version 2.0
     <children>
         <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
             <tabs>
-            <Tab text="%Base">
-               <content>
-                  <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                     <content>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
-                           <padding>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </padding>
-                           <children>
-                              <HBox alignment="CENTER_LEFT" spacing="2.0">
-                                 <children>
-                                    <Label minHeight="-Infinity" minWidth="-Infinity" text="%Formats" />
-                                    <Button fx:id="selectAllButton" mnemonicParsing="false" onAction="#selectAllAction">
-                                       <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconSelectAll.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
-                                    <Button fx:id="selectNoneButton" mnemonicParsing="false" onAction="#selectNoneAction">
-                                       <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconSelectNone.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
-                                 </children>
-                              </HBox>
-                                <FlowPane fx:id="formatsPane" hgap="5.0" vgap="5.0">
+                <Tab text="%Base">
+                    <content>
+                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                            <content>
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                    <padding>
+                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                    </padding>
                                     <children>
-                                        <CheckBox fx:id="csvCheck" mnemonicParsing="false" selected="true">
-                                       <graphic>
-                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconCSV.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic></CheckBox>
-                                        <CheckBox fx:id="excelCheck" mnemonicParsing="false">
-                                       <graphic>
-                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconExcel.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic></CheckBox>
-                                        <CheckBox fx:id="textsCheck" layoutX="154.0" layoutY="10.0" mnemonicParsing="false">
-                                       <graphic>
-                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconTxt.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic></CheckBox>
-                                        <CheckBox fx:id="jsonCheck" layoutX="384.0" layoutY="10.0" mnemonicParsing="false">
-                                       <graphic>
-                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconJSON.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic></CheckBox>
-                                        <CheckBox layoutX="270.0" layoutY="10.0" mnemonicParsing="false" fx:id="xmlCheck">
-                                       <graphic>
-                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconXML.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic></CheckBox>
-                                        <CheckBox fx:id="htmlCheck" layoutX="164.0" layoutY="10.0" mnemonicParsing="false">
-                                       <graphic>
-                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconHtml.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic></CheckBox>
-                                        <CheckBox fx:id="pdfCheck" layoutX="69.0" layoutY="10.0" mnemonicParsing="false">
-                                       <graphic>
-                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconPDF.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic></CheckBox>
-                                    <CheckBox fx:id="myBoxClipboardCheck" layoutX="218.0" layoutY="10.0" mnemonicParsing="false">
-                                       <graphic>
-                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconClipboard.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic></CheckBox>
+                                        <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                            <children>
+                                                <Label minHeight="-Infinity" minWidth="-Infinity" text="%Formats" />
+                                                <Button fx:id="selectAllButton" mnemonicParsing="false" onAction="#selectAllAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconSelectAll.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="selectNoneButton" mnemonicParsing="false" onAction="#selectNoneAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconSelectNone.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                            </children>
+                                        </HBox>
+                                        <FlowPane fx:id="formatsPane" hgap="5.0" vgap="5.0">
+                                            <children>
+                                                <CheckBox fx:id="csvCheck" mnemonicParsing="false" selected="true">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconCSV.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </CheckBox>
+                                                <CheckBox fx:id="excelCheck" mnemonicParsing="false">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconExcel.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </CheckBox>
+                                                <CheckBox fx:id="textsCheck" layoutX="154.0" layoutY="10.0" mnemonicParsing="false">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconTxt.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </CheckBox>
+                                                <CheckBox fx:id="jsonCheck" layoutX="384.0" layoutY="10.0" mnemonicParsing="false">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconJSON.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </CheckBox>
+                                                <CheckBox layoutX="270.0" layoutY="10.0" mnemonicParsing="false" fx:id="xmlCheck">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconXML.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </CheckBox>
+                                                <CheckBox fx:id="htmlCheck" layoutX="164.0" layoutY="10.0" mnemonicParsing="false">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconHtml.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </CheckBox>
+                                                <CheckBox fx:id="pdfCheck" layoutX="69.0" layoutY="10.0" mnemonicParsing="false">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconPDF.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </CheckBox>
+                                                <CheckBox fx:id="myBoxClipboardCheck" layoutX="218.0" layoutY="10.0" mnemonicParsing="false">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconClipboard.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </CheckBox>
+                                            </children>
+                                        </FlowPane>
+                                        <Separator prefWidth="200.0" />
+                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
+                                            <children>
+                                                <Label text="%SplitFilesSize" />
+                                                <ComboBox fx:id="maxLinesSelector" editable="true" prefWidth="200.0" />
+                                            </children>
+                                        </HBox>
+                                        <CheckBox fx:id="rowNumberCheck" mnemonicParsing="false" text="%RowNumber" />
                                     </children>
-                                </FlowPane>
-                              <Separator prefWidth="200.0" />
-                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
-                                    <children>
-                                        <Label text="%SplitFilesSize" />
-                                        <ComboBox fx:id="maxLinesSelector" editable="true" prefWidth="200.0" />
-                                    </children>
-                                </HBox>
-                              <CheckBox fx:id="rowNumberCheck" mnemonicParsing="false" text="%RowNumber" />
-                           </children>
-                        </VBox>
-                     </content>
-                  </ScrollPane>
-               </content>
-            </Tab>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+                    </content>
+                </Tab>
                 <Tab text="CSV">
-               <content>
-                  <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                     <content>
-                              <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                  <children>
-                                      <fx:include fx:id="csvWrite" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlCsvWrite.fxml" VBox.vgrow="ALWAYS" />
-                                  </children>
-                                  <padding>
-                                      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                  </padding>
-                              </VBox>
-                     </content>
-                  </ScrollPane>
-               </content>
+                    <content>
+                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                            <content>
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                    <children>
+                                        <fx:include fx:id="csvWrite" source="ControlTextWriteOptions.fxml" 
+                                                    maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                    </padding>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+                    </content>
                 </Tab>
                 <Tab text="Excel">
                     <content>
@@ -165,30 +174,30 @@ License:    Apache License Version 2.0
                                     <padding>
                                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                     </padding>
-                           <children>
-                              <CheckBox fx:id="excelWithNamesCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%FirstLineDefineNames" wrapText="true" />
-                           </children>
+                                    <children>
+                                        <CheckBox fx:id="excelWithNamesCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%FirstLineDefineNames" wrapText="true" />
+                                    </children>
                                 </VBox>
                             </content>
                         </ScrollPane>
                     </content>
                 </Tab>
-            <Tab text="%Texts">
-               <content>
-                  <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-                     <content>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                           <children>
-                              <fx:include fx:id="textWriteOptions" source="ControlTextWriteOptions.fxml" />
-                           </children>
-                           <padding>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </padding>
-                        </VBox>
-                     </content>
-                  </ScrollPane>
-               </content>
-            </Tab>
+                <Tab text="%Texts">
+                    <content>
+                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                            <content>
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                    <children>
+                                        <fx:include fx:id="textWriteOptions" source="ControlTextWriteOptions.fxml" />
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                    </padding>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+                    </content>
+                </Tab>
                 <Tab text="html">
                     <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
@@ -202,39 +211,39 @@ License:    Apache License Version 2.0
                         </VBox>
                     </content>
                 </Tab>
-            <Tab text="json">
-               <content>
-                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                     </padding>
-                     <children>
-                        <CheckBox disable="true" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%ReplaceForJson" wrapText="true" />
-                     </children>
-                  </VBox>
-               </content>
-            </Tab>
+                <Tab text="json">
+                    <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                            </padding>
+                            <children>
+                                <CheckBox disable="true" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%ReplaceForJson" wrapText="true" />
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
                 <Tab text="PDF">
-               <content>
-                  <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                     <content>
-                              <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                  <children>
-                                      <Label minHeight="-Infinity" text="%PdfColumnsWidthPxList" wrapText="true" />
-                                      <TextField fx:id="widthList" maxWidth="1.7976931348623157E308" />
-                              <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                                 <content>
-                                    <fx:include fx:id="pdfOptions" source="ControlPdfWriteOptions.fxml" />
-                                 </content>
-                              </ScrollPane>
-                                  </children>
-                                  <padding>
-                                      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                  </padding>
-                              </VBox>
-                     </content>
-                  </ScrollPane>
-               </content>
+                    <content>
+                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                            <content>
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                    <children>
+                                        <Label minHeight="-Infinity" text="%PdfColumnsWidthPxList" wrapText="true" />
+                                        <TextField fx:id="widthList" maxWidth="1.7976931348623157E308" />
+                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                                            <content>
+                                                <fx:include fx:id="pdfOptions" source="ControlPdfWriteOptions.fxml" />
+                                            </content>
+                                        </ScrollPane>
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                    </padding>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+                    </content>
                 </Tab>
             </tabs>
         </TabPane>

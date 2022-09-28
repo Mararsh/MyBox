@@ -9,6 +9,7 @@ import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
+import org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
 /**
  * @Author Mara
@@ -22,7 +23,9 @@ public class ExpressionCalculator {
     public String expression, result, error;
 
     public ExpressionCalculator() {
-        ScriptEngineManager factory = new ScriptEngineManager();
+        // https://github.com/Mararsh/MyBox/issues/1568
+        ScriptEngineManager factory = new ScriptEngineManager(ClassLoader.getSystemClassLoader());
+        factory.registerEngineName("nashorn", new NashornScriptEngineFactory());
         scriptEngine = factory.getEngineByName("nashorn");
         reset();
     }

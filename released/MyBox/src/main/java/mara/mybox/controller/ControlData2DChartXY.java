@@ -43,6 +43,7 @@ public class ControlData2DChartXY extends BaseData2DChartFx {
         this.data = data;
         this.colIndics = colIndics;
         this.rowNumber = rowNumber;
+        chartMaker.setPalette(makePalette());
         chartMaker.makeChart();
         setChart(chartMaker.getXyChart());
         chartMaker.writeXYChart(columns, data, colIndics, rowNumber);

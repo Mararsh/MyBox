@@ -108,6 +108,7 @@ public class TextFileTools {
             if (writer == null || values == null || values.isEmpty() || delimiter == null) {
                 return;
             }
+            String delimiterValue = TextTools.delimiterValue(delimiter);
             int end = values.size() - 1;
             String line = "";
             for (int c = 0; c <= end; c++) {
@@ -116,7 +117,7 @@ public class TextFileTools {
                     line += value;
                 }
                 if (c < end) {
-                    line += delimiter;
+                    line += delimiterValue;
                 }
             }
             writer.write(line + "\n");

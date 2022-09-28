@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -24,7 +23,6 @@ import mara.mybox.data2d.DataTable;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.chart.BoxWhiskerChart;
 import mara.mybox.fxml.chart.ChartOptions.ChartType;
@@ -92,9 +90,14 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
         try {
             super.initControls();
 
-            chartController.dataController = this;
             chartMaker = chartController.chartMaker;
             chartMaker.init(ChartType.BoxWhiskerChart, message("BoxWhiskerChart"));
+            chartController.redrawNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    drawChart();
+                }
+            });
 
             initBoxOptions();
 
@@ -340,6 +343,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
             if (!super.initData()) {
                 return false;
             }
+            chartController.palette = null;
             categorysCol = -1;
             if (rowsRadio.isSelected() && selectedCategory != null
                     && categoryColumnSelector.getSelectionModel().getSelectedIndex() != 0) {
@@ -514,8 +518,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
                     .setDefaultCategoryLabel(selectedCategory)
                     .setCategoryLabel(selectedCategory)
                     .setDefaultValueLabel(calculation.getColsNames().toString())
-                    .setValueLabel(chartMaker.getDefaultValueLabel())
-                    .setPalette(makePalette());
+                    .setValueLabel(chartMaker.getDefaultValueLabel());
             chartController.writeXYChart(outputColumns, outputData, displayCols, false);
             chartMaker.getBoxWhiskerChart()
                     .setBoxWidth(boxWidth)
@@ -593,37 +596,6 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
     }
 
     @FXML
-    public void randomColors() {
-        try {
-            chartMaker.setPalette(makePalette());
-            setLinesStyle();
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public Map<String, String> makePalette() {
-        try {
-            Random random = new Random();
-            if (palette == null) {
-                palette = new HashMap();
-            } else {
-                palette.clear();
-            }
-            for (int i = 0; i < outputColumns.size(); i++) {
-                Data2DColumn column = outputColumns.get(i);
-                column.setColor(FxColorTools.randomColor(random));
-                String rgb = FxColorTools.color2rgb(FxColorTools.randomColor(random));
-                palette.put(column.getColumnName(), rgb);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-        return palette;
-    }
-
-    @FXML
     @Override
     public void selectAllAction() {
         isSettingValues = true;
@@ -662,7 +634,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
     /*
         static
      */
-    public static Data2DChartBoxWhiskerController open(ControlData2DEditTable tableController) {
+    public static Data2DChartBoxWhiskerController open(ControlData2DLoad tableController) {
         try {
             Data2DChartBoxWhiskerController controller = (Data2DChartBoxWhiskerController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DChartBoxWhiskerFxml, false);

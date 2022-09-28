@@ -60,7 +60,7 @@ public class ControlDataConvert extends BaseController {
     protected BufferedWriter textWriter, htmlWriter, xmlWriter, jsonWriter;
     protected XSSFWorkbook xssfBook;
     protected XSSFSheet xssfSheet;
-    protected String indent = "    ", filePrefix, textDelimiter;
+    protected String indent = "    ", filePrefix, textDelimiter, csvDelimiter;
     protected List<Integer> columnWidths;
     protected PaginatedPdfTable pdfTable;
     protected List<List<String>> pageRows;
@@ -78,7 +78,7 @@ public class ControlDataConvert extends BaseController {
     @FXML
     protected TextField widthList;
     @FXML
-    protected ControlCsvOptions csvWriteController;
+    protected ControlTextOptions csvWriteController;
     @FXML
     protected ControlTextOptions textWriteOptionsController;
     @FXML
@@ -171,7 +171,7 @@ public class ControlDataConvert extends BaseController {
     }
 
     private void initCSV() {
-        csvWriteController.setControls(baseName + "Write");
+        csvWriteController.setControls(baseName + "CSVWrite", false, false);
     }
 
     private void initExcel() {
@@ -184,7 +184,7 @@ public class ControlDataConvert extends BaseController {
     }
 
     private void initTexts() {
-        textWriteOptionsController.setControls(baseName + "Write", false);
+        textWriteOptionsController.setControls(baseName + "TextWrite", false, true);
     }
 
     private void initHtml() {
@@ -313,7 +313,7 @@ public class ControlDataConvert extends BaseController {
             if (htmlCheck.isSelected()) {
                 UserConfig.setString(baseName + "Css", cssArea.getText());
             }
-            if (csvCheck.isSelected() && csvWriteController.delimiterInput.getStyle().equals(UserConfig.badStyle())) {
+            if (csvCheck.isSelected() && csvWriteController.delimiterController.delimiterInput.getStyle().equals(UserConfig.badStyle())) {
                 return false;
             }
             if (textsCheck.isSelected()
@@ -399,8 +399,9 @@ public class ControlDataConvert extends BaseController {
                 csvFile = parent.makeTargetFile(currentPrefix, ".csv", targetPath);
                 if (csvFile != null) {
                     updateLogs(message("Writing") + " " + csvFile.getAbsolutePath());
+                    csvDelimiter = csvWriteController.delimiterController.getDelimiterName();
                     csvPrinter = new CSVPrinter(new FileWriter(csvFile, csvWriteController.charset),
-                            CsvTools.csvFormat(csvWriteController.delimiter));
+                            CsvTools.csvFormat(csvDelimiter));
                     if (csvWriteController.withNamesCheck.isSelected()) {
                         csvPrinter.printRecord(names);
                     }
@@ -413,7 +414,7 @@ public class ControlDataConvert extends BaseController {
                 if (textFile != null) {
                     updateLogs(message("Writing") + " " + textFile.getAbsolutePath());
                     textWriter = new BufferedWriter(new FileWriter(textFile, textWriteOptionsController.charset));
-                    textDelimiter = TextTools.delimiterValue(textWriteOptionsController.delimiterName);
+                    textDelimiter = TextTools.delimiterValue(textWriteOptionsController.getDelimiterName());
                     if (textWriteOptionsController.withNamesCheck.isSelected()) {
                         TextFileTools.writeLine(textWriter, names, textDelimiter);
                     }
@@ -627,7 +628,7 @@ public class ControlDataConvert extends BaseController {
                 Data2D d = Data2D.create(Data2DDefinition.Type.CSV);
                 d.setTask(task).setFile(csvFile)
                         .setCharset(csvWriteController.charset)
-                        .setDelimiter(csvWriteController.delimiter + "")
+                        .setDelimiter(csvDelimiter)
                         .setHasHeader(csvWriteController.withNamesCheck.isSelected())
                         .setDataName(d.dataName())
                         .setColsNumber(columns.size())
@@ -739,14 +740,14 @@ public class ControlDataConvert extends BaseController {
     public void openFiles() {
         if (csvFile != null && csvFile.exists()) {
             DataFileCSVController.open(csvFile, csvWriteController.charset,
-                    csvWriteController.withNamesCheck.isSelected(), csvWriteController.delimiter);
+                    csvWriteController.withNamesCheck.isSelected(), csvDelimiter);
         }
         if (xlsxFile != null && xlsxFile.exists()) {
             DataFileExcelController.open(xlsxFile, excelWithNamesCheck.isSelected());
         }
         if (textFile != null && textFile.exists()) {
             DataFileTextController.open(textFile, textWriteOptionsController.charset,
-                    textWriteOptionsController.withNamesCheck.isSelected(), textWriteOptionsController.delimiterName);
+                    textWriteOptionsController.withNamesCheck.isSelected(), textDelimiter);
         }
         if (pdfFile != null && pdfFile.exists()) {
             PdfViewController.open(pdfFile);

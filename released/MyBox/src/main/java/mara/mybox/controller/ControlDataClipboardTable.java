@@ -18,7 +18,6 @@ public class ControlDataClipboardTable extends ControlData2DList {
 
     public ControlDataClipboardTable() {
         baseTitle = message("DataClipboard");
-        TipsLabelKey = "Data2DTips";
     }
 
     @Override

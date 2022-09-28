@@ -50,7 +50,7 @@ public class ImageBlend {
             for (int j = 0; j < backImage.getHeight(); ++j) {
                 for (int i = 0; i < backImage.getWidth(); ++i) {
                     int backPixel = backImage.getRGB(i, j);
-                    if (rect.include(i, j)) {
+                    if (rect.contains(i, j)) {
                         int forePixel = foreImage.getRGB(i - x, j - y);
                         target.setRGB(i, j, colorBlend.blend(forePixel, backPixel));
                     } else {

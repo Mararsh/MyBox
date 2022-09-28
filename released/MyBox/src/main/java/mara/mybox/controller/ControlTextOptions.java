@@ -19,11 +19,10 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public class ControlTextOptions extends BaseController {
-    
+
     protected Charset charset;
-    protected String delimiterName;
     protected boolean autoDetermine;
-    
+
     @FXML
     protected CheckBox withNamesCheck;
     @FXML
@@ -34,11 +33,11 @@ public class ControlTextOptions extends BaseController {
     protected ToggleGroup charsetGroup;
     @FXML
     protected RadioButton autoCharsetRadio, charsetKnownRadio;
-    
-    public void setControls(String baseName, boolean hasBlanks) {
+
+    public void setControls(String name, boolean isRead, boolean canRegx) {
         try {
-            this.baseName = baseName;
-            
+            baseName = baseName + "_" + name;
+
             if (charsetGroup == null) {
                 autoDetermine = false;
             } else {
@@ -64,16 +63,9 @@ public class ControlTextOptions extends BaseController {
                     checkCharset();
                 }
             });
-            
-            delimiterController.setControls(baseName, hasBlanks);
-            delimiterName = delimiterController.delimiterName;
-            delimiterController.changedNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    delimiterName = delimiterController.delimiterName;
-                }
-            });
-            
+
+            delimiterController.setControls(baseName, isRead, canRegx);
+
             withNamesCheck.setSelected(UserConfig.getBoolean(baseName + "TextWithNames", true));
             withNamesCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -81,12 +73,12 @@ public class ControlTextOptions extends BaseController {
                     UserConfig.setBoolean(baseName + "TextWithNames", withNamesCheck.isSelected());
                 }
             });
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     protected void checkCharset() {
         if (charsetGroup == null) {
             autoDetermine = false;
@@ -103,7 +95,7 @@ public class ControlTextOptions extends BaseController {
         }
         UserConfig.setString(baseName + "TextCharset", charset.name());
     }
-    
+
     protected void setCharset(Charset charset) {
         if (charsetKnownRadio != null) {
             charsetKnownRadio.setSelected(true);
@@ -112,9 +104,17 @@ public class ControlTextOptions extends BaseController {
             charsetSelector.setValue(charset.name());
         }
     }
-    
-    protected void setDelimiter(String delimiter) {
-        delimiterController.setDelimiter(delimiter);
+
+    protected void setDelimiterName(String delimiter) {
+        delimiterController.setDelimiterName(delimiter);
     }
-    
+
+    public String getDelimiterName() {
+        return delimiterController.getDelimiterName();
+    }
+
+    public String getDelimiterValue() {
+        return delimiterController.getDelimiterValue();
+    }
+
 }

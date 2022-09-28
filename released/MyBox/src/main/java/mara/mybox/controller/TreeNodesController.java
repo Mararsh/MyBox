@@ -467,7 +467,7 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
                 return JavaScriptController.open("");
             case TreeNode.InformationInTree:
                 return TreeManageController.oneOpen();
-            case TreeNode.JEXL:
+            case TreeNode.JEXLCode:
                 return JexlController.open("", "", "");
         }
         return null;

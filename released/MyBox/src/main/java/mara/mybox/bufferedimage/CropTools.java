@@ -1,6 +1,7 @@
 package mara.mybox.bufferedimage;
 
 import java.awt.Color;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
@@ -25,7 +26,7 @@ public class CropTools {
             int bgPixel = bgColor.getRGB();
             for (int j = 0; j < height; ++j) {
                 for (int i = 0; i < width; ++i) {
-                    if (shape.include(i, j)) {
+                    if (shape.contains(i, j)) {
                         target.setRGB(i, j, bgPixel);
                     } else {
                         target.setRGB(i, j, source.getRGB(i, j));
@@ -41,30 +42,43 @@ public class CropTools {
 
     public static BufferedImage cropOutside(BufferedImage source, DoubleShape shape, Color bgColor) {
         try {
-            if (shape == null || !shape.isValid()) {
+            if (source == null || shape == null || !shape.isValid()) {
                 return source;
             }
             int width = source.getWidth();
             int height = source.getHeight();
-            DoubleRectangle bound = shape.getBound();
-            int x1 = (int) Math.round(Math.max(0, bound.getSmallX()));
-            int y1 = (int) Math.round(Math.max(0, bound.getSmallY()));
+            DoubleRectangle shapeBound = shape.getBound();
+            int x1 = Math.max(0, (int) Math.round(shapeBound.getSmallX()));
+            int y1 = Math.max(0, (int) Math.round(shapeBound.getSmallY()));
             if (x1 >= width || y1 >= height) {
-                return source;
+                return null;
             }
-            int x2 = (int) Math.round(Math.min(width - 1, bound.getBigX()));
-            int y2 = (int) Math.round(Math.min(height - 1, bound.getBigY()));
+            int x2 = Math.min(width - 1, (int) Math.ceil(shapeBound.getBigX()));
+            int y2 = Math.min(height - 1, (int) Math.ceil(shapeBound.getBigY()));
             int w = x2 - x1 + 1;
             int h = y2 - y1 + 1;
+            Rectangle intBound = new Rectangle(x1, y1, w, h);
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(w, h, imageType);
             int bgPixel = bgColor.getRGB();
-            for (int y = 0; y < h; y++) {
-                for (int x = 0; x < w; x++) {
-                    if (shape.include(x1 + x, y1 + y)) {
-                        target.setRGB(x, y, source.getRGB(x1 + x, y1 + y));
-                    } else {
-                        target.setRGB(x, y, bgPixel);
+            if (shape instanceof DoubleRectangle) {   // decimal may make gap, so use int bound instead
+                for (int y = 0; y < h; y++) {
+                    for (int x = 0; x < w; x++) {
+                        if (intBound.contains(x1 + x, y1 + y)) {
+                            target.setRGB(x, y, source.getRGB(x1 + x, y1 + y));
+                        } else {
+                            target.setRGB(x, y, bgPixel);
+                        }
+                    }
+                }
+            } else {
+                for (int y = 0; y < h; y++) {
+                    for (int x = 0; x < w; x++) {
+                        if (shape.contains(x1 + x, y1 + y)) {
+                            target.setRGB(x, y, source.getRGB(x1 + x, y1 + y));
+                        } else {
+                            target.setRGB(x, y, bgPixel);
+                        }
                     }
                 }
             }
@@ -84,6 +98,10 @@ public class CropTools {
 
     public static BufferedImage cropOutside(BufferedImage source, double x1, double y1, double x2, double y2) {
         return cropOutside(source, new DoubleRectangle(x1, y1, x2, y2), Color.WHITE);
+    }
+
+    public static BufferedImage cropOutside(BufferedImage source, double x1, double y1, double x2, double y2, Color bgColor) {
+        return cropOutside(source, new DoubleRectangle(x1, y1, x2, y2), bgColor);
     }
 
     public static BufferedImage sample(BufferedImage source, DoubleRectangle rectangle, int xscale, int yscale) {

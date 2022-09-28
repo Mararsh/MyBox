@@ -2,7 +2,6 @@ package mara.mybox.data2d;
 
 import java.io.File;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.controller.DataInMyBoxClipboardController;
 import mara.mybox.db.data.Data2DColumn;
@@ -41,31 +40,24 @@ public class DataClipboard extends DataFileCSV {
 
     public static DataClipboard create(SingletonTask task, String dname,
             List<Data2DColumn> cols, List<List<String>> data) {
-        if (data == null || data.isEmpty()) {
+        if (cols == null || data == null || data.isEmpty()) {
             return null;
         }
-        DataClipboard d = new DataClipboard();
-        d.setTask(task);
-        List<String> names = new ArrayList<>();
-        for (Data2DColumn c : cols) {
-            names.add(c.getColumnName());
-        }
-        File tmpFile = d.tmpFile(dname, names, data);
-        if (tmpFile == null) {
+        DataFileCSV csvData = DataFileCSV.save(dname, task, cols, data);
+        if (csvData == null) {
             return null;
         }
         File dFile = newFile();
-        if (FileTools.rename(tmpFile, dFile, true)) {
-            return create(task, dname, cols, dFile, data.size(), data.get(0).size());
+        if (FileTools.rename(csvData.getFile(), dFile, true)) {
+            return create(task, csvData, dFile);
         } else {
             MyBoxLog.error("Failed");
             return null;
         }
     }
 
-    public static DataClipboard create(SingletonTask task, String name,
-            List<Data2DColumn> cols, File dFile, long rowsNumber, long colsNumber) {
-        if (dFile == null || rowsNumber <= 0) {
+    public static DataClipboard create(SingletonTask task, Data2D sourceData, File dFile) {
+        if (dFile == null || sourceData == null) {
             return null;
         }
         try {
@@ -74,6 +66,10 @@ public class DataClipboard extends DataFileCSV {
             d.setFile(dFile);
             d.setCharset(Charset.forName("UTF-8"));
             d.setDelimiter(",");
+            List<Data2DColumn> cols = sourceData.getColumns();
+            String name = sourceData.getDataName();
+            long rowsNumber = sourceData.getRowsNumber();
+            long colsNumber = sourceData.getColsNumber();
             d.setHasHeader(cols != null && !cols.isEmpty());
             if (rowsNumber > 0 && colsNumber > 0) {
                 d.setColsNumber(colsNumber);
@@ -86,6 +82,7 @@ public class DataClipboard extends DataFileCSV {
             } else {
                 d.setDataName(dFile.getName());
             }
+            d.setComments(sourceData.getComments());
             if (Data2D.saveAttributes(d, cols)) {
                 DataInMyBoxClipboardController.update();
                 return d;
@@ -97,27 +94,6 @@ public class DataClipboard extends DataFileCSV {
                 task.setError(e.toString());
             }
             MyBoxLog.error(e);
-            return null;
-        }
-    }
-
-    public static DataClipboard create(SingletonTask task, List<Data2DColumn> cols, Data2D data) {
-        if (data == null || data.getFile() == null) {
-            return null;
-        }
-        File dFile = new File(AppPaths.getDataClipboardPath() + File.separator + data.getFile().getName());
-        if (FileTools.rename(data.getFile(), dFile, true)) {
-            DataClipboard d = new DataClipboard();
-            d.cloneAll(data);
-            d.setType(Type.MyBoxClipboard).setFile(dFile).setDataName(data.getFile().getName());
-            if (Data2D.saveAttributes(d, cols)) {
-                DataInMyBoxClipboardController.update();
-                return d;
-            } else {
-                return null;
-            }
-        } else {
-            MyBoxLog.error("Failed");
             return null;
         }
     }

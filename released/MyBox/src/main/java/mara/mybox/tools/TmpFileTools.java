@@ -23,7 +23,8 @@ public class TmpFileTools {
         if (prefix == null) {
             return getTempFileName(path);
         }
-        return path + File.separator + prefix + "_" + DateTools.nowFileString() + "_" + IntTools.random(100);
+        return path + File.separator + FileNameTools.filter(prefix)
+                + "_" + DateTools.nowFileString() + "_" + IntTools.random(100);
     }
 
     public static File getTempFile() {
@@ -43,22 +44,25 @@ public class TmpFileTools {
     }
 
     public static File getPathTempFile(String path, String suffix) {
-        File file = new File(getTempFileName(path) + suffix);
+        String s = FileNameTools.filter(suffix);
+        File file = new File(getTempFileName(path) + s);
         while (file.exists()) {
-            file = new File(getTempFileName(path) + suffix);
+            file = new File(getTempFileName(path) + s);
         }
         return file;
     }
 
     public static File getPathTempFile(String path, String prefix, String suffix) {
-        if (prefix != null && !prefix.isBlank()) {
-            File tFile = new File(path + File.separator + prefix + suffix);
+        String p = FileNameTools.filter(prefix);
+        String s = FileNameTools.filter(suffix);
+        if (p != null && !p.isBlank()) {
+            File tFile = new File(path + File.separator + p + s);
             while (tFile.exists()) {
-                tFile = new File(getTempFileName(path, prefix) + suffix);
+                tFile = new File(getTempFileName(path, p) + s);
             }
             return tFile;
         }
-        return getPathTempFile(path, suffix);
+        return getPathTempFile(path, s);
     }
 
     public static File getTempDirectory() {

@@ -33,76 +33,76 @@ public class PixelsBlendFactory {
     public static ImagesBlendMode blendMode(String mode) {
 
         if (message("NormalMode").equals(mode)) {
-            return PixelsBlend.ImagesBlendMode.NORMAL;
+            return ImagesBlendMode.NORMAL;
 
         } else if (message("DissolveMode").equals(mode)) {
-            return PixelsBlend.ImagesBlendMode.DISSOLVE;
+            return ImagesBlendMode.DISSOLVE;
 
         } else if (message("MultiplyMode").equals(mode)) {
-            return PixelsBlend.ImagesBlendMode.MULTIPLY;
+            return ImagesBlendMode.MULTIPLY;
 
         } else if (message("ScreenMode").equals(mode)) {
-            return PixelsBlend.ImagesBlendMode.SCREEN;
+            return ImagesBlendMode.SCREEN;
 
         } else if (message("OverlayMode").equals(mode)) {
-            return PixelsBlend.ImagesBlendMode.OVERLAY;
+            return ImagesBlendMode.OVERLAY;
 
         } else if (message("HardLightMode").equals(mode)) {
-            return PixelsBlend.ImagesBlendMode.HARD_LIGHT;
+            return ImagesBlendMode.HARD_LIGHT;
 
         } else if (message("SoftLightMode").equals(mode)) {
-            return PixelsBlend.ImagesBlendMode.SOFT_LIGHT;
+            return ImagesBlendMode.SOFT_LIGHT;
 
         } else if (message("ColorDodgeMode").equals(mode)) {
-            return PixelsBlend.ImagesBlendMode.COLOR_DODGE;
+            return ImagesBlendMode.COLOR_DODGE;
 
         } else if (message("LinearDodgeMode").equals(mode)) {
-            return PixelsBlend.ImagesBlendMode.LINEAR_DODGE;
+            return ImagesBlendMode.LINEAR_DODGE;
 
         } else if (message("DivideMode").equals(mode)) {
-            return PixelsBlend.ImagesBlendMode.DIVIDE;
+            return ImagesBlendMode.DIVIDE;
 
         } else if (message("ColorBurnMode").equals(mode)) {
-            return PixelsBlend.ImagesBlendMode.COLOR_BURN;
+            return ImagesBlendMode.COLOR_BURN;
 
         } else if (message("LinearBurnMode").equals(mode)) {
-            return PixelsBlend.ImagesBlendMode.LINEAR_BURN;
+            return ImagesBlendMode.LINEAR_BURN;
 
         } else if (message("VividLightMode").equals(mode)) {
-            return PixelsBlend.ImagesBlendMode.VIVID_LIGHT;
+            return ImagesBlendMode.VIVID_LIGHT;
 
         } else if (message("LinearLightMode").equals(mode)) {
-            return PixelsBlend.ImagesBlendMode.LINEAR_LIGHT;
+            return ImagesBlendMode.LINEAR_LIGHT;
 
         } else if (message("SubtractMode").equals(mode)) {
-            return PixelsBlend.ImagesBlendMode.SUBTRACT;
+            return ImagesBlendMode.SUBTRACT;
 
         } else if (message("DifferenceMode").equals(mode)) {
-            return PixelsBlend.ImagesBlendMode.DIFFERENCE;
+            return ImagesBlendMode.DIFFERENCE;
 
         } else if (message("ExclusionMode").equals(mode)) {
-            return PixelsBlend.ImagesBlendMode.EXCLUSION;
+            return ImagesBlendMode.EXCLUSION;
 
         } else if (message("DarkenMode").equals(mode)) {
-            return PixelsBlend.ImagesBlendMode.DARKEN;
+            return ImagesBlendMode.DARKEN;
 
         } else if (message("LightenMode").equals(mode)) {
-            return PixelsBlend.ImagesBlendMode.LIGHTEN;
+            return ImagesBlendMode.LIGHTEN;
 
         } else if (message("HueMode").equals(mode)) {
-            return PixelsBlend.ImagesBlendMode.HUE;
+            return ImagesBlendMode.HUE;
 
         } else if (message("SaturationMode").equals(mode)) {
-            return PixelsBlend.ImagesBlendMode.SATURATION;
+            return ImagesBlendMode.SATURATION;
 
         } else if (message("ColorMode").equals(mode)) {
-            return PixelsBlend.ImagesBlendMode.COLOR;
+            return ImagesBlendMode.COLOR;
 
         } else if (message("LuminosityMode").equals(mode)) {
-            return PixelsBlend.ImagesBlendMode.LUMINOSITY;
+            return ImagesBlendMode.LUMINOSITY;
 
         } else {
-            return PixelsBlend.ImagesBlendMode.NORMAL;
+            return ImagesBlendMode.NORMAL;
         }
 
     }
@@ -164,7 +164,7 @@ public class PixelsBlendFactory {
     public static class NormalBlend extends PixelsBlend {
 
         public NormalBlend() {
-            this.blendMode = PixelsBlend.ImagesBlendMode.NORMAL;
+            this.blendMode = ImagesBlendMode.NORMAL;
         }
 
     }
@@ -172,7 +172,7 @@ public class PixelsBlendFactory {
     public static class DissolveBlend extends PixelsBlend {
 
         public DissolveBlend() {
-            this.blendMode = PixelsBlend.ImagesBlendMode.DISSOLVE;
+            this.blendMode = ImagesBlendMode.DISSOLVE;
 
         }
 
@@ -188,7 +188,7 @@ public class PixelsBlendFactory {
     public static class MultiplyBlend extends PixelsBlend {
 
         public MultiplyBlend() {
-            this.blendMode = PixelsBlend.ImagesBlendMode.MULTIPLY;
+            this.blendMode = ImagesBlendMode.MULTIPLY;
 
         }
 
@@ -203,7 +203,7 @@ public class PixelsBlendFactory {
     public static class ScreenBlend extends PixelsBlend {
 
         public ScreenBlend() {
-            this.blendMode = PixelsBlend.ImagesBlendMode.SCREEN;
+            this.blendMode = ImagesBlendMode.SCREEN;
 
         }
 
@@ -220,7 +220,7 @@ public class PixelsBlendFactory {
     public static class OverlayBlend extends PixelsBlend {
 
         public OverlayBlend() {
-            this.blendMode = PixelsBlend.ImagesBlendMode.OVERLAY;
+            this.blendMode = ImagesBlendMode.OVERLAY;
 
         }
 
@@ -249,7 +249,7 @@ public class PixelsBlendFactory {
     public static class HardLightBlend extends PixelsBlend {
 
         public HardLightBlend() {
-            this.blendMode = PixelsBlend.ImagesBlendMode.HARD_LIGHT;
+            this.blendMode = ImagesBlendMode.HARD_LIGHT;
 
         }
 
@@ -278,7 +278,7 @@ public class PixelsBlendFactory {
     public static class SoftLightBlend extends PixelsBlend {
 
         public SoftLightBlend() {
-            this.blendMode = PixelsBlend.ImagesBlendMode.SOFT_LIGHT;
+            this.blendMode = ImagesBlendMode.SOFT_LIGHT;
 
         }
 
@@ -313,7 +313,7 @@ public class PixelsBlendFactory {
     public static class ColorDodgeBlend extends PixelsBlend {
 
         public ColorDodgeBlend() {
-            this.blendMode = PixelsBlend.ImagesBlendMode.COLOR_DODGE;
+            this.blendMode = ImagesBlendMode.COLOR_DODGE;
 
         }
 
@@ -333,7 +333,7 @@ public class PixelsBlendFactory {
     public static class LinearDodgeBlend extends PixelsBlend {
 
         public LinearDodgeBlend() {
-            this.blendMode = PixelsBlend.ImagesBlendMode.LINEAR_DODGE;
+            this.blendMode = ImagesBlendMode.LINEAR_DODGE;
 
         }
 
@@ -350,7 +350,7 @@ public class PixelsBlendFactory {
     public static class DivideBlend extends PixelsBlend {
 
         public DivideBlend() {
-            this.blendMode = PixelsBlend.ImagesBlendMode.DIVIDE;
+            this.blendMode = ImagesBlendMode.DIVIDE;
 
         }
 
@@ -366,7 +366,7 @@ public class PixelsBlendFactory {
     public static class ColorBurnBlend extends PixelsBlend {
 
         public ColorBurnBlend() {
-            this.blendMode = PixelsBlend.ImagesBlendMode.COLOR_BURN;
+            this.blendMode = ImagesBlendMode.COLOR_BURN;
 
         }
 
@@ -386,7 +386,7 @@ public class PixelsBlendFactory {
     public static class LinearBurnBlend extends PixelsBlend {
 
         public LinearBurnBlend() {
-            this.blendMode = PixelsBlend.ImagesBlendMode.LINEAR_BURN;
+            this.blendMode = ImagesBlendMode.LINEAR_BURN;
 
         }
 
@@ -406,7 +406,7 @@ public class PixelsBlendFactory {
     public static class VividLightBlend extends PixelsBlend {
 
         public VividLightBlend() {
-            this.blendMode = PixelsBlend.ImagesBlendMode.VIVID_LIGHT;
+            this.blendMode = ImagesBlendMode.VIVID_LIGHT;
 
         }
 
@@ -441,7 +441,7 @@ public class PixelsBlendFactory {
     public static class LinearLightBlend extends PixelsBlend {
 
         public LinearLightBlend() {
-            this.blendMode = PixelsBlend.ImagesBlendMode.LINEAR_LIGHT;
+            this.blendMode = ImagesBlendMode.LINEAR_LIGHT;
 
         }
 
@@ -458,7 +458,7 @@ public class PixelsBlendFactory {
     public static class SubtractBlend extends PixelsBlend {
 
         public SubtractBlend() {
-            this.blendMode = PixelsBlend.ImagesBlendMode.SUBTRACT;
+            this.blendMode = ImagesBlendMode.SUBTRACT;
 
         }
 
@@ -475,7 +475,7 @@ public class PixelsBlendFactory {
     public static class DifferenceBlend extends PixelsBlend {
 
         public DifferenceBlend() {
-            this.blendMode = PixelsBlend.ImagesBlendMode.DIFFERENCE;
+            this.blendMode = ImagesBlendMode.DIFFERENCE;
 
         }
 
@@ -492,7 +492,7 @@ public class PixelsBlendFactory {
     public static class ExclusionBlend extends PixelsBlend {
 
         public ExclusionBlend() {
-            this.blendMode = PixelsBlend.ImagesBlendMode.EXCLUSION;
+            this.blendMode = ImagesBlendMode.EXCLUSION;
 
         }
 
@@ -509,7 +509,7 @@ public class PixelsBlendFactory {
     public static class DarkenBlend extends PixelsBlend {
 
         public DarkenBlend() {
-            this.blendMode = PixelsBlend.ImagesBlendMode.DARKEN;
+            this.blendMode = ImagesBlendMode.DARKEN;
 
         }
 
@@ -526,7 +526,7 @@ public class PixelsBlendFactory {
     public static class LightenBlend extends PixelsBlend {
 
         public LightenBlend() {
-            this.blendMode = PixelsBlend.ImagesBlendMode.LIGHTEN;
+            this.blendMode = ImagesBlendMode.LIGHTEN;
 
         }
 
@@ -543,7 +543,7 @@ public class PixelsBlendFactory {
     public static class HueBlend extends PixelsBlend {
 
         public HueBlend() {
-            this.blendMode = PixelsBlend.ImagesBlendMode.HUE;
+            this.blendMode = ImagesBlendMode.HUE;
 
         }
 
@@ -565,7 +565,7 @@ public class PixelsBlendFactory {
     public static class SaturationBlend extends PixelsBlend {
 
         public SaturationBlend() {
-            this.blendMode = PixelsBlend.ImagesBlendMode.SATURATION;
+            this.blendMode = ImagesBlendMode.SATURATION;
 
         }
 
@@ -587,7 +587,7 @@ public class PixelsBlendFactory {
     public static class LuminosityBlend extends PixelsBlend {
 
         public LuminosityBlend() {
-            this.blendMode = PixelsBlend.ImagesBlendMode.LUMINOSITY;
+            this.blendMode = ImagesBlendMode.LUMINOSITY;
 
         }
 
@@ -609,7 +609,7 @@ public class PixelsBlendFactory {
     public static class ColorBlend extends PixelsBlend {
 
         public ColorBlend() {
-            this.blendMode = PixelsBlend.ImagesBlendMode.COLOR;
+            this.blendMode = ImagesBlendMode.COLOR;
 
         }
 

@@ -42,6 +42,7 @@ import mara.mybox.value.UserConfig;
 public abstract class BaseImageController_Actions extends BaseImageController_Image {
 
     protected int currentAngle = 0, rotateAngle = 90;
+    protected Color bgColor = Color.WHITE;
 
     protected void initOperationBox() {
         try {
@@ -83,7 +84,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         }
     }
 
-    private Image scopeImage() {
+    public Image scopeImage() {
         Image inImage = imageView.getImage();
 
         if (maskRectangleLine != null && maskRectangleLine.isVisible()) {
@@ -93,16 +94,16 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                     && maskRectangleData.getBigY() == (int) inImage.getHeight() - 1) {
                 return inImage;
             }
-            return CropTools.cropOutsideFx(inImage, maskRectangleData, Color.WHITE);
+            return CropTools.cropOutsideFx(inImage, maskRectangleData, bgColor);
 
         } else if (maskCircleLine != null && maskCircleLine.isVisible()) {
-            return CropTools.cropOutsideFx(inImage, maskCircleData, Color.WHITE);
+            return CropTools.cropOutsideFx(inImage, maskCircleData, bgColor);
 
         } else if (maskEllipseLine != null && maskEllipseLine.isVisible()) {
-            return CropTools.cropOutsideFx(inImage, maskEllipseData, Color.WHITE);
+            return CropTools.cropOutsideFx(inImage, maskEllipseData, bgColor);
 
         } else if (maskPolygonLine != null && maskPolygonLine.isVisible()) {
-            return CropTools.cropOutsideFx(inImage, maskPolygonData, Color.WHITE);
+            return CropTools.cropOutsideFx(inImage, maskPolygonData, bgColor);
 
         } else {
             return inImage;
@@ -182,6 +183,12 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     public void splitAction() {
         ImageSplitController controller = (ImageSplitController) openStage(Fxmls.ImageSplitFxml);
         checkImage(controller);
+    }
+
+    @FXML
+    public void repeatAction() {
+        ImageRepeatController controller = (ImageRepeatController) openStage(Fxmls.ImageRepeatFxml);
+        checkImage(controller.sourceController);
     }
 
     @FXML
@@ -436,6 +443,12 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             menu.setOnAction((ActionEvent event) -> {
                 sampleAction();
 
+            });
+            handleMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Repeat"), StyleTools.getIconImage("iconRepeat.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                repeatAction();
             });
             handleMenu.getItems().add(menu);
 

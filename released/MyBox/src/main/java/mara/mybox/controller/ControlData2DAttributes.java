@@ -44,7 +44,7 @@ public class ControlData2DAttributes extends BaseController {
     @FXML
     protected Label nameLabel;
     @FXML
-    protected TextArea infoArea;
+    protected TextArea descInput, infoArea;
     @FXML
     protected TextField idInput, timeInput, dataTypeInput, dataNameInput;
     @FXML
@@ -124,6 +124,19 @@ public class ControlData2DAttributes extends BaseController {
                         }
                     });
 
+            descInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
+                    if (!isSettingValues) {
+                        if (newValue == null && oldValue != null
+                                || newValue != null && !newValue.equals(oldValue)) {
+                            status(Status.Modified);
+                        }
+                    }
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -173,6 +186,7 @@ public class ControlData2DAttributes extends BaseController {
             dataNameInput.setText(data2D.getDataName());
             scaleSelector.setValue(data2D.getScale() + "");
             randomSelector.setValue(data2D.getMaxRandom() + "");
+            descInput.setText(data2D.getComments());
             isSettingValues = false;
             updateInfo();
         } catch (Exception e) {
@@ -266,7 +280,9 @@ public class ControlData2DAttributes extends BaseController {
         data2D.setDataName(name);
         data2D.setScale(scale);
         data2D.setMaxRandom(maxRandom);
+        data2D.setComments(descInput.getText());
         data2D.setModifyTime(new Date());
+        dataController.tableController.tableChanged(true);
         return true;
     }
 

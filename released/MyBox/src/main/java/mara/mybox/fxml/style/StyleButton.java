@@ -318,6 +318,9 @@ public class StyleButton {
         if (id.startsWith("cat")) {
             return new StyleData(id, message("Meow"), "", "iconCat.png");
         }
+        if (id.startsWith("help")) {
+            return new StyleData(id, message("HelpMe"), "", "iconClaw.png");
+        }
         if (id.startsWith("edit")) {
             switch (id) {
                 case "editOkButton":
@@ -357,9 +360,7 @@ public class StyleButton {
         if (id.startsWith("refresh")) {
             return new StyleData(id, message("Refresh"), "", "iconRefresh.png");
         }
-        if (id.startsWith("help")) {
-            return new StyleData(id, message("HelpMe"), "", "iconCatFoot.png");
-        }
+
         if (id.startsWith("manufacture")) {
             return new StyleData(id, message("Manufacture"), "", "iconEdit.png");
         }
@@ -631,12 +632,16 @@ public class StyleButton {
                     return new StyleData(id, message("Insert"), "", "iconInsert.png");
             }
         }
+        if (id.startsWith("XYChart")) {
+            return new StyleData(id, message("XYChart"), "", "iconXYChart.png");
+        }
         if (id.startsWith("straightLine")) {
             return new StyleData(id, message("StraightLine"), "", "iconStraightLine.png");
         }
         if (id.startsWith("jar")) {
             return new StyleData(id, message("JarFile"), "", "iconJar.png");
         }
+
         return null;
     }
 

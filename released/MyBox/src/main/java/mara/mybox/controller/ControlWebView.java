@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
@@ -24,8 +23,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -37,13 +34,11 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
-import javafx.scene.web.PromptData;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebErrorEvent;
 import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
-import javafx.stage.Stage;
-import javafx.util.Callback;
+import mara.mybox.data.HtmlElement;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.db.data.VisitHistory;
@@ -92,6 +87,7 @@ public class ControlWebView extends BaseController {
     protected final SimpleBooleanProperty addressChangedNotify, addressInvalidNotify,
             pageLoadingNotify, pageLoadedNotify;
     protected final String StyleNodeID = "MyBox__Html_Style20211118";
+    protected boolean linkInNewTab;
 
     @FXML
     protected WebView webView;
@@ -117,6 +113,7 @@ public class ControlWebView extends BaseController {
         addressInvalidNotify = new SimpleBooleanProperty(false);
         pageLoadingNotify = new SimpleBooleanProperty(false);
         pageLoadedNotify = new SimpleBooleanProperty(false);
+        linkInNewTab = false;
     }
 
     @Override
@@ -152,7 +149,7 @@ public class ControlWebView extends BaseController {
 
             webView.setCache(false);
             webEngine.setJavaScriptEnabled(true);
-            webEngine.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/610.2 (KHTML, like Gecko) JavaFX/17 Safari/610.2");
+//            webEngine.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/610.2 (KHTML, like Gecko) JavaFX/17 Safari/610.2");
 
             webEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<Worker.State>() {
                 @Override
@@ -229,38 +226,49 @@ public class ControlWebView extends BaseController {
                         if (href != null) {
                             String target = element.getAttribute("target");
                             String clickAction = UserConfig.getString("WebViewWhenClickImageLink", "PopMenu");
-                            if ("click".equals(domEventType) && target != null && !target.equalsIgnoreCase("_blank")) {
-                                webEngine.executeScript("if ( window.frames." + target
-                                        + ".document.readyState==\"complete\") alert('FrameReadyName-" + target + "');");
-                                webEngine.executeScript("window.frames." + target + ".document.onreadystatechange = "
-                                        + "function(){ if ( window.frames." + target
-                                        + ".document.readyState==\"complete\") alert('FrameReadyName-" + target + "'); }");
-                            } else if ("contextmenu".equals(domEventType)
-                                    || ("click".equals(domEventType) && !href.startsWith("javascript:")
-                                    && (clickAction == null || "PopMenu".equals(clickAction)))) {
+                            HtmlElement htmlElement = new HtmlElement(element, charset);
+//                            MyBoxLog.console(target);
+                            if ("click".equals(domEventType)) {
+                                if (target != null && !target.equalsIgnoreCase("_blank")) {
+                                    webEngine.executeScript("if ( window.frames." + target
+                                            + ".document.readyState==\"complete\") alert('FrameReadyName-" + target + "');");
+                                    webEngine.executeScript("window.frames." + target + ".document.onreadystatechange = "
+                                            + "function(){ if ( window.frames." + target
+                                            + ".document.readyState==\"complete\") alert('FrameReadyName-" + target + "'); }");
+                                } else if (!href.startsWith("javascript:")) {
+                                    if (linkInNewTab) {
+                                        ev.preventDefault();
+                                        WebBrowserController.oneOpen(htmlElement.getFinalAddress(), true);
+                                    } else if (!"AsPage".equals(clickAction)) {
+                                        ev.preventDefault();
+                                        if (clickAction == null || "PopMenu".equals(clickAction)) {
+                                            timer = new Timer();
+                                            timer.schedule(new TimerTask() {
+                                                @Override
+                                                public void run() {
+                                                    Platform.runLater(() -> {
+                                                        popLinkMenu(htmlElement);
+                                                    });
+                                                }
+                                            }, 100);
+                                        } else if ("Load".equals(clickAction)) {
+                                            loadAddress(htmlElement.getFinalAddress());
+                                        } else {
+                                            WebBrowserController.oneOpen(htmlElement.getFinalAddress(), "OpenSwitch".equals(clickAction));
+                                        }
+                                    }
+                                }
+                            } else if ("contextmenu".equals(domEventType)) {
                                 ev.preventDefault();
                                 timer = new Timer();
                                 timer.schedule(new TimerTask() {
                                     @Override
                                     public void run() {
                                         Platform.runLater(() -> {
-                                            popLinkMenu(element);
+                                            popLinkMenu(htmlElement);
                                         });
                                     }
                                 }, 100);
-                            } else if ("click".equals(domEventType) && !href.startsWith("javascript:")) {
-                                switch (clickAction) {
-                                    case "AsPage":
-                                        break;
-                                    case "Load":
-                                        ev.preventDefault();
-                                        loadAddress(finalAddress(element));
-                                        break;
-                                    default:
-                                        ev.preventDefault();
-                                        WebBrowserController.oneOpen(finalAddress(element), "OpenSwitch".equals(clickAction));
-                                        break;
-                                }
                             }
 
                         } else if ("contextmenu".equals(domEventType) && !"frame".equalsIgnoreCase(tag)) {
@@ -316,41 +324,39 @@ public class ControlWebView extends BaseController {
                 }
             });
 
-            webEngine.setPromptHandler(new Callback< PromptData, String>() {
-                @Override
-                public String call(PromptData p) {
-//                    MyBoxLog.console("here:" + p.getMessage());
-                    String value = PopTools.askValue(
-                            parentController != null ? parentController.getBaseTitle() : myController.getBaseTitle(),
-                            null, p.getMessage(), p.getDefaultValue());
-                    return value;
-                }
-            });
-
-            webEngine.setConfirmHandler(new Callback< String, Boolean>() {
-                @Override
-                public Boolean call(String message) {
-                    try {
-//                        MyBoxLog.console("here:" + message);
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle(parentController != null ? parentController.getBaseTitle() : myController.getBaseTitle());
-                        alert.setHeaderText(null);
-                        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-                        alert.getDialogPane().setContent(new Label(message));
-                        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-                        stage.setAlwaysOnTop(true);
-                        stage.toFront();
-                        alert.getButtonTypes().addAll(ButtonType.YES, ButtonType.NO);
-                        Optional<ButtonType> result = alert.showAndWait();
-                        return result != null && result.get() == ButtonType.YES;
-                    } catch (Exception e) {
-                        MyBoxLog.error(e.toString());
-                        return false;
-                    }
-
-                }
-            });
-
+//            webEngine.setPromptHandler(new Callback< PromptData, String>() {
+//                @Override
+//                public String call(PromptData p) {
+////                    MyBoxLog.console("here:" + p.getMessage());
+//                    String value = PopTools.askValue(
+//                            parentController != null ? parentController.getBaseTitle() : myController.getBaseTitle(),
+//                            null, p.getMessage(), p.getDefaultValue());
+//                    return value;
+//                }
+//            });
+//            webEngine.setConfirmHandler(new Callback< String, Boolean>() {
+//                @Override
+//                public Boolean call(String message) {
+//                    try {
+////                        MyBoxLog.console("here:" + message);
+//                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//                        alert.setTitle(parentController != null ? parentController.getBaseTitle() : myController.getBaseTitle());
+//                        alert.setHeaderText(null);
+//                        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+//                        alert.getDialogPane().setContent(new Label(message));
+//                        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+//                        stage.setAlwaysOnTop(true);
+//                        stage.toFront();
+//                        alert.getButtonTypes().addAll(ButtonType.YES, ButtonType.NO);
+//                        Optional<ButtonType> result = alert.showAndWait();
+//                        return result != null && result.get() == ButtonType.YES;
+//                    } catch (Exception e) {
+//                        MyBoxLog.error(e.toString());
+//                        return false;
+//                    }
+//
+//                }
+//            });
             webEngine.setOnAlert(new EventHandler<WebEvent<String>>() {
                 @Override
                 public void handle(WebEvent<String> ev) {
@@ -393,6 +399,7 @@ public class ControlWebView extends BaseController {
 
                 @Override
                 public void handle(WebErrorEvent event) {
+//                    MyBoxLog.console(event.getMessage());
                     if (webViewLabel != null) {
                         webViewLabel.setText(event.getMessage());
                     }
@@ -631,59 +638,18 @@ public class ControlWebView extends BaseController {
         }
     }
 
-    public String finalAddress(Element element) {
-        if (element == null) {
-            return null;
-        }
-        String tag = element.getTagName();
-        if (tag == null) {
-            return null;
-        }
-        String href = null;
-        if (tag.equalsIgnoreCase("a")) {
-            href = element.getAttribute("href");
-        } else if (tag.equalsIgnoreCase("img")) {
-            href = element.getAttribute("src");
-        }
-        if (href == null) {
-            return null;
-        }
-        String linkAddress;
-        try {
-            linkAddress = new URL(new URL(element.getBaseURI()), href).toString();
-        } catch (Exception e) {
-            linkAddress = href;
-        }
-        return URLDecoder.decode(linkAddress, charset);
-    }
-
-    public void popLinkMenu(Element element) {
-        if (linkX < 0 || linkY < 0 || element == null) {
+    public void popLinkMenu(HtmlElement htmlElement) {
+        if (linkX < 0 || linkY < 0 || htmlElement == null) {
             return;
         }
-        String tag = element.getTagName();
-        if (tag == null) {
-            return;
-        }
-        String href = null, hname = null;
-        if (tag.equalsIgnoreCase("a")) {
-            href = element.getAttribute("href");
-            hname = element.getTextContent();
-        } else if (tag.equalsIgnoreCase("img")) {
-            href = element.getAttribute("src");
-            hname = element.getAttribute("alt");
-        }
+        String href = htmlElement.getHref();
         if (href == null) {
             return;
         }
-        String linkAddress;
-        try {
-            linkAddress = new URL(new URL(element.getBaseURI()), href).toString();
-        } catch (Exception e) {
-            linkAddress = href;
-        }
-        String finalAddress = URLDecoder.decode(linkAddress, charset);
-        String name = hname;
+        String linkAddress = htmlElement.getLinkAddress();
+        String finalAddress = htmlElement.getFinalAddress();
+        String tag = htmlElement.getTag();
+        String name = htmlElement.getName();
         List<MenuItem> items = new ArrayList<>();
         boolean showName = name != null && !name.isBlank() && !name.equalsIgnoreCase(href);
         String title = (showName ? message("Name") + ": " + name + "\n" : "")
@@ -695,7 +661,9 @@ public class ControlWebView extends BaseController {
         items.add(menu);
         items.add(new SeparatorMenuItem());
 
-        items.add(clickMenu());
+        if (!linkInNewTab) {
+            items.add(clickMenu());
+        }
 
         menu = new MenuItem(message("QueryNetworkAddress"), StyleTools.getIconImage("iconQuery.png"));
         menu.setOnAction((ActionEvent event) -> {
@@ -1107,7 +1075,9 @@ public class ControlWebView extends BaseController {
             operationsMenu.getItems().setAll(operationsMenu());
             items.add(operationsMenu);
 
-            items.add(clickMenu());
+            if (!linkInNewTab) {
+                items.add(clickMenu());
+            }
 
             items.add(new SeparatorMenuItem());
 
@@ -1166,28 +1136,35 @@ public class ControlWebView extends BaseController {
                 });
                 viewMenu.getItems().add(menu);
 
-                if (address != null && !address.isBlank()) {
-                    viewMenu.getItems().add(new SeparatorMenuItem());
+                viewMenu.getItems().add(new SeparatorMenuItem());
 
+                if (address != null && !address.isBlank()) {
                     menu = new MenuItem(message("OpenLinkBySystem"), StyleTools.getIconImage("iconWindow.png"));
                     menu.setOnAction((ActionEvent event) -> {
                         browse(address);
                     });
                     viewMenu.getItems().add(menu);
-
-                    menu = new MenuItem(message("OpenLinkInNewTabSwitch"), StyleTools.getIconImage("iconWindow.png"));
-                    menu.setOnAction((ActionEvent event) -> {
-                        WebBrowserController.oneOpen(address, true);
-                    });
-                    viewMenu.getItems().add(menu);
-
-                    menu = new MenuItem(message("OpenLinkInNewTab"), StyleTools.getIconImage("iconWindow.png"));
-                    menu.setOnAction((ActionEvent event) -> {
-                        WebBrowserController.oneOpen(address, false);
-                    });
-                    viewMenu.getItems().add(menu);
-
                 }
+
+                menu = new MenuItem(message("OpenLinkInNewTabSwitch"), StyleTools.getIconImage("iconWindow.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    if (address != null && !address.isBlank()) {
+                        WebBrowserController.oneOpen(address, true);
+                    } else {
+                        WebBrowserController.oneLoad(html, true);
+                    }
+                });
+                viewMenu.getItems().add(menu);
+
+                menu = new MenuItem(message("OpenLinkInNewTab"), StyleTools.getIconImage("iconWindow.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    if (address != null && !address.isBlank()) {
+                        WebBrowserController.oneOpen(address, false);
+                    } else {
+                        WebBrowserController.oneLoad(html, false);
+                    }
+                });
+                viewMenu.getItems().add(menu);
 
                 if (isFrameset) {
                     NodeList frameList = webEngine.getDocument().getElementsByTagName("frame");
@@ -1218,7 +1195,6 @@ public class ControlWebView extends BaseController {
                                 }
 
                             });
-                            menu.setDisable(html == null || html.isBlank());
                             frameItems.add(menu);
                         }
                         if (!frameItems.isEmpty()) {

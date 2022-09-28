@@ -12,24 +12,21 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.util.Callback;
-import javafx.util.converter.DefaultStringConverter;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataClipboard;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileExcel;
-import mara.mybox.data2d.DataFileText;
 import mara.mybox.data2d.DataFilter;
 import mara.mybox.data2d.DataMatrix;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
@@ -38,9 +35,11 @@ import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.cell.TableAutoCommitCell;
+import mara.mybox.fxml.TextClipboardTools;
+import mara.mybox.fxml.cell.TableTextEditCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DoubleMatrixTools;
+import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -161,11 +160,10 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         }
         if (data2D == null || data2D.getType() != def.getType()) {
             data2D = Data2D.create(def.getType());
-            data2D.cloneAll(def);
         } else if (data2D != def) {
             data2D.resetData();
-            data2D.cloneAll(def);
         }
+        data2D.cloneAll(def);
         readDefinition();
     }
 
@@ -188,12 +186,10 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             protected boolean handle() {
                 try ( Connection conn = DerbyBase.getConnection()) {
                     data2D.startTask(task, null);
-                    List<ColumnDefinition.ColumnType> types = data2D.getInitColumnTypes();
                     data2D.readDataDefinition(conn);
                     if (isCancelled()) {
                         return false;
                     }
-                    data2D.setInitColumnTypes(types);
                     return data2D.readColumns(conn);
                 } catch (Exception e) {
                     error = e.toString();
@@ -371,55 +367,47 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             @Override
             protected boolean handle() {
                 try {
-                    if (data2D.getType() == Data2D.Type.Texts) {
-                        targetData = new DataFileText();
-                        targetData.setColumns(csvData.getColumns())
-                                .setFile(csvData.getFile())
-                                .setDataName(csvData.dataName())
-                                .setDelimiter(csvData.getDelimiter())
-                                .setCharset(csvData.getCharset());
-                        targetData.saveAttributes();
-                        recordFileWritten(targetData.getFile(), VisitHistory.FileType.Text);
-                    } else {
-                        switch (data2D.getType()) {
-                            case CSV:
-                                targetData = csvData;
-                                targetData.saveAttributes();
-                                recordFileWritten(targetData.getFile(), VisitHistory.FileType.CSV);
-                                break;
-                            case Excel: {
-                                DataFileExcel excelData = DataFileExcel.toExcel(task, csvData);
-                                if (excelData != null) {
-                                    recordFileWritten(excelData.getFile(), VisitHistory.FileType.Excel);
-                                }
-                                targetData = excelData;
-                                break;
+                    switch (data2D.getType()) {
+                        case Texts:
+                            targetData = csvData.cloneAll();
+                            targetData.setType(Data2DDefinition.Type.Texts).setD2did(-1);
+                            targetData.saveAttributes();
+                            recordFileWritten(targetData.getFile(), VisitHistory.FileType.Text);
+                            break;
+                        case CSV:
+                            targetData = csvData;
+                            targetData.saveAttributes();
+                            recordFileWritten(targetData.getFile(), VisitHistory.FileType.CSV);
+                            break;
+                        case Excel: {
+                            DataFileExcel excelData = DataFileExcel.toExcel(task, csvData);
+                            if (excelData != null) {
+                                recordFileWritten(excelData.getFile(), VisitHistory.FileType.Excel);
                             }
-                            case DatabaseTable: {
-                                String name = csvData.dataName();
-                                if (name.startsWith(Data2D.TmpTablePrefix)) {
-                                    name = name.substring(Data2D.TmpTablePrefix.length());
-                                }
-                                DataTable dataTable = csvData.toTable(task, name, true);
-                                targetData = dataTable;
-                                break;
-                            }
-                            case MyBoxClipboard: {
-                                DataClipboard clip = DataClipboard.toClip(task, csvData);
-                                targetData = clip;
-                                break;
-                            }
-                            case Matrix: {
-                                DataMatrix matrix = DataMatrix.toMatrix(task, csvData);
-                                targetData = matrix;
-                                break;
-                            }
+                            targetData = excelData;
+                            break;
                         }
-                        if (targetData == null) {
-                            return false;
+                        case DatabaseTable: {
+                            String name = csvData.dataName();
+                            if (name.startsWith(Data2D.TmpTablePrefix)) {
+                                name = name.substring(Data2D.TmpTablePrefix.length());
+                            }
+
+                            DataTable dataTable = csvData.toTable(task, name, true);
+                            targetData = dataTable;
+                            break;
+                        }
+                        case MyBoxClipboard: {
+                            DataClipboard clip = DataClipboard.toClip(task, csvData);
+                            targetData = clip;
+                            break;
+                        }
+                        case Matrix: {
+                            DataMatrix matrix = DataMatrix.toMatrix(task, csvData);
+                            targetData = matrix;
+                            break;
                         }
                     }
-
                     return targetData != null;
                 } catch (Exception e) {
                     error = e.toString();
@@ -429,17 +417,12 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
 
             @Override
             protected void whenSucceeded() {
-                targetData.setInitColumnTypes(csvData.getInitColumnTypes());
                 loadDef(targetData);
                 if (dataController != null && dataController.manageController != null) {
                     dataController.manageController.refreshAction();
                 }
             }
 
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-            }
         };
         start(task);
     }
@@ -621,6 +604,80 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         }
     }
 
+    @FXML
+    @Override
+    public void copyAction() {
+        if (!validateData()) {
+            return;
+        }
+        Data2DCopyController.open(this);
+    }
+
+    @FXML
+    @Override
+    public void copyToSystemClipboard() {
+        if (!validateData()) {
+            return;
+        }
+        Data2DCopyController controller = Data2DCopyController.open(this);
+        controller.targetController.systemClipboardRadio.setSelected(true);
+    }
+
+    public void copyToSystemClipboard(List<String> names, List<List<String>> data) {
+        try {
+            if (data == null || data.isEmpty()) {
+                popError(message("NoData"));
+                return;
+            }
+            String text = TextTools.dataText(data, ",", names, null);
+            TextClipboardTools.copyToSystemClipboard(this, text);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void copyToMyBoxClipboard(List<String> names, List<List<String>> data) {
+        try {
+            if (data == null || data.isEmpty()) {
+                popError(message("NoData"));
+                return;
+            }
+            toMyBoxClipboard(null, data2D.toColumns(names), data);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void toMyBoxClipboard(String name, List<Data2DColumn> cols, List<List<String>> data) {
+        try {
+            if (data == null || data.isEmpty()) {
+                popError(message("NoData"));
+                return;
+            }
+            SingletonTask copyTask = new SingletonTask<Void>(this) {
+
+                private DataClipboard clip;
+
+                @Override
+                protected boolean handle() {
+                    clip = DataClipboard.create(task, name, cols, data);
+                    return clip != null;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    DataInMyBoxClipboardController controller = DataInMyBoxClipboardController.oneOpen();
+                    controller.loadDef(clip);
+                    popDone();
+                }
+
+            };
+            start(copyTask, false);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
 
     /*
         table
@@ -647,7 +704,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 return;
             }
             List<Data2DColumn> columns = data2D.getColumns();
-            int scale = data2D.getScale();
             for (int i = 0; i < columns.size(); i++) {
                 Data2DColumn dataColumn = columns.get(i);
                 String name = dataColumn.getColumnName();
@@ -655,14 +711,14 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 tableColumn.setPrefWidth(dataColumn.getWidth());
                 tableColumn.setEditable(!readOnly && dataColumn.isEditable() && !dataColumn.isId());
                 tableColumn.setUserData(dataColumn.getIndex());
-                int col = i + 1;
+                int colIndex = i + 1;
 
                 tableColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<List<String>, String>, ObservableValue<String>>() {
                     @Override
                     public ObservableValue<String> call(TableColumn.CellDataFeatures<List<String>, String> param) {
                         try {
                             List<String> row = (List<String>) param.getValue();
-                            return new SimpleStringProperty(row.get(col));
+                            return new SimpleStringProperty(row.get(colIndex));
                         } catch (Exception e) {
                             return null;
                         }
@@ -674,8 +730,8 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                         @Override
                         public TableCell<List<String>, String> call(TableColumn<List<String>, String> param) {
                             try {
-                                TableAutoCommitCell<List<String>, String> cell
-                                        = new TableAutoCommitCell<List<String>, String>(new DefaultStringConverter()) {
+                                TableTextEditCell<List<String>> cell
+                                        = new TableTextEditCell<List<String>>(myController, dataColumn.isTextType()) {
                                     @Override
                                     public void updateItem(String item, boolean empty) {
                                         super.updateItem(item, empty);
@@ -697,37 +753,29 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                         return dataColumn.validValue(value);
                                     }
 
-                                    @Override
-                                    public void commitEdit(String value) {
-                                        try {
-                                            int rowIndex = rowIndex();
-                                            if (rowIndex < 0 || !valid(value)) {
-                                                cancelEdit();
-                                                return;
-                                            }
-                                            List<String> row = tableData.get(rowIndex);
-                                            if (row == null || row.size() <= col) {
-                                                cancelEdit();
-                                                return;
-                                            }
-                                            String oldValue = row.get(col);
-                                            if ((value == null && oldValue != null)
-                                                    || (value != null && !value.equals(oldValue))) {
-                                                super.commitEdit(value);
-                                                row.set(col, dataColumn.display(value));
-                                                tableData.set(rowIndex, row);
-                                            }
-                                        } catch (Exception e) {
-                                            MyBoxLog.debug(e);
-                                        }
-                                    }
-
                                 };
 
                                 return cell;
                             } catch (Exception e) {
                                 return null;
                             }
+                        }
+                    });
+
+                    tableColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<List<String>, String>>() {
+                        @Override
+                        public void handle(TableColumn.CellEditEvent<List<String>, String> e) {
+                            if (e == null) {
+                                return;
+                            }
+                            int rowIndex = e.getTablePosition().getRow();
+                            if (rowIndex < 0 || rowIndex >= tableData.size()) {
+                                return;
+                            }
+                            List<String> row = tableData.get(rowIndex);
+                            String value = e.getNewValue();
+                            row.set(colIndex, dataColumn.display(value));
+                            tableData.set(rowIndex, row);
                         }
                     });
                     tableColumn.getStyleClass().add("editable-column");
@@ -776,7 +824,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                         public void changed(ObservableValue<? extends Number> o, Number ov, Number nv) {
                             int w = nv.intValue();
                             dataColumn.setWidth(w);
-                            dataController.columnsController.setWidth(col - 1, w);
+                            dataController.columnsController.setWidth(colIndex - 1, w);
                         }
                     });
                 }
@@ -1037,26 +1085,22 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
 
 
     /*
-        get/set
+        set
      */
-    public ObservableList<List<String>> getTableData() {
-        return tableData;
-    }
-
-    public void setTableData(ObservableList<List<String>> tableData) {
-        this.tableData = tableData;
-    }
-
-    public TableView<List<String>> getTableView() {
-        return tableView;
-    }
-
-    public void setTableView(TableView<List<String>> tableView) {
-        this.tableView = tableView;
-    }
-
     public void setNotUpdateTitle(boolean notUpdateTitle) {
         this.notUpdateTitle = notUpdateTitle;
+    }
+
+
+    /*
+        get
+     */
+    public Data2D getData2D() {
+        return data2D;
+    }
+
+    public ObservableList<List<String>> getTableData() {
+        return tableData;
     }
 
 }

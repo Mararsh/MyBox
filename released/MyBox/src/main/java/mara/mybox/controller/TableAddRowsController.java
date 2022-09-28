@@ -23,7 +23,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-9-4
  * @License Apache License Version 2.0
  */
-public class TableAddRowsController extends BaseController {
+public class TableAddRowsController extends BaseChildController {
 
     protected BaseTableViewController tableViewController;
     protected int number;
@@ -38,11 +38,6 @@ public class TableAddRowsController extends BaseController {
     protected TextField numberInput;
     @FXML
     protected HBox rowBox;
-
-    @Override
-    public void setStageStatus() {
-        setAsPop(baseName);
-    }
 
     public void setParameters(BaseTableViewController tableViewController) {
         try {
@@ -134,6 +129,10 @@ public class TableAddRowsController extends BaseController {
         numberInput.setText((number - 1) + "");
     }
 
+    public void addRow(int index, int number) {
+        tableViewController.addRows(index, number);
+    }
+
     @FXML
     @Override
     public void okAction() {
@@ -150,8 +149,7 @@ public class TableAddRowsController extends BaseController {
             } else if (belowRadio.isSelected()) {
                 index++;
             }
-            tableViewController.addRows(index, number);
-
+            addRow(index, number);
             popSuccessful();
 
             setSelector();
@@ -161,11 +159,6 @@ public class TableAddRowsController extends BaseController {
         }
     }
 
-    @FXML
-    @Override
-    public void cancelAction() {
-        close();
-    }
 
     /*
         static

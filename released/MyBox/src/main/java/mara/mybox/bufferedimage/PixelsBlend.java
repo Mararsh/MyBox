@@ -80,11 +80,13 @@ public abstract class PixelsBlend {
     }
 
     protected int blend(int forePixel, int backPixel) {
-        if (ignoreTransparency && forePixel == 0) {
-            return backPixel;
-        }
-        if (ignoreTransparency && backPixel == 0) {
-            return forePixel;
+        if (ignoreTransparency) {
+            if (forePixel == 0) {
+                return backPixel;
+            }
+            if (backPixel == 0) {
+                return forePixel;
+            }
         }
         if (orderReversed) {
             foreColor = new Color(backPixel, true);
@@ -103,6 +105,7 @@ public abstract class PixelsBlend {
         return newColor.getRGB();
     }
 
+    // replace this in different blend mode. Refer to "PixelsBlendFactory"
     protected void makeRGB() {
         red = (int) (foreColor.getRed() * opacity + backColor.getRed() * (1.0f - opacity));
         green = (int) (foreColor.getGreen() * opacity + backColor.getGreen() * (1.0f - opacity));
@@ -113,11 +116,13 @@ public abstract class PixelsBlend {
         static
      */
     public static Color blendColors(Color foreColor, Color backColor, float opacity, boolean ignoreTransparency) {
-        if (ignoreTransparency && foreColor.getRGB() == 0) {
-            return backColor;
-        }
-        if (ignoreTransparency && backColor.getRGB() == 0) {
-            return foreColor;
+        if (ignoreTransparency) {
+            if (foreColor.getRGB() == 0) {
+                return backColor;
+            }
+            if (backColor.getRGB() == 0) {
+                return foreColor;
+            }
         }
         return makeRGB(foreColor, backColor, opacity);
     }

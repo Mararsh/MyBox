@@ -149,9 +149,16 @@ public class MenuController extends BaseChildController {
         nodesBox.getChildren().add(node);
     }
 
-    public void addFlowPane(List<Node> nodes) {
-        try {
+    public void addNode(int index, Node node) {
+        nodesBox.getChildren().add(index, node);
+    }
 
+    public void addFlowPane(List<Node> nodes) {
+        addFlowPane(-1, nodes);
+    }
+
+    public void addFlowPane(int index, List<Node> nodes) {
+        try {
             FlowPane flowPane = new FlowPane();
             flowPane.setMinHeight(Region.USE_PREF_SIZE);
             flowPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
@@ -160,8 +167,11 @@ public class MenuController extends BaseChildController {
             if (nodes != null) {
                 flowPane.getChildren().setAll(nodes);
             }
-
-            addNode(flowPane);
+            if (index >= 0) {
+                addNode(index, flowPane);
+            } else {
+                addNode(flowPane);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

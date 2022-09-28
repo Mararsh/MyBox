@@ -218,9 +218,10 @@ public class ChartOptions<X, Y> {
         return labelType;
     }
 
-    public void setLabelType(LabelType labelType) {
+    public ChartOptions setLabelType(LabelType labelType) {
         this.labelType = labelType;
         UserConfig.setString(chartName + "LabelType", getLabelType().name());
+        return this;
     }
 
     public String getChartTitle() {
@@ -379,6 +380,7 @@ public class ChartOptions<X, Y> {
 
     public ChartOptions setDefaultChartTitle(String defaultChartTitle) {
         this.defaultChartTitle = defaultChartTitle;
+        this.chartTitle = defaultChartTitle;
         return this;
     }
 
@@ -388,6 +390,7 @@ public class ChartOptions<X, Y> {
 
     public ChartOptions setDefaultCategoryLabel(String defaultCategoryLabel) {
         this.defaultCategoryLabel = defaultCategoryLabel;
+        this.categoryLabel = defaultCategoryLabel;
         return this;
     }
 
@@ -397,6 +400,7 @@ public class ChartOptions<X, Y> {
 
     public ChartOptions setDefaultValueLabel(String defaultValueLabel) {
         this.defaultValueLabel = defaultValueLabel;
+        this.valueLabel = defaultValueLabel;
         return this;
     }
 

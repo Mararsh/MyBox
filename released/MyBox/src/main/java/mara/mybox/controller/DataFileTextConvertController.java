@@ -43,7 +43,7 @@ public class DataFileTextConvertController extends BaseDataConvertController {
     public void initOptionsSection() {
         try {
             super.initOptionsSection();
-            readOptionsController.setControls(baseName + "Read", true);
+            readOptionsController.setControls(baseName + "Read", true, true);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -57,7 +57,7 @@ public class DataFileTextConvertController extends BaseDataConvertController {
             return false;
         }
         sourceCharset = readOptionsController.charset;
-        sourceDelimiterName = readOptionsController.delimiterName;
+        sourceDelimiterName = readOptionsController.getDelimiterName();
         sourceWithName = readOptionsController.withNamesCheck.isSelected();
         return super.makeMoreParameters();
     }

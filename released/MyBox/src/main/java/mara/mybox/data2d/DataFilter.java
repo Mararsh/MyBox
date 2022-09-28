@@ -44,13 +44,13 @@ public class DataFilter {
     public void start(SingletonTask task, Data2D data2D) {
         resetNumber();
         this.task = task;
-        calculator.start();
+        calculator.reset();
     }
 
     public void stop() {
         resetNumber();
         task = null;
-        calculator.stop();
+        calculator.reset();
     }
 
     public static DataFilter create() {

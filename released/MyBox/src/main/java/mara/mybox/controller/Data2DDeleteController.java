@@ -149,7 +149,7 @@ public class Data2DDeleteController extends BaseData2DHandleController {
     /*
         static
      */
-    public static Data2DDeleteController open(ControlData2DEditTable tableController) {
+    public static Data2DDeleteController open(ControlData2DLoad tableController) {
         try {
             Data2DDeleteController controller = (Data2DDeleteController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DDeleteFxml, false);

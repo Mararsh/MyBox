@@ -18,7 +18,7 @@ public class JexlController extends JShellController {
     public JexlController() {
         baseTitle = message("JEXL");
         TipsLabelKey = "JEXLTips";
-        category = TreeNode.JEXL;
+        category = TreeNode.JEXLCode;
         nameMsg = message("Title");
         valueMsg = message("Codes");
     }

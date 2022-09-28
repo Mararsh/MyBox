@@ -366,6 +366,11 @@ public class MarkdownEditorController extends TextEditorController {
     }
 
     @FXML
+    public void editHtmlAction() {
+        webViewController.editAction();
+    }
+
+    @FXML
     public void refreshHtml() {
         markdown2html(true, false);
     }

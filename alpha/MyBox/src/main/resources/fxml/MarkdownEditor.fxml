@@ -404,6 +404,15 @@ License:    Apache License Version 2.0
                                                             </ImageView>
                                                          </graphic>
                                                       </Button>
+                                                      <Button fx:id="editHtmlButton" layoutX="218.0" layoutY="10.0" mnemonicParsing="false" onAction="#editHtmlAction">
+                                                         <graphic>
+                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                               <image>
+                                                                  <Image url="@../buttons/Red/iconEdit.png" />
+                                                               </image>
+                                                            </ImageView>
+                                                         </graphic>
+                                                      </Button>
                                                                       <Button fx:id="refreshHtmlButton" mnemonicParsing="false" onAction="#refreshHtml">
                                                                           <graphic>
                                                                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.util.List;
+import java.util.Random;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -48,6 +49,7 @@ public class DataFileExcelController extends BaseData2DFileController {
 
     public DataFileExcelController() {
         baseTitle = message("EditExcel");
+        TipsLabelKey = "DataFileExcelTips";
     }
 
     @Override
@@ -173,8 +175,9 @@ public class DataFileExcelController extends BaseData2DFileController {
             return;
         }
         String tryName = message("Sheet") + (sheets.size() + 1);
+        Random random = new Random();
         while (sheets.contains(tryName)) {
-            tryName += "m";
+            tryName += random.nextInt(10);
         }
         String newName = PopTools.askValue(null, message("Create"), message("SheetName"), tryName);
         if (newName == null || newName.isBlank()) {
@@ -216,9 +219,10 @@ public class DataFileExcelController extends BaseData2DFileController {
         }
         String currentSheetName = dataFileExcel.getSheet();
         List<String> sheets = dataFileExcel.getSheetNames();
-        String tryName = currentSheetName + "m";
+        Random random = new Random();
+        String tryName = currentSheetName + random.nextInt(10);
         while (dataFileExcel.getSheetNames() != null && sheets.contains(tryName)) {
-            tryName += "m";
+            tryName += random.nextInt(10);
         }
         String newName = PopTools.askValue(null, message("CurrentName") + ": " + currentSheetName, message("NewName"), tryName);
         if (newName == null || newName.isBlank() || newName.equals(currentSheetName)

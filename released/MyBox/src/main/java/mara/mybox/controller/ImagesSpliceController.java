@@ -10,7 +10,6 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
@@ -60,8 +59,6 @@ public class ImagesSpliceController extends ImageViewerController {
     protected ComboBox<String> columnsBox, intervalBox, MarginsBox;
     @FXML
     protected ColorSet colorSetController;
-    @FXML
-    protected Button newWindowButton;
     @FXML
     protected HBox opBox;
     @FXML
