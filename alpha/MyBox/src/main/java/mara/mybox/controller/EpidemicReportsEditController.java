@@ -12,7 +12,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.util.converter.LongStringConverter;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.db.data.GeographyCode;
@@ -20,12 +19,13 @@ import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.LongStringFromatConverter;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.cell.TableAutoCommitCell;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
-import mara.mybox.fxml.cell.TableAutoCommitCell;
 
 /**
  * @Author Mara
@@ -94,10 +94,10 @@ public class EpidemicReportsEditController extends BaseSysTableController<Epidem
             confirmedColumn.setCellValueFactory(new PropertyValueFactory<>("confirmed"));
             confirmedColumn.setCellFactory((TableColumn<EpidemicReport, Long> param) -> {
                 TableAutoCommitCell<EpidemicReport, Long> cell
-                        = new TableAutoCommitCell<EpidemicReport, Long>(new LongStringConverter()) {
+                        = new TableAutoCommitCell<EpidemicReport, Long>(new LongStringFromatConverter()) {
                     @Override
                     public void commitEdit(Long val) {
-                        if (val < 0) {
+                        if (val == null || val < 0) {
                             cancelEdit();
                         } else {
                             super.commitEdit(val);
@@ -122,10 +122,10 @@ public class EpidemicReportsEditController extends BaseSysTableController<Epidem
             headledColumn.setCellValueFactory(new PropertyValueFactory<>("healed"));
             headledColumn.setCellFactory((TableColumn<EpidemicReport, Long> param) -> {
                 TableAutoCommitCell<EpidemicReport, Long> cell
-                        = new TableAutoCommitCell<EpidemicReport, Long>(new LongStringConverter()) {
+                        = new TableAutoCommitCell<EpidemicReport, Long>(new LongStringFromatConverter()) {
                     @Override
                     public void commitEdit(Long val) {
-                        if (val < 0) {
+                        if (val == null || val < 0) {
                             cancelEdit();
                         } else {
                             super.commitEdit(val);
@@ -150,10 +150,10 @@ public class EpidemicReportsEditController extends BaseSysTableController<Epidem
             deadColumn.setCellValueFactory(new PropertyValueFactory<>("dead"));
             deadColumn.setCellFactory((TableColumn<EpidemicReport, Long> param) -> {
                 TableAutoCommitCell<EpidemicReport, Long> cell
-                        = new TableAutoCommitCell<EpidemicReport, Long>(new LongStringConverter()) {
+                        = new TableAutoCommitCell<EpidemicReport, Long>(new LongStringFromatConverter()) {
                     @Override
                     public void commitEdit(Long val) {
-                        if (val < 0) {
+                        if (val == null || val < 0) {
                             cancelEdit();
                         } else {
                             super.commitEdit(val);

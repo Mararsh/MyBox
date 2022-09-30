@@ -475,6 +475,7 @@ public class BaseDataAdaptor {
             switch (column.getType()) {
                 case String:
                 case Text:
+                case Enumeration:
                 case Color:
                 case File:
                 case Image:

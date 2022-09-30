@@ -1,8 +1,11 @@
 package mara.mybox.fxml.cell;
 
+import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
@@ -10,7 +13,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
-import javafx.util.StringConverter;
 
 /**
  * @Author Mara
@@ -19,8 +21,15 @@ import javafx.util.StringConverter;
  */
 public class TableComboBoxCell<S, T> extends ComboBoxTableCell<S, T> {
 
-    public TableComboBoxCell(StringConverter<T> converter, ObservableList<T> items) {
-        super(converter, items);
+    protected int maxVisibleCount;
+
+    public TableComboBoxCell(ObservableList<T> items, int maxCount) {
+        super(items);
+        this.maxVisibleCount = maxCount;
+        if (maxVisibleCount <= 0) {
+            maxVisibleCount = 10;
+        }
+
         this.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -35,27 +44,32 @@ public class TableComboBoxCell<S, T> extends ComboBoxTableCell<S, T> {
         });
     }
 
+    @Override
+    public void startEdit() {
+        super.startEdit();
+        Node g = getGraphic();
+        if (g != null && g instanceof ComboBox) {
+            ComboBox cb = (ComboBox) g;
+            cb.setVisibleRowCount(maxVisibleCount);
+        }
+    }
+
     public int rowIndex() {
         TableRow row = getTableRow();
         return row == null ? -1 : row.getIndex();
     }
 
-    public static <S, T> Callback<TableColumn<S, T>, TableCell<S, T>> forTableColumn(final T... items) {
-        return forTableColumn(null, items);
-    }
-
-    public static <S, T> Callback<TableColumn<S, T>, TableCell<S, T>> forTableColumn(
-            final StringConverter<T> converter, final T... items) {
-        return forTableColumn(converter, FXCollections.observableArrayList(items));
-    }
-
-    public static <S, T> Callback<TableColumn<S, T>, TableCell<S, T>> forTableColumn(final ObservableList<T> items) {
-        return forTableColumn(null, items);
-    }
-
-    public static <S, T> Callback<TableColumn<S, T>, TableCell<S, T>> forTableColumn(
-            final StringConverter<T> converter, final ObservableList<T> items) {
-        return list -> new TableComboBoxCell<S, T>(converter, items);
+    public static <S, T> Callback<TableColumn<S, T>, TableCell<S, T>> create(List<T> items, int maxVisibleCount) {
+        return new Callback<TableColumn<S, T>, TableCell<S, T>>() {
+            @Override
+            public TableCell<S, T> call(TableColumn<S, T> param) {
+                ObservableList<T> olist = FXCollections.observableArrayList();
+                for (T item : items) {
+                    olist.add(item);
+                }
+                return new TableComboBoxCell<>(olist, maxVisibleCount);
+            }
+        };
     }
 
 }

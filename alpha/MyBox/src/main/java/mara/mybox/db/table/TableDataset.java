@@ -39,9 +39,9 @@ public class TableDataset extends BaseTable<Dataset> {
         addColumn(new ColumnDefinition("dsid", ColumnType.Long, true, true).setAuto(true));
         Map<Object, String> lvalues = new LinkedHashMap<>();
         lvalues.put("Location_data", Languages.tableMessage("Location_data"));
-        addColumn(new ColumnDefinition("data_category", ColumnType.String, true).setLength(StringMaxLength).setData(lvalues));
+        addColumn(new ColumnDefinition("data_category", ColumnType.String, true).setLength(StringMaxLength).setDisplayMap(lvalues));
         addColumn(new ColumnDefinition("data_set", ColumnType.String, true).setLength(StringMaxLength));
-        addColumn(new ColumnDefinition("time_format", ColumnType.Short).setData(Era.values()));
+        addColumn(new ColumnDefinition("time_format", ColumnType.Short).setDisplayMap(Era.values()));
         addColumn(new ColumnDefinition("time_format_omitAD", ColumnType.Boolean));
         addColumn(new ColumnDefinition("text_color", ColumnType.Color));
         addColumn(new ColumnDefinition("text_background_color", ColumnType.Color));

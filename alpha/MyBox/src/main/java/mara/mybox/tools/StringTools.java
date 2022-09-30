@@ -466,4 +466,54 @@ public class StringTools {
         }
     }
 
+    public static List<String> toList(String value, String separater) {
+        try {
+            if (value == null || value.isBlank()) {
+                return null;
+            }
+            String[] a = value.split(separater);
+            if (a == null || a.length == 0) {
+                return null;
+            }
+            List<String> values = new ArrayList<>();
+            for (String v : a) {
+                if (v != null && !v.isBlank()) {
+                    values.add(v);
+                }
+            }
+            if (values.isEmpty()) {
+                return null;
+            } else {
+                return values;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static String toString(List<String> values, String separater) {
+        try {
+            if (values == null || values.isEmpty()) {
+                return null;
+            }
+            String s = null;
+            for (String v : values) {
+                if (v != null && !v.isBlank()) {
+                    if (s == null) {
+                        s = v;
+                    } else {
+                        s += separater + v;
+                    }
+                }
+            }
+            if (s == null || s.isBlank()) {
+                return null;
+            } else {
+                return s;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 }

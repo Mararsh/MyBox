@@ -15,13 +15,13 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
-import javafx.util.converter.LongStringConverter;
 import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.ImageClipboardTools;
+import mara.mybox.fxml.LongStringFromatConverter;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
@@ -146,11 +146,11 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
                 durationColumn.setCellValueFactory(new PropertyValueFactory<>("duration"));
                 durationColumn.setCellFactory((TableColumn<ImageInformation, Long> param) -> {
                     TableAutoCommitCell<ImageInformation, Long> cell
-                            = new TableAutoCommitCell<ImageInformation, Long>(new LongStringConverter()) {
+                            = new TableAutoCommitCell<ImageInformation, Long>(new LongStringFromatConverter()) {
 
                         @Override
                         public boolean valid(Long value) {
-                            return value > 0;
+                            return value != null && value > 0;
                         }
 
                         @Override

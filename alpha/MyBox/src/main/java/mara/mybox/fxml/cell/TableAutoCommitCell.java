@@ -16,6 +16,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
@@ -30,6 +31,7 @@ import mara.mybox.fxml.FloatStringFromatConverter;
 import mara.mybox.fxml.IntegerStringFromatConverter;
 import mara.mybox.fxml.LongStringFromatConverter;
 import mara.mybox.fxml.ShortStringFromatConverter;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.TimeFormats;
 import mara.mybox.value.UserConfig;
 
@@ -58,8 +60,20 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
         this(null);
     }
 
-    public TableAutoCommitCell(final StringConverter<T> conv) {
+    public TableAutoCommitCell(StringConverter<T> conv) {
         super(conv);
+        setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                TableView<S> table = getTableView();
+                if (table != null && table.getItems() != null) {
+                    int index = rowIndex();
+                    if (index < table.getItems().size()) {
+                        startEdit();
+                    }
+                }
+            }
+        });
     }
 
     public boolean valid() {
@@ -100,20 +114,6 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
         }
     }
 
-    public S dataRow() {
-        try {
-            int index = rowIndex();
-            if (index < 0) {
-                return null;
-            } else {
-                return getTableView().getItems().get(index);
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return null;
-        }
-    }
-
     public int size() {
         try {
             return getTableView().getItems().size();
@@ -121,6 +121,11 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
             MyBoxLog.debug(e);
             return -1;
         }
+    }
+
+    protected String name() {
+        return message("TableRowNumber") + " " + (rowIndex() + 1) + "\n"
+                + getTableColumn().getText();
     }
 
     @Override
@@ -229,7 +234,6 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
             if (isEditing()) {
                 if (changed && valid) {
                     super.commitEdit(value);
-                    refreshDataRow();
                 } else {
                     cancelEdit();
                 }
@@ -254,7 +258,6 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
                     CellEditEvent<S, T> ev = new CellEditEvent<>(table, pos, TableColumn.editCommitEvent(), value);
                     Event.fireEvent(column, ev);
                     updateItem(value, false);
-                    refreshDataRow();
                 }
             } else {
                 cancelEdit();
@@ -262,15 +265,6 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
             if (table != null) {
                 table.edit(-1, null);
             }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
-    public void refreshDataRow() {
-        try {
-            int rowIndex = rowIndex();
-            getTableView().getItems().set(rowIndex, getTableView().getItems().get(rowIndex));
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }

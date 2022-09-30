@@ -23,7 +23,7 @@ public class TextInputController extends BaseChildController {
     protected SimpleBooleanProperty notify;
 
     @FXML
-    protected Label titleLabel;
+    protected Label titleLabel, commentsLabel;
     @FXML
     protected TextArea textArea;
     @FXML
@@ -64,6 +64,14 @@ public class TextInputController extends BaseChildController {
 
     public String getText() {
         return textArea.getText();
+    }
+
+    public void setTitleLabel(String title) {
+        titleLabel.setText(title);
+    }
+
+    public void setCommentsLabel(String comments) {
+        commentsLabel.setText(comments);
     }
 
     @FXML

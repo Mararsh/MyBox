@@ -61,7 +61,7 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
         addColumn(new Data2DColumn("foreign_table", ColumnType.String).setLength(StringMaxLength));
         addColumn(new Data2DColumn("foreign_column", ColumnType.String).setLength(StringMaxLength));
         addColumn(new Data2DColumn("values_list", ColumnType.Text).setLength(StringMaxLength));
-        addColumn(new Data2DColumn("description", ColumnType.String).setLength(StringMaxLength));
+        addColumn(new Data2DColumn("description", ColumnType.Text).setLength(StringMaxLength));
         return this;
     }
 

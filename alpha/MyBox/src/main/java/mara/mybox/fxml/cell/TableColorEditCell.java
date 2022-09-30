@@ -26,7 +26,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2020-12-03
  * @License Apache License Version 2.0
  */
-public class TableColorCommitCell<S> extends TableCell<S, Color> {
+public class TableColorEditCell<S> extends TableCell<S, Color> {
 
     protected BaseController parent;
     protected TableColor tableColor;
@@ -34,7 +34,7 @@ public class TableColorCommitCell<S> extends TableCell<S, Color> {
     protected String msgPrefix;
     protected ChangeListener<Boolean> setListener;
 
-    public TableColorCommitCell(BaseController parent, TableColor tableColor) {
+    public TableColorEditCell(BaseController parent, TableColor tableColor) {
         this.parent = parent;
         this.tableColor = tableColor;
         if (this.tableColor == null) {

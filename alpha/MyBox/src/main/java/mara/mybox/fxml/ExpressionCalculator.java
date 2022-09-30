@@ -18,15 +18,17 @@ import org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory;
  */
 public class ExpressionCalculator {
 
-    public ScriptEngine scriptEngine;
+    public static ScriptEngine scriptEngine;
     public FindReplaceString findReplace;
     public String expression, result, error;
 
     public ExpressionCalculator() {
         // https://github.com/Mararsh/MyBox/issues/1568
-        ScriptEngineManager factory = new ScriptEngineManager(ClassLoader.getSystemClassLoader());
-        factory.registerEngineName("nashorn", new NashornScriptEngineFactory());
-        scriptEngine = factory.getEngineByName("nashorn");
+        if (scriptEngine == null) {
+            ScriptEngineManager factory = new ScriptEngineManager(ClassLoader.getSystemClassLoader());
+            factory.registerEngineName("nashorn", new NashornScriptEngineFactory());
+            scriptEngine = factory.getEngineByName("nashorn");
+        }
         reset();
     }
 

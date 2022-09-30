@@ -36,7 +36,8 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
-import mara.mybox.fxml.cell.TableTextEditCell;
+import mara.mybox.fxml.cell.TableComboBoxCell;
+import mara.mybox.fxml.cell.TableData2DEditCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DoubleMatrixTools;
 import mara.mybox.tools.TextTools;
@@ -684,6 +685,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
      */
     @Override
     public void tableChanged(boolean changed) {
+        MyBoxLog.console(changed);
         if (isSettingValues || data2D == null) {
             return;
         }
@@ -704,6 +706,8 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 return;
             }
             List<Data2DColumn> columns = data2D.getColumns();
+
+            ControlData2DLoad dataControl = this;
             for (int i = 0; i < columns.size(); i++) {
                 Data2DColumn dataColumn = columns.get(i);
                 String name = dataColumn.getColumnName();
@@ -726,42 +730,12 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 });
 
                 if (tableColumn.isEditable()) {
-                    tableColumn.setCellFactory(new Callback<TableColumn<List<String>, String>, TableCell<List<String>, String>>() {
-                        @Override
-                        public TableCell<List<String>, String> call(TableColumn<List<String>, String> param) {
-                            try {
-                                TableTextEditCell<List<String>> cell
-                                        = new TableTextEditCell<List<String>>(myController, dataColumn.isTextType()) {
-                                    @Override
-                                    public void updateItem(String item, boolean empty) {
-                                        super.updateItem(item, empty);
-                                        setStyle(null);
-                                        try {
-                                            setStyle(data2D.cellStyle(styleFilter, rowIndex(), name));
-                                        } catch (Exception e) {
-                                        }
-                                        if (empty || item == null) {
-                                            setText(null);
-                                            setGraphic(null);
-                                            return;
-                                        }
-                                        setText(dataColumn.display(item));
-                                    }
 
-                                    @Override
-                                    public boolean valid(String value) {
-                                        return dataColumn.validValue(value);
-                                    }
-
-                                };
-
-                                return cell;
-                            } catch (Exception e) {
-                                return null;
-                            }
-                        }
-                    });
-
+                    if (dataColumn.isEnumType()) {
+                        tableColumn.setCellFactory(TableComboBoxCell.create(dataColumn.getEnumValues(), 12));
+                    } else {
+                        tableColumn.setCellFactory(TableData2DEditCell.create(dataControl, dataColumn));
+                    }
                     tableColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<List<String>, String>>() {
                         @Override
                         public void handle(TableColumn.CellEditEvent<List<String>, String> e) {
@@ -773,8 +747,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                 return;
                             }
                             List<String> row = tableData.get(rowIndex);
-                            String value = e.getNewValue();
-                            row.set(colIndex, dataColumn.display(value));
+                            row.set(colIndex, e.getNewValue());
                             tableData.set(rowIndex, row);
                         }
                     });
@@ -1101,6 +1074,10 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
 
     public ObservableList<List<String>> getTableData() {
         return tableData;
+    }
+
+    public DataFilter getStyleFilter() {
+        return styleFilter;
     }
 
 }

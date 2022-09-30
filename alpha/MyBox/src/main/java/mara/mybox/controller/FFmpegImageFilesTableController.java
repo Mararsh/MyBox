@@ -8,12 +8,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.util.converter.LongStringConverter;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.LongStringFromatConverter;
+import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
-import mara.mybox.fxml.cell.TableAutoCommitCell;
 
 /**
  * @Author Mara
@@ -77,11 +77,11 @@ public class FFmpegImageFilesTableController extends FilesTableController {
             durationColumn.setCellValueFactory(new PropertyValueFactory<>("duration"));
             durationColumn.setCellFactory((TableColumn<FileInformation, Long> param) -> {
                 TableAutoCommitCell<FileInformation, Long> cell
-                        = new TableAutoCommitCell<FileInformation, Long>(new LongStringConverter()) {
+                        = new TableAutoCommitCell<FileInformation, Long>(new LongStringFromatConverter()) {
 
                     @Override
                     public boolean valid(Long value) {
-                        return value > 0;
+                        return value != null && value > 0;
                     }
 
                     @Override

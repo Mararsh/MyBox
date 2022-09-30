@@ -31,23 +31,21 @@ public class TableRowSelectionCell<S, T> extends CheckBoxTableCell<S, T> {
         getStyleClass().add("row-number");
 
         initListeners();
+        tableView.getSelectionModel().getSelectedIndices().addListener(selectedListener);
+        checked.addListener(checkedListener);
 
         setSelectedStateCallback(new Callback<Integer, ObservableValue<Boolean>>() {
             @Override
             public synchronized ObservableValue<Boolean> call(Integer index) {
-                if (checked != null) {
-                    checked.removeListener(checkedListener);
-                    tableView.getSelectionModel().getSelectedIndices().removeListener(selectedListener);
-                    checked = null;
-                }
                 int row = rowIndex();
                 if (row < 0) {
+                    setText("");
                     return null;
                 }
                 setText("" + (row + 1));
-                checked = new SimpleBooleanProperty(tableView.getSelectionModel().isSelected(row));
-                checked.addListener(checkedListener);
-                tableView.getSelectionModel().getSelectedIndices().addListener(selectedListener);
+                checkingBox = true;
+                checked.set(tableView.getSelectionModel().isSelected(row));
+                checkingBox = false;
                 return checked;
             }
         });
@@ -88,8 +86,20 @@ public class TableRowSelectionCell<S, T> extends CheckBoxTableCell<S, T> {
     }
 
     public int rowIndex() {
-        TableRow row = getTableRow();
-        return row == null ? -1 : row.getIndex();
+        try {
+            TableRow row = getTableRow();
+            if (row == null) {
+                return -1;
+            }
+            int index = row.getIndex();
+            if (index >= 0 && index < getTableView().getItems().size()) {
+                return index;
+            } else {
+                return -2;
+            }
+        } catch (Exception e) {
+            return -3;
+        }
     }
 
     public static <S, T> Callback<TableColumn<S, T>, TableCell<S, T>> create(TableView tableView) {

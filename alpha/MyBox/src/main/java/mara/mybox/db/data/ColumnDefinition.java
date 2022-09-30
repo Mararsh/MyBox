@@ -46,11 +46,12 @@ public class ColumnDefinition extends BaseData {
     protected Era.Format timeFormat;
     protected Object value;
     protected Number maxValue, minValue;
-    protected Map<Object, String> data;  // value, displayString
+    protected Map<Object, String> displayMap;
     protected DoubleStatistic statistic;
+    protected List<String> enumValues;
 
     public static enum ColumnType {
-        String, Boolean, Text,
+        String, Boolean, Text, Enumeration,
         Color, // rgba
         File, Image, // string of the path
         Double, Float, Long, Integer, Short,
@@ -91,7 +92,7 @@ public class ColumnDefinition extends BaseData {
         referColumn = null;
         label = null;
         statistic = null;
-        data = null;
+        displayMap = null;
     }
 
     public ColumnDefinition() {
@@ -213,6 +214,7 @@ public class ColumnDefinition extends BaseData {
             switch (type) {
                 case String:
                 case Text:
+                case Enumeration:
                 case File:
                 case Image:
                     return length <= 0 || value.length() <= length;
@@ -302,6 +304,10 @@ public class ColumnDefinition extends BaseData {
         return type == ColumnType.String || type == ColumnType.Text;
     }
 
+    public boolean isEnumType() {
+        return type == ColumnType.Enumeration && enumValues != null && !enumValues.isEmpty();
+    }
+
     public String random(Random random, int maxRandom, short scale, boolean nonNegative) {
         if (random == null) {
             random = new Random();
@@ -363,6 +369,7 @@ public class ColumnDefinition extends BaseData {
             switch (type) {
                 case String:
                 case Text:
+                case Enumeration:
                 case Color:
                 case File:
                 case Image:
@@ -555,6 +562,7 @@ public class ColumnDefinition extends BaseData {
         switch (type) {
             case String:
             case Text:
+            case Enumeration:
             case File:
             case Image:
             case Color:
@@ -602,6 +610,7 @@ public class ColumnDefinition extends BaseData {
         switch (type) {
             case String:
             case Text:
+            case Enumeration:
             case File:
             case Image:
             case Color:
@@ -707,7 +716,8 @@ public class ColumnDefinition extends BaseData {
         List<ColumnType> types = new ArrayList<>();
         types.addAll(Arrays.asList(ColumnType.String, ColumnType.Boolean,
                 ColumnType.Double, ColumnType.Float, ColumnType.Long, ColumnType.Integer, ColumnType.Short,
-                ColumnType.Datetime));
+                ColumnType.Datetime, ColumnType.Date,
+                ColumnType.Text, ColumnType.Enumeration));
         return types;
     }
 
@@ -959,12 +969,12 @@ public class ColumnDefinition extends BaseData {
         return this;
     }
 
-    public Map<Object, String> getData() {
-        return data;
+    public Map<Object, String> getDisplayMap() {
+        return displayMap;
     }
 
-    public ColumnDefinition setData(Map<Object, String> data) {
-        this.data = data;
+    public ColumnDefinition setDisplayMap(Map<Object, String> data) {
+        this.displayMap = data;
         return this;
     }
 
@@ -1037,6 +1047,15 @@ public class ColumnDefinition extends BaseData {
 
     public ColumnDefinition setDescription(String description) {
         this.description = description;
+        return this;
+    }
+
+    public List<String> getEnumValues() {
+        return enumValues;
+    }
+
+    public ColumnDefinition setEnumValues(List<String> enumValues) {
+        this.enumValues = enumValues;
         return this;
     }
 

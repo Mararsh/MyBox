@@ -9,6 +9,8 @@ import mara.mybox.data.StringTable;
 import static mara.mybox.db.data.ColumnDefinition.columnType;
 import static mara.mybox.db.data.ColumnDefinition.number2String;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.StringTools;
+import static mara.mybox.value.AppValues.MyBoxSeparator;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -20,6 +22,7 @@ public class Data2DColumn extends ColumnDefinition {
 
     protected Data2DDefinition data2DDefinition;
     protected long d2cid, d2id;
+    protected String enumDisplay;
 
     public final void initData2DColumn() {
         initColumnDefinition();
@@ -172,7 +175,7 @@ public class Data2DColumn extends ColumnDefinition {
             case "foreign_column":
                 return data.getReferColumn();
             case "values_list":
-                return null;
+                return StringTools.toString(data.getEnumValues(), MyBoxSeparator);
             case "description":
                 return data.getDescription();
         }
@@ -255,6 +258,7 @@ public class Data2DColumn extends ColumnDefinition {
                     data.setReferColumn(value == null ? null : (String) value);
                     return true;
                 case "values_list":
+                    data.setEnumValues(StringTools.toList(value == null ? null : (String) value, MyBoxSeparator));
                     return true;
                 case "description":
                     data.setDescription(value == null ? null : (String) value);
@@ -348,6 +352,20 @@ public class Data2DColumn extends ColumnDefinition {
             MyBoxLog.error(e);
             return null;
         }
+    }
+
+    /*
+        customized get/set
+     */
+    public String getEnumDisplay() {
+        enumDisplay = StringTools.toString(enumValues, "\n");
+        return enumDisplay;
+    }
+
+    public Data2DColumn setEnumDisplay(String enumDisplay) {
+        this.enumDisplay = enumDisplay;
+        enumValues = StringTools.toList(enumDisplay, "\n");
+        return this;
     }
 
     /*

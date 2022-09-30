@@ -25,7 +25,7 @@ import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
-import mara.mybox.fxml.cell.TableColorCommitCell;
+import mara.mybox.fxml.cell.TableColorEditCell;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -111,7 +111,7 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
             colorColumn.setCellFactory(new Callback<TableColumn<Tag, Color>, TableCell<Tag, Color>>() {
                 @Override
                 public TableCell<Tag, Color> call(TableColumn<Tag, Color> param) {
-                    TableColorCommitCell<Tag> cell = new TableColorCommitCell<Tag>(myController, tableColor) {
+                    TableColorEditCell<Tag> cell = new TableColorEditCell<Tag>(myController, tableColor) {
                         @Override
                         public void colorChanged(int index, Color color) {
                             if (isSettingValues || color == null
