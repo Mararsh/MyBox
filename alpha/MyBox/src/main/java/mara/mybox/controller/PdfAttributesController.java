@@ -101,7 +101,7 @@ public class PdfAttributesController extends BaseController {
                     return;
                 }
                 try {
-                    Date d = DateTools.stringToDatetime(newValue);
+                    Date d = DateTools.encodeDate(newValue);
                     if (d != null) {
                         createTimeInput.setStyle(null);
                         createTime = d;
@@ -123,7 +123,7 @@ public class PdfAttributesController extends BaseController {
                     return;
                 }
                 try {
-                    Date d = DateTools.stringToDatetime(newValue);
+                    Date d = DateTools.encodeDate(newValue);
                     if (d != null) {
                         modifyTimeInput.setStyle(null);
                         modifyTime = d;

@@ -3,8 +3,8 @@ package mara.mybox.tools;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import mara.mybox.data.CoordinateSystem;
-import static mara.mybox.data.CoordinateSystem.Value.GCJ_02;
+import mara.mybox.data.GeoCoordinateSystem;
+import static mara.mybox.data.GeoCoordinateSystem.Value.GCJ_02;
 import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.data.Location;
 import mara.mybox.dev.MyBoxLog;
@@ -301,7 +301,7 @@ public class LocationTools {
                     || location.getCoordinateSystem() == null) {
                 return location;
             }
-            CoordinateSystem cs = location.getCoordinateSystem();
+            GeoCoordinateSystem cs = location.getCoordinateSystem();
             double[] coordinate;
             switch (cs.getValue()) {
                 case GCJ_02:
@@ -325,7 +325,7 @@ public class LocationTools {
             newCode.setLdid(-1);
             newCode.setLongitude(coordinate[0]);
             newCode.setLatitude(coordinate[1]);
-            newCode.setCoordinateSystem(CoordinateSystem.WGS84());
+            newCode.setCoordinateSystem(GeoCoordinateSystem.WGS84());
             return newCode;
         } catch (Exception e) {
             return null;
@@ -355,7 +355,7 @@ public class LocationTools {
                     || location.getCoordinateSystem() == null) {
                 return location;
             }
-            CoordinateSystem cs = location.getCoordinateSystem();
+            GeoCoordinateSystem cs = location.getCoordinateSystem();
             double[] coordinate;
             switch (cs.getValue()) {
                 case CGCS2000:
@@ -377,7 +377,7 @@ public class LocationTools {
             newLocation.setLdid(-1);
             newLocation.setLongitude(coordinate[0]);
             newLocation.setLatitude(coordinate[1]);
-            newLocation.setCoordinateSystem(CoordinateSystem.GCJ02());
+            newLocation.setCoordinateSystem(GeoCoordinateSystem.GCJ02());
             return newLocation;
         } catch (Exception e) {
             return null;
@@ -401,7 +401,7 @@ public class LocationTools {
         return newLocations;
     }
 
-    public static List<Location> toGCJ02ByWebService(CoordinateSystem sourceCS, List<Location> codes) {
+    public static List<Location> toGCJ02ByWebService(GeoCoordinateSystem sourceCS, List<Location> codes) {
         try {
             if (codes == null || codes.isEmpty()) {
                 return null;
@@ -422,7 +422,7 @@ public class LocationTools {
                 }
                 String results = GeographyCodeTools.toGCJ02ByWebService(sourceCS, locationsString);
                 String[] locationsValues = results.split(";");
-                CoordinateSystem GCJ02 = CoordinateSystem.GCJ02();
+                GeoCoordinateSystem GCJ02 = GeoCoordinateSystem.GCJ02();
                 for (int i = 0; i < locationsValues.length; i++) {
                     String locationValue = locationsValues[i];
                     String[] values = locationValue.split(",");

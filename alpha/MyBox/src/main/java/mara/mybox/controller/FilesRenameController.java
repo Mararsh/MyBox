@@ -401,7 +401,7 @@ public class FilesRenameController extends BaseBatchFileController {
 
     @FXML
     public void popRegexExample(MouseEvent mouseEvent) {
-        PopTools.popRegexExample(this, oldStringInput, mouseEvent);
+        PopTools.popRegexExamples(this, oldStringInput, mouseEvent);
     }
 
 }

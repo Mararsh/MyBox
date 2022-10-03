@@ -15,7 +15,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
-import mara.mybox.data.CoordinateSystem;
+import mara.mybox.data.GeoCoordinateSystem;
 import mara.mybox.db.data.Dataset;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeTools;
@@ -46,7 +46,7 @@ public class LocationDataEditController extends BaseController {
     protected short direction;
     protected long startTime, endTime;
     protected long dataid = -1;
-    protected CoordinateSystem coordinateSystem;
+    protected GeoCoordinateSystem coordinateSystem;
     protected Dataset dataset;
     protected Location loadedLocationData;
 
@@ -117,17 +117,17 @@ public class LocationDataEditController extends BaseController {
                     });
             checkPrecision();
 
-            for (CoordinateSystem.Value item : CoordinateSystem.Value.values()) {
+            for (GeoCoordinateSystem.Value item : GeoCoordinateSystem.Value.values()) {
                 coordinateSystemSelector.getItems().add(Languages.message(item.name()));
             }
             coordinateSystemSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
                 if (newValue == null || newValue.isEmpty()) {
                     return;
                 }
-                coordinateSystem = new CoordinateSystem(newValue);
+                coordinateSystem = new GeoCoordinateSystem(newValue);
                 UserConfig.setString("GeographyCodeCoordinateSystem", newValue);
             });
-            coordinateSystemSelector.getSelectionModel().select(UserConfig.getString("GeographyCodeCoordinateSystem", Languages.message(CoordinateSystem.defaultValue().name())));
+            coordinateSystemSelector.getSelectionModel().select(UserConfig.getString("GeographyCodeCoordinateSystem", Languages.message(GeoCoordinateSystem.defaultValue().name())));
 
             speedInput.textProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldv, String newv) -> {
@@ -560,12 +560,12 @@ public class LocationDataEditController extends BaseController {
 
     @FXML
     public void popStartExample(MouseEvent mouseEvent) {
-        popMenu = PopTools.popEraExample(popMenu, startTimeInput, mouseEvent);
+        popMenu = PopTools.popEraExamples(popMenu, startTimeInput, mouseEvent);
     }
 
     @FXML
     public void popEndExample(MouseEvent mouseEvent) {
-        popMenu = PopTools.popEraExample(popMenu, endTimeInput, mouseEvent);
+        popMenu = PopTools.popEraExamples(popMenu, endTimeInput, mouseEvent);
     }
 
     @FXML

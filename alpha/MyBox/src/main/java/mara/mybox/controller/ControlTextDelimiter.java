@@ -273,7 +273,7 @@ public class ControlTextDelimiter extends BaseController {
 
     @FXML
     public void popRegexExample(MouseEvent mouseEvent) {
-        PopTools.popRegexExample(this, delimiterInput, mouseEvent);
+        PopTools.popRegexExamples(this, delimiterInput, mouseEvent);
     }
 
     @Override

@@ -11,7 +11,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
-import mara.mybox.data.CoordinateSystem;
+import mara.mybox.data.GeoCoordinateSystem;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeLevel;
 import mara.mybox.db.table.TableGeographyCode;
@@ -33,7 +33,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
     protected double longitude, latitude, altitude, precision;
     protected long area, population;
     protected GeographyCode loadedCode;
-    protected CoordinateSystem coordinateSystem;
+    protected GeoCoordinateSystem coordinateSystem;
 
     @FXML
     protected TextField gcidInput, subordinateInput, chineseInput, englishInput,
@@ -68,7 +68,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
             super.initControls();
             longitude = latitude = -200;
             altitude = precision = 0;
-            coordinateSystem = CoordinateSystem.defaultCode();
+            coordinateSystem = GeoCoordinateSystem.defaultCode();
 
             longitudeInput.textProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldv, String newv) -> {
@@ -90,14 +90,14 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
                         checkPrecision();
                     });
 
-            for (CoordinateSystem.Value item : CoordinateSystem.Value.values()) {
+            for (GeoCoordinateSystem.Value item : GeoCoordinateSystem.Value.values()) {
                 coordinateSystemSelector.getItems().add(Languages.message(item.name()));
             }
             coordinateSystemSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
                 if (newValue == null || newValue.isEmpty()) {
                     return;
                 }
-                coordinateSystem = new CoordinateSystem(newValue);
+                coordinateSystem = new GeoCoordinateSystem(newValue);
                 UserConfig.setString("GeographyCodeCoordinateSystem", newValue);
             });
             coordinateSystemSelector.getSelectionModel().select(UserConfig.getString("GeographyCodeCoordinateSystem", Languages.message("CGCS2000")));

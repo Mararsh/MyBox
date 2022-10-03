@@ -687,7 +687,7 @@ public class ControlFindReplace extends BaseController {
 
     @FXML
     public void popFindExample(MouseEvent mouseEvent) {
-        PopTools.popRegexExample(this, findArea, mouseEvent);
+        PopTools.popRegexExamples(this, findArea, mouseEvent);
     }
 
     @FXML

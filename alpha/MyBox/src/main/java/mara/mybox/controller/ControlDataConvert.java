@@ -719,7 +719,7 @@ public class ControlDataConvert extends BaseController {
                         .setCharset(Charset.forName("UTF-8"))
                         .setDelimiter(",")
                         .setHasHeader(true)
-                        .setDataName(dataRowIndex + "x" + columns.size())
+                        .setDataName(d.dataName())
                         .setColsNumber(columns.size())
                         .setRowsNumber(dataRowIndex);
                 Data2D.saveAttributes(conn, d, columns);

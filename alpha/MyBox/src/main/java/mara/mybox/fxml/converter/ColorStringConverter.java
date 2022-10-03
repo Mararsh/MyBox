@@ -1,4 +1,4 @@
-package mara.mybox.fxml;
+package mara.mybox.fxml.converter;
 
 import javafx.scene.paint.Color;
 import javafx.util.StringConverter;

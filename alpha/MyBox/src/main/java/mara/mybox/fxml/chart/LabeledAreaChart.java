@@ -31,6 +31,7 @@ public class LabeledAreaChart<X, Y> extends AreaChart<X, Y> {
         this.setMaxHeight(Double.MAX_VALUE);
         VBox.setVgrow(this, Priority.ALWAYS);
         HBox.setHgrow(this, Priority.ALWAYS);
+        chartMaker = new XYChartMaker<>();
     }
 
     public LabeledAreaChart setMaker(XYChartMaker<X, Y> chartMaker) {

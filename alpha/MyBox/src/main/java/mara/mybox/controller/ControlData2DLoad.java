@@ -27,6 +27,8 @@ import mara.mybox.data2d.DataFilter;
 import mara.mybox.data2d.DataMatrix;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
@@ -36,8 +38,10 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
-import mara.mybox.fxml.cell.TableComboBoxCell;
-import mara.mybox.fxml.cell.TableData2DEditCell;
+import mara.mybox.fxml.cell.TableCheckboxCell;
+import mara.mybox.fxml.cell.TableDataCell;
+import mara.mybox.fxml.cell.TableDatetimeInputCell;
+import mara.mybox.fxml.cell.TableStringBooleanCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DoubleMatrixTools;
 import mara.mybox.tools.TextTools;
@@ -711,6 +715,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             for (int i = 0; i < columns.size(); i++) {
                 Data2DColumn dataColumn = columns.get(i);
                 String name = dataColumn.getColumnName();
+                ColumnType type = dataColumn.getType();
                 TableColumn tableColumn = new TableColumn<List<String>, String>(name);
                 tableColumn.setPrefWidth(dataColumn.getWidth());
                 tableColumn.setEditable(!readOnly && dataColumn.isEditable() && !dataColumn.isId());
@@ -732,9 +737,54 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 if (tableColumn.isEditable()) {
 
                     if (dataColumn.isEnumType()) {
-                        tableColumn.setCellFactory(TableComboBoxCell.create(dataColumn.getEnumValues(), 12));
+//                        tableColumn.setCellFactory(TableComboBoxCell.create(dataColumn.getEnumValues(), 12));
+                    } else if (type == ColumnType.Boolean) {
+                        tableColumn.setCellFactory(new Callback<TableColumn<List<String>, String>, TableCell<List<String>, String>>() {
+                            @Override
+                            public TableCell<List<String>, String> call(TableColumn<List<String>, String> param) {
+                                try {
+                                    TableCheckboxCell<List<String>, String> cell = new TableCheckboxCell<>() {
+                                        @Override
+                                        protected boolean getCellValue(int rowIndex) {
+                                            try {
+                                                if (rowIndex < 0 || rowIndex >= tableData.size()) {
+                                                    return false;
+                                                }
+                                                List<String> row = tableData.get(rowIndex);
+                                                return ColumnDefinition.string2Boolean(row.get(colIndex));
+                                            } catch (Exception e) {
+                                                return false;
+                                            }
+                                        }
+
+                                        @Override
+                                        protected void setCellValue(int rowIndex, boolean value) {
+                                            try {
+                                                if (rowIndex < 0 || rowIndex >= tableData.size()) {
+                                                    return;
+                                                }
+                                                List<String> row = tableData.get(rowIndex);
+                                                if ((value + "").equalsIgnoreCase(row.get(colIndex))) {
+                                                    return;
+                                                }
+                                                row.set(colIndex, value + "");
+                                            } catch (Exception e) {
+                                                MyBoxLog.debug(e);
+                                            }
+                                        }
+                                    };
+                                    return cell;
+                                } catch (Exception e) {
+                                    return null;
+                                }
+                            }
+                        });
+                    } else if (type == ColumnType.Datetime) {
+                        tableColumn.setCellFactory(TableDatetimeInputCell.create(dataControl, null, TimeType.DateTime));
+                    } else if (type == ColumnType.Date) {
+                        tableColumn.setCellFactory(TableDatetimeInputCell.create(dataControl, null, TimeType.Date));
                     } else {
-                        tableColumn.setCellFactory(TableData2DEditCell.create(dataControl, dataColumn));
+                        tableColumn.setCellFactory(TableDataCell.create(dataControl, dataColumn, true));
                     }
                     tableColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<List<String>, String>>() {
                         @Override
@@ -753,35 +803,11 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                     });
                     tableColumn.getStyleClass().add("editable-column");
                 } else {
-                    tableColumn.setCellFactory(new Callback<TableColumn<List<String>, String>, TableCell<List<String>, String>>() {
-                        @Override
-                        public TableCell<List<String>, String> call(TableColumn<List<String>, String> param) {
-                            try {
-                                TableCell<List<String>, String> cell = new TableCell<List<String>, String>() {
-                                    @Override
-                                    public void updateItem(String item, boolean empty) {
-                                        super.updateItem(item, empty);
-                                        setStyle(null);
-                                        try {
-                                            setStyle(data2D.cellStyle(styleFilter, getTableRow().getIndex(), name));
-                                        } catch (Exception e) {
-                                        }
-                                        if (empty || item == null) {
-                                            setText(null);
-                                            setGraphic(null);
-                                            return;
-                                        }
-                                        setText(dataColumn.display(item));
-                                    }
-                                };
-
-                                return cell;
-                            } catch (Exception e) {
-                                return null;
-                            }
-                        }
-                    });
-
+                    if (type == ColumnType.Boolean) {
+                        tableColumn.setCellFactory(new TableStringBooleanCell());
+                    } else {
+                        tableColumn.setCellFactory(TableDataCell.create(dataControl, dataColumn, false));
+                    }
                 }
 
                 tableColumn.setComparator(new Comparator<String>() {

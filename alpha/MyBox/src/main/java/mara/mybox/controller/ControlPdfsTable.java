@@ -17,7 +17,7 @@ import javafx.scene.layout.HBox;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.IntegerStringFromatConverter;
+import mara.mybox.fxml.converter.IntegerStringFromatConverter;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.PdfTools;

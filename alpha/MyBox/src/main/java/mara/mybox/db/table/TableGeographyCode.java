@@ -8,7 +8,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import mara.mybox.data.CoordinateSystem;
+import mara.mybox.data.GeoCoordinateSystem;
 import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.BatchSize;
 import static mara.mybox.db.DerbyBase.stringValue;
@@ -385,7 +385,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
     }
 
     // this way is not accurate since multiple addresses can have same coordinate
-    public static GeographyCode readCode(CoordinateSystem coordinateSystem,
+    public static GeographyCode readCode(GeoCoordinateSystem coordinateSystem,
             double longitude, double latitude, boolean decodeAncestors) {
         if (coordinateSystem == null || !validCoordinate(longitude, latitude)) {
             return null;
@@ -400,7 +400,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
     }
 
     public static GeographyCode readCode(Connection conn,
-            CoordinateSystem coordinateSystem,
+            GeoCoordinateSystem coordinateSystem,
             double longitude, double latitude, boolean decodeAncestors) {
         if (coordinateSystem == null || !validCoordinate(longitude, latitude)) {
             return null;
@@ -821,7 +821,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
             code.setLatitude(results.getDouble("latitude"));
             code.setAltitude(results.getDouble("altitude"));
             code.setPrecision(results.getDouble("precision"));
-            code.setCoordinateSystem(new CoordinateSystem(results.getShort("coordinate_system")));
+            code.setCoordinateSystem(new GeoCoordinateSystem(results.getShort("coordinate_system")));
             code.setChineseName(results.getString("chinese_name"));
             code.setEnglishName(results.getString("english_name"));
             code.setCode1(results.getString("code1"));

@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Map;
 import javax.xml.parsers.DocumentBuilderFactory;
 import mara.mybox.controller.LoadingController;
-import mara.mybox.data.CoordinateSystem;
-import static mara.mybox.data.CoordinateSystem.Value.GCJ_02;
+import mara.mybox.data.GeoCoordinateSystem;
+import static mara.mybox.data.GeoCoordinateSystem.Value.GCJ_02;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
@@ -49,12 +49,12 @@ public class GeographyCodeTools {
     /*
         Query codes by web service
      */
-    public static GeographyCode geoCode(CoordinateSystem coordinateSystem, String address) {
+    public static GeographyCode geoCode(GeoCoordinateSystem coordinateSystem, String address) {
         try {
             if (coordinateSystem == null) {
                 return null;
             }
-            if (coordinateSystem.getValue() == CoordinateSystem.Value.GCJ_02) {
+            if (coordinateSystem.getValue() == GeoCoordinateSystem.Value.GCJ_02) {
                 // GaoDe Map only supports info codes of China
                 String urlString = "https://restapi.amap.com/v3/geocode/geo?address="
                         + URLEncoder.encode(address, "UTF-8") + "&output=xml&key="
@@ -63,7 +63,7 @@ public class GeographyCodeTools {
                 geographyCode.setChineseName(address);
                 geographyCode.setCoordinateSystem(coordinateSystem);
                 return gaodeCode(urlString, geographyCode);
-            } else if (coordinateSystem.getValue() == CoordinateSystem.Value.CGCS2000) {
+            } else if (coordinateSystem.getValue() == GeoCoordinateSystem.Value.CGCS2000) {
                 //  http://api.tianditu.gov.cn/geocoder?ds={"keyWord":"泰山"}&tk=0ddeb917def62b4691500526cc30a9b1
                 String urlString = "http://api.tianditu.gov.cn/geocoder?ds="
                         + URLEncoder.encode("{\"keyWord\":\""
@@ -123,7 +123,7 @@ public class GeographyCodeTools {
         }
     }
 
-    public static GeographyCode geoCode(CoordinateSystem coordinateSystem, double longitude, double latitude, boolean decodeAncestors) {
+    public static GeographyCode geoCode(GeoCoordinateSystem coordinateSystem, double longitude, double latitude, boolean decodeAncestors) {
         try {
             GeographyCode geographyCode = TableGeographyCode.readCode(coordinateSystem, longitude, latitude, decodeAncestors);
             if (geographyCode != null) {
@@ -135,12 +135,12 @@ public class GeographyCodeTools {
         }
     }
 
-    public static GeographyCode geoCode(CoordinateSystem coordinateSystem, double longitude, double latitude) {
+    public static GeographyCode geoCode(GeoCoordinateSystem coordinateSystem, double longitude, double latitude) {
         try {
             if (coordinateSystem == null) {
                 return null;
             }
-            if (coordinateSystem.getValue() == CoordinateSystem.Value.GCJ_02) {
+            if (coordinateSystem.getValue() == GeoCoordinateSystem.Value.GCJ_02) {
                 String urlString = "https://restapi.amap.com/v3/geocode/regeo?location="
                         + longitude + "," + latitude + "&output=xml&key="
                         + UserConfig.getString("GaoDeMapServiceKey", AppValues.GaoDeMapServiceKey);
@@ -149,7 +149,7 @@ public class GeographyCodeTools {
                 geographyCode.setLatitude(latitude);
                 geographyCode.setCoordinateSystem(coordinateSystem);
                 return gaodeCode(urlString, geographyCode);
-            } else if (coordinateSystem.getValue() == CoordinateSystem.Value.CGCS2000) {
+            } else if (coordinateSystem.getValue() == GeoCoordinateSystem.Value.CGCS2000) {
                 String urlString = "http://api.tianditu.gov.cn/geocoder?postStr={'lon':"
                         + longitude + ",'lat':" + latitude
                         + ",'ver':1}&type=geocode&tk="
@@ -1345,9 +1345,9 @@ public class GeographyCodeTools {
                 }
             }
             if (names.contains("coordinate_system")) {
-                code.setCoordinateSystem(new CoordinateSystem(record.get("coordinate_system")));
+                code.setCoordinateSystem(new GeoCoordinateSystem(record.get("coordinate_system")));
             } else {
-                code.setCoordinateSystem(CoordinateSystem.defaultCode());
+                code.setCoordinateSystem(GeoCoordinateSystem.defaultCode());
             }
             if (names.contains("chinese_name")) {
                 code.setChineseName(record.get("chinese_name"));
@@ -1506,11 +1506,11 @@ public class GeographyCodeTools {
                 }
             }
             if (names.contains("coordinate_system")) {
-                code.setCoordinateSystem(new CoordinateSystem(record.get("coordinate_system")));
+                code.setCoordinateSystem(new GeoCoordinateSystem(record.get("coordinate_system")));
             } else if (names.contains(Languages.message(lang, "CoordinateSystem"))) {
-                code.setCoordinateSystem(new CoordinateSystem(record.get(Languages.message(lang, "CoordinateSystem"))));
+                code.setCoordinateSystem(new GeoCoordinateSystem(record.get(Languages.message(lang, "CoordinateSystem"))));
             } else {
-                code.setCoordinateSystem(CoordinateSystem.defaultCode());
+                code.setCoordinateSystem(GeoCoordinateSystem.defaultCode());
             }
             if (names.contains("chinese_name")) {
                 code.setChineseName(record.get("chinese_name"));
@@ -1778,7 +1778,7 @@ public class GeographyCodeTools {
     public static GeographyCode toCGCS2000(GeographyCode code, boolean setCS) {
         GeographyCode converted = toWGS84(code);
         if (converted != null && setCS) {
-            converted.setCoordinateSystem(CoordinateSystem.CGCS2000());
+            converted.setCoordinateSystem(GeoCoordinateSystem.CGCS2000());
         }
         return converted;
     }
@@ -1806,7 +1806,7 @@ public class GeographyCodeTools {
                     || code.getCoordinateSystem() == null) {
                 return code;
             }
-            CoordinateSystem cs = code.getCoordinateSystem();
+            GeoCoordinateSystem cs = code.getCoordinateSystem();
             double[] coordinate;
             switch (cs.getValue()) {
                 case GCJ_02:
@@ -1830,7 +1830,7 @@ public class GeographyCodeTools {
             newCode.setGcid(-1);
             newCode.setLongitude(coordinate[0]);
             newCode.setLatitude(coordinate[1]);
-            newCode.setCoordinateSystem(CoordinateSystem.WGS84());
+            newCode.setCoordinateSystem(GeoCoordinateSystem.WGS84());
             return newCode;
         } catch (Exception e) {
             return null;
@@ -1860,7 +1860,7 @@ public class GeographyCodeTools {
                     || code.getCoordinateSystem() == null) {
                 return code;
             }
-            CoordinateSystem cs = code.getCoordinateSystem();
+            GeoCoordinateSystem cs = code.getCoordinateSystem();
             double[] coordinate;
             switch (cs.getValue()) {
                 case CGCS2000:
@@ -1882,7 +1882,7 @@ public class GeographyCodeTools {
             newCode.setGcid(-1);
             newCode.setLongitude(coordinate[0]);
             newCode.setLatitude(coordinate[1]);
-            newCode.setCoordinateSystem(CoordinateSystem.GCJ02());
+            newCode.setCoordinateSystem(GeoCoordinateSystem.GCJ02());
             return newCode;
         } catch (Exception e) {
             return null;
@@ -1906,7 +1906,7 @@ public class GeographyCodeTools {
         return newCodes;
     }
 
-    public static List<GeographyCode> toGCJ02ByWebService(CoordinateSystem sourceCS, List<GeographyCode> codes) {
+    public static List<GeographyCode> toGCJ02ByWebService(GeoCoordinateSystem sourceCS, List<GeographyCode> codes) {
         try {
             if (codes == null || codes.isEmpty()) {
                 return null;
@@ -1927,7 +1927,7 @@ public class GeographyCodeTools {
                 }
                 String results = toGCJ02ByWebService(sourceCS, locationsString);
                 String[] locationsValues = results.split(";");
-                CoordinateSystem GCJ02 = CoordinateSystem.GCJ02();
+                GeoCoordinateSystem GCJ02 = GeoCoordinateSystem.GCJ02();
                 for (int i = 0; i < locationsValues.length; i++) {
                     String locationValue = locationsValues[i];
                     String[] values = locationValue.split(",");
@@ -1947,7 +1947,7 @@ public class GeographyCodeTools {
         }
     }
 
-    public static double[] toGCJ02ByWebService(CoordinateSystem sourceCS, double longitude, double latitude) {
+    public static double[] toGCJ02ByWebService(GeoCoordinateSystem sourceCS, double longitude, double latitude) {
         try {
 
             if (sourceCS == null || sourceCS.getValue() == GCJ_02) {
@@ -1967,7 +1967,7 @@ public class GeographyCodeTools {
         }
     }
 
-    public static String toGCJ02ByWebService(CoordinateSystem sourceCS, String locationsString) {
+    public static String toGCJ02ByWebService(GeoCoordinateSystem sourceCS, String locationsString) {
         try {
             if (sourceCS == null || sourceCS.getValue() == GCJ_02) {
                 return locationsString;

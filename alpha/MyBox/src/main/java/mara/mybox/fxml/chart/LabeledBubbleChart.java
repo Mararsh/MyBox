@@ -31,9 +31,10 @@ public class LabeledBubbleChart<X, Y> extends BubbleChart<X, Y> {
         this.setMaxHeight(Double.MAX_VALUE);
         VBox.setVgrow(this, Priority.ALWAYS);
         HBox.setHgrow(this, Priority.ALWAYS);
+        chartMaker = new XYChartMaker<>();
     }
 
-    public LabeledBubbleChart   setMaker(XYChartMaker<X,Y> chartMaker) {
+    public LabeledBubbleChart setMaker(XYChartMaker<X, Y> chartMaker) {
         this.chartMaker = chartMaker;
         return this;
     }

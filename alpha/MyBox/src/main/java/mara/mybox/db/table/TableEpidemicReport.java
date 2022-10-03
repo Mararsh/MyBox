@@ -353,7 +353,7 @@ public class TableEpidemicReport extends BaseTable<EpidemicReport> {
 //            }
 //            // Only care data and ignore timeDuration
 //            String dateString = DateTools.datetimeToString(report.getTime()).substring(0, 10) + EpidemicReport.COVID19TIME;
-//            report.setTime(DateTools.stringToDatetime(dateString).getTime());
+//            report.setTime(DateTools.encodeDate(dateString).getTime());
 //            return true;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

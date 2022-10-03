@@ -66,7 +66,7 @@ import mara.mybox.data.IntPoint;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.IntegerStringFromatConverter;
+import mara.mybox.fxml.converter.IntegerStringFromatConverter;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.RecentVisitMenu;

@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import mara.mybox.data.CoordinateSystem;
+import mara.mybox.data.GeoCoordinateSystem;
 import mara.mybox.db.data.Dataset;
 import mara.mybox.db.data.Location;
 import mara.mybox.db.table.BaseTable;
@@ -83,7 +83,7 @@ public class LocationDataImportMovebankController extends BaseImportCsvControlle
             if (v != null) {
                 data.setLatitude(Double.parseDouble(v));
             }
-            data.setCoordinateSystem(CoordinateSystem.WGS84());
+            data.setCoordinateSystem(GeoCoordinateSystem.WGS84());
             v = record.get("timestamp");
             if (v != null) {
                 Date d = DateTools.encodeEra(v);

@@ -169,7 +169,7 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
                 copyAttr.setOnlyCopyModified(copyModifiedCheck.isSelected());
                 copyAttr.setModifyAfter(0);
                 if (copyAttr.isOnlyCopyModified() && modifyAfterInput.getValue() != null) {
-                    copyAttr.setModifyAfter(DateTools.localDate2Date(modifyAfterInput.getValue()).getTime());
+                    copyAttr.setModifyAfter(DateTools.localDateToDate(modifyAfterInput.getValue()).getTime());
                 }
                 copyAttr.setDeleteNotExisteds(deleteNonExistedCheck.isSelected());
 

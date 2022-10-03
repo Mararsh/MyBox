@@ -26,7 +26,8 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.Data2DTools;
+import mara.mybox.data2d.Data2DExampleTools;
+import mara.mybox.data2d.Data2DMenuTools;
 import mara.mybox.data2d.DataClipboard;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.Data2DColumn;
@@ -662,17 +663,17 @@ public class ControlData2D extends BaseController {
             popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
 
-            popMenu.getItems().addAll(Data2DTools.editMenu(this));
+            popMenu.getItems().addAll(Data2DMenuTools.editMenu(this));
 
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            popMenu.getItems().addAll(Data2DTools.operationsMenu(tableController));
+            popMenu.getItems().addAll(Data2DMenuTools.operationsMenu(tableController));
 
             popMenu.getItems().add(new SeparatorMenuItem());
 
             if (data2D.isDataFile() || data2D.isUserTable() || data2D.isClipboard()) {
                 Menu examplesMenu = new Menu(message("Examples"), StyleTools.getIconImage("iconExamples.png"));
-                examplesMenu.getItems().addAll(Data2DTools.examplesMenu(this));
+                examplesMenu.getItems().addAll(Data2DExampleTools.examplesMenu(this));
                 popMenu.getItems().add(examplesMenu);
                 popMenu.getItems().add(new SeparatorMenuItem());
             }

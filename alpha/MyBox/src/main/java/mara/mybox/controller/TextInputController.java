@@ -1,16 +1,13 @@
 package mara.mybox.controller;
 
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -18,32 +15,16 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-11-15
  * @License Apache License Version 2.0
  */
-public class TextInputController extends BaseChildController {
+public class TextInputController extends BaseInputController {
 
-    protected SimpleBooleanProperty notify;
-
-    @FXML
-    protected Label titleLabel, commentsLabel;
     @FXML
     protected TextArea textArea;
     @FXML
     protected CheckBox wrapCheck;
 
-    public TextInputController() {
-        baseTitle = Languages.message("Table");
-    }
-
     public void setParameters(BaseController parent, String title, String initValue) {
         try {
-            parentController = parent;
-            if (parent != null) {
-                baseName = parent.baseName;
-                getMyStage().setTitle(parent.getTitle());
-            }
-            getMyStage().centerOnScreen();
-            titleLabel.setText(title);
-
-            notify = new SimpleBooleanProperty();
+            super.setParameters(parent, title);
 
             textArea.setText(initValue);
             wrapCheck.setSelected(UserConfig.getBoolean(baseName + "Wrap", true));
@@ -62,39 +43,9 @@ public class TextInputController extends BaseChildController {
         }
     }
 
-    public String getText() {
+    @Override
+    public String getInputString() {
         return textArea.getText();
-    }
-
-    public void setTitleLabel(String title) {
-        titleLabel.setText(title);
-    }
-
-    public void setCommentsLabel(String comments) {
-        commentsLabel.setText(comments);
-    }
-
-    @FXML
-    @Override
-    public void okAction() {
-        notify.set(!notify.get());
-    }
-
-    public SimpleBooleanProperty getNotify() {
-        return notify;
-    }
-
-    public void setNotify(SimpleBooleanProperty notify) {
-        this.notify = notify;
-    }
-
-    @Override
-    public void cleanPane() {
-        try {
-            notify = null;
-        } catch (Exception e) {
-        }
-        super.cleanPane();
     }
 
     public static TextInputController open(BaseController parent, String title, String initValue) {

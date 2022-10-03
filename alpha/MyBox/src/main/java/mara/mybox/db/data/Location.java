@@ -2,7 +2,7 @@ package mara.mybox.db.data;
 
 import java.io.File;
 import java.util.Date;
-import mara.mybox.data.CoordinateSystem;
+import mara.mybox.data.GeoCoordinateSystem;
 import mara.mybox.data.Era;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
@@ -24,7 +24,7 @@ public class Location extends BaseData implements Cloneable {
     protected double longitude, latitude, altitude, precision, speed, dataValue, dataSize;
     protected short direction;
     protected File image;
-    protected CoordinateSystem coordinateSystem;
+    protected GeoCoordinateSystem coordinateSystem;
     protected Dataset dataset;
     protected Era startEra, endEra;
 
@@ -33,7 +33,7 @@ public class Location extends BaseData implements Cloneable {
         longitude = latitude = altitude = precision = speed = dataValue = dataSize = AppValues.InvalidDouble;
         startTime = endTime = duration = AppValues.InvalidLong;
         direction = AppValues.InvalidShort;
-        coordinateSystem = CoordinateSystem.defaultCode();
+        coordinateSystem = GeoCoordinateSystem.defaultCode();
     }
 
     @Override
@@ -41,7 +41,7 @@ public class Location extends BaseData implements Cloneable {
         try {
             Location newCode = (Location) super.clone();
             if (coordinateSystem != null) {
-                newCode.setCoordinateSystem((CoordinateSystem) coordinateSystem.clone());
+                newCode.setCoordinateSystem((GeoCoordinateSystem) coordinateSystem.clone());
             }
             if (dataset != null) {
                 newCode.setDataset((Dataset) dataset.clone());
@@ -114,7 +114,7 @@ public class Location extends BaseData implements Cloneable {
                     return true;
                 case "coordinate_system":
                     data.setCoordinateSystem(value == null
-                            ? CoordinateSystem.defaultCode() : new CoordinateSystem((short) value));
+                            ? GeoCoordinateSystem.defaultCode() : new GeoCoordinateSystem((short) value));
                     return true;
                 case "data_value":
                     data.setDataValue(value == null ? AppValues.InvalidDouble : (Double) value);
@@ -168,7 +168,7 @@ public class Location extends BaseData implements Cloneable {
                 return data.getDirection();
             case "coordinate_system":
                 return data.getCoordinateSystem() == null
-                        ? CoordinateSystem.defaultCode().shortValue()
+                        ? GeoCoordinateSystem.defaultCode().shortValue()
                         : data.getCoordinateSystem().shortValue();
             case "data_value":
                 return data.getDataValue();
@@ -202,7 +202,7 @@ public class Location extends BaseData implements Cloneable {
             case "start_time":
                 return DateTools.textEra(data.getStartEra());
             case "coordinate_system":
-                CoordinateSystem cs = data.getCoordinateSystem();
+                GeoCoordinateSystem cs = data.getCoordinateSystem();
                 return cs != null ? cs.name() : null;
             case "end_time":
                 return DateTools.textEra(data.getEndEra());
@@ -413,11 +413,11 @@ public class Location extends BaseData implements Cloneable {
         return this;
     }
 
-    public CoordinateSystem getCoordinateSystem() {
+    public GeoCoordinateSystem getCoordinateSystem() {
         return coordinateSystem;
     }
 
-    public Location setCoordinateSystem(CoordinateSystem coordinateSystem) {
+    public Location setCoordinateSystem(GeoCoordinateSystem coordinateSystem) {
         this.coordinateSystem = coordinateSystem;
         return this;
     }

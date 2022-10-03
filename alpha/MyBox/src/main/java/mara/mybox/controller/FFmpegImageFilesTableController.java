@@ -10,7 +10,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LongStringFromatConverter;
+import mara.mybox.fxml.converter.LongStringFromatConverter;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;

@@ -95,7 +95,7 @@ public class EpidemicReportTools {
         try {
             EpidemicReport report = new EpidemicReport();
             report.setDataSet(record.get("DataSet"));
-            report.setTime(DateTools.stringToDatetime(record.get("Time")).getTime());
+            report.setTime(DateTools.encodeDate(record.get("Time")).getTime());
             report.setLocationid(Long.valueOf(record.get("Locationid")));
             report.setConfirmed(Long.valueOf(record.get("Confirmed")));
             report.setHealed(Long.valueOf(record.get("Healed")));
@@ -129,14 +129,14 @@ public class EpidemicReportTools {
             }
             if (names.contains("Time")) {
                 try {
-                    report.setTime(DateTools.stringToDatetime(record.get("Time")).getTime());
+                    report.setTime(DateTools.encodeDate(record.get("Time")).getTime());
                 } catch (Exception e) {
                     ret.put("message", "Miss Time1");
                     return ret;
                 }
             } else if (names.contains(Languages.message(lang, "Time"))) {
                 try {
-                    report.setTime(DateTools.stringToDatetime(record.get(Languages.message(lang, "Time"))).getTime());
+                    report.setTime(DateTools.encodeDate(record.get(Languages.message(lang, "Time"))).getTime());
                 } catch (Exception e) {
                     ret.put("message", "Miss Time2");
                     return ret;

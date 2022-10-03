@@ -31,9 +31,10 @@ public class LabeledBarChart<X, Y> extends BarChart<X, Y> {
         this.setMaxHeight(Double.MAX_VALUE);
         VBox.setVgrow(this, Priority.ALWAYS);
         HBox.setHgrow(this, Priority.ALWAYS);
+        chartMaker = new XYChartMaker<Axis, Axis>();
     }
 
-    public LabeledBarChart   setMaker(XYChartMaker<X,Y> chartMaker) {
+    public LabeledBarChart setMaker(XYChartMaker<X, Y> chartMaker) {
         this.chartMaker = chartMaker;
         return this;
     }

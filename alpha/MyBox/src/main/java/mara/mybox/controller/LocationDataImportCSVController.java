@@ -1,11 +1,12 @@
 package mara.mybox.controller;
 
 import java.sql.Connection;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import mara.mybox.data.CoordinateSystem;
+import mara.mybox.data.GeoCoordinateSystem;
 import mara.mybox.db.data.Dataset;
 import mara.mybox.db.data.Location;
 import mara.mybox.db.table.BaseTable;
@@ -13,7 +14,7 @@ import mara.mybox.db.table.TableDataset;
 import mara.mybox.db.table.TableLocationData;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVRecord;
 
 /**
@@ -28,7 +29,7 @@ public class LocationDataImportCSVController extends BaseImportCsvController<Loc
     protected TableDataset tableDataset;
 
     public LocationDataImportCSVController() {
-        baseTitle = Languages.message("ImportLocationDataCVS");
+        baseTitle = message("ImportLocationDataCVS");
     }
 
     @Override
@@ -55,10 +56,10 @@ public class LocationDataImportCSVController extends BaseImportCsvController<Loc
 
     @Override
     protected boolean validHeader(List<String> names) {
-        String lang = names.contains(Languages.message("zh", "Dataset")) ? "zh" : "en";
-        if (!names.contains(Languages.message(lang, "Longitude"))
-                || !names.contains(Languages.message(lang, "Latitude"))) {
-            updateLogs(Languages.message("InvalidFormat"), true);
+        String lang = names.contains(message("zh", "Dataset")) ? "zh" : "en";
+        if (!names.contains(message(lang, "Longitude"))
+                || !names.contains(message(lang, "Latitude"))) {
+            updateLogs(message("InvalidFormat"), true);
             return false;
         }
         return true;
@@ -67,9 +68,9 @@ public class LocationDataImportCSVController extends BaseImportCsvController<Loc
     @Override
     protected Location readRecord(Connection conn, List<String> names, CSVRecord record) {
         try {
-            String lang = names.contains(Languages.message("zh", "Dataset")) ? "zh" : "en";
+            String lang = names.contains(message("zh", "Dataset")) ? "zh" : "en";
             Location data = new Location();
-            String datasetName = record.get(Languages.message(lang, "Dataset"));
+            String datasetName = record.get(message(lang, "Dataset"));
             Dataset dataset = datasets.get(datasetName);
             if (dataset == null) {
                 dataset = tableLocationData.queryAndCreateDataset(conn, datasetName);
@@ -77,86 +78,93 @@ public class LocationDataImportCSVController extends BaseImportCsvController<Loc
             }
             data.setDataset(dataset);
             data.setDatasetid(dataset.getDsid());
-            if (names.contains(Languages.message(lang, "Label"))) {
-                data.setLabel(record.get(Languages.message(lang, "Label")));
+            if (names.contains(message(lang, "Label"))) {
+                data.setLabel(record.get(message(lang, "Label")));
             }
-            if (names.contains(Languages.message(lang, "Address"))) {
-                data.setAddress(record.get(Languages.message(lang, "Address")));
+            if (names.contains(message(lang, "Address"))) {
+                data.setAddress(record.get(message(lang, "Address")));
             }
-            String v = record.get(Languages.message(lang, "Longitude"));
+            String v = record.get(message(lang, "Longitude"));
             if (v != null) {
                 data.setLongitude(Double.parseDouble(v));
             }
-            v = record.get(Languages.message(lang, "Latitude"));
+            v = record.get(message(lang, "Latitude"));
             if (v != null) {
                 data.setLatitude(Double.parseDouble(v));
             }
-            if (names.contains(Languages.message(lang, "Altitude"))) {
-                v = record.get(Languages.message(lang, "Altitude"));
+            if (names.contains(message(lang, "Altitude"))) {
+                v = record.get(message(lang, "Altitude"));
                 if (v != null) {
                     data.setAltitude(Double.parseDouble(v));
                 }
             }
-            if (names.contains(Languages.message(lang, "Precision"))) {
-                v = record.get(Languages.message(lang, "Precision"));
+            if (names.contains(message(lang, "Precision"))) {
+                v = record.get(message(lang, "Precision"));
                 if (v != null) {
                     data.setPrecision(Double.parseDouble(v));
                 }
             }
-            if (names.contains(Languages.message(lang, "Speed"))) {
-                v = record.get(Languages.message(lang, "Speed"));
+            if (names.contains(message(lang, "Speed"))) {
+                v = record.get(message(lang, "Speed"));
                 if (v != null) {
                     data.setSpeed(Double.parseDouble(v));
                 }
             }
-            if (names.contains(Languages.message(lang, "Direction"))) {
-                v = record.get(Languages.message(lang, "Direction"));
+            if (names.contains(message(lang, "Direction"))) {
+                v = record.get(message(lang, "Direction"));
                 if (v != null) {
                     data.setDirection(Short.parseShort(v));
                 }
             }
-            if (names.contains(Languages.message(lang, "CoordinateSystem"))) {
-                v = record.get(Languages.message(lang, "CoordinateSystem"));
+            if (names.contains(message(lang, "CoordinateSystem"))) {
+                v = record.get(message(lang, "CoordinateSystem"));
                 if (v != null) {
-                    data.setCoordinateSystem(new CoordinateSystem(v));
+                    data.setCoordinateSystem(new GeoCoordinateSystem(v));
                 }
             }
-            if (names.contains(Languages.message(lang, "DataValue"))) {
-                v = record.get(Languages.message(lang, "DataValue"));
+            if (names.contains(message(lang, "DataValue"))) {
+                v = record.get(message(lang, "DataValue"));
                 if (v != null) {
                     data.setDataValue(Double.parseDouble(v));
                 }
             }
-            if (names.contains(Languages.message(lang, "DataSize"))) {
-                v = record.get(Languages.message(lang, "DataSize"));
+            if (names.contains(message(lang, "DataSize"))) {
+                v = record.get(message(lang, "DataSize"));
                 if (v != null) {
                     data.setDataSize(Double.parseDouble(v));
                 }
             }
-            if (names.contains(Languages.message(lang, "StartTime"))) {
-                v = record.get(Languages.message(lang, "StartTime"));
-                if (v != null) {
-                    Date d = DateTools.encodeEra(v);
-                    if (d != null) {
-                        data.setStartTime(d.getTime());
+            List<String> tnames = Arrays.asList(message(lang, "StartTime"), "Start Time", "start time", "start_time", "starttime");
+            for (String tname : tnames) {
+                if (names.contains(tname)) {
+                    v = record.get(tname);
+                    if (v != null) {
+                        Date d = DateTools.encodeEra(v);
+                        if (d != null) {
+                            data.setStartTime(d.getTime());
+                            break;
+                        }
                     }
                 }
             }
-            if (names.contains(Languages.message(lang, "EndTime"))) {
-                v = record.get(Languages.message(lang, "EndTime"));
-                if (v != null) {
-                    data.setEndTime(DateTools.encodeEra(v).getTime());
-                    Date d = DateTools.encodeEra(v);
-                    if (d != null) {
-                        data.setEndTime(d.getTime());
+            tnames = Arrays.asList(message(lang, "EndTime"), "End Time", "end time", "end_time", "endtime");
+            for (String tname : tnames) {
+                if (names.contains(tname)) {
+                    v = record.get(tname);
+                    if (v != null) {
+                        Date d = DateTools.encodeEra(v);
+                        if (d != null) {
+                            data.setEndTime(d.getTime());
+                            break;
+                        }
                     }
                 }
             }
-            if (names.contains(Languages.message(lang, "Image"))) {
-                data.setImageName(record.get(Languages.message(lang, "Image")));
+            if (names.contains(message(lang, "Image"))) {
+                data.setImageName(record.get(message(lang, "Image")));
             }
-            if (names.contains(Languages.message(lang, "Comments"))) {
-                data.setComments(record.get(Languages.message(lang, "Comments")));
+            if (names.contains(message(lang, "Comments"))) {
+                data.setComments(record.get(message(lang, "Comments")));
             }
             return data;
         } catch (Exception e) {

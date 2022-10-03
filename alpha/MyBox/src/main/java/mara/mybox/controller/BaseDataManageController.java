@@ -438,6 +438,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
             return;
         }
         super.checkButtons();
+        clearButton.setDisable(false);
 
         boolean isEmpty = tableData == null || tableData.isEmpty();
         boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;

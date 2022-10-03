@@ -1,6 +1,6 @@
 package mara.mybox.db.data;
 
-import mara.mybox.data.CoordinateSystem;
+import mara.mybox.data.GeoCoordinateSystem;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Languages;
@@ -23,7 +23,7 @@ public class GeographyCode extends BaseData {
     protected double longitude, latitude, altitude, precision;
     protected GeographyCode ownerCode, continentCode, countryCode, provinceCode, cityCode,
             countyCode, townCode, villageCode, buildingCode;
-    protected CoordinateSystem coordinateSystem;
+    protected GeoCoordinateSystem coordinateSystem;
     protected AddressSource source;
     protected String sourceName;
 
@@ -62,7 +62,7 @@ public class GeographyCode extends BaseData {
                 newCode.setLevelCode((GeographyCodeLevel) levelCode.clone());
             }
             if (coordinateSystem != null) {
-                newCode.setCoordinateSystem((CoordinateSystem) coordinateSystem.clone());
+                newCode.setCoordinateSystem((GeoCoordinateSystem) coordinateSystem.clone());
             }
             if (ownerCode != null) {
                 newCode.setOwnerCode((GeographyCode) ownerCode.clone());
@@ -136,7 +136,7 @@ public class GeographyCode extends BaseData {
                     return true;
                 case "coordinate_system":
                     data.setCoordinateSystem(value == null
-                            ? CoordinateSystem.defaultCode() : new CoordinateSystem((short) value));
+                            ? GeoCoordinateSystem.defaultCode() : new GeoCoordinateSystem((short) value));
                     return true;
                 case "area":
                     data.setArea(value == null ? AppValues.InvalidLong : (long) value);
@@ -234,7 +234,7 @@ public class GeographyCode extends BaseData {
                 return data.getPrecision();
             case "coordinate_system":
                 return data.getCoordinateSystem() == null
-                        ? CoordinateSystem.defaultCode().shortValue()
+                        ? GeoCoordinateSystem.defaultCode().shortValue()
                         : data.getCoordinateSystem().shortValue();
             case "chinese_name":
                 return data.getChineseName();
@@ -308,7 +308,7 @@ public class GeographyCode extends BaseData {
             case "level":
                 return data.getLevelName();
             case "coordinate_system":
-                CoordinateSystem cs = data.getCoordinateSystem();
+                GeoCoordinateSystem cs = data.getCoordinateSystem();
                 return cs != null ? cs.name() : null;
             case "continent":
                 return data.getContinentName();
@@ -774,9 +774,9 @@ public class GeographyCode extends BaseData {
         return levelName;
     }
 
-    public CoordinateSystem getCoordinateSystem() {
+    public GeoCoordinateSystem getCoordinateSystem() {
         if (coordinateSystem == null) {
-            coordinateSystem = CoordinateSystem.defaultCode();
+            coordinateSystem = GeoCoordinateSystem.defaultCode();
         }
         return coordinateSystem;
     }
@@ -1101,7 +1101,7 @@ public class GeographyCode extends BaseData {
         this.ownerCode = ownerCode;
     }
 
-    public void setCoordinateSystem(CoordinateSystem coordinateSystem) {
+    public void setCoordinateSystem(GeoCoordinateSystem coordinateSystem) {
         this.coordinateSystem = coordinateSystem;
     }
 

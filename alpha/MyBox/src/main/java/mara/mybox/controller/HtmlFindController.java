@@ -394,7 +394,7 @@ public class HtmlFindController extends WebAddressController {
 
     @FXML
     public void popFindExample(MouseEvent mouseEvent) {
-        PopTools.popRegexExample(this, findInput, mouseEvent);
+        PopTools.popRegexExamples(this, findInput, mouseEvent);
     }
 
     @FXML

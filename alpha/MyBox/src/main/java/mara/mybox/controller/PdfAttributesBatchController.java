@@ -250,7 +250,7 @@ public class PdfAttributesBatchController extends BaseBatchPdfController {
             return;
         }
         try {
-            Date d = DateTools.stringToDatetime(s);
+            Date d = DateTools.encodeDate(s);
             if (d != null) {
                 createTimeInput.setStyle(null);
                 createTime = d;
@@ -274,7 +274,7 @@ public class PdfAttributesBatchController extends BaseBatchPdfController {
             return;
         }
         try {
-            Date d = DateTools.stringToDatetime(s);
+            Date d = DateTools.encodeDate(s);
             if (d != null) {
                 modifyTimeInput.setStyle(null);
                 modifyTime = d;

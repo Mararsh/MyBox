@@ -531,8 +531,9 @@ public class BaseDataAdaptor {
                     }
                     return svalue != AppValues.InvalidShort ? svalue + "" : null;
                 case Datetime:
-                case Date:
                     return DateTools.datetimeToString((Date) value);
+                case Date:
+                    return DateTools.dateToString((Date) value);
             }
         } catch (Exception e) {
             MyBoxLog.error(e, column.getColumnName());

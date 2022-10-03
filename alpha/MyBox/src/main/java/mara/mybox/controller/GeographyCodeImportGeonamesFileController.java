@@ -4,7 +4,7 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import mara.mybox.data.CoordinateSystem;
+import mara.mybox.data.GeoCoordinateSystem;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeLevel;
@@ -84,7 +84,7 @@ public class GeographyCodeImportGeonamesFileController extends BaseImportCsvCont
                         code.setCountry(countryCode.getGcid());
                         code.setEnglishName(place);
                         code.setCode1(record.get(1));
-                        code.setCoordinateSystem(CoordinateSystem.WGS84());
+                        code.setCoordinateSystem(GeoCoordinateSystem.WGS84());
                         String province = record.get(3);
                         String city = record.get(5);
                         String county = record.get(7);
@@ -121,7 +121,7 @@ public class GeographyCodeImportGeonamesFileController extends BaseImportCsvCont
                                 provinceCode.setLevelCode(new GeographyCodeLevel((short) 4));
                                 provinceCode.setLatitude(latitude);
                                 provinceCode.setLongitude(longitude);
-                                provinceCode.setCoordinateSystem(CoordinateSystem.WGS84());
+                                provinceCode.setCoordinateSystem(GeoCoordinateSystem.WGS84());
                                 if (TableGeographyCode.insert(conn, insert, provinceCode)) {
                                     insertCount++;
                                     importCount++;
@@ -166,7 +166,7 @@ public class GeographyCodeImportGeonamesFileController extends BaseImportCsvCont
                                 cityCode.setLevelCode(new GeographyCodeLevel((short) 5));
                                 cityCode.setLatitude(latitude);
                                 cityCode.setLongitude(longitude);
-                                cityCode.setCoordinateSystem(CoordinateSystem.WGS84());
+                                cityCode.setCoordinateSystem(GeoCoordinateSystem.WGS84());
                                 if (TableGeographyCode.insert(conn, insert, cityCode)) {
                                     insertCount++;
                                     importCount++;
@@ -217,7 +217,7 @@ public class GeographyCodeImportGeonamesFileController extends BaseImportCsvCont
                                 countyCode.setLevel((short) 6);
                                 countyCode.setLatitude(latitude);
                                 countyCode.setLongitude(longitude);
-                                countyCode.setCoordinateSystem(CoordinateSystem.WGS84());
+                                countyCode.setCoordinateSystem(GeoCoordinateSystem.WGS84());
                                 if (TableGeographyCode.insert(conn, insert, countyCode)) {
                                     insertCount++;
                                     importCount++;

@@ -1,5 +1,6 @@
 package mara.mybox.tools;
 
+import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
@@ -15,8 +16,10 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.TimeZone;
 import mara.mybox.data.Era;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.TimeFormats;
 
 /**
@@ -25,6 +28,10 @@ import mara.mybox.value.TimeFormats;
  * @License Apache License Version 2.0
  */
 public class DateTools {
+
+    public static enum TimeType {
+        DateTime, Date, Era
+    }
 
     // invalid values are always in the end
     public static int compare(String s1, String s2, boolean desc) {
@@ -43,6 +50,18 @@ public class DateTools {
         return DoubleTools.compare(d1, d2, desc);
     }
 
+    public static void printFormats() {
+        MyBoxLog.console(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, Locale.ENGLISH).format(new Date()));
+        MyBoxLog.console(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, Locale.CHINESE).format(new Date()));
+        MyBoxLog.console(DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.ENGLISH).format(new Date()));
+        MyBoxLog.console(DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.CHINESE).format(new Date()));
+        MyBoxLog.console(DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, Locale.ENGLISH).format(new Date()));
+        MyBoxLog.console(DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, Locale.CHINESE).format(new Date()));
+        MyBoxLog.console(DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL, Locale.ENGLISH).format(new Date()));
+        MyBoxLog.console(DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL, Locale.CHINESE).format(new Date()));
+
+    }
+
     public static TimeZone getTimeZone() {
         return TimeZone.getDefault();
     }
@@ -59,14 +78,14 @@ public class DateTools {
     }
 
     public static String nowString3() {
-        return datetimeToString(new Date(), TimeFormats.DatetimeFormat3, getTimeZone());
+        return datetimeToString(new Date(), TimeFormats.DatetimeFormat3);
     }
 
     public static boolean isBC(long value) {
         if (value == AppValues.InvalidLong) {
             return false;
         }
-        String s = datetimeToString(new Date(value), TimeFormats.EraDatetimeEn, Languages.LocaleEn);
+        String s = datetimeToString(new Date(value), TimeFormats.EraDatetimeEn, Languages.LocaleEn, null);
         return s.contains("BC");
     }
 
@@ -94,7 +113,7 @@ public class DateTools {
         boolean isChinese = Languages.isChinese();
         Locale locale = isChinese ? Languages.LocaleZhCN : Languages.LocaleEn;
         Date d = new Date(value);
-        String s = datetimeToString(d, TimeFormats.EraDatetimeEn, Languages.LocaleEn);
+        String s = datetimeToString(d, TimeFormats.EraDatetimeEn, Languages.LocaleEn, null);
         boolean showEra = s.contains("BC") || !ignoreAD;
         String sformat;
         if (isChinese) {
@@ -161,7 +180,7 @@ public class DateTools {
                     break;
             }
         }
-        return DateTools.datetimeToString(d, sformat, locale);
+        return DateTools.datetimeToString(d, sformat, locale, null);
     }
 
     public static Date encodeEra(String strDate) {
@@ -170,7 +189,7 @@ public class DateTools {
         }
         String s = strDate.trim().replace("T", " "), format;
         Locale locale;
-        if (s.contains(Languages.message("zh", "BC")) || s.contains(Languages.message("zh", "AD"))) {
+        if (s.contains(message("zh", "BC")) || s.contains(message("zh", "AD"))) {
             locale = Languages.LocaleZhCN;
             if (s.contains(":") && s.contains("-")) {
                 if (s.contains(".")) {
@@ -204,7 +223,7 @@ public class DateTools {
             } else {
                 format = TimeFormats.EraYearZh;
             }
-        } else if (s.contains(Languages.message("en", "BC")) || s.contains(Languages.message("en", "AD"))) {
+        } else if (s.contains(message("en", "BC")) || s.contains(message("en", "AD"))) {
             locale = Languages.LocaleEn;
             if (s.contains(":") && s.contains("-")) {
                 if (s.contains(".")) {
@@ -239,8 +258,7 @@ public class DateTools {
                 format = TimeFormats.EraYearEn;
             }
         } else {
-            locale = Languages.isChinese() ? Languages.LocaleZhCN : Languages.LocaleEn;
-            return adToDatetime(s, locale);
+            return encodeDate(s);
         }
         Date d = stringToDatetime(s, format, locale);
 //        MyBoxLog.debug(s + "  " + locale.getLanguage() + " " + format + "  " + locale + "  "
@@ -248,46 +266,71 @@ public class DateTools {
         return d;
     }
 
-    public static Date adToDatetime(String strDate, Locale locale) {
-        if (strDate == null) {
-            return null;
-        }
-        String s = strDate.trim().replace("T", " "), format;
-        if (s.contains(":") && s.contains("-")) {
-            if (s.contains(".")) {
-                format = TimeFormats.DatetimeMs;
-            } else {
-                format = TimeFormats.DatetimeFormat;
+    public static Date encodeDate(String strDate) {
+        Locale locale = Languages.isChinese() ? Languages.LocaleZhCN : Languages.LocaleEn;
+        return encodeDate(strDate, locale);
+    }
+
+    public static Date encodeDate(String strDate, Locale locale) {
+        try {
+            if (strDate == null || strDate.isBlank()) {
+                return null;
             }
-            if (s.contains("+")) {
-                format += " Z";
+            try {
+                return new SimpleDateFormat().parse(strDate);
+            } catch (Exception e) {
             }
-        } else if (s.contains("-")) {
+            String s = strDate.trim().replace("T", " "), format;
             String ss = s;
             if (ss.startsWith("-")) {
-                ss = ss.substring(1);
+                ss = s.substring(1);
             }
-            if (!ss.contains("-")) {
-                format = TimeFormats.YearFormat;
-            } else {
-                if (ss.indexOf("-") == ss.lastIndexOf("-")) {
-                    format = TimeFormats.MonthFormat;
+            if (s.contains("/")) {
+                if (s.contains(":")) {
+                    if (s.contains(".")) {
+                        format = TimeFormats.DatetimeMsE;
+                    } else {
+                        format = TimeFormats.DatetimeFormatE;
+                    }
+                    if (s.contains("+")) {
+                        format += " Z";
+                    }
+                } else if (s.indexOf("/") == s.lastIndexOf("/")) {
+                    format = TimeFormats.MonthFormatE;
                 } else {
-                    format = TimeFormats.DateFormat;
+                    format = TimeFormats.DateFormatE;
                 }
-            }
-        } else if (s.contains(":")) {
-            if (s.contains(".")) {
-                format = TimeFormats.TimeMs;
+            } else if (ss.contains("-")) {
+                if (ss.contains(":")) {
+                    if (ss.contains(".")) {
+                        format = TimeFormats.EraDatetimeMs;
+                    } else {
+                        format = TimeFormats.EraDatetime;
+                    }
+                    if (ss.contains("+")) {
+                        format += " Z";
+                    }
+                } else if (ss.indexOf("-") == ss.lastIndexOf("-")) {
+                    format = TimeFormats.EraMonth;
+                } else {
+                    format = TimeFormats.EraDate;
+                }
+            } else if (s.contains(":")) {
+                if (s.contains(".")) {
+                    format = TimeFormats.TimeMs;
+                } else {
+                    format = TimeFormats.TimeFormat;
+                }
             } else {
-                format = TimeFormats.TimeFormat;
+                format = TimeFormats.EraYear;
             }
-        } else {
-            format = TimeFormats.YearFormat;
-        }
+//            MyBoxLog.debug(s + "  " + format);
 //        MyBoxLog.debug(s + "  " + format + "  " + locale + "  "
 //                + stringToDatetime(s, format, locale).getTime());
-        return stringToDatetime(s, format, locale);
+            return stringToDatetime(s, format, locale);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static String datetimeToString(long dvalue) {
@@ -298,11 +341,7 @@ public class DateTools {
     }
 
     public static String datetimeToString(Date theDate) {
-        return datetimeToString(theDate, getTimeZone());
-    }
-
-    public static String datetimeToString(Date theDate, TimeZone theZone) {
-        return datetimeToString(theDate, TimeFormats.DatetimeFormat, theZone);
+        return datetimeToString(theDate, null, null, null);
     }
 
     public static String datetimeToString(long theDate, String format) {
@@ -313,43 +352,32 @@ public class DateTools {
     }
 
     public static String datetimeToString(Date theDate, String format) {
-        return datetimeToString(theDate, format, Locale.getDefault());
+        return datetimeToString(theDate, format, null, null);
     }
 
-    public static String datetimeToString(Date theDate, String format, TimeZone theZone) {
-        if (theDate == null || theZone == null) {
-            return null;
-        }
-        SimpleDateFormat formatter = new SimpleDateFormat(format);
-        formatter.setTimeZone(theZone);
-        String dateString = formatter.format(theDate);
-        return dateString;
-    }
-
-    public static String datetimeToString(Date theDate, String format, Locale locale) {
-        if (theDate == null || locale == null) {
-            return null;
-        }
-        SimpleDateFormat formatter = new SimpleDateFormat(format, locale);
-        String dateString = formatter.format(theDate);
-        return dateString;
-    }
-
-    public static String datetime5ToString(Date theDate) {
+    public static String datetimeToString(Date theDate, String inFormat, Locale inLocale, TimeZone inZone) {
         if (theDate == null) {
             return null;
         }
-        SimpleDateFormat formatter = new SimpleDateFormat(TimeFormats.EraDatetimeZh, Languages.LocaleEn);
-        formatter.setTimeZone(getTimeZone());
+        String format = inFormat;
+        if (format == null || format.isBlank()) {
+            format = TimeFormats.DatetimeFormat;
+        }
+        Locale locale = inLocale;
+        if (locale == null) {
+            locale = Locale.getDefault();
+        }
+        TimeZone zone = inZone;
+        if (zone == null) {
+            zone = getTimeZone();
+        }
+        SimpleDateFormat formatter = new SimpleDateFormat(format, locale);
+        formatter.setTimeZone(zone);
         String dateString = formatter.format(theDate);
         return dateString;
     }
 
-    public static String stringToString(String theDate) {
-        return datetimeToString(stringToDatetime(theDate));
-    }
-
-    public static Date localDate2Date(LocalDate localDate) {
+    public static Date localDateToDate(LocalDate localDate) {
         try {
             ZoneId zoneId = ZoneId.systemDefault();
             ZonedDateTime zdt = localDate.atStartOfDay(zoneId);
@@ -360,7 +388,7 @@ public class DateTools {
         }
     }
 
-    public static LocalDate date2LocalDate(Date date) {
+    public static LocalDate dateToLocalDate(Date date) {
         try {
             Instant instant = date.toInstant();
             ZoneId zoneId = ZoneId.systemDefault();
@@ -371,19 +399,12 @@ public class DateTools {
         }
     }
 
-    public static Date stringToDatetime(String strDate) {
-        return DateTools.stringToDatetime(strDate, "yyyy-MM-dd HH:mm:ss");
+    public static String localDateToString(LocalDate localDate) {
+        return dateToString(localDateToDate(localDate));
     }
 
-    public static Date stringToDatetime5(String strDate) {
-        try {
-            SimpleDateFormat formatter = new SimpleDateFormat(TimeFormats.EraDatetimeZh, Locale.getDefault());
-//            formatter.setTimeZone(theZone);
-            ParsePosition pos = new ParsePosition(0);
-            return formatter.parse(strDate, pos);
-        } catch (Exception e) {
-            return null;
-        }
+    public static LocalDate stringToLocalDate(String strDate) {
+        return dateToLocalDate(encodeEra(strDate));
     }
 
     public static Date stringToDatetime(String strDate, String format) {
@@ -395,6 +416,7 @@ public class DateTools {
                 || format == null || format.isEmpty()) {
             return null;
         }
+//        MyBoxLog.debug(strDate + "  " + format + "  " + locale);
         try {
             SimpleDateFormat formatter = new SimpleDateFormat(format, locale);
 //            formatter.setTimeZone(theZone);
@@ -406,11 +428,15 @@ public class DateTools {
     }
 
     public static Date parseMonth(String month) {
-        return stringToDatetime(month, "yyyy-MM");
+        return DateTools.encodeEra(month);
     }
 
     public static Date thisMonth() {
         return DateTools.stringToDatetime(nowString().substring(0, 7), "yyyy-MM");
+    }
+
+    public static String dateToString(Date theDate) {
+        return datetimeToString(theDate, TimeFormats.DateFormat);
     }
 
     public static String dateToMonthString(Date theDate) {
@@ -469,30 +495,30 @@ public class DateTools {
         if (years > 0) {
             if (months > 0) {
                 if (days > 0) {
-                    date = MessageFormat.format(Languages.message("DurationYearsMonthsDays"),
+                    date = MessageFormat.format(message("DurationYearsMonthsDays"),
                             years, months, days);
                 } else {
-                    date = MessageFormat.format(Languages.message("DurationYearsMonths"),
+                    date = MessageFormat.format(message("DurationYearsMonths"),
                             years, months);
                 }
             } else if (days > 0) {
-                date = MessageFormat.format(Languages.message("DurationYearsDays"),
+                date = MessageFormat.format(message("DurationYearsDays"),
                         years, days);
             } else {
-                date = MessageFormat.format(Languages.message("DurationYears"),
+                date = MessageFormat.format(message("DurationYears"),
                         years);
             }
         } else {
             if (months > 0) {
                 if (days > 0) {
-                    date = MessageFormat.format(Languages.message("DurationMonthsDays"),
+                    date = MessageFormat.format(message("DurationMonthsDays"),
                             months, days);
                 } else {
-                    date = MessageFormat.format(Languages.message("DurationMonths"),
+                    date = MessageFormat.format(message("DurationMonths"),
                             months);
                 }
             } else if (days > 0) {
-                date = MessageFormat.format(Languages.message("DurationDays"),
+                date = MessageFormat.format(message("DurationDays"),
                         days);
             } else {
                 date = "";
@@ -505,10 +531,10 @@ public class DateTools {
         Period period = period(time1, time2);
         String date;
         if (period.getYears() > 0) {
-            date = MessageFormat.format(Languages.message("DurationYearsMonths"),
+            date = MessageFormat.format(message("DurationYearsMonths"),
                     period.getYears(), period.getMonths());
         } else if (period.getMonths() > 0) {
-            date = MessageFormat.format(Languages.message("DurationMonths"),
+            date = MessageFormat.format(message("DurationMonths"),
                     period.getYears(), period.getMonths());
         } else {
             date = "";
@@ -520,7 +546,7 @@ public class DateTools {
         Period period = period(time1, time2);
         String date;
         if (period.getYears() > 0) {
-            date = MessageFormat.format(Languages.message("DurationYears"),
+            date = MessageFormat.format(message("DurationYears"),
                     period.getYears());
         } else {
             date = "";
@@ -651,10 +677,7 @@ public class DateTools {
         if (r == null) {
             r = new Random();
         }
-        int sign = r.nextInt(2);
-        long i = new Date().getTime() - r.nextInt();
-//        long i = r.nextLong(new Date().getTime());  // jdk 17
-        return sign == 1 ? i : -i;
+        return r.nextLong(new Date().getTime() * 100);
     }
 
     public static String randomTimeString(Random r) {
@@ -662,6 +685,13 @@ public class DateTools {
             r = new Random();
         }
         return datetimeToString(randomTime(r));
+    }
+
+    public static String randomDateString(Random r) {
+        if (r == null) {
+            r = new Random();
+        }
+        return dateToString(new Date(randomTime(r)));
     }
 
 }

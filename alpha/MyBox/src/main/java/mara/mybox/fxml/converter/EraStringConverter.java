@@ -1,4 +1,4 @@
-package mara.mybox.fxml;
+package mara.mybox.fxml.converter;
 
 import javafx.util.StringConverter;
 import mara.mybox.data.Era;

@@ -106,6 +106,7 @@ public class Data2DSplit extends Data2DOperator {
             if (csvPrinter == null) {
                 return;
             }
+            csvPrinter.flush();
             csvPrinter.close();
             csvPrinter = null;
             File file = data2D.tmpFile(prefix + "_" + startIndex + "-" + rowIndex, null, ".csv");

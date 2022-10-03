@@ -1,4 +1,4 @@
-package mara.mybox.fxml;
+package mara.mybox.fxml.converter;
 
 import javafx.util.StringConverter;
 import mara.mybox.tools.StringTools;
@@ -8,19 +8,19 @@ import mara.mybox.tools.StringTools;
  * @CreateDate 2021-11-12
  * @License Apache License Version 2.0
  */
-public class LongStringFromatConverter extends StringConverter<Long> {
+public class DoubleStringFromatConverter extends StringConverter<Double> {
 
     @Override
-    public Long fromString(String value) {
+    public Double fromString(String value) {
         try {
-            return Long.valueOf(value.trim().replaceAll(",", ""));
+            return Double.valueOf(value.trim().replaceAll(",", ""));
         } catch (Exception e) {
             return null;
         }
     }
 
     @Override
-    public String toString(Long value) {
+    public String toString(Double value) {
         try {
             return StringTools.format(value);
         } catch (Exception e) {

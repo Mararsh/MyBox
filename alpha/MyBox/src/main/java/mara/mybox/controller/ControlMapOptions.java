@@ -20,7 +20,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.web.WebEngine;
-import mara.mybox.data.CoordinateSystem;
+import mara.mybox.data.GeoCoordinateSystem;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
@@ -46,7 +46,7 @@ public class ControlMapOptions extends BaseController {
     protected WebEngine webEngine;
     protected boolean mapLoaded;
     protected MapName mapName;
-    protected CoordinateSystem coordinateSystem;
+    protected GeoCoordinateSystem coordinateSystem;
 
     public enum MapName {
         TianDiTu, GaoDe
@@ -614,7 +614,7 @@ public class ControlMapOptions extends BaseController {
                 cgcs2000Radio.setDisable(true);
                 mercatorRadio.setSelected(true);
                 geodeticRadio.setDisable(true);
-                coordinateSystem = CoordinateSystem.GCJ02();
+                coordinateSystem = GeoCoordinateSystem.GCJ02();
 
                 if (optionsBox.getChildren().contains(controlsBox)) {
                     optionsBox.getChildren().removeAll(controlsBox);
@@ -640,7 +640,7 @@ public class ControlMapOptions extends BaseController {
                 gcj02Radio.setDisable(true);
                 geodeticRadio.setDisable(false);
 
-                coordinateSystem = CoordinateSystem.CGCS2000();
+                coordinateSystem = GeoCoordinateSystem.CGCS2000();
 
                 if (optionsBox.getChildren().contains(languageBox)) {
                     optionsBox.getChildren().removeAll(languageBox, layersBox);

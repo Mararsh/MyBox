@@ -31,7 +31,7 @@ import mara.mybox.fxml.cell.TableBooleanCell;
 import mara.mybox.fxml.cell.TableCheckboxCell;
 import mara.mybox.fxml.cell.TableColorEditCell;
 import mara.mybox.fxml.cell.TableComboBoxCell;
-import mara.mybox.fxml.cell.TableTextAreaEditCell;
+import mara.mybox.fxml.cell.TableTextAreaInputCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
 
@@ -55,10 +55,9 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     }
 
     @FXML
-    protected TableColumn<Data2DColumn, String> nameColumn, typeColumn, defaultColumn, descColumn, enumColumn;
+    protected TableColumn<Data2DColumn, String> nameColumn, typeColumn, defaultColumn, descColumn, formatColumn;
     @FXML
-    protected TableColumn<Data2DColumn, Boolean> editableColumn, notNullColumn, formatColumn,
-            primaryColumn, autoColumn;
+    protected TableColumn<Data2DColumn, Boolean> editableColumn, notNullColumn, primaryColumn, autoColumn;
     @FXML
     protected TableColumn<Data2DColumn, Integer> indexColumn, lengthColumn, widthColumn;
     @FXML
@@ -195,46 +194,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             editableColumn.setEditable(true);
             editableColumn.getStyleClass().add("editable-column");
 
-            formatColumn.setCellValueFactory(new PropertyValueFactory<>("needFormat"));
-            formatColumn.setCellFactory(new Callback<TableColumn<Data2DColumn, Boolean>, TableCell<Data2DColumn, Boolean>>() {
-                @Override
-                public TableCell<Data2DColumn, Boolean> call(TableColumn<Data2DColumn, Boolean> param) {
-                    try {
-                        TableCheckboxCell<Data2DColumn, Boolean> cell = new TableCheckboxCell<>() {
-                            @Override
-                            protected boolean getCellValue(int rowIndex) {
-                                try {
-                                    return tableData.get(rowIndex).isNeedFormat();
-                                } catch (Exception e) {
-                                    return false;
-                                }
-                            }
-
-                            @Override
-                            protected void setCellValue(int rowIndex, boolean value) {
-                                try {
-                                    if (rowIndex < 0) {
-                                        return;
-                                    }
-                                    Data2DColumn column = tableData.get(rowIndex);
-                                    if (column == null || column.isAuto()) {
-                                        return;
-                                    }
-                                    if (value != column.isNeedFormat()) {
-                                        column.setNeedFormat(value);
-                                        status(Status.Modified);
-                                    }
-                                } catch (Exception e) {
-                                    MyBoxLog.debug(e);
-                                }
-                            }
-                        };
-                        return cell;
-                    } catch (Exception e) {
-                        return null;
-                    }
-                }
-            });
+            formatColumn.setCellValueFactory(new PropertyValueFactory<>("format"));
             formatColumn.setEditable(true);
             formatColumn.getStyleClass().add("editable-column");
 
@@ -376,7 +336,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             });
 
             descColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
-            descColumn.setCellFactory(TableTextAreaEditCell.forStringColumn(myController, null));
+            descColumn.setCellFactory(TableTextAreaInputCell.create(myController, null));
             descColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Data2DColumn, String>>() {
                 @Override
                 public void handle(TableColumn.CellEditEvent<Data2DColumn, String> e) {
@@ -395,27 +355,6 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             });
             descColumn.setEditable(true);
             descColumn.getStyleClass().add("editable-column");
-
-            enumColumn.setCellValueFactory(new PropertyValueFactory<>("enumDisplay"));
-            enumColumn.setCellFactory(TableTextAreaEditCell.forStringColumn(myController, message("EnumInputComments")));
-            enumColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Data2DColumn, String>>() {
-                @Override
-                public void handle(TableColumn.CellEditEvent<Data2DColumn, String> e) {
-                    if (e == null) {
-                        return;
-                    }
-                    int colIndex = e.getTablePosition().getRow();
-                    if (colIndex < 0 || colIndex >= tableData.size()) {
-                        return;
-                    }
-                    Data2DColumn column = tableData.get(colIndex);
-                    column.setEnumDisplay(e.getNewValue());
-                    tableData.set(colIndex, column);
-                    status(Status.Modified);
-                }
-            });
-            enumColumn.setEditable(true);
-            enumColumn.getStyleClass().add("editable-column");
 
             checkButtons();
 

@@ -9,6 +9,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
@@ -16,7 +18,7 @@ import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.tools.DateTools;
+import mara.mybox.value.AppValues;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -32,17 +34,22 @@ public class ControlData2DColumnEdit extends BaseChildController {
     protected int columnIndex;
 
     @FXML
-    protected TextField nameInput, defaultInput, lengthInput, widthInput;
+    protected TextField nameInput, defaultInput, lengthInput, widthInput, formatInput, scaleInput;
     @FXML
     protected ToggleGroup typeGroup;
     @FXML
-    protected RadioButton stringRadio, doubleRadio, floatRadio, longRadio, intRadio, shortRadio, booleanRadio, dateRadio;
+    protected RadioButton stringRadio, doubleRadio, floatRadio, longRadio, intRadio, shortRadio, booleanRadio,
+            datetimeRadio, dateRadio, eraRadio, longitudeRadio, latitudeRadio, enumRadio;
     @FXML
-    protected CheckBox notNullCheck, editableCheck, formatCheck;
+    protected CheckBox notNullCheck, editableCheck;
     @FXML
     protected ColorSet colorController;
     @FXML
-    protected TextArea descInput;
+    protected TextArea enumInput, descInput;
+    @FXML
+    protected VBox optionsBox, enumBox;
+    @FXML
+    protected HBox formatBox;
 
     public ControlData2DColumnEdit() {
         TipsLabelKey = message("SqlIdentifierComments");
@@ -59,25 +66,10 @@ public class ControlData2DColumnEdit extends BaseChildController {
             typeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    if (stringRadio.isSelected()) {
-                        defaultInput.setText("");
-                    } else if (doubleRadio.isSelected()) {
-                        defaultInput.setText("0");
-                    } else if (floatRadio.isSelected()) {
-                        defaultInput.setText("0");
-                    } else if (longRadio.isSelected()) {
-                        defaultInput.setText("0");
-                    } else if (intRadio.isSelected()) {
-                        defaultInput.setText("0");
-                    } else if (shortRadio.isSelected()) {
-                        defaultInput.setText("0");
-                    } else if (booleanRadio.isSelected()) {
-                        defaultInput.setText("false");
-                    } else if (dateRadio.isSelected()) {
-                        defaultInput.setText(DateTools.nowString());
-                    }
+                    checkType();
                 }
             });
+            loadColumn(null);
 
             rightTipsView.setVisible(columnsController.data2D.isTable());
 
@@ -91,52 +83,116 @@ public class ControlData2DColumnEdit extends BaseChildController {
         loadColumn(index);
     }
 
+    public void checkType() {
+        try {
+            if (isSettingValues) {
+                return;
+            }
+            optionsBox.getChildren().clear();
+            defaultInput.clear();
+
+            if (doubleRadio.isSelected() || floatRadio.isSelected()
+                    || longRadio.isSelected() || intRadio.isSelected() || shortRadio.isSelected()) {
+                optionsBox.getChildren().add(formatBox);
+
+            } else if (datetimeRadio.isSelected() || dateRadio.isSelected() || eraRadio.isSelected()) {
+                optionsBox.getChildren().add(formatBox);
+
+            } else if (enumRadio.isSelected()) {
+                optionsBox.getChildren().add(enumBox);
+
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
+        }
+    }
+
     public void loadColumn(int index) {
         try {
             Data2DColumn column = columnsController.tableData.get(index);
             if (column == null) {
+                column = new Data2DColumn();
+            }
+            loadColumn(column);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void loadColumn(Data2DColumn column) {
+        try {
+            if (column == null) {
                 return;
             }
-            columnIndex = index;
+            isSettingValues = true;
+            switch (column.getType()) {
+                case String:
+                    stringRadio.setSelected(true);
+                    break;
+                case Double:
+                    doubleRadio.setSelected(true);
+                    break;
+                case Float:
+                    floatRadio.setSelected(true);
+                    break;
+                case Long:
+                    longRadio.setSelected(true);
+                    break;
+                case Integer:
+                    intRadio.setSelected(true);
+                    break;
+                case Short:
+                    shortRadio.setSelected(true);
+                    break;
+                case Boolean:
+                    booleanRadio.setSelected(true);
+                    break;
+                case Datetime:
+                    datetimeRadio.setSelected(true);
+                    break;
+                case Date:
+                    dateRadio.setSelected(true);
+                    break;
+                case Era:
+                    eraRadio.setSelected(true);
+                    break;
+                case Enumeration:
+                    enumRadio.setSelected(true);
+                    break;
+                case Longitude:
+                    longitudeRadio.setSelected(true);
+                    break;
+                case Latitude:
+                    latitudeRadio.setSelected(true);
+                    break;
+                default:
+                    stringRadio.setSelected(true);
+            }
+            isSettingValues = false;
+            checkType();
+
+            columnIndex = column.getIndex();
             nameInput.setText(column.getColumnName());
             lengthInput.setText(column.getLength() + "");
             widthInput.setText(column.getWidth() + "");
+            scaleInput.setText(column.getScale() + "");
+            String format = column.getFormat();
+            if (format == null) {
+                enumInput.clear();
+                formatInput.clear();
+            } else {
+                enumInput.setText(format.replaceAll(AppValues.MyBoxSeparator, "\n"));
+                formatInput.setText(format);
+            }
             defaultInput.setText(column.getDefaultValue());
             descInput.setText(column.getDescription());
 
             notNullCheck.setSelected(column.isNotNull());
             editableCheck.setSelected(column.isEditable());
-            formatCheck.setSelected(column.isNeedFormat());
 
             colorController.setColor(column.getColor());
-            switch (column.getType()) {
-                case String:
-                    stringRadio.setSelected(true);
-                    return;
-                case Double:
-                    doubleRadio.setSelected(true);
-                    return;
-                case Float:
-                    floatRadio.setSelected(true);
-                    return;
-                case Long:
-                    longRadio.setSelected(true);
-                    return;
-                case Integer:
-                    intRadio.setSelected(true);
-                    return;
-                case Short:
-                    shortRadio.setSelected(true);
-                    return;
-                case Boolean:
-                    booleanRadio.setSelected(true);
-                    return;
-                case Datetime:
-                    dateRadio.setSelected(true);
-                    return;
-                default:
-                    stringRadio.setSelected(true);
-            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -174,34 +230,53 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 popError(message("InvalidParameter") + ": " + message("Width"));
                 return null;
             }
+            int scale;
+            try {
+                scale = Integer.parseInt(scaleInput.getText());
+            } catch (Exception ee) {
+                popError(message("InvalidParameter") + ": " + message("DecimialScale"));
+                return null;
+            }
             Data2DColumn column;
             if (columnIndex >= 0) {
                 column = columnsController.tableData.get(columnIndex);
             } else {
                 column = new Data2DColumn();
             }
-            column.setColumnName(name).setLength(length).setWidth(width)
+            column.setColumnName(name)
+                    .setLength(length).setWidth(width).setScale(scale)
                     .setNotNull(notNullCheck.isSelected())
                     .setEditable(editableCheck.isSelected())
-                    .setNeedFormat(formatCheck.isSelected())
                     .setColor((Color) colorController.rect.getFill())
                     .setDescription(descInput.getText());
+            String format = formatInput.getText();
             if (stringRadio.isSelected()) {
                 column.setType(ColumnType.String);
             } else if (doubleRadio.isSelected()) {
-                column.setType(ColumnType.Double);
+                column.setType(ColumnType.Double).setFormat(format);
             } else if (floatRadio.isSelected()) {
-                column.setType(ColumnType.Float);
+                column.setType(ColumnType.Float).setFormat(format);
             } else if (longRadio.isSelected()) {
-                column.setType(ColumnType.Long);
+                column.setType(ColumnType.Long).setFormat(format);
             } else if (intRadio.isSelected()) {
-                column.setType(ColumnType.Integer);
+                column.setType(ColumnType.Integer).setFormat(format);
             } else if (shortRadio.isSelected()) {
-                column.setType(ColumnType.Short);
+                column.setType(ColumnType.Short).setFormat(format);
             } else if (booleanRadio.isSelected()) {
                 column.setType(ColumnType.Boolean);
+            } else if (datetimeRadio.isSelected()) {
+                column.setType(ColumnType.Datetime).setFormat(format);
             } else if (dateRadio.isSelected()) {
-                column.setType(ColumnType.Datetime);
+                column.setType(ColumnType.Date).setFormat(format);
+            } else if (eraRadio.isSelected()) {
+                column.setType(ColumnType.Era).setFormat(format);
+            } else if (enumRadio.isSelected()) {
+                column.setType(ColumnType.Enumeration)
+                        .setFormat(format != null ? format.replaceAll("\n", AppValues.MyBoxSeparator) : null);
+            } else if (longitudeRadio.isSelected()) {
+                column.setType(ColumnType.Longitude);
+            } else if (latitudeRadio.isSelected()) {
+                column.setType(ColumnType.Latitude);
             }
             String dv = defaultInput.getText();
             if (dv != null) {

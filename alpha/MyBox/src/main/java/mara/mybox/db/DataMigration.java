@@ -14,7 +14,7 @@ import java.util.Map;
 import javafx.application.Platform;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageConvertTools;
-import mara.mybox.data.CoordinateSystem;
+import mara.mybox.data.GeoCoordinateSystem;
 import static mara.mybox.db.DerbyBase.BatchSize;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorPaletteName;
@@ -64,6 +64,7 @@ import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.SystemConfig;
+import mara.mybox.value.TimeFormats;
 
 /**
  * @Author Mara
@@ -156,6 +157,9 @@ public class DataMigration {
                 if (lastVersion < 6006000) {
                     updateIn660(conn);
                 }
+                if (lastVersion < 6006001) {
+                    updateIn661(conn);
+                }
             }
             TableStringValues.add(conn, "InstalledVersions", AppValues.AppVersion);
             conn.setAutoCommit(true);
@@ -163,6 +167,34 @@ public class DataMigration {
             MyBoxLog.debug(e.toString());
         }
         return true;
+    }
+
+    private static void updateIn661(Connection conn) {
+        try ( Statement statement = conn.createStatement()) {
+            MyBoxLog.info("Updating tables in 6.6.1...");
+
+            //  Datetime, Date, Year, Month, Time, TimeMs, DatetimeMs, DatetimeZone, DatetimeMsZone
+            conn.setAutoCommit(true);
+            statement.executeUpdate("ALTER TABLE Data2D_Column ADD COLUMN scale int");
+            statement.executeUpdate("ALTER TABLE Data2D_Column ADD COLUMN format VARCHAR(" + StringMaxLength + ")");
+            statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.DatetimeFormat + "' WHERE time_format < 2 AND column_type < 6");
+            statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.DateFormat + "' WHERE time_format=2 AND column_type < 6");
+            statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.YearFormat + "' WHERE time_format=3 AND column_type < 6");
+            statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.MonthFormat + "' WHERE time_format=4 AND column_type < 6");
+            statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.TimeFormat + "' WHERE time_format=5 AND column_type < 6");
+            statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.TimeMs + "' WHERE time_format=6 AND column_type < 6");
+            statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.DatetimeMs + "' WHERE time_format=7 AND column_type < 6");
+            statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.DatetimeFormat + " Z' WHERE time_format=8 AND column_type < 6");
+            statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.DatetimeMs + " Z' WHERE time_format=9 AND column_type < 6");
+            statement.executeUpdate("UPDATE Data2D_Column SET format='#,###' WHERE need_format=true AND column_type >= 6 AND column_type <= 10");
+            statement.executeUpdate("UPDATE Data2D_Column SET format='' WHERE column_type = 1");
+            statement.executeUpdate("ALTER TABLE Data2D_Column DROP COLUMN need_format");
+            statement.executeUpdate("ALTER TABLE Data2D_Column DROP COLUMN time_format");
+            statement.executeUpdate("ALTER TABLE Data2D_Column DROP COLUMN values_list");
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     private static void updateIn660(Connection conn) {
@@ -1038,7 +1070,7 @@ public class DataMigration {
                     data.setPrecision(results.getDouble("precision"));
                     data.setSpeed(results.getDouble("speed"));
                     data.setDirection(results.getShort("direction"));
-                    data.setCoordinateSystem(new CoordinateSystem(results.getShort("coordinate_system")));
+                    data.setCoordinateSystem(new GeoCoordinateSystem(results.getShort("coordinate_system")));
                     data.setDataValue(results.getDouble("data_value"));
                     data.setDataSize(results.getDouble("data_size"));
                     Date d = results.getTimestamp("data_time");

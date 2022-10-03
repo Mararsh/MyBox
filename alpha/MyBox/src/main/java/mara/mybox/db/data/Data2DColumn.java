@@ -4,13 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javafx.scene.paint.Color;
-import mara.mybox.data.Era;
 import mara.mybox.data.StringTable;
 import static mara.mybox.db.data.ColumnDefinition.columnType;
 import static mara.mybox.db.data.ColumnDefinition.number2String;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.StringTools;
-import static mara.mybox.value.AppValues.MyBoxSeparator;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -22,7 +19,6 @@ public class Data2DColumn extends ColumnDefinition {
 
     protected Data2DDefinition data2DDefinition;
     protected long d2cid, d2id;
-    protected String enumDisplay;
 
     public final void initData2DColumn() {
         initColumnDefinition();
@@ -142,6 +138,8 @@ public class Data2DColumn extends ColumnDefinition {
                 return data.getLength();
             case "width":
                 return data.getWidth();
+            case "scale":
+                return data.getScale();
             case "color":
                 return data.getColor() == null ? null : data.getColor().toString();
             case "is_primary":
@@ -152,8 +150,8 @@ public class Data2DColumn extends ColumnDefinition {
                 return data.isAuto();
             case "editable":
                 return data.isEditable();
-            case "need_format":
-                return data.isNeedFormat();
+            case "format":
+                return data.getFormat();
             case "on_delete":
                 return onDelete(data.getOnDelete());
             case "on_update":
@@ -164,8 +162,6 @@ public class Data2DColumn extends ColumnDefinition {
                 return number2String(data.getMaxValue());
             case "min_value":
                 return number2String(data.getMinValue());
-            case "time_format":
-                return Era.format(data.getTimeFormat());
             case "label":
                 return data.getLabel();
             case "foreign_name":
@@ -174,8 +170,6 @@ public class Data2DColumn extends ColumnDefinition {
                 return data.getReferTable();
             case "foreign_column":
                 return data.getReferColumn();
-            case "values_list":
-                return StringTools.toString(data.getEnumValues(), MyBoxSeparator);
             case "description":
                 return data.getDescription();
         }
@@ -209,6 +203,9 @@ public class Data2DColumn extends ColumnDefinition {
                 case "width":
                     data.setWidth(value == null ? null : (int) value);
                     return true;
+                case "scale":
+                    data.setScale(value == null ? null : (int) value);
+                    return true;
                 case "color":
                     data.setColor(value == null ? null : Color.web((String) value));
                     return true;
@@ -224,8 +221,8 @@ public class Data2DColumn extends ColumnDefinition {
                 case "editable":
                     data.setEditable(value == null ? false : (boolean) value);
                     return true;
-                case "need_format":
-                    data.setNeedFormat(value == null ? false : (boolean) value);
+                case "format":
+                    data.setFormat(value == null ? null : (String) value);
                     return true;
                 case "on_delete":
                     data.setOnDelete(onDelete((short) value));
@@ -242,9 +239,6 @@ public class Data2DColumn extends ColumnDefinition {
                 case "min_value":
                     data.setMinValue(string2Number(data.getType(), (String) value));
                     return true;
-                case "time_format":
-                    data.setTimeFormat(Era.format((short) value));
-                    return true;
                 case "label":
                     data.setLabel(value == null ? null : (String) value);
                     return true;
@@ -256,9 +250,6 @@ public class Data2DColumn extends ColumnDefinition {
                     return true;
                 case "foreign_column":
                     data.setReferColumn(value == null ? null : (String) value);
-                    return true;
-                case "values_list":
-                    data.setEnumValues(StringTools.toList(value == null ? null : (String) value, MyBoxSeparator));
                     return true;
                 case "description":
                     data.setDescription(value == null ? null : (String) value);
@@ -352,20 +343,6 @@ public class Data2DColumn extends ColumnDefinition {
             MyBoxLog.error(e);
             return null;
         }
-    }
-
-    /*
-        customized get/set
-     */
-    public String getEnumDisplay() {
-        enumDisplay = StringTools.toString(enumValues, "\n");
-        return enumDisplay;
-    }
-
-    public Data2DColumn setEnumDisplay(String enumDisplay) {
-        this.enumDisplay = enumDisplay;
-        enumValues = StringTools.toList(enumDisplay, "\n");
-        return this;
     }
 
     /*

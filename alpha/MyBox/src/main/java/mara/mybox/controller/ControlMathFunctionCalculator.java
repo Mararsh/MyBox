@@ -631,8 +631,8 @@ public class ControlMathFunctionCalculator extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                browse(chartFile);
                 browse(chartFile.getParentFile());
+                browse(chartFile);
             }
 
         };

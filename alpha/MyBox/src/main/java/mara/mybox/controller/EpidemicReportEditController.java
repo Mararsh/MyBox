@@ -215,7 +215,7 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
                 timeInput.setStyle(null);
                 return;
             }
-            Date v = DateTools.stringToDatetime(value);
+            Date v = DateTools.encodeDate(value);
             if (v != null) {
                 time = v.getTime();
                 timeInput.setStyle(null);

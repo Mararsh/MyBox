@@ -10,7 +10,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.TimeZone;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -393,7 +392,7 @@ public class PopTools {
                     getListener = new ChangeListener<Boolean>() {
                         @Override
                         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                            String value = inputController.getText();
+                            String value = inputController.getInputString();
                             if (value == null || value.isBlank()) {
                                 value = null;
                             }
@@ -658,21 +657,61 @@ public class PopTools {
     /*
         examples
      */
-    public static ContextMenu popEraExample(ContextMenu inPopMenu, TextField input, MouseEvent mouseEvent) {
+    public static ContextMenu popDatetimeExamples(ContextMenu inPopMenu, TextField input, MouseEvent mouseEvent) {
         try {
-            if (inPopMenu != null && inPopMenu.isShowing()) {
-                inPopMenu.hide();
-            }
-            final ContextMenu popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+            List<String> values = new ArrayList<>();
+            Date d = new Date();
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeFormat));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMs));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DateFormat));
+            values.add(DateTools.datetimeToString(d, TimeFormats.MonthFormat));
+            values.add(DateTools.datetimeToString(d, TimeFormats.YearFormat));
+            values.add(DateTools.datetimeToString(d, TimeFormats.TimeMs));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeFormat + " Z"));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeFormatE));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMsE));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DateFormatE));
+            values.add(DateTools.datetimeToString(d, TimeFormats.MonthFormatE));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeFormatE + " Z"));
+            values.addAll(Arrays.asList(
+                    "2020-07-15T36:55:09", "2020-07-10T10:10:10.532 +0800"
+            ));
+            return popMenu(inPopMenu, input, mouseEvent, values);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static ContextMenu popDateExamples(ContextMenu inPopMenu, TextField input, MouseEvent mouseEvent) {
+        try {
+            List<String> values = new ArrayList<>();
+            Date d = new Date();
+            values.add(DateTools.datetimeToString(d, TimeFormats.DateFormat));
+            values.add(DateTools.datetimeToString(d, TimeFormats.MonthFormat));
+            values.add(DateTools.datetimeToString(d, TimeFormats.YearFormat));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DateFormatE));
+            values.add(DateTools.datetimeToString(d, TimeFormats.MonthFormatE));
+            return popMenu(inPopMenu, input, mouseEvent, values);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static ContextMenu popEraExamples(ContextMenu inPopMenu, TextField input, MouseEvent mouseEvent) {
+        try {
             List<String> values = new ArrayList<>();
             values.add(DateTools.nowString());
-            values.add(DateTools.datetimeToString(new Date(), TimeFormats.DatetimeMs, TimeZone.getDefault()));
-            values.add(DateTools.datetimeToString(new Date(), TimeFormats.TimeMs, TimeZone.getDefault()));
-            values.add(DateTools.datetimeToString(new Date(), TimeFormats.DatetimeMs + " Z", TimeZone.getDefault()));
+            values.add(DateTools.datetimeToString(new Date(), TimeFormats.DatetimeMs));
+            values.add(DateTools.datetimeToString(new Date(), TimeFormats.TimeMs));
+            values.add(DateTools.datetimeToString(new Date(), TimeFormats.DatetimeMs + " Z"));
+            values.add(DateTools.datetimeToString(new Date(), TimeFormats.DatetimeMsE));
+            values.add(DateTools.datetimeToString(new Date(), TimeFormats.DatetimeMsE + " Z"));
             values.addAll(Arrays.asList(
                     "2020-07-15T36:55:09", "960-01-23", "581",
-                    "-2020-07-10 10:10:10.532 +0800", "-960-01-23", "-581"
+                    "-2020-07-10 10:10:10.532 +0800", "-960-01-23", "-581",
+                    "3/16/2020", "3/16/2020 10:10:10.532", "3/16/2020 10:10:10"
             ));
             if (Languages.isChinese()) {
                 values.addAll(Arrays.asList(
@@ -684,6 +723,25 @@ public class PopTools {
                     "202 BC", "770-12-11 BC", "1046-03-10 10:10:10 BC",
                     "581 AD", "960-01-23 AD", "2020-07-10 10:10:10 AD"
             ));
+
+            return popMenu(inPopMenu, input, mouseEvent, values);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static ContextMenu popMenu(ContextMenu inPopMenu, TextField input, MouseEvent mouseEvent, List<String> values) {
+        try {
+            if (inPopMenu != null && inPopMenu.isShowing()) {
+                inPopMenu.hide();
+            }
+            if (values == null || values.isEmpty()) {
+                return inPopMenu;
+            }
+            final ContextMenu popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+
             MenuItem menu;
             for (String value : values) {
                 menu = new MenuItem(value);
@@ -712,7 +770,7 @@ public class PopTools {
         }
     }
 
-    public static void popRegexExample(BaseController parent, TextInputControl input, MouseEvent mouseEvent) {
+    public static void popRegexExamples(BaseController parent, TextInputControl input, MouseEvent mouseEvent) {
         try {
             MenuController controller = MenuController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
             Button clearButton = new Button(message("Clear"));

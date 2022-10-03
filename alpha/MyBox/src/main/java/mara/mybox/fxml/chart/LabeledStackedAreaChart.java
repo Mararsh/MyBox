@@ -31,6 +31,7 @@ public class LabeledStackedAreaChart<X, Y> extends StackedAreaChart<X, Y> {
         this.setMaxHeight(Double.MAX_VALUE);
         VBox.setVgrow(this, Priority.ALWAYS);
         HBox.setHgrow(this, Priority.ALWAYS);
+        chartMaker = new XYChartMaker<Axis, Axis>();
     }
 
     public LabeledStackedAreaChart setMaker(XYChartMaker<X, Y> chartMaker) {

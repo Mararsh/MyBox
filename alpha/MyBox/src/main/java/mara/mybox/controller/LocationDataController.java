@@ -20,7 +20,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import mara.mybox.data.CoordinateSystem;
+import mara.mybox.data.GeoCoordinateSystem;
 import mara.mybox.data.Era;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Dataset;
@@ -71,7 +71,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
     protected TableColumn<Location, Double> longitudeColumn, latitudeColumn, altitudeColumn,
             valueColumn, sizeColumn, precisionColumn, speedColumn;
     @FXML
-    protected TableColumn<Location, CoordinateSystem> coordinateSystemColumn;
+    protected TableColumn<Location, GeoCoordinateSystem> coordinateSystemColumn;
     @FXML
     protected TableColumn<Location, Integer> directionColumn;
     @FXML

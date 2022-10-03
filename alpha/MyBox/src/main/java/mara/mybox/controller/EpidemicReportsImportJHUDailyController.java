@@ -139,14 +139,14 @@ public class EpidemicReportsImportJHUDailyController extends EpidemicReportsImpo
                             date = DateTools.stringToDatetime(time, "mm/dd/yyyy hh:mm");
                         }
                     } else {
-                        date = DateTools.stringToDatetime(time.replace("T", " "));
+                        date = DateTools.encodeDate(time.replace("T", " "));
                     }
                     if (date == null) {
                         updateLogs(lineCount + " " + Languages.message("InvalidFormat") + " " + Languages.message("MissTime"), true);
                         break;
                     }
                     // Do not care timeDuration
-                    date = DateTools.stringToDatetime(DateTools.datetimeToString(date, "yyyy-MM-dd") + EpidemicReport.COVID19TIME);
+                    date = DateTools.encodeDate(DateTools.datetimeToString(date, "yyyy-MM-dd") + EpidemicReport.COVID19TIME);
                     if (verboseCheck.isSelected() || (importCount % 100 == 0)) {
                         updateLogs(Languages.message("Insert") + " " + insertCount + " "
                                 + Languages.message("Update") + " " + updateCount + " "

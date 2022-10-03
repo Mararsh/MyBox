@@ -19,7 +19,7 @@ import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LongStringFromatConverter;
+import mara.mybox.fxml.converter.LongStringFromatConverter;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -289,7 +289,7 @@ public class EpidemicReportsEditController extends BaseSysTableController<Epidem
                 timeInput.setStyle(null);
                 return;
             }
-            Date v = DateTools.stringToDatetime(value);
+            Date v = DateTools.encodeDate(value);
             if (v != null) {
                 time = v.getTime();
                 timeInput.setStyle(null);

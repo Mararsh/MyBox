@@ -44,23 +44,22 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
         addColumn(new Data2DColumn("index", ColumnType.Integer));
         addColumn(new Data2DColumn("length", ColumnType.Integer));
         addColumn(new Data2DColumn("width", ColumnType.Integer));
+        addColumn(new Data2DColumn("scale", ColumnType.Integer));
         addColumn(new Data2DColumn("color", ColumnType.Color).setLength(16));
         addColumn(new Data2DColumn("is_primary", ColumnType.Boolean));
         addColumn(new Data2DColumn("is_auto", ColumnType.Boolean));
         addColumn(new Data2DColumn("not_null", ColumnType.Boolean));
         addColumn(new Data2DColumn("editable", ColumnType.Boolean));
-        addColumn(new Data2DColumn("need_format", ColumnType.Boolean));
         addColumn(new Data2DColumn("on_delete", ColumnType.Short));
         addColumn(new Data2DColumn("on_update", ColumnType.Short));
         addColumn(new Data2DColumn("default_value", ColumnType.String).setLength(StringMaxLength));
         addColumn(new Data2DColumn("max_value", ColumnType.String).setLength(StringMaxLength));
         addColumn(new Data2DColumn("min_value", ColumnType.String).setLength(StringMaxLength));
-        addColumn(new Data2DColumn("time_format", ColumnType.Short));
         addColumn(new Data2DColumn("label", ColumnType.String).setLength(StringMaxLength));
         addColumn(new Data2DColumn("foreign_name", ColumnType.String).setLength(StringMaxLength));
         addColumn(new Data2DColumn("foreign_table", ColumnType.String).setLength(StringMaxLength));
         addColumn(new Data2DColumn("foreign_column", ColumnType.String).setLength(StringMaxLength));
-        addColumn(new Data2DColumn("values_list", ColumnType.Text).setLength(StringMaxLength));
+        addColumn(new Data2DColumn("format", ColumnType.String).setLength(StringMaxLength));
         addColumn(new Data2DColumn("description", ColumnType.Text).setLength(StringMaxLength));
         return this;
     }

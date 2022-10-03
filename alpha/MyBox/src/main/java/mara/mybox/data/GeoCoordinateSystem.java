@@ -17,7 +17,7 @@ https://blog.csdn.net/An1090239782/article/details/100572140
 https://blog.csdn.net/xcymorningsun/article/details/79254163
 https://blog.csdn.net/qq_34149805/article/details/65634252
  */
-public class CoordinateSystem implements Cloneable {
+public class GeoCoordinateSystem implements Cloneable {
 
     protected Value value;
 
@@ -25,11 +25,11 @@ public class CoordinateSystem implements Cloneable {
         CGCS2000, GCJ_02, WGS_84, BD_09, Mapbar
     }
 
-    public CoordinateSystem(Value value) {
+    public GeoCoordinateSystem(Value value) {
         this.value = value == null ? defaultValue() : value;
     }
 
-    public CoordinateSystem(String name) {
+    public GeoCoordinateSystem(String name) {
         this.value = defaultValue();
         if (name == null) {
             return;
@@ -42,7 +42,7 @@ public class CoordinateSystem implements Cloneable {
         }
     }
 
-    public CoordinateSystem(short intValue) {
+    public GeoCoordinateSystem(short intValue) {
         switch (intValue) {
             case 0:
                 value = Value.CGCS2000;
@@ -125,28 +125,28 @@ public class CoordinateSystem implements Cloneable {
         return Value.CGCS2000;
     }
 
-    public static CoordinateSystem defaultCode() {
-        return new CoordinateSystem(CoordinateSystem.defaultValue());
+    public static GeoCoordinateSystem defaultCode() {
+        return new GeoCoordinateSystem(GeoCoordinateSystem.defaultValue());
     }
 
-    public static CoordinateSystem Mapbar() {
-        return new CoordinateSystem(CoordinateSystem.Value.Mapbar);
+    public static GeoCoordinateSystem Mapbar() {
+        return new GeoCoordinateSystem(GeoCoordinateSystem.Value.Mapbar);
     }
 
-    public static CoordinateSystem BD09() {
-        return new CoordinateSystem(CoordinateSystem.Value.BD_09);
+    public static GeoCoordinateSystem BD09() {
+        return new GeoCoordinateSystem(GeoCoordinateSystem.Value.BD_09);
     }
 
-    public static CoordinateSystem CGCS2000() {
-        return new CoordinateSystem(CoordinateSystem.Value.CGCS2000);
+    public static GeoCoordinateSystem CGCS2000() {
+        return new GeoCoordinateSystem(GeoCoordinateSystem.Value.CGCS2000);
     }
 
-    public static CoordinateSystem WGS84() {
-        return new CoordinateSystem(CoordinateSystem.Value.WGS_84);
+    public static GeoCoordinateSystem WGS84() {
+        return new GeoCoordinateSystem(GeoCoordinateSystem.Value.WGS_84);
     }
 
-    public static CoordinateSystem GCJ02() {
-        return new CoordinateSystem(CoordinateSystem.Value.GCJ_02);
+    public static GeoCoordinateSystem GCJ02() {
+        return new GeoCoordinateSystem(GeoCoordinateSystem.Value.GCJ_02);
     }
 
     /*

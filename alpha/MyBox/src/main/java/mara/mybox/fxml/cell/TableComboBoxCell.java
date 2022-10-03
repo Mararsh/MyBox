@@ -55,8 +55,20 @@ public class TableComboBoxCell<S, T> extends ComboBoxTableCell<S, T> {
     }
 
     public int rowIndex() {
-        TableRow row = getTableRow();
-        return row == null ? -1 : row.getIndex();
+        try {
+            TableRow row = getTableRow();
+            if (row == null) {
+                return -1;
+            }
+            int index = row.getIndex();
+            if (index >= 0 && index < getTableView().getItems().size()) {
+                return index;
+            } else {
+                return -2;
+            }
+        } catch (Exception e) {
+            return -3;
+        }
     }
 
     public static <S, T> Callback<TableColumn<S, T>, TableCell<S, T>> create(List<T> items, int maxVisibleCount) {

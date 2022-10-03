@@ -636,7 +636,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
 
                     } else if (fileSelectorType == FileSelectorType.ModifiedTimeEarlierThan
                             || fileSelectorType == FileSelectorType.ModifiedTimeLaterThan) {
-                        Date d = DateTools.stringToDatetime(newv);
+                        Date d = DateTools.encodeDate(newv);
                         if (d != null) {
                             fileSelectorTime = d.getTime();
                         } else {
@@ -1054,7 +1054,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
 
     @FXML
     public void popRegexExample(MouseEvent mouseEvent) {
-        PopTools.popRegexExample(this, tableFiltersInput, mouseEvent);
+        PopTools.popRegexExamples(this, tableFiltersInput, mouseEvent);
     }
 
 }

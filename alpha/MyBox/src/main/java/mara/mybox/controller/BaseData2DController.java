@@ -14,7 +14,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.Data2DTools;
+import mara.mybox.data2d.Data2DExampleTools;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.data.Data2DColumn;
@@ -235,7 +235,7 @@ public abstract class BaseData2DController extends BaseController {
 
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            popMenu.getItems().addAll(Data2DTools.examplesMenu(dataController));
+            popMenu.getItems().addAll(Data2DExampleTools.examplesMenu(dataController));
 
             popMenu.getItems().add(new SeparatorMenuItem());
 

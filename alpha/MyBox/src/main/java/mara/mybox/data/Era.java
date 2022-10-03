@@ -7,8 +7,6 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 
-import mara.mybox.value.Languages;
-
 /**
  * @Author Mara
  * @CreateDate 2020-7-13
@@ -65,57 +63,24 @@ public class Era {
     public static Map<Object, String> values() {
         Map<Object, String> values = new LinkedHashMap<>();
         for (Format format : Format.values()) {
-            values.put(format(format), Languages.message(format.name()));
+            values.put(format(format), message(format.name()));
         }
         return values;
     }
 
     public static Format format(short value) {
-        switch (value) {
-            case 2:
-                return Format.Date;
-            case 3:
-                return Format.Year;
-            case 4:
-                return Format.Month;
-            case 5:
-                return Format.Time;
-            case 6:
-                return Format.TimeMs;
-            case 7:
-                return Format.DatetimeMs;
-            case 8:
-                return Format.DatetimeZone;
-            case 9:
-                return Format.DatetimeMsZone;
-            default:
-                return Format.Datetime;
+        try {
+            return Format.values()[value];
+        } catch (Exception e) {
+            return Format.Datetime;
         }
     }
 
     public static short format(Format format) {
-        if (format == null) {
+        try {
+            return (short) format.ordinal();
+        } catch (Exception e) {
             return 0;
-        }
-        switch (format) {
-            case Date:
-                return 2;
-            case Year:
-                return 3;
-            case Month:
-                return 4;
-            case Time:
-                return 5;
-            case TimeMs:
-                return 6;
-            case DatetimeMs:
-                return 7;
-            case DatetimeZone:
-                return 8;
-            case DatetimeMsZone:
-                return 9;
-            default:
-                return 0;
         }
     }
 
