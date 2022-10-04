@@ -6,8 +6,7 @@ import javafx.util.Callback;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.BaseInputController;
 import mara.mybox.controller.DatetimeInputController;
-import mara.mybox.tools.DateTools;
-import mara.mybox.tools.DateTools.TimeType;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
 
 /**
  * @Author Mara
@@ -16,9 +15,9 @@ import mara.mybox.tools.DateTools.TimeType;
  */
 public class TableDatetimeInputCell<S> extends TableStringInputCell<S> {
 
-    protected DateTools.TimeType timeType;
+    protected ColumnType timeType;
 
-    public TableDatetimeInputCell(BaseController parent, String comments, TimeType timeType) {
+    public TableDatetimeInputCell(BaseController parent, String comments, ColumnType timeType) {
         super(parent, comments);
         this.timeType = timeType;
     }
@@ -29,7 +28,7 @@ public class TableDatetimeInputCell<S> extends TableStringInputCell<S> {
     }
 
     public static <S> Callback<TableColumn<S, String>, TableCell<S, String>>
-            create(BaseController parent, String comments, TimeType timeType) {
+            create(BaseController parent, String comments, ColumnType timeType) {
         return new Callback<TableColumn<S, String>, TableCell<S, String>>() {
             @Override
             public TableCell<S, String> call(TableColumn<S, String> param) {

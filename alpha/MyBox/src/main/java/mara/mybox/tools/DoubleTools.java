@@ -1,8 +1,7 @@
 package mara.mybox.tools;
 
-import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Random;
 import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.value.AppValues;
@@ -16,7 +15,6 @@ import static mara.mybox.value.Languages.message;
 public class DoubleTools {
 
     public static boolean invalidDouble(double value) {
-
         return Double.isNaN(value) || Double.isInfinite(value)
                 || value == AppValues.InvalidDouble;
     }
@@ -105,32 +103,16 @@ public class DoubleTools {
         }
     }
 
+    public static String format(double data, String format) {
+        return NumberTools.format(data, format);
+    }
+
     public static String format(double data) {
-        try {
-            String format = "#,###";
-            String s = data + "";
-            int pos = s.indexOf(".");
-            if (pos >= 0) {
-                format += "." + "#".repeat(s.substring(pos + 1).length());
-            }
-            DecimalFormat df = new DecimalFormat(format);
-            return df.format(data);
-        } catch (Exception e) {
-            return data + "";
-        }
+        return NumberTools.format(data);
     }
 
     public static String format(double data, int scale) {
-        try {
-            String format = "#,###";
-            if (scale > 0) {
-                format += "." + "#".repeat(scale);
-            }
-            DecimalFormat df = new DecimalFormat(format);
-            return df.format(scale(data, scale));
-        } catch (Exception e) {
-            return data + "";
-        }
+        return NumberTools.format(data, scale);
     }
 
     public static int compare(String s1, String s2, boolean desc) {
@@ -189,18 +171,13 @@ public class DoubleTools {
 
     public static double scale(double v, int scale) {
         try {
-            BigDecimal b = new BigDecimal(v);
-            return scale(b, scale);
+            NumberFormat formatter = NumberFormat.getInstance();
+            formatter.setMaximumFractionDigits(scale);
+            formatter.setRoundingMode(RoundingMode.HALF_UP);
+            return Double.valueOf(formatter.format(v));
         } catch (Exception e) {
             return v;
         }
-    }
-
-    public static double scale(BigDecimal b, int scale) {
-        if (b == null) {
-            return Double.NaN;
-        }
-        return b.setScale(scale, RoundingMode.HALF_UP).doubleValue();
     }
 
     public static double random(Random r, int max, boolean nonNegative) {

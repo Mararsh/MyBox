@@ -39,6 +39,7 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.cell.TableCheckboxCell;
+import mara.mybox.fxml.cell.TableComboBoxCell;
 import mara.mybox.fxml.cell.TableDataCell;
 import mara.mybox.fxml.cell.TableDatetimeInputCell;
 import mara.mybox.fxml.cell.TableStringBooleanCell;
@@ -737,7 +738,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 if (tableColumn.isEditable()) {
 
                     if (dataColumn.isEnumType()) {
-//                        tableColumn.setCellFactory(TableComboBoxCell.create(dataColumn.getEnumValues(), 12));
+                        tableColumn.setCellFactory(TableComboBoxCell.create(dataColumn.enumValues(), 12));
                     } else if (type == ColumnType.Boolean) {
                         tableColumn.setCellFactory(new Callback<TableColumn<List<String>, String>, TableCell<List<String>, String>>() {
                             @Override
@@ -780,9 +781,9 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                             }
                         });
                     } else if (type == ColumnType.Datetime) {
-                        tableColumn.setCellFactory(TableDatetimeInputCell.create(dataControl, null, TimeType.DateTime));
+                        tableColumn.setCellFactory(TableDatetimeInputCell.create(dataControl, null, ColumnType.Datetime));
                     } else if (type == ColumnType.Date) {
-                        tableColumn.setCellFactory(TableDatetimeInputCell.create(dataControl, null, TimeType.Date));
+                        tableColumn.setCellFactory(TableDatetimeInputCell.create(dataControl, null, ColumnType.Date));
                     } else {
                         tableColumn.setCellFactory(TableDataCell.create(dataControl, dataColumn, true));
                     }
@@ -796,6 +797,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                             if (rowIndex < 0 || rowIndex >= tableData.size()) {
                                 return;
                             }
+                            MyBoxLog.console(rowIndex + "  " + e.getNewValue());
                             List<String> row = tableData.get(rowIndex);
                             row.set(colIndex, e.getNewValue());
                             tableData.set(rowIndex, row);

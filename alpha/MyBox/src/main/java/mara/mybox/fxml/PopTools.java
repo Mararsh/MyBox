@@ -661,18 +661,18 @@ public class PopTools {
         try {
             List<String> values = new ArrayList<>();
             Date d = new Date();
-            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeFormat));
+            values.add(DateTools.datetimeToString(d, TimeFormats.Datetime));
             values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMs));
-            values.add(DateTools.datetimeToString(d, TimeFormats.DateFormat));
-            values.add(DateTools.datetimeToString(d, TimeFormats.MonthFormat));
-            values.add(DateTools.datetimeToString(d, TimeFormats.YearFormat));
+            values.add(DateTools.datetimeToString(d, TimeFormats.Date));
+            values.add(DateTools.datetimeToString(d, TimeFormats.Month));
+            values.add(DateTools.datetimeToString(d, TimeFormats.Year));
             values.add(DateTools.datetimeToString(d, TimeFormats.TimeMs));
-            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeFormat + " Z"));
-            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeFormatE));
+            values.add(DateTools.datetimeToString(d, TimeFormats.Datetime + " Z"));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeE));
             values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMsE));
-            values.add(DateTools.datetimeToString(d, TimeFormats.DateFormatE));
-            values.add(DateTools.datetimeToString(d, TimeFormats.MonthFormatE));
-            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeFormatE + " Z"));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DateE));
+            values.add(DateTools.datetimeToString(d, TimeFormats.MonthE));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeE + " Z"));
             values.addAll(Arrays.asList(
                     "2020-07-15T36:55:09", "2020-07-10T10:10:10.532 +0800"
             ));
@@ -687,11 +687,11 @@ public class PopTools {
         try {
             List<String> values = new ArrayList<>();
             Date d = new Date();
-            values.add(DateTools.datetimeToString(d, TimeFormats.DateFormat));
-            values.add(DateTools.datetimeToString(d, TimeFormats.MonthFormat));
-            values.add(DateTools.datetimeToString(d, TimeFormats.YearFormat));
-            values.add(DateTools.datetimeToString(d, TimeFormats.DateFormatE));
-            values.add(DateTools.datetimeToString(d, TimeFormats.MonthFormatE));
+            values.add(DateTools.datetimeToString(d, TimeFormats.Date));
+            values.add(DateTools.datetimeToString(d, TimeFormats.Month));
+            values.add(DateTools.datetimeToString(d, TimeFormats.Year));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DateE));
+            values.add(DateTools.datetimeToString(d, TimeFormats.MonthE));
             return popMenu(inPopMenu, input, mouseEvent, values);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

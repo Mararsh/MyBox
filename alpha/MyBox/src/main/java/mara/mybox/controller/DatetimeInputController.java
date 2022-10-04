@@ -4,11 +4,11 @@ import java.util.Date;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DateTools;
-import mara.mybox.tools.DateTools.TimeType;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -19,7 +19,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class DatetimeInputController extends BaseInputController {
 
-    protected TimeType timeType;
+    protected ColumnType timeType;
 
     @FXML
     protected TextField timeInput;
@@ -27,7 +27,7 @@ public class DatetimeInputController extends BaseInputController {
     public DatetimeInputController() {
     }
 
-    public void setParameters(BaseController parent, String title, String initValue, TimeType timeType) {
+    public void setParameters(BaseController parent, String title, String initValue, ColumnType timeType) {
         try {
             super.setParameters(parent, title);
             this.timeType = timeType;
@@ -67,10 +67,10 @@ public class DatetimeInputController extends BaseInputController {
     @FXML
     public void popTimeExample(MouseEvent mouseEvent) {
         if (timeType == null) {
-            timeType = TimeType.DateTime;
+            timeType = ColumnType.Datetime;
         }
         switch (timeType) {
-            case DateTime:
+            case Datetime:
                 popMenu = PopTools.popDatetimeExamples(popMenu, timeInput, mouseEvent);
                 break;
             case Date:
@@ -83,7 +83,7 @@ public class DatetimeInputController extends BaseInputController {
         }
     }
 
-    public static DatetimeInputController open(BaseController parent, String title, String initValue, TimeType timeType) {
+    public static DatetimeInputController open(BaseController parent, String title, String initValue, ColumnType timeType) {
         try {
             DatetimeInputController controller = (DatetimeInputController) WindowTools.openChildStage(
                     parent.getMyWindow(), Fxmls.DatetimeInputFxml, true);

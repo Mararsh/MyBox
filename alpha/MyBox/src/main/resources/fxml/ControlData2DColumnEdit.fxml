@@ -59,9 +59,9 @@ License:    Apache License Version 2.0
          <children>
             <HBox fx:id="formatBox" alignment="CENTER_LEFT" spacing="2.0">
                <children>
-                  <Label minWidth="-Infinity" text="%Format" />
+                  <Label minWidth="-Infinity" text="%DisplayFormat" />
                   <TextField fx:id="formatInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                  <Button fx:id="exampleButton" mnemonicParsing="false" onMouseEntered="#popTimeExample">
+                  <Button fx:id="examplesButton" mnemonicParsing="false" onMouseEntered="#popExamples">
                      <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -76,42 +76,40 @@ License:    Apache License Version 2.0
                <children>
                   <HBox spacing="10.0">
                      <children>
-                        <Label text="%EnumerateValues" />
                         <Label text="%EnumInputComments" />
                      </children>
                   </HBox>
-                  <TextArea fx:id="enumInput" minHeight="100.0" wrapText="true" />
+                  <TextArea fx:id="enumInput" minHeight="100.0" prefHeight="100.0" wrapText="true" />
                </children>
             </VBox>
          </children>
       </VBox>
-      <FlowPane alignment="CENTER_LEFT" hgap="5.0" layoutX="15.0" layoutY="48.0" vgap="5.0">
+      <FlowPane hgap="2.0" layoutX="15.0" layoutY="440.0" vgap="2.0">
          <children>
-                <Label fx:id="lengthLabel" text="%Length" />
-                <TextField fx:id="lengthInput" prefWidth="100.0" text="32672" />
-                <Label text="(&lt;= 32672)" />
-            <Label layoutX="214.0" layoutY="17.0" text="%DecimalScale">
+            <Label text="%DecimalScale" />
+            <TextField fx:id="scaleInput" prefWidth="100.0" text="8" />
+                <Label fx:id="lengthLabel" text="%Length">
                <padding>
                   <Insets left="10.0" />
                </padding>
             </Label>
-            <TextField fx:id="scaleInput" layoutX="253.0" layoutY="13.0" prefWidth="100.0" text="8" />
-         </children>
-      </FlowPane>
-      <FlowPane hgap="2.0" layoutX="15.0" layoutY="440.0" vgap="2.0">
-         <children>
-                <Label text="%Width" />
-                <TextField fx:id="widthInput" prefWidth="100.0" text="100" />
-                <Label text="%Color">
-               <padding>
-                  <Insets left="10.0" />
-               </padding></Label>
-                <fx:include fx:id="color" source="ColorSet.fxml" />
+                <TextField fx:id="lengthInput" prefWidth="100.0" text="32672" />
+                <Label text="(&lt;= 32672)" />
          </children>
       </FlowPane>
         <FlowPane hgap="2.0" vgap="2.0">
             <children>
-                <CheckBox fx:id="notNullCheck" layoutX="100.0" layoutY="10.0" mnemonicParsing="false" text="%NotNull" />
+                <Label text="%Color" />
+                <fx:include fx:id="color" source="ColorSet.fxml" />
+                <Label text="%Width">
+               <padding>
+                  <Insets left="10.0" />
+               </padding></Label>
+                <TextField fx:id="widthInput" prefWidth="100.0" text="100" />
+                <CheckBox fx:id="notNullCheck" layoutX="100.0" layoutY="10.0" mnemonicParsing="false" text="%NotNull">
+               <padding>
+                  <Insets left="10.0" />
+               </padding></CheckBox>
                 <CheckBox fx:id="editableCheck" layoutX="190.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Editable" />
             </children>
         </FlowPane>
@@ -122,7 +120,7 @@ License:    Apache License Version 2.0
          </children>
       </HBox>
       <Label text="%Description" />
-      <TextArea fx:id="descInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" wrapText="true" VBox.vgrow="ALWAYS" />
+      <TextArea fx:id="descInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" prefHeight="100.0" wrapText="true" VBox.vgrow="ALWAYS" />
     </children>
     <padding>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

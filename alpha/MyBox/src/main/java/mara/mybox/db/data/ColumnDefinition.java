@@ -316,6 +316,13 @@ public class ColumnDefinition extends BaseData {
         return type == ColumnType.Enumeration;
     }
 
+    public List<String> enumValues() {
+        if (!isEnumType()) {
+            return null;
+        }
+        return StringTools.toList(format, AppValues.MyBoxSeparator);
+    }
+
     public String random(Random random, int maxRandom, short scale, boolean nonNegative) {
         if (random == null) {
             random = new Random();
@@ -526,44 +533,23 @@ public class ColumnDefinition extends BaseData {
             if (o == null) {
                 return string;
             }
-            boolean numberNeedFormat = format != null && format.equals("#,###");
             switch (type) {
                 case Double:
-                    if (numberNeedFormat) {
-                        return DoubleTools.format((double) o);
-                    } else {
-                        return (double) o + "";
-                    }
+                    return DoubleTools.format((double) o, format);
                 case Float:
-                    if (numberNeedFormat) {
-                        return FloatTools.format((float) o);
-                    } else {
-                        return (float) o + "";
-                    }
+                    return FloatTools.format((float) o, format);
                 case Long:
-                    if (numberNeedFormat) {
-                        return LongTools.format((long) o);
-                    } else {
-                        return (long) o + "";
-                    }
+                    return LongTools.format((long) o, format);
                 case Integer:
-                    if (numberNeedFormat) {
-                        return IntTools.format((int) o);
-                    } else {
-                        return (int) o + "";
-                    }
+                    return IntTools.format((int) o, format);
                 case Short:
-                    if (numberNeedFormat) {
-                        return ShortTools.format((short) o);
-                    } else {
-                        return (short) o + "";
-                    }
+                    return ShortTools.format((short) o, format);
                 case Datetime:
-                    return DateTools.datetimeToString((Date) o);
+                    return DateTools.datetimeToString((Date) o, format);
                 case Date:
-                    return DateTools.dateToString((Date) o);
+                    return DateTools.datetimeToString((Date) o, format);
                 case Era:
-                    return DateTools.datetimeToString(new Date((long) o));
+                    return DateTools.datetimeToString(new Date((long) o), format);
                 default:
                     String s = o.toString();
                     return s.length() > maxLen ? s.substring(0, maxLen) : s;
@@ -575,7 +561,6 @@ public class ColumnDefinition extends BaseData {
 
     public String savedValue(String string) {
         String savedValue = toString(fromString(string, InvalidAs.Blank));
-        MyBoxLog.console(string + " -- " + savedValue);
         return savedValue;
     }
 

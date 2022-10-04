@@ -18,7 +18,6 @@ import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.db.table.TableColor;
@@ -30,7 +29,7 @@ import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableBooleanCell;
 import mara.mybox.fxml.cell.TableCheckboxCell;
 import mara.mybox.fxml.cell.TableColorEditCell;
-import mara.mybox.fxml.cell.TableComboBoxCell;
+import mara.mybox.fxml.cell.TableDataColumnCell;
 import mara.mybox.fxml.cell.TableTextAreaInputCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
@@ -123,33 +122,9 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             });
 
             typeColumn.setCellValueFactory(new PropertyValueFactory<>("typeString"));
-            List<String> types = new ArrayList<>();
-            for (ColumnType type : Data2DColumn.editTypes()) {
-                types.add(message(type.name()));
-            }
-            typeColumn.setCellFactory(TableComboBoxCell.create(types, types.size()));
-            typeColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Data2DColumn, String>>() {
-                @Override
-                public void handle(TableColumn.CellEditEvent<Data2DColumn, String> t) {
-                    if (t == null) {
-                        return;
-                    }
-                    Data2DColumn column = t.getRowValue();
-                    String v = t.getNewValue();
-                    if (column == null || v == null) {
-                        return;
-                    }
-                    for (ColumnType type : Data2DColumn.editTypes()) {
-                        if (type.name().equals(v) || message(type.name()).equals(v)) {
-                            if (type != column.getType()) {
-                                column.setType(type);
-                                status(Status.Modified);
-                            }
-                            return;
-                        }
-                    }
-                }
-            });
+            typeColumn.setCellFactory(TableDataColumnCell.create(this));
+            typeColumn.setEditable(true);
+            formatColumn.getStyleClass().add("editable-column");
 
             editableColumn.setCellValueFactory(new PropertyValueFactory<>("editable"));
             editableColumn.setCellFactory(new Callback<TableColumn<Data2DColumn, Boolean>, TableCell<Data2DColumn, Boolean>>() {
@@ -195,6 +170,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             editableColumn.getStyleClass().add("editable-column");
 
             formatColumn.setCellValueFactory(new PropertyValueFactory<>("format"));
+            formatColumn.setCellFactory(TableDataColumnCell.create(this));
             formatColumn.setEditable(true);
             formatColumn.getStyleClass().add("editable-column");
 

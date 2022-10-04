@@ -27,7 +27,7 @@ public class TableDataCell extends TableStringEditCell<List<String>> {
         super();
         this.dataControl = dataControl;
         this.dataColumn = dataColumn;
-        this.forEdit = isEdit;
+        this.forEdit = forEdit;
     }
 
     @Override

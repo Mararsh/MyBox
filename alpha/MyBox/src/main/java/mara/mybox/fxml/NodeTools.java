@@ -155,6 +155,17 @@ public class NodeTools {
         return false;
     }
 
+    public static String getSelectedText(ToggleGroup group) {
+        if (group == null) {
+            return null;
+        }
+        Toggle button = group.getSelectedToggle();
+        if (button == null || !(button instanceof RadioButton)) {
+            return null;
+        }
+        return ((RadioButton) button).getText();
+    }
+
     public static boolean setItemSelected(ComboBox<String> box, String text) {
         if (box == null || text == null) {
             return false;

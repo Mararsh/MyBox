@@ -1,6 +1,5 @@
 package mara.mybox.tools;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -19,14 +18,12 @@ public class LongTools {
         return value == AppValues.InvalidLong;
     }
 
+    public static String format(long data, String format) {
+        return NumberTools.format(data, format);
+    }
+
     public static String format(long data) {
-        try {
-            String format = "#,###";
-            DecimalFormat df = new DecimalFormat(format);
-            return df.format(data);
-        } catch (Exception e) {
-            return data + "";
-        }
+        return format(data, "#,###");
     }
 
     // invalid values are always in the end

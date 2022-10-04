@@ -48,6 +48,7 @@ public class Data2DColumnEditController extends BaseChildController {
             columnsController.tableData.set(index, column);
             columnsController.tableView.scrollTo(index - 3);
             popSuccessful();
+            close();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -60,7 +61,7 @@ public class Data2DColumnEditController extends BaseChildController {
     public static Data2DColumnEditController open(ControlData2DColumns columnsController, int index) {
         try {
             Data2DColumnEditController controller = (Data2DColumnEditController) WindowTools.openChildStage(
-                    columnsController.getMyWindow(), Fxmls.Data2DColumnEditFxml, false);
+                    columnsController.getMyWindow(), Fxmls.Data2DColumnEditFxml, true);
             controller.setParameters(columnsController, index);
             return controller;
         } catch (Exception e) {

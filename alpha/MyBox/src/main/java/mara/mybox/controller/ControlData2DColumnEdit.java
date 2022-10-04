@@ -9,6 +9,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -34,7 +35,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
     protected int columnIndex;
 
     @FXML
-    protected TextField nameInput, defaultInput, lengthInput, widthInput, formatInput, scaleInput;
+    protected TextField nameInput, defaultInput, lengthInput, widthInput, scaleInput, formatInput;
     @FXML
     protected ToggleGroup typeGroup;
     @FXML
@@ -55,7 +56,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
         TipsLabelKey = message("SqlIdentifierComments");
     }
 
-    protected void setParameters(ControlData2DColumns columnsController) {
+    protected void init(ControlData2DColumns columnsController) {
         try {
             this.columnsController = columnsController;
             columnIndex = -1;
@@ -69,7 +70,6 @@ public class ControlData2DColumnEdit extends BaseChildController {
                     checkType();
                 }
             });
-            loadColumn(null);
 
             rightTipsView.setVisible(columnsController.data2D.isTable());
 
@@ -78,8 +78,13 @@ public class ControlData2DColumnEdit extends BaseChildController {
         }
     }
 
+    protected void setParameters(ControlData2DColumns columnsController) {
+        init(columnsController);
+        loadColumn(-1);
+    }
+
     public void setParameters(ControlData2DColumns columnsController, int index) {
-        setParameters(columnsController);
+        init(columnsController);
         loadColumn(index);
     }
 
@@ -91,15 +96,15 @@ public class ControlData2DColumnEdit extends BaseChildController {
             optionsBox.getChildren().clear();
             defaultInput.clear();
 
-            if (doubleRadio.isSelected() || floatRadio.isSelected()
-                    || longRadio.isSelected() || intRadio.isSelected() || shortRadio.isSelected()) {
-                optionsBox.getChildren().add(formatBox);
+            if (enumRadio.isSelected()) {
+                optionsBox.getChildren().add(enumBox);
 
             } else if (datetimeRadio.isSelected() || dateRadio.isSelected() || eraRadio.isSelected()) {
                 optionsBox.getChildren().add(formatBox);
 
-            } else if (enumRadio.isSelected()) {
-                optionsBox.getChildren().add(enumBox);
+            } else if (doubleRadio.isSelected() || floatRadio.isSelected()
+                    || longRadio.isSelected() || intRadio.isSelected() || shortRadio.isSelected()) {
+                optionsBox.getChildren().add(formatBox);
 
             }
 
@@ -110,12 +115,14 @@ public class ControlData2DColumnEdit extends BaseChildController {
 
     public void loadColumn(int index) {
         try {
-            Data2DColumn column = columnsController.tableData.get(index);
-            if (column == null) {
-                column = new Data2DColumn();
+            if (index >= 0 && index < columnsController.tableData.size()) {
+                Data2DColumn column = columnsController.tableData.get(index);
+                columnIndex = index;
+                loadColumn(column);
+            } else {
+                columnIndex = -1;
+                loadColumn(new Data2DColumn());
             }
-            loadColumn(column);
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -173,18 +180,25 @@ public class ControlData2DColumnEdit extends BaseChildController {
             isSettingValues = false;
             checkType();
 
-            columnIndex = column.getIndex();
             nameInput.setText(column.getColumnName());
             lengthInput.setText(column.getLength() + "");
             widthInput.setText(column.getWidth() + "");
             scaleInput.setText(column.getScale() + "");
+            formatInput.clear();
+            enumInput.clear();
             String format = column.getFormat();
-            if (format == null) {
-                enumInput.clear();
-                formatInput.clear();
-            } else {
-                enumInput.setText(format.replaceAll(AppValues.MyBoxSeparator, "\n"));
-                formatInput.setText(format);
+            if (format != null) {
+                if (enumRadio.isSelected()) {
+                    enumInput.setText(format.replaceAll(AppValues.MyBoxSeparator, "\n"));
+
+                } else if (datetimeRadio.isSelected() || dateRadio.isSelected() || eraRadio.isSelected()) {
+                    formatInput.setText(format);
+
+                } else if (doubleRadio.isSelected() || floatRadio.isSelected()
+                        || longRadio.isSelected() || intRadio.isSelected() || shortRadio.isSelected()) {
+                    formatInput.setText(format);
+
+                }
             }
             defaultInput.setText(column.getDefaultValue());
             descInput.setText(column.getDescription());
@@ -237,6 +251,11 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 popError(message("InvalidParameter") + ": " + message("DecimialScale"));
                 return null;
             }
+            String enumString = enumInput.getText();
+            if (enumRadio.isSelected() && (enumString == null || enumString.isBlank())) {
+                popError(message("InvalidParameter") + ": " + message("EnumerateValues"));
+                return null;
+            }
             Data2DColumn column;
             if (columnIndex >= 0) {
                 column = columnsController.tableData.get(columnIndex);
@@ -249,9 +268,10 @@ public class ControlData2DColumnEdit extends BaseChildController {
                     .setEditable(editableCheck.isSelected())
                     .setColor((Color) colorController.rect.getFill())
                     .setDescription(descInput.getText());
+
             String format = formatInput.getText();
             if (stringRadio.isSelected()) {
-                column.setType(ColumnType.String);
+                column.setType(ColumnType.String).setFormat(null);
             } else if (doubleRadio.isSelected()) {
                 column.setType(ColumnType.Double).setFormat(format);
             } else if (floatRadio.isSelected()) {
@@ -263,7 +283,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             } else if (shortRadio.isSelected()) {
                 column.setType(ColumnType.Short).setFormat(format);
             } else if (booleanRadio.isSelected()) {
-                column.setType(ColumnType.Boolean);
+                column.setType(ColumnType.Boolean).setFormat(null);
             } else if (datetimeRadio.isSelected()) {
                 column.setType(ColumnType.Datetime).setFormat(format);
             } else if (dateRadio.isSelected()) {
@@ -272,12 +292,13 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 column.setType(ColumnType.Era).setFormat(format);
             } else if (enumRadio.isSelected()) {
                 column.setType(ColumnType.Enumeration)
-                        .setFormat(format != null ? format.replaceAll("\n", AppValues.MyBoxSeparator) : null);
+                        .setFormat(enumString.replaceAll("\n", AppValues.MyBoxSeparator));
             } else if (longitudeRadio.isSelected()) {
-                column.setType(ColumnType.Longitude);
+                column.setType(ColumnType.Longitude).setFormat(null);
             } else if (latitudeRadio.isSelected()) {
-                column.setType(ColumnType.Latitude);
+                column.setType(ColumnType.Latitude).setFormat(null);
             }
+
             String dv = defaultInput.getText();
             if (dv != null) {
                 column.setDefaultValue(dv);
@@ -287,6 +308,23 @@ public class ControlData2DColumnEdit extends BaseChildController {
             MyBoxLog.error(e);
             return null;
         }
+    }
+
+    @FXML
+    public void popExamples(MouseEvent mouseEvent) {
+
+//        switch (timeType) {
+//            case Datetime:
+//                popMenu = PopTools.popDatetimeExamples(popMenu, timeInput, mouseEvent);
+//                break;
+//            case Date:
+//                popMenu = PopTools.popDateExamples(popMenu, timeInput, mouseEvent);
+//                break;
+//            case Era:
+//                popMenu = PopTools.popEraExamples(popMenu, timeInput, mouseEvent);
+//                break;
+//
+//        }
     }
 
     /*

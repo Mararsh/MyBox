@@ -1,6 +1,8 @@
 package mara.mybox.tools;
 
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,32 +31,16 @@ public class FloatTools {
         }
     }
 
+    public static String format(float data, String format) {
+        return NumberTools.format(data, format);
+    }
+
     public static String format(float data) {
-        try {
-            String format = "#,###";
-            String s = data + "";
-            int pos = s.indexOf(".");
-            if (pos >= 0) {
-                format += "." + "#".repeat(s.substring(pos + 1).length());
-            }
-            DecimalFormat df = new DecimalFormat(format);
-            return df.format(data);
-        } catch (Exception e) {
-            return data + "";
-        }
+        return NumberTools.format(data);
     }
 
     public static String format(float data, int scale) {
-        try {
-            String format = "#,###";
-            if (scale > 0) {
-                format += "." + "#".repeat(scale);
-            }
-            DecimalFormat df = new DecimalFormat(format);
-            return df.format(scale(data, scale));
-        } catch (Exception e) {
-            return data + "";
-        }
+        return NumberTools.format(data, scale);
     }
 
     public static int compare(String s1, String s2, boolean desc) {
@@ -96,8 +82,15 @@ public class FloatTools {
         }
     }
 
-    public static float scale(float fvalue, int scale) {
-        return (float) DoubleTools.scale(fvalue, scale);
+    public static float scale(float v, int scale) {
+        try {
+            NumberFormat formatter = NumberFormat.getInstance();
+            formatter.setMaximumFractionDigits(scale);
+            formatter.setRoundingMode(RoundingMode.HALF_UP);
+            return Float.valueOf(formatter.format(v));
+        } catch (Exception e) {
+            return v;
+        }
     }
 
     public static float roundFloat2(float fvalue) {

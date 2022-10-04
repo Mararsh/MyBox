@@ -173,18 +173,17 @@ public class DataMigration {
         try ( Statement statement = conn.createStatement()) {
             MyBoxLog.info("Updating tables in 6.6.1...");
 
-            //  Datetime, Date, Year, Month, Time, TimeMs, DatetimeMs, DatetimeZone, DatetimeMsZone
             conn.setAutoCommit(true);
             statement.executeUpdate("ALTER TABLE Data2D_Column ADD COLUMN scale int");
             statement.executeUpdate("ALTER TABLE Data2D_Column ADD COLUMN format VARCHAR(" + StringMaxLength + ")");
-            statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.DatetimeFormat + "' WHERE time_format < 2 AND column_type < 6");
-            statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.DateFormat + "' WHERE time_format=2 AND column_type < 6");
-            statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.YearFormat + "' WHERE time_format=3 AND column_type < 6");
-            statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.MonthFormat + "' WHERE time_format=4 AND column_type < 6");
-            statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.TimeFormat + "' WHERE time_format=5 AND column_type < 6");
+            statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.Datetime + "' WHERE time_format < 2 AND column_type < 6");
+            statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.Date + "' WHERE time_format=2 AND column_type < 6");
+            statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.Year + "' WHERE time_format=3 AND column_type < 6");
+            statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.Month + "' WHERE time_format=4 AND column_type < 6");
+            statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.Time + "' WHERE time_format=5 AND column_type < 6");
             statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.TimeMs + "' WHERE time_format=6 AND column_type < 6");
             statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.DatetimeMs + "' WHERE time_format=7 AND column_type < 6");
-            statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.DatetimeFormat + " Z' WHERE time_format=8 AND column_type < 6");
+            statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.Datetime + " Z' WHERE time_format=8 AND column_type < 6");
             statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.DatetimeMs + " Z' WHERE time_format=9 AND column_type < 6");
             statement.executeUpdate("UPDATE Data2D_Column SET format='#,###' WHERE need_format=true AND column_type >= 6 AND column_type <= 10");
             statement.executeUpdate("UPDATE Data2D_Column SET format='' WHERE column_type = 1");

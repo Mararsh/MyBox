@@ -29,10 +29,6 @@ import mara.mybox.value.TimeFormats;
  */
 public class DateTools {
 
-    public static enum TimeType {
-        DateTime, Date, Era
-    }
-
     // invalid values are always in the end
     public static int compare(String s1, String s2, boolean desc) {
         double d1, d2;
@@ -67,7 +63,7 @@ public class DateTools {
     }
 
     public static String nowFileString() {
-        SimpleDateFormat formatter = new SimpleDateFormat(TimeFormats.DatetimeFormat2);
+        SimpleDateFormat formatter = new SimpleDateFormat(TimeFormats.Datetime2);
         formatter.setTimeZone(getTimeZone());
         String dateString = formatter.format(new Date());
         return dateString;
@@ -78,7 +74,7 @@ public class DateTools {
     }
 
     public static String nowString3() {
-        return datetimeToString(new Date(), TimeFormats.DatetimeFormat3);
+        return datetimeToString(new Date(), TimeFormats.Datetime3);
     }
 
     public static boolean isBC(long value) {
@@ -290,15 +286,15 @@ public class DateTools {
                     if (s.contains(".")) {
                         format = TimeFormats.DatetimeMsE;
                     } else {
-                        format = TimeFormats.DatetimeFormatE;
+                        format = TimeFormats.DatetimeE;
                     }
                     if (s.contains("+")) {
                         format += " Z";
                     }
                 } else if (s.indexOf("/") == s.lastIndexOf("/")) {
-                    format = TimeFormats.MonthFormatE;
+                    format = TimeFormats.MonthE;
                 } else {
-                    format = TimeFormats.DateFormatE;
+                    format = TimeFormats.DateE;
                 }
             } else if (ss.contains("-")) {
                 if (ss.contains(":")) {
@@ -319,7 +315,7 @@ public class DateTools {
                 if (s.contains(".")) {
                     format = TimeFormats.TimeMs;
                 } else {
-                    format = TimeFormats.TimeFormat;
+                    format = TimeFormats.Time;
                 }
             } else {
                 format = TimeFormats.EraYear;
@@ -361,7 +357,7 @@ public class DateTools {
         }
         String format = inFormat;
         if (format == null || format.isBlank()) {
-            format = TimeFormats.DatetimeFormat;
+            format = TimeFormats.Datetime;
         }
         Locale locale = inLocale;
         if (locale == null) {
@@ -436,7 +432,7 @@ public class DateTools {
     }
 
     public static String dateToString(Date theDate) {
-        return datetimeToString(theDate, TimeFormats.DateFormat);
+        return datetimeToString(theDate, TimeFormats.Date);
     }
 
     public static String dateToMonthString(Date theDate) {
