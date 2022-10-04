@@ -11,7 +11,7 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.NumberTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.math3.stat.Frequency;
@@ -104,7 +104,7 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
                     String value = (String) iterator.next();
                     row.add(value);
                     row.add(frequency.getCount(value) + "");
-                    row.add(DoubleTools.format(frequency.getPct(value) * 100, scale));
+                    row.add(NumberTools.format(frequency.getPct(value) * 100, scale));
                     outputData.add(row);
                 }
             }

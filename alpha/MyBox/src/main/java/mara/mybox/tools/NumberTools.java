@@ -11,63 +11,78 @@ import static mara.mybox.value.Languages.message;
  */
 public class NumberTools {
 
-    public static String format(Number data, String inFormat) {
+    public static String format(Number data, String format) {
+        return format(data, format, -1);
+    }
+
+    public static String format(Number data, String inFormat, int scale) {
         try {
+            if (data == null) {
+                return null;
+            }
             String format = inFormat;
-            if (message("en", "GroupInThousands").equals(format)
+            if (format == null || format.isBlank()
+                    || message("en", "None").equals(format)
+                    || message("zh", "None").equals(format)) {
+                return noFormat(data);
+
+            } else if (message("en", "ScientificNotation").equals(format)
+                    || message("zh", "ScientificNotation").equals(format)) {
+                return scientificNotation(data);
+
+            } else if (message("en", "GroupInThousands").equals(format)
                     || message("zh", "GroupInThousands").equals(format)) {
-                format = groupFormat3(data);
+                return format(data, 3, scale);
+
             } else if (message("en", "GroupInTenThousands").equals(format)
                     || message("zh", "GroupInTenThousands").equals(format)) {
-                format = groupFormat4(data);
+                return format(data, 4, scale);
+
+            } else {
+                DecimalFormat df = new DecimalFormat(format);
+                df.setMaximumFractionDigits(scale >= 0 ? scale : 340);
+                df.setRoundingMode(RoundingMode.HALF_UP);
+                return df.format(data);
             }
-            DecimalFormat df = new DecimalFormat(format);
-            return df.format(data);
+
         } catch (Exception e) {
             return new DecimalFormat().format(data);
         }
+    }
+
+    public static String noFormat(Number data) {
+        return format(data, -1, -1);
+    }
+
+    public static String scientificNotation(Number data) {
+        return data == null ? null : data.toString();
     }
 
     public static String format(Number data) {
-        return format(data, groupFormat3(data));
-    }
-
-    public static String groupFormat3(Number data) {
-        try {
-            String format = "#,###";
-            String s = new DecimalFormat().format(data);
-            int pos = s.indexOf(".");
-            if (pos >= 0) {
-                format += "." + "#".repeat(s.substring(pos + 1).length());
-            }
-            return format;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public static String groupFormat4(Number data) {
-        try {
-            String format = "#,####";
-            String s = new DecimalFormat().format(data);
-            int pos = s.indexOf(".");
-            if (pos >= 0) {
-                format += "." + "#".repeat(s.substring(pos + 1).length());
-            }
-            return format;
-        } catch (Exception e) {
-            return null;
-        }
+        return format(data, 3, -1);
     }
 
     public static String format(Number data, int scale) {
+        return format(data, -1, scale);
+    }
+
+    public static String format(Number data, int groupSize, int scale) {
         try {
-            DecimalFormat formatter = new DecimalFormat(groupFormat3(data));
-            formatter.setMaximumFractionDigits(scale);
-            formatter.setRoundingMode(RoundingMode.HALF_UP);
-            return formatter.format(data);
+            if (data == null) {
+                return null;
+            }
+            DecimalFormat df = new DecimalFormat();
+            if (groupSize >= 0) {
+                df.setGroupingUsed(true);
+                df.setGroupingSize(groupSize);
+            } else {
+                df.setGroupingUsed(false);
+            }
+            df.setMaximumFractionDigits(scale >= 0 ? scale : 340);
+            df.setRoundingMode(RoundingMode.HALF_UP);
+            return df.format(data);
         } catch (Exception e) {
-            return new DecimalFormat().format(data);
+            return null;
         }
     }
 

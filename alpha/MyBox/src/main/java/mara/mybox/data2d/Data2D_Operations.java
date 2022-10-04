@@ -27,6 +27,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.NumberTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVPrinter;
@@ -526,7 +527,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             List<String> row = new ArrayList<>();
             row.add(message("All") + "-" + message("Summation"));
             double sum = reader.gettValue();
-            row.add(DoubleTools.format(sum, scale));
+            row.add(NumberTools.format(sum, scale));
             for (int c : cols) {
                 row.add(null);
             }

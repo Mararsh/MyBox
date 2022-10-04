@@ -1,10 +1,17 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
@@ -18,16 +25,18 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.TimeFormats;
 
 /**
  * @Author Mara
  * @CreateDate 2022-2-19
  * @License Apache License Version 2.0
- *
  */
 public class ControlData2DColumnEdit extends BaseChildController {
 
@@ -95,6 +104,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             }
             optionsBox.getChildren().clear();
             defaultInput.clear();
+            formatInput.clear();
 
             if (enumRadio.isSelected()) {
                 optionsBox.getChildren().add(enumBox);
@@ -312,19 +322,127 @@ public class ControlData2DColumnEdit extends BaseChildController {
 
     @FXML
     public void popExamples(MouseEvent mouseEvent) {
+        if (doubleRadio.isSelected() || floatRadio.isSelected()) {
+            List<String> values = new ArrayList<>();
+            values.add(message("GroupInThousands"));
+            values.add(message("GroupInTenThousands"));
+            values.add(message("ScientificNotation"));
+            values.add(message("None"));
+            popExamples(mouseEvent, values, "DecimalFormat",
+                    "https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/DecimalFormat.html");
 
-//        switch (timeType) {
-//            case Datetime:
-//                popMenu = PopTools.popDatetimeExamples(popMenu, timeInput, mouseEvent);
-//                break;
-//            case Date:
-//                popMenu = PopTools.popDateExamples(popMenu, timeInput, mouseEvent);
-//                break;
-//            case Era:
-//                popMenu = PopTools.popEraExamples(popMenu, timeInput, mouseEvent);
-//                break;
-//
-//        }
+        } else if (longRadio.isSelected() || intRadio.isSelected() || shortRadio.isSelected()) {
+            List<String> values = new ArrayList<>();
+            values.add(message("GroupInThousands"));
+            values.add(message("GroupInTenThousands"));
+            values.add(message("None"));
+            popExamples(mouseEvent, values, "DecimalFormat",
+                    "https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/DecimalFormat.html");
+
+        } else if (datetimeRadio.isSelected()) {
+            List<String> values = new ArrayList<>();
+            values.add(TimeFormats.Datetime);
+            values.add(TimeFormats.DatetimeMs);
+            values.add(TimeFormats.Date);
+            values.add(TimeFormats.Month);
+            values.add(TimeFormats.Year);
+            values.add(TimeFormats.TimeMs);
+            values.add(TimeFormats.Datetime + " Z");
+            values.add(TimeFormats.DatetimeE);
+            values.add(TimeFormats.DatetimeMsE);
+            values.add(TimeFormats.DateE);
+            values.add(TimeFormats.MonthE);
+            values.add(TimeFormats.DatetimeE + " Z");
+            popExamples(mouseEvent, values, "DateFormat",
+                    "https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/SimpleDateFormat.html");
+
+        } else if (dateRadio.isSelected()) {
+            List<String> values = new ArrayList<>();
+            values.add(TimeFormats.Date);
+            values.add(TimeFormats.Month);
+            values.add(TimeFormats.Year);
+            values.add(TimeFormats.DateE);
+            values.add(TimeFormats.MonthE);
+            popExamples(mouseEvent, values, "DateFormat",
+                    "https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/SimpleDateFormat.html");
+
+        } else if (eraRadio.isSelected()) {
+            List<String> values = new ArrayList<>();
+            values.add(TimeFormats.EraDatetimeEn);
+            values.add(TimeFormats.EraDatetimeMsEn);
+            values.add(TimeFormats.EraDateEn);
+            values.add(TimeFormats.EraMonthEn);
+            values.add(TimeFormats.EraYearEn);
+            values.add(TimeFormats.EraDatetimeZh);
+            values.add(TimeFormats.EraDatetimeMsZh);
+            values.add(TimeFormats.EraDateZh);
+            values.add(TimeFormats.EraMonthZh);
+            values.add(TimeFormats.EraYearZh);
+            popExamples(mouseEvent, values, "DateFormat",
+                    "https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/SimpleDateFormat.html");
+
+        }
+
+    }
+
+    public void popExamples(MouseEvent mouseEvent, List<String> values, String linkName, String linkAddress) {
+        try {
+            if (values == null || values.isEmpty()) {
+                return;
+            }
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+
+            MenuItem menu = new MenuItem(message("ClearInputArea"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    formatInput.clear();
+                }
+            });
+            popMenu.getItems().add(menu);
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            for (String value : values) {
+                menu = new MenuItem(value);
+                menu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        formatInput.setText(value);
+                    }
+                });
+                popMenu.getItems().add(menu);
+            }
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(linkName);
+            menu.setStyle("-fx-text-fill: blue;");
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    myController.openLink(linkAddress);
+                }
+            });
+            popMenu.getItems().add(menu);
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    popMenu.hide();
+                }
+            });
+            popMenu.getItems().add(menu);
+            LocateTools.locateMouse(mouseEvent, popMenu);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     /*

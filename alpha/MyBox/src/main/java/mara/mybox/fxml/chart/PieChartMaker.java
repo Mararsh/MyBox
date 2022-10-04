@@ -12,6 +12,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.NumberTools;
 
 /**
  * @Author Mara
@@ -19,24 +20,24 @@ import mara.mybox.tools.DoubleTools;
  * @License Apache License Version 2.0
  */
 public class PieChartMaker extends PieChartOptions {
-    
+
     public PieChartMaker() {
         chartType = ChartType.Pie;
     }
-    
+
     public PieChartMaker init(String chartName) {
         clearChart();
         this.chartName = chartName;
         initPieOptions();
         return this;
     }
-    
+
     @Override
     public void clearChart() {
         super.clearChart();
         pieChart = null;
     }
-    
+
     public PieChart makeChart() {
         try {
             clearChart();
@@ -51,7 +52,7 @@ public class PieChartMaker extends PieChartOptions {
         }
         return pieChart;
     }
-    
+
     public void initPieChart() {
         try {
             pieChart = new PieChart();
@@ -98,7 +99,7 @@ public class PieChartMaker extends PieChartOptions {
                     continue;
                 }
                 double percent = DoubleTools.scale(d * 100 / total, scale);
-                String value = DoubleTools.format(d, scale);
+                String value = NumberTools.format(d, scale);
                 switch (labelType) {
                     case Category:
                         label = (displayLabelName ? getCategoryLabel() + ": " : "") + name;
@@ -126,15 +127,15 @@ public class PieChartMaker extends PieChartOptions {
                 }
                 paletteList.add(FxColorTools.randomRGB(random));
             }
-            
+
             pieChart.setLegendVisible(legendSide == null);
             pieChart.setLabelsVisible(labelVisible());
             pieChart.setClockwise(clockwise);
             ChartTools.setPieColors(pieChart, paletteList, showLegend(), labelFontSize);
-            
+
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
     }
-    
+
 }

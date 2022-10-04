@@ -103,18 +103,6 @@ public class DoubleTools {
         }
     }
 
-    public static String format(double data, String format) {
-        return NumberTools.format(data, format);
-    }
-
-    public static String format(double data) {
-        return NumberTools.format(data);
-    }
-
-    public static String format(double data, int scale) {
-        return NumberTools.format(data, scale);
-    }
-
     public static int compare(String s1, String s2, boolean desc) {
         return compare(toDouble(s1, InvalidAs.Blank), toDouble(s2, InvalidAs.Blank), desc);
     }

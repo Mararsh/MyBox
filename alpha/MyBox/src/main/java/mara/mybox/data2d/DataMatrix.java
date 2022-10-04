@@ -15,6 +15,7 @@ import mara.mybox.db.table.TableData2DCell;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.NumberTools;
 
 /**
  * @Author Mara
@@ -138,7 +139,7 @@ public class DataMatrix extends Data2D {
         if (DoubleTools.invalidDouble(d)) {
             return Double.NaN + "";
         } else {
-            return DoubleTools.format(d, scale);
+            return NumberTools.format(d, scale);
         }
     }
 

@@ -9,6 +9,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.NumberTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -97,7 +98,7 @@ public class Data2DNormalizeController extends BaseData2DHandleController {
                                 break;
                         }
                     } else {
-                        row.add(DoubleTools.format(d, scale));
+                        row.add(NumberTools.format(d, scale));
                     }
                 }
                 if (otherColsNumber > 0) {

@@ -8,7 +8,7 @@ import mara.mybox.calculation.SimpleLinearRegression;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.NumberTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -89,11 +89,11 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
                     List<String> row = new ArrayList<>();
                     row.add(yName);
                     row.add(xName);
-                    row.add(DoubleTools.format(simpleRegression.getRSquare(), scale));
-                    row.add(DoubleTools.format(simpleRegression.getR(), scale));
+                    row.add(NumberTools.format(simpleRegression.getRSquare(), scale));
+                    row.add(NumberTools.format(simpleRegression.getR(), scale));
                     row.add(simpleRegression.getModel());
-                    row.add(DoubleTools.format(simpleRegression.getSlope(), scale));
-                    row.add(DoubleTools.format(simpleRegression.getIntercept(), scale));
+                    row.add(NumberTools.format(simpleRegression.getSlope(), scale));
+                    row.add(NumberTools.format(simpleRegression.getIntercept(), scale));
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {

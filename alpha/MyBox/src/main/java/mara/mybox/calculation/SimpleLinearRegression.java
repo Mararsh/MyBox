@@ -8,6 +8,7 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.NumberTools;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 
@@ -72,42 +73,42 @@ public class SimpleLinearRegression extends SimpleRegression {
         lastData = new ArrayList<>();
         lastData.add(rowIndex + "");
         lastData.add(getN() + "");
-        lastData.add(DoubleTools.format(x, scale));
-        lastData.add(DoubleTools.format(y, scale));
-        lastData.add(DoubleTools.format(lastSlope, scale));
-        lastData.add(DoubleTools.format(lastIntercept, scale));
-        lastData.add(DoubleTools.format(lastRSquare, scale));
-        lastData.add(DoubleTools.format(lastR, scale));
-        lastData.add(DoubleTools.format(getMeanSquareError(), scale));
-        lastData.add(DoubleTools.format(getSumSquaredErrors(), scale));
-        lastData.add(DoubleTools.format(getTotalSumSquares(), scale));
-        lastData.add(DoubleTools.format(getRegressionSumSquares(), scale));
-        lastData.add(DoubleTools.format(getSlopeStdErr(), scale));
-        lastData.add(DoubleTools.format(getSignificance(), scale));
-        lastData.add(DoubleTools.format(getSlopeConfidenceInterval(), scale));
-        lastData.add(DoubleTools.format(getInterceptStdErr(), scale));
-        lastData.add(DoubleTools.format(getSumOfCrossProducts(), scale));
-        lastData.add(DoubleTools.format(getSumOfCrossProducts(), scale));
-        lastData.add(DoubleTools.format(getXSumSquares(), scale));
+        lastData.add(NumberTools.format(x, scale));
+        lastData.add(NumberTools.format(y, scale));
+        lastData.add(NumberTools.format(lastSlope, scale));
+        lastData.add(NumberTools.format(lastIntercept, scale));
+        lastData.add(NumberTools.format(lastRSquare, scale));
+        lastData.add(NumberTools.format(lastR, scale));
+        lastData.add(NumberTools.format(getMeanSquareError(), scale));
+        lastData.add(NumberTools.format(getSumSquaredErrors(), scale));
+        lastData.add(NumberTools.format(getTotalSumSquares(), scale));
+        lastData.add(NumberTools.format(getRegressionSumSquares(), scale));
+        lastData.add(NumberTools.format(getSlopeStdErr(), scale));
+        lastData.add(NumberTools.format(getSignificance(), scale));
+        lastData.add(NumberTools.format(getSlopeConfidenceInterval(), scale));
+        lastData.add(NumberTools.format(getInterceptStdErr(), scale));
+        lastData.add(NumberTools.format(getSumOfCrossProducts(), scale));
+        lastData.add(NumberTools.format(getSumOfCrossProducts(), scale));
+        lastData.add(NumberTools.format(getXSumSquares(), scale));
 
         try {
             Class superClass = getClass().getSuperclass();
 
             Field xbar = superClass.getDeclaredField("xbar");
             xbar.setAccessible(true);
-            lastData.add(DoubleTools.format((double) xbar.get(this), scale));
+            lastData.add(NumberTools.format((double) xbar.get(this), scale));
 
             Field sumX = superClass.getDeclaredField("sumX");
             sumX.setAccessible(true);
-            lastData.add(DoubleTools.format((double) sumX.get(this), scale));
+            lastData.add(NumberTools.format((double) sumX.get(this), scale));
 
             Field ybar = superClass.getDeclaredField("ybar");
             ybar.setAccessible(true);
-            lastData.add(DoubleTools.format((double) ybar.get(this), scale));
+            lastData.add(NumberTools.format((double) ybar.get(this), scale));
 
             Field sumY = superClass.getDeclaredField("sumY");
             sumY.setAccessible(true);
-            lastData.add(DoubleTools.format((double) sumY.get(this), scale));
+            lastData.add(NumberTools.format((double) sumY.get(this), scale));
 
         } catch (Exception e) {
             MyBoxLog.console(e);
@@ -140,8 +141,8 @@ public class SimpleLinearRegression extends SimpleRegression {
         return message("IndependentVariable") + ": " + xName + "\n"
                 + message("DependentVariable") + ": " + yName + "\n"
                 + message("LinearModel") + ": " + getModel() + "\n"
-                + message("CoefficientOfDetermination") + ": " + DoubleTools.format(lastRSquare, scale) + "\n"
-                + message("PearsonsR") + ": " + DoubleTools.format(lastR, scale);
+                + message("CoefficientOfDetermination") + ": " + NumberTools.format(lastRSquare, scale) + "\n"
+                + message("PearsonsR") + ": " + NumberTools.format(lastR, scale);
     }
 
     public String getModel() {
@@ -150,8 +151,8 @@ public class SimpleLinearRegression extends SimpleRegression {
             return message("Invalid");
         }
         return yName + " = "
-                + DoubleTools.format(lastIntercept, scale) + (lastSlope > 0 ? " + " : " - ")
-                + DoubleTools.format(Math.abs(lastSlope), scale) + " * " + xName;
+                + NumberTools.format(lastIntercept, scale) + (lastSlope > 0 ? " + " : " - ")
+                + NumberTools.format(Math.abs(lastSlope), scale) + " * " + xName;
     }
 
     /*

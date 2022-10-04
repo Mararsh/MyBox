@@ -9,6 +9,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.NumberTools;
 import static mara.mybox.tools.TmpFileTools.getPathTempFile;
 import mara.mybox.value.AppPaths;
 import static mara.mybox.value.Languages.message;
@@ -97,7 +98,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         values
      */
     public String randomDouble(Random random, boolean nonNegative) {
-        return DoubleTools.format(DoubleTools.random(random, maxRandom, nonNegative), scale);
+        return NumberTools.format(DoubleTools.random(random, maxRandom, nonNegative), scale);
     }
 
     public String randomString(Random random) {

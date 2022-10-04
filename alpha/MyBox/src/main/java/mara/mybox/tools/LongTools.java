@@ -18,14 +18,6 @@ public class LongTools {
         return value == AppValues.InvalidLong;
     }
 
-    public static String format(long data, String format) {
-        return NumberTools.format(data, format);
-    }
-
-    public static String format(long data) {
-        return format(data, "#,###");
-    }
-
     // invalid values are always in the end
     public static int compare(String s1, String s2, boolean desc) {
         double d1, d2;

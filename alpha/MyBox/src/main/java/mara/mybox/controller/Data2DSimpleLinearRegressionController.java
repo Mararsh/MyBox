@@ -22,6 +22,7 @@ import mara.mybox.fxml.chart.ResidualChart;
 import mara.mybox.fxml.chart.XYChartMaker;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.tools.NumberTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -237,7 +238,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
             for (int i = 0; i < outputData.size(); i++) {
                 List<String> rowData = outputData.get(i);
                 double x = DoubleTools.toDouble(rowData.get(1), invalidAs);
-                rowData.add(DoubleTools.format(intercept + slope * x, scale));
+                rowData.add(NumberTools.format(intercept + slope * x, scale));
             }
 
             makeResidualData();
@@ -278,22 +279,22 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
                 double residual = y - predict;
                 residualRow.add(rowData.get(0));
                 if (residualIndRadio.isSelected()) {
-                    residualRow.add(DoubleTools.format(x, scale));
+                    residualRow.add(NumberTools.format(x, scale));
                 } else if (residualActualRadio.isSelected()) {
-                    residualRow.add(DoubleTools.format(y, scale));
+                    residualRow.add(NumberTools.format(y, scale));
                 } else {
-                    residualRow.add(DoubleTools.format(predict, scale));
+                    residualRow.add(NumberTools.format(predict, scale));
                 }
                 if (residualStdCheck.isSelected()) {
                     double stdResidual = residual / stdDeviation;
-                    residualRow.add(DoubleTools.format(stdResidual, scale));
+                    residualRow.add(NumberTools.format(stdResidual, scale));
                     residualRow.add("1.96");
                     residualRow.add("-1.96");
                     if (stdResidual >= -1.96 && stdResidual <= 1.96) {
                         residualInside++;
                     }
                 } else {
-                    residualRow.add(DoubleTools.format(residual, scale));
+                    residualRow.add(NumberTools.format(residual, scale));
                 }
                 residualData.add(residualRow);
             }
@@ -361,8 +362,8 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
 
     public void writeModelView() {
         try {
-            String interceptScaled = DoubleTools.format(intercept, scale);
-            String slopeScaled = DoubleTools.format(Math.abs(slope), scale);
+            String interceptScaled = NumberTools.format(intercept, scale);
+            String slopeScaled = NumberTools.format(Math.abs(slope), scale);
             if (DoubleTools.invalidDouble(slope)) {
                 alertError(message("InvalidData") + "\n" + message("RegressionFailedNotice"));
             }

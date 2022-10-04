@@ -13,6 +13,7 @@ import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.NumberTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -129,7 +130,7 @@ public class Data2DPercentageController extends BaseData2DHandleController {
             List<String> row = new ArrayList<>();
             row.add(message("Column") + "-" + message("Summation"));
             for (int c = 0; c < colsLen; c++) {
-                row.add(DoubleTools.format(sum[c], scale));
+                row.add(NumberTools.format(sum[c], scale));
             }
             int otherColsNumber = otherColsIndices != null ? otherColsIndices.size() : 0;
             if (otherColsNumber > 0) {
@@ -201,7 +202,7 @@ public class Data2DPercentageController extends BaseData2DHandleController {
                         sum += d;
                     }
                 }
-                row.add(DoubleTools.format(sum, scale));
+                row.add(NumberTools.format(sum, scale));
                 for (int c : colIndices) {
                     String s = tableRow.get(c + 1);
                     double d = DoubleTools.toDouble(s, invalidAs);
@@ -261,7 +262,7 @@ public class Data2DPercentageController extends BaseData2DHandleController {
             outputData = new ArrayList<>();
             List<String> row = new ArrayList<>();
             row.add(message("All") + "-" + message("Summation"));
-            row.add(DoubleTools.format(sum, scale));
+            row.add(NumberTools.format(sum, scale));
             for (int c : colIndices) {
                 row.add(null);
             }

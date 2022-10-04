@@ -23,6 +23,7 @@ import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.IntTools;
 import mara.mybox.tools.LongTools;
+import mara.mybox.tools.NumberTools;
 import mara.mybox.tools.ShortTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppValues;
@@ -148,6 +149,7 @@ public class ColumnDefinition extends BaseData {
             length = c.length;
             width = c.width;
             scale = c.scale;
+            format = c.format;
             color = c.color;
             isPrimaryKey = c.isPrimaryKey;
             notNull = c.notNull;
@@ -155,7 +157,6 @@ public class ColumnDefinition extends BaseData {
             editable = c.editable;
             onDelete = c.onDelete;
             onUpdate = c.onUpdate;
-            format = c.format;
             defaultValue = c.defaultValue;
             value = c.value;
             maxValue = c.maxValue;
@@ -329,9 +330,9 @@ public class ColumnDefinition extends BaseData {
         }
         switch (type) {
             case Double:
-                return DoubleTools.format(DoubleTools.random(random, maxRandom, nonNegative), scale);
+                return NumberTools.format(DoubleTools.random(random, maxRandom, nonNegative), scale);
             case Float:
-                return FloatTools.format(FloatTools.random(random, maxRandom, nonNegative), scale);
+                return NumberTools.format(FloatTools.random(random, maxRandom, nonNegative), scale);
             case Integer:
                 return StringTools.format(IntTools.random(random, maxRandom, nonNegative));
             case Long:
@@ -346,11 +347,11 @@ public class ColumnDefinition extends BaseData {
             case Date:
                 return DateTools.randomDateString(random);
             case GeoCoordinate:
-                String x = DoubleTools.format(DoubleTools.random(random, Math.min(maxRandom, 180), nonNegative), scale);
-                String y = DoubleTools.format(DoubleTools.random(random, Math.min(maxRandom, 90), nonNegative), scale);
+                String x = NumberTools.format(DoubleTools.random(random, Math.min(maxRandom, 180), nonNegative), scale);
+                String y = NumberTools.format(DoubleTools.random(random, Math.min(maxRandom, 90), nonNegative), scale);
                 return x + "," + y;
             default:
-                return DoubleTools.format(DoubleTools.random(random, maxRandom, nonNegative), scale);
+                return NumberTools.format(DoubleTools.random(random, maxRandom, nonNegative), scale);
 //                return (char) ('a' + random.nextInt(25)) + "";
         }
     }
@@ -535,15 +536,15 @@ public class ColumnDefinition extends BaseData {
             }
             switch (type) {
                 case Double:
-                    return DoubleTools.format((double) o, format);
+                    return NumberTools.format((double) o, format, scale);
                 case Float:
-                    return FloatTools.format((float) o, format);
+                    return NumberTools.format((float) o, format, scale);
                 case Long:
-                    return LongTools.format((long) o, format);
+                    return NumberTools.format((long) o, format, scale);
                 case Integer:
-                    return IntTools.format((int) o, format);
+                    return NumberTools.format((int) o, format, scale);
                 case Short:
-                    return ShortTools.format((short) o, format);
+                    return NumberTools.format((short) o, format, scale);
                 case Datetime:
                     return DateTools.datetimeToString((Date) o, format);
                 case Date:

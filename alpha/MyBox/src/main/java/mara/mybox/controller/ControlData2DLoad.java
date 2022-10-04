@@ -690,7 +690,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
      */
     @Override
     public void tableChanged(boolean changed) {
-        MyBoxLog.console(changed);
         if (isSettingValues || data2D == null) {
             return;
         }

@@ -13,7 +13,7 @@ import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.NumberTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -164,10 +164,10 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
                     namesMap.put(namesString, xnames);
                     row.add(yName);
                     row.add(namesString);
-                    row.add(DoubleTools.format(regression.getAdjustedRSqure(), scale));
-                    row.add(DoubleTools.format(regression.getrSqure(), scale));
+                    row.add(NumberTools.format(regression.getAdjustedRSqure(), scale));
+                    row.add(NumberTools.format(regression.getrSqure(), scale));
                     row.add(Arrays.toString(regression.getCoefficients()));
-                    row.add(DoubleTools.format(regression.getIntercept(), scale));
+                    row.add(NumberTools.format(regression.getIntercept(), scale));
 
                     Platform.runLater(new Runnable() {
                         @Override

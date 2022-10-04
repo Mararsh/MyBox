@@ -15,6 +15,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.NumberTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -510,29 +511,29 @@ public class XYChartMaker<X, Y> extends XYChartOptions<X, Y> {
                 categoryName = xyChart.getXAxis().getLabel();
                 category = item.getXValue() == null ? "" : item.getXValue().toString();
                 if (categoryIsNumbers) {
-                    categoryDis = DoubleTools.format(ChartTools.realValue(xCoordinate, Double.valueOf(category)), scale);
+                    categoryDis = NumberTools.format(ChartTools.realValue(xCoordinate, Double.valueOf(category)), scale);
                 } else {
                     categoryDis = category;
                 }
                 number = item.getYValue() == null ? "" : item.getYValue().toString();
-                numberDis = DoubleTools.format(ChartTools.realValue(yCoordinate, Double.valueOf(number)), scale);
+                numberDis = NumberTools.format(ChartTools.realValue(yCoordinate, Double.valueOf(number)), scale);
             } else {
                 categoryName = xyChart.getYAxis().getLabel();
                 category = item.getYValue() == null ? "" : item.getYValue().toString();
                 if (categoryIsNumbers) {
-                    categoryDis = DoubleTools.format(ChartTools.realValue(yCoordinate, Double.valueOf(category)), scale);
+                    categoryDis = NumberTools.format(ChartTools.realValue(yCoordinate, Double.valueOf(category)), scale);
                 } else {
                     categoryDis = category;
                 }
                 number = item.getXValue() == null ? "" : item.getXValue().toString();
-                numberDis = DoubleTools.format(ChartTools.realValue(xCoordinate, Double.valueOf(number)), scale);
+                numberDis = NumberTools.format(ChartTools.realValue(xCoordinate, Double.valueOf(number)), scale);
             }
 
             if (item.getExtraValue() != null) {
                 double d = (double) item.getExtraValue();
-                extra = "\n" + (displayLabelName ? message("Size") + ": " : "") + DoubleTools.format(d, scale);
+                extra = "\n" + (displayLabelName ? message("Size") + ": " : "") + NumberTools.format(d, scale);
                 extraDis = "\n" + (displayLabelName ? message("Size") + ": " : "")
-                        + DoubleTools.format(ChartTools.realValue(sizeCoordinate, d), scale);
+                        + NumberTools.format(ChartTools.realValue(sizeCoordinate, d), scale);
             } else {
                 extra = "";
                 extraDis = "";

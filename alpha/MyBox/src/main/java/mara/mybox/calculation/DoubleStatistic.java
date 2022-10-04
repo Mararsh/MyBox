@@ -8,6 +8,7 @@ import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleArrayTools;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.NumberTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppValues;
 import org.apache.commons.math3.stat.descriptive.moment.Skewness;
@@ -300,62 +301,62 @@ public class DoubleStatistic {
             list.add(StringTools.format(count));
         }
         if (options.isSum()) {
-            list.add(DoubleTools.format(sum, scale));
+            list.add(NumberTools.format(sum, scale));
         }
         if (options.isMean()) {
-            list.add(DoubleTools.format(mean, scale));
+            list.add(NumberTools.format(mean, scale));
         }
         if (options.isMaximum()) {
-            list.add(DoubleTools.format(maximum, scale));
+            list.add(NumberTools.format(maximum, scale));
         }
         if (options.isMinimum()) {
-            list.add(DoubleTools.format(minimum, scale));
+            list.add(NumberTools.format(minimum, scale));
         }
         if (options.isGeometricMean()) {
-            list.add(DoubleTools.format(geometricMean, scale));
+            list.add(NumberTools.format(geometricMean, scale));
         }
         if (options.isSumSquares()) {
-            list.add(DoubleTools.format(sumSquares, scale));
+            list.add(NumberTools.format(sumSquares, scale));
         }
         if (options.isPopulationStandardDeviation()) {
-            list.add(DoubleTools.format(populationVariance, scale));
+            list.add(NumberTools.format(populationVariance, scale));
         }
         if (options.isSampleVariance()) {
-            list.add(DoubleTools.format(sampleVariance, scale));
+            list.add(NumberTools.format(sampleVariance, scale));
         }
         if (options.isPopulationStandardDeviation()) {
-            list.add(DoubleTools.format(populationStandardDeviation, scale));
+            list.add(NumberTools.format(populationStandardDeviation, scale));
         }
         if (options.isSampleStandardDeviation()) {
-            list.add(DoubleTools.format(sampleStandardDeviation, scale));
+            list.add(NumberTools.format(sampleStandardDeviation, scale));
         }
         if (options.isSkewness()) {
-            list.add(DoubleTools.format(skewness, scale));
+            list.add(NumberTools.format(skewness, scale));
         }
         if (options.isMedian()) {
-            list.add(DoubleTools.format(median, scale));
+            list.add(NumberTools.format(median, scale));
         }
         if (options.isUpperQuartile()) {
-            list.add(DoubleTools.format(upperQuartile, scale));
+            list.add(NumberTools.format(upperQuartile, scale));
         }
         if (options.isLowerQuartile()) {
-            list.add(DoubleTools.format(lowerQuartile, scale));
+            list.add(NumberTools.format(lowerQuartile, scale));
         }
         if (options.isUpperExtremeOutlierLine()) {
-            list.add(DoubleTools.format(upperExtremeOutlierLine, scale));
+            list.add(NumberTools.format(upperExtremeOutlierLine, scale));
         }
         if (options.isUpperMildOutlierLine()) {
-            list.add(DoubleTools.format(upperMildOutlierLine, scale));
+            list.add(NumberTools.format(upperMildOutlierLine, scale));
         }
         if (options.isLowerExtremeOutlierLine()) {
-            list.add(DoubleTools.format(lowerMildOutlierLine, scale));
+            list.add(NumberTools.format(lowerMildOutlierLine, scale));
         }
         if (options.isLowerMildOutlierLine()) {
-            list.add(DoubleTools.format(lowerExtremeOutlierLine, scale));
+            list.add(NumberTools.format(lowerExtremeOutlierLine, scale));
         }
         if (options.isMode()) {
             try {
-                list.add(DoubleTools.format((double) modeValue, scale));
+                list.add(NumberTools.format((double) modeValue, scale));
             } catch (Exception e) {
                 list.add(modeValue.toString());
             }

@@ -16,14 +16,6 @@ import javafx.scene.control.IndexRange;
  */
 public class IntTools {
 
-    public static String format(int data, String format) {
-        return NumberTools.format(data, format);
-    }
-
-    public static String format(int data) {
-        return format(data, "#,###");
-    }
-
     // invalid values are always in the end
     public static int compare(String s1, String s2, boolean desc) {
         float f1, f2;

@@ -12,7 +12,7 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.NumberTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
 
@@ -572,37 +572,37 @@ public class DescriptiveStatistic {
             countRow.add(StringTools.format(statistic.getCount()));
         }
         if (summationRow != null) {
-            summationRow.add(DoubleTools.format(statistic.getSum(), scale));
+            summationRow.add(NumberTools.format(statistic.getSum(), scale));
         }
         if (meanRow != null) {
-            meanRow.add(DoubleTools.format(statistic.getMean(), scale));
+            meanRow.add(NumberTools.format(statistic.getMean(), scale));
         }
         if (geometricMeanRow != null) {
-            geometricMeanRow.add(DoubleTools.format(statistic.getGeometricMean(), scale));
+            geometricMeanRow.add(NumberTools.format(statistic.getGeometricMean(), scale));
         }
         if (sumOfSquaresRow != null) {
-            sumOfSquaresRow.add(DoubleTools.format(statistic.getSumSquares(), scale));
+            sumOfSquaresRow.add(NumberTools.format(statistic.getSumSquares(), scale));
         }
         if (populationVarianceRow != null) {
-            populationVarianceRow.add(DoubleTools.format(statistic.getPopulationVariance(), scale));
+            populationVarianceRow.add(NumberTools.format(statistic.getPopulationVariance(), scale));
         }
         if (sampleVarianceRow != null) {
-            sampleVarianceRow.add(DoubleTools.format(statistic.getSampleVariance(), scale));
+            sampleVarianceRow.add(NumberTools.format(statistic.getSampleVariance(), scale));
         }
         if (populationStandardDeviationRow != null) {
-            populationStandardDeviationRow.add(DoubleTools.format(statistic.getPopulationStandardDeviation(), scale));
+            populationStandardDeviationRow.add(NumberTools.format(statistic.getPopulationStandardDeviation(), scale));
         }
         if (sampleStandardDeviationRow != null) {
-            sampleStandardDeviationRow.add(DoubleTools.format(statistic.getSampleStandardDeviation(), scale));
+            sampleStandardDeviationRow.add(NumberTools.format(statistic.getSampleStandardDeviation(), scale));
         }
         if (skewnessRow != null) {
-            skewnessRow.add(DoubleTools.format(statistic.getSkewness(), scale));
+            skewnessRow.add(NumberTools.format(statistic.getSkewness(), scale));
         }
         if (minimumRow != null) {
-            minimumRow.add(DoubleTools.format(statistic.getMinimum(), scale));
+            minimumRow.add(NumberTools.format(statistic.getMinimum(), scale));
         }
         if (maximumRow != null) {
-            maximumRow.add(DoubleTools.format(statistic.getMaximum(), scale));
+            maximumRow.add(NumberTools.format(statistic.getMaximum(), scale));
         }
         return true;
     }
@@ -614,7 +614,7 @@ public class DescriptiveStatistic {
         if (medianRow != null) {
             Object v = statistic.getMedianValue();
             try {
-                medianRow.add(DoubleTools.format((double) v, scale));
+                medianRow.add(NumberTools.format((double) v, scale));
             } catch (Exception e) {
                 try {
                     medianRow.add(v.toString());
@@ -626,7 +626,7 @@ public class DescriptiveStatistic {
         if (modeRow != null) {
             Object v = statistic.getModeValue();
             try {
-                modeRow.add(DoubleTools.format((double) v, scale));
+                modeRow.add(NumberTools.format((double) v, scale));
             } catch (Exception e) {
                 try {
                     modeRow.add(v.toString());
@@ -638,7 +638,7 @@ public class DescriptiveStatistic {
         if (lowerQuartileRow != null) {
             Object v = statistic.getLowerQuartileValue();
             try {
-                lowerQuartileRow.add(DoubleTools.format((double) v, scale));
+                lowerQuartileRow.add(NumberTools.format((double) v, scale));
             } catch (Exception e) {
                 try {
                     lowerQuartileRow.add(v.toString());
@@ -651,7 +651,7 @@ public class DescriptiveStatistic {
         if (upperQuartileRow != null) {
             Object v = statistic.getUpperQuartileValue();
             try {
-                upperQuartileRow.add(DoubleTools.format((double) v, scale));
+                upperQuartileRow.add(NumberTools.format((double) v, scale));
             } catch (Exception e) {
                 try {
                     upperQuartileRow.add(v.toString());
@@ -661,16 +661,16 @@ public class DescriptiveStatistic {
             }
         }
         if (upperExtremeOutlierLineRow != null) {
-            upperExtremeOutlierLineRow.add(DoubleTools.format((double) statistic.getUpperExtremeOutlierLine(), scale));
+            upperExtremeOutlierLineRow.add(NumberTools.format((double) statistic.getUpperExtremeOutlierLine(), scale));
         }
         if (upperMildOutlierLineRow != null) {
-            upperMildOutlierLineRow.add(DoubleTools.format((double) statistic.getUpperMildOutlierLine(), scale));
+            upperMildOutlierLineRow.add(NumberTools.format((double) statistic.getUpperMildOutlierLine(), scale));
         }
         if (lowerMildOutlierLineRow != null) {
-            lowerMildOutlierLineRow.add(DoubleTools.format((double) statistic.getLowerMildOutlierLine(), scale));
+            lowerMildOutlierLineRow.add(NumberTools.format((double) statistic.getLowerMildOutlierLine(), scale));
         }
         if (lowerExtremeOutlierLineRow != null) {
-            lowerExtremeOutlierLineRow.add(DoubleTools.format((double) statistic.getLowerExtremeOutlierLine(), scale));
+            lowerExtremeOutlierLineRow.add(NumberTools.format((double) statistic.getLowerExtremeOutlierLine(), scale));
         }
         return true;
     }

@@ -31,18 +31,6 @@ public class FloatTools {
         }
     }
 
-    public static String format(float data, String format) {
-        return NumberTools.format(data, format);
-    }
-
-    public static String format(float data) {
-        return NumberTools.format(data);
-    }
-
-    public static String format(float data, int scale) {
-        return NumberTools.format(data, scale);
-    }
-
     public static int compare(String s1, String s2, boolean desc) {
         float f1, f2;
         try {
