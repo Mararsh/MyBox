@@ -30,7 +30,7 @@ import mara.mybox.fxml.cell.TableBooleanCell;
 import mara.mybox.fxml.cell.TableCheckboxCell;
 import mara.mybox.fxml.cell.TableColorEditCell;
 import mara.mybox.fxml.cell.TableDataColumnCell;
-import mara.mybox.fxml.cell.TableTextAreaInputCell;
+import mara.mybox.fxml.cell.TableTextAreaEditCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
 
@@ -312,7 +312,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             });
 
             descColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
-            descColumn.setCellFactory(TableTextAreaInputCell.create(myController, null));
+            descColumn.setCellFactory(TableTextAreaEditCell.create(myController, null));
             descColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Data2DColumn, String>>() {
                 @Override
                 public void handle(TableColumn.CellEditEvent<Data2DColumn, String> e) {

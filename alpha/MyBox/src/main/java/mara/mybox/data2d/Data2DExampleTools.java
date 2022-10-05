@@ -35,7 +35,7 @@ public class Data2DExampleTools {
             List<MenuItem> items = new ArrayList<>();
 
             MenuItem menu;
-            String lang = Languages.isChinese() ? "zh" : "en";
+            String lang = Languages.getLangName();
 
             // https://data.stats.gov.cn/index.htm
             Menu chinaMenu = new Menu(message("StatisticDataOfChina"), StyleTools.getIconImage("iconChina.png"));

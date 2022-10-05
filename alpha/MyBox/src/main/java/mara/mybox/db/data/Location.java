@@ -2,8 +2,8 @@ package mara.mybox.db.data;
 
 import java.io.File;
 import java.util.Date;
-import mara.mybox.data.GeoCoordinateSystem;
 import mara.mybox.data.Era;
+import mara.mybox.data.GeoCoordinateSystem;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
@@ -275,7 +275,7 @@ public class Location extends BaseData implements Cloneable {
         } else if (dataset == null) {
             startTimeText = DateTools.textEra(startTime);
         } else {
-            startTimeText = DateTools.textEra(startTime, dataset.getTimeFormat(), dataset.isOmitAD());
+//            startTimeText = DateTools.textEra(startTime, dataset.getTimeFormat(), dataset.isOmitAD());
         }
         return startTimeText;
     }
@@ -286,7 +286,7 @@ public class Location extends BaseData implements Cloneable {
         } else if (dataset == null) {
             endTimeText = DateTools.textEra(endTime);
         } else {
-            endTimeText = DateTools.textEra(endTime, dataset.getTimeFormat(), dataset.isOmitAD());
+//            endTimeText = DateTools.textEra(endTime, dataset.getTimeFormat(), dataset.isOmitAD());
         }
         return endTimeText;
     }
@@ -319,7 +319,7 @@ public class Location extends BaseData implements Cloneable {
         } else if (dataset == null) {
             startEra = new Era(startTime);
         } else {
-            startEra = new Era(startTime, dataset.getTimeFormat(), dataset.isOmitAD());
+//            startEra = new Era(startTime, dataset.getTimeFormat(), dataset.isOmitAD());
         }
         return startEra;
     }
@@ -330,7 +330,7 @@ public class Location extends BaseData implements Cloneable {
         } else if (dataset == null) {
             endEra = new Era(endTime);
         } else {
-            endEra = new Era(endTime, dataset.getTimeFormat(), dataset.isOmitAD());
+//            endEra = new Era(endTime, dataset.getTimeFormat(), dataset.isOmitAD());
         }
         return endEra;
     }
@@ -349,7 +349,8 @@ public class Location extends BaseData implements Cloneable {
             return null;
         }
         if (dataset != null) {
-            return DateTools.duration(new Date(startTime), new Date(endTime), dataset.timeFormat);
+//            return DateTools.duration(new Date(startTime), new Date(endTime), dataset.timeFormat);
+            return DateTools.duration(new Date(startTime), new Date(endTime), null);
         } else {
             return DateTools.duration(new Date(startTime), new Date(endTime), null);
         }

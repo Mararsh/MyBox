@@ -147,7 +147,6 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
         }
         Node g = getGraphic();
         textFieldRef = (g != null && g instanceof TextField) ? (TextField) g : null;
-        MyBoxLog.console(textFieldRef != null);
         if (textFieldRef != null) {
             textFieldRef.focusedProperty().addListener(focusListener);
             textFieldRef.setOnKeyPressed(keyPressedHandler);

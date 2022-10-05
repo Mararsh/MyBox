@@ -134,7 +134,7 @@ public class TreeNode extends BaseData {
         if (null == category) {
             return null;
         } else {
-            String lang = Languages.isChinese() ? "zh" : "en";
+            String lang = Languages.getLangName();
             return getInternalFile("/data/examples/" + category + "_Examples_" + lang + ".txt",
                     "data", category + "_Examples_" + lang + ".txt", true);
         }

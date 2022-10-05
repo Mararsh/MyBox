@@ -26,7 +26,7 @@ public class TableDateCell<T> extends TableCell<T, Date>
                     setGraphic(null);
                     return;
                 }
-                setText(DateTools.datetimeToString(item));
+                setText(DateTools.textEra(item));
                 setGraphic(null);
             }
         };

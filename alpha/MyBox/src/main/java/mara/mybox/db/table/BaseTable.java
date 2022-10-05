@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import mara.mybox.data.Era;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.BatchSize;
@@ -43,7 +42,6 @@ public abstract class BaseTable<D> {
 
     protected String tableName, idColumn, orderColumns;
     protected List<ColumnDefinition> columns, primaryColumns, foreignColumns, referredColumns;
-    protected Era.Format timeFormat;
     protected boolean supportBatchUpdate;
     protected long newID = -1;
 
@@ -394,7 +392,6 @@ public abstract class BaseTable<D> {
         primaryColumns = new ArrayList<>();
         foreignColumns = new ArrayList<>();
         referredColumns = new ArrayList<>();
-        timeFormat = Era.Format.Datetime;
         supportBatchUpdate = false;
         newID = -1;
     }
@@ -1674,15 +1671,6 @@ public abstract class BaseTable<D> {
 
     public BaseTable setColumns(List<ColumnDefinition> columns) {
         this.columns = columns;
-        return this;
-    }
-
-    public Era.Format getTimeFormat() {
-        return timeFormat;
-    }
-
-    public BaseTable setTimeFormat(Era.Format timeFormat) {
-        this.timeFormat = timeFormat;
         return this;
     }
 

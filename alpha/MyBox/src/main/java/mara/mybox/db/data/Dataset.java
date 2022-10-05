@@ -2,7 +2,6 @@ package mara.mybox.db.data;
 
 import java.io.File;
 import javafx.scene.paint.Color;
-import mara.mybox.data.Era;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 
@@ -17,7 +16,7 @@ public class Dataset extends BaseData {
     protected String dataCategory, dataSet, comments;
     protected Color textColor, bgColor, chartColor;
     protected File image;
-    protected Era.Format timeFormat;
+//    protected Era.Format timeFormat;
     protected boolean omitAD;
 
     private void init() {
@@ -25,7 +24,7 @@ public class Dataset extends BaseData {
         textColor = Color.BLACK;
         bgColor = Color.WHITE;
         chartColor = Color.web("#961c1c");
-        timeFormat = Era.Format.Datetime;
+//        timeFormat = Era.Format.Datetime;
         omitAD = true;
     }
 
@@ -67,7 +66,7 @@ public class Dataset extends BaseData {
                     data.setDataSet(value == null ? null : (String) value);
                     return true;
                 case "time_format":
-                    data.setTimeFormat(value == null ? Era.Format.Datetime : Era.format((short) value));
+//                    data.setTimeFormat(value == null ? Era.Format.Datetime : Era.format((short) value));
                     return true;
                 case "time_format_omitAD":
                     data.setOmitAD(value == null ? false : (boolean) value);
@@ -112,8 +111,8 @@ public class Dataset extends BaseData {
                     return data.getDataCategory();
                 case "data_set":
                     return data.getDataSet();
-                case "time_format":
-                    return Era.format(data.getTimeFormat());
+//                case "time_format":
+//                    return Era.format(data.getTimeFormat());
                 case "time_format_omitAD":
                     return data.isOmitAD();
                 case "text_color":
@@ -171,15 +170,14 @@ public class Dataset extends BaseData {
         return this;
     }
 
-    public Era.Format getTimeFormat() {
-        return timeFormat;
-    }
-
-    public Dataset setTimeFormat(Era.Format timeFormat) {
-        this.timeFormat = timeFormat;
-        return this;
-    }
-
+//    public Era.Format getTimeFormat() {
+//        return timeFormat;
+//    }
+//
+//    public Dataset setTimeFormat(Era.Format timeFormat) {
+//        this.timeFormat = timeFormat;
+//        return this;
+//    }
     public Color getTextColor() {
         return textColor;
     }

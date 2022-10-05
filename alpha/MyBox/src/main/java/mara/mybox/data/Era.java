@@ -1,11 +1,9 @@
 package mara.mybox.data;
 
 import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppValues;
-import static mara.mybox.value.Languages.message;
+import mara.mybox.value.TimeFormats;
 
 /**
  * @Author Mara
@@ -22,18 +20,14 @@ import static mara.mybox.value.Languages.message;
 public class Era {
 
     protected long value = AppValues.InvalidLong;
-    protected Format format = Format.Datetime;
+    protected String format = TimeFormats.Datetime;
     protected boolean ignoreAD = true;
-
-    public static enum Format {
-        Datetime, Date, Year, Month, Time, TimeMs, DatetimeMs, DatetimeZone, DatetimeMsZone
-    }
 
     public Era(long value) {
         this.value = value;
     }
 
-    public Era(long value, Format format, boolean ignoreAD) {
+    public Era(long value, String format, boolean ignoreAD) {
         this.value = value;
         this.format = format;
         this.ignoreAD = ignoreAD;
@@ -50,38 +44,7 @@ public class Era {
         if (value == AppValues.InvalidLong) {
             return null;
         }
-        return DateTools.textEra(value, format, ignoreAD);
-    }
-
-    public int formatValue() {
-        return format(this.format);
-    }
-
-    /*
-        static methods
-     */
-    public static Map<Object, String> values() {
-        Map<Object, String> values = new LinkedHashMap<>();
-        for (Format format : Format.values()) {
-            values.put(format(format), message(format.name()));
-        }
-        return values;
-    }
-
-    public static Format format(short value) {
-        try {
-            return Format.values()[value];
-        } catch (Exception e) {
-            return Format.Datetime;
-        }
-    }
-
-    public static short format(Format format) {
-        try {
-            return (short) format.ordinal();
-        } catch (Exception e) {
-            return 0;
-        }
+        return DateTools.textEra(value, format);
     }
 
     /*
@@ -96,11 +59,11 @@ public class Era {
         return this;
     }
 
-    public Format getFormat() {
+    public String getFormat() {
         return format;
     }
 
-    public Era setFormat(Format format) {
+    public Era setFormat(String format) {
         this.format = format;
         return this;
     }

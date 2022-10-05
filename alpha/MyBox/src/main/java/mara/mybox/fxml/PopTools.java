@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import javafx.beans.value.ChangeListener;
@@ -667,12 +668,12 @@ public class PopTools {
             values.add(DateTools.datetimeToString(d, TimeFormats.Month));
             values.add(DateTools.datetimeToString(d, TimeFormats.Year));
             values.add(DateTools.datetimeToString(d, TimeFormats.TimeMs));
-            values.add(DateTools.datetimeToString(d, TimeFormats.Datetime + " Z"));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeZone));
             values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeE));
             values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMsE));
             values.add(DateTools.datetimeToString(d, TimeFormats.DateE));
             values.add(DateTools.datetimeToString(d, TimeFormats.MonthE));
-            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeE + " Z"));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeZoneE));
             values.addAll(Arrays.asList(
                     "2020-07-15T36:55:09", "2020-07-10T10:10:10.532 +0800"
             ));
@@ -699,35 +700,108 @@ public class PopTools {
         }
     }
 
-    public static ContextMenu popEraExamples(ContextMenu inPopMenu, TextField input, MouseEvent mouseEvent) {
+    public static void popEraExamples(BaseController parent, TextField input, MouseEvent mouseEvent) {
         try {
             List<String> values = new ArrayList<>();
-            values.add(DateTools.nowString());
-            values.add(DateTools.datetimeToString(new Date(), TimeFormats.DatetimeMs));
-            values.add(DateTools.datetimeToString(new Date(), TimeFormats.TimeMs));
-            values.add(DateTools.datetimeToString(new Date(), TimeFormats.DatetimeMs + " Z"));
-            values.add(DateTools.datetimeToString(new Date(), TimeFormats.DatetimeMsE));
-            values.add(DateTools.datetimeToString(new Date(), TimeFormats.DatetimeMsE + " Z"));
-            values.addAll(Arrays.asList(
-                    "2020-07-15T36:55:09", "960-01-23", "581",
-                    "-2020-07-10 10:10:10.532 +0800", "-960-01-23", "-581",
-                    "3/16/2020", "3/16/2020 10:10:10.532", "3/16/2020 10:10:10"
-            ));
+            Date d = new Date();
+            values.add(DateTools.datetimeToString(d, TimeFormats.EraDatetimeEnd, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.EraDatetimeMsEnd, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.EraDateEnd, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.EraMonthEnd, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.EraYearEnd, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.EraDatetimeStart, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.EraDatetimeMsStart, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.EraDateStart, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.EraMonthStart, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.EraYearStart, Locale.ENGLISH, null));
+
+            Date bc = DateTools.encodeEra("770-3-9 12:56:33.498 BC");
+            values.add(DateTools.datetimeToString(bc, TimeFormats.EraDatetimeEnd, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(bc, TimeFormats.EraDatetimeMsEnd, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(bc, TimeFormats.EraDateEnd, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(bc, TimeFormats.EraMonthEnd, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(bc, TimeFormats.EraYearEnd, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(bc, TimeFormats.EraDatetimeStart, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(bc, TimeFormats.EraDatetimeMsStart, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(bc, TimeFormats.EraDateStart, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(bc, TimeFormats.EraMonthStart, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(bc, TimeFormats.EraYearStart, Locale.ENGLISH, null));
+
             if (Languages.isChinese()) {
-                values.addAll(Arrays.asList(
-                        "公元960", "公元960-01-23", "公元2020-07-10 10:10:10",
-                        "公元前202", "公元前770-12-11", "公元前1046-03-10 10:10:10"
-                ));
+                values.add(DateTools.datetimeToString(d, TimeFormats.EraDatetimeEnd, Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(d, TimeFormats.EraDatetimeMsEnd, Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(d, TimeFormats.EraDateEnd, Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(d, TimeFormats.EraMonthEnd, Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(d, TimeFormats.EraYearEnd, Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(d, TimeFormats.EraDatetimeStart, Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(d, TimeFormats.EraDatetimeMsStart, Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(d, TimeFormats.EraDateStart, Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(d, TimeFormats.EraMonthStart, Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(d, TimeFormats.EraYearStart, Locale.CHINESE, null));
+
+                values.add(DateTools.datetimeToString(bc, TimeFormats.EraDatetimeEnd, Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(bc, TimeFormats.EraDatetimeMsEnd, Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(bc, TimeFormats.EraDateEnd, Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(bc, TimeFormats.EraMonthEnd, Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(bc, TimeFormats.EraYearEnd, Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(bc, TimeFormats.EraDatetimeStart, Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(bc, TimeFormats.EraDatetimeMsStart, Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(bc, TimeFormats.EraDateStart, Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(bc, TimeFormats.EraMonthStart, Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(bc, TimeFormats.EraYearStart, Locale.CHINESE, null));
             }
+
+            values.add(DateTools.datetimeToString(d, TimeFormats.EraDatetimeEndE, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.EraDatetimeMsEndE, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.EraDateEndE, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.EraMonthEndE, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.EraDatetimeStartE, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.EraDatetimeMsStartE, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.EraDateStartE, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.EraMonthStartE, Locale.ENGLISH, null));
+
+            values.add(DateTools.datetimeToString(d, TimeFormats.Datetime));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMs));
+            values.add(DateTools.datetimeToString(d, TimeFormats.Date));
+            values.add(DateTools.datetimeToString(d, TimeFormats.Month));
+            values.add(DateTools.datetimeToString(d, TimeFormats.Year));
+            values.add(DateTools.datetimeToString(d, TimeFormats.TimeMs));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeZone));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeE));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMsE));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DateE));
+            values.add(DateTools.datetimeToString(d, TimeFormats.MonthE));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeZoneE));
             values.addAll(Arrays.asList(
-                    "202 BC", "770-12-11 BC", "1046-03-10 10:10:10 BC",
-                    "581 AD", "960-01-23 AD", "2020-07-10 10:10:10 AD"
+                    "2020-07-15T36:55:09", "2020-07-10T10:10:10.532 +0800"
             ));
 
-            return popMenu(inPopMenu, input, mouseEvent, values);
+            MenuController controller = MenuController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+
+            List<Node> nodes = new ArrayList<>();
+            for (String value : values) {
+                Button button = new Button(value);
+                button.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        input.setText(value);
+                        controller.close();
+                    }
+                });
+                nodes.add(button);
+            }
+            controller.addFlowPane(nodes);
+
+            Hyperlink link = new Hyperlink("DateFormat");
+            link.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    parent.openLink("https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/SimpleDateFormat.html");
+                }
+            });
+            controller.addNode(link);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return null;
         }
     }
 
@@ -753,6 +827,7 @@ public class PopTools {
                 popMenu.getItems().add(menu);
             }
             popMenu.getItems().add(new SeparatorMenuItem());
+
             menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {

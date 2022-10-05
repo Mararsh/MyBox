@@ -17,14 +17,14 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-10-2
  * @License Apache License Version 2.0
  */
-public class DatetimeInputController extends BaseInputController {
+public class DateInputController extends BaseInputController {
 
     protected ColumnType timeType;
 
     @FXML
     protected TextField timeInput;
 
-    public DatetimeInputController() {
+    public DateInputController() {
     }
 
     public void setParameters(BaseController parent, String title, String initValue, ColumnType timeType) {
@@ -43,7 +43,7 @@ public class DatetimeInputController extends BaseInputController {
     }
 
     public Date getDate() {
-        return DateTools.encodeDate(timeInput.getText());
+        return DateTools.encodeEra(timeInput.getText());
     }
 
     @Override
@@ -77,16 +77,16 @@ public class DatetimeInputController extends BaseInputController {
                 popMenu = PopTools.popDateExamples(popMenu, timeInput, mouseEvent);
                 break;
             case Era:
-                popMenu = PopTools.popEraExamples(popMenu, timeInput, mouseEvent);
+                PopTools.popEraExamples(this, timeInput, mouseEvent);
                 break;
 
         }
     }
 
-    public static DatetimeInputController open(BaseController parent, String title, String initValue, ColumnType timeType) {
+    public static DateInputController open(BaseController parent, String title, String initValue, ColumnType timeType) {
         try {
-            DatetimeInputController controller = (DatetimeInputController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.DatetimeInputFxml, true);
+            DateInputController controller = (DateInputController) WindowTools.openChildStage(
+                    parent.getMyWindow(), Fxmls.DateInputFxml, true);
             controller.setParameters(parent, title, initValue, timeType);
             return controller;
         } catch (Exception e) {

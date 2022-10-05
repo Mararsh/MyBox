@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
-import mara.mybox.data.Era;
 import mara.mybox.db.data.Dataset;
 import mara.mybox.db.table.TableDataset;
 import mara.mybox.dev.MyBoxLog;
@@ -11,8 +10,6 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableBooleanCell;
 import mara.mybox.fxml.cell.TableColorCell;
 import mara.mybox.fxml.cell.TableTableMessageCell;
-import mara.mybox.fxml.cell.TableTimeFormatCell;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -34,7 +31,7 @@ public class DatasetController extends BaseDataManageController<Dataset> {
     protected TableColumn<Dataset, String> categoryColumn, datasetColumn, textColorColumn,
             textBgColorColumn, chartColorColumn, imageColumn, commentsColumn;
     @FXML
-    protected TableColumn<Dataset, Era.Format> timeFormatColumn;
+    protected TableColumn<Dataset, String> timeFormatColumn;
     @FXML
     protected TableColumn<Dataset, Boolean> omitADColumn;
 
@@ -63,7 +60,7 @@ public class DatasetController extends BaseDataManageController<Dataset> {
             chartColorColumn.setCellValueFactory(new PropertyValueFactory<>("chartColor"));
             chartColorColumn.setCellFactory(new TableColorCell());
             timeFormatColumn.setCellValueFactory(new PropertyValueFactory<>("timeFormat"));
-            timeFormatColumn.setCellFactory(new TableTimeFormatCell());
+//            timeFormatColumn.setCellFactory(new TableTimeFormatCell());
             omitADColumn.setCellValueFactory(new PropertyValueFactory<>("omitAD"));
             omitADColumn.setCellFactory(new TableBooleanCell());
             imageColumn.setCellValueFactory(new PropertyValueFactory<>("image"));

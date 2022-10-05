@@ -15,24 +15,25 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" minHeight="-Infinity" minWidth="-Infinity" spacing="10.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DatetimeInputController">
+<VBox fx:id="thisPane" minHeight="-Infinity" minWidth="-Infinity" spacing="10.0" 
+      xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DateInputController">
     <children>
         <Label fx:id="titleLabel" alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Value" textAlignment="CENTER" wrapText="true" VBox.vgrow="NEVER" />
-      <Label fx:id="commentsLabel" />
-      <HBox alignment="CENTER_LEFT" spacing="2.0">
-         <children>
-            <TextField fx:id="timeInput" maxWidth="1.7976931348623157E308" prefWidth="400.0" />
-            <Button fx:id="exampleButton" mnemonicParsing="false" onMouseEntered="#popTimeExample">
-               <graphic>
-                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconExamples.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-         </children>
-      </HBox>
+        <Label fx:id="commentsLabel" />
+        <HBox alignment="CENTER_LEFT" spacing="2.0">
+            <children>
+                <TextField fx:id="timeInput" maxWidth="1.7976931348623157E308" prefWidth="400.0" />
+                <Button fx:id="exampleButton" mnemonicParsing="false" onMouseEntered="#popTimeExample">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconExamples.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </children>
+        </HBox>
         <HBox alignment="CENTER_RIGHT" spacing="5.0">
             <children>
                 <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">

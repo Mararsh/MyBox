@@ -313,6 +313,10 @@ public class ColumnDefinition extends BaseData {
         return type == ColumnType.String || type == ColumnType.Text;
     }
 
+    public boolean isDateType() {
+        return type == ColumnType.Datetime || type == ColumnType.Date || type == ColumnType.Era;
+    }
+
     public boolean isEnumType() {
         return type == ColumnType.Enumeration;
     }
@@ -476,14 +480,14 @@ public class ColumnDefinition extends BaseData {
                 case Integer:
                     return (int) Math.round(Double.parseDouble(string.replaceAll(",", "")));
                 case Boolean:
-                    return string2Boolean(string);
+                    return StringTools.string2Boolean(string);
                 case Short:
                     return (short) Math.round(Double.parseDouble(string.replaceAll(",", "")));
                 case Datetime:
                 case Date:
-                    return DateTools.encodeDate(string);
+                    return DateTools.encodeEra(string);
                 case Era:
-                    return DateTools.encodeDate(string).getTime();
+                    return DateTools.encodeEra(string).getTime();
                 case GeoCoordinate:
                     return DoublePoint.parse(string, ",");
                 default:
@@ -759,15 +763,6 @@ public class ColumnDefinition extends BaseData {
         } catch (Exception e) {
         }
         return null;
-    }
-
-    public static boolean string2Boolean(String string) {
-        if (string == null || string.isBlank()) {
-            return false;
-        }
-        return "1".equals(string)
-                || "true".equalsIgnoreCase(string) || "yes".equalsIgnoreCase(string)
-                || message("true").equals(string) || message("Yes").equals(string);
     }
 
     public static short onUpdate(OnUpdate type) {

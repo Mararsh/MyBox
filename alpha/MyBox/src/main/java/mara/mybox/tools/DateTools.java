@@ -81,7 +81,7 @@ public class DateTools {
         if (value == AppValues.InvalidLong) {
             return false;
         }
-        String s = datetimeToString(new Date(value), TimeFormats.EraDatetimeEn, Languages.LocaleEn, null);
+        String s = datetimeToString(new Date(value), TimeFormats.EraDatetimeEnd, Languages.LocaleEn, null);
         return s.contains("BC");
     }
 
@@ -89,94 +89,103 @@ public class DateTools {
         if (era == null || era.getValue() == AppValues.InvalidLong) {
             return "";
         }
-        return textEra(era.getValue(), era.getFormat(), era.isIgnoreAD());
+        return textEra(era.getValue(), era.getFormat());
+    }
+
+    public static String textEra(String value) {
+        return textEra(encodeEra(value));
+    }
+
+    public static String textEra(Date value) {
+        return value == null ? null : textEra(value.getTime());
     }
 
     public static String textEra(long value) {
         if (value == AppValues.InvalidLong) {
             return "";
         }
-        return textEra(value, Era.Format.Datetime, true);
+        return textEra(value, isBC(value) ? TimeFormats.EraDatetimeEnd : TimeFormats.Datetime);
     }
 
-    public static String textEra(long value, Era.Format format, boolean ignoreAD) {
+    public static String textEra(long value, String format) {
         if (value == AppValues.InvalidLong) {
             return "";
         }
-        if (format == null) {
-            format = Era.Format.Datetime;
-        }
-        boolean isChinese = Languages.isChinese();
-        Locale locale = isChinese ? Languages.LocaleZhCN : Languages.LocaleEn;
-        Date d = new Date(value);
-        String s = datetimeToString(d, TimeFormats.EraDatetimeEn, Languages.LocaleEn, null);
-        boolean showEra = s.contains("BC") || !ignoreAD;
-        String sformat;
-        if (isChinese) {
-            switch (format) {
-                case Date:
-                    sformat = showEra ? TimeFormats.EraDateZh : TimeFormats.EraDate;
-                    break;
-                case Year:
-                    sformat = showEra ? TimeFormats.EraYearZh : TimeFormats.EraYear;
-                    break;
-                case Month:
-                    sformat = showEra ? TimeFormats.EraMonthZh : TimeFormats.EraMonth;
-                    break;
-                case Time:
-                    sformat = TimeFormats.EraTime;
-                    break;
-                case TimeMs:
-                    sformat = TimeFormats.EraTimeMs;
-                    break;
-                case DatetimeMs:
-                    sformat = showEra ? TimeFormats.EraDatetimeMsZh : TimeFormats.EraDatetimeMs;
-                    break;
-                case DatetimeZone:
-                    sformat = showEra ? TimeFormats.EraDatetimeZh + " Z" : TimeFormats.EraDatetime + " Z";
-                    break;
-                case DatetimeMsZone:
-                    sformat = showEra ? TimeFormats.EraDatetimeMsZh + " Z" : TimeFormats.EraDatetimeMs + " Z";
-                    break;
-                default:
-                    sformat = showEra ? TimeFormats.EraDatetimeZh : TimeFormats.EraDatetime;
-                    break;
+        return datetimeToString(new Date(value), format, Languages.locale(), null);
+    }
+
+    public static String eraFormatStart(String s) {
+        String format;
+        if (s.contains(":") && s.contains("-")) {
+            if (s.contains(".")) {
+                format = TimeFormats.EraDatetimeMsStart;
+            } else {
+                format = TimeFormats.EraDatetimeStart;
+            }
+            if (s.contains("+")) {
+                format += " Z";
+            }
+        } else if (s.contains("-")) {
+            String ss = s;
+            if (ss.startsWith("-")) {
+                ss = ss.substring(1);
+            }
+            if (!ss.contains("-")) {
+                format = TimeFormats.EraYearStart;
+            } else {
+                if (ss.indexOf("-") == ss.lastIndexOf("-")) {
+                    format = TimeFormats.EraMonthStart;
+                } else {
+                    format = TimeFormats.EraDateStart;
+                }
+            }
+        } else if (s.contains(":")) {
+            if (s.contains(".")) {
+                format = TimeFormats.TimeMsA;
+            } else {
+                format = TimeFormats.TimeA;
             }
         } else {
-            switch (format) {
-                case Date:
-                    sformat = showEra ? TimeFormats.EraDateEn : TimeFormats.EraDate;
-                    break;
-                case Year:
-                    sformat = showEra ? TimeFormats.EraYearEn : TimeFormats.EraYear;
-                    break;
-                case Month:
-                    sformat = showEra ? TimeFormats.EraMonthEn : TimeFormats.EraMonth;
-                    break;
-                case Time:
-                    sformat = TimeFormats.EraTime;
-                    break;
-                case TimeMs:
-                    sformat = TimeFormats.EraTimeMs;
-                    break;
-                case DatetimeMs:
-                    sformat = showEra ? TimeFormats.EraDatetimeMsEn : TimeFormats.EraDatetimeMs;
-                    break;
-                case DatetimeZone:
-                    sformat = showEra ? TimeFormats.EraDatetimeEn + " Z" : TimeFormats.EraDatetime + " Z";
-                    break;
-                case DatetimeMsZone:
-                    sformat = showEra ? TimeFormats.EraDatetimeMsEn + " Z" : TimeFormats.EraDatetimeMsEn + " Z";
-                    break;
-                default:
-                    if (showEra) {
-                        return s;
-                    }
-                    sformat = TimeFormats.EraDatetime;
-                    break;
-            }
+            format = TimeFormats.EraYearStart;
         }
-        return DateTools.datetimeToString(d, sformat, locale, null);
+        return format;
+    }
+
+    public static String eraFormatEnd(String s) {
+        String format;
+        if (s.contains(":") && s.contains("-")) {
+            if (s.contains(".")) {
+                format = TimeFormats.EraDatetimeMsEnd;
+            } else {
+                format = TimeFormats.EraDatetimeEnd;
+            }
+            if (s.contains("+")) {
+                format += " Z";
+            }
+        } else if (s.contains("-")) {
+            String ss = s;
+            if (ss.startsWith("-")) {
+                ss = ss.substring(1);
+            }
+            if (!ss.contains("-")) {
+                format = TimeFormats.EraYearEnd;
+            } else {
+                if (ss.indexOf("-") == ss.lastIndexOf("-")) {
+                    format = TimeFormats.EraMonthEnd;
+                } else {
+                    format = TimeFormats.EraDateEnd;
+                }
+            }
+        } else if (s.contains(":")) {
+            if (s.contains(".")) {
+                format = TimeFormats.TimeMsA;
+            } else {
+                format = TimeFormats.TimeA;
+            }
+        } else {
+            format = TimeFormats.EraYearEnd;
+        }
+        return format;
     }
 
     public static Date encodeEra(String strDate) {
@@ -185,74 +194,22 @@ public class DateTools {
         }
         String s = strDate.trim().replace("T", " "), format;
         Locale locale;
-        if (s.contains(message("zh", "BC")) || s.contains(message("zh", "AD"))) {
+        if (s.startsWith(message("zh", "BC")) || s.startsWith(message("zh", "AD"))) {
             locale = Languages.LocaleZhCN;
-            if (s.contains(":") && s.contains("-")) {
-                if (s.contains(".")) {
-                    format = TimeFormats.EraDatetimeMsZh;
-                } else {
-                    format = TimeFormats.EraDatetimeZh;
-                }
-                if (s.contains("+")) {
-                    format += " Z";
-                }
-            } else if (s.contains("-")) {
-                String ss = s;
-                if (ss.startsWith("-")) {
-                    ss = ss.substring(1);
-                }
-                if (!ss.contains("-")) {
-                    format = TimeFormats.EraYearZh;
-                } else {
-                    if (ss.indexOf("-") == ss.lastIndexOf("-")) {
-                        format = TimeFormats.EraMonthZh;
-                    } else {
-                        format = TimeFormats.EraDateZh;
-                    }
-                }
-            } else if (s.contains(":")) {
-                if (s.contains(".")) {
-                    format = TimeFormats.EraTimeMs;
-                } else {
-                    format = TimeFormats.EraTime;
-                }
-            } else {
-                format = TimeFormats.EraYearZh;
-            }
-        } else if (s.contains(message("en", "BC")) || s.contains(message("en", "AD"))) {
+            format = eraFormatStart(s);
+
+        } else if (s.startsWith(message("en", "BC")) || s.startsWith(message("en", "AD"))) {
             locale = Languages.LocaleEn;
-            if (s.contains(":") && s.contains("-")) {
-                if (s.contains(".")) {
-                    format = TimeFormats.EraDatetimeMsEn;
-                } else {
-                    format = TimeFormats.EraDatetimeEn;
-                }
-                if (s.contains("+")) {
-                    format += " Z";
-                }
-            } else if (s.contains("-")) {
-                String ss = s;
-                if (ss.startsWith("-")) {
-                    ss = ss.substring(1);
-                }
-                if (!ss.contains("-")) {
-                    format = TimeFormats.EraYearEn;
-                } else {
-                    if (ss.indexOf("-") == ss.lastIndexOf("-")) {
-                        format = TimeFormats.EraMonthEn;
-                    } else {
-                        format = TimeFormats.EraDateEn;
-                    }
-                }
-            } else if (s.contains(":")) {
-                if (s.contains(".")) {
-                    format = TimeFormats.EraTimeMs;
-                } else {
-                    format = TimeFormats.EraTime;
-                }
-            } else {
-                format = TimeFormats.EraYearEn;
-            }
+            format = eraFormatStart(s);
+
+        } else if (s.endsWith(message("zh", "BC")) || s.endsWith(message("zh", "AD"))) {
+            locale = Languages.LocaleZhCN;
+            format = eraFormatEnd(s);
+
+        } else if (s.endsWith(message("en", "BC")) || s.endsWith(message("en", "AD"))) {
+            locale = Languages.LocaleEn;
+            format = eraFormatEnd(s);
+
         } else {
             return encodeDate(s);
         }
@@ -263,18 +220,13 @@ public class DateTools {
     }
 
     public static Date encodeDate(String strDate) {
-        Locale locale = Languages.isChinese() ? Languages.LocaleZhCN : Languages.LocaleEn;
-        return encodeDate(strDate, locale);
+        return encodeDate(strDate, Languages.locale());
     }
 
     public static Date encodeDate(String strDate, Locale locale) {
         try {
             if (strDate == null || strDate.isBlank()) {
                 return null;
-            }
-            try {
-                return new SimpleDateFormat().parse(strDate);
-            } catch (Exception e) {
             }
             String s = strDate.trim().replace("T", " "), format;
             String ss = s;
@@ -299,17 +251,17 @@ public class DateTools {
             } else if (ss.contains("-")) {
                 if (ss.contains(":")) {
                     if (ss.contains(".")) {
-                        format = TimeFormats.EraDatetimeMs;
+                        format = TimeFormats.DatetimeMsA;
                     } else {
-                        format = TimeFormats.EraDatetime;
+                        format = TimeFormats.DatetimeA;
                     }
                     if (ss.contains("+")) {
                         format += " Z";
                     }
                 } else if (ss.indexOf("-") == ss.lastIndexOf("-")) {
-                    format = TimeFormats.EraMonth;
+                    format = TimeFormats.MonthA;
                 } else {
-                    format = TimeFormats.EraDate;
+                    format = TimeFormats.DateA;
                 }
             } else if (s.contains(":")) {
                 if (s.contains(".")) {
@@ -318,7 +270,7 @@ public class DateTools {
                     format = TimeFormats.Time;
                 }
             } else {
-                format = TimeFormats.EraYear;
+                format = TimeFormats.YearA;
             }
 //            MyBoxLog.debug(s + "  " + format);
 //        MyBoxLog.debug(s + "  " + format + "  " + locale + "  "
@@ -337,7 +289,11 @@ public class DateTools {
     }
 
     public static String datetimeToString(Date theDate) {
-        return datetimeToString(theDate, null, null, null);
+        if (theDate == null) {
+            return null;
+        }
+        String format = isBC(theDate.getTime()) ? TimeFormats.EraDatetimeEnd : TimeFormats.Datetime;
+        return datetimeToString(theDate, format, null, null);
     }
 
     public static String datetimeToString(long theDate, String format) {
@@ -357,11 +313,11 @@ public class DateTools {
         }
         String format = inFormat;
         if (format == null || format.isBlank()) {
-            format = TimeFormats.Datetime;
+            format = isBC(theDate.getTime()) ? TimeFormats.EraDatetimeEnd : TimeFormats.Datetime;
         }
         Locale locale = inLocale;
         if (locale == null) {
-            locale = Locale.getDefault();
+            locale = Languages.locale();
         }
         TimeZone zone = inZone;
         if (zone == null) {
@@ -415,9 +371,7 @@ public class DateTools {
 //        MyBoxLog.debug(strDate + "  " + format + "  " + locale);
         try {
             SimpleDateFormat formatter = new SimpleDateFormat(format, locale);
-//            formatter.setTimeZone(theZone);
-            ParsePosition pos = new ParsePosition(0);
-            return formatter.parse(strDate, pos);
+            return formatter.parse(strDate, new ParsePosition(0));
         } catch (Exception e) {
             return null;
         }
@@ -639,30 +593,30 @@ public class DateTools {
         return Period.between(localDate1, localDate2);
     }
 
-    public static String duration(Date time1, Date time2, Era.Format format) {
+    public static String duration(Date time1, Date time2, String format) {
         if (time1 == null || time2 == null) {
             return null;
         }
-        Era.Format dFormat = format;
-        if (format == null) {
-            dFormat = Era.Format.Datetime;
+        String dFormat = format;
+        if (dFormat == null) {
+            dFormat = TimeFormats.Datetime;
         }
         switch (dFormat) {
-            case Date:
+            case TimeFormats.Date:
                 return dateDuration(time1, time2);
-            case Month:
+            case TimeFormats.Month:
                 return yearsMonthsDuration(time1, time2);
-            case Year:
+            case TimeFormats.Year:
                 return yearsDuration(time1, time2);
-            case Time:
+            case TimeFormats.Time:
                 return DateTools.timeDuration(time1, time2);
-            case TimeMs:
+            case TimeFormats.TimeMs:
                 return msDuration(time1, time2);
-            case DatetimeMs:
+            case TimeFormats.DatetimeMs:
                 return datetimeMsDuration(time1, time2);
-            case DatetimeZone:
+            case TimeFormats.DatetimeZone:
                 return datetimeZoneDuration(time1, time2);
-            case DatetimeMsZone:
+            case TimeFormats.DatetimeMsZone:
                 return datetimeMsZoneDuration(time1, time2);
             default:
                 return datetimeDuration(time1, time2);

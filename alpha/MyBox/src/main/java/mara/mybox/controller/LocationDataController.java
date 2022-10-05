@@ -21,11 +21,10 @@ import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import mara.mybox.data.GeoCoordinateSystem;
-import mara.mybox.data.Era;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.BaseDataAdaptor;
 import mara.mybox.db.data.Dataset;
 import mara.mybox.db.data.Location;
-import mara.mybox.db.data.BaseDataAdaptor;
 import mara.mybox.db.table.TableDataset;
 import mara.mybox.db.table.TableLocationData;
 import mara.mybox.dev.MyBoxLog;
@@ -526,7 +525,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
                         Dataset dataset = Dataset.create()
                                 .setDataCategory("Location_Data")
                                 .setDataSet(datasetName)
-                                .setTimeFormat(Era.Format.Year)
+                                //                                .setTimeFormat(Era.Format.Year)
                                 .setOmitAD(false)
                                 .setTextColor(Color.web("#622A1D"))
                                 .setImage(image);
@@ -534,7 +533,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
                     } catch (Exception e) {
                         MyBoxLog.debug(e.toString());
                     }
-                    String lang = Languages.isChinese() ? "zh" : "en";
+                    String lang = Languages.getLangName();
                     file = FxFileTools.getInternalFile("/data/examples/Location_Data_ChineseHistoricalCapitals_" + lang + ".csv",
                             "data", "Location_Data_ChineseHistoricalCapitals_" + lang + ".csv");
                     return true;
@@ -602,7 +601,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
                         Dataset dataset = Dataset.create()
                                 .setDataCategory("Location_Data")
                                 .setDataSet(datasetName)
-                                .setTimeFormat(Era.Format.Datetime)
+                                //                                .setTimeFormat(Era.Format.Datetime)
                                 .setOmitAD(true)
                                 .setTextColor(Color.web("#432918"))
                                 .setImage(image)
@@ -611,7 +610,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
                     } catch (Exception e) {
                         MyBoxLog.debug(e.toString());
                     }
-                    String lang = Languages.isChinese() ? "zh" : "en";
+                    String lang = Languages.getLangName();
                     file = FxFileTools.getInternalFile("/data/examples/Location_Data_EuropeanGadwalls_" + lang + ".csv",
                             "data", "Location_Data_EuropeanGadwalls_" + lang + ".csv");
                     return true;
@@ -674,7 +673,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
                         Dataset dataset = Dataset.create()
                                 .setDataCategory("Location_Data")
                                 .setDataSet(datasetName)
-                                .setTimeFormat(Era.Format.Datetime)
+                                //                                .setTimeFormat(Era.Format.Datetime)
                                 .setOmitAD(true)
                                 .setTextColor(Color.web("#432918"))
                                 .setImage(image)
@@ -683,7 +682,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
                     } catch (Exception e) {
                         MyBoxLog.debug(e.toString());
                     }
-                    String lang = Languages.isChinese() ? "zh" : "en";
+                    String lang = Languages.getLangName();
                     file = FxFileTools.getInternalFile("/data/examples/Location_Data_SpermWhales_" + lang + ".csv",
                             "data", "Location_Data_SpermWhales_" + lang + ".csv");
                     return true;

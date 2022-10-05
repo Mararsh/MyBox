@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import mara.mybox.data.Era;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
@@ -22,26 +21,26 @@ import mara.mybox.value.Languages;
  * @License Apache License Version 2.0
  */
 public class TableDataset extends BaseTable<Dataset> {
-    
+
     public TableDataset() {
         tableName = "Dataset";
         defineColumns();
     }
-    
+
     public TableDataset(boolean defineColumns) {
         tableName = "Dataset";
         if (defineColumns) {
             defineColumns();
         }
     }
-    
+
     public final TableDataset defineColumns() {
         addColumn(new ColumnDefinition("dsid", ColumnType.Long, true, true).setAuto(true));
         Map<Object, String> lvalues = new LinkedHashMap<>();
         lvalues.put("Location_data", Languages.tableMessage("Location_data"));
         addColumn(new ColumnDefinition("data_category", ColumnType.String, true).setLength(StringMaxLength).setDisplayMap(lvalues));
         addColumn(new ColumnDefinition("data_set", ColumnType.String, true).setLength(StringMaxLength));
-        addColumn(new ColumnDefinition("time_format", ColumnType.Short).setDisplayMap(Era.values()));
+//        addColumn(new ColumnDefinition("time_format", ColumnType.Short).setDisplayMap(Era.values()));
         addColumn(new ColumnDefinition("time_format_omitAD", ColumnType.Boolean));
         addColumn(new ColumnDefinition("text_color", ColumnType.Color));
         addColumn(new ColumnDefinition("text_background_color", ColumnType.Color));
@@ -50,16 +49,16 @@ public class TableDataset extends BaseTable<Dataset> {
         addColumn(new ColumnDefinition("dataset_comments", ColumnType.Text).setLength(StringMaxLength));
         return this;
     }
-    
+
     public static final String Create_Index_unique
             = "CREATE UNIQUE INDEX Dataset_unique_index on Dataset (  data_category, data_set )";
-    
+
     public static final String UniqueQeury
             = "SELECT * FROM Dataset WHERE data_category=? AND data_set=?";
-    
+
     public static final String CategoryQeury
             = "SELECT * FROM Dataset WHERE data_category=? ";
-    
+
     public static List<String> dataCategories() {
         List<String> dataCategories = new ArrayList<>();
         dataCategories.addAll(Arrays.asList(
@@ -67,7 +66,7 @@ public class TableDataset extends BaseTable<Dataset> {
         ));
         return dataCategories;
     }
-    
+
     public Dataset read(String category, String dataset) {
         try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
@@ -77,7 +76,7 @@ public class TableDataset extends BaseTable<Dataset> {
             return null;
         }
     }
-    
+
     public Dataset read(Connection conn, String category, String datasetName) {
         if (conn == null || category == null || datasetName == null) {
             return null;
@@ -91,7 +90,7 @@ public class TableDataset extends BaseTable<Dataset> {
             return null;
         }
     }
-    
+
     public List<Dataset> datasets(String category) {
         List<Dataset> dataList = new ArrayList<>();
         if (category == null || category.trim().isBlank()) {
@@ -105,7 +104,7 @@ public class TableDataset extends BaseTable<Dataset> {
         }
         return dataList;
     }
-    
+
     public List<Dataset> datasets(Connection conn, String category) {
         List<Dataset> dataList = new ArrayList<>();
         if (conn == null || category == null || category.trim().isBlank()) {
@@ -125,7 +124,7 @@ public class TableDataset extends BaseTable<Dataset> {
         }
         return dataList;
     }
-    
+
     public List<String> datasetNames(String category) {
         List<String> dataList = new ArrayList<>();
         if (category == null || category.trim().isBlank()) {
@@ -138,7 +137,7 @@ public class TableDataset extends BaseTable<Dataset> {
         }
         return dataList;
     }
-    
+
     public List<String> datasetNames(Connection conn, String category) {
         List<String> dataList = new ArrayList<>();
         if (conn == null || category == null || category.trim().isBlank()) {
@@ -158,7 +157,7 @@ public class TableDataset extends BaseTable<Dataset> {
         }
         return dataList;
     }
-    
+
     @Override
     public List<String> importNecessaryFields() {
         return Arrays.asList(Languages.message("DataSet"), Languages.message("Time"), Languages.message("Confirmed"), Languages.message("Healed"), Languages.message("Dead"),
@@ -166,7 +165,7 @@ public class TableDataset extends BaseTable<Dataset> {
                 Languages.message("County"), Languages.message("Town"), Languages.message("Village"), Languages.message("Building"), Languages.message("PointOfInterest")
         );
     }
-    
+
     @Override
     public List<String> importAllFields() {
         return Arrays.asList(Languages.message("DataSet"), Languages.message("Time"), Languages.message("Confirmed"), Languages.message("Healed"), Languages.message("Dead"), Languages.message("DataSource"),
@@ -179,5 +178,5 @@ public class TableDataset extends BaseTable<Dataset> {
                 Languages.message("County"), Languages.message("Town"), Languages.message("Village"), Languages.message("Building"), Languages.message("PointOfInterest")
         );
     }
-    
+
 }

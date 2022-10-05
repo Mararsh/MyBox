@@ -40,9 +40,9 @@ public class DoubleTools {
         try {
             double d = Double.valueOf(string.replaceAll(",", ""));
             if (invalidDouble(d)) {
-                if ("true".equalsIgnoreCase(string) || "yes".equalsIgnoreCase(string)) {
+                if (StringTools.isTrue(string)) {
                     return 1;
-                } else if ("false".equalsIgnoreCase(string) || "no".equalsIgnoreCase(string)) {
+                } else if (StringTools.isFalse(string)) {
                     return 0;
                 }
                 return value(invalidAs);

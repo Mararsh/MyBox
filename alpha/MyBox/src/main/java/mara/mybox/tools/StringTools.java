@@ -516,4 +516,26 @@ public class StringTools {
         }
     }
 
+    public static boolean string2Boolean(String string) {
+        return isTrue(string);
+    }
+
+    public static boolean isTrue(String string) {
+        if (string == null || string.isBlank()) {
+            return false;
+        }
+        return "1".equals(string)
+                || "true".equalsIgnoreCase(string) || "yes".equalsIgnoreCase(string)
+                || message("true").equals(string) || message("Yes").equals(string);
+    }
+
+    public static boolean isFalse(String string) {
+        if (string == null || string.isBlank()) {
+            return false;
+        }
+        return "0".equals(string)
+                || "false".equalsIgnoreCase(string) || "no".equalsIgnoreCase(string)
+                || message("false").equals(string) || message("No").equals(string);
+    }
+
 }

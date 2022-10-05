@@ -109,12 +109,22 @@ public class ControlData2DColumnEdit extends BaseChildController {
             if (enumRadio.isSelected()) {
                 optionsBox.getChildren().add(enumBox);
 
-            } else if (datetimeRadio.isSelected() || dateRadio.isSelected() || eraRadio.isSelected()) {
+            } else if (datetimeRadio.isSelected()) {
                 optionsBox.getChildren().add(formatBox);
+                formatInput.setText(TimeFormats.Datetime);
+
+            } else if (dateRadio.isSelected()) {
+                optionsBox.getChildren().add(formatBox);
+                formatInput.setText(TimeFormats.Date);
+
+            } else if (eraRadio.isSelected()) {
+                optionsBox.getChildren().add(formatBox);
+                formatInput.setText(TimeFormats.EraDateEnd);
 
             } else if (doubleRadio.isSelected() || floatRadio.isSelected()
                     || longRadio.isSelected() || intRadio.isSelected() || shortRadio.isSelected()) {
                 optionsBox.getChildren().add(formatBox);
+                formatInput.setText(message("GroupInThousands"));
 
             }
 
@@ -280,6 +290,9 @@ public class ControlData2DColumnEdit extends BaseChildController {
                     .setDescription(descInput.getText());
 
             String format = formatInput.getText();
+            if (message("None").equals(format)) {
+                format = null;
+            }
             if (stringRadio.isSelected()) {
                 column.setType(ColumnType.String).setFormat(null);
             } else if (doubleRadio.isSelected()) {
@@ -347,12 +360,12 @@ public class ControlData2DColumnEdit extends BaseChildController {
             values.add(TimeFormats.Month);
             values.add(TimeFormats.Year);
             values.add(TimeFormats.TimeMs);
-            values.add(TimeFormats.Datetime + " Z");
+            values.add(TimeFormats.DatetimeZone);
             values.add(TimeFormats.DatetimeE);
             values.add(TimeFormats.DatetimeMsE);
             values.add(TimeFormats.DateE);
             values.add(TimeFormats.MonthE);
-            values.add(TimeFormats.DatetimeE + " Z");
+            values.add(TimeFormats.DatetimeZoneE);
             popExamples(mouseEvent, values, "DateFormat",
                     "https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/SimpleDateFormat.html");
 
@@ -368,16 +381,16 @@ public class ControlData2DColumnEdit extends BaseChildController {
 
         } else if (eraRadio.isSelected()) {
             List<String> values = new ArrayList<>();
-            values.add(TimeFormats.EraDatetimeEn);
-            values.add(TimeFormats.EraDatetimeMsEn);
-            values.add(TimeFormats.EraDateEn);
-            values.add(TimeFormats.EraMonthEn);
-            values.add(TimeFormats.EraYearEn);
-            values.add(TimeFormats.EraDatetimeZh);
-            values.add(TimeFormats.EraDatetimeMsZh);
-            values.add(TimeFormats.EraDateZh);
-            values.add(TimeFormats.EraMonthZh);
-            values.add(TimeFormats.EraYearZh);
+            values.add(TimeFormats.EraDatetimeEnd);
+            values.add(TimeFormats.EraDatetimeMsEnd);
+            values.add(TimeFormats.EraDateEnd);
+            values.add(TimeFormats.EraMonthEnd);
+            values.add(TimeFormats.EraYearEnd);
+            values.add(TimeFormats.EraDatetimeStart);
+            values.add(TimeFormats.EraDatetimeMsStart);
+            values.add(TimeFormats.EraDateStart);
+            values.add(TimeFormats.EraMonthStart);
+            values.add(TimeFormats.EraYearStart);
             popExamples(mouseEvent, values, "DateFormat",
                     "https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/SimpleDateFormat.html");
 

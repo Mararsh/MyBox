@@ -39,15 +39,22 @@ public class Languages {
         UserConfig.setString("language", lang);
         currentBundle = getBundle(lang);
         currentTableBundle = getTableBundle(lang);
+        AppVariables.isChinese = lang.startsWith("zh");
     }
 
     public static String getLanguage() {
         String lang = UserConfig.getString("language", Locale.getDefault().getLanguage());
-        return lang != null ? lang.toLowerCase() : Locale.getDefault().getLanguage().toLowerCase();
+        lang = lang != null ? lang.toLowerCase() : Locale.getDefault().getLanguage().toLowerCase();
+        AppVariables.isChinese = lang.startsWith("zh");
+        return lang;
     }
 
     public static boolean isChinese() {
-        return getLanguage().startsWith("zh");
+        return AppVariables.isChinese;
+    }
+
+    public static String getLangName() {
+        return AppVariables.isChinese ? "zh" : "en";
     }
 
     public static ResourceBundle getBundle() {
@@ -180,6 +187,10 @@ public class Languages {
 
     public static File interfaceLanguageFile(String langName) {
         return new File(AppVariables.MyBoxLanguagesPath + File.separator + "Messages_" + langName + ".properties");
+    }
+
+    public static Locale locale() {
+        return isChinese() ? Languages.LocaleZhCN : Languages.LocaleEn;
     }
 
 }

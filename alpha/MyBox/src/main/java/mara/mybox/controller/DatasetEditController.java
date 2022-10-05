@@ -13,7 +13,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import mara.mybox.data.Era;
 import mara.mybox.db.data.Dataset;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableDataset;
@@ -141,35 +140,35 @@ public class DatasetEditController extends BaseController {
 
             categorySelector.getSelectionModel().select(Languages.tableMessage(loadedDataset.getDataCategory()));
             datasetInput.setText(loadedDataset.getDataSet());
-            switch (loadedDataset.getTimeFormat()) {
-                case Date:
-                    dateRadio.setSelected(true);
-                    break;
-                case Year:
-                    yearRadio.setSelected(true);
-                    break;
-                case Month:
-                    monthRadio.setSelected(true);
-                    break;
-                case Time:
-                    timeRadio.setSelected(true);
-                    break;
-                case TimeMs:
-                    timeMsRadio.setSelected(true);
-                    break;
-                case DatetimeMs:
-                    datatimeMsRadio.setSelected(true);
-                    break;
-                case DatetimeZone:
-                    datetimeZoneRadio.setSelected(true);
-                    break;
-                case DatetimeMsZone:
-                    datatimeMsZoneRadio.setSelected(true);
-                    break;
-                default:
-                    datetimeRadio.setSelected(true);
-                    break;
-            }
+//            switch (loadedDataset.getTimeFormat()) {
+//                case Date:
+//                    dateRadio.setSelected(true);
+//                    break;
+//                case Year:
+//                    yearRadio.setSelected(true);
+//                    break;
+//                case Month:
+//                    monthRadio.setSelected(true);
+//                    break;
+//                case Time:
+//                    timeRadio.setSelected(true);
+//                    break;
+//                case TimeMs:
+//                    timeMsRadio.setSelected(true);
+//                    break;
+//                case DatetimeMs:
+//                    datatimeMsRadio.setSelected(true);
+//                    break;
+//                case DatetimeZone:
+//                    datetimeZoneRadio.setSelected(true);
+//                    break;
+//                case DatetimeMsZone:
+//                    datatimeMsZoneRadio.setSelected(true);
+//                    break;
+//                default:
+//                    datetimeRadio.setSelected(true);
+//                    break;
+//            }
             omitADCheck.setSelected(loadedDataset.isOmitAD());
 
             if (loadedDataset.getTextColor() != null) {
@@ -246,25 +245,25 @@ public class DatasetEditController extends BaseController {
                     break;
                 }
             }
-            if (dateRadio.isSelected()) {
-                dataset.setTimeFormat(Era.Format.Date);
-            } else if (yearRadio.isSelected()) {
-                dataset.setTimeFormat(Era.Format.Year);
-            } else if (monthRadio.isSelected()) {
-                dataset.setTimeFormat(Era.Format.Month);
-            } else if (timeRadio.isSelected()) {
-                dataset.setTimeFormat(Era.Format.Time);
-            } else if (timeMsRadio.isSelected()) {
-                dataset.setTimeFormat(Era.Format.TimeMs);
-            } else if (datetimeZoneRadio.isSelected()) {
-                dataset.setTimeFormat(Era.Format.DatetimeZone);
-            } else if (datatimeMsRadio.isSelected()) {
-                dataset.setTimeFormat(Era.Format.DatetimeMs);
-            } else if (datatimeMsZoneRadio.isSelected()) {
-                dataset.setTimeFormat(Era.Format.DatetimeMsZone);
-            } else {
-                dataset.setTimeFormat(Era.Format.Datetime);
-            }
+//            if (dateRadio.isSelected()) {
+//                dataset.setTimeFormat(Era.Format.Date);
+//            } else if (yearRadio.isSelected()) {
+//                dataset.setTimeFormat(Era.Format.Year);
+//            } else if (monthRadio.isSelected()) {
+//                dataset.setTimeFormat(Era.Format.Month);
+//            } else if (timeRadio.isSelected()) {
+//                dataset.setTimeFormat(Era.Format.Time);
+//            } else if (timeMsRadio.isSelected()) {
+//                dataset.setTimeFormat(Era.Format.TimeMs);
+//            } else if (datetimeZoneRadio.isSelected()) {
+//                dataset.setTimeFormat(Era.Format.DatetimeZone);
+//            } else if (datatimeMsRadio.isSelected()) {
+//                dataset.setTimeFormat(Era.Format.DatetimeMs);
+//            } else if (datatimeMsZoneRadio.isSelected()) {
+//                dataset.setTimeFormat(Era.Format.DatetimeMsZone);
+//            } else {
+//                dataset.setTimeFormat(Era.Format.Datetime);
+//            }
             dataset.setOmitAD(omitADCheck.isSelected());
 
             dataset.setTextColor(Color.web(textColorSetController.rgba()));

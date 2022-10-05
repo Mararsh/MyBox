@@ -560,12 +560,12 @@ public class LocationDataEditController extends BaseController {
 
     @FXML
     public void popStartExample(MouseEvent mouseEvent) {
-        popMenu = PopTools.popEraExamples(popMenu, startTimeInput, mouseEvent);
+        PopTools.popEraExamples(this, startTimeInput, mouseEvent);
     }
 
     @FXML
     public void popEndExample(MouseEvent mouseEvent) {
-        popMenu = PopTools.popEraExamples(popMenu, endTimeInput, mouseEvent);
+        PopTools.popEraExamples(this, endTimeInput, mouseEvent);
     }
 
     @FXML
