@@ -260,15 +260,7 @@ public class Fxmls {
     public static final String GeographyCodeImportGeonamesFileFxml = "/fxml/GeographyCodeImportGeonamesFile.fxml";
     public static final String GeographyCodeSelectortFxml = "/fxml/GeographyCodeSelector.fxml";
 
-    public static final String DatasetFxml = "/fxml/Dataset.fxml";
-    public static final String DatasetEditFxml = "/fxml/DatasetEdit.fxml";
-
-    public static final String LocationDataFxml = "/fxml/LocationData.fxml";
-    public static final String LocationDataEditFxml = "/fxml/LocationDataEdit.fxml";
     public static final String LocationInMapFxml = "/fxml/LocationInMap.fxml";
-    public static final String LocationDataImportCSVFxml = "/fxml/LocationDataImportCSV.fxml";
-    public static final String LocationDataImportMovebankFxml = "/fxml/LocationDataImportMovebank.fxml";
-
     public static final String ConvertCoordinateFxml = "/fxml/ConvertCoordinate.fxml";
 
     public static final String EpidemicReportsFxml = "/fxml/EpidemicReports.fxml";

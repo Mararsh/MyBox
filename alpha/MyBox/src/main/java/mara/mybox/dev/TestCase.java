@@ -181,8 +181,6 @@ public class TestCase {
             cases.add(new TestCase(index++, message("DatabaseSQL"), Fxmls.DatabaseSqlFxml));
             cases.add(new TestCase(index++, message("JShell"), Fxmls.JShellFxml));
             cases.add(new TestCase(index++, message("GeographyCode"), Fxmls.GeographyCodeFxml));
-            cases.add(new TestCase(index++, message("LocationInMap"), Fxmls.LocationInMapFxml));
-            cases.add(new TestCase(index++, message("LocationData"), Fxmls.LocationDataFxml));
             cases.add(new TestCase(index++, message("ConvertCoordinate"), Fxmls.ConvertCoordinateFxml));
             cases.add(new TestCase(index++, message("EpidemicReport"), Fxmls.EpidemicReportsFxml));
             cases.add(new TestCase(index++, message("BarcodeCreator"), Fxmls.BarcodeCreatorFxml));

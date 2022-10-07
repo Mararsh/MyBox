@@ -66,22 +66,20 @@ public class ControlMapOptions extends BaseController {
             markerSizeSelector, mapSizeSelector, textSizeSelector;
     @FXML
     protected ToggleGroup dataGroup, mapGroup, coordinateGroup, projectionGroup,
-            langGroup, markerImageGroup, mapStyleGroup, textColorGroup;
+            langGroup, markerImageGroup, mapStyleGroup;
     @FXML
     protected RadioButton tiandituRadio, gaodeRadio, cgcs2000Radio, gcj02Radio,
             mercatorRadio, geodeticRadio, currentPageRadio, currentQueryRadio,
             chineseEnglishRadio, chineseRadio, englishRadio,
             styleDefaultRadio, styleIndigoRadio, styleBlackRadio,
-            markerPointRadio, markerCircleRadio, markerImageRadio, markerDatasetRadio, markerDataRadio,
-            dataColorRadio, setColorRadio;
+            markerPointRadio, markerCircleRadio, markerImageRadio;
     @FXML
     protected TextField markerImageInput;
     @FXML
     protected VBox optionsBox, mapBox, dataBox, languageBox, controlsBox, layersBox, sizeBox,
             markerTextBox, markerImageBox;
     @FXML
-    protected FlowPane locationTextPane, baseTextPane, textColorPane,
-            markerImagePane, dataNumberPane;
+    protected FlowPane baseTextPane, textColorPane, markerImagePane, dataNumberPane;
     @FXML
     protected ColorSet colorSetController;
 
@@ -160,10 +158,6 @@ public class ControlMapOptions extends BaseController {
                         type = "Circle";
                     } else if (markerImageRadio.isSelected()) {
                         type = "Image";
-                    } else if (markerDatasetRadio.isSelected()) {
-                        type = "Dataset";
-                    } else if (markerDataRadio.isSelected()) {
-                        type = "Data";
                     } else {
                         type = "Point";
                     }
@@ -341,24 +335,9 @@ public class ControlMapOptions extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends Paint> observable,
                         Paint oldValue, Paint newValue) {
-                    if (setColorRadio.isSelected()) {
-                        drawPoints();
-                    }
+                    drawPoints();
                 }
             });
-
-            if (textColorGroup != null) {
-                textColorGroup.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> ov, Toggle oldv, Toggle newv) -> {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    UserConfig.setBoolean(baseName + "TextDataColor", dataColorRadio.isSelected());
-                    if (!isSettingValues) {
-                        drawPoints();
-                    }
-                }
-                );
-            }
 
             if (markerLabelCheck != null) {
                 markerLabelCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
@@ -573,21 +552,13 @@ public class ControlMapOptions extends BaseController {
                     && "EPSG:4326".equals(UserConfig.getString(baseName + "Projection", "EPSG:900913"))) {
                 geodeticRadio.setSelected(true);
             }
-            String type = UserConfig.getString(baseName + "MarkerImageType",
-                    mapController instanceof LocationDataMapController ? "Dataset" : "Point");
+            String type = UserConfig.getString(baseName + "MarkerImageType", "Point");
             if ("Circle".equals(type)) {
                 markerCircleRadio.setSelected(true);
             } else if ("Image".equals(type)) {
                 markerImageRadio.setSelected(true);
-            } else if ("Dataset".equals(type)) {
-                markerDatasetRadio.setSelected(true);
-            } else if ("Data".equals(type)) {
-                markerDataRadio.setSelected(true);
             } else {
                 markerPointRadio.setSelected(true);
-            }
-            if (UserConfig.getBoolean(baseName + "TextDataColor", false)) {
-                dataColorRadio.setSelected(true);
             }
             isSettingValues = false;
 

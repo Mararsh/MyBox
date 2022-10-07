@@ -11,8 +11,6 @@ import java.util.Map;
 import java.util.Random;
 import javafx.scene.paint.Color;
 import mara.mybox.calculation.DoubleStatistic;
-import mara.mybox.data.DoublePoint;
-import mara.mybox.data.GeoCoordinatePoint;
 import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
@@ -42,7 +40,7 @@ public class ColumnDefinition extends BaseData {
     protected ColumnType type;
     protected int index, length, width, scale;
     protected Color color;
-    protected boolean isPrimaryKey, notNull, editable, auto;
+    protected boolean isPrimaryKey, notNull, editable, auto, fixTwoDigitYear;
     protected OnDelete onDelete;
     protected OnUpdate onUpdate;
     protected Object value;
@@ -51,13 +49,13 @@ public class ColumnDefinition extends BaseData {
     protected DoubleStatistic statistic;
 
     public static enum ColumnType {
-        String, Boolean, Text,
+        String, Boolean, Enumeration,
         Color, // rgba
         File, Image, // string of the path
         Double, Float, Long, Integer, Short,
         Datetime, Date, Era, // Looks Derby does not support date of BC(before Christ)
         Clob, Blob,
-        Enumeration, Longitude, Latitude, GeoCoordinate
+        Longitude, Latitude
     }
 
     public static enum OnDelete {
@@ -77,7 +75,7 @@ public class ColumnDefinition extends BaseData {
         columnName = null;
         type = ColumnType.String;
         index = -1;
-        isPrimaryKey = notNull = auto = false;
+        isPrimaryKey = notNull = auto = fixTwoDigitYear = false;
         editable = true;
         length = StringMaxLength;
         width = 100; // px
@@ -216,7 +214,6 @@ public class ColumnDefinition extends BaseData {
             }
             switch (type) {
                 case String:
-                case Text:
                 case Enumeration:
                 case File:
                 case Image:
@@ -230,8 +227,6 @@ public class ColumnDefinition extends BaseData {
                 case Double:
                     Double.parseDouble(value.replaceAll(",", ""));
                     return true;
-                case GeoCoordinate:
-                    return GeoCoordinatePoint.valid(value, ",");
                 case Float:
                     Float.parseFloat(value.replaceAll(",", ""));
                     return true;
@@ -254,7 +249,7 @@ public class ColumnDefinition extends BaseData {
                 case Datetime:
                 case Date:
                 case Era:
-                    return DateTools.encodeDate(value) != null;
+                    return DateTools.encodeDate(value, fixTwoDigitYear) != null;
                 default:
                     return true;
             }
@@ -285,7 +280,6 @@ public class ColumnDefinition extends BaseData {
                 case Float:
                     return FloatTools.compare(value1, value2, false);
                 case Long:
-                case Era:
                     return LongTools.compare(value1, value2, false);
                 case Integer:
                     return IntTools.compare(value1, value2, false);
@@ -294,8 +288,6 @@ public class ColumnDefinition extends BaseData {
                 case Datetime:
                 case Date:
                     return DateTools.compare(value1, value2, false);
-                case GeoCoordinate:
-                    return DoublePoint.compare(value1, value2, ",", false);
                 default:
                     return StringTools.compare(value1, value2);
             }
@@ -310,7 +302,7 @@ public class ColumnDefinition extends BaseData {
     }
 
     public boolean isTextType() {
-        return type == ColumnType.String || type == ColumnType.Text;
+        return type == ColumnType.String;
     }
 
     public boolean isDateType() {
@@ -350,10 +342,6 @@ public class ColumnDefinition extends BaseData {
                 return DateTools.randomTimeString(random);
             case Date:
                 return DateTools.randomDateString(random);
-            case GeoCoordinate:
-                String x = NumberTools.format(DoubleTools.random(random, Math.min(maxRandom, 180), nonNegative), scale);
-                String y = NumberTools.format(DoubleTools.random(random, Math.min(maxRandom, 90), nonNegative), scale);
-                return x + "," + y;
             default:
                 return NumberTools.format(DoubleTools.random(random, maxRandom, nonNegative), scale);
 //                return (char) ('a' + random.nextInt(25)) + "";
@@ -393,11 +381,11 @@ public class ColumnDefinition extends BaseData {
             }
             switch (type) {
                 case String:
-                case Text:
                 case Enumeration:
                 case Color:
                 case File:
                 case Image:
+                case Era:
                     return results.getString(savedName);
                 case Double:
                     double d;
@@ -422,7 +410,6 @@ public class ColumnDefinition extends BaseData {
                     }
                     return f;
                 case Long:
-                case Era:
                     long l;
                     try {
                         l = Long.valueOf(results.getObject(savedName).toString());
@@ -456,9 +443,6 @@ public class ColumnDefinition extends BaseData {
                     return results.getBlob(savedName);
                 case Clob:
                     return results.getClob(savedName);
-                case GeoCoordinate:
-                    DoublePoint p = DoublePoint.parse(results.getString(savedName), ",");
-                    return p;
                 default:
                     MyBoxLog.debug(savedName + " " + type);
             }
@@ -487,9 +471,7 @@ public class ColumnDefinition extends BaseData {
                 case Date:
                     return DateTools.encodeEra(string);
                 case Era:
-                    return DateTools.encodeEra(string).getTime();
-                case GeoCoordinate:
-                    return DoublePoint.parse(string, ",");
+                    return DateTools.textEra(string);
                 default:
                     return string;
             }
@@ -519,8 +501,6 @@ public class ColumnDefinition extends BaseData {
                     return DateTools.datetimeToString((Date) value);
                 case Date:
                     return DateTools.dateToString((Date) value);
-                case Era:
-                    return DateTools.datetimeToString(new Date((long) value));
                 default:
                     return value + "";
             }
@@ -554,7 +534,7 @@ public class ColumnDefinition extends BaseData {
                 case Date:
                     return DateTools.datetimeToString((Date) o, format);
                 case Era:
-                    return DateTools.datetimeToString(new Date((long) o), format);
+                    return DateTools.datetimeToString(DateTools.encodeEra(string), format);
                 default:
                     String s = o.toString();
                     return s.length() > maxLen ? s.substring(0, maxLen) : s;
@@ -565,8 +545,15 @@ public class ColumnDefinition extends BaseData {
     }
 
     public String savedValue(String string) {
-        String savedValue = toString(fromString(string, InvalidAs.Blank));
-        return savedValue;
+        switch (type) {
+            case Datetime:
+            case Date:
+            case Era:
+                return string;
+            default:
+                toString(fromString(string, InvalidAs.Blank));
+        }
+        return string;
     }
 
     public boolean valueQuoted() {
@@ -577,12 +564,10 @@ public class ColumnDefinition extends BaseData {
         Object v = fromString(defaultValue, InvalidAs.Blank);
         switch (type) {
             case String:
-            case Text:
             case Enumeration:
             case File:
             case Image:
             case Color:
-            case GeoCoordinate:
                 if (v != null) {
                     return "'" + defaultValue + "'";
                 } else {
@@ -626,12 +611,11 @@ public class ColumnDefinition extends BaseData {
         Object v = fromString(defaultValue, InvalidAs.Blank);
         switch (type) {
             case String:
-            case Text:
             case Enumeration:
             case File:
             case Image:
             case Color:
-            case GeoCoordinate:
+            case Era:
                 if (v != null) {
                     return defaultValue;
                 } else {
@@ -641,9 +625,7 @@ public class ColumnDefinition extends BaseData {
             case Float:
             case Long:
             case Integer:
-            case Era:
             case Short:
-
                 if (v != null) {
                     return v;
                 } else {
@@ -1034,6 +1016,15 @@ public class ColumnDefinition extends BaseData {
 
     public ColumnDefinition setScale(int scale) {
         this.scale = scale;
+        return this;
+    }
+
+    public boolean isFixTwoDigitYear() {
+        return fixTwoDigitYear;
+    }
+
+    public ColumnDefinition setFixTwoDigitYear(boolean fixTwoDigitYear) {
+        this.fixTwoDigitYear = fixTwoDigitYear;
         return this;
     }
 

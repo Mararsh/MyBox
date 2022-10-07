@@ -39,10 +39,10 @@ import mara.mybox.value.TimeFormats;
  * @License Apache License Version 2.0
  */
 public class ControlData2DColumnEdit extends BaseChildController {
-
+    
     protected ControlData2DColumns columnsController;
     protected int columnIndex;
-
+    
     @FXML
     protected TextField nameInput, defaultInput, lengthInput, widthInput, scaleInput, formatInput;
     @FXML
@@ -51,7 +51,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
     protected RadioButton stringRadio, doubleRadio, floatRadio, longRadio, intRadio, shortRadio, booleanRadio,
             datetimeRadio, dateRadio, eraRadio, longitudeRadio, latitudeRadio, enumRadio;
     @FXML
-    protected CheckBox notNullCheck, editableCheck;
+    protected CheckBox notNullCheck, editableCheck, fixYearCheck;
     @FXML
     protected ColorSet colorController;
     @FXML
@@ -60,43 +60,43 @@ public class ControlData2DColumnEdit extends BaseChildController {
     protected VBox optionsBox, enumBox;
     @FXML
     protected HBox formatBox;
-
+    
     public ControlData2DColumnEdit() {
         TipsLabelKey = message("SqlIdentifierComments");
     }
-
+    
     protected void init(ControlData2DColumns columnsController) {
         try {
             this.columnsController = columnsController;
             columnIndex = -1;
-
+            
             colorController.init(this, baseName + "Color");
             colorController.setColor(FxColorTools.randomColor());
-
+            
             typeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
                     checkType();
                 }
             });
-
+            
             rightTipsView.setVisible(columnsController.data2D.isTable());
-
+            
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
         }
     }
-
+    
     protected void setParameters(ControlData2DColumns columnsController) {
         init(columnsController);
         loadColumn(-1);
     }
-
+    
     public void setParameters(ControlData2DColumns columnsController, int index) {
         init(columnsController);
         loadColumn(index);
     }
-
+    
     public void checkType() {
         try {
             if (isSettingValues) {
@@ -105,34 +105,35 @@ public class ControlData2DColumnEdit extends BaseChildController {
             optionsBox.getChildren().clear();
             defaultInput.clear();
             formatInput.clear();
-
+            fixYearCheck.setSelected(false);
+            
             if (enumRadio.isSelected()) {
                 optionsBox.getChildren().add(enumBox);
-
+                
             } else if (datetimeRadio.isSelected()) {
-                optionsBox.getChildren().add(formatBox);
+                optionsBox.getChildren().addAll(formatBox, fixYearCheck);
                 formatInput.setText(TimeFormats.Datetime);
-
+                
             } else if (dateRadio.isSelected()) {
-                optionsBox.getChildren().add(formatBox);
+                optionsBox.getChildren().addAll(formatBox, fixYearCheck);
                 formatInput.setText(TimeFormats.Date);
-
+                
             } else if (eraRadio.isSelected()) {
-                optionsBox.getChildren().add(formatBox);
+                optionsBox.getChildren().addAll(formatBox, fixYearCheck);
                 formatInput.setText(TimeFormats.EraDateEnd);
-
+                
             } else if (doubleRadio.isSelected() || floatRadio.isSelected()
                     || longRadio.isSelected() || intRadio.isSelected() || shortRadio.isSelected()) {
                 optionsBox.getChildren().add(formatBox);
                 formatInput.setText(message("GroupInThousands"));
-
+                
             }
-
+            
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
         }
     }
-
+    
     public void loadColumn(int index) {
         try {
             if (index >= 0 && index < columnsController.tableData.size()) {
@@ -147,7 +148,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             MyBoxLog.error(e);
         }
     }
-
+    
     public void loadColumn(Data2DColumn column) {
         try {
             if (column == null) {
@@ -199,40 +200,41 @@ public class ControlData2DColumnEdit extends BaseChildController {
             }
             isSettingValues = false;
             checkType();
-
+            
             nameInput.setText(column.getColumnName());
             lengthInput.setText(column.getLength() + "");
             widthInput.setText(column.getWidth() + "");
             scaleInput.setText(column.getScale() + "");
+            fixYearCheck.setSelected(column.isFixTwoDigitYear());
             formatInput.clear();
             enumInput.clear();
             String format = column.getFormat();
             if (format != null) {
                 if (enumRadio.isSelected()) {
                     enumInput.setText(format.replaceAll(AppValues.MyBoxSeparator, "\n"));
-
+                    
                 } else if (datetimeRadio.isSelected() || dateRadio.isSelected() || eraRadio.isSelected()) {
                     formatInput.setText(format);
-
+                    
                 } else if (doubleRadio.isSelected() || floatRadio.isSelected()
                         || longRadio.isSelected() || intRadio.isSelected() || shortRadio.isSelected()) {
                     formatInput.setText(format);
-
+                    
                 }
             }
             defaultInput.setText(column.getDefaultValue());
             descInput.setText(column.getDescription());
-
+            
             notNullCheck.setSelected(column.isNotNull());
             editableCheck.setSelected(column.isEditable());
-
+            
             colorController.setColor(column.getColor());
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
+    
     public Data2DColumn pickValues() {
         try {
             String name = nameInput.getText();
@@ -287,8 +289,9 @@ public class ControlData2DColumnEdit extends BaseChildController {
                     .setNotNull(notNullCheck.isSelected())
                     .setEditable(editableCheck.isSelected())
                     .setColor((Color) colorController.rect.getFill())
+                    .setFixTwoDigitYear(fixYearCheck.isSelected())
                     .setDescription(descInput.getText());
-
+            
             String format = formatInput.getText();
             if (message("None").equals(format)) {
                 format = null;
@@ -321,7 +324,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             } else if (latitudeRadio.isSelected()) {
                 column.setType(ColumnType.Latitude).setFormat(null);
             }
-
+            
             String dv = defaultInput.getText();
             if (dv != null) {
                 column.setDefaultValue(dv);
@@ -332,7 +335,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             return null;
         }
     }
-
+    
     @FXML
     public void popExamples(MouseEvent mouseEvent) {
         if (doubleRadio.isSelected() || floatRadio.isSelected()) {
@@ -343,7 +346,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             values.add(message("None"));
             popExamples(mouseEvent, values, "DecimalFormat",
                     "https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/DecimalFormat.html");
-
+            
         } else if (longRadio.isSelected() || intRadio.isSelected() || shortRadio.isSelected()) {
             List<String> values = new ArrayList<>();
             values.add(message("GroupInThousands"));
@@ -351,7 +354,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             values.add(message("None"));
             popExamples(mouseEvent, values, "DecimalFormat",
                     "https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/DecimalFormat.html");
-
+            
         } else if (datetimeRadio.isSelected()) {
             List<String> values = new ArrayList<>();
             values.add(TimeFormats.Datetime);
@@ -368,7 +371,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             values.add(TimeFormats.DatetimeZoneE);
             popExamples(mouseEvent, values, "DateFormat",
                     "https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/SimpleDateFormat.html");
-
+            
         } else if (dateRadio.isSelected()) {
             List<String> values = new ArrayList<>();
             values.add(TimeFormats.Date);
@@ -378,7 +381,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             values.add(TimeFormats.MonthE);
             popExamples(mouseEvent, values, "DateFormat",
                     "https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/SimpleDateFormat.html");
-
+            
         } else if (eraRadio.isSelected()) {
             List<String> values = new ArrayList<>();
             values.add(TimeFormats.EraDatetimeEnd);
@@ -393,11 +396,11 @@ public class ControlData2DColumnEdit extends BaseChildController {
             values.add(TimeFormats.EraYearStart);
             popExamples(mouseEvent, values, "DateFormat",
                     "https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/SimpleDateFormat.html");
-
+            
         }
-
+        
     }
-
+    
     public void popExamples(MouseEvent mouseEvent, List<String> values, String linkName, String linkAddress) {
         try {
             if (values == null || values.isEmpty()) {
@@ -408,7 +411,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             }
             popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
-
+            
             MenuItem menu = new MenuItem(message("ClearInputArea"));
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -418,7 +421,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             });
             popMenu.getItems().add(menu);
             popMenu.getItems().add(new SeparatorMenuItem());
-
+            
             for (String value : values) {
                 menu = new MenuItem(value);
                 menu.setOnAction(new EventHandler<ActionEvent>() {
@@ -430,7 +433,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 popMenu.getItems().add(menu);
             }
             popMenu.getItems().add(new SeparatorMenuItem());
-
+            
             menu = new MenuItem(linkName);
             menu.setStyle("-fx-text-fill: blue;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
@@ -441,7 +444,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             });
             popMenu.getItems().add(menu);
             popMenu.getItems().add(new SeparatorMenuItem());
-
+            
             menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
@@ -452,7 +455,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             });
             popMenu.getItems().add(menu);
             LocateTools.locateMouse(mouseEvent, popMenu);
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -473,5 +476,5 @@ public class ControlData2DColumnEdit extends BaseChildController {
             return null;
         }
     }
-
+    
 }

@@ -190,12 +190,12 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                 }
             }
             Data2DWriteTable reader = Data2DWriteTable.create(this)
-                    .setConn(conn).setWriterTable(dataTable)
-                    .setIncludeRowNumber(includeRowNumber);
+                    .setConn(conn).setWriterTable(dataTable);
             if (reader == null) {
                 return -3;
             }
-            reader.setInvalidAs(invalidAs).setCols(cols).setTask(task).start();
+            reader.setIncludeRowNumber(includeRowNumber).setInvalidAs(invalidAs)
+                    .setCols(cols).setTask(task).start();
             if (!reader.failed()) {
                 conn.commit();
                 return reader.getCount();

@@ -756,6 +756,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                 return;
                             }
                             List<String> row = tableData.get(rowIndex);
+                            MyBoxLog.console(row.get(colIndex) + " --> " + e.getNewValue());
                             row.set(colIndex, e.getNewValue());
                             tableData.set(rowIndex, row);
                         }

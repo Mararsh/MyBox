@@ -16,16 +16,12 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.value.UserConfig;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -250,7 +246,7 @@ public class PdfAttributesBatchController extends BaseBatchPdfController {
             return;
         }
         try {
-            Date d = DateTools.encodeDate(s);
+            Date d = DateTools.encodeDate(s, true);
             if (d != null) {
                 createTimeInput.setStyle(null);
                 createTime = d;
@@ -274,7 +270,7 @@ public class PdfAttributesBatchController extends BaseBatchPdfController {
             return;
         }
         try {
-            Date d = DateTools.encodeDate(s);
+            Date d = DateTools.encodeDate(s, true);
             if (d != null) {
                 modifyTimeInput.setStyle(null);
                 modifyTime = d;
@@ -350,11 +346,11 @@ public class PdfAttributesBatchController extends BaseBatchPdfController {
     public boolean makeActualParameters() {
         if (changeProtectionRadio.isSelected()) {
             if (newUserPassword != null || newOwnerPassword != null) {
-                if (!PopTools.askSure(this,myStage.getTitle(), Languages.message("SureSetPasswords"))) {
+                if (!PopTools.askSure(this, myStage.getTitle(), Languages.message("SureSetPasswords"))) {
                     return false;
                 }
             } else {
-                if (!PopTools.askSure(this,myStage.getTitle(), Languages.message("SureUnsetPasswords"))) {
+                if (!PopTools.askSure(this, myStage.getTitle(), Languages.message("SureUnsetPasswords"))) {
                     return false;
                 }
             }

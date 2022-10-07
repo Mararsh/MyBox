@@ -27,7 +27,10 @@ public class TableDataCell extends TableAutoCommitCell<List<String>, String> {
     }
 
     protected boolean setCellValue(String inValue) {
-        String value = inValue == null ? null : inValue.replaceAll("\\\\n", "\n");
+        String value = inValue;
+        if (value != null && dataColumn.isTextType()) {
+            value = value.replaceAll("\\\\n", "\n");
+        }
         boolean changed = changed(value);
         commit(value, valid(value), changed);
         return changed;

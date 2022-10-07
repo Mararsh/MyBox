@@ -18,18 +18,18 @@ import mara.mybox.value.Languages;
  */
 public class Location extends BaseData implements Cloneable {
 
-    protected long ldid, datasetid, startTime, endTime, duration;
-    protected String datasetName, address, comments, label,
+    protected long ldid, startTime, endTime, duration;
+    protected String dataset, address, comments, label,
             startTimeText, endTimeText, periodText, durationText;
     protected double longitude, latitude, altitude, precision, speed, dataValue, dataSize;
     protected short direction;
     protected File image;
     protected GeoCoordinateSystem coordinateSystem;
-    protected Dataset dataset;
     protected Era startEra, endEra;
 
     public Location() {
-        ldid = datasetid = -1;
+        ldid = -1;
+        dataset = null;
         longitude = latitude = altitude = precision = speed = dataValue = dataSize = AppValues.InvalidDouble;
         startTime = endTime = duration = AppValues.InvalidLong;
         direction = AppValues.InvalidShort;
@@ -42,9 +42,6 @@ public class Location extends BaseData implements Cloneable {
             Location newCode = (Location) super.clone();
             if (coordinateSystem != null) {
                 newCode.setCoordinateSystem((GeoCoordinateSystem) coordinateSystem.clone());
-            }
-            if (dataset != null) {
-                newCode.setDataset((Dataset) dataset.clone());
             }
             return newCode;
         } catch (Exception e) {
@@ -84,9 +81,6 @@ public class Location extends BaseData implements Cloneable {
             switch (column) {
                 case "ldid":
                     data.setLdid(value == null ? -1 : (long) value);
-                    return true;
-                case "datasetid":
-                    data.setDatasetid(value == null ? -1 : (long) value);
                     return true;
                 case "label":
                     data.setLabel(value == null ? null : (String) value);
@@ -148,8 +142,6 @@ public class Location extends BaseData implements Cloneable {
         switch (column) {
             case "ldid":
                 return data.getLdid();
-            case "datasetid":
-                return data.getDatasetid();
             case "label":
                 return data.getLabel() == null ? null : (data.getLabel().length() > 2048 ? data.getLabel().substring(0, 2048) : data.getLabel());
             case "address":
@@ -197,8 +189,6 @@ public class Location extends BaseData implements Cloneable {
             return null;
         }
         switch (column.getColumnName()) {
-            case "datasetid":
-                return data.getDatasetName();
             case "start_time":
                 return DateTools.textEra(data.getStartEra());
             case "coordinate_system":
@@ -209,8 +199,6 @@ public class Location extends BaseData implements Cloneable {
             case "location_image":
                 if (data.getImage() != null) {
                     return data.getImage().getAbsolutePath();
-                } else if (data.getDataset() != null && data.getDataset().getImage() != null) {
-                    return data.getDataset().getImage().getAbsolutePath();
                 }
         }
         return BaseDataAdaptor.displayColumnBase(data, column, value);
@@ -233,28 +221,6 @@ public class Location extends BaseData implements Cloneable {
     /*
         custmized get/set
      */
-    public long getDatasetid() {
-        if (dataset != null) {
-            datasetid = dataset.getDsid();
-        }
-        return datasetid;
-    }
-
-    public Location setDataset(Dataset dataset) {
-        this.dataset = dataset;
-        if (dataset != null) {
-            datasetid = dataset.getDsid();
-        }
-        return this;
-    }
-
-    public String getDatasetName() {
-        if (dataset != null) {
-            datasetName = dataset.getDataSet();
-        }
-        return datasetName;
-    }
-
     public long getStartTime() {
 //        if (startTime == CommonValues.InvalidLong && endTime != CommonValues.InvalidLong) {
 //            startTime = endTime;
@@ -272,8 +238,6 @@ public class Location extends BaseData implements Cloneable {
     public String getStartTimeText() {
         if (getStartTime() == AppValues.InvalidLong) {
             startTimeText = null;
-        } else if (dataset == null) {
-            startTimeText = DateTools.textEra(startTime);
         } else {
 //            startTimeText = DateTools.textEra(startTime, dataset.getTimeFormat(), dataset.isOmitAD());
         }
@@ -283,8 +247,6 @@ public class Location extends BaseData implements Cloneable {
     public String getEndTimeText() {
         if (getEndTime() == AppValues.InvalidLong) {
             endTimeText = null;
-        } else if (dataset == null) {
-            endTimeText = DateTools.textEra(endTime);
         } else {
 //            endTimeText = DateTools.textEra(endTime, dataset.getTimeFormat(), dataset.isOmitAD());
         }
@@ -316,8 +278,6 @@ public class Location extends BaseData implements Cloneable {
     public Era getStartEra() {
         if (getStartTime() == AppValues.InvalidLong) {
             startEra = null;
-        } else if (dataset == null) {
-            startEra = new Era(startTime);
         } else {
 //            startEra = new Era(startTime, dataset.getTimeFormat(), dataset.isOmitAD());
         }
@@ -327,8 +287,6 @@ public class Location extends BaseData implements Cloneable {
     public Era getEndEra() {
         if (getEndTime() == AppValues.InvalidLong) {
             endEra = null;
-        } else if (dataset == null) {
-            endEra = new Era(endTime);
         } else {
 //            endEra = new Era(endTime, dataset.getTimeFormat(), dataset.isOmitAD());
         }
@@ -348,12 +306,7 @@ public class Location extends BaseData implements Cloneable {
         if (startTime == endTime || startTime == AppValues.InvalidLong || endTime == AppValues.InvalidLong) {
             return null;
         }
-        if (dataset != null) {
-//            return DateTools.duration(new Date(startTime), new Date(endTime), dataset.timeFormat);
-            return DateTools.duration(new Date(startTime), new Date(endTime), null);
-        } else {
-            return DateTools.duration(new Date(startTime), new Date(endTime), null);
-        }
+        return DateTools.duration(new Date(startTime), new Date(endTime), null);
     }
 
     public Location setImageName(String string) {
@@ -420,20 +373,6 @@ public class Location extends BaseData implements Cloneable {
 
     public Location setCoordinateSystem(GeoCoordinateSystem coordinateSystem) {
         this.coordinateSystem = coordinateSystem;
-        return this;
-    }
-
-    public Dataset getDataset() {
-        return dataset;
-    }
-
-    public Location setDatasetid(long datasetid) {
-        this.datasetid = datasetid;
-        return this;
-    }
-
-    public Location setDatasetName(String datasetName) {
-        this.datasetName = datasetName;
         return this;
     }
 

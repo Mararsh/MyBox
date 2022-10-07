@@ -1,7 +1,6 @@
 package mara.mybox.data;
 
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.Languages;
 
 /**
  * @Author Mara
@@ -35,7 +34,7 @@ public class GeoCoordinateSystem implements Cloneable {
             return;
         }
         for (Value item : Value.values()) {
-            if (name.equals(item.name()) || name.equals(Languages.message(item.name()))) {
+            if (name.equals(item.name()) || name.equals(message(item.name()))) {
                 this.value = item;
                 return;
             }
@@ -43,25 +42,10 @@ public class GeoCoordinateSystem implements Cloneable {
     }
 
     public GeoCoordinateSystem(short intValue) {
-        switch (intValue) {
-            case 0:
-                value = Value.CGCS2000;
-                break;
-            case 1:
-                value = Value.GCJ_02;
-                break;
-            case 2:
-                value = Value.WGS_84;
-                break;
-            case 3:
-                value = Value.BD_09;
-                break;
-            case 4:
-                value = Value.Mapbar;
-                break;
-            default:
-                value = defaultValue();
-                break;
+        try {
+            value = Value.values()[intValue];
+        } catch (Exception e) {
+            value = defaultValue();
         }
     }
 
@@ -72,24 +56,15 @@ public class GeoCoordinateSystem implements Cloneable {
         return value.name();
     }
 
+    public String messageName() {
+        return message(name());
+    }
+
     public short shortValue() {
         if (value == null) {
             value = defaultValue();
         }
-        switch (value) {
-            case CGCS2000:
-                return 0;
-            case GCJ_02:
-                return 1;
-            case WGS_84:
-                return 2;
-            case BD_09:
-                return 3;
-            case Mapbar:
-                return 4;
-            default:
-                return -1;
-        }
+        return (short) value.ordinal();
     }
 
     public String gaodeConvertService() {
@@ -147,6 +122,14 @@ public class GeoCoordinateSystem implements Cloneable {
 
     public static GeoCoordinateSystem GCJ02() {
         return new GeoCoordinateSystem(GeoCoordinateSystem.Value.GCJ_02);
+    }
+
+    public static String name(short value) {
+        return new GeoCoordinateSystem(value).name();
+    }
+
+    public static String messageName(short value) {
+        return new GeoCoordinateSystem(value).messageName();
     }
 
     /*

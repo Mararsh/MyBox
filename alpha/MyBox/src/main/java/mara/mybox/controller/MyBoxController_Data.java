@@ -105,11 +105,6 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
                 TextData, TextDataConvert, TextDataMerge
         );
 
-        MenuItem Dataset = new MenuItem(message("Dataset"));
-        Dataset.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.DatasetFxml);
-        });
-
         MenuItem GeographyCode = new MenuItem(message("GeographyCode"));
         GeographyCode.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.GeographyCodeFxml);
@@ -118,11 +113,6 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
         MenuItem LocationInMap = new MenuItem(message("LocationInMap"));
         LocationInMap.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.LocationInMapFxml);
-        });
-
-        MenuItem LocationData = new MenuItem(message("LocationData"));
-        LocationData.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.LocationDataFxml);
         });
 
         MenuItem ConvertCoordinate = new MenuItem(message("ConvertCoordinate"));
@@ -138,7 +128,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
         Menu Location = new Menu(message("Location"));
         Location.getItems().addAll(
                 GeographyCode, LocationInMap, ConvertCoordinate, new SeparatorMenuItem(),
-                LocationData, EpidemicReport
+                EpidemicReport
         );
 
         MenuItem MatricesManage = new MenuItem(message("MatricesManage"));

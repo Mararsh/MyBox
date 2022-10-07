@@ -12,8 +12,8 @@ import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -215,7 +215,7 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
                 timeInput.setStyle(null);
                 return;
             }
-            Date v = DateTools.encodeDate(value);
+            Date v = DateTools.encodeDate(value, true);
             if (v != null) {
                 time = v.getTime();
                 timeInput.setStyle(null);

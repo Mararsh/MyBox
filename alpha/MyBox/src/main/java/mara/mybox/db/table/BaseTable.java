@@ -118,7 +118,6 @@ public abstract class BaseTable<D> {
             boolean notNull = column.isNotNull();
             switch (column.getType()) {
                 case String:
-                case Text:
                 case Color:
                 case File:
                 case Image:
@@ -465,7 +464,6 @@ public abstract class BaseTable<D> {
         ColumnType type = column.getType();
         switch (type) {
             case String:
-            case Text:
             case File:
             case Image:
                 def += "VARCHAR(" + column.getLength() + ")";

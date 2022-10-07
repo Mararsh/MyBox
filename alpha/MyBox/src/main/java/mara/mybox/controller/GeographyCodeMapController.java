@@ -8,9 +8,9 @@ import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.BaseData;
+import mara.mybox.db.data.BaseDataAdaptor;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeTools;
-import mara.mybox.db.data.BaseDataAdaptor;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -38,21 +38,6 @@ public class GeographyCodeMapController extends BaseMapController {
             super.initValues();
 
             geoTable = new TableGeographyCode();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void initControls() {
-        try {
-            super.initControls();
-
-            mapOptionsController.markerTextBox.getChildren().remove(mapOptionsController.locationTextPane);
-            mapOptionsController.markerImagePane.getChildren().removeAll(
-                    mapOptionsController.markerDataRadio, mapOptionsController.markerDatasetRadio);
-            mapOptionsController.dataColorRadio.setVisible(false);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

@@ -88,7 +88,7 @@ public class DataTable extends Data2D {
                     dataColumns.add(dataColumn);
                 }
             }
-            return recordTable(conn, referredName, dataColumns, null);
+            return recordTable(conn, referredName, dataColumns, comments);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());

@@ -17,7 +17,6 @@ import mara.mybox.db.table.TableData2DCell;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.db.table.TableData2DStyle;
-import mara.mybox.db.table.TableDataset;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.db.table.TableGeographyCode;
@@ -62,9 +61,6 @@ public class BaseDataAdaptor {
 
         } else if (data instanceof GeographyCode) {
             return new TableGeographyCode();
-
-        } else if (data instanceof Dataset) {
-            return new TableDataset();
 
         } else if (data instanceof EpidemicReport) {
             return new TableEpidemicReport();
@@ -151,9 +147,6 @@ public class BaseDataAdaptor {
 
         } else if (data instanceof GeographyCode) {
             return GeographyCode.valid((GeographyCode) data);
-
-        } else if (data instanceof Dataset) {
-            return Dataset.valid((Dataset) data);
 
         } else if (data instanceof EpidemicReport) {
             return EpidemicReport.valid((EpidemicReport) data);
@@ -246,9 +239,6 @@ public class BaseDataAdaptor {
         } else if (data instanceof GeographyCode) {
             return GeographyCode.getValue((GeographyCode) data, name);
 
-        } else if (data instanceof Dataset) {
-            return Dataset.getValue((Dataset) data, name);
-
         } else if (data instanceof EpidemicReport) {
             return EpidemicReport.getValue((EpidemicReport) data, name);
 
@@ -327,9 +317,6 @@ public class BaseDataAdaptor {
         }
         if (data instanceof GeographyCode) {
             return GeographyCode.setValue((GeographyCode) data, name, value);
-
-        } else if (data instanceof Dataset) {
-            return Dataset.setValue((Dataset) data, name, value);
 
         } else if (data instanceof EpidemicReport) {
             return EpidemicReport.setValue((EpidemicReport) data, name, value);
@@ -474,7 +461,6 @@ public class BaseDataAdaptor {
         try {
             switch (column.getType()) {
                 case String:
-                case Text:
                 case Enumeration:
                 case Color:
                 case File:

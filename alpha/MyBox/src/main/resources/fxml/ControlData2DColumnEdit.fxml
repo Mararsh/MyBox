@@ -72,6 +72,7 @@ License:    Apache License Version 2.0
                   </Button>
                </children>
             </HBox>
+            <CheckBox fx:id="fixYearCheck" mnemonicParsing="false" text="%FixTwoDigitYears" />
             <VBox fx:id="enumBox" spacing="10.0">
                <children>
                   <HBox spacing="10.0">

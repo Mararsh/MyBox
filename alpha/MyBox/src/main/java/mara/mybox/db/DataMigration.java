@@ -8,13 +8,13 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javafx.application.Platform;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageConvertTools;
-import mara.mybox.data.GeoCoordinateSystem;
+import mara.mybox.data2d.Data2D_Convert;
+import mara.mybox.data2d.DataTable;
 import static mara.mybox.db.DerbyBase.BatchSize;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorPaletteName;
@@ -24,14 +24,12 @@ import mara.mybox.db.data.Data2DCell;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.Data2DStyle;
-import mara.mybox.db.data.Dataset;
 import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeLevel;
 import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.db.data.ImageEditHistory;
-import mara.mybox.db.data.Location;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.data.WebHistory;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
@@ -48,7 +46,6 @@ import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
-import mara.mybox.db.table.TableLocationData;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableWebHistory;
@@ -56,6 +53,7 @@ import mara.mybox.dev.DevTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppPaths;
@@ -176,6 +174,7 @@ public class DataMigration {
             conn.setAutoCommit(true);
             statement.executeUpdate("ALTER TABLE Data2D_Column ADD COLUMN scale int");
             statement.executeUpdate("ALTER TABLE Data2D_Column ADD COLUMN format VARCHAR(" + StringMaxLength + ")");
+            statement.executeUpdate("UPDATE Data2D_Column SET column_type=0  WHERE column_type=2");
             statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.Datetime + "' WHERE time_format < 2 AND column_type < 6");
             statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.Date + "' WHERE time_format=2 AND column_type < 6");
             statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.Year + "' WHERE time_format=3 AND column_type < 6");
@@ -186,10 +185,66 @@ public class DataMigration {
             statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.Datetime + " Z' WHERE time_format=8 AND column_type < 6");
             statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.DatetimeMs + " Z' WHERE time_format=9 AND column_type < 6");
             statement.executeUpdate("UPDATE Data2D_Column SET format='#,###' WHERE need_format=true AND column_type >= 6 AND column_type <= 10");
-            statement.executeUpdate("UPDATE Data2D_Column SET format='' WHERE column_type = 1");
+            statement.executeUpdate("UPDATE Data2D_Column SET format=null WHERE column_type = 1");
             statement.executeUpdate("ALTER TABLE Data2D_Column DROP COLUMN need_format");
             statement.executeUpdate("ALTER TABLE Data2D_Column DROP COLUMN time_format");
             statement.executeUpdate("ALTER TABLE Data2D_Column DROP COLUMN values_list");
+
+            statement.executeUpdate("ALTER TABLE Location_Data ADD COLUMN dataset VARCHAR(" + StringMaxLength + ")");
+            statement.executeUpdate("ALTER TABLE Location_Data ADD COLUMN from_time VARCHAR(64)");
+            statement.executeUpdate("ALTER TABLE Location_Data ADD COLUMN to_time VARCHAR(64)");
+            statement.executeUpdate("UPDATE Location_Data AS A SET dataset=(select B.data_set FROM Dataset AS B WHERE A.datasetid=B.dsid )");
+            statement.executeUpdate("UPDATE Location_Data AS A SET location_image=(select B.dataset_image FROM Dataset AS B WHERE A.datasetid=B.dsid )");
+            statement.executeUpdate("DROP INDEX Dataset_unique_index");
+            statement.executeUpdate("DROP VIEW Location_Data_View");
+            statement.executeUpdate("ALTER TABLE  Location_Data DROP CONSTRAINT  Location_Data_datasetid_fk");
+            statement.executeUpdate("ALTER TABLE Location_Data DROP COLUMN datasetid");
+            statement.executeUpdate("DROP TABLE Dataset");
+
+            DataTable locations = new DataTable();
+            locations.readDefinitionFromDB(conn, "Location_Data");
+            String tmpTable = Data2D_Convert.tmpTableName();
+            statement.executeUpdate("CREATE TABLE " + tmpTable + " (time BIGINT,  PRIMARY KEY ( time ) )");
+            statement.executeUpdate("INSERT INTO " + tmpTable + " (time ) SELECT DISTINCT start_time FROM Location_Data WHERE start_time IS NOT NULL");
+            long count = 0;
+            try ( ResultSet query = conn.createStatement().executeQuery("SELECT time FROM " + tmpTable)) {
+                conn.setAutoCommit(false);
+                while (query.next()) {
+                    try {
+                        long time = query.getLong("time");
+                        statement.executeUpdate("UPDATE Location_Data SET from_time='"
+                                + DateTools.datetimeToString(time) + "' WHERE start_time=" + time);
+                        if (count++ >= 100) {
+                            conn.commit();
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+                conn.commit();
+            }
+            statement.executeUpdate("DELETE FROM " + tmpTable);
+            statement.executeUpdate("INSERT INTO " + tmpTable + " (time ) SELECT DISTINCT end_time FROM Location_Data WHERE end_time IS NOT NULL");
+            count = 0;
+            try ( ResultSet query = conn.createStatement().executeQuery("SELECT time FROM " + tmpTable)) {
+                conn.setAutoCommit(false);
+                while (query.next()) {
+                    try {
+                        long time = query.getLong("time");
+                        statement.executeUpdate("UPDATE Location_Data SET to_time='"
+                                + DateTools.datetimeToString(time) + "' WHERE end_time=" + time);
+                        if (count++ >= 100) {
+                            conn.commit();
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+                conn.commit();
+            }
+
+            conn.setAutoCommit(true);
+            statement.executeUpdate("DROP TABLE " + tmpTable);
+            statement.executeUpdate("ALTER TABLE Location_Data DROP COLUMN start_time");
+            statement.executeUpdate("ALTER TABLE Location_Data DROP COLUMN end_time");
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -990,7 +1045,6 @@ public class DataMigration {
             MyBoxLog.info("Updating tables in 6.3.2...");
             updateForeignKeysIn632(conn);
             updateGeographyCodeIn632(conn);
-            updateLocationIn632(conn);
             TableStringValues.add(conn, "InstalledVersions", "6.3.2");
             conn.setAutoCommit(true);
         } catch (Exception e) {
@@ -1039,61 +1093,6 @@ public class DataMigration {
             }
             conn.commit();
             conn.setAutoCommit(true);
-        } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
-        }
-    }
-
-    private static void updateLocationIn632(Connection conn) {
-        TableLocationData tableLocationData = new TableLocationData();
-        try ( Statement statement = conn.createStatement();
-                 PreparedStatement locationIinsert = conn.prepareStatement(tableLocationData.insertStatement())) {
-            int insertCount = 0;
-            conn.setAutoCommit(false);
-            try ( ResultSet results = statement.executeQuery("SELECT * FROM Location")) {
-                Map<String, Dataset> datasets = new HashMap<>();
-                while (results.next()) {
-                    Location data = new Location();
-                    String datasetName = results.getString("data_set");
-                    Dataset dataset = datasets.get(datasetName);
-                    if (dataset == null) {
-                        dataset = tableLocationData.queryAndCreateDataset(conn, datasetName);
-                        datasets.put(datasetName, dataset);
-                    }
-                    data.setDataset(dataset);
-                    data.setLabel(results.getString("data_label"));
-                    data.setAddress(results.getString("address"));
-                    data.setLongitude(results.getDouble("longitude"));
-                    data.setLatitude(results.getDouble("latitude"));
-                    data.setAltitude(results.getDouble("altitude"));
-                    data.setPrecision(results.getDouble("precision"));
-                    data.setSpeed(results.getDouble("speed"));
-                    data.setDirection(results.getShort("direction"));
-                    data.setCoordinateSystem(new GeoCoordinateSystem(results.getShort("coordinate_system")));
-                    data.setDataValue(results.getDouble("data_value"));
-                    data.setDataSize(results.getDouble("data_size"));
-                    Date d = results.getTimestamp("data_time");
-                    if (d != null) {
-                        data.setStartTime(d.getTime() * (results.getShort("data_time_bc") >= 0 ? 1 : -1));
-                    }
-                    data.setImageName(results.getString("image_location"));
-                    data.setComments(results.getString("comments"));
-                    tableLocationData.setInsertStatement(conn, locationIinsert, data);
-                    locationIinsert.addBatch();
-                    if (++insertCount % BatchSize == 0) {
-                        locationIinsert.executeBatch();
-                        conn.commit();
-                    }
-                }
-            }
-            locationIinsert.executeBatch();
-            conn.commit();
-            conn.setAutoCommit(true);
-            try {
-                statement.executeUpdate("DROP TABLE Location");
-            } catch (Exception e) {
-//                MyBoxLog.debug(e.toString());
-            }
         } catch (Exception e) {
 //            MyBoxLog.debug(e.toString());
         }

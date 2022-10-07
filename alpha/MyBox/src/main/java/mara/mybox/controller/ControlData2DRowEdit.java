@@ -50,7 +50,7 @@ public class ControlData2DRowEdit extends BaseController {
 
     public TextInputControl addInput(String name, ColumnType type, boolean editable) {
         try {
-            if (type == ColumnType.String || type == ColumnType.Text) {
+            if (type == ColumnType.String || type == ColumnType.String) {
                 Label label = new Label(name);
                 label.setWrapText(true);
                 valuesBox.getChildren().add(label);

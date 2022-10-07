@@ -120,8 +120,6 @@ License:    Apache License Version 2.0
                                     </toggleGroup>
                                 </RadioButton>
                                 <RadioButton fx:id="markerCircleRadio" mnemonicParsing="false" text="%Circle" toggleGroup="$markerImageGroup" />
-                                <RadioButton fx:id="markerDatasetRadio" layoutX="197.0" layoutY="10.0" mnemonicParsing="false" text="%DatasetImage" toggleGroup="$markerImageGroup" />
-                                <RadioButton fx:id="markerDataRadio" mnemonicParsing="false" text="%DataImage" toggleGroup="$markerImageGroup" />
                             </children>
                         </FlowPane>
                         <FlowPane hgap="5.0" vgap="5.0">
@@ -162,18 +160,6 @@ License:    Apache License Version 2.0
                                 <CheckBox fx:id="markerCoordinateCheck" layoutX="118.0" layoutY="52.0" mnemonicParsing="false" text="%Coordinate" />
                             </children>
                         </FlowPane>
-                        <FlowPane fx:id="locationTextPane" hgap="5.0" layoutX="15.0" layoutY="60.0" vgap="5.0">
-                            <children>
-                                <CheckBox fx:id="markerStartCheck" layoutX="118.0" layoutY="52.0" mnemonicParsing="false" text="%StartTime" />
-                                <CheckBox fx:id="markerEndCheck" layoutX="307.0" layoutY="10.0" mnemonicParsing="false" text="%EndTime" />
-                                <CheckBox fx:id="markerDurationCheck" layoutX="213.0" layoutY="10.0" mnemonicParsing="false" text="%Duration" />
-                                <CheckBox fx:id="markerDatasetCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Dataset" />
-                                <CheckBox fx:id="markerValueCheck" mnemonicParsing="false" text="%DataValue" />
-                                <CheckBox fx:id="markerSizeCheck" layoutX="10.0" layoutY="52.0" mnemonicParsing="false" text="%DataSize" />
-                                <CheckBox fx:id="markerSpeedCheck" layoutX="10.0" layoutY="94.0" mnemonicParsing="false" text="%Speed" />
-                                <CheckBox fx:id="markerDirectionCheck" layoutX="10.0" layoutY="94.0" mnemonicParsing="false" text="%Direction" />
-                            </children>
-                        </FlowPane>
                         <FlowPane hgap="5.0" vgap="5.0">
                             <children>
                                 <Label text="%TextSize" />
@@ -185,13 +171,7 @@ License:    Apache License Version 2.0
                         <FlowPane fx:id="textColorPane" hgap="5.0" layoutX="15.0" layoutY="186.0" vgap="5.0">
                             <children>
                                 <Label text="%TextColor" />
-                                <RadioButton fx:id="setColorRadio" mnemonicParsing="false" selected="true">
-                                    <toggleGroup>
-                                        <ToggleGroup fx:id="textColorGroup" />
-                                    </toggleGroup>
-                                </RadioButton>
                                 <fx:include fx:id="colorSet" source="ColorSet.fxml" />
-                                <RadioButton fx:id="dataColorRadio" mnemonicParsing="false" text="%DataColor" toggleGroup="$textColorGroup" />
                             </children>
                         </FlowPane>
                     </children>

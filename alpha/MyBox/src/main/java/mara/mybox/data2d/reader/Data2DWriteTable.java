@@ -82,11 +82,6 @@ public class Data2DWriteTable extends Data2DOperator {
         return this;
     }
 
-    public Data2DWriteTable setIncludeRowNumber(boolean includeRowNumber) {
-        this.includeRowNumber = includeRowNumber;
-        return this;
-    }
-
     /*
         get
      */

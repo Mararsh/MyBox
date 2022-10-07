@@ -381,10 +381,7 @@ public abstract class BaseMapController extends BaseController {
     }
 
     public Color textColor() {
-        if (mapOptionsController.setColorRadio.isSelected()) {
-            return (Color) (mapOptionsController.colorSetController.rect.getFill());
-        }
-        return Color.BLACK;
+        return (Color) (mapOptionsController.colorSetController.rect.getFill());
     }
 
     @FXML

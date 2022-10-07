@@ -381,4 +381,16 @@ public class Data2DColumn extends ColumnDefinition {
         return this;
     }
 
+    @Override
+    public Data2DColumn setFormat(String format) {
+        this.format = format;
+        return this;
+    }
+
+    @Override
+    public Data2DColumn setFixTwoDigitYear(boolean fixTwoDigitYear) {
+        this.fixTwoDigitYear = fixTwoDigitYear;
+        return this;
+    }
+
 }

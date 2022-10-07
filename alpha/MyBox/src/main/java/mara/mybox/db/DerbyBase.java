@@ -23,7 +23,6 @@ import mara.mybox.db.table.TableData2DCell;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.db.table.TableData2DStyle;
-import mara.mybox.db.table.TableDataset;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.db.table.TableFloatMatrix;
@@ -475,10 +474,6 @@ public class DerbyBase {
                 new TableGeographyCode().createTable(conn);
                 loadingController.info("Geography_Code");
             }
-            if (!tables.contains("Dataset".toLowerCase())) {
-                new TableDataset().createTable(conn);
-                loadingController.info("Dataset");
-            }
             if (!tables.contains("Location_Data".toLowerCase())) {
                 new TableLocationData().createTable(conn);
                 loadingController.info("Location_Data");
@@ -605,13 +600,6 @@ public class DerbyBase {
 //                    MyBoxLog.error(e);
                 }
             }
-            if (!indexes.contains("Dataset_unique_index".toLowerCase())) {
-                try ( Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableDataset.Create_Index_unique);
-                } catch (Exception e) {
-//                    MyBoxLog.error(e);
-                }
-            }
             if (!indexes.contains("MyBox_Log_index".toLowerCase())) {
                 try ( Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableMyBoxLog.Create_Index);
@@ -696,13 +684,6 @@ public class DerbyBase {
             if (!views.contains("Epidemic_Report_Statistic_View".toLowerCase())) {
                 try ( Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableEpidemicReport.CreateStatisticView);
-                } catch (Exception e) {
-//                    MyBoxLog.error(e);
-                }
-            }
-            if (!views.contains("Location_Data_View".toLowerCase())) {
-                try ( Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableLocationData.CreateView);
                 } catch (Exception e) {
 //                    MyBoxLog.error(e);
                 }

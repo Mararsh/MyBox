@@ -189,6 +189,10 @@ public class DateTools {
     }
 
     public static Date encodeEra(String strDate) {
+        return encodeEra(strDate, false);
+    }
+
+    public static Date encodeEra(String strDate, boolean fixTwoDigitYear) {
         if (strDate == null) {
             return null;
         }
@@ -211,19 +215,19 @@ public class DateTools {
             format = eraFormatEnd(s);
 
         } else {
-            return encodeDate(s);
+            return encodeDate(s, fixTwoDigitYear);
         }
-        Date d = stringToDatetime(s, format, locale);
+        Date d = stringToDatetime(s, format, locale, fixTwoDigitYear);
 //        MyBoxLog.debug(s + "  " + locale.getLanguage() + " " + format + "  " + locale + "  "
 //                + DateTools.textEra(d.getTime(), Era.Format.Datetime, false));
         return d;
     }
 
-    public static Date encodeDate(String strDate) {
-        return encodeDate(strDate, Languages.locale());
+    public static Date encodeDate(String strDate, boolean fixTwoDigitYear) {
+        return encodeDate(strDate, Languages.locale(), fixTwoDigitYear);
     }
 
-    public static Date encodeDate(String strDate, Locale locale) {
+    public static Date encodeDate(String strDate, Locale locale, boolean fixTwoDigitYear) {
         try {
             if (strDate == null || strDate.isBlank()) {
                 return null;
@@ -275,7 +279,7 @@ public class DateTools {
 //            MyBoxLog.debug(s + "  " + format);
 //        MyBoxLog.debug(s + "  " + format + "  " + locale + "  "
 //                + stringToDatetime(s, format, locale).getTime());
-            return stringToDatetime(s, format, locale);
+            return stringToDatetime(s, format, locale, fixTwoDigitYear);
         } catch (Exception e) {
             return null;
         }
@@ -360,10 +364,14 @@ public class DateTools {
     }
 
     public static Date stringToDatetime(String strDate, String format) {
-        return stringToDatetime(strDate, format, Locale.getDefault());
+        return stringToDatetime(strDate, format, Locale.getDefault(), false);
     }
 
-    public static Date stringToDatetime(String strDate, String format, Locale locale) {
+    public static Date stringToDatetime(String strDate, String format, boolean fixTwoDigitYear) {
+        return stringToDatetime(strDate, format, Locale.getDefault(), fixTwoDigitYear);
+    }
+
+    public static Date stringToDatetime(String strDate, String format, Locale locale, boolean fixTwoDigitYear) {
         if (strDate == null || strDate.isEmpty()
                 || format == null || format.isEmpty()) {
             return null;
@@ -371,6 +379,9 @@ public class DateTools {
 //        MyBoxLog.debug(strDate + "  " + format + "  " + locale);
         try {
             SimpleDateFormat formatter = new SimpleDateFormat(format, locale);
+            if (!fixTwoDigitYear) {
+                formatter.set2DigitYearStart(new SimpleDateFormat("yyyy").parse("0000"));
+            }
             return formatter.parse(strDate, new ParsePosition(0));
         } catch (Exception e) {
             return null;
