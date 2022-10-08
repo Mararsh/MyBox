@@ -20,17 +20,17 @@ import javafx.util.Callback;
  * @License Apache License Version 2.0
  */
 public class TableComboBoxCell<S, T> extends ComboBoxTableCell<S, T> {
-
+    
     protected int maxVisibleCount;
-
+    
     public TableComboBoxCell(ObservableList<T> items, int maxCount) {
         super(items);
-        this.maxVisibleCount = maxCount;
+        maxVisibleCount = maxCount;
         if (maxVisibleCount <= 0) {
             maxVisibleCount = 10;
         }
-
-        this.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        
+        setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 TableView<S> table = getTableView();
@@ -43,7 +43,7 @@ public class TableComboBoxCell<S, T> extends ComboBoxTableCell<S, T> {
             }
         });
     }
-
+    
     @Override
     public void startEdit() {
         super.startEdit();
@@ -51,9 +51,10 @@ public class TableComboBoxCell<S, T> extends ComboBoxTableCell<S, T> {
         if (g != null && g instanceof ComboBox) {
             ComboBox cb = (ComboBox) g;
             cb.setVisibleRowCount(maxVisibleCount);
+            cb.setValue(getItem());
         }
     }
-
+    
     public int rowIndex() {
         try {
             TableRow row = getTableRow();
@@ -70,7 +71,7 @@ public class TableComboBoxCell<S, T> extends ComboBoxTableCell<S, T> {
             return -3;
         }
     }
-
+    
     public static <S, T> Callback<TableColumn<S, T>, TableCell<S, T>> create(List<T> items, int maxVisibleCount) {
         return new Callback<TableColumn<S, T>, TableCell<S, T>>() {
             @Override
@@ -83,5 +84,5 @@ public class TableComboBoxCell<S, T> extends ComboBoxTableCell<S, T> {
             }
         };
     }
-
+    
 }

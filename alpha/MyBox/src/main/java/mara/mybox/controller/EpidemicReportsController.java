@@ -729,9 +729,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
         if (selected == null || selected.getLocation() == null) {
             return;
         }
-        LocationInMapController controller
-                = (LocationInMapController) openScene(null, Fxmls.LocationInMapFxml);
-        controller.loadCoordinate(null, selected.getLocation().getLongitude(), selected.getLocation().getLatitude());
+        LocationInMapController.load(selected.getLocation().getLongitude(), selected.getLocation().getLatitude());
     }
 
     @Override

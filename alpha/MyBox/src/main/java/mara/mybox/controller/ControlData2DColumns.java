@@ -169,7 +169,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             editableColumn.setEditable(true);
             editableColumn.getStyleClass().add("editable-column");
 
-            formatColumn.setCellValueFactory(new PropertyValueFactory<>("format"));
+            formatColumn.setCellValueFactory(new PropertyValueFactory<>("formatDisplay"));
             formatColumn.setCellFactory(TableDataColumnCell.create(this));
             formatColumn.setEditable(true);
             formatColumn.getStyleClass().add("editable-column");

@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -256,14 +257,19 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
     @FXML
     public void locationAction(ActionEvent event) {
         try {
-            LocationInMapController controller = (LocationInMapController) openStage(Fxmls.LocationInMapFxml);
-            controller.loadCoordinate(this, longitude, latitude);
+            CoordinatePickerController controller = CoordinatePickerController.open(this, longitude, latitude);
+            controller.notify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    setGeographyCode(controller.geographyCode);
+                    controller.closeStage();
+                }
+            });
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    @Override
     public void setGeographyCode(GeographyCode code) {
         try {
             if (code == null) {

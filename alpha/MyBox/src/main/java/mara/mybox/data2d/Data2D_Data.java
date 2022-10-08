@@ -519,4 +519,16 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         }
     }
 
+    public boolean includeCoordinate() {
+        boolean hasLongitude = false, haslatitude = false;
+        for (Data2DColumn column : columns) {
+            if (column.getType() == ColumnType.Longitude) {
+                hasLongitude = true;
+            } else if (column.getType() == ColumnType.Latitude) {
+                haslatitude = true;
+            }
+        }
+        return hasLongitude && haslatitude;
+    }
+
 }

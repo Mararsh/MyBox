@@ -297,8 +297,8 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             if (code == null) {
                 return;
             }
-            LocationInMapController controller = (LocationInMapController) openStage(Fxmls.LocationInMapFxml);
-            controller.loadCoordinate(null, code.getLongitude(), code.getLatitude());
+            LocationInMapController.load(code.getLongitude(), code.getLatitude());
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

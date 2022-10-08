@@ -22,18 +22,12 @@ import mara.mybox.db.data.GeographyCode;
 import static mara.mybox.db.data.GeographyCodeTools.toGCJ02ByWebService;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.value.UserConfig;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.LocationTools;
 import static mara.mybox.tools.LocationTools.latitudeToDmsString;
 import static mara.mybox.tools.LocationTools.longitudeToDmsString;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
-import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import mara.mybox.value.UserConfig;
 import thridparty.CoordinateConverter;
 
 /**
@@ -577,14 +571,20 @@ public class ConvertCoordinateController extends BaseMapController {
     @FXML
     public void locationAction(ActionEvent event) {
         try {
-            LocationInMapController controller = (LocationInMapController) openStage(Fxmls.LocationInMapFxml);
-            controller.loadCoordinate(this, longitude, latitude);
+            CoordinatePickerController controller = CoordinatePickerController.open(this, longitude, latitude);
+            controller.notify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    setGeographyCode(controller.geographyCode);
+                    controller.closeStage();
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    @Override
     public void setGeographyCode(GeographyCode code) {
         try {
             if (code == null) {

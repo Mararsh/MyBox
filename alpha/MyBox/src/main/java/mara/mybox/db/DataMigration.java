@@ -246,6 +246,9 @@ public class DataMigration {
             statement.executeUpdate("ALTER TABLE Location_Data DROP COLUMN start_time");
             statement.executeUpdate("ALTER TABLE Location_Data DROP COLUMN end_time");
 
+            statement.executeUpdate("DELETE FROM VISIT_HISTORY WHERE resource_type=4 AND resource_value='LocationData'");
+            statement.executeUpdate("DELETE FROM VISIT_HISTORY WHERE resource_type=4 AND resource_value='位置数据'");
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

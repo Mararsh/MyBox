@@ -261,7 +261,9 @@ public class Fxmls {
     public static final String GeographyCodeSelectortFxml = "/fxml/GeographyCodeSelector.fxml";
 
     public static final String LocationInMapFxml = "/fxml/LocationInMap.fxml";
+    public static final String CoordinatePickerFxml = "/fxml/CoordinatePicker.fxml";
     public static final String ConvertCoordinateFxml = "/fxml/ConvertCoordinate.fxml";
+    public static final String Data2DCoordinatePickerFxml = "/fxml/Data2DCoordinatePicker.fxml";
 
     public static final String EpidemicReportsFxml = "/fxml/EpidemicReports.fxml";
     public static final String EpidemicReportEditFxml = "/fxml/EpidemicReportEdit.fxml";

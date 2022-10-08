@@ -225,6 +225,8 @@ public class ColumnDefinition extends BaseData {
                     Color.web(value);
                     return true;
                 case Double:
+                case Longitude:
+                case Latitude:
                     Double.parseDouble(value.replaceAll(",", ""));
                     return true;
                 case Float:
@@ -388,6 +390,8 @@ public class ColumnDefinition extends BaseData {
                 case Era:
                     return results.getString(savedName);
                 case Double:
+                case Longitude:
+                case Latitude:
                     double d;
                     try {
                         d = Double.valueOf(results.getObject(savedName).toString());
@@ -456,6 +460,8 @@ public class ColumnDefinition extends BaseData {
         try {
             switch (type) {
                 case Double:
+                case Longitude:
+                case Latitude:
                     return Double.parseDouble(string.replaceAll(",", ""));
                 case Float:
                     return Float.parseFloat(string.replaceAll(",", ""));
@@ -535,6 +541,10 @@ public class ColumnDefinition extends BaseData {
                     return DateTools.datetimeToString((Date) o, format);
                 case Era:
                     return DateTools.datetimeToString(DateTools.encodeEra(string), format);
+                case Enumeration:
+                case Longitude:
+                case Latitude:
+                    return string;
                 default:
                     String s = o.toString();
                     return s.length() > maxLen ? s.substring(0, maxLen) : s;
@@ -549,6 +559,7 @@ public class ColumnDefinition extends BaseData {
             case Datetime:
             case Date:
             case Era:
+            case Enumeration:
                 return string;
             default:
                 toString(fromString(string, InvalidAs.Blank));
@@ -568,6 +579,7 @@ public class ColumnDefinition extends BaseData {
             case File:
             case Image:
             case Color:
+            case Era:
                 if (v != null) {
                     return "'" + defaultValue + "'";
                 } else {
@@ -577,8 +589,9 @@ public class ColumnDefinition extends BaseData {
             case Float:
             case Long:
             case Integer:
-            case Era:
             case Short:
+            case Longitude:
+            case Latitude:
                 if (v != null) {
                     return v + "";
                 } else {
@@ -626,6 +639,8 @@ public class ColumnDefinition extends BaseData {
             case Long:
             case Integer:
             case Short:
+            case Longitude:
+            case Latitude:
                 if (v != null) {
                     return v;
                 } else {
@@ -652,6 +667,10 @@ public class ColumnDefinition extends BaseData {
             default:
                 return null;
         }
+    }
+
+    public String getFormatDisplay() {
+        return format == null ? null : format.replaceAll(AppValues.MyBoxSeparator, "\n");
     }
 
     /*

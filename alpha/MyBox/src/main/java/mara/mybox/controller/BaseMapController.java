@@ -120,24 +120,25 @@ public abstract class BaseMapController extends BaseController {
                         "200", "500", "1000", "50", "5", "3", "1", "10", "100", "300", "800", "1500", "2000", "3000", "5000", "10000"
                 ));
                 intervalSelector.setValue(interval + "");
-                intervalSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                    try {
-                        int v = Integer.valueOf(intervalSelector.getValue());
-                        if (v > 0) {
-                            interval = v;
-                            UserConfig.setInt(baseName + "Interval", interval);
-                            ValidationTools.setEditorNormal(intervalSelector);
-                            if (isSettingValues) {
-                                return;
+                intervalSelector.getSelectionModel().selectedItemProperty().addListener(
+                        (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                            try {
+                                int v = Integer.valueOf(intervalSelector.getValue());
+                                if (v > 0) {
+                                    interval = v;
+                                    UserConfig.setInt(baseName + "Interval", interval);
+                                    ValidationTools.setEditorNormal(intervalSelector);
+                                    if (isSettingValues) {
+                                        return;
+                                    }
+                                    drawFrames();
+                                } else {
+                                    ValidationTools.setEditorBadStyle(intervalSelector);
+                                }
+                            } catch (Exception e) {
+                                MyBoxLog.error(e.toString());
                             }
-                            drawFrames();
-                        } else {
-                            ValidationTools.setEditorBadStyle(intervalSelector);
-                        }
-                    } catch (Exception e) {
-                        MyBoxLog.error(e.toString());
-                    }
-                });
+                        });
             }
 
             if (loopCheck != null) {
@@ -390,7 +391,9 @@ public abstract class BaseMapController extends BaseController {
         if (mapOptionsController.mapLoaded) {
             webEngine.executeScript("clearMap();");
         }
-        titleLabel.setText("");
+        if (titleLabel != null) {
+            titleLabel.setText("");
+        }
     }
 
     @FXML

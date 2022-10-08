@@ -31,6 +31,7 @@ import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
@@ -40,6 +41,8 @@ import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.cell.TableComboBoxCell;
 import mara.mybox.fxml.cell.TableDataBooleanDisplayCell;
 import mara.mybox.fxml.cell.TableDataBooleanEditCell;
+import mara.mybox.fxml.cell.TableDataColorEditCell;
+import mara.mybox.fxml.cell.TableDataCoordinateEditCell;
 import mara.mybox.fxml.cell.TableDataDateEditCell;
 import mara.mybox.fxml.cell.TableDataDisplayCell;
 import mara.mybox.fxml.cell.TableDataEditCell;
@@ -712,6 +715,8 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             List<Data2DColumn> columns = data2D.getColumns();
 
             ControlData2DLoad dataControl = this;
+            TableColor tableColor = null;
+            boolean includeCoordinate = data2D.includeCoordinate();
             for (int i = 0; i < columns.size(); i++) {
                 Data2DColumn dataColumn = columns.get(i);
                 String name = dataColumn.getColumnName();
@@ -738,10 +743,22 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
 
                     if (dataColumn.isEnumType()) {
                         tableColumn.setCellFactory(TableComboBoxCell.create(dataColumn.enumValues(), 12));
+
                     } else if (type == ColumnType.Boolean) {
                         tableColumn.setCellFactory(TableDataBooleanEditCell.create(dataControl, dataColumn, colIndex));
+
+                    } else if (type == ColumnType.Color) {
+                        if (tableColor == null) {
+                            tableColor = new TableColor();
+                        }
+                        tableColumn.setCellFactory(TableDataColorEditCell.create(dataControl, dataColumn, tableColor));
+
                     } else if (dataColumn.isDateType()) {
                         tableColumn.setCellFactory(TableDataDateEditCell.create(dataControl, dataColumn));
+
+                    } else if (includeCoordinate && (type == ColumnType.Longitude || type == ColumnType.Latitude)) {
+                        tableColumn.setCellFactory(TableDataCoordinateEditCell.create(dataControl, dataColumn));
+
                     } else {
                         tableColumn.setCellFactory(TableDataEditCell.create(dataControl, dataColumn));
                     }
@@ -756,7 +773,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                 return;
                             }
                             List<String> row = tableData.get(rowIndex);
-                            MyBoxLog.console(row.get(colIndex) + " --> " + e.getNewValue());
                             row.set(colIndex, e.getNewValue());
                             tableData.set(rowIndex, row);
                         }

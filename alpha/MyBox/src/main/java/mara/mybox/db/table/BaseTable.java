@@ -121,6 +121,8 @@ public abstract class BaseTable<D> {
                 case Color:
                 case File:
                 case Image:
+                case Enumeration:
+                case Era:
                     if (value == null) {
                         if (notNull) {
                             statement.setString(index, (String) column.defaultValue());
@@ -136,6 +138,8 @@ public abstract class BaseTable<D> {
                     }
                     break;
                 case Double:
+                case Longitude:
+                case Latitude:
                     double d;
                     if (value == null) {
                         d = Double.NaN;
@@ -170,7 +174,6 @@ public abstract class BaseTable<D> {
                     }
                     break;
                 case Long:
-                case Era:
                     long l;
                     if (value == null) {
                         if (column.isAuto()) {
@@ -466,19 +469,24 @@ public abstract class BaseTable<D> {
             case String:
             case File:
             case Image:
+            case Enumeration:
                 def += "VARCHAR(" + column.getLength() + ")";
+                break;
+            case Era:
+                def += "VARCHAR(64)";
                 break;
             case Color:
                 def += "VARCHAR(16)";
                 break;
             case Double:
+            case Longitude:
+            case Latitude:
                 def += "DOUBLE";
                 break;
             case Float:
                 def += "FLOAT";
                 break;
             case Long:
-            case Era:
                 def += "BIGINT";
                 break;
             case Integer:

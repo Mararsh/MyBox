@@ -465,9 +465,12 @@ public class BaseDataAdaptor {
                 case Color:
                 case File:
                 case Image:
+                case Era:
                     String rvalue = (String) value;
                     return rvalue;
                 case Double:
+                case Longitude:
+                case Latitude:
                     double dvalue = (double) value;
                     if (column.getMaxValue() != null && dvalue > (double) column.getMaxValue()) {
                         return null;
@@ -486,7 +489,6 @@ public class BaseDataAdaptor {
                     }
                     return DoubleTools.invalidDouble(fvalue) ? null : (fvalue + "");
                 case Long:
-                case Era:
                     long lvalue = (long) value;
                     if (column.getMaxValue() != null && lvalue > (long) column.getMaxValue()) {
                         return null;
