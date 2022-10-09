@@ -87,6 +87,10 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         }
     }
 
+    public boolean supportMultipleLine() {
+        return type != Type.Texts && type != Type.Matrix;
+    }
+
     /*
         matrix
      */

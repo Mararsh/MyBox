@@ -44,7 +44,6 @@ public class ControlMapOptions extends BaseController {
     protected int markerSize, textSize, mapSize, dataMax;
     protected File markerImageFile;
     protected WebEngine webEngine;
-    protected boolean mapLoaded;
     protected MapName mapName;
     protected GeoCoordinateSystem coordinateSystem;
 
@@ -99,7 +98,7 @@ public class ControlMapOptions extends BaseController {
 
     public void initOptions() {
         try {
-            mapLoaded = false;
+            mapController.mapLoaded = false;
             markerSize = 24;
             textSize = 12;
             mapSize = UserConfig.getInt(baseName + "MapSize", 3);
@@ -573,12 +572,11 @@ public class ControlMapOptions extends BaseController {
             return;
         }
         isSettingValues = true;
-        mapLoaded = false;
+        mapController.mapLoaded = false;
         optionsBox.setDisable(true);
         try {
             if (gaodeRadio != null && gaodeRadio.isSelected()) {
                 mapName = MapName.GaoDe;
-                webEngine.loadContent(LocationTools.gaodeMap());
 
                 gcj02Radio.setSelected(true);
                 gcj02Radio.setDisable(false);
@@ -601,6 +599,8 @@ public class ControlMapOptions extends BaseController {
                 mapSizeSelector.getItems().addAll(Arrays.asList(
                         "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18"
                 ));
+
+                webEngine.loadContent(LocationTools.gaodeMap());
 
             } else {
                 mapName = MapName.TianDiTu;
@@ -650,7 +650,7 @@ public class ControlMapOptions extends BaseController {
             @Override
             public void run() {
                 Platform.runLater(() -> {
-                    if (!mapLoaded) {
+                    if (!mapController.mapLoaded) {
                         return;
                     }
                     if (timer != null) {
@@ -675,7 +675,6 @@ public class ControlMapOptions extends BaseController {
 
     protected void mapLoaded() {
         optionsBox.setDisable(false);
-        mapLoaded = true;
     }
 
     public void setData() {
@@ -751,7 +750,7 @@ public class ControlMapOptions extends BaseController {
     }
 
     public void setMapSize(int size, boolean setMap, boolean setSelector) {
-        if (!mapLoaded || isSettingValues) {
+        if (!mapController.mapLoaded || isSettingValues) {
             return;
         }
         mapSize = size;

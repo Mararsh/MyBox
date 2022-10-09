@@ -66,6 +66,7 @@ public abstract class BaseMapController extends BaseController {
     protected boolean frameCompleted;
     protected WebEngine webEngine;
     protected int interval, frameIndex;
+    protected boolean mapLoaded;
 
     @FXML
     protected WebView mapView;
@@ -234,7 +235,7 @@ public abstract class BaseMapController extends BaseController {
             if (mapView == null) {
                 return;
             }
-
+            mapLoaded = false;
             webEngine = mapView.getEngine();
             webEngine.setJavaScriptEnabled(true);
 
@@ -290,14 +291,19 @@ public abstract class BaseMapController extends BaseController {
         try {
 //            MyBoxLog.debug(data);
             if (data.equals("Loaded")) {
-                mapOptionsController.mapLoaded();
-                return;
-            } else if (data.startsWith("zoomSize:")) {
-                int v = Integer.parseInt(data.substring("zoomSize:".length()));
-                if (v != mapOptionsController.mapSize) {
-                    mapOptionsController.setMapSize(v, false, true);
+                mapLoaded = true;
+            }
+            if (mapOptionsController != null) {
+                if (data.equals("Loaded")) {
+                    mapOptionsController.mapLoaded();
+                    return;
+                } else if (data.startsWith("zoomSize:")) {
+                    int v = Integer.parseInt(data.substring("zoomSize:".length()));
+                    if (v != mapOptionsController.mapSize) {
+                        mapOptionsController.setMapSize(v, false, true);
+                    }
+                    return;
                 }
-                return;
             }
             boolean isClicked = true;
             if (data.startsWith("click:")) {
@@ -327,8 +333,7 @@ public abstract class BaseMapController extends BaseController {
     protected void drawPoint(double longitude, double latitude,
             String label, String markerImage, String info, Color textColor) {
         try {
-            if (webEngine == null
-                    || !mapOptionsController.mapLoaded
+            if (webEngine == null || !mapLoaded
                     || !LocationTools.validCoordinate(longitude, latitude)) {
                 return;
             }
@@ -388,7 +393,7 @@ public abstract class BaseMapController extends BaseController {
     @FXML
     @Override
     public void clearAction() {
-        if (mapOptionsController.mapLoaded) {
+        if (mapLoaded) {
             webEngine.executeScript("clearMap();");
         }
         if (titleLabel != null) {

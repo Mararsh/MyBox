@@ -52,9 +52,8 @@ public class GeographyCodeMapController extends BaseMapController {
     @Override
     public void drawPoints() {
         try {
-            if (webEngine == null
-                    || geographyCodes == null || geographyCodes.isEmpty()
-                    || !mapOptionsController.mapLoaded) {
+            if (webEngine == null || !mapLoaded
+                    || geographyCodes == null || geographyCodes.isEmpty()) {
                 return;
             }
             webEngine.executeScript("clearMap();");
@@ -221,7 +220,7 @@ public class GeographyCodeMapController extends BaseMapController {
     @FXML
     @Override
     public void clearAction() {
-        if (mapOptionsController.mapLoaded) {
+        if (mapLoaded) {
             webEngine.executeScript("clearMap();");
         }
         geographyCodes = null;

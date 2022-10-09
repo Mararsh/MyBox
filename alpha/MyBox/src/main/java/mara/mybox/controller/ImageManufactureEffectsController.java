@@ -32,9 +32,9 @@ import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.Fxmls;
@@ -286,7 +286,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                     if (sourceFile != null) {
                         scope.setFile(sourceFile.getAbsolutePath());
                     }
-                    scope.setRectangle(new DoubleRectangle(0, 0, image.getWidth(), image.getHeight()));
+                    scope.setRectangle(new DoubleRectangle(0, 0, image.getWidth() - 1, image.getHeight() - 1));
                     BufferedImage[] outline = AlphaTools.outline(outlineSource,
                             scope.getRectangle(), image.getWidth(), image.getHeight(),
                             false, ColorConvertTools.converColor(Color.WHITE), false);

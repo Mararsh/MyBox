@@ -15,11 +15,13 @@ public class TableDataCell extends TableAutoCommitCell<List<String>, String> {
     protected ControlData2DLoad dataControl;
     protected Data2DColumn dataColumn;
     protected final int trucSize = 200;
+    protected boolean supportMultipleLine;
 
     public TableDataCell(ControlData2DLoad dataControl, Data2DColumn dataColumn) {
         super(new DefaultStringConverter());
         this.dataControl = dataControl;
         this.dataColumn = dataColumn;
+        supportMultipleLine = dataControl.getData2D().supportMultipleLine() && dataColumn.isTextType();
     }
 
     protected String getCellValue() {
@@ -28,7 +30,7 @@ public class TableDataCell extends TableAutoCommitCell<List<String>, String> {
 
     protected boolean setCellValue(String inValue) {
         String value = inValue;
-        if (value != null && dataColumn.isTextType()) {
+        if (value != null && supportMultipleLine) {
             value = value.replaceAll("\\\\n", "\n");
         }
         boolean changed = changed(value);
@@ -38,7 +40,7 @@ public class TableDataCell extends TableAutoCommitCell<List<String>, String> {
 
     @Override
     public boolean valid(String value) {
-        return dataColumn.validValue(value);
+        return dataColumn.validValue(value) && dataControl.getData2D().validValue(value);
     }
 
     @Override

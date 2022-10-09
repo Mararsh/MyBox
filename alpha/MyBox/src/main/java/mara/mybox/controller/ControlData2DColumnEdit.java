@@ -28,7 +28,6 @@ import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.value.AppValues;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.TimeFormats;
@@ -214,7 +213,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             String format = column.getFormat();
             if (format != null) {
                 if (enumRadio.isSelected()) {
-                    enumInput.setText(format.replaceAll(AppValues.MyBoxSeparator, "\n"));
+                    enumInput.setText(format);
 
                 } else if (datetimeRadio.isSelected() || dateRadio.isSelected() || eraRadio.isSelected()) {
                     formatInput.setText(format);
@@ -321,7 +320,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 column.setType(ColumnType.Era).setFormat(format);
             } else if (enumRadio.isSelected()) {
                 column.setType(ColumnType.Enumeration)
-                        .setFormat(enumString.replaceAll("\n", AppValues.MyBoxSeparator));
+                        .setFormat(enumString);
             } else if (longitudeRadio.isSelected()) {
                 column.setType(ColumnType.Longitude).setFormat(null);
             } else if (latitudeRadio.isSelected()) {

@@ -595,7 +595,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
     }
 
     public ImageInformation setRegion(double x1, double y1, double x2, double y2) {
-        this.region = new Rectangle((int) x1, (int) y1, Math.abs((int) (x2 - x1 + 1)), Math.abs((int) (y2 - y1 + 1)));
+        this.region = new Rectangle((int) x1, (int) y1, Math.abs((int) (x2 - x1)), Math.abs((int) (y2 - y1)));
         return this;
     }
 

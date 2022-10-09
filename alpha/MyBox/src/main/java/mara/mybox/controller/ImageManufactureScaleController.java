@@ -173,7 +173,7 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
             width = imageView.getImage().getWidth();
             height = imageView.getImage().getHeight();
             imageController.setMaskRectangleLineVisible(true);
-            imageController.maskRectangleData = new DoubleRectangle(0, 0, width, height);
+            imageController.maskRectangleData = new DoubleRectangle(0, 0, width - 1, height - 1);
             imageController.drawMaskRectangleLineAsData();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -285,7 +285,6 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
                 + "x" + (int) Math.round(imageView.getImage().getHeight()) + "\n"
                 + Languages.message("AfterChange") + ": " + (int) Math.round(width)
                 + "x" + (int) Math.round(height) + "\n";
-        MyBoxLog.debug(width + " " + width);
         commentsLabel.setText(info);
     }
 

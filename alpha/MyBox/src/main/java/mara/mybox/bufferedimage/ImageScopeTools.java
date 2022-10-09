@@ -340,9 +340,9 @@ public class ImageScopeTools {
                 FontMetrics metrics = g.getFontMetrics(font);
                 int yOffset = metrics.getAscent();
                 for (int i = 0; i < rows.size() - 1; ++i) {
-                    int h = rows.get(i + 1) - rows.get(i) + 1;
+                    int h = rows.get(i + 1) - rows.get(i);
                     for (int j = 0; j < cols.size() - 1; ++j) {
-                        int w = cols.get(j + 1) - cols.get(j) + 1;
+                        int w = cols.get(j + 1) - cols.get(j);
                         int x = cols.get(j) + w / 3;
                         int y = rows.get(i) + h / 3 + yOffset;
                         g.drawString(w + "x" + h, (int) (x / scale), (int) (y / scale) + yOffset);

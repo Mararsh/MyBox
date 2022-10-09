@@ -221,7 +221,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             y = getImageHeight() - 1;
         }
         maskRectangleData = new DoubleRectangle(x, y,
-                x + maskRectangleData.getWidth() - 1, y + maskRectangleData.getHeight() - 1);
+                x + maskRectangleData.getWidth(), y + maskRectangleData.getHeight());
         drawMaskRectangleLine();
     }
 

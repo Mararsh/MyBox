@@ -227,6 +227,12 @@ public class Data2DDefinition extends BaseData {
         }
     }
 
+    public boolean validValue(String value) {
+        if (value == null || type != Type.Texts) {
+            return true;
+        }
+        return !value.contains("\n") && !value.contains(delimiter);
+    }
 
     /*
         static methods

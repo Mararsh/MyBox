@@ -22,7 +22,7 @@ public class DoubleOutline extends DoubleRectangle {
 
     public DoubleOutline(BufferedImage image, int color) {
         this.image = image;
-        rectangle = new DoubleRectangle(0, 0, image.getWidth(), image.getHeight());
+        rectangle = new DoubleRectangle(0, 0, image.getWidth() - 1, image.getHeight() - 1);
         this.insideColor = color;
         offsetX = rectangle.getSmallX() >= 0 ? 0 : rectangle.getSmallX();
         offsetY = rectangle.getSmallY() >= 0 ? 0 : rectangle.getSmallY();

@@ -1180,7 +1180,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
     protected void drawMap(List<EpidemicReport> timeReports) {
         try {
             if (timeReports == null || timeReports.isEmpty()
-                    || webEngine == null || !mapOptionsController.mapLoaded) {
+                    || webEngine == null || !mapLoaded) {
                 return;
             }
             webEngine.executeScript("clearMap();");

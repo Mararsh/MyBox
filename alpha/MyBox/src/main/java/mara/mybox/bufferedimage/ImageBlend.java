@@ -1,9 +1,9 @@
 package mara.mybox.bufferedimage;
 
 import java.awt.image.BufferedImage;
+import mara.mybox.bufferedimage.PixelsBlend.ImagesBlendMode;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.bufferedimage.PixelsBlend.ImagesBlendMode;
 
 /**
  * @Author Mara

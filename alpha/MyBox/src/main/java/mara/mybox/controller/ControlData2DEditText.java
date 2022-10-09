@@ -195,7 +195,7 @@ public class ControlData2DEditText extends BaseController {
                     }
                     List<String> nrow = new ArrayList<>();
                     for (String s : row) {
-                        if (s == null) {
+                        if (s == null || !data2D.supportMultipleLine()) {
                             nrow.add(s);
                         } else {
                             nrow.add(s.replaceAll("\\\\n", "\n"));

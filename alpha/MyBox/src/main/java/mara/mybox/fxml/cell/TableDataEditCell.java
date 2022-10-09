@@ -26,7 +26,7 @@ public class TableDataEditCell extends TableDataCell {
     @Override
     public void startEdit() {
         String s = getItem();
-        if (dataColumn.isTextType() && s != null && s.contains("\n")) {
+        if (supportMultipleLine && s != null && s.contains("\n")) {
             TextInputController inputController = TextInputController.open(dataControl, name(), s);
             getListener = new ChangeListener<Boolean>() {
                 @Override

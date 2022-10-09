@@ -141,7 +141,7 @@ public class LocationInMapController extends GeographyCodeMapController {
             @Override
             public void run() {
                 Platform.runLater(() -> {
-                    if (timer == null || !mapOptionsController.mapLoaded) {
+                    if (timer == null || !mapLoaded) {
                         return;
                     }
                     if (timer != null) {
@@ -223,7 +223,7 @@ public class LocationInMapController extends GeographyCodeMapController {
     @FXML
     @Override
     public void clearAction() {
-        if (mapOptionsController.mapLoaded) {
+        if (mapLoaded) {
             webEngine.executeScript("clearMap();");
         }
         geographyCodes.clear();

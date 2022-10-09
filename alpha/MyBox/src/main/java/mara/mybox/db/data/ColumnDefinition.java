@@ -319,7 +319,7 @@ public class ColumnDefinition extends BaseData {
         if (!isEnumType()) {
             return null;
         }
-        return StringTools.toList(format, AppValues.MyBoxSeparator);
+        return StringTools.toList(format, "\n");
     }
 
     public String random(Random random, int maxRandom, short scale, boolean nonNegative) {
