@@ -98,7 +98,7 @@ public class LocationInMapController extends GeographyCodeMapController {
         } else if (addressRadio.isSelected()) {
             NodeStyleTools.setTooltip(locateInput, Languages.message("MapAddressComments"));
             locateInput.setText(Languages.isChinese() ? "拙政园"
-                    : (mapOptionsController.mapName == ControlMapOptions.MapName.TianDiTu ? "Paris" : "巴黎"));
+                    : (mapOptions.isGaoDeMap() ? "巴黎" : "Paris"));
             locateInput.setEditable(true);
             queryButton.setDisable(false);
         } else {
@@ -176,14 +176,14 @@ public class LocationInMapController extends GeographyCodeMapController {
                             String[] values = value.split(",");
                             double longitude = DoubleTools.scale6(Double.valueOf(values[0].trim()));
                             double latitude = DoubleTools.scale6(Double.valueOf(values[1].trim()));
-                            code = GeographyCodeTools.geoCode(mapOptionsController.coordinateSystem,
+                            code = GeographyCodeTools.geoCode(mapOptions.getCoordinateSystem(),
                                     longitude, latitude, true);
                         } catch (Exception e) {
                             MyBoxLog.error(e.toString());
                             return false;
                         }
                     } else {
-                        code = GeographyCodeTools.geoCode(mapOptionsController.coordinateSystem, value);
+                        code = GeographyCodeTools.geoCode(mapOptions.getCoordinateSystem(), value);
                     }
                     if (code == null) {
                         return false;

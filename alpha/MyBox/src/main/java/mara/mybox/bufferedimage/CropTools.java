@@ -54,8 +54,8 @@ public class CropTools {
             }
             int x2 = Math.min(width - 1, (int) Math.round(shapeBound.getBigX()));
             int y2 = Math.min(height - 1, (int) Math.round(shapeBound.getBigY()));
-            int w = x2 - x1;
-            int h = y2 - y1;
+            int w = x2 - x1 + 1;
+            int h = y2 - y1 + 1;
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(w, h, imageType);
             int bgPixel = bgColor.getRGB();

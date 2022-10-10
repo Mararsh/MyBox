@@ -24,8 +24,8 @@ public class DoubleRectangle implements DoubleShape {
         smallY = rectangle.getY();
         width = rectangle.getWidth();
         height = rectangle.getHeight();
-        bigX = rectangle.getX() + width;
-        bigY = rectangle.getY() + height;
+        bigX = rectangle.getX() + width - 1;
+        bigY = rectangle.getY() + height - 1;
     }
 
     public DoubleRectangle(double x1, double y1, double x2, double y2) {
@@ -93,7 +93,7 @@ public class DoubleRectangle implements DoubleShape {
     }
 
     public final double getWidth() {
-        width = Math.abs(bigX - smallX);
+        width = Math.abs(bigX - smallX) + 1;
         return width;
     }
 
@@ -102,7 +102,7 @@ public class DoubleRectangle implements DoubleShape {
     }
 
     public final double getHeight() {
-        height = Math.abs(bigY - smallY);
+        height = Math.abs(bigY - smallY) + 1;
         return height;
     }
 

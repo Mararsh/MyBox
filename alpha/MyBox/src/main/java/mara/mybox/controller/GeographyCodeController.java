@@ -150,7 +150,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
     }
 
     public boolean mapCurrentPage() {
-        return mapController.mapOptionsController.currentPageRadio.isSelected();
+        return true;
     }
 
     @FXML
@@ -221,7 +221,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
                 @Override
                 protected boolean handle() {
                     mapData = TableGeographyCode.queryCodes(dataQuerySQL,
-                            mapController.mapOptionsController.dataMax, true);
+                            mapController.mapOptions.getDataMax(), true);
                     return true;
                 }
 

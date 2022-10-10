@@ -22,7 +22,7 @@ import mara.mybox.value.Languages;
  * @CreateDate 2020-1-20
  * @License Apache License Version 2.0
  */
-public class GeographyCodeMapController extends BaseMapController {
+public class GeographyCodeMapController extends BaseMapFramesController {
 
     protected TableGeographyCode geoTable;
     protected BaseDataManageController dataController;
@@ -46,7 +46,15 @@ public class GeographyCodeMapController extends BaseMapController {
 
     public void initMap(BaseDataManageController dataController) {
         this.dataController = dataController;
-        super.initMap(dataController);
+        super.checkFirstRun(dataController);
+    }
+
+    @Override
+    public void setDataMax() {
+        if (!mapLoaded || isSettingValues) {
+            return;
+        }
+        dataController.reloadChart();
     }
 
     @Override
@@ -72,9 +80,9 @@ public class GeographyCodeMapController extends BaseMapController {
                     @Override
                     protected boolean handle() {
                         points = new ArrayList<>();
-                        if (mapOptionsController.mapName == ControlMapOptions.MapName.GaoDe) {
+                        if (mapOptions.isGaoDeMap()) {
                             points = GeographyCodeTools.toGCJ02(geographyCodes);
-                        } else if (mapOptionsController.mapName == ControlMapOptions.MapName.TianDiTu) {
+                        } else {
                             points = GeographyCodeTools.toCGCS2000(geographyCodes, false);
                         }
                         return true;
@@ -112,9 +120,11 @@ public class GeographyCodeMapController extends BaseMapController {
                                         frameEnd = false;
                                         GeographyCode geographyCode = points.get(index);
                                         drawPoint(geographyCode.getLongitude(), geographyCode.getLatitude(),
-                                                markerLabel(geographyCode), markerImage(),
+                                                mapOptions.getMarkerSize(),
+                                                markerLabel(geographyCode),
+                                                mapOptions.getMarkerImageFile().getAbsolutePath(),
                                                 BaseDataAdaptor.displayData(geoTable, geographyCode, null, true),
-                                                textColor());
+                                                mapOptions.getTextColor());
                                         if (!centered) {
                                             webEngine.executeScript("setCenter(" + geographyCode.getLongitude()
                                                     + ", " + geographyCode.getLatitude() + ");");
@@ -127,8 +137,7 @@ public class GeographyCodeMapController extends BaseMapController {
                                                 timer.cancel();
                                                 timer = null;
                                             }
-                                            if (mapOptionsController.mapName == ControlMapOptions.MapName.GaoDe
-                                                    && mapOptionsController.fitViewCheck.isSelected()) {
+                                            if (mapOptions.isGaoDeMap() && mapOptions.isFitView()) {
                                                 webEngine.executeScript("map.setFitView();");
                                             }
                                         }

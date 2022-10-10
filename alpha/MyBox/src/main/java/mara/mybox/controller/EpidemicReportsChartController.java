@@ -198,28 +198,6 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 drawChart();
             });
 
-            mapOptionsController.textSize = 12;
-            labelSizeSelector.getItems().addAll(Arrays.asList(
-                    "12", "14", "10", "15", "16", "18", "9", "8", "18", "20", "24"
-            ));
-            labelSizeSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                try {
-                    int v = Integer.parseInt(newValue);
-                    if (v > 0) {
-                        mapOptionsController.textSize = v;
-                        labelSizeSelector.getEditor().setStyle(null);
-                        UserConfig.setInt("EpidemicReportChartTextSize", mapOptionsController.textSize);
-                        if (!isSettingValues) {
-                            drawChart();
-                        }
-                    } else {
-                        labelSizeSelector.getEditor().setStyle(UserConfig.badStyle());
-                    }
-                } catch (Exception e) {
-                    labelSizeSelector.getEditor().setStyle(UserConfig.badStyle());
-                }
-            });
-
             legendSide = null;
             legendGroup.selectedToggleProperty().addListener(
                     (ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) -> {
@@ -354,8 +332,11 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
         chartTimes = new ArrayList<>();
         chartTimes.addAll(reportsController.dataTimes);
         Collections.reverse(chartTimes);
-        mapOptionsController.mapSize = 3;
+
         frameIndex = 0;
+        isSettingValues = true;
+        mapOptions.setMapSize(3);
+        isSettingValues = false;
 
         orderNames = new ArrayList<>();
         orderNames.addAll(reportsController.orderNames);
@@ -866,11 +847,11 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
         if (last) {
             String valueLabel = finalLabel + " " + finalValue;
             Label text = new Label(valueLabel);
-            text.setStyle("-fx-background-color: transparent;  -fx-font-size: " + mapOptionsController.textSize + "px; -fx-font-weight: bolder;");
+            text.setStyle("-fx-background-color: transparent;  -fx-font-size: " + mapOptions.getTextSize() + "px; -fx-font-weight: bolder;");
             data.setNode(text);
         } else if (labelType == LabelType.Pop) {
             Label text = new Label("");
-            text.setStyle("-fx-background-color: transparent;  -fx-font-size: " + mapOptionsController.textSize + "px; -fx-font-weight: bolder;");
+            text.setStyle("-fx-background-color: transparent;  -fx-font-size: " + mapOptions.getTextSize() + "px; -fx-font-weight: bolder;");
             data.setNode(text);
             NodeStyleTools.setTooltip(text, finalLabel + " " + finalValue);
         } else {
@@ -890,7 +871,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                     break;
             }
             Label text = new Label(valueLabel);
-            text.setStyle("-fx-background-color: transparent;  -fx-font-size: " + mapOptionsController.textSize + "px;");
+            text.setStyle("-fx-background-color: transparent;  -fx-font-size: " + mapOptions.getTextSize() + "px;");
             data.setNode(text);
         }
         return data;
@@ -991,7 +972,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
         NumberAxis numberAxis = new NumberAxis();
         LabeledBarChart barChart = new LabeledBarChart(new CategoryAxis(), numberAxis);
         barChart.setLabelType(labelType)
-                .setLabelFontSize(mapOptionsController.textSize);
+                .setLabelFontSize(mapOptions.getTextSize());
         ChartTools.setChartCoordinate(numberAxis, chartCoordinate);
         barChart.setAlternativeRowFillVisible(false);
         barChart.setAlternativeColumnFillVisible(false);
@@ -1021,7 +1002,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
         NumberAxis numberAxis = new NumberAxis();
         LabeledBarChart barChart = new LabeledBarChart(numberAxis, new CategoryAxis());
         barChart.setLabelType(labelType)
-                .setLabelFontSize(mapOptionsController.textSize);
+                .setLabelFontSize(mapOptions.getTextSize());
         ChartTools.setChartCoordinate(numberAxis, chartCoordinate);
         barChart.setAlternativeRowFillVisible(false);
         barChart.setAlternativeColumnFillVisible(false);
@@ -1194,7 +1175,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                             + location.getLongitude() + "," + location.getLatitude() + ");");
                     mapCentered = true;
                 }
-                Color textColor = textColor();
+                Color textColor = mapOptions.getTextColor();
                 String name = (multipleDatasets ? report.getDataSet() + " - " : "") + location.getFullName();
                 name = textColor == null ? name
                         : "<span style=\"color:" + FxColorTools.color2rgb(textColor) + "\">" + name + "</span>";
@@ -1222,9 +1203,10 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 String info = mapOptionsController.popInfoCheck.isSelected()
                         ? "<div>" + name + value + "</div></br>"
                         + BaseDataAdaptor.displayData(reportsController.tableDefinition, report, displayNames(), true) : "";
-                mapOptionsController.markerSize = markSize(EpidemicReportTools.getNumber(report, orderNames.get(0)).doubleValue());
-                drawPoint(location.getLongitude(), location.getLatitude(),
-                        label, circleImage(), info, null);
+                isSettingValues = true;
+                int markSize = markSize(EpidemicReportTools.getNumber(report, orderNames.get(0)).doubleValue());
+                drawPoint(location.getLongitude(), location.getLatitude(), markSize,
+                        label, mapOptions.circleImage().getAbsolutePath(), info, null);
             }
 //            if (mapOptionsController.mapName == MapName.GaoDe) {
 //                webEngine.executeScript("map.setFitView();");
@@ -1237,8 +1219,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
     // maximum marker size of GaoDe Map is 64
     protected int markSize(double value) {
         if (maxValue == 0) {
-            mapOptionsController.markerSize = 20;
-            return mapOptionsController.markerSize;
+            return 20;
         }
         double d, m;
 //        switch (chartCoordinate) {
@@ -1260,8 +1241,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
 //        }
         d = Math.log(value);
         m = Math.log(maxValue);
-        mapOptionsController.markerSize = Math.min(60, Math.max(10, (int) (d * 60 / m)));
-        return mapOptionsController.markerSize;
+        return Math.min(60, Math.max(10, (int) (d * 60 / m)));
     }
 
     @Override
@@ -1308,7 +1288,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 return;
             }
             recordFileWritten(directory, VisitHistory.FileType.Image);
-            String snapName = snapName(false);
+            String snapName = snapName();
             File filePath = new File(directory.getAbsolutePath() + File.separator + snapName + File.separator);
             filePath.mkdirs();
             final String filePrefix = filePath + File.separator + snapName;

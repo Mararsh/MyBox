@@ -230,7 +230,8 @@ public class ImageScopeTools {
                 lineWidth, lineWidth}, 0.0F);
             g.setStroke(stroke);
             DoubleRectangle rect = ellipse.getRectangle();
-            g.drawOval((int) Math.round(rect.getSmallX()), (int) Math.round(rect.getSmallY()), (int) Math.round(rect.getWidth()), (int) Math.round(rect.getHeight()));
+            g.drawOval((int) Math.round(rect.getSmallX()), (int) Math.round(rect.getSmallY()),
+                    (int) Math.round(rect.getWidth()), (int) Math.round(rect.getHeight()));
             g.dispose();
             return target;
         } catch (Exception e) {

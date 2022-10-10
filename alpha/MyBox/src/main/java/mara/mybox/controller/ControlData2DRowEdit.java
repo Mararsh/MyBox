@@ -108,11 +108,16 @@ public class ControlData2DRowEdit extends BaseController {
                 } else if (column.isDateType()) {
                     makeDateInput(column);
 
-                } else {
+                } else if (editController.data2D.supportMultipleLine()) {
                     makeTextArea(column);
-                }
 
+                } else {
+                    makeTextField(column);
+
+                }
             }
+
+            okButton.requestFocus();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -391,7 +396,12 @@ public class ControlData2DRowEdit extends BaseController {
                     }
 
                 }
-                row.add(value);
+                if (column.validValue(value) && editController.data2D.validValue(value)) {
+                    row.add(value);
+                } else {
+                    popError(message("Invalid") + ": " + column.getColumnName());
+                    return null;
+                }
             }
             return row;
         } catch (Exception ex) {
