@@ -262,12 +262,4 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         }
     }
 
-
-    /*
-        get/set
-     */
-    public int getScale() {
-        return scale;
-    }
-
 }

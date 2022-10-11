@@ -1205,8 +1205,8 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                         + BaseDataAdaptor.displayData(reportsController.tableDefinition, report, displayNames(), true) : "";
                 isSettingValues = true;
                 int markSize = markSize(EpidemicReportTools.getNumber(report, orderNames.get(0)).doubleValue());
-                drawPoint(location.getLongitude(), location.getLatitude(), markSize,
-                        label, mapOptions.circleImage().getAbsolutePath(), info, null);
+                drawPoint(location.getLongitude(), location.getLatitude(),
+                        label, info, mapOptions.circleImage().getAbsolutePath(), markSize, null);
             }
 //            if (mapOptionsController.mapName == MapName.GaoDe) {
 //                webEngine.executeScript("map.setFitView();");

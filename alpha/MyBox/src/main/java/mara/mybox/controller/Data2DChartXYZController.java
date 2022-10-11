@@ -99,10 +99,12 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
             xSelector.getItems().clear();
             ySelector.getItems().clear();
             zSelector.getItems().clear();
+            isSettingValues = false;
             List<String> names = data2D.columnNames();
             if (names == null || names.isEmpty()) {
                 return;
             }
+            isSettingValues = true;
             String xCol = xSelector.getSelectionModel().getSelectedItem();
             xSelector.getItems().setAll(names);
             if (xCol != null && names.contains(xCol)) {
@@ -240,15 +242,13 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
                     } else {
                         outputData = filtered(dataColsIndices, false);
                     }
+                    data2D.stopFilter();
                     if (outputData == null || outputData.isEmpty()) {
                         error = message("NoData");
                         return false;
                     }
-                    data2D.stopFilter();
-                    String dataName = data2D.getDataName();
-                    dataName = dataName == null || dataName.isBlank() ? data2D.shortName() : dataName;
                     chartFile = chartController.makeChart(outputColumns, outputData,
-                            seriesSize, dataName, scale,
+                            seriesSize, data2D.dataName(), scale,
                             xCategoryCheck.isSelected(), yCategoryCheck.isSelected(), zCategoryCheck.isSelected());
                     return chartFile != null && chartFile.exists();
                 } catch (Exception e) {

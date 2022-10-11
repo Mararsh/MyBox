@@ -738,16 +738,15 @@ public class Data2DExampleTools {
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = new DataFileCSV();
                 List<Data2DColumn> columns = new ArrayList<>();
-                columns.add(new Data2DColumn(message(lang, "Label"), ColumnType.String, true));
+                columns.add(new Data2DColumn(message(lang, "StartTime"), ColumnType.Datetime).setFixTwoDigitYear(true));
+                columns.add(new Data2DColumn(message(lang, "EndTime"), ColumnType.Datetime).setFixTwoDigitYear(true));
                 columns.add(new Data2DColumn(message(lang, "Longitude"), ColumnType.Longitude));
                 columns.add(new Data2DColumn(message(lang, "Latitude"), ColumnType.Latitude));
                 columns.add(new Data2DColumn(message(lang, "CoordinateSystem"), ColumnType.String));
-                columns.add(new Data2DColumn(message(lang, "StartTime"), ColumnType.Datetime).setFixTwoDigitYear(true));
-                columns.add(new Data2DColumn(message(lang, "EndTime"), ColumnType.Datetime).setFixTwoDigitYear(true));
                 columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
                 data.setColumns(columns).setDataName(message("AutumnMovementPatternsOfEuropeanGadwalls"))
                         .setComments("https://www.datarepository.movebank.org/handle/10255/move.346");
-                if (makeExampleFile(lang, "EuropeanGadwalls_" + lang, data)) {
+                if (makeExampleFile(lang, "EuropeanGadwalls", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -757,15 +756,36 @@ public class Data2DExampleTools {
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = new DataFileCSV();
                 List<Data2DColumn> columns = new ArrayList<>();
-                columns.add(new Data2DColumn(message(lang, "Label"), ColumnType.String, true));
+                columns.add(new Data2DColumn(message(lang, "Time"), ColumnType.Datetime).setFixTwoDigitYear(true));
                 columns.add(new Data2DColumn(message(lang, "Longitude"), ColumnType.Longitude));
                 columns.add(new Data2DColumn(message(lang, "Latitude"), ColumnType.Latitude));
                 columns.add(new Data2DColumn(message(lang, "CoordinateSystem"), ColumnType.String));
-                columns.add(new Data2DColumn(message(lang, "Time"), ColumnType.Datetime).setFixTwoDigitYear(true));
                 columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
                 data.setColumns(columns).setDataName(message("SpermWhalesGulfOfMexico"))
                         .setComments("https://www.datarepository.movebank.org/handle/10255/move.1059");
-                if (makeExampleFile(lang, "SpermWhales_" + lang, data)) {
+                if (makeExampleFile(lang, "SpermWhales", data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            locationMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("EpidemicReportsCOVID19"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn(message(lang, "Time"), ColumnType.Datetime).setFixTwoDigitYear(true));
+                columns.add(new Data2DColumn(message(lang, "Confirmed"), ColumnType.Integer));
+                columns.add(new Data2DColumn(message(lang, "Healed"), ColumnType.Integer));
+                columns.add(new Data2DColumn(message(lang, "Dead"), ColumnType.Integer));
+                columns.add(new Data2DColumn(message(lang, "Level"), ColumnType.String));
+                columns.add(new Data2DColumn(message(lang, "Longitude"), ColumnType.Longitude));
+                columns.add(new Data2DColumn(message(lang, "Latitude"), ColumnType.Latitude));
+                columns.add(new Data2DColumn(message(lang, "Continent"), ColumnType.String));
+                columns.add(new Data2DColumn(message(lang, "Country"), ColumnType.String));
+                columns.add(new Data2DColumn(message(lang, "Province"), ColumnType.String));
+                data.setColumns(columns).setDataName(message("EpidemicReportsCOVID19"))
+                        .setComments("https://github.com/CSSEGISandData/COVID-19");
+                if (makeExampleFile(lang, "EpidemicReports", data)) {
                     controller.loadCSVFile(data);
                 }
             });

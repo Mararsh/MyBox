@@ -145,7 +145,6 @@ License:    Apache License Version 2.0
                         <FlowPane fx:id="baseTextPane" hgap="5.0" vgap="5.0">
                             <children>
                                 <CheckBox fx:id="markerLabelCheck" mnemonicParsing="false" selected="true" text="%Label" />
-                                <CheckBox fx:id="markerAddressCheck" layoutX="10.0" layoutY="52.0" mnemonicParsing="false" text="%Address" />
                                 <CheckBox fx:id="markerCoordinateCheck" layoutX="118.0" layoutY="52.0" mnemonicParsing="false" text="%Coordinate" />
                             </children>
                         </FlowPane>

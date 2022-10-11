@@ -14,7 +14,6 @@ import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.Languages;
 
 /**
@@ -118,16 +117,16 @@ public class GeographyCodeMapController extends BaseMapFramesController {
                                             return;
                                         }
                                         frameEnd = false;
-                                        GeographyCode geographyCode = points.get(index);
-                                        drawPoint(geographyCode.getLongitude(), geographyCode.getLatitude(),
-                                                mapOptions.getMarkerSize(),
-                                                markerLabel(geographyCode),
+                                        GeographyCode code = points.get(index);
+                                        drawPoint(code.getLongitude(), code.getLatitude(),
+                                                code.getName(),
+                                                BaseDataAdaptor.displayData(geoTable, code, null, true),
                                                 mapOptions.getMarkerImageFile().getAbsolutePath(),
-                                                BaseDataAdaptor.displayData(geoTable, geographyCode, null, true),
+                                                mapOptions.getMarkerSize(),
                                                 mapOptions.getTextColor());
                                         if (!centered) {
-                                            webEngine.executeScript("setCenter(" + geographyCode.getLongitude()
-                                                    + ", " + geographyCode.getLatitude() + ");");
+                                            webEngine.executeScript("setCenter(" + code.getLongitude()
+                                                    + ", " + code.getLatitude() + ");");
                                             centered = true;
                                         }
                                         index++;
@@ -176,36 +175,6 @@ public class GeographyCodeMapController extends BaseMapFramesController {
             list.add(geographyCode);
         }
         return BaseDataAdaptor.htmlDataList(geoTable, list, displayNames());
-    }
-
-    public String markerLabel(GeographyCode geographyCode) {
-        String label = "";
-        if (mapOptionsController.markerLabelCheck.isSelected()) {
-            label += geographyCode.getName();
-        }
-        if (mapOptionsController.markerAddressCheck.isSelected()) {
-            String name = geographyCode.getFullName();
-            if (name != null && !name.isBlank()) {
-                if (!mapOptionsController.markerLabelCheck.isSelected()
-                        || !geographyCode.getName().equals(geographyCode.getFullName())) {
-                    if (!label.isBlank()) {
-                        label += "</BR>";
-                    }
-                    label += geographyCode.getFullName();
-                }
-            }
-        }
-        if (mapOptionsController.markerCoordinateCheck.isSelected()
-                && GeographyCodeTools.validCoordinate(geographyCode)) {
-            if (!label.isBlank()) {
-                label += "</BR>";
-            }
-            label += geographyCode.getLongitude() + "," + geographyCode.getLatitude();
-            if (!DoubleTools.invalidDouble(geographyCode.getAltitude())) {
-                label += "," + geographyCode.getAltitude();
-            }
-        }
-        return label;
     }
 
     protected void drawGeographyCodes(List<GeographyCode> codes, String title) {

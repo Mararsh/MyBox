@@ -2002,11 +2002,12 @@ public class GeographyCodeTools {
         Others
      */
     public static boolean validCoordinate(GeographyCode code) {
-        if (code == null) {
-            return false;
-        }
-        return (code.getLongitude() >= -180) && (code.getLongitude() <= 180)
-                && (code.getLatitude() >= -90) && (code.getLatitude() <= 90);
+        return code != null && validCoordinate(code.getLongitude(), code.getLatitude());
+    }
+
+    public static boolean validCoordinate(double longitude, double latitude) {
+        return (longitude >= -180) && (longitude <= 180)
+                && (latitude >= -90) && (latitude <= 90);
     }
 
 }

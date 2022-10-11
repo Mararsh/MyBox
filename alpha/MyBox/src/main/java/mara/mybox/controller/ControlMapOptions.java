@@ -34,14 +34,14 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlMapOptions extends BaseController {
 
-    protected BaseMapController mapController;
+    protected ControlMap mapController;
     protected MapOptions mapOptions;
 
     @FXML
     protected CheckBox fitViewCheck, popInfoCheck,
             standardLayerCheck, satelliteLayerCheck, roadLayerCheck, trafficLayerCheck,
             zoomCheck, scaleCheck, typeCheck, symbolsCheck, boldCheck,
-            markerLabelCheck, markerAddressCheck, markerCoordinateCheck;
+            markerLabelCheck, markerCoordinateCheck;
     @FXML
     protected ComboBox<String> standardOpacitySelector, satelliteOpacitySelector,
             roadOpacitySelector, trafficOpacitySelector, dataMaximumSelector,
@@ -69,7 +69,7 @@ public class ControlMapOptions extends BaseController {
         TipsLabelKey = "MapComments";
     }
 
-    public void setParameters(BaseMapController mapController) {
+    public void setParameters(ControlMap mapController) {
         try {
             this.mapController = mapController;
             this.mapOptions = mapController.mapOptions;
@@ -79,6 +79,8 @@ public class ControlMapOptions extends BaseController {
             setControlListeners();
 
             setControlValues();
+
+            mapTypeChanged();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -91,7 +93,11 @@ public class ControlMapOptions extends BaseController {
             if (mapGroup != null) {
                 mapGroup.selectedToggleProperty().addListener(
                         (ObservableValue<? extends Toggle> ov, Toggle oldv, Toggle newv) -> {
-                            setMapType();
+                            if (isSettingValues) {
+                                return;
+                            }
+                            mapTypeChanged();
+                            mapOptions.setMapType(gaodeRadio.isSelected() ? "GaoDe" : "TianDiTu");
                         }
                 );
             }
@@ -336,14 +342,6 @@ public class ControlMapOptions extends BaseController {
                     mapOptions.setMarkerLabel(markerLabelCheck.isSelected());
                 });
             }
-            if (markerAddressCheck != null) {
-                markerAddressCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    mapOptions.setMarkerAddress(markerAddressCheck.isSelected());
-                });
-            }
             if (markerCoordinateCheck != null) {
                 markerCoordinateCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
                     if (isSettingValues) {
@@ -433,10 +431,15 @@ public class ControlMapOptions extends BaseController {
                 satelliteOpacitySelector.setValue(mapOptions.getSatelliteOpacity() + "");
                 trafficOpacitySelector.setValue(mapOptions.getTrafficOpacity() + "");
             }
-            if (AppVariables.isChinese) {
-                chineseRadio.setSelected(true);
-            } else {
+            if ("zh_en".equals(mapOptions.getLanguage())) {
+                chineseEnglishRadio.setSelected(true);
+            } else if ("en".equals(mapOptions.getLanguage())) {
                 englishRadio.setSelected(true);
+            } else {
+                chineseRadio.setSelected(true);
+            }
+            if (dataMaximumSelector != null) {
+                dataMaximumSelector.setValue(mapOptions.getDataMax() + "");
             }
             if (markerSizeSelector != null) {
                 markerSizeSelector.setValue(mapOptions.getMarkerSize() + "");
@@ -449,9 +452,6 @@ public class ControlMapOptions extends BaseController {
             }
             if (markerLabelCheck != null) {
                 markerLabelCheck.setSelected(mapOptions.isMarkerLabel());
-            }
-            if (markerAddressCheck != null) {
-                markerAddressCheck.setSelected(mapOptions.isMarkerAddress());
             }
             if (markerCoordinateCheck != null) {
                 markerCoordinateCheck.setSelected(mapOptions.isMarkerCoordinate());
@@ -498,16 +498,14 @@ public class ControlMapOptions extends BaseController {
 
     }
 
-    public void setMapType() {
+    public void mapTypeChanged() {
         if (isSettingValues) {
             return;
         }
-        mapOptions.setMapType(gaodeRadio.isSelected() ? "GaoDe" : "TianDiTu");
-
         isSettingValues = true;
         optionsBox.setDisable(true);
         try {
-            if (mapOptions.isGaoDeMap()) {
+            if (gaodeRadio.isSelected()) {
 
                 gcj02Radio.setSelected(true);
                 gcj02Radio.setDisable(false);
@@ -558,6 +556,7 @@ public class ControlMapOptions extends BaseController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+        optionsBox.setDisable(false);
         isSettingValues = false;
     }
 
@@ -669,6 +668,20 @@ public class ControlMapOptions extends BaseController {
             MyBoxLog.error(e.toString());
         }
 
+    }
+
+    public void initImageFile(File file) {
+        try {
+            if (isSettingValues || file == null || !file.exists()) {
+                return;
+            }
+            isSettingValues = true;
+            markerImageRadio.setSelected(true);
+            markerImageInput.setText(file.getAbsolutePath());
+            isSettingValues = false;
+        } catch (Exception e) {
+//            MyBoxLog.error(e.toString());
+        }
     }
 
     @FXML

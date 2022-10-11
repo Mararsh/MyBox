@@ -19,13 +19,12 @@ public class GeographyCode extends BaseData {
     protected String name, fullName, chineseName, englishName, levelName,
             code1, code2, code3, code4, code5, alias1, alias2, alias3, alias4, alias5, comments,
             continentName, countryName, provinceName, cityName, countyName, townName, villageName,
-            buildingName, poiName;
+            buildingName, poiName, label, info, sourceName;
     protected double longitude, latitude, altitude, precision;
     protected GeographyCode ownerCode, continentCode, countryCode, provinceCode, cityCode,
             countyCode, townCode, villageCode, buildingCode;
     protected GeoCoordinateSystem coordinateSystem;
     protected AddressSource source;
-    protected String sourceName;
 
     public static enum AddressLevel {
         Global, Continent, Country, Province, City, County, Town, Village, Building, InterestOfLocation
@@ -881,16 +880,18 @@ public class GeographyCode extends BaseData {
         return longitude;
     }
 
-    public void setLongitude(double longitude) {
+    public GeographyCode setLongitude(double longitude) {
         this.longitude = longitude;
+        return this;
     }
 
     public double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(double latitude) {
+    public GeographyCode setLatitude(double latitude) {
         this.latitude = latitude;
+        return this;
     }
 
     public void setContinent(long continent) {
@@ -1081,8 +1082,9 @@ public class GeographyCode extends BaseData {
         return altitude;
     }
 
-    public void setAltitude(double altitude) {
+    public GeographyCode setAltitude(double altitude) {
         this.altitude = altitude;
+        return this;
     }
 
     public double getPrecision() {
@@ -1101,12 +1103,31 @@ public class GeographyCode extends BaseData {
         this.ownerCode = ownerCode;
     }
 
-    public void setCoordinateSystem(GeoCoordinateSystem coordinateSystem) {
+    public GeographyCode setCoordinateSystem(GeoCoordinateSystem coordinateSystem) {
         this.coordinateSystem = coordinateSystem;
+        return this;
     }
 
     public void setSourceName(String sourceName) {
         this.sourceName = sourceName;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public GeographyCode setInfo(String info) {
+        this.info = info;
+        return this;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public GeographyCode setLabel(String label) {
+        this.label = label;
+        return this;
     }
 
 }

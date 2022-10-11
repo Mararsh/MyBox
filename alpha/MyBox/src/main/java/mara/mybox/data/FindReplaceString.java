@@ -122,8 +122,9 @@ public class FindReplaceString {
             Matcher matcher = pattern.matcher(inputString);
             matcher.region(Math.max(0, start), Math.min(inputString.length(), end));
             StringBuffer s = new StringBuffer();
-            if (replaceString != null && !replaceString.isBlank()) {
-                replaceString = Matcher.quoteReplacement(replaceString);
+            String finalReplace = replaceString == null ? "" : replaceString;
+            if (!finalReplace.isBlank()) {
+                finalReplace = Matcher.quoteReplacement(finalReplace);
             }
             OUTER:
             while (matcher.find()) {
@@ -143,10 +144,10 @@ public class FindReplaceString {
                         case FindNext:
                             break OUTER;
                         case ReplaceFirst:
-                            matcher.appendReplacement(s, replaceString);
+                            matcher.appendReplacement(s, finalReplace);
                             break OUTER;
                         case ReplaceAll:
-                            matcher.appendReplacement(s, replaceString);
+                            matcher.appendReplacement(s, finalReplace);
 //                            MyBoxLog.debug("\n---" + count + "---\n" + s.toString() + "\n-----");
                             break;
                         default:
@@ -184,7 +185,7 @@ public class FindReplaceString {
     }
 
     public String replaceStringAll(String string, String find, String replace) {
-        setInputString(string).setFindString(find).setReplaceString(replace).setAnchor(0).run();
+        setInputString(string).setFindString(find).setReplaceString(replace == null ? "" : replace).setAnchor(0).run();
         return outputString;
     }
 

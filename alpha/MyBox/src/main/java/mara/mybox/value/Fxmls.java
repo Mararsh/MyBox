@@ -217,6 +217,7 @@ public class Fxmls {
     public static final String Data2DSetStylesFxml = "/fxml/Data2DSetStyles.fxml";
     public static final String Data2DGroupEqualValuesFxml = "/fxml/Data2DGroupEqualValues.fxml";
     public static final String Data2DSplitFxml = "/fxml/Data2DSplit.fxml";
+    public static final String Data2DLocationDistributionFxml = "/fxml/Data2DLocationDistribution.fxml";
 
     public static final String JShellFxml = "/fxml/JShell.fxml";
     public static final String JexlFxml = "/fxml/Jexl.fxml";

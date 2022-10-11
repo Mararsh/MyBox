@@ -663,11 +663,18 @@ public class ControlData2D extends BaseController {
             popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
 
-            popMenu.getItems().addAll(Data2DMenuTools.editMenu(this));
+            popMenu.getItems().addAll(Data2DMenuTools.dataMenu(this));
 
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            popMenu.getItems().addAll(Data2DMenuTools.operationsMenu(tableController));
+            popMenu.getItems().addAll(Data2DMenuTools.modifyMenu(this));
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            popMenu.getItems().addAll(Data2DMenuTools.trimMenu(tableController));
+            popMenu.getItems().addAll(Data2DMenuTools.calMenu(tableController));
+            popMenu.getItems().addAll(Data2DMenuTools.staticChartsMenu(tableController));
+            popMenu.getItems().addAll(Data2DMenuTools.dynamicChartsMenu(tableController));
 
             popMenu.getItems().add(new SeparatorMenuItem());
 

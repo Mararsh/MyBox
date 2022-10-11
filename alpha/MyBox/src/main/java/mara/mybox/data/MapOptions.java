@@ -3,6 +3,7 @@ package mara.mybox.data;
 import java.io.File;
 import javafx.scene.paint.Color;
 import mara.mybox.controller.BaseMapController;
+import mara.mybox.controller.ControlMap;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
@@ -17,18 +18,18 @@ import mara.mybox.value.UserConfig;
  */
 public class MapOptions {
 
-    protected BaseMapController mapController;
+    protected ControlMap mapController;
     protected String baseName, mapType, mapStyle, language;
     protected int markerSize, textSize, mapSize, dataMax;
     protected boolean isSettingValues, isGeodetic, fitView, popInfo,
             standardLayer, satelliteLayer, roadLayer, trafficLayer,
-            zoom, scale, type, symbols, bold, markerLabel, markerAddress, markerCoordinate;
+            zoom, scale, type, symbols, bold, markerLabel, markerCoordinate;
     protected float standardOpacity, satelliteOpacity, roadOpacity, trafficOpacity;
     protected File markerImageFile;
     protected Color textColor;
     protected GeoCoordinateSystem coordinateSystem;
 
-    public MapOptions(BaseMapController mapController) {
+    public MapOptions(ControlMap mapController) {
         try {
             this.mapController = mapController;
             baseName = mapController.getBaseName();
@@ -45,7 +46,7 @@ public class MapOptions {
             language = UserConfig.getString(baseName + "Language", AppVariables.isChinese ? "zh_cn" : "en");
             markerSize = UserConfig.getInt(baseName + "MarkerSize", 24);
             textSize = UserConfig.getInt(baseName + "TextSize", 12);
-            mapSize = UserConfig.getInt(baseName + "MapSize", 3);
+            mapSize = UserConfig.getInt(baseName + "MapSize", 9);
             dataMax = UserConfig.getInt(baseName + "DataMax", 3000);
             isGeodetic = UserConfig.getBoolean(baseName + "Geodetic", true);
             fitView = UserConfig.getBoolean(baseName + "FitView", true);
@@ -60,7 +61,6 @@ public class MapOptions {
             symbols = UserConfig.getBoolean(baseName + "Symbols", false);
             bold = UserConfig.getBoolean(baseName + "Bold", false);
             markerLabel = UserConfig.getBoolean(baseName + "MarkerLabel", true);
-            markerAddress = UserConfig.getBoolean(baseName + "MarkerAddress", false);
             markerCoordinate = UserConfig.getBoolean(baseName + "MarkerCoordinate", false);
             standardOpacity = (float) UserConfig.getDouble(baseName + "StandardOpacity", 1f);
             satelliteOpacity = (float) UserConfig.getDouble(baseName + "SatelliteOpacity", 1f);
@@ -126,10 +126,25 @@ public class MapOptions {
                 AppVariables.ControlColor.name() + "Point.png");
     }
 
+    public File chineseHistoricalCapitalsImage() {
+        markerImageFile = FxFileTools.getInternalFile("/img/jade.png", "image", "jade.png");
+        return markerImageFile;
+    }
+
+    public File europeanGadwallsImage() {
+        markerImageFile = FxFileTools.getInternalFile("/img/Gadwalls.png", "image", "Gadwalls.png");
+        return markerImageFile;
+    }
+
+    public File spermWhalesImage() {
+        markerImageFile = FxFileTools.getInternalFile("/img/SpermWhale.png", "image", "SpermWhale.png");
+        return markerImageFile;
+    }
+
     /*
         get/set
      */
-    public BaseMapController getMapController() {
+    public ControlMap getMapController() {
         return mapController;
     }
 
@@ -202,7 +217,7 @@ public class MapOptions {
         this.dataMax = dataMax;
         UserConfig.setInt(baseName + "DataMax", dataMax);
         if (mapController != null && !mapController.isIsSettingValues()) {
-            mapController.setDataMax();
+            mapController.drawPoints();
         }
         return this;
     }
@@ -351,17 +366,6 @@ public class MapOptions {
     public MapOptions setMarkerLabel(boolean markerLabel) {
         this.markerLabel = markerLabel;
         UserConfig.setBoolean(baseName + "MarkerLabel", markerLabel);
-        drawPoints();
-        return this;
-    }
-
-    public boolean isMarkerAddress() {
-        return markerAddress;
-    }
-
-    public MapOptions setMarkerAddress(boolean markerAddress) {
-        this.markerAddress = markerAddress;
-        UserConfig.setBoolean(baseName + "MarkerAddress", markerAddress);
         drawPoints();
         return this;
     }
