@@ -1041,7 +1041,7 @@ public class PopTools {
                     " DATE('1998-02-26') ", " TIMESTAMP('1962-09-23 03:23:34.234') "
             ));
             addButtonsPane(controller, input, Arrays.asList(
-                    " COUNT() ", " AVG() ", " MAX() ", " MIN() ", " SUM() ", " GROUP BY ", " HAVING "
+                    " COUNT(*) ", " AVG() ", " MAX() ", " MIN() ", " SUM() ", " GROUP BY ", " HAVING "
             ));
             addButtonsPane(controller, input, Arrays.asList(
                     " JOIN ", " INNER JOIN ", " LEFT OUTER JOIN ", " RIGHT OUTER JOIN ", " CROSS JOIN "

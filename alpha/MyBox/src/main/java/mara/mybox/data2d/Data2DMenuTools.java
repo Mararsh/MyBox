@@ -17,7 +17,7 @@ import mara.mybox.controller.Data2DConvertToDataBaseController;
 import mara.mybox.controller.Data2DDeleteController;
 import mara.mybox.controller.Data2DExportController;
 import mara.mybox.controller.Data2DFrequencyController;
-import mara.mybox.controller.Data2DGroupEqualValuesController;
+import mara.mybox.controller.Data2DGroupStatisticController;
 import mara.mybox.controller.Data2DLocationDistributionController;
 import mara.mybox.controller.Data2DMultipleLinearRegressionCombinationController;
 import mara.mybox.controller.Data2DMultipleLinearRegressionController;
@@ -259,9 +259,9 @@ public class Data2DMenuTools {
             menu.setDisable(empty);
             calMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("GroupEqualValues"), StyleTools.getIconImage("iconAnalyse.png"));
+            menu = new MenuItem(message("GroupStatistic"), StyleTools.getIconImage("iconAnalyse.png"));
             menu.setOnAction((ActionEvent event) -> {
-                Data2DGroupEqualValuesController.open(controller);
+                Data2DGroupStatisticController.open(controller);
             });
             menu.setDisable(empty);
             calMenu.getItems().add(menu);

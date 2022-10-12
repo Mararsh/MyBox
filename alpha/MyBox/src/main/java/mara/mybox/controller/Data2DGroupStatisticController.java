@@ -6,7 +6,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
@@ -26,7 +25,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-8-10
  * @License Apache License Version 2.0
  */
-public class Data2DGroupEqualValuesController extends Data2DChartXYController {
+public class Data2DGroupStatisticController extends BaseData2DGroupController {
 
     protected List<String> groups, calculationColumns, calculations, sorts;
     protected DataFileCSV resultsFile;
@@ -36,22 +35,20 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
     protected int maxData = -1;
 
     @FXML
-    protected Tab groupTab;
-    @FXML
-    protected ControlSelection groupController, calculationController, sortController;
+    protected ControlSelection calculationController, sortController;
     @FXML
     protected ControlData2DResults valuesController;
     @FXML
     protected TextField maxInput;
     @FXML
-    protected CheckBox displayAllCheck;
+    protected CheckBox displayAllCheck, onlyStatisticCheck;
     @FXML
     protected ControlData2DChartXY xyChartController;
     @FXML
     protected ControlData2DChartPie pieChartController;
 
-    public Data2DGroupEqualValuesController() {
-        baseTitle = message("GroupEqualValues");
+    public Data2DGroupStatisticController() {
+        baseTitle = message("GroupStatistic");
         TipsLabelKey = "GroupEqualTips";
     }
 
@@ -69,7 +66,6 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
                 }
             });
 
-            groupController.setParameters(this, message("Column"), message("GroupBy"));
             groupController.selectedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
@@ -129,6 +125,15 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
                 }
             });
 
+            onlyStatisticCheck.setSelected(UserConfig.getBoolean(baseName + "OnlyStatisticNumbers", false));
+            onlyStatisticCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                    UserConfig.setBoolean(baseName + "OnlyStatisticNumbers", nv);
+                    makeStatisticList();
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -143,21 +148,33 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
                 calculationController.loadNames(null);
                 return;
             }
-            List<String> gnames = new ArrayList<>();
+            groupController.loadNames(data2D.columnNames());
+            makeStatisticList();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void makeStatisticList() {
+        try {
+            if (!data2D.isValid()) {
+                calculationController.loadNames(null);
+                return;
+            }
             List<String> cnames = new ArrayList<>();
             for (Data2DColumn column : data2D.columns) {
                 String name = column.getColumnName();
-                gnames.add(name);
-                cnames.add(name + "-" + message("Mean"));
-                cnames.add(name + "-" + message("Summation"));
-                cnames.add(name + "-" + message("Maximum"));
-                cnames.add(name + "-" + message("Minimum"));
-                cnames.add(name + "-" + message("PopulationVariance"));
-                cnames.add(name + "-" + message("SampleVariance"));
-                cnames.add(name + "-" + message("PopulationStandardDeviation"));
-                cnames.add(name + "-" + message("SampleStandardDeviation"));
+                if (!onlyStatisticCheck.isSelected() || column.isNumberType()) {
+                    cnames.add(name + "-" + message("Mean"));
+                    cnames.add(name + "-" + message("Summation"));
+                    cnames.add(name + "-" + message("Maximum"));
+                    cnames.add(name + "-" + message("Minimum"));
+                    cnames.add(name + "-" + message("PopulationVariance"));
+                    cnames.add(name + "-" + message("SampleVariance"));
+                    cnames.add(name + "-" + message("PopulationStandardDeviation"));
+                    cnames.add(name + "-" + message("SampleStandardDeviation"));
+                }
             }
-            groupController.loadNames(gnames);
             calculationController.loadNames(cnames);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -188,10 +205,6 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-    }
-
-    @Override
-    public void afterRefreshControls() {
     }
 
     @Override
@@ -300,7 +313,7 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
                     if (tmpTable == null) {
                         return false;
                     }
-                    resultsFile = tmpTable.groupEqualValues(data2D.dataName() + "_group", task,
+                    resultsFile = tmpTable.groupStatistic(data2D.dataName() + "_group", task,
                             groups, calculations, sorts, maxData);
                     tmpTable.drop();
                     return resultsFile != null;
@@ -328,7 +341,7 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
 
     @Override
     public String chartTitle() {
-        return message(message("GroupEqualValues") + " - " + groups);
+        return message(message("GroupStatistic") + " - " + groups);
     }
 
     @Override
@@ -503,10 +516,10 @@ public class Data2DGroupEqualValuesController extends Data2DChartXYController {
     /*
         static
      */
-    public static Data2DGroupEqualValuesController open(ControlData2DLoad tableController) {
+    public static Data2DGroupStatisticController open(ControlData2DLoad tableController) {
         try {
-            Data2DGroupEqualValuesController controller = (Data2DGroupEqualValuesController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DGroupEqualValuesFxml, false);
+            Data2DGroupStatisticController controller = (Data2DGroupStatisticController) WindowTools.openChildStage(
+                    tableController.getMyWindow(), Fxmls.Data2DGroupStatisticFxml, false);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

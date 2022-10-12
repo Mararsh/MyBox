@@ -94,6 +94,9 @@ public class PieChartMaker extends PieChartOptions {
             List<String> paletteList = new ArrayList();
             for (List<String> rowData : data) {
                 String name = rowData.get(startIndex);
+                if (name == null) {
+                    name = "";
+                }
                 double d = doubleValue(rowData.get(startIndex + 1));
                 if (d <= 0 || DoubleTools.invalidDouble(d)) {
                     continue;

@@ -45,11 +45,16 @@ License:    Apache License Version 2.0
                                     <tabs>
                                         <Tab text="%Placeholders">
                                             <content>
-                                                <ListView fx:id="placeholdersList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                                    <padding>
-                                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                                    </padding>
-                                                </ListView>
+                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                       <children>
+                                          <CheckBox fx:id="onlyStatisticCheck" mnemonicParsing="false" text="%StatisticOnlyNumbers" />
+                                                      <ListView fx:id="placeholdersList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                                          <padding>
+                                                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                          </padding>
+                                                      </ListView>
+                                       </children>
+                                    </VBox>
                                             </content>
                                         </Tab>
                                         <Tab text="JavaScript">

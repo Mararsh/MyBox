@@ -1407,7 +1407,7 @@ public class DataMigration {
         MyBoxLog.info("migrate GeographyCode 6.1.5...");
         try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
-            int size = DerbyBase.size("select count(level) from Geography_Code");
+            int size = DerbyBase.size("select count(*) from Geography_Code");
             if (size <= 0) {
                 return true;
             }
@@ -1489,7 +1489,7 @@ public class DataMigration {
         MyBoxLog.info("migrate Epidemic_Report 6.2.1...");
         try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
-            int size = DerbyBase.size("select count(confirmed) from Epidemic_Report");
+            int size = DerbyBase.size("select count(*) from Epidemic_Report");
             if (size <= 0) {
                 return true;
             }

@@ -33,12 +33,13 @@ import static mara.mybox.value.Languages.message;
  */
 public class Data2DLocationDistributionController extends BaseData2DHandleController {
 
-    protected Data2DColumn labelColumn, longColumn, laColumn;
+    protected Data2DColumn labelColumn, longColumn, laColumn, sizeColumn;
     protected List<Integer> dataColsIndices;
     protected ToggleGroup csGroup;
+    protected double maxValue, minValue;
 
     @FXML
-    protected ComboBox<String> labelSelector, longitudeSelector, latitudeSelector;
+    protected ComboBox<String> labelSelector, longitudeSelector, latitudeSelector, sizeSelector;
     @FXML
     protected Label noticeLabel;
     @FXML
@@ -96,6 +97,7 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
             labelSelector.getItems().clear();
             longitudeSelector.getItems().clear();
             latitudeSelector.getItems().clear();
+            sizeSelector.getItems().clear();
             List<String> allNames = new ArrayList<>();
             List<String> longNames = new ArrayList<>();
             List<String> laNames = new ArrayList<>();
@@ -122,6 +124,11 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
 
             latitudeSelector.getItems().setAll(laNames);
             latitudeSelector.getSelectionModel().select(0);
+
+            allNames.add(0, message("NotSet"));
+            sizeSelector.getItems().setAll(allNames);
+            sizeSelector.getSelectionModel().select(0);
+
             isSettingValues = false;
 
             String dname = data2D.getDataName();
@@ -196,6 +203,20 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
             dataColsIndices.add(col);
             outputColumns.add(laColumn);
 
+            String sizeName = sizeSelector.getValue();
+            if (sizeName == null || message("NotSet").equals(sizeName)) {
+                col = -1;
+            } else {
+                col = data2D.colOrder(sizeName);
+            }
+            if (col >= 0) {
+                sizeColumn = data2D.column(col);
+                dataColsIndices.add(col);
+                outputColumns.add(sizeColumn);
+            } else {
+                sizeColumn = null;
+            }
+
             if (otherColsIndices != null) {
                 for (int c : otherColsIndices) {
                     if (!dataColsIndices.contains(c)) {
@@ -221,10 +242,10 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
             @Override
             protected boolean handle() {
                 try {
-                    long max = filterController.filter.getMaxPassed();
-                    max = Math.min(max > 0 ? max : Integer.MAX_VALUE,
+                    long maxDataNumber = filterController.filter.getMaxPassed();
+                    maxDataNumber = Math.min(maxDataNumber > 0 ? maxDataNumber : Integer.MAX_VALUE,
                             mapController.mapOptions.getDataMax());
-                    filterController.filter.setMaxPassed(max);
+                    filterController.filter.setMaxPassed(maxDataNumber);
                     data2D.startTask(task, filterController.filter);
                     if (isAllPages()) {
                         outputData = data2D.allRows(dataColsIndices, false);
@@ -235,6 +256,24 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                     if (outputData == null || outputData.isEmpty()) {
                         error = message("NoData");
                         return false;
+                    }
+                    if (sizeColumn != null) {
+                        maxValue = -Double.MAX_VALUE;
+                        minValue = Double.MAX_VALUE;
+                        double size;
+                        for (List<String> row : outputData) {
+                            try {
+                                size = Double.valueOf(row.get(3));
+                            } catch (Exception e) {
+                                size = 0;
+                            }
+                            if (size > maxValue) {
+                                maxValue = size;
+                            }
+                            if (size < minValue) {
+                                minValue = size;
+                            }
+                        }
                     }
                     return true;
                 } catch (Exception e) {
@@ -317,7 +356,24 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                                     + (v == null ? "" : v) + "\n";
                         }
                         code.setLabel(row.get(0)).setInfo(info);
-                        mapController.drawPoint(code);
+                        int markSize;
+                        if (sizeColumn != null) {
+                            double v;
+                            try {
+                                v = Double.valueOf(row.get(3));
+                            } catch (Exception e) {
+                                v = 0;
+                            }
+                            markSize = markSize(v);
+                        } else {
+                            markSize = mapController.mapOptions.getMarkerSize();
+                        }
+                        mapController.drawPoint(code.getLongitude(), code.getLatitude(),
+                                code.getLabel(), code.getInfo(),
+                                mapController.mapOptions.getMarkerImageFile().getAbsolutePath(),
+                                markSize,
+                                mapController.mapOptions.getTextColor());
+
                         if (!centered) {
                             mapController.webEngine.executeScript("setCenter(" + code.getLongitude()
                                     + ", " + code.getLatitude() + ");");
@@ -348,8 +404,17 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                 return false;
             }
 
-        }, 0, 1); // Interface may be blocked if put all points in map altogether.
+        }, 0, 2); // Interface may be blocked if put all points in map altogether.
 
+    }
+
+    // maximum marker size of GaoDe Map is 64
+    protected int markSize(double value) {
+        if (maxValue == minValue) {
+            return mapController.mapOptions.getMarkerSize();
+        }
+        double size = 60d * (value - minValue) / (maxValue - minValue);
+        return Math.min(60, Math.max(10, (int) size));
     }
 
     /*

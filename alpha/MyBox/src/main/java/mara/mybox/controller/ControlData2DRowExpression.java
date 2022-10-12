@@ -2,12 +2,18 @@ package mara.mybox.controller;
 
 import java.util.Arrays;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.fxml.PopTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -19,6 +25,9 @@ public class ControlData2DRowExpression extends ControlJavaScriptRefer {
     protected Data2D data2D;
     public ExpressionCalculator calculator;
 
+    @FXML
+    protected CheckBox onlyStatisticCheck;
+
     public ControlData2DRowExpression() {
         TipsLabelKey = "RowExpressionTips";
     }
@@ -28,6 +37,15 @@ public class ControlData2DRowExpression extends ControlJavaScriptRefer {
         try {
             super.initControls();
             initCalculator();
+
+            onlyStatisticCheck.setSelected(UserConfig.getBoolean(baseName + "OnlyStatisticNumbers", false));
+            onlyStatisticCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                    UserConfig.setBoolean(baseName + "OnlyStatisticNumbers", nv);
+                    setPlaceholders();
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -41,24 +59,35 @@ public class ControlData2DRowExpression extends ControlJavaScriptRefer {
     public void setData2D(Data2D data2D) {
         try {
             this.data2D = data2D;
+            setPlaceholders();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void setPlaceholders() {
+        try {
             placeholdersList.getItems().clear();
             if (data2D == null || !data2D.isValid()) {
                 return;
             }
-            List<String> colnames = data2D.columnNames();
-            for (int i = 0; i < colnames.size(); i++) {
-                placeholdersList.getItems().add("#{" + colnames.get(i) + "}");
-                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("Mean") + "}");
-                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("Median") + "}");
-                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("Mode") + "}");
-                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("MinimumQ0") + "}");
-                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("LowerQuartile") + "}");
-                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("UpperQuartile") + "}");
-                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("MaximumQ4") + "}");
-                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("LowerExtremeOutlierLine") + "}");
-                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("LowerMildOutlierLine") + "}");
-                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("UpperMildOutlierLine") + "}");
-                placeholdersList.getItems().add("#{" + colnames.get(i) + "-" + message("UpperExtremeOutlierLine") + "}");
+            List<Data2DColumn> columns = data2D.getColumns();
+            for (Data2DColumn column : columns) {
+                String name = column.getColumnName();
+                placeholdersList.getItems().add("#{" + name + "}");
+                if (!onlyStatisticCheck.isSelected() || column.isNumberType()) {
+                    placeholdersList.getItems().add("#{" + name + "-" + message("Mean") + "}");
+                    placeholdersList.getItems().add("#{" + name + "-" + message("Median") + "}");
+                    placeholdersList.getItems().add("#{" + name + "-" + message("Mode") + "}");
+                    placeholdersList.getItems().add("#{" + name + "-" + message("MinimumQ0") + "}");
+                    placeholdersList.getItems().add("#{" + name + "-" + message("LowerQuartile") + "}");
+                    placeholdersList.getItems().add("#{" + name + "-" + message("UpperQuartile") + "}");
+                    placeholdersList.getItems().add("#{" + name + "-" + message("MaximumQ4") + "}");
+                    placeholdersList.getItems().add("#{" + name + "-" + message("LowerExtremeOutlierLine") + "}");
+                    placeholdersList.getItems().add("#{" + name + "-" + message("LowerMildOutlierLine") + "}");
+                    placeholdersList.getItems().add("#{" + name + "-" + message("UpperMildOutlierLine") + "}");
+                    placeholdersList.getItems().add("#{" + name + "-" + message("UpperExtremeOutlierLine") + "}");
+                }
             }
             placeholdersList.getItems().add("#{" + message("TableRowNumber") + "}");
             placeholdersList.getItems().add("#{" + message("DataRowNumber") + "}");
@@ -88,8 +117,10 @@ public class ControlData2DRowExpression extends ControlJavaScriptRefer {
             ), true, 2);
 
             PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
-                    "'#{" + col1 + "}'.search(/Hello/ig) >= 0",
+                    "'#{" + col1 + "}' == ''",
                     "'#{" + col1 + "}'.length > 0",
+                    "'#{" + col1 + "}' == '2016-05-19 11:34:28'",
+                    "'#{" + col1 + "}'.search(/Hello/ig) >= 0",
                     "'#{" + col1 + "}'.indexOf('Hello') == 3",
                     "'#{" + col1 + "}'.startsWith('Hello')",
                     "'#{" + col1 + "}'.endsWith('Hello')",

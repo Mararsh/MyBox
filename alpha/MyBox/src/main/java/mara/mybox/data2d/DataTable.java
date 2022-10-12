@@ -618,7 +618,7 @@ public class DataTable extends Data2D {
     }
 
     // Based on results of "Data2D_Convert.toTmpTable(...)"
-    public DataFileCSV groupEqualValues(String dname, SingletonTask task,
+    public DataFileCSV groupStatistic(String dname, SingletonTask task,
             List<String> groups, List<String> calculations, List<String> sorts, int max) {
         if (groups == null || groups.isEmpty() || sourceColumns == null) {
             return null;
@@ -642,7 +642,7 @@ public class DataTable extends Data2D {
                 }
             }
             maps.put(message("Count"), countName);
-            String selections = "COUNT(" + mappedColumnName(groups.get(0)) + ") AS " + countName;
+            String selections = "COUNT(*) AS " + countName;
             String sourceName, mappedName, resultName, selectItem;
             if (calculations != null) {
                 for (String calculation : calculations) {
@@ -777,7 +777,7 @@ public class DataTable extends Data2D {
             return null;
         }
         Object mode = null;
-        String sql = "SELECT " + colName + ", count(" + colName + ") AS mybox99_mode FROM " + sheet
+        String sql = "SELECT " + colName + ", count(*) AS mybox99_mode FROM " + sheet
                 + " GROUP BY " + colName + " ORDER BY mybox99_mode DESC FETCH FIRST ROW ONLY";
         try ( PreparedStatement statement = conn.prepareStatement(sql);
                  ResultSet results = statement.executeQuery()) {
@@ -976,7 +976,7 @@ public class DataTable extends Data2D {
             row.add(colName + "_" + message("CountPercentage"));
             csvPrinter.printRecord(row);
 
-            String sql = "SELECT count(" + colName + ") AS mybox99_count FROM " + sheet;
+            String sql = "SELECT count(*) AS mybox99_count FROM " + sheet;
             try ( PreparedStatement statement = conn.prepareStatement(sql);
                      ResultSet results = statement.executeQuery()) {
                 if (results.next()) {
@@ -996,7 +996,7 @@ public class DataTable extends Data2D {
             row.add("100");
             dNumber = 1;
             csvPrinter.printRecord(row);
-            sql = "SELECT " + colName + ", count(" + colName + ") AS mybox99_count FROM " + sheet
+            sql = "SELECT " + colName + ", count(*) AS mybox99_count FROM " + sheet
                     + " GROUP BY " + colName + " ORDER BY mybox99_count DESC";
             try ( PreparedStatement statement = conn.prepareStatement(sql);
                      ResultSet results = statement.executeQuery()) {

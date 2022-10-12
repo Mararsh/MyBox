@@ -77,7 +77,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
 
     public void setTableValues() {
         queryPrefix = "SELECT * FROM " + tableName;
-        sizePrefix = "SELECT count(" + idColumn + ") FROM " + tableName;
+        sizePrefix = "SELECT count(*) FROM " + tableName;
         clearPrefix = "DELETE FROM " + tableName;
         if (tableDefinition != null) {
             tableDefinitionString = tableDefinition.html();

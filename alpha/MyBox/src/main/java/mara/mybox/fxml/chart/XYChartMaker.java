@@ -343,7 +343,13 @@ public class XYChartMaker<X, Y> extends XYChartOptions<X, Y> {
 
                 double numberValue;
                 for (List<String> rowData : data) {
+                    if (startIndex >= rowData.size() || col >= rowData.size()) {
+                        continue;
+                    }
                     String category = rowData.get(startIndex);
+                    if (category == null) {
+                        category = "";
+                    }
                     numberValue = scaleValue(rowData.get(col));
                     if (DoubleTools.invalidDouble(numberValue)) {
                         if (invalidAs == InvalidAs.Zero) {

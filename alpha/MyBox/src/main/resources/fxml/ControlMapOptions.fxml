@@ -61,12 +61,12 @@ License:    Apache License Version 2.0
                   <FlowPane hgap="5.0" layoutX="15.0" layoutY="56.0" vgap="5.0">
                       <children>
                           <Label text="%Projection" />
-                          <RadioButton fx:id="mercatorRadio" mnemonicParsing="false" selected="true" text="%EPSG900913">
+                          <RadioButton fx:id="mercatorRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%EPSG900913" wrapText="true">
                               <toggleGroup>
                                   <ToggleGroup fx:id="projectionGroup" />
                               </toggleGroup>
                           </RadioButton>
-                          <RadioButton fx:id="geodeticRadio" mnemonicParsing="false" text="%EPSG4326" toggleGroup="$projectionGroup" />
+                          <RadioButton fx:id="geodeticRadio" minHeight="-Infinity" mnemonicParsing="false" text="%EPSG4326" toggleGroup="$projectionGroup" wrapText="true" />
                       </children>
                   </FlowPane>
               </children>

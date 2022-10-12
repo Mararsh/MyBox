@@ -215,7 +215,7 @@ public class Fxmls {
     public static final String Data2DChartXYOptionsFxml = "/fxml/Data2DChartXYOptions.fxml";
     public static final String Data2DChartPieOptionsFxml = "/fxml/Data2DChartPieOptions.fxml";
     public static final String Data2DSetStylesFxml = "/fxml/Data2DSetStyles.fxml";
-    public static final String Data2DGroupEqualValuesFxml = "/fxml/Data2DGroupEqualValues.fxml";
+    public static final String Data2DGroupStatisticFxml = "/fxml/Data2DGroupStatistic.fxml";
     public static final String Data2DSplitFxml = "/fxml/Data2DSplit.fxml";
     public static final String Data2DLocationDistributionFxml = "/fxml/Data2DLocationDistribution.fxml";
 
