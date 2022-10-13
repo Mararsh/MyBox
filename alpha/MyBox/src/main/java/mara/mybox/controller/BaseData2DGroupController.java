@@ -1,15 +1,11 @@
 package mara.mybox.controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import java.util.List;
 import javafx.fxml.FXML;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import mara.mybox.data2d.DataFilter;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -19,18 +15,15 @@ import static mara.mybox.value.Languages.message;
  */
 public class BaseData2DGroupController extends Data2DChartXYController {
 
+    protected String groupName;
+    protected List<String> groupNames;
+    protected List<DataFilter> groupConditions;
+    protected double groupInterval, groupNumber;
+
     @FXML
     protected Tab groupTab;
     @FXML
-    protected ControlSelection groupController;
-    @FXML
-    protected ToggleGroup groupGroup;
-    @FXML
-    protected RadioButton groupValuesRadio, groupIntervalRadio, groupNumberRadio, groupConditionsRadio;
-    @FXML
-    protected VBox groupBox, groupValuesBox, groupConditionsBox;
-    @FXML
-    protected HBox groupColumnlBox, groupIntervalBox, groupNumberBox;
+    protected ControlData2DGroup groupController;
 
     public BaseData2DGroupController() {
         baseTitle = message("GroupStatistic");
@@ -42,14 +35,19 @@ public class BaseData2DGroupController extends Data2DChartXYController {
         try {
             super.initControls();
 
-            groupController.setParameters(this, message("Column"), message("GroupBy"));
-            groupGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    checkGroupType();
-                }
-            });
-            checkGroupType();
+            groupController.setParameters(this);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
+    public void refreshControls() {
+        try {
+            super.refreshControls();
+
+            groupController.refreshControls();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -60,44 +58,112 @@ public class BaseData2DGroupController extends Data2DChartXYController {
     public void afterRefreshControls() {
     }
 
-    public void checkGroupType() {
+    @Override
+    public boolean initData() {
         try {
-            groupBox.getChildren().clear();
-            if (groupValuesRadio.isSelected()) {
-                groupBox.getChildren().add(groupValuesBox);
+            groupName = null;
+            groupNames = null;
+            groupConditions = null;
+            groupInterval = Double.NaN;
+            groupNumber = Double.NaN;
 
-            } else if (groupIntervalRadio.isSelected()) {
-                groupBox.getChildren().addAll(groupColumnlBox, groupIntervalBox);
+            boolean valid = false;
+            if (groupByValues()) {
+                groupNames = getGroupColumns();
+                valid = groupNames != null && !groupNames.isEmpty();
 
-            } else if (groupNumberRadio.isSelected()) {
-                groupBox.getChildren().addAll(groupColumnlBox, groupNumberBox);
+            } else if (groupByConditions()) {
+                groupConditions = getFilters();
+                valid = groupConditions != null && !groupConditions.isEmpty();
 
-            } else if (groupConditionsRadio.isSelected()) {
-                groupBox.getChildren().add(groupConditionsBox);
+            } else if (groupByInterval()) {
+                groupName = getColumn();
+                groupInterval = getGroupInterval();
+                valid = groupName != null && !groupName.isBlank()
+                        && !DoubleTools.invalidDouble(groupInterval);
+
+            } else if (groupByNumber()) {
+                groupName = getColumn();
+                groupNumber = getGroupNumber();
+                valid = groupName != null && !groupName.isBlank()
+                        && groupNumber > 0;
 
             }
 
+            if (!valid) {
+                outOptionsError(message("SelectToHandle") + ": " + message("GroupBy"));
+                tabPane.getSelectionModel().select(groupTab);
+                return false;
+            }
+
+            return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
+            return false;
         }
     }
 
-    @FXML
-    public void addCondition() {
-        try {
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+    public boolean groupByValues() {
+        return groupController.valuesRadio.isSelected();
     }
 
-    @FXML
-    public void deleteConditions() {
-        try {
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+    public List<String> getGroupColumns() {
+        if (!groupByValues()) {
+            return null;
         }
+        return groupController.columnsController.selectedNames();
+    }
+
+    public boolean groupByInterval() {
+        return groupController.intervalRadio.isSelected();
+    }
+
+    public String getColumn() {
+        if (!groupByInterval() && !groupByNumber()) {
+            return null;
+        }
+        return groupController.columnSelector.getValue();
+    }
+
+    public double getGroupInterval() {
+        if (!groupByInterval()) {
+            return Double.NaN;
+        }
+        double v;
+        try {
+            v = Double.valueOf(groupController.intervalInput.getText());
+        } catch (Exception e) {
+            v = Double.NaN;
+        }
+        return v;
+    }
+
+    public boolean groupByNumber() {
+        return groupController.numberRadio.isSelected();
+    }
+
+    public int getGroupNumber() {
+        if (!groupByNumber()) {
+            return -1;
+        }
+        int v;
+        try {
+            v = Integer.valueOf(groupController.numberInput.getText());
+        } catch (Exception e) {
+            v = -1;
+        }
+        return v;
+    }
+
+    public boolean groupByConditions() {
+        return groupController.conditionsRadio.isSelected();
+    }
+
+    public List<DataFilter> getFilters() {
+        if (!groupByConditions()) {
+            return null;
+        }
+        return groupController.tableData;
     }
 
 }

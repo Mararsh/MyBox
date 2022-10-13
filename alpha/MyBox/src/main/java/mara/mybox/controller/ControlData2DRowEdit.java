@@ -117,7 +117,7 @@ public class ControlData2DRowEdit extends BaseController {
                 }
             }
 
-            okButton.requestFocus();
+            thisPane.requestFocus();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

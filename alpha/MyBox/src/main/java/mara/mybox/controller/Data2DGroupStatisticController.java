@@ -27,7 +27,7 @@ import mara.mybox.value.UserConfig;
  */
 public class Data2DGroupStatisticController extends BaseData2DGroupController {
 
-    protected List<String> groups, calculationColumns, calculations, sorts;
+    protected List<String> calculationColumns, calculations, sorts;
     protected DataFileCSV resultsFile;
     protected PieChartMaker pieMaker;
     protected List<List<String>> xyData, pieData;
@@ -66,7 +66,7 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
                 }
             });
 
-            groupController.selectedNotify.addListener(new ChangeListener<Boolean>() {
+            groupController.columnsController.selectedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     makeSortList();
@@ -144,11 +144,9 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
         try {
             sortController.loadNames(null);
             if (!data2D.isValid()) {
-                groupController.loadNames(null);
                 calculationController.loadNames(null);
                 return;
             }
-            groupController.loadNames(data2D.columnNames());
             makeStatisticList();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -187,7 +185,7 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
             List<String> names = new ArrayList<>();
             names.add(message("Count") + "-" + message("Descending"));
             names.add(message("Count") + "-" + message("Ascending"));
-            groups = groupController.selectedNames();
+            List<String> groups = getGroupColumns();
             if (groups != null) {
                 for (String name : groups) {
                     names.add(name + "-" + message("Descending"));
@@ -215,17 +213,25 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
     @Override
     public boolean initData() {
         try {
+            if (!super.initData()) {
+                return false;
+            }
             checkObject();
             checkInvalidAs();
 
-            groups = groupController.selectedNames();
-            if (groups == null || groups.isEmpty()) {
-                outOptionsError(message("SelectToHandle") + ": " + message("GroupBy"));
-                tabPane.getSelectionModel().select(groupTab);
-                return false;
-            }
             List<String> colsNames = new ArrayList<>();
-            colsNames.addAll(groups);
+
+            if (groupByValues()) {
+                colsNames.addAll(groupNames);
+
+            } else if (groupByConditions()) {
+                colsNames = data2D.columnNames();
+
+            } else {
+                colsNames.add(groupName);
+
+            }
+
             calculations = calculationController.selectedNames();
             calculationColumns = new ArrayList<>();
             if (calculations != null) {
@@ -267,7 +273,7 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
             checkedColsNames = colsNames;
 
             xyChartController.palette = null;
-            return initChart(groups.toString(), false);
+            return initChart(baseTitle, false);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
@@ -310,13 +316,7 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
                         outputData = null;
                     }
                     tmp2D.stopFilter();
-                    if (tmpTable == null) {
-                        return false;
-                    }
-                    resultsFile = tmpTable.groupStatistic(data2D.dataName() + "_group", task,
-                            groups, calculations, sorts, maxData);
-                    tmpTable.drop();
-                    return resultsFile != null;
+                    return groupData(tmpTable);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -339,9 +339,33 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
         start(task);
     }
 
+    public boolean groupData(DataTable tmpTable) {
+        try {
+            if (tmpTable == null) {
+                return false;
+            }
+            if (groupByValues()) {
+                resultsFile = tmpTable.groupStatisticByValues(data2D.dataName() + "_group", task,
+                        groupNames, calculations, sorts, maxData);
+
+            } else if (groupByConditions()) {
+
+            }
+
+            tmpTable.drop();
+            return resultsFile != null;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
     @Override
     public String chartTitle() {
-        return message(message("GroupStatistic") + " - " + groups);
+        return baseTitle;
     }
 
     @Override
@@ -410,7 +434,7 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
             if (resultsData == null) {
                 return;
             }
-            int groupSize = groups.size(), columnSize = resultsFile.columns.size();
+            int groupSize = groupNames.size(), columnSize = resultsFile.columns.size();
             int categoryIndex = groupSize > 1 ? 0 : 1;
             int countIndex = groupSize + 1;
             List<Integer> valueIndice = new ArrayList<>();

@@ -25,7 +25,7 @@ public abstract class BaseInputController extends BaseChildController {
                 getMyStage().setTitle(parent.getTitle());
             }
             getMyStage().centerOnScreen();
-            if (titleLabel != null) {
+            if (titleLabel != null && title != null) {
                 titleLabel.setText(title);
             }
 

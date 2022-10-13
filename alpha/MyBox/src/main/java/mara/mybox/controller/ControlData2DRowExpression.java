@@ -120,9 +120,9 @@ public class ControlData2DRowExpression extends ControlJavaScriptRefer {
                     "'#{" + col1 + "}' == ''",
                     "'#{" + col1 + "}'.length > 0",
                     "'#{" + col1 + "}' == '2016-05-19 11:34:28'",
+                    "'#{" + col1 + "}'.startsWith('2016-05-19 11')",
                     "'#{" + col1 + "}'.search(/Hello/ig) >= 0",
                     "'#{" + col1 + "}'.indexOf('Hello') == 3",
-                    "'#{" + col1 + "}'.startsWith('Hello')",
                     "'#{" + col1 + "}'.endsWith('Hello')",
                     "var array = [ 'A', 'B', 'C', 'D' ];\n"
                     + "array.includes('#{" + col1 + "}')"
