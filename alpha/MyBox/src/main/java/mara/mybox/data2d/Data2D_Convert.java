@@ -51,14 +51,6 @@ public abstract class Data2D_Convert extends Data2D_Edit {
 
     public static String TmpTablePrefix = "MYBOXTMP__";
 
-    public static String tmpTableName() {
-        return TmpTablePrefix + DateTools.nowString3();
-    }
-
-    public static String tmpTableName(String sourceName) {
-        return TmpTablePrefix + sourceName + DateTools.nowString3();
-    }
-
     /*
         to/from database table
      */
@@ -260,6 +252,17 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         }
     }
 
+    /* 
+        static
+     */
+    public static String tmpTableName() {
+        return TmpTablePrefix + DateTools.nowString3();
+    }
+
+    public static String tmpTableName(String sourceName) {
+        return TmpTablePrefix + sourceName + DateTools.nowString3();
+    }
+
     public static DataTable makeTable(SingletonTask task, String tname,
             List<Data2DColumn> sourceColumns, List<String> keys, String idName) {
         try {
@@ -347,6 +350,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                 return null;
             }
             tableData2D = dataTable.getTableData2D();
+//            MyBoxLog.console(tableData2D.createTableStatement());
             if (conn.createStatement().executeUpdate(tableData2D.createTableStatement()) < 0) {
                 return null;
             }
@@ -361,6 +365,10 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             }
             return null;
         }
+    }
+
+    public static DataTable createTable(SingletonTask task, Connection conn, List<Data2DColumn> columns) {
+        return createTable(task, conn, null, columns, null, null, null, true);
     }
 
     public static DataFileCSV toCSV(SingletonTask task, DataTable dataTable, File file, boolean save) {

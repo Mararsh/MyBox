@@ -5,6 +5,7 @@ import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -751,60 +752,106 @@ public class DataTable extends Data2D {
 
     }
 
-    public List<DataFileCSV> groupStatisticByInteval(String dname, SingletonTask task,
+    public DataFileCSV groupStatisticByInteval(String dname, SingletonTask task,
             String group, double interval, List<String> calculations, List<String> sorts, int max) {
         if (group == null || group.isEmpty() || sourceColumns == null) {
             return null;
         }
-        try {
-            List<DataFileCSV> files = new ArrayList<>();
-            String groupName = mappedColumnName(group);
-            List<Integer> groupCols = new ArrayList<>();
-            groupCols.add(this.colOrder(groupName));
-
+        try ( Connection conn = DerbyBase.getConnection();
+                 Statement query = conn.createStatement()) {
+            List<Data2DColumn> tmpColumns = new ArrayList<>();
+            String conditionColName = message("Condition");
+            tmpColumns.add(new Data2DColumn(conditionColName, ColumnDefinition.ColumnType.String));
+            tmpColumns.addAll(columns.subList(1, columns.size()));
+            DataTable groupData = DataTable.createTable(task, conn, tmpColumns);
+            TableData2D groupTable = groupData.getTableData2D();
+            long count = 0;
             double maxValue = Double.NaN, minValue = Double.NaN;
-            String sql = "SELECT MAX(" + groupName + ") AS dmax, MIN(" + groupName + ") AS dmin FROM " + sheet;
-            try ( Connection conn = DerbyBase.getConnection();
-                     PreparedStatement statement = conn.prepareStatement(sql);
-                     ResultSet results = statement.executeQuery()) {
-                if (results != null) {
+            String sql = "SELECT MAX(" + group + ") AS dmax, MIN(" + group + ") AS dmin FROM " + sheet;
+            try ( ResultSet results = query.executeQuery(sql)) {
+                if (results.next()) {
                     maxValue = results.getDouble("dmax");
                     minValue = results.getDouble("dmin");
                 }
             } catch (Exception e) {
                 if (task != null) {
                     task.setError(e.toString());
-                } else {
-                    MyBoxLog.error(e.toString());
                 }
+                MyBoxLog.error(e.toString());
             }
-            if (DoubleTools.invalidDouble(maxValue) || DoubleTools.invalidDouble(minValue)) {
+            if (DoubleTools.invalidDouble(maxValue) || DoubleTools.invalidDouble(minValue)
+                    || task == null || task.isCancelled()) {
+                query.close();
+                conn.close();
                 return null;
             }
-
-            DescriptiveStatistic calculation = new DescriptiveStatistic()
-                    .setMaximum(true).setMinimum(true);
-            DoubleStatistic[] statistic = statisticByColumnsWithoutStored(groupCols, calculation);
-            if (statistic == null || statistic.length != 1) {
-                return null;
-            }
-
             double from = minValue, to;
             String condition;
+            conn.setAutoCommit(false);
             while (from <= maxValue) {
                 if (task == null || task.isCancelled()) {
+                    query.close();
+                    conn.close();
                     return null;
                 }
                 to = from + interval;
-                condition = groupName + " >= " + from + " && " + groupName + " < " + to;
+                if (to >= maxValue) {
+                    condition = group + " >= " + from + " AND " + group + " <= " + maxValue;
+                    from = maxValue + 1;
+                } else {
+                    condition = group + " >= " + from + " AND " + group + " < " + to;
+                    from = to;
+                }
+                sql = "SELECT * FROM " + sheet + " WHERE " + condition;
+                try ( ResultSet results = query.executeQuery(sql)) {
+                    while (results.next()) {
+                        if (task == null || task.isCancelled()) {
+                            results.close();
+                            query.close();
+                            conn.close();
+                            return null;
+                        }
+                        try {
+                            Data2DRow data2DRow = groupTable.newRow();
+                            for (int i = 1; i < columns.size(); i++) {
+                                Data2DColumn sourceColumn = columns.get(i);
+                                String sourceColName = sourceColumn.getColumnName();
+                                String targetColName = groupData.mappedColumnName(sourceColName);
+                                data2DRow.setColumnValue(targetColName, results.getObject(sourceColName));
+                            }
+                            data2DRow.setColumnValue(conditionColName, condition);
+                            groupTable.insertData(conn, data2DRow);
+                            if (++count % DerbyBase.BatchSize == 0) {
+                                conn.commit();
+                            }
+                        } catch (Exception e) {
+                            if (task != null) {
+                                task.setError(e.toString());
+                            } else {
+                                MyBoxLog.error(e.toString());
+                            }
+                        }
+                    }
+                    conn.commit();
+                } catch (Exception e) {
+                    if (task != null) {
+                        task.setError(e.toString());
+                    }
+                    MyBoxLog.error(e.toString());
+                }
             }
-
-            DataFileCSV results = query(dname, task, sql, message("Group"));
-            if (results == null) {
+            if (count < 1) {
                 return null;
             }
-            results.saveAttributes();
-            return files;
+            List<String> groups = new ArrayList<>();
+            groups.add(conditionColName);
+            for (String name : columnsMap.keySet()) {
+                groupData.columnsMap.put(name, groupData.columnsMap.get(columnsMap.get(name)));
+            }
+            DataFileCSV resultsFile = groupData.groupStatisticByValues(dname, task,
+                    groups, calculations, sorts, max);
+            groupData.drop();
+            return resultsFile;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -813,7 +860,6 @@ public class DataTable extends Data2D {
             }
             return null;
         }
-
     }
 
     public List<DataFileCSV> statisticByFilter(SingletonTask task,
