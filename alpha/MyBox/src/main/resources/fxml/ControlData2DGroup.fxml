@@ -24,14 +24,14 @@ License:    Apache License Version 2.0
     <children>
                       <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
                           <children>
-                              <Label text="%GroupBy" />
+                              <Label text="%By" />
                               <RadioButton fx:id="valuesRadio" mnemonicParsing="false" selected="true" text="%Values">
                <toggleGroup>
                   <ToggleGroup fx:id="typeGroup" />
                </toggleGroup>
                               </RadioButton>
-                              <RadioButton fx:id="intervalRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Interval" toggleGroup="$typeGroup" />
-                              <RadioButton fx:id="numberRadio" layoutX="106.0" layoutY="10.0" mnemonicParsing="false" text="%Number2" toggleGroup="$typeGroup" />
+                              <RadioButton fx:id="intervalRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%GroupInterval" toggleGroup="$typeGroup" />
+                              <RadioButton fx:id="numberRadio" layoutX="106.0" layoutY="10.0" mnemonicParsing="false" text="%GroupNumber" toggleGroup="$typeGroup" />
                               <RadioButton fx:id="conditionsRadio" layoutX="194.0" layoutY="10.0" mnemonicParsing="false" text="%Conditions" toggleGroup="$typeGroup" />
                           </children>
                       </FlowPane>
@@ -39,7 +39,7 @@ License:    Apache License Version 2.0
                           <children>
                               <VBox fx:id="columnsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                   <children>
-                                      <fx:include fx:id="columns" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlSelection.fxml" VBox.vgrow="ALWAYS" />
+                                      <fx:include fx:id="columns" minHeight="-Infinity" prefHeight="300.0" source="ControlSelection.fxml" />
                                   </children>
                               </VBox>
                               <HBox fx:id="columnlBox" alignment="CENTER_LEFT" layoutX="10.0" layoutY="294.0" spacing="2.0">

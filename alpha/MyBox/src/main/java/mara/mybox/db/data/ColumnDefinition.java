@@ -303,6 +303,10 @@ public class ColumnDefinition extends BaseData {
                 || type == ColumnType.Integer || type == ColumnType.Long || type == ColumnType.Short;
     }
 
+    public boolean needScale() {
+        return type == ColumnType.Double || type == ColumnType.Float;
+    }
+
     public boolean isTextType() {
         return type == ColumnType.String;
     }

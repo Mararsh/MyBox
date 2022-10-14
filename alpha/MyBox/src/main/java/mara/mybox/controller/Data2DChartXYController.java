@@ -5,16 +5,12 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.fxml.chart.ChartOptions.ChartType;
 import mara.mybox.fxml.chart.XYChartMaker;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -31,16 +27,13 @@ public class Data2DChartXYController extends BaseData2DChartController {
     protected Data2DColumn categoryColumn;
 
     @FXML
-    protected ToggleGroup chartGroup;
-    @FXML
-    protected RadioButton barChartRadio, stackedBarChartRadio, lineChartRadio, scatterChartRadio,
-            bubbleChartRadio, areaChartRadio, stackedAreaChartRadio;
+    protected ControlChartXYSelection chartTypesController;
     @FXML
     protected VBox columnsBox, columnCheckBoxsBox;
     @FXML
     protected Label valuesLabel;
     @FXML
-    protected FlowPane valueColumnPane, categoryColumnsPane, typesPane;
+    protected FlowPane valueColumnPane, categoryColumnsPane;
     @FXML
     protected ControlData2DChartXY chartController;
 
@@ -62,28 +55,30 @@ public class Data2DChartXYController extends BaseData2DChartController {
                 }
             });
 
-            checkChartType();
-            chartGroup.selectedToggleProperty().addListener(
-                    (ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) -> {
-                        checkChartType();
-                        refreshAction();
-                    });
+            typeChanged();
+            chartTypesController.typeNodify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    typeChanged();
+                    refreshAction();
+                }
+            });
 
-            typesPane.disableProperty().bind(chartController.buttonsPane.disableProperty());
+            chartTypesController.thisPane.disableProperty().bind(chartController.buttonsPane.disableProperty());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    public void checkChartType() {
+    public void typeChanged() {
         try {
             if (columnsBox == null) {
                 return;
             }
             columnsBox.getChildren().clear();
 
-            if (bubbleChartRadio != null && bubbleChartRadio.isSelected()) {
+            if (chartTypesController.isBubbleChart()) {
                 columnsBox.getChildren().addAll(categoryColumnsPane, valueColumnPane, columnCheckBoxsBox);
                 valuesLabel.setText(message("SizeColumns") + " " + message("NoSelectionMeansAll"));
 
@@ -115,7 +110,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
             categoryColumn = data2D.column(categoryCol);
             dataColsIndices.add(categoryCol);
             outputColumns.add(categoryColumn);
-            if (bubbleChartRadio != null && bubbleChartRadio.isSelected()) {
+            if (chartTypesController.isBubbleChart()) {
                 title += " - " + selectedValue;
                 int valueCol = data2D.colOrder(selectedValue);
                 if (valueCol < 0) {
@@ -145,34 +140,9 @@ public class Data2DChartXYController extends BaseData2DChartController {
 
     public boolean initChart(String title, boolean categoryIsNumbers) {
         try {
-            ChartType chartType;
-            String chartName;
-            if (barChartRadio.isSelected()) {
-                chartType = ChartType.Bar;
-                chartName = message("BarChart");
-            } else if (stackedBarChartRadio.isSelected()) {
-                chartType = ChartType.StackedBar;
-                chartName = message("StackedBarChart");
-            } else if (lineChartRadio.isSelected()) {
-                chartType = ChartType.Line;
-                chartName = message("LineChart");
-            } else if (scatterChartRadio.isSelected()) {
-                chartType = ChartType.Scatter;
-                chartName = message("ScatterChart");
-            } else if (areaChartRadio.isSelected()) {
-                chartType = ChartType.Area;
-                chartName = message("AreaChart");
-            } else if (stackedAreaChartRadio.isSelected()) {
-                chartType = ChartType.StackedArea;
-                chartName = message("StackedAreaChart");
-            } else if (bubbleChartRadio.isSelected()) {
-                chartType = ChartType.Bubble;
-                chartName = message("BubbleChart");
-            } else {
-                return false;
-            }
+            String chartName = chartTypesController.chartName;
             UserConfig.setBoolean(chartName + "CategoryIsNumbers", categoryIsNumbers);
-            chartMaker.init(chartType, chartName)
+            chartMaker.init(chartTypesController.chartType, chartName)
                     .setDefaultChartTitle(title)
                     .setChartTitle(title)
                     .setDefaultCategoryLabel(selectedCategory)

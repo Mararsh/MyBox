@@ -4,6 +4,7 @@ import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.util.Random;
 import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 
@@ -24,6 +25,15 @@ public class DoubleTools {
             return 0;
         } else {
             return Double.NaN;
+        }
+    }
+
+    public static String scaleString(String string, InvalidAs invalidAs, int scale) {
+        try {
+            double d = toDouble(string, invalidAs);
+            return scaleString(d, scale);
+        } catch (Exception e) {
+            return string;
         }
     }
 
@@ -159,12 +169,23 @@ public class DoubleTools {
 
     public static double scale(double v, int scale) {
         try {
-            NumberFormat formatter = NumberFormat.getInstance();
-            formatter.setMaximumFractionDigits(scale);
-            formatter.setRoundingMode(RoundingMode.HALF_UP);
-            return Double.valueOf(formatter.format(v));
+            return Double.valueOf(scaleString(v, scale));
         } catch (Exception e) {
             return v;
+        }
+    }
+
+    public static String scaleString(double v, int scale) {
+        try {
+            NumberFormat formatter = NumberFormat.getInstance();
+            formatter.setMaximumFractionDigits(scale);
+            formatter.setMinimumFractionDigits(0);
+            formatter.setGroupingUsed(false);
+            formatter.setRoundingMode(RoundingMode.HALF_UP);
+            return formatter.format(v);
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+            return v + "";
         }
     }
 

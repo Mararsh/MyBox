@@ -13,17 +13,20 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-8-10
  * @License Apache License Version 2.0
  */
-public class BaseData2DGroupController extends Data2DChartXYController {
+public class BaseData2DGroupController extends BaseData2DChartController {
 
     protected String groupName;
     protected List<String> groupNames;
     protected List<DataFilter> groupConditions;
     protected double groupInterval, groupNumber;
+    protected List<String> sorts;
 
     @FXML
     protected Tab groupTab;
     @FXML
     protected ControlData2DGroup groupController;
+    @FXML
+    protected ControlSelection sortController;
 
     public BaseData2DGroupController() {
         baseTitle = message("GroupStatistic");
@@ -52,10 +55,6 @@ public class BaseData2DGroupController extends Data2DChartXYController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-    }
-
-    @Override
-    public void afterRefreshControls() {
     }
 
     @Override
@@ -96,6 +95,7 @@ public class BaseData2DGroupController extends Data2DChartXYController {
                 return false;
             }
 
+            sorts = sortController.selectedNames();
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);

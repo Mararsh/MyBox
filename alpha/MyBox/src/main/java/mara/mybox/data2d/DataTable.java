@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Random;
 import mara.mybox.calculation.DescriptiveStatistic;
 import mara.mybox.calculation.DoubleStatistic;
+import mara.mybox.data.FindReplaceString;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
@@ -620,7 +621,8 @@ public class DataTable extends Data2D {
 
     // Based on results of "Data2D_Convert.toTmpTable(...)"
     public DataFileCSV groupStatisticByValues(String dname, SingletonTask task,
-            List<String> groups, List<String> calculations, List<String> sorts, int max) {
+            List<String> groups, List<String> calculations, List<String> sorts,
+            int max, int dscale, InvalidAs invalidAs) {
         if (groups == null || groups.isEmpty() || sourceColumns == null) {
             return null;
         }
@@ -735,7 +737,7 @@ public class DataTable extends Data2D {
                 sql += " FETCH FIRST " + max + " ROWS ONLY";
             }
 //            MyBoxLog.console(sql);
-            DataFileCSV results = query(dname, task, sql, message("Group"));
+            DataFileCSV results = query(dname, task, sql, message("Group"), dscale, invalidAs);
             if (results == null) {
                 return null;
             }
@@ -752,20 +754,24 @@ public class DataTable extends Data2D {
 
     }
 
-    public DataFileCSV groupStatisticByInteval(String dname, SingletonTask task,
-            String group, double interval, List<String> calculations, List<String> sorts, int max) {
-        if (group == null || group.isEmpty() || sourceColumns == null) {
+    public DataFileCSV groupStatisticByRange(String dname, SingletonTask task,
+            boolean isInterval, String group, double nvalue, List<String> calculations, List<String> sorts,
+            int max, int dscale, InvalidAs invalidAs) {
+        if (group == null || group.isEmpty() || (!isInterval && nvalue <= 0)
+                || sourceColumns == null) {
             return null;
         }
+        List<Data2DColumn> tmpColumns = new ArrayList<>();
+        String rangeName = group + "_" + message("Range");
+        tmpColumns.add(new Data2DColumn(rangeName, ColumnDefinition.ColumnType.String));
+        tmpColumns.addAll(columns.subList(1, columns.size()));
+        DataTable rangeData;
+        long count = 0;
         try ( Connection conn = DerbyBase.getConnection();
                  Statement query = conn.createStatement()) {
-            List<Data2DColumn> tmpColumns = new ArrayList<>();
-            String conditionColName = message("Condition");
-            tmpColumns.add(new Data2DColumn(conditionColName, ColumnDefinition.ColumnType.String));
-            tmpColumns.addAll(columns.subList(1, columns.size()));
-            DataTable groupData = DataTable.createTable(task, conn, tmpColumns);
-            TableData2D groupTable = groupData.getTableData2D();
-            long count = 0;
+            rangeData = DataTable.createTable(task, conn, tmpColumns);
+            rangeName = rangeData.mappedColumnName(rangeName);
+            TableData2D rangeTable = rangeData.getTableData2D();
             double maxValue = Double.NaN, minValue = Double.NaN;
             String sql = "SELECT MAX(" + group + ") AS dmax, MIN(" + group + ") AS dmin FROM " + sheet;
             try ( ResultSet results = query.executeQuery(sql)) {
@@ -781,77 +787,213 @@ public class DataTable extends Data2D {
             }
             if (DoubleTools.invalidDouble(maxValue) || DoubleTools.invalidDouble(minValue)
                     || task == null || task.isCancelled()) {
+                if (task != null) {
+                    task.setError(message("NoData"));
+                }
                 query.close();
                 conn.close();
                 return null;
             }
+            double interval;
+            if (isInterval) {
+                interval = nvalue;
+            } else {
+                interval = (maxValue - minValue) / nvalue;
+            }
             double from = minValue, to;
-            String condition;
+            String condition, range;
             conn.setAutoCommit(false);
-            while (from <= maxValue) {
-                if (task == null || task.isCancelled()) {
-                    query.close();
-                    conn.close();
-                    return null;
+            try ( PreparedStatement insert = conn.prepareStatement(rangeTable.insertStatement())) {
+                while (from <= maxValue) {
+                    if (task == null || task.isCancelled()) {
+                        query.close();
+                        conn.close();
+                        return null;
+                    }
+                    to = from + interval;
+                    if (to >= maxValue) {
+                        condition = group + " >= " + from;
+                        range = "[" + DoubleTools.scaleString(from, dscale) + ","
+                                + DoubleTools.scaleString(maxValue, dscale) + "]";
+                        from = maxValue + 1;
+                    } else {
+                        condition = group + " >= " + from + " AND " + group + " < " + to;
+                        range = "[" + DoubleTools.scaleString(from, dscale) + ","
+                                + DoubleTools.scaleString(to, dscale) + ")";
+                        from = to;
+                    }
+                    sql = "SELECT * FROM " + sheet + " WHERE " + condition;
+                    try ( ResultSet results = query.executeQuery(sql)) {
+                        while (results.next()) {
+                            if (task == null || task.isCancelled()) {
+                                results.close();
+                                query.close();
+                                conn.close();
+                                return null;
+                            }
+                            try {
+                                Data2DRow data2DRow = rangeTable.newRow();
+                                for (int i = 1; i < columns.size(); i++) {
+                                    Data2DColumn sourceColumn = columns.get(i);
+                                    String sourceColName = sourceColumn.getColumnName();
+                                    String targetColName = rangeData.mappedColumnName(sourceColName);
+                                    data2DRow.setColumnValue(targetColName, results.getObject(sourceColName));
+                                }
+                                data2DRow.setColumnValue(rangeName, range);
+                                rangeTable.insertData(conn, insert, data2DRow);
+                                if (++count % DerbyBase.BatchSize == 0) {
+                                    conn.commit();
+                                }
+                            } catch (Exception e) {
+                                if (task != null) {
+                                    task.setError(e.toString());
+                                } else {
+                                    MyBoxLog.error(e.toString());
+                                }
+                            }
+                        }
+                        conn.commit();
+                    } catch (Exception e) {
+                        if (task != null) {
+                            task.setError(e.toString());
+                        }
+                        MyBoxLog.error(e.toString());
+                    }
                 }
-                to = from + interval;
-                if (to >= maxValue) {
-                    condition = group + " >= " + from + " AND " + group + " <= " + maxValue;
-                    from = maxValue + 1;
+            } catch (Exception e) {
+                if (task != null) {
+                    task.setError(e.toString());
                 } else {
-                    condition = group + " >= " + from + " AND " + group + " < " + to;
-                    from = to;
+                    MyBoxLog.error(e.toString());
                 }
-                sql = "SELECT * FROM " + sheet + " WHERE " + condition;
-                try ( ResultSet results = query.executeQuery(sql)) {
-                    while (results.next()) {
-                        if (task == null || task.isCancelled()) {
-                            results.close();
-                            query.close();
-                            conn.close();
-                            return null;
+                return null;
+            }
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
+            }
+            return null;
+        }
+        if (count < 1) {
+            if (task != null) {
+                task.setError(message("NoData"));
+            }
+            return null;
+        }
+        List<String> groups = new ArrayList<>();
+        groups.add(rangeName);
+        for (String name : columnsMap.keySet()) {
+            rangeData.columnsMap.put(name, rangeData.columnsMap.get(columnsMap.get(name)));
+        }
+        DataFileCSV resultsFile = rangeData.groupStatisticByValues(dname, task,
+                groups, calculations, sorts, max, dscale, invalidAs);
+        rangeData.drop();
+        return resultsFile;
+    }
+
+    public DataFileCSV groupStatisticByFilters(String dname, SingletonTask task,
+            List<DataFilter> filters, List<String> calculations, List<String> sorts,
+            int max, int dscale, InvalidAs invalidAs) {
+        if (filters == null || filters.isEmpty() || sourceColumns == null) {
+            return null;
+        }
+        List<Data2DColumn> tmpColumns = new ArrayList<>();
+        String filterColName = message("RowFilter");
+        tmpColumns.add(new Data2DColumn(filterColName, ColumnDefinition.ColumnType.String));
+        tmpColumns.addAll(columns.subList(1, columns.size()));
+        DataTable filtersData;
+        long count = 0;
+        try ( Connection conn = DerbyBase.getConnection();
+                 Statement query = conn.createStatement();
+                 ResultSet results = query.executeQuery("SELECT * FROM " + sheet)) {
+            filtersData = DataTable.createTable(task, conn, tmpColumns);
+            filterColName = filtersData.mappedColumnName(filterColName);
+            TableData2D filtersTable = filtersData.getTableData2D();
+            long rindex = 0;
+            List<DataFilter> filledFilters = new ArrayList<>();
+            List<String> sourceScripts = new ArrayList<>();
+            FindReplaceString findReplace = FindReplaceString.create().
+                    setOperation(FindReplaceString.Operation.ReplaceAll)
+                    .setIsRegex(false).setCaseInsensitive(false).setMultiline(false);
+            for (int i = 0; i < filters.size(); i++) {
+                String script = filters.get(i).getSourceScript();
+                for (String name : columnsMap.keySet()) {
+                    script = findReplace.replaceStringAll(script, "#{" + name + "}", "#{" + columnsMap.get(name) + "}");
+                    script = findReplace.replaceStringAll(script, "#{" + name + "-" + message("Mean") + "}",
+                            "#{" + columnsMap.get(name) + "-" + message("Mean") + "}");
+                    script = findReplace.replaceStringAll(script, "#{" + name + "-" + message("Summation") + "}",
+                            "#{" + columnsMap.get(name) + "-" + message("Summation") + "}");
+                    script = findReplace.replaceStringAll(script, "#{" + name + "-" + message("Maximum") + "}",
+                            "#{" + columnsMap.get(name) + "-" + message("Maximum") + "}");
+                    script = findReplace.replaceStringAll(script, "#{" + name + "-" + message("Minimum") + "}",
+                            "#{" + columnsMap.get(name) + "-" + message("Minimum") + "}");
+                    script = findReplace.replaceStringAll(script, "#{" + name + "-" + message("PopulationVariance") + "}",
+                            "#{" + columnsMap.get(name) + "-" + message("PopulationVariance") + "}");
+                    script = findReplace.replaceStringAll(script, "#{" + name + "-" + message("SampleVariance") + "}",
+                            "#{" + columnsMap.get(name) + "-" + message("SampleVariance") + "}");
+                    script = findReplace.replaceStringAll(script, "#{" + name + "-" + message("PopulationStandardDeviation") + "}",
+                            "#{" + columnsMap.get(name) + "-" + message("PopulationStandardDeviation") + "}");
+                    script = findReplace.replaceStringAll(script, "#{" + name + "-" + message("SampleStandardDeviation") + "}",
+                            "#{" + columnsMap.get(name) + "-" + message("SampleStandardDeviation") + "}");
+                }
+                sourceScripts.add(script);
+            }
+            List<String> filledScripts = calculateScriptsStatistic(sourceScripts);
+            for (int i = 0; i < filters.size(); i++) {
+                DataFilter sfilter = filters.get(i);
+                DataFilter tfilter = new DataFilter()
+                        .setSourceScript(filledScripts.get(i))
+                        .setReversed(sfilter.isReversed())
+                        .setMaxPassed(sfilter.getMaxPassed());
+                filledFilters.add(tfilter);
+            }
+            try ( PreparedStatement insert = conn.prepareStatement(filtersTable.insertStatement())) {
+                while (results.next()) {
+                    if (task == null || task.isCancelled()) {
+                        results.close();
+                        query.close();
+                        conn.close();
+                        return null;
+                    }
+                    try {
+                        Data2DRow data2DRow = filtersTable.newRow();
+                        List<String> sourceRow = new ArrayList<>();
+                        for (Data2DColumn sourceColumn : columns) {
+                            String sourceColName = sourceColumn.getColumnName();
+                            Object value = results.getObject(sourceColName);
+                            sourceRow.add(sourceColumn.toString(value));
+                            String targetColName = filtersData.mappedColumnName(sourceColName);
+                            data2DRow.setColumnValue(targetColName, value);
                         }
-                        try {
-                            Data2DRow data2DRow = groupTable.newRow();
-                            for (int i = 1; i < columns.size(); i++) {
-                                Data2DColumn sourceColumn = columns.get(i);
-                                String sourceColName = sourceColumn.getColumnName();
-                                String targetColName = groupData.mappedColumnName(sourceColName);
-                                data2DRow.setColumnValue(targetColName, results.getObject(sourceColName));
+                        rindex++;
+                        for (int i = 0; i < filledFilters.size(); i++) {
+                            DataFilter vfilter = filledFilters.get(i);
+                            if (vfilter.filterDataRow(this, sourceRow, rindex)) {
+                                data2DRow.setColumnValue(filterColName, filterColName + (i + 1));
+                                filtersTable.insertData(conn, insert, data2DRow);
+                                if (++count % DerbyBase.BatchSize == 0) {
+                                    conn.commit();
+                                }
                             }
-                            data2DRow.setColumnValue(conditionColName, condition);
-                            groupTable.insertData(conn, data2DRow);
-                            if (++count % DerbyBase.BatchSize == 0) {
-                                conn.commit();
-                            }
-                        } catch (Exception e) {
-                            if (task != null) {
-                                task.setError(e.toString());
-                            } else {
-                                MyBoxLog.error(e.toString());
-                            }
+                        }
+                    } catch (Exception e) {
+                        if (task != null) {
+                            task.setError(e.toString());
+                        } else {
+                            MyBoxLog.error(e.toString());
                         }
                     }
-                    conn.commit();
-                } catch (Exception e) {
-                    if (task != null) {
-                        task.setError(e.toString());
-                    }
+                }
+                conn.commit();
+            } catch (Exception e) {
+                if (task != null) {
+                    task.setError(e.toString());
+                } else {
                     MyBoxLog.error(e.toString());
                 }
             }
-            if (count < 1) {
-                return null;
-            }
-            List<String> groups = new ArrayList<>();
-            groups.add(conditionColName);
-            for (String name : columnsMap.keySet()) {
-                groupData.columnsMap.put(name, groupData.columnsMap.get(columnsMap.get(name)));
-            }
-            DataFileCSV resultsFile = groupData.groupStatisticByValues(dname, task,
-                    groups, calculations, sorts, max);
-            groupData.drop();
-            return resultsFile;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -860,54 +1002,29 @@ public class DataTable extends Data2D {
             }
             return null;
         }
-    }
-
-    public List<DataFileCSV> statisticByFilter(SingletonTask task,
-            DataFilter filter, List<String> calculations, List<String> sorts, int max) {
-//        if (group == null || group.isEmpty() || sourceColumns == null) {
-//            return null;
-//        }
-        try {
-            List<DataFileCSV> files = new ArrayList<>();
-//            String groupName = mappedColumnName(group);
-//            List<Integer> groupCols = new ArrayList<>();
-//            groupCols.add(this.colOrder(groupName));
-//            DescriptiveStatistic calculation = new DescriptiveStatistic()
-//                    .setMaximum(true).setMinimum(true);
-//            DoubleStatistic[] statistic = statisticByColumnsWithoutStored(groupCols, calculation);
-//            if (statistic == null || statistic.length != 1) {
-//                return null;
-//            }
-//            double maxValue = statistic[0].getMaximum();
-//            double minValue = statistic[0].getMinimum();
-//            double from = minValue, to;
-//            String condition;
-//            while (from <= maxValue) {
-//                if (task == null || task.isCancelled()) {
-//                    return null;
-//                }
-//                to = from + interval;
-//                condition = groupName + " >= " + from + " && " + groupName + " < " + to;
-//            }
-//
-//            DataFileCSV results = query(dname, task, sql, message("Group"));
-//            if (results == null) {
-//                return null;
-//            }
-//            results.saveAttributes();
-            return files;
-        } catch (Exception e) {
+        if (count < 1) {
             if (task != null) {
-                task.setError(e.toString());
-            } else {
-                MyBoxLog.error(e.toString());
+                task.setError(message("NoData"));
             }
             return null;
         }
-
+        List<String> groups = new ArrayList<>();
+        groups.add(filterColName);
+        for (String name : columnsMap.keySet()) {
+            filtersData.columnsMap.put(name, filtersData.columnsMap.get(columnsMap.get(name)));
+        }
+        DataFileCSV resultsFile = filtersData.groupStatisticByValues(dname, task,
+                groups, calculations, sorts, max, dscale, invalidAs);
+        filtersData.drop();
+        return resultsFile;
     }
 
     public DataFileCSV query(String dname, SingletonTask task, String query, String rowNumberName) {
+        return query(dname, task, query, rowNumberName, scale, InvalidAs.Blank);
+    }
+
+    public DataFileCSV query(String dname, SingletonTask task, String query, String rowNumberName,
+            int dscale, InvalidAs invalidAs) {
         if (query == null || query.isBlank()) {
             return null;
         }
@@ -916,7 +1033,7 @@ public class DataTable extends Data2D {
                  PreparedStatement statement = conn.prepareStatement(query);
                  ResultSet results = statement.executeQuery()) {
             if (results != null) {
-                targetData = DataFileCSV.save(dname, task, results, rowNumberName);
+                targetData = DataFileCSV.save(dname, task, results, rowNumberName, dscale, invalidAs);
             }
         } catch (Exception e) {
             if (task != null) {

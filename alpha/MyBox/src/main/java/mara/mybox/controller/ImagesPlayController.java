@@ -136,6 +136,31 @@ public class ImagesPlayController extends BaseImagesListController {
 
             playController.setParameters(this);
 
+            playController.frameNodify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    displayFrame(playController.currentIndex);
+                }
+            });
+
+            playController.stopNodify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    closeFile();
+                }
+            });
+
+            playController.intervalNodify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    if (imageInfos != null) {
+                        for (ImageInformation info : imageInfos) {
+                            info.setDuration(playController.interval);
+                        }
+                    }
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

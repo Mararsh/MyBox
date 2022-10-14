@@ -16,29 +16,25 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.chart.PieChartMaker;
-import mara.mybox.fxml.chart.XYChartMaker;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
- * @CreateDate 2022-8-10
+ * @CreateDate 2022-10-14
  * @License Apache License Version 2.0
  */
-public class Data2DGroupStatisticController extends BaseData2DGroupController {
+public class Data2DChartGroupXYController extends BaseData2DGroupController {
 
-    protected List<String> calculationColumns, calculations;
     protected DataFileCSV resultsFile;
-    protected XYChartMaker xyMaker;
     protected PieChartMaker pieMaker;
     protected List<List<String>> xyData, pieData;
     protected List<Data2DColumn> xyColumns, pieColumns;
-    protected Data2DColumn categoryColumn;
     protected int maxData = -1;
 
     @FXML
-    protected ControlSelection calculationController;
+    protected ControlSelection calculationController, sortController;
     @FXML
     protected ControlData2DResults valuesController;
     @FXML
@@ -49,10 +45,8 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
     protected ControlData2DChartXY xyChartController;
     @FXML
     protected ControlData2DChartPie pieChartController;
-    @FXML
-    protected ControlChartXYSelection chartTypesController;
 
-    public Data2DGroupStatisticController() {
+    public Data2DChartGroupXYController() {
         baseTitle = message("GroupStatistic");
         TipsLabelKey = "GroupEqualTips";
     }
@@ -61,27 +55,6 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
     public void initControls() {
         try {
             super.initControls();
-
-            xyMaker = xyChartController.chartMaker;
-            xyChartController.redrawNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    drawXYChart();
-                }
-            });
-
-            chartTypesController.typeNodify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    if (categoryColumn == null) {
-                        return;
-                    }
-                    initXYChart(baseTitle, categoryColumn.isNumberType());
-                    drawXYChart();
-                }
-            });
-
-            chartTypesController.thisPane.disableProperty().bind(xyChartController.buttonsPane.disableProperty());
 
             pieMaker = pieChartController.pieMaker;
             pieChartController.redrawNotify.addListener(new ChangeListener<Boolean>() {
@@ -165,10 +138,8 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
     }
 
     @Override
-    public void refreshControls() {
+    public void makeOptions() {
         try {
-            super.refreshControls();
-
             sortController.loadNames(null);
             if (!data2D.isValid()) {
                 calculationController.loadNames(null);
@@ -176,7 +147,6 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
             }
             makeStatisticList();
             makeSortList();
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -220,13 +190,13 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
                     names.add(name + "-" + message("Ascending"));
                 }
             }
-            calculations = calculationController.selectedNames();
-            if (calculations != null) {
-                for (String name : calculations) {
-                    names.add(name + "-" + message("Descending"));
-                    names.add(name + "-" + message("Ascending"));
-                }
-            }
+//            calculations = calculationController.selectedNames();
+//            if (calculations != null) {
+//                for (String name : calculations) {
+//                    names.add(name + "-" + message("Descending"));
+//                    names.add(name + "-" + message("Ascending"));
+//                }
+//            }
             sortController.loadNames(names);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -260,38 +230,7 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
 
             }
 
-            calculations = calculationController.selectedNames();
-            calculationColumns = new ArrayList<>();
-            if (calculations != null) {
-                for (String name : calculations) {
-                    if (name.endsWith("-" + message("Mean"))) {
-                        name = name.substring(0, name.length() - ("-" + message("Mean")).length());
-                    } else if (name.endsWith("-" + message("Summation"))) {
-                        name = name.substring(0, name.length() - ("-" + message("Summation")).length());
-                    } else if (name.endsWith("-" + message("Maximum"))) {
-                        name = name.substring(0, name.length() - ("-" + message("Maximum")).length());
-                    } else if (name.endsWith("-" + message("Minimum"))) {
-                        name = name.substring(0, name.length() - ("-" + message("Minimum")).length());
-                    } else if (name.endsWith("-" + message("PopulationVariance"))) {
-                        name = name.substring(0, name.length() - ("-" + message("PopulationVariance")).length());
-                    } else if (name.endsWith("-" + message("SampleVariance"))) {
-                        name = name.substring(0, name.length() - ("-" + message("SampleVariance")).length());
-                    } else if (name.endsWith("-" + message("PopulationStandardDeviation"))) {
-                        name = name.substring(0, name.length() - ("-" + message("PopulationStandardDeviation")).length());
-                    } else if (name.endsWith("-" + message("SampleStandardDeviation"))) {
-                        name = name.substring(0, name.length() - ("-" + message("SampleStandardDeviation")).length());
-                    } else {
-                        continue;
-                    }
-                    if (!colsNames.contains(name)) {
-                        colsNames.add(name);
-                    }
-                    if (!calculationColumns.contains(name)) {
-                        calculationColumns.add(name);
-                    }
-                }
-            }
-
+            sorts = sortController.selectedNames();
             checkedColsIndices = new ArrayList<>();
             checkedColumns = new ArrayList<>();
             for (String name : colsNames) {
@@ -301,13 +240,32 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
             checkedColsNames = colsNames;
 
             xyChartController.palette = null;
-            return initXYChart(baseTitle, false);
+            return true;
+//            return initXYChart(baseTitle, false);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
         }
     }
 
+//    public boolean initXYChart(String title, boolean categoryIsNumbers) {
+//        try {
+//            String chartName = chartTypesController.chartName;
+//            UserConfig.setBoolean(chartName + "CategoryIsNumbers", categoryIsNumbers);
+//            xyMaker.init(chartTypesController.chartType, chartName)
+//                    .setDefaultChartTitle(title)
+//                    .setChartTitle(title)
+//                    .setDefaultCategoryLabel(selectedCategory)
+//                    .setCategoryLabel(selectedCategory)
+//                    .setDefaultValueLabel(selectedValue)
+//                    .setValueLabel(selectedValue)
+//                    .setInvalidAs(invalidAs);
+//            return true;
+//        } catch (Exception e) {
+//            MyBoxLog.error(e.toString());
+//            return false;
+//        }
+//    }
     @Override
     protected void startOperation() {
         if (task != null) {
@@ -328,9 +286,7 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
                         if (groupName != null && groupName.equals(name)) {
                             tmpColumn.setType(ColumnDefinition.ColumnType.Double);
                         }
-                        if (calculationColumns.contains(name)) {
-                            tmpColumn.setType(ColumnDefinition.ColumnType.Double);
-                        }
+
                         tmpColumns.add(tmpColumn);
                     }
                     tmp2D.setColumns(tmpColumns);
@@ -376,23 +332,23 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
             if (tmpTable == null) {
                 return false;
             }
-            if (groupByValues()) {
-                resultsFile = tmpTable.groupStatisticByValues(data2D.dataName() + "_group", task,
-                        groupNames, calculations, sorts, maxData, scale, invalidAs);
-
-            } else if (groupByInterval()) {
-                resultsFile = tmpTable.groupStatisticByRange(data2D.dataName() + "_group", task,
-                        true, groupName, groupInterval, calculations, sorts, maxData, scale, invalidAs);
-
-            } else if (groupByNumber()) {
-                resultsFile = tmpTable.groupStatisticByRange(data2D.dataName() + "_group", task,
-                        false, groupName, groupNumber, calculations, sorts, maxData, scale, invalidAs);
-
-            } else if (groupByConditions()) {
-                resultsFile = tmpTable.groupStatisticByFilters(data2D.dataName() + "_group", task,
-                        groupConditions, calculations, sorts, maxData, scale, invalidAs);
-
-            }
+//            if (groupByValues()) {
+//                resultsFile = tmpTable.groupStatisticByValues(data2D.dataName() + "_group", task,
+//                        groupNames, calculations, sorts, maxData, scale, invalidAs);
+//
+//            } else if (groupByInterval()) {
+//                resultsFile = tmpTable.groupStatisticByRange(data2D.dataName() + "_group", task,
+//                        true, groupName, groupInterval, calculations, sorts, maxData, scale, invalidAs);
+//
+//            } else if (groupByNumber()) {
+//                resultsFile = tmpTable.groupStatisticByRange(data2D.dataName() + "_group", task,
+//                        false, groupName, groupNumber, calculations, sorts, maxData, scale, invalidAs);
+//
+//            } else if (groupByConditions()) {
+//                resultsFile = tmpTable.groupStatisticByFilters(data2D.dataName() + "_group", task,
+//                        groupConditions, calculations, sorts, maxData, scale, invalidAs);
+//
+//            }
 
             tmpTable.drop();
             return resultsFile != null;
@@ -420,7 +376,7 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
         xyData = null;
         pieColumns = null;
         pieData = null;
-        xyMaker.clearChart();
+//        chartMaker.clearChart();
         pieMaker.clearChart();
         if (resultsFile == null) {
             return;
@@ -503,18 +459,18 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
             } else {
                 valueIndice.add(countIndex);
             }
-            categoryColumn = resultsFile.columns.get(categoryIndex);
-            Data2DColumn countColumn = resultsFile.columns.get(countIndex);
-
-            xyColumns = new ArrayList<>();
-            xyColumns.add(categoryColumn);
-            for (int i : valueIndice) {
-                xyColumns.add(resultsFile.columns.get(i));
-            }
-
-            pieColumns = new ArrayList<>();
-            pieColumns.add(categoryColumn);
-            pieColumns.add(countColumn);
+//            categoryColumn = resultsFile.columns.get(categoryIndex);
+//            Data2DColumn countColumn = resultsFile.columns.get(countIndex);
+//
+//            xyColumns = new ArrayList<>();
+//            xyColumns.add(categoryColumn);
+//            for (int i : valueIndice) {
+//                xyColumns.add(resultsFile.columns.get(i));
+//            }
+//
+//            pieColumns = new ArrayList<>();
+//            pieColumns.add(categoryColumn);
+//            pieColumns.add(countColumn);
 
             xyData = new ArrayList<>();
             pieData = new ArrayList<>();
@@ -532,45 +488,24 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
                 pieData.add(pieRow);
             }
 
-            selectedCategory = categoryColumn.getColumnName();
-            selectedValue = message("Aggregate");
-            String title = chartTitle();
-            initXYChart(title, categoryColumn.isNumberType());
-
-            pieMaker.init(message("PieChart"))
-                    .setDefaultChartTitle(title + " - " + message("Count"))
-                    .setChartTitle(title + " - " + message("Count"))
-                    .setDefaultCategoryLabel(selectedCategory)
-                    .setCategoryLabel(selectedCategory)
-                    .setDefaultValueLabel(message("Count"))
-                    .setValueLabel(message("Count"))
-                    .setInvalidAs(invalidAs);
-
+//            selectedCategory = categoryColumn.getColumnName();
+//            selectedValue = message("Aggregate");
+//            String title = chartTitle();
+//            initChart(title, categoryColumn.isNumberType());
+//            pieMaker.init(message("PieChart"))
+//                    .setDefaultChartTitle(title + " - " + message("Count"))
+//                    .setChartTitle(title + " - " + message("Count"))
+//                    .setDefaultCategoryLabel(selectedCategory)
+//                    .setCategoryLabel(selectedCategory)
+//                    .setDefaultValueLabel(message("Count"))
+//                    .setValueLabel(message("Count"))
+//                    .setInvalidAs(invalidAs);
         } catch (Exception e) {
             if (backgroundTask != null) {
                 backgroundTask.setError(e.toString());
             } else {
                 MyBoxLog.error(e);
             }
-        }
-    }
-
-    public boolean initXYChart(String title, boolean categoryIsNumbers) {
-        try {
-            String chartName = chartTypesController.chartName;
-            UserConfig.setBoolean(chartName + "CategoryIsNumbers", categoryIsNumbers);
-            xyMaker.init(chartTypesController.chartType, chartName)
-                    .setDefaultChartTitle(title)
-                    .setChartTitle(title)
-                    .setDefaultCategoryLabel(selectedCategory)
-                    .setCategoryLabel(selectedCategory)
-                    .setDefaultValueLabel(selectedValue)
-                    .setValueLabel(selectedValue)
-                    .setInvalidAs(invalidAs);
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return false;
         }
     }
 
@@ -616,9 +551,9 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
     /*
         static
      */
-    public static Data2DGroupStatisticController open(ControlData2DLoad tableController) {
+    public static Data2DChartGroupXYController open(ControlData2DLoad tableController) {
         try {
-            Data2DGroupStatisticController controller = (Data2DGroupStatisticController) WindowTools.openChildStage(
+            Data2DChartGroupXYController controller = (Data2DChartGroupXYController) WindowTools.openChildStage(
                     tableController.getMyWindow(), Fxmls.Data2DGroupStatisticFxml, false);
             controller.setParameters(tableController);
             controller.requestMouse();

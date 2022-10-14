@@ -25,6 +25,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
@@ -575,6 +576,11 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         to/from CSV
      */
     public static DataFileCSV save(String dname, SingletonTask task, ResultSet results, String rowNumberName) {
+        return save(dname, task, results, rowNumberName, 8, InvalidAs.Blank);
+    }
+
+    public static DataFileCSV save(String dname, SingletonTask task, ResultSet results, String rowNumberName,
+            int dscale, InvalidAs invalidAs) {
         try {
             if (results == null) {
                 return null;
@@ -609,7 +615,11 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                     }
                     for (Data2DColumn column : db2Columns) {
                         Object v = results.getObject(column.getColumnName());
-                        fileRow.add(v == null ? "" : column.toString(v));
+                        String s = column.toString(v);
+                        if (column.needScale()) {
+                            s = DoubleTools.scaleString(s, invalidAs, dscale);
+                        }
+                        fileRow.add(s);
                     }
                     csvPrinter.printRecord(fileRow);
                     fileRow.clear();

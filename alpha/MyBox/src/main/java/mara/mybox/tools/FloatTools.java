@@ -75,6 +75,7 @@ public class FloatTools {
             NumberFormat formatter = NumberFormat.getInstance();
             formatter.setMaximumFractionDigits(scale);
             formatter.setRoundingMode(RoundingMode.HALF_UP);
+            formatter.setGroupingUsed(false);
             return Float.valueOf(formatter.format(v));
         } catch (Exception e) {
             return v;

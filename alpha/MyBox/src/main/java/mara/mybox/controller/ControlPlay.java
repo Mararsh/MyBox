@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -13,7 +14,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Languages;
@@ -26,10 +26,10 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlPlay extends BaseController {
 
-    protected ImagesPlayController imagesController;
     protected int interval, framesNumber, currentIndex, fromFrame, toFrame;
     protected double speed;
     protected long currentDelay;
+    protected SimpleBooleanProperty frameNodify, stopNodify, intervalNodify;
 
     @FXML
     protected ComboBox<String> speedSelector, intervalSelector, frameSelector;
@@ -40,10 +40,14 @@ public class ControlPlay extends BaseController {
     @FXML
     protected Label totalLabel;
 
-    public void setParameters(ImagesPlayController imagesController) {
+    public void setParameters(BaseController parent) {
         try {
-            this.imagesController = imagesController;
-            this.baseName = imagesController.baseName;
+            frameNodify = new SimpleBooleanProperty();
+            stopNodify = new SimpleBooleanProperty();
+            intervalNodify = new SimpleBooleanProperty();
+
+            this.parentController = parent;
+            this.baseName = parent.baseName;
             clear();
 
             frameSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -101,11 +105,7 @@ public class ControlPlay extends BaseController {
                             interval = v;
                             intervalSelector.getEditor().setStyle(null);
                             UserConfig.setInt(baseName + "Interval", v);
-                            if (imagesController.imageInfos != null) {
-                                for (ImageInformation info : imagesController.imageInfos) {
-                                    info.setDuration(interval);
-                                }
-                            }
+                            intervalNodify.set(!intervalNodify.get());
                         }
                     } catch (Exception e) {
                         speedSelector.getEditor().setStyle(UserConfig.badStyle());
@@ -263,9 +263,7 @@ public class ControlPlay extends BaseController {
             frameSelector.getSelectionModel().select((currentIndex + 1) + "");
             isSettingValues = false;
             speed = speed <= 0 ? 1 : speed;
-            if (imagesController != null) {
-                imagesController.displayFrame(currentIndex);
-            }
+            frameNodify.set(!frameNodify.get());
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -277,9 +275,7 @@ public class ControlPlay extends BaseController {
             previousButton.setDisable(false);
             nextButton.setDisable(false);
             pauseButton.setUserData("Paused");
-            if (imagesController != null) {
-                imagesController.closeFile();
-            }
+            stopNodify.set(!stopNodify.get());
         } else {
             StyleTools.setNameIcon(pauseButton, Languages.message("Pause"), "iconPause.png");
             previousButton.setDisable(true);
@@ -359,16 +355,16 @@ public class ControlPlay extends BaseController {
         currentIndex = 0;
         fromFrame = 0;
         toFrame = -1;
+        stopNodify.set(!stopNodify.get());
     }
 
     @Override
     public void cleanPane() {
         try {
             clear();
-            if (imagesController != null) {
-                imagesController.closeFile();
-                imagesController = null;
-            }
+            frameNodify = null;
+            stopNodify = null;
+            intervalNodify = null;
         } catch (Exception e) {
         }
         super.cleanPane();
