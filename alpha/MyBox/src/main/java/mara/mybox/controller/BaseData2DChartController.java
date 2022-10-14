@@ -158,14 +158,11 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     }
 
     public String chartTitle() {
-        return null;
+        return baseTitle;
     }
 
     public String categoryName() {
-        if (categoryColumnSelector == null) {
-            return null;
-        }
-        return categoryColumnSelector.getSelectionModel().getSelectedItem();
+        return selectedCategory;
     }
 
     @Override

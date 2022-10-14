@@ -166,7 +166,6 @@ License:    Apache License Version 2.0
                                           <VBox prefHeight="200.0" prefWidth="100.0" spacing="5.0">
                                              <children>
                                                 <fx:include fx:id="group" source="ControlData2DGroup.fxml" />
-                                                                  <fx:include fx:id="sort" minHeight="-Infinity" prefHeight="200.0" source="ControlSelection.fxml" />
                                              </children>
                                           </VBox>
                                        </content>
@@ -182,7 +181,7 @@ License:    Apache License Version 2.0
                                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                                             </padding>
                                                             <children>
-                                                                <CheckBox fx:id="onlyStatisticCheck" mnemonicParsing="false" text="%StatisticOnlyNumbers" />
+                                                                <CheckBox fx:id="onlyStatisticCheck" minHeight="-Infinity" mnemonicParsing="false" text="%StatisticOnlyNumbers" wrapText="true" />
                                                                 <fx:include fx:id="calculation" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlSelection.fxml" VBox.vgrow="ALWAYS" />
                                                             </children>
                                                         </VBox>
@@ -199,6 +198,7 @@ License:    Apache License Version 2.0
                                                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                                             </padding>
                                                             <children>
+                                                                  <fx:include fx:id="sort" minHeight="-Infinity" prefHeight="200.0" source="ControlSelection.fxml" />
                                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="ALWAYS">
                                                                     <children>
                                                       <HBox alignment="CENTER_LEFT" spacing="2.0">
@@ -207,7 +207,7 @@ License:    Apache License Version 2.0
                                                             <ComboBox fx:id="scaleSelector" editable="true" prefWidth="120.0" />
                                                          </children>
                                                       </HBox>
-                                                                        <FlowPane fx:id="maxPane" hgap="2.0" vgap="2.0">
+                                                                        <FlowPane fx:id="maxPane" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
                                                                             <children>
                                                                                 <Label minHeight="-Infinity" text="%MaxResultsTake" wrapText="true" />
                                                                                 <TextField fx:id="maxInput" prefWidth="100.0" />
@@ -315,7 +315,7 @@ License:    Apache License Version 2.0
                                                     </padding>
                                                     <children>
                                           <fx:include fx:id="chartTypes" source="ControlChartXYSelection.fxml" />
-                                                        <fx:include maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DChartXY.fxml" VBox.vgrow="ALWAYS" fx:id="xyChart" />
+                                                        <fx:include fx:id="chart" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DChartXY.fxml" VBox.vgrow="ALWAYS" />
                                                     </children>
                                                 </VBox>
                                             </content>

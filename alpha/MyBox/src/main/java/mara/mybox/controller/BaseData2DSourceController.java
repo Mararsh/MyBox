@@ -36,7 +36,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
     protected ChangeListener<Boolean> tableLoadListener, tableStatusListener;
 
     @FXML
-    protected Tab dataTab, filterTab, optionsTab;
+    protected Tab dataTab, filterTab, optionsTab, groupTab;
     @FXML
     protected ToggleGroup rowsGroup;
     @FXML

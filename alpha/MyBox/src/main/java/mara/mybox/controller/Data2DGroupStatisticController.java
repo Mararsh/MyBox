@@ -6,7 +6,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.TextField;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
@@ -16,7 +15,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.chart.PieChartMaker;
-import mara.mybox.fxml.chart.XYChartMaker;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -26,31 +24,22 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-8-10
  * @License Apache License Version 2.0
  */
-public class Data2DGroupStatisticController extends BaseData2DGroupController {
+public class Data2DGroupStatisticController extends Data2DChartGroupXYController {
 
     protected List<String> calculationColumns, calculations;
     protected DataFileCSV resultsFile;
-    protected XYChartMaker xyMaker;
     protected PieChartMaker pieMaker;
-    protected List<List<String>> xyData, pieData;
-    protected List<Data2DColumn> xyColumns, pieColumns;
-    protected Data2DColumn categoryColumn;
-    protected int maxData = -1;
+    protected List<List<String>> pieData;
+    protected List<Data2DColumn> pieColumns;
 
     @FXML
     protected ControlSelection calculationController;
     @FXML
     protected ControlData2DResults valuesController;
     @FXML
-    protected TextField maxInput;
-    @FXML
-    protected CheckBox displayAllCheck, onlyStatisticCheck;
-    @FXML
-    protected ControlData2DChartXY xyChartController;
+    protected CheckBox onlyStatisticCheck;
     @FXML
     protected ControlData2DChartPie pieChartController;
-    @FXML
-    protected ControlChartXYSelection chartTypesController;
 
     public Data2DGroupStatisticController() {
         baseTitle = message("GroupStatistic");
@@ -62,27 +51,6 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
         try {
             super.initControls();
 
-            xyMaker = xyChartController.chartMaker;
-            xyChartController.redrawNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    drawXYChart();
-                }
-            });
-
-            chartTypesController.typeNodify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    if (categoryColumn == null) {
-                        return;
-                    }
-                    initXYChart(baseTitle, categoryColumn.isNumberType());
-                    drawXYChart();
-                }
-            });
-
-            chartTypesController.thisPane.disableProperty().bind(xyChartController.buttonsPane.disableProperty());
-
             pieMaker = pieChartController.pieMaker;
             pieChartController.redrawNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -91,12 +59,6 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
                 }
             });
 
-            groupController.columnsController.selectedNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    makeSortList();
-                }
-            });
             calculationController.setParameters(this, message("Calculation"), message("Aggregate"));
             calculationController.selectedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -104,49 +66,11 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
                     makeSortList();
                 }
             });
-            sortController.setParameters(this, message("Sort"), message("Sort"));
-
-            displayAllCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayAll", true));
-            displayAllCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
-                if (isSettingValues) {
-                    return;
-                }
-                UserConfig.setBoolean(baseName + "DisplayAll", displayAllCheck.isSelected());
-                noticeMemory();
-                makeChart();
-            });
-
-            displayAllCheck.visibleProperty().bind(allPagesRadio.selectedProperty());
 
             valuesController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    makeChart();
-                }
-            });
-
-            maxData = UserConfig.getInt(baseName + "MaxDataNumber", -1);
-            if (maxData > 0) {
-                maxInput.setText(maxData + "");
-            }
-            maxInput.setStyle(null);
-            maxInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    String maxs = maxInput.getText();
-                    if (maxs == null || maxs.isBlank()) {
-                        maxData = -1;
-                        maxInput.setStyle(null);
-                        UserConfig.setLong(baseName + "MaxDataNumber", -1);
-                    } else {
-                        try {
-                            maxData = Integer.valueOf(maxs);
-                            maxInput.setStyle(null);
-                            UserConfig.setLong(baseName + "MaxDataNumber", maxData);
-                        } catch (Exception e) {
-                            maxInput.setStyle(UserConfig.badStyle());
-                        }
-                    }
+                    refreshAction();
                 }
             });
 
@@ -169,13 +93,11 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
         try {
             super.refreshControls();
 
-            sortController.loadNames(null);
             if (!data2D.isValid()) {
                 calculationController.loadNames(null);
                 return;
             }
             makeStatisticList();
-            makeSortList();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -208,16 +130,19 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
         }
     }
 
+    @Override
     public void makeSortList() {
         try {
             List<String> names = new ArrayList<>();
             names.add(message("Count") + "-" + message("Descending"));
             names.add(message("Count") + "-" + message("Ascending"));
-            List<String> groups = getGroupColumns();
-            if (groups != null) {
-                for (String name : groups) {
-                    names.add(name + "-" + message("Descending"));
-                    names.add(name + "-" + message("Ascending"));
+            if (groupController.byValues()) {
+                List<String> groups = groupController.groupNames;
+                if (groups != null) {
+                    for (String name : groups) {
+                        names.add(name + "-" + message("Descending"));
+                        names.add(name + "-" + message("Ascending"));
+                    }
                 }
             }
             calculations = calculationController.selectedNames();
@@ -234,29 +159,21 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
     }
 
     @Override
-    public void noticeMemory() {
-        noticeLabel.setVisible(isAllPages() && displayAllCheck.isSelected());
-    }
-
-    @Override
     public boolean initData() {
         try {
             if (!super.initData()) {
                 return false;
             }
-            checkObject();
-            checkInvalidAs();
-
             List<String> colsNames = new ArrayList<>();
 
-            if (groupByValues()) {
-                colsNames.addAll(groupNames);
+            if (groupController.byValues()) {
+                colsNames.addAll(groupController.groupNames);
 
-            } else if (groupByConditions()) {
+            } else if (groupController.byConditions()) {
                 colsNames = data2D.columnNames();
 
             } else {
-                colsNames.add(groupName);
+                colsNames.add(groupController.groupName);
 
             }
 
@@ -300,8 +217,9 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
             }
             checkedColsNames = colsNames;
 
-            xyChartController.palette = null;
-            return initXYChart(baseTitle, false);
+            sorts = sortController.selectedNames();
+
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
@@ -325,7 +243,7 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
                     for (Data2DColumn column : data2D.columns) {
                         Data2DColumn tmpColumn = column.cloneAll();
                         String name = tmpColumn.getColumnName();
-                        if (groupName != null && groupName.equals(name)) {
+                        if (groupController.groupName != null && groupController.groupName.equals(name)) {
                             tmpColumn.setType(ColumnDefinition.ColumnType.Double);
                         }
                         if (calculationColumns.contains(name)) {
@@ -376,21 +294,23 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
             if (tmpTable == null) {
                 return false;
             }
-            if (groupByValues()) {
+            if (groupController.byValues()) {
                 resultsFile = tmpTable.groupStatisticByValues(data2D.dataName() + "_group", task,
-                        groupNames, calculations, sorts, maxData, scale, invalidAs);
+                        groupController.groupNames, calculations, sorts, maxData, scale, invalidAs);
 
-            } else if (groupByInterval()) {
+            } else if (groupController.byInterval()) {
                 resultsFile = tmpTable.groupStatisticByRange(data2D.dataName() + "_group", task,
-                        true, groupName, groupInterval, calculations, sorts, maxData, scale, invalidAs);
+                        true, groupController.groupName, groupController.groupInterval,
+                        calculations, sorts, maxData, scale, invalidAs);
 
-            } else if (groupByNumber()) {
+            } else if (groupController.byNumber()) {
                 resultsFile = tmpTable.groupStatisticByRange(data2D.dataName() + "_group", task,
-                        false, groupName, groupNumber, calculations, sorts, maxData, scale, invalidAs);
+                        false, groupController.groupName, groupController.groupNumber,
+                        calculations, sorts, maxData, scale, invalidAs);
 
-            } else if (groupByConditions()) {
+            } else if (groupController.byConditions()) {
                 resultsFile = tmpTable.groupStatisticByFilters(data2D.dataName() + "_group", task,
-                        groupConditions, calculations, sorts, maxData, scale, invalidAs);
+                        groupController.groupConditions, calculations, sorts, maxData, scale, invalidAs);
 
             }
 
@@ -405,22 +325,14 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
         }
     }
 
+    @FXML
     @Override
-    public String chartTitle() {
-        return baseTitle;
-    }
-
-    @Override
-    public String categoryName() {
-        return selectedCategory;
-    }
-
-    public void makeChart() {
-        xyColumns = null;
-        xyData = null;
+    public void refreshAction() {
+        outputColumns = null;
+        outputData = null;
         pieColumns = null;
         pieData = null;
-        xyMaker.clearChart();
+        chartMaker.clearChart();
         pieMaker.clearChart();
         if (resultsFile == null) {
             return;
@@ -435,9 +347,7 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
                 try {
                     resultsFile.startTask(backgroundTask, null);
                     makeChartData();
-                    outputColumns = xyColumns;
-                    outputData = xyData;
-                    return xyData != null;
+                    return outputData != null;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -478,15 +388,15 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
             }
             int groupSize, columnSize = resultsFile.columns.size();
             int categoryIndex;
-            if (groupByValues()) {
-                groupSize = groupNames.size();
+            if (groupController.byValues()) {
+                groupSize = groupController.groupNames.size();
                 categoryIndex = groupSize > 1 ? 0 : 1;
 
-            } else if (groupByInterval() || groupByNumber()) {
+            } else if (groupController.byInterval() || groupController.byNumber()) {
                 groupSize = 1;
                 categoryIndex = 1;
 
-            } else if (groupByConditions()) {
+            } else if (groupController.byConditions()) {
                 groupSize = 1;
                 categoryIndex = 1;
 
@@ -506,17 +416,17 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
             categoryColumn = resultsFile.columns.get(categoryIndex);
             Data2DColumn countColumn = resultsFile.columns.get(countIndex);
 
-            xyColumns = new ArrayList<>();
-            xyColumns.add(categoryColumn);
+            outputColumns = new ArrayList<>();
+            outputColumns.add(categoryColumn);
             for (int i : valueIndice) {
-                xyColumns.add(resultsFile.columns.get(i));
+                outputColumns.add(resultsFile.columns.get(i));
             }
 
             pieColumns = new ArrayList<>();
             pieColumns.add(categoryColumn);
             pieColumns.add(countColumn);
 
-            xyData = new ArrayList<>();
+            outputData = new ArrayList<>();
             pieData = new ArrayList<>();
             for (List<String> data : resultsData) {
                 List<String> xyRow = new ArrayList<>();
@@ -525,7 +435,7 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
                 for (int i : valueIndice) {
                     xyRow.add(data.get(i));
                 }
-                xyData.add(xyRow);
+                outputData.add(xyRow);
                 List<String> pieRow = new ArrayList<>();
                 pieRow.add(category);
                 pieRow.add(data.get(countIndex));
@@ -535,7 +445,7 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
             selectedCategory = categoryColumn.getColumnName();
             selectedValue = message("Aggregate");
             String title = chartTitle();
-            initXYChart(title, categoryColumn.isNumberType());
+            initChart(title, categoryColumn.isNumberType());
 
             pieMaker.init(message("PieChart"))
                     .setDefaultChartTitle(title + " - " + message("Count"))
@@ -555,48 +465,10 @@ public class Data2DGroupStatisticController extends BaseData2DGroupController {
         }
     }
 
-    public boolean initXYChart(String title, boolean categoryIsNumbers) {
-        try {
-            String chartName = chartTypesController.chartName;
-            UserConfig.setBoolean(chartName + "CategoryIsNumbers", categoryIsNumbers);
-            xyMaker.init(chartTypesController.chartType, chartName)
-                    .setDefaultChartTitle(title)
-                    .setChartTitle(title)
-                    .setDefaultCategoryLabel(selectedCategory)
-                    .setCategoryLabel(selectedCategory)
-                    .setDefaultValueLabel(selectedValue)
-                    .setValueLabel(selectedValue)
-                    .setInvalidAs(invalidAs);
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return false;
-        }
-    }
-
     @Override
     public void drawChart() {
         drawXYChart();
         drawPieChart();
-    }
-
-    @FXML
-    @Override
-    public void refreshAction() {
-        makeChart();
-    }
-
-    @FXML
-    public void drawXYChart() {
-        try {
-            if (xyData == null || xyData.isEmpty()) {
-                popError(message("NoData"));
-                return;
-            }
-            xyChartController.writeXYChart(xyColumns, xyData, null, false);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
     }
 
     @FXML
