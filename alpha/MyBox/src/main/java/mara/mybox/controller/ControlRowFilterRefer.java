@@ -18,19 +18,18 @@ import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
- * @CreateDate 2022-9-5
+ * @CreateDate 2022-10-15
  * @License Apache License Version 2.0
  */
-public class ControlJavaScriptRefer extends TreeNodesController {
+public class ControlRowFilterRefer extends TreeNodesController {
 
     @FXML
     protected TextArea scriptInput;
     @FXML
     protected ListView<String> placeholdersList;
 
-    public ControlJavaScriptRefer() {
-        baseTitle = "JavaScript";
-        category = TreeNode.JavaScript;
+    public ControlRowFilterRefer() {
+        category = TreeNode.RowFilter;
     }
 
     @Override

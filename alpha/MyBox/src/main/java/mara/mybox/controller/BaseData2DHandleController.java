@@ -555,9 +555,9 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             selectedRadio.setSelected(true);
         }
         UserConfig.setLong(baseName + "MaxDataNumber", sourceController.filterController.maxData);
-        filterController.maxInput.setText(sourceController.filterController.maxData + "");
         filterController.load(sourceController.filterController.scriptInput.getText(),
-                sourceController.filterController.othersRadio.isSelected());
+                sourceController.filterController.trueRadio.isSelected());
+        filterController.maxInput.setText(sourceController.filterController.maxData + "");
         scaleSelector.getSelectionModel().select(sourceController.scale + "");
     }
 

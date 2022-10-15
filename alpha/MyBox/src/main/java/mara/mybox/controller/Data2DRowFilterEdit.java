@@ -27,11 +27,7 @@ public class Data2DRowFilterEdit extends BaseInputController {
             this.handleController = handleController;
 
             filterController.setParameters(handleController);
-            filterController.setData2D(handleController.data2D);
-
-            if (filter != null) {
-                filterController.load(filter.getSourceScript(), filter.isReversed());
-            }
+            filterController.load(handleController.data2D, filter);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

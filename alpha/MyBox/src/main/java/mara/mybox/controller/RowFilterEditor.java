@@ -2,47 +2,42 @@ package mara.mybox.controller;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TreeItem;
-import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.DataFilter;
+import javafx.scene.input.MouseEvent;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
- * @CreateDate 2022-6-1
+ * @CreateDate 2022-10-15
  * @License Apache License Version 2.0
  */
-public class ControlData2DFilter extends ControlData2DRowExpression {
+public class RowFilterEditor extends TreeNodeEditor {
 
+    protected RowFilterController manageController;
     protected long maxData = -1;
-    protected DataFilter filter;
 
     @FXML
     protected RadioButton trueRadio, othersRadio;
     @FXML
     protected TextField maxInput;
 
-    public ControlData2DFilter() {
-        TipsLabelKey = "RowFilterTips";
-        category = TreeNode.RowFilter;
+    public RowFilterEditor() {
+        defaultExt = "js";
     }
 
-    @Override
-    public void initCalculator() {
-        filter = new DataFilter();
-        calculator = filter.calculator;
-    }
-
-    public void setParameters(BaseController parent) {
+    protected void setParameters(RowFilterController manageController) {
         try {
-            baseName = parent.baseName;
+            this.manageController = manageController;
+            baseName = manageController.baseName;
 
             if (maxInput != null) {
                 maxData = UserConfig.getLong(baseName + "MaxDataNumber", -1);
@@ -82,64 +77,25 @@ public class ControlData2DFilter extends ControlData2DRowExpression {
     }
 
     @Override
-    public void setData2D(Data2D data2D) {
-        super.setData2D(data2D);
-        data2D.filter = filter;
+    protected void showEditorPane() {
     }
 
-    @Override
-    protected void editNode(TreeItem<TreeNode> item) {
-        if (item == null) {
-            return;
-        }
-        TreeNode node = item.getValue();
-        if (node == null || node.getValue() == null) {
-            return;
-        }
-        scriptInput.setText(node.getValue());
-        maxInput.setText("");
-        trueRadio.setSelected(true);
-        String more = node.getMore();
-        if (more != null && more.contains(TreeNode.TagsSeparater)) {
-            try {
-                String[] v = more.split(TreeNode.TagsSeparater);
-                if (StringTools.isFalse(v[0])) {
-                    othersRadio.setSelected(true);
-                } else {
-                    trueRadio.setSelected(true);
-                }
-                long max = Long.parseLong(v[1]);
-                if (max > 0) {
-                    maxInput.setText(max + "");
-                }
-            } catch (Exception e) {
-            }
-        }
-    }
-
-    @Override
     public void clear() {
         isSettingValues = true;
-        scriptInput.clear();
+        valueInput.clear();
         maxInput.clear();
-        placeholdersList.getItems().clear();
         trueRadio.setSelected(true);
         isSettingValues = false;
-        filter.clear();
-    }
-
-    public void load(String script, boolean isTrue) {
-        load(script, isTrue, -1);
     }
 
     public void load(String script, boolean isTrue, long max) {
         clear();
         isSettingValues = true;
         if (script == null || script.isBlank()) {
-            scriptInput.clear();
+            valueInput.clear();
             trueRadio.setSelected(true);
         } else {
-            scriptInput.setText(script);
+            valueInput.setText(script);
             if (isTrue) {
                 trueRadio.setSelected(true);
             } else {
@@ -148,68 +104,74 @@ public class ControlData2DFilter extends ControlData2DRowExpression {
         }
         maxInput.setText(max > 0 ? max + "" : "");
         isSettingValues = false;
-        filter.setSourceScript(script);
-        filter.setReversed(!isTrue);
-        filter.setMaxPassed(max);
     }
 
-    public void load(Data2D data2D, DataFilter filter) {
-        if (filter == null) {
-            clear();
-            return;
-        }
-        load(filter.getSourceScript(), !filter.isReversed(), filter.getMaxPassed());
-        setData2D(data2D);
-    }
-
-    public void loadNode(TreeNode node) {
+    @Override
+    protected synchronized void editNode(TreeNode node) {
+        super.editNode(node);
         isSettingValues = true;
         if (node != null) {
             String script = node.getValue();
             String more = node.getMore();
             if (more != null && more.contains(TreeNode.TagsSeparater)) {
                 try {
-                    String[] v = more.split(more);
+                    String[] v = more.split(TreeNode.TagsSeparater);
                     load(script, StringTools.isTrue(v[0]), Long.parseLong(v[1]));
                 } catch (Exception e) {
-                    load(script, true);
+                    load(script, true, -1);
                 }
             } else {
-                load(script, true);
+                load(script, true, -1);
             }
         } else {
-            load(null, true);
+            load(null, true, -1);
         }
         isSettingValues = false;
     }
 
-    public DataFilter pickValues() {
-        filter.setReversed(othersRadio.isSelected())
-                .setMaxPassed(maxData).setPassedNumber(0)
-                .setSourceScript(scriptInput.getText());
-        if (data2D != null) {
-            data2D.setFilter(filter);
-        }
-        return filter;
-    }
-
     @Override
-    public boolean checkExpression(boolean allPages) {
-        if (!super.checkExpression(allPages)) {
-            return false;
+    public TreeNode pickNodeData() {
+        TreeNode node = super.pickNodeData();
+        if (node != null) {
+            String more = trueRadio.isSelected() ? "true" : "false";
+            more += TreeNode.TagsSeparater;
+            more += maxData > 0 ? maxData + "" : "";
+            node.setMore(more);
         }
-        if (maxInput != null && UserConfig.badStyle().equals(maxInput.getStyle())) {
-            error = message("InvalidParameter") + ": " + message("MaxSourceDataTake");
-            return false;
-        }
-        pickValues();
-        return true;
+        return node;
     }
 
     @FXML
-    @Override
-    public void editAction() {
-        RowFilterController.open(scriptInput.getText(), trueRadio.isSelected(), maxData);
+    protected void popScriptExamples(MouseEvent mouseEvent) {
+        if (UserConfig.getBoolean(interfaceName + "ExamplesPopWhenMouseHovering", false)) {
+            scriptExamples(mouseEvent);
+        }
+    }
+
+    @FXML
+    protected void showScriptExamples(ActionEvent event) {
+        scriptExamples(event);
+    }
+
+    protected void scriptExamples(Event event) {
+        try {
+            MenuController controller = PopTools.popJavaScriptExamples(this, event, valueInput, interfaceName + "Examples");
+            PopTools.rowExpressionButtons(controller, valueInput, message("Column") + "1");
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    protected void popScriptHistories(MouseEvent event) {
+        if (UserConfig.getBoolean(interfaceName + "HistoriesPopWhenMouseHovering", false)) {
+            PopTools.popStringValues(this, valueInput, event, interfaceName + "Histories", false, true);
+        }
+    }
+
+    @FXML
+    protected void showScriptHistories(ActionEvent event) {
+        PopTools.popStringValues(this, valueInput, event, interfaceName + "Histories", false, true);
     }
 
 }

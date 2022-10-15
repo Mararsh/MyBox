@@ -1217,4 +1217,44 @@ public class PopTools {
         }
     }
 
+    public static void rowExpressionButtons(MenuController controller,
+            TextInputControl scriptInput, String colName) {
+        try {
+            if (controller == null) {
+                return;
+            }
+            PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
+                    "#{" + message("DataRowNumber") + "} % 2 == 0",
+                    "#{" + message("DataRowNumber") + "} % 2 == 1",
+                    "#{" + message("DataRowNumber") + "} >= 9",
+                    "#{" + message("TableRowNumber") + "} % 2 == 0",
+                    "#{" + message("TableRowNumber") + "} % 2 == 1",
+                    "#{" + message("TableRowNumber") + "} == 1"
+            ), true, 2);
+
+            PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
+                    "#{" + colName + "} == 0",
+                    "Math.abs(#{" + colName + "}) >= 3",
+                    "#{" + colName + "} < 0 || #{" + colName + "} != -6 "
+            ), true, 3);
+
+            PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
+                    "'#{" + message("Time") + "}' == '2016-05-19 11:34:28'",
+                    "'#{" + message("Time") + "}'.startsWith('2016-05-19 11')"
+            ), true, 4);
+
+            PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
+                    "'#{" + colName + "}' == ''",
+                    "'#{" + colName + "}'.length > 0",
+                    "'#{" + colName + "}'.indexOf('Hello') == 3",
+                    "'#{" + colName + "}'.endsWith('Hello')",
+                    "'#{" + colName + "}'.search(/Hello/ig) >= 0",
+                    "var array = [ 'A', 'B', 'C', 'D' ];\n"
+                    + "array.includes('#{" + colName + "}')"
+            ), true, 5);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
 }

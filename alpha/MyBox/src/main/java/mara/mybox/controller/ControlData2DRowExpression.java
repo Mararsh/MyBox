@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.util.Arrays;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -103,35 +102,8 @@ public class ControlData2DRowExpression extends ControlJavaScriptRefer {
                 return;
             }
             String col1 = data2D.columnNames().get(0);
-            PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
-                    "#{" + message("DataRowNumber") + "} % 2 == 0",
-                    "#{" + message("DataRowNumber") + "} % 2 == 1",
-                    "#{" + message("DataRowNumber") + "} >= 9",
-                    "#{" + message("TableRowNumber") + "} % 2 == 0",
-                    "#{" + message("TableRowNumber") + "} % 2 == 1",
-                    "#{" + message("TableRowNumber") + "} == 1"
-            ), true, 2);
+            PopTools.rowExpressionButtons(controller, scriptInput, col1);
 
-            PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
-                    "#{" + col1 + "} == 0",
-                    "Math.abs(#{" + col1 + "}) >= 3",
-                    "#{" + col1 + "} < 0 || #{" + col1 + "} != -6 "
-            ), true, 3);
-
-            PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
-                    "'#{" + message("Time") + "}' == '2016-05-19 11:34:28'",
-                    "'#{" + message("Time") + "}'.startsWith('2016-05-19 11')"
-            ), true, 4);
-
-            PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
-                    "'#{" + col1 + "}' == ''",
-                    "'#{" + col1 + "}'.length > 0",
-                    "'#{" + col1 + "}'.indexOf('Hello') == 3",
-                    "'#{" + col1 + "}'.endsWith('Hello')",
-                    "'#{" + col1 + "}'.search(/Hello/ig) >= 0",
-                    "var array = [ 'A', 'B', 'C', 'D' ];\n"
-                    + "array.includes('#{" + col1 + "}')"
-            ), true, 5);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

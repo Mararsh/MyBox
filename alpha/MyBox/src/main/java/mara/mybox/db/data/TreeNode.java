@@ -28,6 +28,7 @@ public class TreeNode extends BaseData {
     public static final String JEXLCode = "JEXLCode";
     public static final String JavaScript = "JavaScript";
     public static final String MathFunction = "MathFunction";
+    public static final String RowFilter = "RowFilter";
 
     protected long nodeid, parentid;
     protected String category, title, value, more, serialNumber;

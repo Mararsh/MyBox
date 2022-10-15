@@ -135,6 +135,17 @@ public class DataFilter {
         }
     }
 
+    public void clear() {
+        sourceScript = null;
+        filledScript = null;
+        maxPassed = -1;
+        reversed = false;
+        passedNumber = 0;
+        passed = false;
+        task = null;
+        calculator.reset();
+    }
+
     /*
         get/set
      */
