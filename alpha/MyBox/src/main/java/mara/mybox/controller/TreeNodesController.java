@@ -88,7 +88,7 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
     @Override
     protected void nodeAdded(TreeNode parent, TreeNode newNode) {
         if (caller != null) {
-            caller.addNewNode(caller.find(parent), newNode);
+            caller.addNewNode(caller.find(parent), newNode, true);
         }
         if (manageController != null) {
             manageController.nodeAdded(parent, newNode);

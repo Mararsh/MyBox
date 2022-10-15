@@ -177,7 +177,7 @@ public class TreeNodeEditor extends TreeTagsController {
         selectedNotify.set(!selectedNotify.get());
     }
 
-    protected synchronized void editNode(TreeNode node) {
+    protected void editNode(TreeNode node) {
         isSettingValues = true;
         currentNode = node;
         if (node != null) {
@@ -268,8 +268,9 @@ public class TreeNodeEditor extends TreeTagsController {
         start(updateTask, false);
     }
 
-    protected synchronized void copyNode() {
+    protected void copyNode() {
         isSettingValues = true;
+        parentController.setTitle(parentController.baseTitle + ": " + message("NewData"));
         idInput.setText(message("NewData"));
         nameInput.appendText(" " + message("Copy"));
         currentNode = null;
@@ -330,6 +331,7 @@ public class TreeNodeEditor extends TreeTagsController {
                         }
                         if (currentNode == null || parentNode == null) {
                             currentNode = null;
+                            conn.close();
                             return true;
                         } else {
                             node.setNodeid(currentNode.getNodeid());
@@ -343,10 +345,11 @@ public class TreeNodeEditor extends TreeTagsController {
                         newData = true;
                     }
                     if (currentNode == null) {
+                        conn.close();
                         return false;
                     }
                     long nodeid = currentNode.getNodeid();
-                    List<String> nodeTags = tableTreeNodeTag.nodeTagNames(nodeid);
+                    List<String> nodeTags = tableTreeNodeTag.nodeTagNames(conn, nodeid);
                     List<Tag> selected = tableView.getSelectionModel().getSelectedItems();
                     if (selected == null || selected.isEmpty()) {
                         tableTreeNodeTag.removeTags(conn, nodeid);
@@ -388,13 +391,13 @@ public class TreeNodeEditor extends TreeTagsController {
                     copyNode();
                     popError(message("NotExist"));
                 } else {
-                    popSaved();
                     editNode(currentNode);
                     if (newData) {
                         treeController.newNodeSaved();
                     } else {
                         treeController.nodeSaved();
                     }
+                    popSaved();
                 }
             }
 

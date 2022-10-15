@@ -747,15 +747,15 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                     if (isRoot) {
                         treeView.setRoot(rootItem);
                         rootItem.setExpanded(true);
-                        itemSelected(rootItem);
-                        nodeDeleted(rootItem.getValue());
+//                        itemSelected(rootItem);
+//                        nodeDeleted(rootItem.getValue());
                     } else {
                         targetItem.getChildren().clear();
                         if (targetItem.getParent() != null) {
                             targetItem.getParent().getChildren().remove(targetItem);
                         }
-                        itemSelected(treeView.getSelectionModel().getSelectedItem());
-                        nodeDeleted(targetItem.getValue());
+//                        itemSelected(treeView.getSelectionModel().getSelectedItem());
+//                        nodeDeleted(targetItem.getValue());
                     }
 
                     popSuccessful();
@@ -908,7 +908,6 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                 @Override
                 protected void whenSucceeded() {
                     treeView.refresh();
-                    select(item);
                 }
             };
             start(task);
@@ -950,14 +949,16 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         item.setExpanded(true);
     }
 
-    protected void addNewNode(TreeItem<P> item, P node) {
+    protected void addNewNode(TreeItem<P> item, P node, boolean select) {
         if (item == null || node == null) {
             return;
         }
         TreeItem<P> child = new TreeItem(node);
         item.getChildren().add(child);
         child.setExpanded(false);
-        select(item);
+        if (select) {
+            select(item);
+        }
     }
 
     protected void updateChild(TreeItem<P> item, P node) {

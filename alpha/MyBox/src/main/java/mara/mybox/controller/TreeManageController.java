@@ -389,10 +389,10 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         if (nodeController.currentNode == null) {
             return;
         }
+        nodesController.addNewNode(nodesController.find(nodeController.parentNode), nodeController.currentNode, false);
         if (loadedParent != null && nodeController.parentNode.getNodeid() == loadedParent.getNodeid()) {
             loadNodes(nodeController.parentNode);
         }
-        nodesController.addNewNode(nodesController.find(nodeController.parentNode), nodeController.currentNode);
     }
 
     public void nodeChanged() {
