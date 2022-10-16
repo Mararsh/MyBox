@@ -422,4 +422,28 @@ public abstract class Data2D_Filter extends Data2D_Data {
         }
     }
 
+    public List<String> namesInScript(String script) {
+        if (script == null || script.isEmpty()) {
+            return null;
+        }
+        List<String> names = new ArrayList<>();
+        for (String name : columnNames()) {
+            if (script.contains("#{" + name + "}")
+                    || script.contains("#{" + name + "}-" + message("Mean"))
+                    || script.contains("#{" + name + "}-" + message("Median"))
+                    || script.contains("#{" + name + "}-" + message("Mode"))
+                    || script.contains("#{" + name + "}-" + message("MinimumQ0"))
+                    || script.contains("#{" + name + "}-" + message("LowerQuartile"))
+                    || script.contains("#{" + name + "}-" + message("UpperQuartile"))
+                    || script.contains("#{" + name + "}-" + message("MaximumQ4"))
+                    || script.contains("#{" + name + "}-" + message("LowerExtremeOutlierLine"))
+                    || script.contains("#{" + name + "}-" + message("LowerMildOutlierLine"))
+                    || script.contains("#{" + name + "}-" + message("UpperMildOutlierLine"))
+                    || script.contains("#{" + name + "}-" + message("UpperExtremeOutlierLine"))) {
+                names.add(name);
+            }
+        }
+        return names;
+    }
+
 }

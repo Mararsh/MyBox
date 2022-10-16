@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -8,7 +9,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -28,24 +28,23 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
     protected BaseData2DHandleController handleController;
     protected ChangeListener<Boolean> listener;
     protected String groupName;
-    protected List<String> groupNames;
+    protected List<String> groupNames, conditionVariables;
     protected List<DataFilter> groupConditions;
-    protected double groupInterval, groupNumber;
 
     @FXML
     protected ControlSelection columnsController;
     @FXML
     protected ToggleGroup typeGroup;
     @FXML
-    protected RadioButton valuesRadio, intervalRadio, numberRadio, conditionsRadio;
+    protected RadioButton valuesRadio, valueRangeRadio, conditionsRadio, rowsRangeRadio;
     @FXML
-    protected VBox groupBox, columnsBox, conditionsBox;
+    protected VBox groupBox, columnsBox, conditionsBox, splitBox;
     @FXML
-    protected HBox columnlBox, intervalBox, numberBox;
-    @FXML
-    protected TextField intervalInput, numberInput;
+    protected HBox columnBox;
     @FXML
     protected ComboBox<String> columnSelector;
+    @FXML
+    protected ControlSplit splitController;
     @FXML
     protected TableColumn<DataFilter, String> conditionColumn;
     @FXML
@@ -61,6 +60,8 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
             super.initControls();
 
             columnsController.setParameters(this, message("Column"), message("GroupBy"));
+            splitController.setParameters(this);
+
             typeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
@@ -114,13 +115,15 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
                 groupBox.getChildren().add(columnsBox);
                 commentsLabel.setText(message("GroupValuesComments"));
 
-            } else if (intervalRadio.isSelected()) {
-                groupBox.getChildren().addAll(columnlBox, intervalBox);
+            } else if (valueRangeRadio.isSelected()) {
+                groupBox.getChildren().addAll(columnBox, splitBox);
                 commentsLabel.setText(message("GroupIntervalComments"));
+                splitController.isPositiveInteger = false;
 
-            } else if (numberRadio.isSelected()) {
-                groupBox.getChildren().addAll(columnlBox, numberBox);
+            } else if (rowsRangeRadio.isSelected()) {
+                groupBox.getChildren().add(splitBox);
                 commentsLabel.setText(message("GroupNumberComments"));
+                splitController.isPositiveInteger = true;
 
             } else if (conditionsRadio.isSelected()) {
                 groupBox.getChildren().add(conditionsBox);
@@ -138,8 +141,6 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
             groupName = null;
             groupNames = null;
             groupConditions = null;
-            groupInterval = Double.NaN;
-            groupNumber = Double.NaN;
 
             boolean valid = true;
             if (valuesRadio.isSelected()) {
@@ -154,33 +155,16 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
                     valid = false;
                 }
 
-            } else if (intervalRadio.isSelected()) {
+            } else if (valueRangeRadio.isSelected()) {
                 groupName = columnSelector.getValue();
-                if (groupName == null || groupName.isBlank()) {
+                if (groupName == null || groupName.isBlank() || !splitController.valid.get()) {
                     valid = false;
-                } else {
-                    try {
-                        groupInterval = Double.valueOf(intervalInput.getText());
-                    } catch (Exception e) {
-                        valid = false;
-                    }
                 }
 
-            } else if (numberRadio.isSelected()) {
+            } else if (rowsRangeRadio.isSelected()) {
                 groupName = columnSelector.getValue();
-                if (groupName == null || groupName.isBlank()) {
+                if (groupName == null || groupName.isBlank() || !splitController.valid.get()) {
                     valid = false;
-                } else {
-                    try {
-                        int v = Integer.valueOf(numberInput.getText());
-                        if (v <= 0) {
-                            valid = false;
-                        } else {
-                            groupNumber = v;
-                        }
-                    } catch (Exception e) {
-                        valid = false;
-                    }
                 }
             }
 
@@ -196,20 +180,56 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
         }
     }
 
-    public boolean byValues() {
+    public boolean byEqualValues() {
         return valuesRadio.isSelected();
     }
 
-    public boolean byInterval() {
-        return intervalRadio.isSelected();
+    public boolean byValueRange() {
+        return valueRangeRadio.isSelected();
     }
 
-    public boolean byNumber() {
-        return numberRadio.isSelected();
+    public boolean byValueSize() {
+        return valueRangeRadio.isSelected() && splitController.sizeRadio.isSelected();
+    }
+
+    public boolean byValueNumber() {
+        return valueRangeRadio.isSelected() && splitController.numberRadio.isSelected();
+    }
+
+    public boolean byValueList() {
+        return valueRangeRadio.isSelected() && splitController.listRadio.isSelected();
+    }
+
+    public boolean byRowsRange() {
+        return rowsRangeRadio.isSelected();
+    }
+
+    public boolean byRowsSize() {
+        return rowsRangeRadio.isSelected() && splitController.sizeRadio.isSelected();
+    }
+
+    public boolean byRowsNumber() {
+        return rowsRangeRadio.isSelected() && splitController.numberRadio.isSelected();
+    }
+
+    public boolean byRowsList() {
+        return rowsRangeRadio.isSelected() && splitController.listRadio.isSelected();
     }
 
     public boolean byConditions() {
         return conditionsRadio.isSelected();
+    }
+
+    public List<String> conditionVariables() {
+        conditionVariables = new ArrayList<>();
+        if (!byConditions()) {
+            return conditionVariables;
+        }
+        for (DataFilter filter : tableData) {
+
+        }
+
+        return conditionVariables;
     }
 
     @FXML

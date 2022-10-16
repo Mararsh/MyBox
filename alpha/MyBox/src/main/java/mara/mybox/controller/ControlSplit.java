@@ -23,10 +23,13 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlSplit extends BaseController {
 
+    protected double dsize;
     protected int size, number;
     protected List<Integer> list;
+    protected List<Double> dlist;
     protected SplitType splitType;
     protected SimpleBooleanProperty valid;
+    protected boolean isPositiveInteger;
 
     @FXML
     protected ToggleGroup splitGroup;
@@ -55,9 +58,14 @@ public class ControlSplit extends BaseController {
     }
 
     public void setParameters(BaseController parent) {
+        setParameters(parent, true);
+    }
+
+    public void setParameters(BaseController parent, boolean isInteger) {
         try {
             parentController = parent;
             baseName = baseName + "_" + parent.baseName;
+            this.isPositiveInteger = isInteger;
 
             valid.bind(sizeInput.styleProperty().isNotEqualTo(UserConfig.badStyle())
                     .and(numberInput.styleProperty().isNotEqualTo(UserConfig.badStyle()))
@@ -128,17 +136,27 @@ public class ControlSplit extends BaseController {
     }
 
     private void checkSize() {
-        try {
-            int v = Integer.valueOf(sizeInput.getText());
-            if (v > 0) {
-                sizeInput.setStyle(null);
-                size = v;
-                UserConfig.setString(baseName + "Size", size + "");
-            } else {
+        if (isPositiveInteger) {
+            try {
+                int v = Integer.valueOf(sizeInput.getText());
+                if (v > 0) {
+                    size = v;
+                    UserConfig.setString(baseName + "Size", size + "");
+                    sizeInput.setStyle(null);
+                } else {
+                    sizeInput.setStyle(UserConfig.badStyle());
+                }
+            } catch (Exception e) {
                 sizeInput.setStyle(UserConfig.badStyle());
             }
-        } catch (Exception e) {
-            sizeInput.setStyle(UserConfig.badStyle());
+        } else {
+            try {
+                dsize = Double.valueOf(sizeInput.getText());
+                UserConfig.setString(baseName + "Size", dsize + "");
+                sizeInput.setStyle(null);
+            } catch (Exception e) {
+                sizeInput.setStyle(UserConfig.badStyle());
+            }
         }
     }
 
@@ -158,32 +176,62 @@ public class ControlSplit extends BaseController {
     }
 
     private void checkList() {
-        list = new ArrayList<>();
-        try {
-            String[] ss = listInput.getText().split(",");
-            for (String item : ss) {
-                String[] values = item.split("-");
-                if (values.length != 2) {
-                    continue;
-                }
-                try {
-                    int start = Integer.valueOf(values[0].trim());
-                    int end = Integer.valueOf(values[1].trim());
-                    if (start > 0 && end >= start) {  // 1-based, include start and end
-                        list.add(start);
-                        list.add(end);
+        if (isPositiveInteger) {
+            list = new ArrayList<>();
+            try {
+                String[] ss = listInput.getText().split(",");
+                for (String item : ss) {
+                    String[] values = item.split("-");
+                    if (values.length != 2) {
+                        continue;
                     }
-                } catch (Exception e) {
+                    try {
+                        int start = Integer.valueOf(values[0].trim());
+                        int end = Integer.valueOf(values[1].trim());
+                        if (start > 0 && end >= start) {  // 1-based, include start and end
+                            list.add(start);
+                            list.add(end);
+                        }
+                    } catch (Exception e) {
+                    }
                 }
-            }
-            if (this.list.isEmpty()) {
+                if (list.isEmpty()) {
+                    listInput.setStyle(UserConfig.badStyle());
+                } else {
+                    listInput.setStyle(null);
+                    UserConfig.setString(baseName + "List", listInput.getText());
+                }
+            } catch (Exception e) {
                 listInput.setStyle(UserConfig.badStyle());
-            } else {
-                listInput.setStyle(null);
-                UserConfig.setString(baseName + "List", listInput.getText());
             }
-        } catch (Exception e) {
-            listInput.setStyle(UserConfig.badStyle());
+        } else {
+            dlist = new ArrayList<>();
+            try {
+                String[] ss = listInput.getText().split(",");
+                for (String item : ss) {
+                    String[] values = item.split("-");
+                    if (values.length != 2) {
+                        continue;
+                    }
+                    try {
+                        double start = Double.valueOf(values[0].trim());
+                        double end = Double.valueOf(values[1].trim());
+                        if (end >= start) {  // 1-based, include start and end
+                            dlist.add(start);
+                            dlist.add(end);
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+                if (dlist.isEmpty()) {
+                    listInput.setStyle(UserConfig.badStyle());
+                } else {
+                    listInput.setStyle(null);
+                    UserConfig.setString(baseName + "List", listInput.getText());
+                }
+            } catch (Exception e) {
+                listInput.setStyle(UserConfig.badStyle());
+            }
         }
     }
 

@@ -9,6 +9,7 @@ import javafx.scene.control.CheckBox;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
+import mara.mybox.data2d.DataTableGroupStatistic;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -136,7 +137,7 @@ public class Data2DGroupStatisticController extends Data2DChartGroupXYController
             List<String> names = new ArrayList<>();
             names.add(message("Count") + "-" + message("Descending"));
             names.add(message("Count") + "-" + message("Ascending"));
-            if (groupController.byValues()) {
+            if (groupController.byEqualValues()) {
                 List<String> groups = groupController.groupNames;
                 if (groups != null) {
                     for (String name : groups) {
@@ -166,7 +167,7 @@ public class Data2DGroupStatisticController extends Data2DChartGroupXYController
             }
             List<String> colsNames = new ArrayList<>();
 
-            if (groupController.byValues()) {
+            if (groupController.byEqualValues()) {
                 colsNames.addAll(groupController.groupNames);
 
             } else if (groupController.byConditions()) {
@@ -294,22 +295,21 @@ public class Data2DGroupStatisticController extends Data2DChartGroupXYController
             if (tmpTable == null) {
                 return false;
             }
-            if (groupController.byValues()) {
-                resultsFile = tmpTable.groupStatisticByValues(data2D.dataName() + "_group", task,
+            if (groupController.byEqualValues()) {
+                resultsFile = DataTableGroupStatistic.groupStatisticByValues(tmpTable, data2D.dataName() + "_group", task,
                         groupController.groupNames, calculations, sorts, maxData, scale, invalidAs);
 
-            } else if (groupController.byInterval()) {
-                resultsFile = tmpTable.groupStatisticByRange(data2D.dataName() + "_group", task,
-                        true, groupController.groupName, groupController.groupInterval,
-                        calculations, sorts, maxData, scale, invalidAs);
-
-            } else if (groupController.byNumber()) {
-                resultsFile = tmpTable.groupStatisticByRange(data2D.dataName() + "_group", task,
-                        false, groupController.groupName, groupController.groupNumber,
-                        calculations, sorts, maxData, scale, invalidAs);
-
+//            } else if (groupController.byInterval()) {
+//                resultsFile = tmpTable.groupStatisticByRange(data2D.dataName() + "_group", task,
+//                        true, groupController.groupName, groupController.groupInterval,
+//                        calculations, sorts, maxData, scale, invalidAs);
+//
+//            } else if (groupController.byNumber()) {
+//                resultsFile = tmpTable.groupStatisticByRange(data2D.dataName() + "_group", task,
+//                        false, groupController.groupName, groupController.groupNumber,
+//                        calculations, sorts, maxData, scale, invalidAs);
             } else if (groupController.byConditions()) {
-                resultsFile = tmpTable.groupStatisticByFilters(data2D.dataName() + "_group", task,
+                resultsFile = DataTableGroupStatistic.groupStatisticByFilters(tmpTable, data2D.dataName() + "_group", task,
                         groupController.groupConditions, calculations, sorts, maxData, scale, invalidAs);
 
             }
@@ -388,14 +388,13 @@ public class Data2DGroupStatisticController extends Data2DChartGroupXYController
             }
             int groupSize, columnSize = resultsFile.columns.size();
             int categoryIndex;
-            if (groupController.byValues()) {
+            if (groupController.byEqualValues()) {
                 groupSize = groupController.groupNames.size();
                 categoryIndex = groupSize > 1 ? 0 : 1;
 
-            } else if (groupController.byInterval() || groupController.byNumber()) {
-                groupSize = 1;
-                categoryIndex = 1;
-
+//            } else if (groupController.byInterval() || groupController.byNumber()) {
+//                groupSize = 1;
+//                categoryIndex = 1;
             } else if (groupController.byConditions()) {
                 groupSize = 1;
                 categoryIndex = 1;

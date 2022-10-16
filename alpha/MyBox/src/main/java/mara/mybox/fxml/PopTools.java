@@ -1250,7 +1250,7 @@ public class PopTools {
                     "'#{" + colName + "}'.endsWith('Hello')",
                     "'#{" + colName + "}'.search(/Hello/ig) >= 0",
                     "var array = [ 'A', 'B', 'C', 'D' ];\n"
-                    + "array.includes('#{" + colName + "}')"
+                    + "array.includes('#{" + colName + "})')"
             ), true, 5);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

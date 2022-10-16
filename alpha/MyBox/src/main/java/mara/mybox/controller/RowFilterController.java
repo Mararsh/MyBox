@@ -61,6 +61,17 @@ public class RowFilterController extends TreeManageController {
     /*
         static
      */
+    public static RowFilterController open() {
+        try {
+            RowFilterController controller = (RowFilterController) WindowTools.openStage(Fxmls.RowFilterFxml);
+            controller.requestMouse();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
     public static RowFilterController open(String script, boolean reversed, long max) {
         try {
             RowFilterController controller = (RowFilterController) WindowTools.openStage(Fxmls.RowFilterFxml);

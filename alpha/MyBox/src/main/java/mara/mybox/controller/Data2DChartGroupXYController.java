@@ -148,7 +148,7 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
             List<String> names = new ArrayList<>();
             names.add(message("Count") + "-" + message("Descending"));
             names.add(message("Count") + "-" + message("Ascending"));
-            if (groupController.byValues()) {
+            if (groupController.byEqualValues()) {
                 List<String> groups = groupController.groupNames;
                 if (groups != null) {
                     for (String name : groups) {

@@ -289,7 +289,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
                     if (value != null && !value.isBlank()) {
                         int pos = value.indexOf(TreeNode.MorePrefix);
                         if (pos >= 0) {
-                            more = value.substring(pos + morePrefixLen);
+                            more = value.substring(pos + morePrefixLen).strip();
                             value = value.substring(0, pos);
                         } else if (isWebFavorite) {
                             String[] lines = value.split("\n");

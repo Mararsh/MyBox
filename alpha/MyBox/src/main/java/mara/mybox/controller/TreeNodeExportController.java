@@ -598,10 +598,12 @@ public class TreeNodeExportController extends BaseTaskController {
             if (node.getValue() != null) {
                 textsWriter.write(node.getValue() + "\n");
             }
-            if ((treeController instanceof WebFavoritesController)
-                    && iconCheck.isSelected() && node.getMore() != null && !node.getMore().isBlank()) {
-                textsWriter.write(node.getMore() + "\n");
+            if (node.getMore() != null && !node.getMore().isBlank()) {
+                if (!(treeController instanceof WebFavoritesController) || iconCheck.isSelected()) {
+                    textsWriter.write(node.getMore() + "\n");
+                }
             }
+
             textsWriter.write("\n");
         } catch (Exception e) {
             updateLogs(e.toString());
@@ -648,6 +650,11 @@ public class TreeNodeExportController extends BaseTaskController {
                                 + indent + indent + "</div>\n\n");
                     }
                 }
+                if (node.getMore() != null && !node.getMore().isBlank()) {
+                    writer.write(indent + indent + indent + "<PRE><CODE>" + node.getMore() + "</CODE></PRE>\n"
+                            + indent + indent + "</div>\n\n");
+                }
+
             }
             writer.write(indent + indent + "</div><HR>\n\n");
         } catch (Exception e) {
@@ -682,13 +689,12 @@ public class TreeNodeExportController extends BaseTaskController {
                 xmlWriter.write(indent + indent + indent + "<" + message("Tags")
                         + "><![CDATA[" + s + "]]></" + message("Tags") + ">\n");
             }
-            if (treeController instanceof WebFavoritesController) {
-                if (iconCheck.isSelected() && node.getMore() != null && !node.getMore().isBlank()) {
+            if (node.getMore() != null && !node.getMore().isBlank()) {
+                if (!(treeController instanceof WebFavoritesController) || iconCheck.isSelected()) {
                     xmlWriter.write(indent + indent + indent + "<" + treeController.moreMsg
                             + "><![CDATA[" + node.getMore()
                             + "]]></" + treeController.moreMsg + ">\n");
                 }
-
             }
             if (node.getValue() != null) {
                 xmlWriter.write(indent + indent + indent + "<" + treeController.valueMsg + ">\n"
@@ -747,13 +753,15 @@ public class TreeNodeExportController extends BaseTaskController {
                         .append("\"").append(treeController.valueMsg).append("\": \"")
                         .append(JsonTools.replaceSpecialChars(node.getValue())).append("\"");
             }
-            if ((treeController instanceof WebFavoritesController)
-                    && iconCheck.isSelected() && node.getMore() != null && !node.getMore().isBlank()) {
-                s.append(",\n");
-                s.append(indent).append(indent)
-                        .append("\"").append(treeController.moreMsg).append("\": \"")
-                        .append(node.getMore().replaceAll("\\\\", "/")).append("\"");
+            if (node.getMore() != null && !node.getMore().isBlank()) {
+                if (!(treeController instanceof WebFavoritesController) || iconCheck.isSelected()) {
+                    s.append(",\n");
+                    s.append(indent).append(indent)
+                            .append("\"").append(treeController.moreMsg).append("\": \"")
+                            .append(node.getMore().replaceAll("\\\\", "/")).append("\"");
+                }
             }
+
             s.append("\n");
             s.append(indent).append("}").append("\n");
             jsonWriter.write(s.toString());

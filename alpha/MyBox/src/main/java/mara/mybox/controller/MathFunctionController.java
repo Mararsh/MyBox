@@ -3,6 +3,8 @@ package mara.mybox.controller;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.WindowTools;
+import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -52,6 +54,20 @@ public class MathFunctionController extends TreeManageController {
 
     @Override
     public void itemClicked() {
+    }
+
+    /*
+        static
+     */
+    public static MathFunctionController open() {
+        try {
+            MathFunctionController controller = (MathFunctionController) WindowTools.openStage(Fxmls.MathFunctionFxml);
+            controller.requestMouse();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
     }
 
 }

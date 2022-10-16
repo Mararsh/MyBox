@@ -29,7 +29,7 @@ import mara.mybox.controller.Data2DSetValuesController;
 import mara.mybox.controller.Data2DSimpleLinearRegressionCombinationController;
 import mara.mybox.controller.Data2DSimpleLinearRegressionController;
 import mara.mybox.controller.Data2DSortController;
-import mara.mybox.controller.Data2DSplitController;
+import mara.mybox.controller.Data2DGroupController;
 import mara.mybox.controller.Data2DStatisticController;
 import mara.mybox.controller.Data2DTransposeController;
 import mara.mybox.controller.DataTableQueryController;
@@ -222,9 +222,9 @@ public class Data2DMenuTools {
             menu.setDisable(empty);
             trimMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Split"), StyleTools.getIconImage("iconSplit.png"));
+            menu = new MenuItem(message("SplitGroup"), StyleTools.getIconImage("iconSplit.png"));
             menu.setOnAction((ActionEvent event) -> {
-                Data2DSplitController.open(controller);
+                Data2DGroupController.open(controller);
             });
             menu.setDisable(empty);
             trimMenu.getItems().add(menu);
@@ -363,7 +363,7 @@ public class Data2DMenuTools {
             menu.setOnAction((ActionEvent event) -> {
                 Data2DChartXYZController.open(controller);
             });
-            menu.setDisable(data2D == null || data2D.columnsNumber() < 3);
+            menu.setDisable(invalidData || data2D.columnsNumber() < 3);
             chartMenu.getItems().add(menu);
 
             menu = new MenuItem(message("LocationDistribution"), StyleTools.getIconImage("iconLocation.png"));
@@ -428,7 +428,7 @@ public class Data2DMenuTools {
             menu.setOnAction((ActionEvent event) -> {
                 Data2DChartXYZController.open(controller);
             });
-            menu.setDisable(data2D == null || data2D.columnsNumber() < 3);
+            menu.setDisable(invalidData || data2D.columnsNumber() < 3);
             chartMenu.getItems().add(menu);
 
             menu = new MenuItem(message("LocationDistribution"), StyleTools.getIconImage("iconLocation.png"));

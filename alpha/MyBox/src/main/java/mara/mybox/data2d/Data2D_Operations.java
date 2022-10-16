@@ -327,8 +327,8 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             }
             List<DataFileCSV> files = new ArrayList<>();
             for (int i = 0; i < list.size();) {
-                long start = list.get(i++);
-                long end = list.get(i++);
+                long start = Math.round(list.get(i++));
+                long end = Math.round(list.get(i++));
                 if (start <= 0) {
                     start = 1;
                 }

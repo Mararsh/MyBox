@@ -93,7 +93,7 @@ public class ControlData2DFilter extends ControlData2DRowExpression {
             return;
         }
         TreeNode node = item.getValue();
-        if (node == null || node.getValue() == null) {
+        if (node == null) {
             return;
         }
         scriptInput.setText(node.getValue());
@@ -102,7 +102,7 @@ public class ControlData2DFilter extends ControlData2DRowExpression {
         String more = node.getMore();
         if (more != null && more.contains(TreeNode.TagsSeparater)) {
             try {
-                String[] v = more.split(TreeNode.TagsSeparater);
+                String[] v = more.strip().split(TreeNode.TagsSeparater);
                 if (StringTools.isFalse(v[0])) {
                     othersRadio.setSelected(true);
                 } else {
@@ -162,27 +162,6 @@ public class ControlData2DFilter extends ControlData2DRowExpression {
         setData2D(data2D);
     }
 
-    public void loadNode(TreeNode node) {
-        isSettingValues = true;
-        if (node != null) {
-            String script = node.getValue();
-            String more = node.getMore();
-            if (more != null && more.contains(TreeNode.TagsSeparater)) {
-                try {
-                    String[] v = more.split(more);
-                    load(script, StringTools.isTrue(v[0]), Long.parseLong(v[1]));
-                } catch (Exception e) {
-                    load(script, true);
-                }
-            } else {
-                load(script, true);
-            }
-        } else {
-            load(null, true);
-        }
-        isSettingValues = false;
-    }
-
     public DataFilter pickValues() {
         filter.setReversed(othersRadio.isSelected())
                 .setMaxPassed(maxData).setPassedNumber(0)
@@ -210,6 +189,12 @@ public class ControlData2DFilter extends ControlData2DRowExpression {
     @Override
     public void editAction() {
         RowFilterController.open(scriptInput.getText(), trueRadio.isSelected(), maxData);
+    }
+
+    @FXML
+    @Override
+    public void dataAction() {
+        RowFilterController.open();
     }
 
 }

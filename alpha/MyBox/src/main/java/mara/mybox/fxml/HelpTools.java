@@ -53,6 +53,8 @@ public class HelpTools {
             table.newLinkRow("", "https://github.com/tomsharp/SVR/tree/master/data");
             table.newLinkRow("", "https://github.com/krishnaik06/simple-Linear-Regression");
             table.newLinkRow("", "https://github.com/susanli2016/Machine-Learning-with-Python/tree/master/data");
+            table.newLinkRow("", "https://www.datarepository.movebank.org");
+            table.newLinkRow("", "https://github.com/CSSEGISandData/COVID-19");
             table.newLinkRow("Apache-Math", "https://commons.apache.org/proper/commons-math/");
             table.newLinkRow("", "https://commons.apache.org/proper/commons-math/apidocs/index.html");
             table.newLinkRow(message("Study"), "https://github.com/InfolabAI/DeepLearning");

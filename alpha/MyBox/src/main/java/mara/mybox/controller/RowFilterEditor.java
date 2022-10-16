@@ -115,7 +115,7 @@ public class RowFilterEditor extends TreeNodeEditor {
             String more = node.getMore();
             if (more != null && more.contains(TreeNode.TagsSeparater)) {
                 try {
-                    String[] v = more.split(TreeNode.TagsSeparater);
+                    String[] v = more.strip().split(TreeNode.TagsSeparater);
                     load(script, StringTools.isTrue(v[0]), Long.parseLong(v[1]));
                 } catch (Exception e) {
                     load(script, true, -1);

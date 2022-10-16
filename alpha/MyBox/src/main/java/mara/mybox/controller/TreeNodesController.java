@@ -469,7 +469,13 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
                 return TreeManageController.oneOpen();
             case TreeNode.JEXLCode:
                 return JexlController.open("", "", "");
+            case TreeNode.RowFilter:
+                return RowFilterController.open();
+            case TreeNode.MathFunction:
+                return MathFunctionController.open();
+
         }
         return null;
     }
+
 }
