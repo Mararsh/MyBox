@@ -158,8 +158,9 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         return dataSize;
     }
 
-    public void setDataSize(long dataSize) {
+    public Data2D_Attributes setDataSize(long dataSize) {
         this.dataSize = dataSize;
+        return this;
     }
 
     public long getPagesNumber() {

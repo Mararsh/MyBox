@@ -23,10 +23,9 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlSplit extends BaseController {
 
-    protected double dsize;
-    protected int size, number;
-    protected List<Integer> list;
-    protected List<Double> dlist;
+    protected double size;
+    protected int number;
+    protected List<Double> list;
     protected SplitType splitType;
     protected SimpleBooleanProperty valid;
     protected boolean isPositiveInteger;
@@ -78,31 +77,32 @@ public class ControlSplit extends BaseController {
                     checkSplitType();
                 }
             });
-            checkSplitType();
 
+            sizeInput.setText(UserConfig.getString(baseName + "Size", "100"));
             sizeInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     checkSize();
                 }
             });
-            sizeInput.setText(UserConfig.getString(baseName + "Size", "100"));
 
+            numberInput.setText(UserConfig.getString(baseName + "Number", "3"));
             numberInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     checkNumber();
                 }
             });
-            numberInput.setText(UserConfig.getString(baseName + "Number", "3"));
 
+            listInput.setText(UserConfig.getString(baseName + "List", "1-10,11-20"));
             listInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     checkList();
                 }
             });
-            listInput.setText(UserConfig.getString(baseName + "List", "1-10,11-20"));
+
+            checkSplitType();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -110,7 +110,7 @@ public class ControlSplit extends BaseController {
 
     }
 
-    private void checkSplitType() {
+    public void checkSplitType() {
         sizeInput.setDisable(true);
         numberInput.setDisable(true);
         listInput.setDisable(true);
@@ -136,13 +136,20 @@ public class ControlSplit extends BaseController {
     }
 
     private void checkSize() {
+        if (isSettingValues) {
+            return;
+        }
         if (isPositiveInteger) {
             try {
-                int v = Integer.valueOf(sizeInput.getText());
+                double v = Double.valueOf(sizeInput.getText());
                 if (v > 0) {
                     size = v;
-                    UserConfig.setString(baseName + "Size", size + "");
+                    long psize = Math.round(size);
+                    UserConfig.setString(baseName + "Size", psize + "");
                     sizeInput.setStyle(null);
+                    isSettingValues = true;
+                    sizeInput.setText(psize + "");
+                    isSettingValues = false;
                 } else {
                     sizeInput.setStyle(UserConfig.badStyle());
                 }
@@ -151,8 +158,8 @@ public class ControlSplit extends BaseController {
             }
         } else {
             try {
-                dsize = Double.valueOf(sizeInput.getText());
-                UserConfig.setString(baseName + "Size", dsize + "");
+                size = Double.valueOf(sizeInput.getText());
+                UserConfig.setString(baseName + "Size", size + "");
                 sizeInput.setStyle(null);
             } catch (Exception e) {
                 sizeInput.setStyle(UserConfig.badStyle());
@@ -189,6 +196,34 @@ public class ControlSplit extends BaseController {
                         int start = Integer.valueOf(values[0].trim());
                         int end = Integer.valueOf(values[1].trim());
                         if (start > 0 && end >= start) {  // 1-based, include start and end
+                            list.add(start + 0d);
+                            list.add(end + 0d);
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+                if (list.isEmpty()) {
+                    listInput.setStyle(UserConfig.badStyle());
+                } else {
+                    listInput.setStyle(null);
+                    UserConfig.setString(baseName + "List", listInput.getText());
+                }
+            } catch (Exception e) {
+                listInput.setStyle(UserConfig.badStyle());
+            }
+        } else {
+            list = new ArrayList<>();
+            try {
+                String[] ss = listInput.getText().split(",");
+                for (String item : ss) {
+                    String[] values = item.split("-");
+                    if (values.length != 2) {
+                        continue;
+                    }
+                    try {
+                        double start = Double.valueOf(values[0].trim());
+                        double end = Double.valueOf(values[1].trim());
+                        if (end >= start) {
                             list.add(start);
                             list.add(end);
                         }
@@ -204,35 +239,22 @@ public class ControlSplit extends BaseController {
             } catch (Exception e) {
                 listInput.setStyle(UserConfig.badStyle());
             }
-        } else {
-            dlist = new ArrayList<>();
-            try {
-                String[] ss = listInput.getText().split(",");
-                for (String item : ss) {
-                    String[] values = item.split("-");
-                    if (values.length != 2) {
-                        continue;
-                    }
-                    try {
-                        double start = Double.valueOf(values[0].trim());
-                        double end = Double.valueOf(values[1].trim());
-                        if (end >= start) {  // 1-based, include start and end
-                            dlist.add(start);
-                            dlist.add(end);
-                        }
-                    } catch (Exception e) {
-                    }
-                }
-                if (dlist.isEmpty()) {
-                    listInput.setStyle(UserConfig.badStyle());
-                } else {
-                    listInput.setStyle(null);
-                    UserConfig.setString(baseName + "List", listInput.getText());
-                }
-            } catch (Exception e) {
-                listInput.setStyle(UserConfig.badStyle());
-            }
         }
+    }
+
+    public int pSize() {
+        return (int) Math.round(size);
+    }
+
+    public List<Integer> pList() {
+        if (list == null) {
+            return null;
+        }
+        List<Integer> plist = new ArrayList<>();
+        for (double d : list) {
+            plist.add((int) Math.round(d));
+        }
+        return plist;
     }
 
     public int size(long total, int number) {

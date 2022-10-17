@@ -32,7 +32,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
     protected List<Integer> selectedRowsIndices, filteredRowsIndices, checkedColsIndices, otherColsIndices;
     protected List<String> checkedColsNames, otherColsNames;
     protected List<Data2DColumn> checkedColumns, otherColumns;
-    protected boolean idExclude = false, notSelectColumnsInTable = false;
+    protected boolean idExclude = false, notSelectColumnsInTable = false, noCheckedColumnsMeansAll = true;
     protected ChangeListener<Boolean> tableLoadListener, tableStatusListener;
 
     @FXML
@@ -461,7 +461,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                 }
             }
 
-            if (checkedColsIndices.isEmpty()) {
+            if (noCheckedColumnsMeansAll && checkedColsIndices.isEmpty()) {
                 checkedColsIndices = allIndices;
                 checkedColsNames = allNames;
                 checkedColumns = allCols;

@@ -46,6 +46,9 @@ public class ControlJavaScriptRefer extends TreeNodesController {
             placeholdersList.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
+                    if (isSettingValues) {
+                        return;
+                    }
                     String selected = placeholdersList.getSelectionModel().getSelectedItem();
                     if (selected != null && !selected.isBlank()) {
                         scriptInput.replaceText(scriptInput.getSelection(), selected);

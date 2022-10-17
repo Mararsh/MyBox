@@ -37,6 +37,8 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             super.setParameters(tableController);
 
             idExclude(true);
+            noCheckedColumnsMeansAll = false;
+
             valueController.setParameter(this);
 
         } catch (Exception e) {

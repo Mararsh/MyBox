@@ -5,7 +5,6 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
 import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
@@ -14,7 +13,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -23,13 +21,10 @@ import mara.mybox.value.UserConfig;
  */
 public class Data2DSortController extends BaseData2DHandleController {
 
-    protected int maxData = -1;
     protected List<String> orders;
 
     @FXML
     protected ControlSelection columnsController;
-    @FXML
-    protected TextField maxInput;
 
     public Data2DSortController() {
         baseTitle = message("Sort");
@@ -39,31 +34,6 @@ public class Data2DSortController extends BaseData2DHandleController {
     public void initControls() {
         try {
             super.initControls();
-
-            maxData = UserConfig.getInt(baseName + "MaxDataNumber", -1);
-            if (maxData > 0) {
-                maxInput.setText(maxData + "");
-            }
-            maxInput.setStyle(null);
-            maxInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    String maxs = maxInput.getText();
-                    if (maxs == null || maxs.isBlank()) {
-                        maxData = -1;
-                        maxInput.setStyle(null);
-                        UserConfig.setLong(baseName + "MaxDataNumber", -1);
-                    } else {
-                        try {
-                            maxData = Integer.valueOf(maxs);
-                            maxInput.setStyle(null);
-                            UserConfig.setLong(baseName + "MaxDataNumber", maxData);
-                        } catch (Exception e) {
-                            maxInput.setStyle(UserConfig.badStyle());
-                        }
-                    }
-                }
-            });
 
             columnsController.setParameters(this, message("Column"), message("DataSortLabel"));
             columnsController.selectedNotify.addListener(new ChangeListener<Boolean>() {

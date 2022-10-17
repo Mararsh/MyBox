@@ -1,6 +1,8 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -66,30 +68,38 @@ public class ControlData2DRowExpression extends ControlJavaScriptRefer {
 
     public void setPlaceholders() {
         try {
-            placeholdersList.getItems().clear();
-            if (data2D == null || !data2D.isValid()) {
-                return;
-            }
-            List<Data2DColumn> columns = data2D.getColumns();
-            for (Data2DColumn column : columns) {
-                String name = column.getColumnName();
-                placeholdersList.getItems().add("#{" + name + "}");
-                if (!onlyStatisticCheck.isSelected() || column.isNumberType()) {
-                    placeholdersList.getItems().add("#{" + name + "-" + message("Mean") + "}");
-                    placeholdersList.getItems().add("#{" + name + "-" + message("Median") + "}");
-                    placeholdersList.getItems().add("#{" + name + "-" + message("Mode") + "}");
-                    placeholdersList.getItems().add("#{" + name + "-" + message("MinimumQ0") + "}");
-                    placeholdersList.getItems().add("#{" + name + "-" + message("LowerQuartile") + "}");
-                    placeholdersList.getItems().add("#{" + name + "-" + message("UpperQuartile") + "}");
-                    placeholdersList.getItems().add("#{" + name + "-" + message("MaximumQ4") + "}");
-                    placeholdersList.getItems().add("#{" + name + "-" + message("LowerExtremeOutlierLine") + "}");
-                    placeholdersList.getItems().add("#{" + name + "-" + message("LowerMildOutlierLine") + "}");
-                    placeholdersList.getItems().add("#{" + name + "-" + message("UpperMildOutlierLine") + "}");
-                    placeholdersList.getItems().add("#{" + name + "-" + message("UpperExtremeOutlierLine") + "}");
+            Platform.runLater(() -> {
+                placeholdersList.getItems().clear();
+                if (data2D == null || !data2D.isValid()) {
+                    return;
                 }
-            }
-            placeholdersList.getItems().add("#{" + message("TableRowNumber") + "}");
-            placeholdersList.getItems().add("#{" + message("DataRowNumber") + "}");
+                List<Data2DColumn> columns = data2D.getColumns();
+                List<String> list = new ArrayList<>();
+                for (Data2DColumn column : columns) {
+                    String name = column.getColumnName();
+                    list.add("#{" + name + "}");
+                    if ((onlyStatisticCheck != null && !onlyStatisticCheck.isSelected())
+                            || column.isNumberType()) {
+                        list.add("#{" + name + "-" + message("Mean") + "}");
+                        list.add("#{" + name + "-" + message("Median") + "}");
+                        list.add("#{" + name + "-" + message("Mode") + "}");
+                        list.add("#{" + name + "-" + message("MinimumQ0") + "}");
+                        list.add("#{" + name + "-" + message("LowerQuartile") + "}");
+                        list.add("#{" + name + "-" + message("UpperQuartile") + "}");
+                        list.add("#{" + name + "-" + message("MaximumQ4") + "}");
+                        list.add("#{" + name + "-" + message("LowerExtremeOutlierLine") + "}");
+                        list.add("#{" + name + "-" + message("LowerMildOutlierLine") + "}");
+                        list.add("#{" + name + "-" + message("UpperMildOutlierLine") + "}");
+                        list.add("#{" + name + "-" + message("UpperExtremeOutlierLine") + "}");
+                    }
+                }
+                list.add("#{" + message("TableRowNumber") + "}");
+                list.add("#{" + message("DataRowNumber") + "}");
+
+                placeholdersList.getItems().setAll(list);
+                placeholdersList.applyCss();
+                placeholdersList.layout();
+            });
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

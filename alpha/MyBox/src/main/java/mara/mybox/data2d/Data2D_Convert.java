@@ -99,6 +99,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             boolean includeRowNumber, boolean toNumbers, InvalidAs invalidAs) {
         try ( Connection conn = DerbyBase.getConnection()) {
             DataTable dataTable = createTmpTable(task, conn, tmpTableName(dataName()), cols, includeRowNumber, toNumbers);
+            dataTable.setDataName(dataName());
             writeTableData(task, conn, dataTable, cols, includeRowNumber, invalidAs);
             return dataTable;
         } catch (Exception e) {
@@ -227,6 +228,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             column.setD2cid(-1).setD2id(-1);
             sourceColumns.add(column);
             DataTable dataTable = createTable(task, conn, tmpTableName(), sourceColumns, null, comments, null, true);
+            dataTable.setDataName(dataName());
             dataTable.cloneDefinitionAttributes(this);
             if (cols == null || cols.isEmpty()) {
                 cols = new ArrayList<>();

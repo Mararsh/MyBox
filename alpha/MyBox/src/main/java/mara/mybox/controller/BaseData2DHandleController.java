@@ -10,12 +10,14 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
 import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.Data2D_Operations.ObjectType;
 import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.DataFilter;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -31,10 +33,14 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
 
     protected List<List<String>> outputData;
     protected List<Data2DColumn> outputColumns;
-    protected int scale, defaultScale = 2;
+    protected int scale, defaultScale = 2, maxData = -1;
     protected ObjectType objectType;
     protected InvalidAs invalidAs = InvalidAs.Skip;
 
+    @FXML
+    protected ControlData2DGroup groupController;
+    @FXML
+    protected ControlSelection sortController;
     @FXML
     protected ControlData2DTarget targetController;
     @FXML
@@ -45,6 +51,8 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
     protected ComboBox<String> scaleSelector;
     @FXML
     protected ToggleGroup objectGroup;
+    @FXML
+    protected TextField maxInput;
     @FXML
     protected RadioButton columnsRadio, rowsRadio, allRadio,
             skipNonnumericRadio, zeroNonnumericRadio, blankNonnumericRadio;
@@ -102,6 +110,51 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                     @Override
                     public void changed(ObservableValue ov, String oldValue, String newValue) {
                         checkOptions();
+                    }
+                });
+            }
+
+            if (groupController != null) {
+                groupController.setParameters(this);
+                groupController.columnsController.selectedNotify.addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        makeSortList();
+                    }
+                });
+                groupController.typeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                    @Override
+                    public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                        makeSortList();
+                    }
+                });
+
+                sortController.setParameters(this, message("Sort"), message("Sort"));
+            }
+
+            maxData = UserConfig.getInt(baseName + "MaxDataNumber", -1);
+            if (maxInput != null) {
+                if (maxData > 0) {
+                    maxInput.setText(maxData + "");
+                }
+                maxInput.setStyle(null);
+                maxInput.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue ov, String oldValue, String newValue) {
+                        String maxs = maxInput.getText();
+                        if (maxs == null || maxs.isBlank()) {
+                            maxData = -1;
+                            maxInput.setStyle(null);
+                            UserConfig.setLong(baseName + "MaxDataNumber", -1);
+                        } else {
+                            try {
+                                maxData = Integer.valueOf(maxs);
+                                maxInput.setStyle(null);
+                                UserConfig.setLong(baseName + "MaxDataNumber", maxData);
+                            } catch (Exception e) {
+                                maxInput.setStyle(UserConfig.badStyle());
+                            }
+                        }
                     }
                 });
             }
@@ -195,7 +248,32 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                 isSettingValues = false;
             }
 
+            if (groupController != null) {
+                groupController.refreshControls();
+                makeSortList();
+            }
+
             checkOptions();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void makeSortList() {
+        try {
+            if (sortController == null) {
+                return;
+            }
+            if (!data2D.isValid()) {
+                sortController.loadNames(null);
+                return;
+            }
+            List<String> names = new ArrayList<>();
+            for (String name : data2D.columnNames()) {
+                names.add(name + "-" + message("Descending"));
+                names.add(name + "-" + message("Ascending"));
+            }
+            sortController.loadNames(names);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -279,6 +357,10 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
     // Check when "OK"/"Start" button is clicked
     public boolean initData() {
         try {
+            if (groupController != null && !groupController.pickValues()) {
+                return false;
+            }
+
             checkObject();
             checkInvalidAs();
 
@@ -302,8 +384,23 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
     }
 
     public void preprocessStatistic() {
-        String script = data2D.filterScipt();
-        if (script == null || script.isBlank()) {
+        List<String> scripts = new ArrayList<>();
+        String filterScript = data2D.filterScipt();
+        boolean hasFilterScript = filterScript != null && !filterScript.isBlank();
+        if (hasFilterScript) {
+            scripts.add(filterScript);
+        }
+        boolean hasGroupScripts = groupController != null
+                && groupController.byConditions() && groupController.groupConditions != null;
+        if (hasGroupScripts) {
+            for (DataFilter filter : groupController.groupConditions) {
+                String groupScript = filter.getSourceScript();
+                if (groupScript != null && !groupScript.isBlank()) {
+                    scripts.add(groupScript);
+                }
+            }
+        }
+        if (scripts.isEmpty()) {
             startOperation();
             return;
         }
@@ -315,8 +412,24 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             @Override
             protected boolean handle() {
                 data2D.setTask(task);
-                ok = data2D.fillFilterStatistic();
-                return ok;
+                List<String> filledScripts = data2D.calculateScriptsStatistic(scripts);
+                if (filledScripts == null || filledScripts.size() != scripts.size()) {
+                    return true;
+                }
+                int index = 0;
+                if (hasFilterScript) {
+                    data2D.filter.setFilledScript(filledScripts.get(0));
+                    index = 1;
+                }
+                if (hasGroupScripts) {
+                    for (DataFilter filter : groupController.groupConditions) {
+                        String groupScript = filter.getSourceScript();
+                        if (groupScript != null && !groupScript.isBlank()) {
+                            filter.setFilledScript(filledScripts.get(index++));
+                        }
+                    }
+                }
+                return true;
             }
 
             @Override
@@ -554,10 +667,11 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         } else {
             selectedRadio.setSelected(true);
         }
-        UserConfig.setLong(baseName + "MaxDataNumber", sourceController.filterController.maxData);
+        UserConfig.setLong(baseName + "MaxFilteredNumber",
+                sourceController.filterController.maxFilteredNumber);
         filterController.load(sourceController.filterController.scriptInput.getText(),
                 sourceController.filterController.trueRadio.isSelected());
-        filterController.maxInput.setText(sourceController.filterController.maxData + "");
+        filterController.maxInput.setText(sourceController.filterController.maxFilteredNumber + "");
         scaleSelector.getSelectionModel().select(sourceController.scale + "");
     }
 

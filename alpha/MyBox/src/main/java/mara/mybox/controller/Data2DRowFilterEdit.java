@@ -28,6 +28,7 @@ public class Data2DRowFilterEdit extends BaseInputController {
 
             filterController.setParameters(handleController);
             filterController.load(handleController.data2D, filter);
+            thisPane.requestFocus();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

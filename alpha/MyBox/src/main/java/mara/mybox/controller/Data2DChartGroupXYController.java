@@ -6,7 +6,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.TextField;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -20,15 +19,8 @@ import mara.mybox.value.UserConfig;
  */
 public class Data2DChartGroupXYController extends Data2DChartXYController {
 
-    protected int maxData = -1;
     protected List<String> sorts;
 
-    @FXML
-    protected ControlData2DGroup groupController;
-    @FXML
-    protected ControlSelection sortController;
-    @FXML
-    protected TextField maxInput;
     @FXML
     protected CheckBox displayAllCheck;
     @FXML
@@ -82,31 +74,6 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
                     }
                 });
             }
-
-            maxData = UserConfig.getInt(baseName + "MaxDataNumber", -1);
-            if (maxData > 0) {
-                maxInput.setText(maxData + "");
-            }
-            maxInput.setStyle(null);
-            maxInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    String maxs = maxInput.getText();
-                    if (maxs == null || maxs.isBlank()) {
-                        maxData = -1;
-                        maxInput.setStyle(null);
-                        UserConfig.setLong(baseName + "MaxDataNumber", -1);
-                    } else {
-                        try {
-                            maxData = Integer.valueOf(maxs);
-                            maxInput.setStyle(null);
-                            UserConfig.setLong(baseName + "MaxDataNumber", maxData);
-                        } catch (Exception e) {
-                            maxInput.setStyle(UserConfig.badStyle());
-                        }
-                    }
-                }
-            });
 
             displayAllCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayAll", true));
             displayAllCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {

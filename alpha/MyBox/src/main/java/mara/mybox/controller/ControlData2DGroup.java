@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -15,6 +14,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.data2d.DataFilter;
+import mara.mybox.data2d.reader.DataTableGroup.GroupType;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
 
@@ -30,6 +30,7 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
     protected String groupName;
     protected List<String> groupNames, conditionVariables;
     protected List<DataFilter> groupConditions;
+    protected GroupType groupType;
 
     @FXML
     protected ControlSelection columnsController;
@@ -119,11 +120,13 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
                 groupBox.getChildren().addAll(columnBox, splitBox);
                 commentsLabel.setText(message("GroupIntervalComments"));
                 splitController.isPositiveInteger = false;
+                splitController.checkSplitType();
 
             } else if (rowsRangeRadio.isSelected()) {
                 groupBox.getChildren().add(splitBox);
                 commentsLabel.setText(message("GroupNumberComments"));
                 splitController.isPositiveInteger = true;
+                splitController.checkSplitType();
 
             } else if (conditionsRadio.isSelected()) {
                 groupBox.getChildren().add(conditionsBox);
@@ -141,6 +144,9 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
             groupName = null;
             groupNames = null;
             groupConditions = null;
+            groupType = groupType();
+
+            splitController.checkSplitType();
 
             boolean valid = true;
             if (valuesRadio.isSelected()) {
@@ -162,8 +168,7 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
                 }
 
             } else if (rowsRangeRadio.isSelected()) {
-                groupName = columnSelector.getValue();
-                if (groupName == null || groupName.isBlank() || !splitController.valid.get()) {
+                if (!splitController.valid.get()) {
                     valid = false;
                 }
             }
@@ -182,10 +187,6 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
 
     public boolean byEqualValues() {
         return valuesRadio.isSelected();
-    }
-
-    public boolean byValueRange() {
-        return valueRangeRadio.isSelected();
     }
 
     public boolean byValueSize() {
@@ -220,16 +221,59 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
         return conditionsRadio.isSelected();
     }
 
-    public List<String> conditionVariables() {
-        conditionVariables = new ArrayList<>();
-        if (!byConditions()) {
-            return conditionVariables;
-        }
-        for (DataFilter filter : tableData) {
+    public GroupType groupType() {
+        if (byEqualValues()) {
+            return GroupType.EqualValues;
 
-        }
+        } else if (byValueSize()) {
+            return GroupType.ValueSplitInterval;
 
-        return conditionVariables;
+        } else if (byValueNumber()) {
+            return GroupType.ValueSplitNumber;
+
+        } else if (byValueList()) {
+            return GroupType.ValueSplitList;
+
+        } else if (byRowsSize()) {
+            return GroupType.RowsSplitInterval;
+
+        } else if (byRowsNumber()) {
+            return GroupType.RowsSplitNumber;
+
+        } else if (byRowsList()) {
+            return GroupType.RowsSplitList;
+
+        } else if (byConditions()) {
+            return GroupType.Conditions;
+
+        } else {
+            return null;
+        }
+    }
+
+    public double splitInterval() {
+        if (byValueSize() || byRowsSize()) {
+            return splitController.size;
+
+        } else {
+            return Double.NaN;
+        }
+    }
+
+    public int splitNumber() {
+        if (byValueNumber() || byRowsNumber()) {
+            return splitController.number;
+        } else {
+            return -1;
+        }
+    }
+
+    public List<Double> splitList() {
+        if (byValueList() || byRowsList()) {
+            return splitController.list;
+        } else {
+            return null;
+        }
     }
 
     @FXML

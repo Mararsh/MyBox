@@ -21,7 +21,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlData2DFilter extends ControlData2DRowExpression {
 
-    protected long maxData = -1;
+    protected long maxFilteredNumber = -1;
     protected DataFilter filter;
 
     @FXML
@@ -45,9 +45,9 @@ public class ControlData2DFilter extends ControlData2DRowExpression {
             baseName = parent.baseName;
 
             if (maxInput != null) {
-                maxData = UserConfig.getLong(baseName + "MaxDataNumber", -1);
-                if (maxData > 0) {
-                    maxInput.setText(maxData + "");
+                maxFilteredNumber = UserConfig.getLong(baseName + "MaxFilteredNumber", -1);
+                if (maxFilteredNumber > 0) {
+                    maxInput.setText(maxFilteredNumber + "");
                 }
                 maxInput.setStyle(null);
                 maxInput.textProperty().addListener(new ChangeListener<String>() {
@@ -58,14 +58,14 @@ public class ControlData2DFilter extends ControlData2DRowExpression {
                         }
                         String maxs = maxInput.getText();
                         if (maxs == null || maxs.isBlank()) {
-                            maxData = -1;
+                            maxFilteredNumber = -1;
                             maxInput.setStyle(null);
-                            UserConfig.setLong(baseName + "MaxDataNumber", -1);
+                            UserConfig.setLong(baseName + "MaxFilteredNumber", -1);
                         } else {
                             try {
-                                maxData = Long.parseLong(maxs);
+                                maxFilteredNumber = Long.parseLong(maxs);
                                 maxInput.setStyle(null);
-                                UserConfig.setLong(baseName + "MaxDataNumber", maxData);
+                                UserConfig.setLong(baseName + "MaxFilteredNumber", maxFilteredNumber);
                             } catch (Exception e) {
                                 maxInput.setStyle(UserConfig.badStyle());
                             }
@@ -73,18 +73,12 @@ public class ControlData2DFilter extends ControlData2DRowExpression {
                     }
                 });
             } else {
-                maxData = -1;
+                maxFilteredNumber = -1;
             }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-    }
-
-    @Override
-    public void setData2D(Data2D data2D) {
-        super.setData2D(data2D);
-        data2D.filter = filter;
     }
 
     @Override
@@ -154,17 +148,17 @@ public class ControlData2DFilter extends ControlData2DRowExpression {
     }
 
     public void load(Data2D data2D, DataFilter filter) {
+        setData2D(data2D);
         if (filter == null) {
             clear();
             return;
         }
         load(filter.getSourceScript(), !filter.isReversed(), filter.getMaxPassed());
-        setData2D(data2D);
     }
 
     public DataFilter pickValues() {
         filter.setReversed(othersRadio.isSelected())
-                .setMaxPassed(maxData).setPassedNumber(0)
+                .setMaxPassed(maxFilteredNumber).setPassedNumber(0)
                 .setSourceScript(scriptInput.getText());
         if (data2D != null) {
             data2D.setFilter(filter);
@@ -188,7 +182,7 @@ public class ControlData2DFilter extends ControlData2DRowExpression {
     @FXML
     @Override
     public void editAction() {
-        RowFilterController.open(scriptInput.getText(), trueRadio.isSelected(), maxData);
+        RowFilterController.open(scriptInput.getText(), trueRadio.isSelected(), maxFilteredNumber);
     }
 
     @FXML
