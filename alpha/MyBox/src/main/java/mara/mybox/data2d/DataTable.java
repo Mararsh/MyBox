@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import mara.mybox.calculation.DescriptiveStatistic;
+import mara.mybox.calculation.DescriptiveStatistic.StatisticType;
 import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
@@ -166,6 +167,11 @@ public class DataTable extends Data2D {
                     for (Data2DColumn scolumn : savedColumns) {
                         if (dbColumn.getColumnName().equalsIgnoreCase(scolumn.getColumnName())) {
                             dbColumn.setIndex(scolumn.getIndex());
+                            if (dbColumn.isStringType() && scolumn.isDBStringType()) {
+                                dbColumn.setType(scolumn.getType());
+                            }
+                            dbColumn.setFormat(scolumn.getFormat());
+                            dbColumn.setScale(scolumn.getScale());
                             dbColumn.setColor(scolumn.getColor());
                             dbColumn.setWidth(scolumn.getWidth());
                             dbColumn.setEditable(scolumn.isEditable());
@@ -745,7 +751,7 @@ public class DataTable extends Data2D {
                 }
                 colStatistic.invalidAs = selections.invalidAs;
                 sData[c] = colStatistic;
-                if (selections.median) {
+                if (selections.include(StatisticType.Median)) {
                     colStatistic.medianValue = percentile(conn, column, 50);
                     try {
                         colStatistic.median = Double.valueOf(colStatistic.medianValue + "");
@@ -754,7 +760,7 @@ public class DataTable extends Data2D {
                     }
                 }
                 Object q1 = null, q3 = null;
-                if (selections.upperQuartile || selections.needOutlier()) {
+                if (selections.include(StatisticType.UpperQuartile) || selections.needOutlier()) {
                     q3 = percentile(conn, column, 75);
                     colStatistic.upperQuartileValue = q3;
                     try {
@@ -763,7 +769,7 @@ public class DataTable extends Data2D {
                         colStatistic.upperQuartile = DoubleTools.value(colStatistic.invalidAs);
                     }
                 }
-                if (selections.lowerQuartile || selections.needOutlier()) {
+                if (selections.include(StatisticType.LowerQuartile) || selections.needOutlier()) {
                     q1 = percentile(conn, column, 25);
                     colStatistic.lowerQuartileValue = q1;
                     try {
@@ -772,7 +778,7 @@ public class DataTable extends Data2D {
                         colStatistic.lowerQuartile = DoubleTools.value(colStatistic.invalidAs);
                     }
                 }
-                if (selections.upperExtremeOutlierLine) {
+                if (selections.include(StatisticType.UpperExtremeOutlierLine)) {
                     try {
                         double d1 = Double.valueOf(q1 + "");
                         double d3 = Double.valueOf(q3 + "");
@@ -781,7 +787,7 @@ public class DataTable extends Data2D {
                         colStatistic.upperExtremeOutlierLine = DoubleTools.value(colStatistic.invalidAs);
                     }
                 }
-                if (selections.upperMildOutlierLine) {
+                if (selections.include(StatisticType.UpperMildOutlierLine)) {
                     try {
                         double d1 = Double.valueOf(q1 + "");
                         double d3 = Double.valueOf(q3 + "");
@@ -790,7 +796,7 @@ public class DataTable extends Data2D {
                         colStatistic.upperMildOutlierLine = DoubleTools.value(colStatistic.invalidAs);
                     }
                 }
-                if (selections.lowerMildOutlierLine) {
+                if (selections.include(StatisticType.LowerMildOutlierLine)) {
                     try {
                         double d1 = Double.valueOf(q1 + "");
                         double d3 = Double.valueOf(q3 + "");
@@ -799,7 +805,7 @@ public class DataTable extends Data2D {
                         colStatistic.lowerMildOutlierLine = DoubleTools.value(colStatistic.invalidAs);
                     }
                 }
-                if (selections.lowerExtremeOutlierLine) {
+                if (selections.include(StatisticType.LowerExtremeOutlierLine)) {
                     try {
                         double d1 = Double.valueOf(q1 + "");
                         double d3 = Double.valueOf(q3 + "");
@@ -808,7 +814,7 @@ public class DataTable extends Data2D {
                         colStatistic.lowerExtremeOutlierLine = DoubleTools.value(colStatistic.invalidAs);
                     }
                 }
-                if (selections.mode) {
+                if (selections.include(StatisticType.Mode)) {
                     colStatistic.modeValue = mode(conn, column.getColumnName());
                     try {
                         colStatistic.mode = Double.valueOf(colStatistic.modeValue + "");

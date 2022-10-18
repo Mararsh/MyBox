@@ -116,7 +116,7 @@ public class ControlNewDataTable extends BaseController {
             if (tableData2D == null) {
                 tableData2D = new TableData2D();
             }
-            if (tableData2D.exist(conn, tableName)) {
+            if (tableData2D.exist(conn, tableName) > 0) {
                 if (onlySQL) {
                     alertWarning(message("AlreadyExisted") + ": " + tableName);
                     return true;

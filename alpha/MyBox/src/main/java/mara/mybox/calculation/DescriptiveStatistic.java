@@ -2,7 +2,9 @@ package mara.mybox.calculation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import mara.mybox.controller.BaseData2DHandleController;
 import mara.mybox.data2d.Data2D;
@@ -23,20 +25,14 @@ import static mara.mybox.value.Languages.message;
  */
 public class DescriptiveStatistic {
 
-    public boolean count, sum, mean, geometricMean, sumSquares,
-            populationVariance, sampleVariance, populationStandardDeviation, sampleStandardDeviation, skewness,
-            minimum, maximum, median, upperQuartile, lowerQuartile, mode,
-            upperMildOutlierLine, upperExtremeOutlierLine, lowerMildOutlierLine, lowerExtremeOutlierLine;
+    public List<StatisticType> types = new ArrayList<>();
     public int scale;
     public InvalidAs invalidAs;
 
     protected BaseData2DHandleController handleController;
     protected SingletonTask<Void> task;
     protected Data2D data2D;
-    protected List<String> countRow, summationRow, meanRow, geometricMeanRow, sumOfSquaresRow,
-            populationVarianceRow, sampleVarianceRow, populationStandardDeviationRow, sampleStandardDeviationRow, skewnessRow,
-            maximumRow, minimumRow, medianRow, upperQuartileRow, lowerQuartileRow, modeRow,
-            upperMildOutlierLineRow, upperExtremeOutlierLineRow, lowerMildOutlierLineRow, lowerExtremeOutlierLineRow;
+    protected Map<StatisticType, List<String>> statisticRows;
     protected List<List<String>> outputData;
     protected List<Data2DColumn> outputColumns;
     protected String categoryName;
@@ -45,126 +41,80 @@ public class DescriptiveStatistic {
 
     public StatisticObject statisticObject = StatisticObject.Columns;
 
+    public enum StatisticType {
+        Count, Sum, Mean, GeometricMean, SumSquares, Skewness, Mode,
+        PopulationVariance, SampleVariance, PopulationStandardDeviation, SampleStandardDeviation,
+        MinimumQ0, LowerQuartile, Median, UpperQuartile, MaximumQ4,
+        LowerExtremeOutlierLine, LowerMildOutlierLine, UpperMildOutlierLine, UpperExtremeOutlierLine
+    }
+
     public enum StatisticObject {
         Columns, Rows, All
     }
 
     public static DescriptiveStatistic all(boolean select) {
-        return new DescriptiveStatistic()
-                .setCount(select)
-                .setSum(select)
-                .setMean(select)
-                .setGeometricMean(select)
-                .setSumSquares(select)
-                .setPopulationStandardDeviation(select)
-                .setPopulationVariance(select)
-                .setSampleStandardDeviation(select)
-                .setSampleVariance(select)
-                .setSkewness(select)
-                .setMaximum(select)
-                .setMinimum(select)
-                .setMedian(select)
-                .setUpperQuartile(select)
-                .setLowerQuartile(select)
-                .setMode(select)
-                .setUpperMildOutlierLine(select)
-                .setUpperExtremeOutlierLine(select)
-                .setLowerMildOutlierLine(select)
-                .setLowerExtremeOutlierLine(select);
+        DescriptiveStatistic s = new DescriptiveStatistic();
+        s.types.clear();
+        if (select) {
+            s.types.addAll(Arrays.asList(StatisticType.values()));
+        }
+        return s;
     }
 
-    public List<String> list() {
-        List<String> list = new ArrayList<>();
-        if (count) {
-            list.add("count");
+    public DescriptiveStatistic add(StatisticType type) {
+        if (!types.contains(type)) {
+            types.add(type);
         }
-        if (sum) {
-            list.add("sum");
-        }
-        if (mean) {
-            list.add("mean");
-        }
-        if (count) {
-            list.add("count");
-        }
-        if (maximum) {
-            list.add("maximum");
-        }
-        if (minimum) {
-            list.add("minimum");
-        }
-        if (skewness) {
-            list.add("skewness");
-        }
-        if (geometricMean) {
-            list.add("geometricMean");
-        }
-        if (sumSquares) {
-            list.add("sumSquares");
-        }
-        if (populationVariance) {
-            list.add("populationVariance");
-        }
-        if (sampleVariance) {
-            list.add("sampleVariance");
-        }
-        if (populationStandardDeviation) {
-            list.add("populationStandardDeviation");
-        }
-        if (sampleStandardDeviation) {
-            list.add("sampleStandardDeviation");
-        }
-        if (mode) {
-            list.add("mode");
-        }
-        if (median) {
-            list.add("median");
-        }
-        if (upperQuartile) {
-            list.add("upperQuartile");
-        }
-        if (lowerQuartile) {
-            list.add("lowerQuartile");
-        }
-        if (upperMildOutlierLine) {
-            list.add("upperMildOutlierLine");
-        }
-        if (upperExtremeOutlierLine) {
-            list.add("upperExtremeOutlierLine");
-        }
-        if (lowerMildOutlierLine) {
-            list.add("lowerMildOutlierLine");
-        }
-        if (lowerExtremeOutlierLine) {
-            list.add("lowerExtremeOutlierLine");
-        }
-        return list;
+        return this;
+    }
+
+    public DescriptiveStatistic remove(StatisticType type) {
+        types.remove(type);
+        return this;
+    }
+
+    public boolean include(StatisticType type) {
+        return types.contains(type);
     }
 
     public boolean need() {
-        return needNonStored() || needStored();
+        return !types.isEmpty();
     }
 
     public boolean needNonStored() {
-        return minimum || maximum || mean || sum || count || skewness
-                || geometricMean || sumSquares || needVariance();
+        return include(StatisticType.MinimumQ0)
+                || include(StatisticType.MaximumQ4)
+                || include(StatisticType.Mean)
+                || include(StatisticType.Sum)
+                || include(StatisticType.Count)
+                || include(StatisticType.Skewness)
+                || include(StatisticType.GeometricMean)
+                || include(StatisticType.SumSquares)
+                || needVariance();
     }
 
     public boolean needVariance() {
-        return populationVariance || sampleVariance || populationStandardDeviation || sampleStandardDeviation;
+        return include(StatisticType.PopulationVariance)
+                || include(StatisticType.SampleVariance)
+                || include(StatisticType.PopulationStandardDeviation)
+                || include(StatisticType.SampleStandardDeviation);
     }
 
     public boolean needStored() {
-        return needPercentile() || mode;
+        return needPercentile() || include(StatisticType.Mode);
     }
 
     public boolean needPercentile() {
-        return median || upperQuartile || lowerQuartile || needOutlier();
+        return include(StatisticType.Median)
+                || include(StatisticType.UpperQuartile)
+                || include(StatisticType.LowerQuartile) || needOutlier();
     }
 
     public boolean needOutlier() {
-        return upperMildOutlierLine || upperExtremeOutlierLine
-                || lowerMildOutlierLine || lowerExtremeOutlierLine;
+        return include(StatisticType.LowerExtremeOutlierLine)
+                || include(StatisticType.LowerMildOutlierLine)
+                || include(StatisticType.UpperMildOutlierLine)
+                || include(StatisticType.UpperExtremeOutlierLine);
     }
 
     public boolean prepare() {
@@ -188,7 +138,8 @@ public class DescriptiveStatistic {
 
     public boolean prepareByColumns(String prefix, List<String> names) {
         try {
-            if (names == null || names.isEmpty()) {
+            if (names == null || names.isEmpty() || types.size() < 1) {
+                handleController.popError(message("SelectToHandle") + " " + prefix);
                 return false;
             }
             String cName = prefix + message("Calculation");
@@ -207,150 +158,12 @@ public class DescriptiveStatistic {
             }
 
             outputData = new ArrayList<>();
-
-            countRow = null;
-            if (count) {
-                countRow = new ArrayList<>();
-                countRow.add(prefix + message("Count"));
-                outputData.add(countRow);
-            }
-
-            summationRow = null;
-            if (sum) {
-                summationRow = new ArrayList<>();
-                summationRow.add(prefix + message("Summation"));
-                outputData.add(summationRow);
-            }
-
-            meanRow = null;
-            if (mean) {
-                meanRow = new ArrayList<>();
-                meanRow.add(prefix + message("Mean"));
-                outputData.add(meanRow);
-            }
-
-            geometricMeanRow = null;
-            if (geometricMean) {
-                geometricMeanRow = new ArrayList<>();
-                geometricMeanRow.add(prefix + message("GeometricMean"));
-                outputData.add(geometricMeanRow);
-            }
-
-            sumOfSquaresRow = null;
-            if (sumSquares) {
-                sumOfSquaresRow = new ArrayList<>();
-                sumOfSquaresRow.add(prefix + message("SumOfSquares"));
-                outputData.add(sumOfSquaresRow);
-            }
-
-            populationVarianceRow = null;
-            if (populationVariance) {
-                populationVarianceRow = new ArrayList<>();
-                populationVarianceRow.add(prefix + message("PopulationVariance"));
-                outputData.add(populationVarianceRow);
-            }
-
-            sampleVarianceRow = null;
-            if (sampleVariance) {
-                sampleVarianceRow = new ArrayList<>();
-                sampleVarianceRow.add(prefix + message("SampleVariance"));
-                outputData.add(sampleVarianceRow);
-            }
-
-            populationStandardDeviationRow = null;
-            if (populationStandardDeviation) {
-                populationStandardDeviationRow = new ArrayList<>();
-                populationStandardDeviationRow.add(prefix + message("PopulationStandardDeviation"));
-                outputData.add(populationStandardDeviationRow);
-            }
-
-            sampleStandardDeviationRow = null;
-            if (sampleStandardDeviation) {
-                sampleStandardDeviationRow = new ArrayList<>();
-                sampleStandardDeviationRow.add(prefix + message("SampleStandardDeviation"));
-                outputData.add(sampleStandardDeviationRow);
-            }
-
-            skewnessRow = null;
-            if (skewness) {
-                skewnessRow = new ArrayList<>();
-                skewnessRow.add(prefix + message("Skewness"));
-                outputData.add(skewnessRow);
-            }
-
-            minimumRow = null;
-            if (minimum) {
-                minimumRow = new ArrayList<>();
-                minimumRow.add(prefix + message("MinimumQ0"));
-                outputData.add(minimumRow);
-            }
-
-            lowerQuartileRow = null;
-            if (lowerQuartile) {
-                lowerQuartileRow = new ArrayList<>();
-                lowerQuartileRow.add(prefix + message("LowerQuartile"));
-                outputData.add(lowerQuartileRow);
-            }
-
-            medianRow = null;
-            if (median) {
-                medianRow = new ArrayList<>();
-                medianRow.add(prefix + message("Median"));
-                outputData.add(medianRow);
-            }
-
-            upperQuartileRow = null;
-            if (upperQuartile) {
-                upperQuartileRow = new ArrayList<>();
-                upperQuartileRow.add(prefix + message("UpperQuartile"));
-                outputData.add(upperQuartileRow);
-            }
-
-            maximumRow = null;
-            if (maximum) {
-                maximumRow = new ArrayList<>();
-                maximumRow.add(prefix + message("MaximumQ4"));
-                outputData.add(maximumRow);
-            }
-
-            upperExtremeOutlierLineRow = null;
-            if (upperExtremeOutlierLine) {
-                upperExtremeOutlierLineRow = new ArrayList<>();
-                upperExtremeOutlierLineRow.add(prefix + message("UpperExtremeOutlierLine"));
-                outputData.add(upperExtremeOutlierLineRow);
-            }
-
-            upperMildOutlierLineRow = null;
-            if (upperMildOutlierLine) {
-                upperMildOutlierLineRow = new ArrayList<>();
-                upperMildOutlierLineRow.add(prefix + message("UpperMildOutlierLine"));
-                outputData.add(upperMildOutlierLineRow);
-            }
-
-            lowerMildOutlierLineRow = null;
-            if (lowerMildOutlierLine) {
-                lowerMildOutlierLineRow = new ArrayList<>();
-                lowerMildOutlierLineRow.add(prefix + message("LowerMildOutlierLine"));
-                outputData.add(lowerMildOutlierLineRow);
-            }
-
-            lowerExtremeOutlierLineRow = null;
-            if (lowerExtremeOutlierLine) {
-                lowerExtremeOutlierLineRow = new ArrayList<>();
-                lowerExtremeOutlierLineRow.add(prefix + message("LowerExtremeOutlierLine"));
-                outputData.add(lowerExtremeOutlierLineRow);
-            }
-
-            modeRow = null;
-            if (mode) {
-                modeRow = new ArrayList<>();
-                modeRow.add(prefix + message("Mode"));
-                outputData.add(modeRow);
-            }
-
-            if (outputData.size() < 1) {
-                handleController.popError(prefix + message("SelectToHandle"));
-                return false;
+            statisticRows = new HashMap<>();
+            for (StatisticType type : types) {
+                List<String> row = new ArrayList<>();
+                row.add(prefix + message(type.name()));
+                statisticRows.put(type, row);
+                outputData.add(row);
             }
 
             return true;
@@ -363,6 +176,10 @@ public class DescriptiveStatistic {
 
     public boolean prepareByRows() {
         try {
+            if (types.size() < 1) {
+                handleController.popError(message("SelectToHandle"));
+                return false;
+            }
             outputNames = new ArrayList<>();
             outputColumns = new ArrayList<>();
 
@@ -372,122 +189,9 @@ public class DescriptiveStatistic {
 
             String prefix = message("Rows") + "-";
             int width = 150;
-            if (count) {
-                cName = prefix + message("Count");
-                outputNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
 
-            if (sum) {
-                cName = prefix + message("Summation");
-                outputNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (mean) {
-                cName = prefix + message("Mean");
-                outputNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (geometricMean) {
-                cName = prefix + message("GeometricMean");
-                outputNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (sumSquares) {
-                cName = prefix + message("SumOfSquares");
-                outputNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (populationVariance) {
-                cName = prefix + message("PopulationVariance");
-                outputNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (sampleVariance) {
-                cName = prefix + message("SampleVariance");
-                outputNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (populationStandardDeviation) {
-                cName = prefix + message("PopulationStandardDeviation");
-                outputNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (sampleStandardDeviation) {
-                cName = prefix + message("SampleStandardDeviation");
-                outputNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (skewness) {
-                cName = prefix + message("Skewness");
-                outputNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (minimum) {
-                cName = prefix + message("MinimumQ0");
-                outputNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (lowerQuartile) {
-                cName = prefix + message("LowerQuartile");
-                outputNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (median) {
-                cName = prefix + message("Median");
-                outputNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (upperQuartile) {
-                cName = prefix + message("UpperQuartile");
-                outputNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (maximum) {
-                cName = prefix + message("MaximumQ4");
-                outputNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (upperExtremeOutlierLine) {
-                cName = prefix + message("UpperExtremeOutlierLine");
-                outputNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (upperMildOutlierLine) {
-                cName = prefix + message("UpperMildOutlierLine");
-                outputNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (lowerMildOutlierLine) {
-                cName = prefix + message("LowerMildOutlierLine");
-                outputNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (lowerExtremeOutlierLine) {
-                cName = prefix + message("LowerExtremeOutlierLine");
-                outputNames.add(cName);
-                outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
-            }
-
-            if (mode) {
-                cName = prefix + message("Mode");
+            for (StatisticType type : types) {
+                cName = prefix + message(type.name());
                 outputNames.add(cName);
                 outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, width));
             }
@@ -565,112 +269,104 @@ public class DescriptiveStatistic {
     }
 
     public boolean statisticByColumnsWriteWithoutStored(DoubleStatistic statistic) {
-        if (statistic == null) {
+        if (statistic == null || statisticRows == null) {
             return false;
         }
-        if (countRow != null) {
-            countRow.add(StringTools.format(statistic.getCount()));
+        for (StatisticType type : types) {
+            List<String> row = statisticRows.get(type);
+            if (row == null) {
+                continue;
+            }
+            switch (type) {
+                case Count:
+                    row.add(StringTools.format(statistic.getCount()));
+                    break;
+                case Sum:
+                    row.add(NumberTools.format(statistic.getSum(), scale));
+                    break;
+                case Mean:
+                    row.add(NumberTools.format(statistic.getMean(), scale));
+                    break;
+                case GeometricMean:
+                    row.add(NumberTools.format(statistic.getGeometricMean(), scale));
+                    break;
+                case SumSquares:
+                    row.add(NumberTools.format(statistic.getSumSquares(), scale));
+                    break;
+                case PopulationVariance:
+                    row.add(NumberTools.format(statistic.getPopulationVariance(), scale));
+                    break;
+                case SampleVariance:
+                    row.add(NumberTools.format(statistic.getSampleVariance(), scale));
+                    break;
+                case PopulationStandardDeviation:
+                    row.add(NumberTools.format(statistic.getPopulationStandardDeviation(), scale));
+                    break;
+                case SampleStandardDeviation:
+                    row.add(NumberTools.format(statistic.getSampleStandardDeviation(), scale));
+                    break;
+                case Skewness:
+                    row.add(NumberTools.format(statistic.getSkewness(), scale));
+                    break;
+                case MinimumQ0:
+                    row.add(NumberTools.format(statistic.getMinimum(), scale));
+                    break;
+                case MaximumQ4:
+                    row.add(NumberTools.format(statistic.getMaximum(), scale));
+                    break;
+            }
         }
-        if (summationRow != null) {
-            summationRow.add(NumberTools.format(statistic.getSum(), scale));
-        }
-        if (meanRow != null) {
-            meanRow.add(NumberTools.format(statistic.getMean(), scale));
-        }
-        if (geometricMeanRow != null) {
-            geometricMeanRow.add(NumberTools.format(statistic.getGeometricMean(), scale));
-        }
-        if (sumOfSquaresRow != null) {
-            sumOfSquaresRow.add(NumberTools.format(statistic.getSumSquares(), scale));
-        }
-        if (populationVarianceRow != null) {
-            populationVarianceRow.add(NumberTools.format(statistic.getPopulationVariance(), scale));
-        }
-        if (sampleVarianceRow != null) {
-            sampleVarianceRow.add(NumberTools.format(statistic.getSampleVariance(), scale));
-        }
-        if (populationStandardDeviationRow != null) {
-            populationStandardDeviationRow.add(NumberTools.format(statistic.getPopulationStandardDeviation(), scale));
-        }
-        if (sampleStandardDeviationRow != null) {
-            sampleStandardDeviationRow.add(NumberTools.format(statistic.getSampleStandardDeviation(), scale));
-        }
-        if (skewnessRow != null) {
-            skewnessRow.add(NumberTools.format(statistic.getSkewness(), scale));
-        }
-        if (minimumRow != null) {
-            minimumRow.add(NumberTools.format(statistic.getMinimum(), scale));
-        }
-        if (maximumRow != null) {
-            maximumRow.add(NumberTools.format(statistic.getMaximum(), scale));
-        }
+
         return true;
     }
 
     public boolean statisticByColumnsWriteStored(DoubleStatistic statistic) {
-        if (statistic == null) {
+        if (statistic == null || statisticRows == null) {
             return false;
         }
-        if (medianRow != null) {
-            Object v = statistic.getMedianValue();
+        for (StatisticType type : types) {
+            List<String> row = statisticRows.get(type);
+            if (row == null) {
+                continue;
+            }
+            Object v;
+            switch (type) {
+                case Median:
+                    v = statistic.getMedianValue();
+                    break;
+                case Mode:
+                    v = statistic.getModeValue();
+                    break;
+                case LowerQuartile:
+                    v = statistic.getLowerQuartileValue();
+                    break;
+                case UpperQuartile:
+                    v = statistic.getUpperQuartileValue();
+                    break;
+                case UpperExtremeOutlierLine:
+                    v = statistic.getUpperExtremeOutlierLine();
+                    break;
+                case UpperMildOutlierLine:
+                    v = statistic.getUpperMildOutlierLine();
+                    break;
+                case LowerMildOutlierLine:
+                    v = statistic.getLowerMildOutlierLine();
+                    break;
+                case LowerExtremeOutlierLine:
+                    v = statistic.getLowerExtremeOutlierLine();
+                    break;
+                default:
+                    continue;
+            }
             try {
-                medianRow.add(NumberTools.format((double) v, scale));
+                row.add(NumberTools.format((double) v, scale));
             } catch (Exception e) {
                 try {
-                    medianRow.add(v.toString());
+                    row.add(v.toString());
                 } catch (Exception ex) {
-                    medianRow.add("");
+                    row.add("");
                 }
             }
-        }
-        if (modeRow != null) {
-            Object v = statistic.getModeValue();
-            try {
-                modeRow.add(NumberTools.format((double) v, scale));
-            } catch (Exception e) {
-                try {
-                    modeRow.add(v.toString());
-                } catch (Exception ex) {
-                    modeRow.add("");
-                }
-            }
-        }
-        if (lowerQuartileRow != null) {
-            Object v = statistic.getLowerQuartileValue();
-            try {
-                lowerQuartileRow.add(NumberTools.format((double) v, scale));
-            } catch (Exception e) {
-                try {
-                    lowerQuartileRow.add(v.toString());
-                } catch (Exception ex) {
-                    lowerQuartileRow.add("");
-                }
-            }
-        }
-
-        if (upperQuartileRow != null) {
-            Object v = statistic.getUpperQuartileValue();
-            try {
-                upperQuartileRow.add(NumberTools.format((double) v, scale));
-            } catch (Exception e) {
-                try {
-                    upperQuartileRow.add(v.toString());
-                } catch (Exception ex) {
-                    upperQuartileRow.add("");
-                }
-            }
-        }
-        if (upperExtremeOutlierLineRow != null) {
-            upperExtremeOutlierLineRow.add(NumberTools.format((double) statistic.getUpperExtremeOutlierLine(), scale));
-        }
-        if (upperMildOutlierLineRow != null) {
-            upperMildOutlierLineRow.add(NumberTools.format((double) statistic.getUpperMildOutlierLine(), scale));
-        }
-        if (lowerMildOutlierLineRow != null) {
-            lowerMildOutlierLineRow.add(NumberTools.format((double) statistic.getLowerMildOutlierLine(), scale));
-        }
-        if (lowerExtremeOutlierLineRow != null) {
-            lowerExtremeOutlierLineRow.add(NumberTools.format((double) statistic.getLowerExtremeOutlierLine(), scale));
         }
         return true;
     }
@@ -779,186 +475,6 @@ public class DescriptiveStatistic {
     /*
         get/set
      */
-    public boolean isCount() {
-        return count;
-    }
-
-    public DescriptiveStatistic setCount(boolean count) {
-        this.count = count;
-        return this;
-    }
-
-    public boolean isSum() {
-        return sum;
-    }
-
-    public DescriptiveStatistic setSum(boolean sum) {
-        this.sum = sum;
-        return this;
-    }
-
-    public boolean isMean() {
-        return mean;
-    }
-
-    public DescriptiveStatistic setMean(boolean mean) {
-        this.mean = mean;
-        return this;
-    }
-
-    public boolean isGeometricMean() {
-        return geometricMean;
-    }
-
-    public DescriptiveStatistic setGeometricMean(boolean geometricMean) {
-        this.geometricMean = geometricMean;
-        return this;
-    }
-
-    public boolean isMinimum() {
-        return minimum;
-    }
-
-    public DescriptiveStatistic setMinimum(boolean minimum) {
-        this.minimum = minimum;
-        return this;
-    }
-
-    public boolean isMaximum() {
-        return maximum;
-    }
-
-    public DescriptiveStatistic setMaximum(boolean maximum) {
-        this.maximum = maximum;
-        return this;
-    }
-
-    public boolean isSumSquares() {
-        return sumSquares;
-    }
-
-    public DescriptiveStatistic setSumSquares(boolean sumSquares) {
-        this.sumSquares = sumSquares;
-        return this;
-    }
-
-    public boolean isPopulationVariance() {
-        return populationVariance;
-    }
-
-    public DescriptiveStatistic setPopulationVariance(boolean populationVariance) {
-        this.populationVariance = populationVariance;
-        return this;
-    }
-
-    public boolean isSampleVariance() {
-        return sampleVariance;
-    }
-
-    public DescriptiveStatistic setSampleVariance(boolean sampleVariance) {
-        this.sampleVariance = sampleVariance;
-        return this;
-    }
-
-    public boolean isPopulationStandardDeviation() {
-        return populationStandardDeviation;
-    }
-
-    public DescriptiveStatistic setPopulationStandardDeviation(boolean populationStandardDeviation) {
-        this.populationStandardDeviation = populationStandardDeviation;
-        return this;
-    }
-
-    public boolean isSampleStandardDeviation() {
-        return sampleStandardDeviation;
-    }
-
-    public DescriptiveStatistic setSampleStandardDeviation(boolean sampleStandardDeviation) {
-        this.sampleStandardDeviation = sampleStandardDeviation;
-        return this;
-    }
-
-    public boolean isSkewness() {
-        return skewness;
-    }
-
-    public DescriptiveStatistic setSkewness(boolean skewness) {
-        this.skewness = skewness;
-        return this;
-    }
-
-    public boolean isMode() {
-        return mode;
-    }
-
-    public DescriptiveStatistic setMode(boolean mode) {
-        this.mode = mode;
-        return this;
-    }
-
-    public boolean isMedian() {
-        return median;
-    }
-
-    public DescriptiveStatistic setMedian(boolean median) {
-        this.median = median;
-        return this;
-    }
-
-    public boolean isUpperQuartile() {
-        return upperQuartile;
-    }
-
-    public DescriptiveStatistic setUpperQuartile(boolean upperQuartile) {
-        this.upperQuartile = upperQuartile;
-        return this;
-    }
-
-    public boolean isLowerQuartile() {
-        return lowerQuartile;
-    }
-
-    public DescriptiveStatistic setLowerQuartile(boolean lowerQuartile) {
-        this.lowerQuartile = lowerQuartile;
-        return this;
-    }
-
-    public boolean isUpperMildOutlierLine() {
-        return upperMildOutlierLine;
-    }
-
-    public DescriptiveStatistic setUpperMildOutlierLine(boolean upperMildOutlierLine) {
-        this.upperMildOutlierLine = upperMildOutlierLine;
-        return this;
-    }
-
-    public boolean isUpperExtremeOutlierLine() {
-        return upperExtremeOutlierLine;
-    }
-
-    public DescriptiveStatistic setUpperExtremeOutlierLine(boolean upperExtremeOutlierLine) {
-        this.upperExtremeOutlierLine = upperExtremeOutlierLine;
-        return this;
-    }
-
-    public boolean isLowerMildOutlierLine() {
-        return lowerMildOutlierLine;
-    }
-
-    public DescriptiveStatistic setLowerMildOutlierLine(boolean lowerMildOutlierLine) {
-        this.lowerMildOutlierLine = lowerMildOutlierLine;
-        return this;
-    }
-
-    public boolean isLowerExtremeOutlierLine() {
-        return lowerExtremeOutlierLine;
-    }
-
-    public DescriptiveStatistic setLowerExtremeOutlierLine(boolean lowerExtremeOutlierLine) {
-        this.lowerExtremeOutlierLine = lowerExtremeOutlierLine;
-        return this;
-    }
-
     public StatisticObject getStatisticObject() {
         return statisticObject;
     }
@@ -983,187 +499,6 @@ public class DescriptiveStatistic {
 
     public DescriptiveStatistic setHandleController(BaseData2DHandleController handleController) {
         this.handleController = handleController;
-        return this;
-    }
-
-    public List<String> getCountRow() {
-        return countRow;
-    }
-
-    public DescriptiveStatistic setCountRow(List<String> countRow) {
-        this.countRow = countRow;
-        return this;
-    }
-
-    public List<String> getSummationRow() {
-        return summationRow;
-    }
-
-    public DescriptiveStatistic setSummationRow(List<String> summationRow) {
-        this.summationRow = summationRow;
-        return this;
-    }
-
-    public List<String> getMeanRow() {
-        return meanRow;
-    }
-
-    public DescriptiveStatistic setMeanRow(List<String> meanRow) {
-        this.meanRow = meanRow;
-        return this;
-    }
-
-    public List<String> getGeometricMeanRow() {
-        return geometricMeanRow;
-    }
-
-    public DescriptiveStatistic setGeometricMeanRow(List<String> geometricMeanRow) {
-        this.geometricMeanRow = geometricMeanRow;
-        return this;
-    }
-
-    public List<String> getSumOfSquaresRow() {
-        return sumOfSquaresRow;
-    }
-
-    public DescriptiveStatistic setSumOfSquaresRow(List<String> sumOfSquaresRow) {
-        this.sumOfSquaresRow = sumOfSquaresRow;
-        return this;
-    }
-
-    public List<String> getPopulationVarianceRow() {
-        return populationVarianceRow;
-    }
-
-    public DescriptiveStatistic setPopulationVarianceRow(List<String> populationVarianceRow) {
-        this.populationVarianceRow = populationVarianceRow;
-        return this;
-    }
-
-    public List<String> getSampleVarianceRow() {
-        return sampleVarianceRow;
-    }
-
-    public DescriptiveStatistic setSampleVarianceRow(List<String> sampleVarianceRow) {
-        this.sampleVarianceRow = sampleVarianceRow;
-        return this;
-    }
-
-    public List<String> getPopulationStandardDeviationRow() {
-        return populationStandardDeviationRow;
-    }
-
-    public DescriptiveStatistic setPopulationStandardDeviationRow(List<String> populationStandardDeviationRow) {
-        this.populationStandardDeviationRow = populationStandardDeviationRow;
-        return this;
-    }
-
-    public List<String> getSampleStandardDeviationRow() {
-        return sampleStandardDeviationRow;
-    }
-
-    public DescriptiveStatistic setSampleStandardDeviationRow(List<String> sampleStandardDeviationRow) {
-        this.sampleStandardDeviationRow = sampleStandardDeviationRow;
-        return this;
-
-    }
-
-    public List<String> getSkewnessRow() {
-        return skewnessRow;
-    }
-
-    public DescriptiveStatistic setSkewnessRow(List<String> skewnessRow) {
-        this.skewnessRow = skewnessRow;
-        return this;
-    }
-
-    public List<String> getMaximumRow() {
-        return maximumRow;
-    }
-
-    public DescriptiveStatistic setMaximumRow(List<String> maximumRow) {
-        this.maximumRow = maximumRow;
-        return this;
-    }
-
-    public List<String> getMinimumRow() {
-        return minimumRow;
-    }
-
-    public DescriptiveStatistic setMinimumRow(List<String> minimumRow) {
-        this.minimumRow = minimumRow;
-        return this;
-    }
-
-    public List<String> getMedianRow() {
-        return medianRow;
-    }
-
-    public DescriptiveStatistic setMedianRow(List<String> medianRow) {
-        this.medianRow = medianRow;
-        return this;
-    }
-
-    public List<String> getUpperQuartileRow() {
-        return upperQuartileRow;
-    }
-
-    public DescriptiveStatistic setUpperQuartileRow(List<String> upperQuartileRow) {
-        this.upperQuartileRow = upperQuartileRow;
-        return this;
-    }
-
-    public List<String> getLowerQuartileRow() {
-        return lowerQuartileRow;
-    }
-
-    public DescriptiveStatistic setLowerQuartileRow(List<String> lowerQuartileRow) {
-        this.lowerQuartileRow = lowerQuartileRow;
-        return this;
-    }
-
-    public List<String> getModeRow() {
-        return modeRow;
-    }
-
-    public DescriptiveStatistic setModeRow(List<String> modeRow) {
-        this.modeRow = modeRow;
-        return this;
-    }
-
-    public List<String> getUpperMildOutlierLineRow() {
-        return upperMildOutlierLineRow;
-    }
-
-    public DescriptiveStatistic setUpperMildOutlierLineRow(List<String> upperMildOutlierLineRow) {
-        this.upperMildOutlierLineRow = upperMildOutlierLineRow;
-        return this;
-    }
-
-    public List<String> getUpperExtremeOutlierLineRow() {
-        return upperExtremeOutlierLineRow;
-    }
-
-    public DescriptiveStatistic setUpperExtremeOutlierLineRow(List<String> upperExtremeOutlierLineRow) {
-        this.upperExtremeOutlierLineRow = upperExtremeOutlierLineRow;
-        return this;
-    }
-
-    public List<String> getLowerMildOutlierLineRow() {
-        return lowerMildOutlierLineRow;
-    }
-
-    public DescriptiveStatistic setLowerMildOutlierLineRow(List<String> lowerMildOutlierLineRow) {
-        this.lowerMildOutlierLineRow = lowerMildOutlierLineRow;
-        return this;
-    }
-
-    public List<String> getLowerExtremeOutlierLineRow() {
-        return lowerExtremeOutlierLineRow;
-    }
-
-    public DescriptiveStatistic setLowerExtremeOutlierLineRow(List<String> lowerExtremeOutlierLineRow) {
-        this.lowerExtremeOutlierLineRow = lowerExtremeOutlierLineRow;
         return this;
     }
 

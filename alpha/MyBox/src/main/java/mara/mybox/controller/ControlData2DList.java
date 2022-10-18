@@ -196,9 +196,12 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
     }
 
     @Override
-    public List<Data2DDefinition> readPageData(Connection conn) {
-        tableData2DDefinition.clearInvalid(conn, false);
-        return super.readPageData(conn);
+    public boolean checkBeforeLoadingTableData() {
+        try ( Connection conn = DerbyBase.getConnection();) {
+            tableData2DDefinition.clearInvalid(conn, false);
+        } catch (Exception e) {
+        }
+        return true;
     }
 
     @FXML

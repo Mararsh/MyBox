@@ -226,6 +226,7 @@ License:    Apache License Version 2.0
                                                             </toggleGroup>
                                                         </RadioButton>
                                                         <RadioButton fx:id="filesRadio" mnemonicParsing="false" text="%OneFileEachGroup" toggleGroup="$targetGroup" />
+                                          <RadioButton fx:id="tableRadio" layoutX="210.0" layoutY="10.0" mnemonicParsing="false" text="%DatabaseTable" toggleGroup="$targetGroup" />
                                                     </children>
                                                 </FlowPane>
                                             </children>

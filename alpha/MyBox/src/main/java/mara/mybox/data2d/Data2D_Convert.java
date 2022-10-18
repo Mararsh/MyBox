@@ -341,7 +341,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             DataTable dataTable = new DataTable();
             TableData2D tableData2D = dataTable.getTableData2D();
             String tableName = DerbyBase.fixedIdentifier(name);
-            if (tableData2D.exist(conn, tableName)) {
+            if (tableData2D.exist(conn, tableName) > 0) {
                 if (!dropExisted) {
                     return null;
                 }

@@ -139,31 +139,25 @@ public class ControlSplit extends BaseController {
         if (isSettingValues) {
             return;
         }
-        if (isPositiveInteger) {
-            try {
-                double v = Double.valueOf(sizeInput.getText());
-                if (v > 0) {
-                    size = v;
+        try {
+            double v = Double.valueOf(sizeInput.getText());
+            if (v > 0) {
+                size = v;
+                if (isPositiveInteger) {
                     long psize = Math.round(size);
                     UserConfig.setString(baseName + "Size", psize + "");
-                    sizeInput.setStyle(null);
                     isSettingValues = true;
                     sizeInput.setText(psize + "");
                     isSettingValues = false;
                 } else {
-                    sizeInput.setStyle(UserConfig.badStyle());
+                    UserConfig.setString(baseName + "Size", size + "");
                 }
-            } catch (Exception e) {
-                sizeInput.setStyle(UserConfig.badStyle());
-            }
-        } else {
-            try {
-                size = Double.valueOf(sizeInput.getText());
-                UserConfig.setString(baseName + "Size", size + "");
                 sizeInput.setStyle(null);
-            } catch (Exception e) {
+            } else {
                 sizeInput.setStyle(UserConfig.badStyle());
             }
+        } catch (Exception e) {
+            sizeInput.setStyle(UserConfig.badStyle());
         }
     }
 

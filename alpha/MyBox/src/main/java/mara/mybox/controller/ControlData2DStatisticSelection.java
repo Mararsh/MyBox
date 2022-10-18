@@ -7,6 +7,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 import mara.mybox.calculation.DescriptiveStatistic;
+import mara.mybox.calculation.DescriptiveStatistic.StatisticType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.UserConfig;
@@ -224,27 +225,68 @@ public class ControlData2DStatisticSelection extends BaseController {
 
     public DescriptiveStatistic pickValues() {
         try {
-            calculation = new DescriptiveStatistic()
-                    .setCount(countCheck.isSelected())
-                    .setSum(summationCheck.isSelected())
-                    .setMean(meanCheck.isSelected())
-                    .setGeometricMean(geometricMeanCheck.isSelected())
-                    .setSumSquares(sumOfSquaresCheck.isSelected())
-                    .setPopulationStandardDeviation(populationStandardDeviationCheck.isSelected())
-                    .setPopulationVariance(populationVarianceCheck.isSelected())
-                    .setSampleStandardDeviation(sampleStandardDeviationCheck.isSelected())
-                    .setSampleVariance(sampleVarianceCheck.isSelected())
-                    .setSkewness(skewnessCheck.isSelected())
-                    .setMedian(medianCheck.isSelected())
-                    .setMaximum(maximumCheck.isSelected())
-                    .setMinimum(minimumCheck.isSelected())
-                    .setUpperQuartile(upperQuartileCheck.isSelected())
-                    .setLowerQuartile(lowerQuartileCheck.isSelected())
-                    .setUpperExtremeOutlierLine(UpperExtremeOutlierLineCheck.isSelected())
-                    .setUpperMildOutlierLine(UpperMildOutlierLineCheck.isSelected())
-                    .setLowerExtremeOutlierLine(LowerExtremeOutlierLineCheck.isSelected())
-                    .setLowerMildOutlierLine(LowerMildOutlierLineCheck.isSelected())
-                    .setMode(modeCheck.isSelected());
+            calculation = new DescriptiveStatistic();
+            if (countCheck.isSelected()) {
+                calculation.add(StatisticType.Count);
+            }
+            if (summationCheck.isSelected()) {
+                calculation.add(StatisticType.Sum);
+            }
+            if (meanCheck.isSelected()) {
+                calculation.add(StatisticType.Mean);
+            }
+            if (geometricMeanCheck.isSelected()) {
+                calculation.add(StatisticType.GeometricMean);
+            }
+            if (sumOfSquaresCheck.isSelected()) {
+                calculation.add(StatisticType.SumSquares);
+            }
+            if (populationStandardDeviationCheck.isSelected()) {
+                calculation.add(StatisticType.PopulationStandardDeviation);
+            }
+            if (populationVarianceCheck.isSelected()) {
+                calculation.add(StatisticType.PopulationVariance);
+            }
+            if (sampleStandardDeviationCheck.isSelected()) {
+                calculation.add(StatisticType.SampleStandardDeviation);
+            }
+            if (sampleVarianceCheck.isSelected()) {
+                calculation.add(StatisticType.SampleVariance);
+            }
+            if (skewnessCheck.isSelected()) {
+                calculation.add(StatisticType.Skewness);
+            }
+            if (medianCheck.isSelected()) {
+                calculation.add(StatisticType.Median);
+            }
+            if (maximumCheck.isSelected()) {
+                calculation.add(StatisticType.MaximumQ4);
+            }
+            if (minimumCheck.isSelected()) {
+                calculation.add(StatisticType.MinimumQ0);
+            }
+            if (upperQuartileCheck.isSelected()) {
+                calculation.add(StatisticType.UpperQuartile);
+            }
+            if (lowerQuartileCheck.isSelected()) {
+                calculation.add(StatisticType.LowerQuartile);
+            }
+            if (UpperExtremeOutlierLineCheck.isSelected()) {
+                calculation.add(StatisticType.UpperExtremeOutlierLine);
+            }
+            if (UpperMildOutlierLineCheck.isSelected()) {
+                calculation.add(StatisticType.UpperMildOutlierLine);
+            }
+            if (LowerExtremeOutlierLineCheck.isSelected()) {
+                calculation.add(StatisticType.LowerExtremeOutlierLine);
+            }
+            if (LowerMildOutlierLineCheck.isSelected()) {
+                calculation.add(StatisticType.LowerMildOutlierLine);
+            }
+            if (modeCheck.isSelected()) {
+                calculation.add(StatisticType.Mode);
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e);
             calculation = null;

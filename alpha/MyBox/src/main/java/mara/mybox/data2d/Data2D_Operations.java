@@ -5,6 +5,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.calculation.DescriptiveStatistic;
+import mara.mybox.calculation.DescriptiveStatistic.StatisticType;
 import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.calculation.Normalization;
 import mara.mybox.calculation.SimpleLinearRegression;
@@ -124,8 +125,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             if (reader == null || reader.failed()) {
                 return null;
             }
-            if (selections.isPopulationStandardDeviation() || selections.isPopulationVariance()
-                    || selections.isSampleStandardDeviation() || selections.isSampleVariance()) {
+            if (selections.needVariance()) {
                 reader = Data2DStatistic.create(this)
                         .setStatisticData(sData)
                         .setStatisticCalculation(selections)
@@ -223,8 +223,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         if (reader == null || reader.failed()) {
             return null;
         }
-        if (selections.isPopulationStandardDeviation() || selections.isPopulationVariance()
-                || selections.isSampleStandardDeviation() || selections.isSampleVariance()) {
+        if (selections.needVariance()) {
             reader = Data2DStatistic.create(this)
                     .setStatisticAll(sData)
                     .setStatisticCalculation(selections)
@@ -649,7 +648,9 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             sData[c].invalidAs = invalidAs;
         }
         DescriptiveStatistic selections = DescriptiveStatistic.all(false)
-                .setSum(true).setMaximum(true).setMinimum(true);
+                .add(StatisticType.Sum)
+                .add(StatisticType.MaximumQ4)
+                .add(StatisticType.MinimumQ0);
         Data2DOperator operator = Data2DStatistic.create(this)
                 .setStatisticData(sData)
                 .setStatisticCalculation(selections)
@@ -781,7 +782,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             sData[c].invalidAs = invalidAs;
         }
         DescriptiveStatistic selections = DescriptiveStatistic.all(false)
-                .setPopulationStandardDeviation(true);
+                .add(StatisticType.PopulationStandardDeviation);
         Data2DOperator operator = Data2DStatistic.create(this)
                 .setStatisticData(sData)
                 .setStatisticCalculation(selections)
@@ -846,7 +847,9 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         DoubleStatistic sData = new DoubleStatistic();
         sData.invalidAs = invalidAs;
         DescriptiveStatistic selections = DescriptiveStatistic.all(false)
-                .setSum(true).setMaximum(true).setMinimum(true);
+                .add(StatisticType.Sum)
+                .add(StatisticType.MaximumQ4)
+                .add(StatisticType.MinimumQ0);
         Data2DOperator operator = Data2DStatistic.create(this)
                 .setStatisticAll(sData)
                 .setStatisticCalculation(selections)
@@ -972,7 +975,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         DoubleStatistic sData = new DoubleStatistic();
         sData.invalidAs = invalidAs;
         DescriptiveStatistic selections = DescriptiveStatistic.all(false)
-                .setPopulationStandardDeviation(true);
+                .add(StatisticType.PopulationStandardDeviation);
         Data2DOperator operator = Data2DStatistic.create(this)
                 .setStatisticAll(sData)
                 .setStatisticCalculation(selections)

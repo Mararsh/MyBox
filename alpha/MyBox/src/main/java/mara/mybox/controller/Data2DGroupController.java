@@ -36,7 +36,7 @@ public class Data2DGroupController extends BaseData2DHandleController {
     protected String prefix;
 
     @FXML
-    protected RadioButton fileRadio, filesRadio;
+    protected RadioButton fileRadio, filesRadio, tableRadio;
 
     public Data2DGroupController() {
         baseTitle = message("SplitGroup");
@@ -92,6 +92,14 @@ public class Data2DGroupController extends BaseData2DHandleController {
                             tnames.add(name);
                         }
                     }
+                    TargetType targetType;
+                    if (fileRadio.isSelected()) {
+                        targetType = TargetType.SingleFile;
+                    } else if (filesRadio.isSelected()) {
+                        targetType = TargetType.MultipleFiles;
+                    } else {
+                        targetType = TargetType.Table;
+                    }
                     group = new DataTableGroup(tmpTable)
                             .setOriginalData(data2D)
                             .setType(groupController.groupType())
@@ -105,7 +113,7 @@ public class Data2DGroupController extends BaseData2DHandleController {
                             .setSorts(sortController.selectedNames())
                             .setMax(maxData).setScale(scale)
                             .setInvalidAs(invalidAs).setTask(task)
-                            .setTargetType(fileRadio.isSelected() ? TargetType.SingleFile : TargetType.MultipleFiles)
+                            .setTargetType(targetType)
                             .setTargetNames(tnames);
                     return group.run();
                 } catch (Exception e) {
@@ -117,15 +125,22 @@ public class Data2DGroupController extends BaseData2DHandleController {
             @Override
             protected void whenSucceeded() {
                 if (fileRadio.isSelected()) {
-                    if (group.getTargetFile() != null) {
-                        DataFileCSVController.loadCSV(group.getTargetFile());
+                    DataFileCSV targetFile = group.getTargetFile();
+                    if (targetFile != null) {
+                        DataFileCSVController.loadCSV(targetFile);
                         popInformation(message("GroupNumber") + ": " + group.groupNumber());
                     }
-                } else {
+                } else if (filesRadio.isSelected()) {
                     List<File> files = group.getCsvFiles();
                     if (files != null && !files.isEmpty()) {
                         browse(files.get(0).getParentFile());
                         popInformation(MessageFormat.format(message("FilesGenerated"), files.size()));
+                    }
+                } else {
+                    DataTable targetData = group.getTargetData();
+                    if (targetData != null) {
+                        DataTablesController.loadTable(targetData);
+                        popInformation(message("GroupNumber") + ": " + group.groupNumber());
                     }
                 }
 

@@ -234,6 +234,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         if (conn == null || referredName == null) {
             return -1;
         }
+        MyBoxLog.console(referredName);
         try ( PreparedStatement statement = conn.prepareStatement("DROP TABLE " + referredName)) {
             if (statement.executeUpdate() < 0) {
                 return -2;
@@ -286,8 +287,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             update(conn, Delete_InvalidExcelSheet);
             String sql = "SELECT * FROM Data2D_Definition WHERE data_type < 4";
             List<Data2DDefinition> invalid = new ArrayList<>();
-            try ( PreparedStatement statement = conn.prepareStatement(sql);
-                     ResultSet results = statement.executeQuery()) {
+            try ( ResultSet results = conn.prepareStatement(sql).executeQuery()) {
                 while (results.next()) {
                     Data2DDefinition data = readData(results);
                     try {
@@ -302,22 +302,23 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             }
             count = invalid.size();
             deleteData(conn, invalid);
+            conn.commit();
 
             conn.setAutoCommit(true);
             invalid.clear();
             sql = "SELECT * FROM Data2D_Definition WHERE data_type ="
                     + Data2D.type(Data2DDefinition.Type.DatabaseTable);
-            try ( PreparedStatement statement = conn.prepareStatement(sql);
-                     ResultSet results = statement.executeQuery()) {
+            try ( ResultSet results = conn.prepareStatement(sql).executeQuery()) {
                 while (results.next()) {
                     Data2DDefinition data = readData(results);
-                    if (!exist(conn, data.getSheet())) {
+                    if (exist(conn, data.getSheet()) == 0) {
                         invalid.add(data);
                     }
                 }
             }
             count += invalid.size();
             deleteData(conn, invalid);
+            conn.commit();
 
             if (clearTmpTables) {
                 conn.setAutoCommit(true);
@@ -325,21 +326,21 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
                 sql = "SELECT * FROM Data2D_Definition WHERE data_type="
                         + Data2D.type(Data2DDefinition.Type.DatabaseTable)
                         + " AND sheet like '" + Data2D.TmpTablePrefix + "%'";
-                try ( PreparedStatement statement = conn.prepareStatement(sql);
-                         ResultSet results = statement.executeQuery()) {
+                try ( ResultSet results = conn.prepareStatement(sql).executeQuery()) {
                     while (results.next()) {
                         Data2DDefinition data = readData(results);
-                        if (!exist(conn, data.getSheet())) {
-                            invalid.add(data);
-                        }
+                        invalid.add(data);
                     }
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
                 }
                 count += invalid.size();
                 for (Data2DDefinition d : invalid) {
                     deleteUserTable(conn, d.getSheet());
                 }
+                conn.commit();
             }
-            conn.commit();
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

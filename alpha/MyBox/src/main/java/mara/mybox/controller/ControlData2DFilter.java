@@ -44,11 +44,8 @@ public class ControlData2DFilter extends ControlData2DRowExpression {
         try {
             baseName = parent.baseName;
 
+            maxFilteredNumber = -1;
             if (maxInput != null) {
-                maxFilteredNumber = UserConfig.getLong(baseName + "MaxFilteredNumber", -1);
-                if (maxFilteredNumber > 0) {
-                    maxInput.setText(maxFilteredNumber + "");
-                }
                 maxInput.setStyle(null);
                 maxInput.textProperty().addListener(new ChangeListener<String>() {
                     @Override
@@ -60,20 +57,16 @@ public class ControlData2DFilter extends ControlData2DRowExpression {
                         if (maxs == null || maxs.isBlank()) {
                             maxFilteredNumber = -1;
                             maxInput.setStyle(null);
-                            UserConfig.setLong(baseName + "MaxFilteredNumber", -1);
                         } else {
                             try {
                                 maxFilteredNumber = Long.parseLong(maxs);
                                 maxInput.setStyle(null);
-                                UserConfig.setLong(baseName + "MaxFilteredNumber", maxFilteredNumber);
                             } catch (Exception e) {
                                 maxInput.setStyle(UserConfig.badStyle());
                             }
                         }
                     }
                 });
-            } else {
-                maxFilteredNumber = -1;
             }
 
         } catch (Exception e) {

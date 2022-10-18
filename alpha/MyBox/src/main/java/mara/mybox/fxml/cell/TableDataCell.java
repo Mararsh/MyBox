@@ -21,7 +21,7 @@ public class TableDataCell extends TableAutoCommitCell<List<String>, String> {
         super(new DefaultStringConverter());
         this.dataControl = dataControl;
         this.dataColumn = dataColumn;
-        supportMultipleLine = dataControl.getData2D().supportMultipleLine() && dataColumn.isTextType();
+        supportMultipleLine = dataControl.getData2D().supportMultipleLine() && dataColumn.isStringType();
     }
 
     protected String getCellValue() {

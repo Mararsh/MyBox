@@ -1625,16 +1625,21 @@ public abstract class BaseTable<D> {
         return true;
     }
 
-    public boolean exist(Connection conn, String referredName) {
+    public int exist(Connection conn, String referredName) {
         if (conn == null || referredName == null) {
-            return false;
+            return -1;
         }
-        try ( ResultSet resultSet = conn.getMetaData().getColumns(null, "MARA", DerbyBase.savedName(referredName), "%")) {
-            return resultSet.next();
+        try ( ResultSet resultSet = conn.getMetaData().getColumns(null, "MARA",
+                DerbyBase.savedName(referredName), "%")) {
+            if (resultSet.next()) {
+                return 1;
+            } else {
+                return 0;
+            }
         } catch (Exception e) {
-            MyBoxLog.error(e, referredName);
+            MyBoxLog.debug(e, referredName);
+            return -2;
         }
-        return false;
     }
 
     public String string(String value) {

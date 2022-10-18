@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import mara.mybox.calculation.DescriptiveStatistic;
+import mara.mybox.calculation.DescriptiveStatistic.StatisticType;
 import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.db.data.Data2DColumn;
@@ -218,38 +219,10 @@ public abstract class Data2D_Filter extends Data2D_Data {
             for (int i = 0; i < columnsNumber(); i++) {
                 Data2DColumn column = columns.get(i);
                 String name = column.getColumnName();
-                if (script.contains("#{" + name + "-" + message("Mean") + "}")) {
-                    calculation.setMean(true);
-                }
-                if (script.contains("#{" + name + "-" + message("Median") + "}")) {
-                    calculation.setMedian(true);
-                }
-                if (script.contains("#{" + name + "-" + message("Mode") + "}")) {
-                    calculation.setMode(true);
-                }
-                if (script.contains("#{" + name + "-" + message("MinimumQ0") + "}")) {
-                    calculation.setMinimum(true);
-                }
-                if (script.contains("#{" + name + "-" + message("LowerQuartile") + "}")) {
-                    calculation.setLowerQuartile(true);
-                }
-                if (script.contains("#{" + name + "-" + message("UpperQuartile") + "}")) {
-                    calculation.setUpperQuartile(true);
-                }
-                if (script.contains("#{" + name + "-" + message("MaximumQ4") + "}")) {
-                    calculation.setMaximum(true);
-                }
-                if (script.contains("#{" + name + "-" + message("LowerExtremeOutlierLine") + "}")) {
-                    calculation.setLowerExtremeOutlierLine(true);
-                }
-                if (script.contains("#{" + name + "-" + message("LowerMildOutlierLine") + "}")) {
-                    calculation.setLowerMildOutlierLine(true);
-                }
-                if (script.contains("#{" + name + "-" + message("UpperMildOutlierLine") + "}")) {
-                    calculation.setUpperMildOutlierLine(true);
-                }
-                if (script.contains("#{" + name + "-" + message("UpperExtremeOutlierLine") + "}")) {
-                    calculation.setUpperExtremeOutlierLine(true);
+                for (StatisticType stype : StatisticType.values()) {
+                    if (script.contains("#{" + name + "-" + message(stype.name()) + "}")) {
+                        calculation.add(stype);
+                    }
                 }
                 if (!calculation.need()) {
                     continue;

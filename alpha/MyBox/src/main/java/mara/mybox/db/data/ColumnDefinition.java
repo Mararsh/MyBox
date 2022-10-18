@@ -307,8 +307,14 @@ public class ColumnDefinition extends BaseData {
         return type == ColumnType.Double || type == ColumnType.Float;
     }
 
-    public boolean isTextType() {
+    public boolean isStringType() {
         return type == ColumnType.String;
+    }
+
+    public boolean isDBStringType() {
+        return type == ColumnType.String || type == ColumnType.File
+                || type == ColumnType.Image || type == ColumnType.Enumeration
+                || type == ColumnType.Era || type == ColumnType.Color;
     }
 
     public boolean isDateType() {

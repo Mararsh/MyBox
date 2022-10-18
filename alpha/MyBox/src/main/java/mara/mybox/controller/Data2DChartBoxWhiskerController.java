@@ -19,6 +19,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.calculation.DescriptiveStatistic;
+import mara.mybox.calculation.DescriptiveStatistic.StatisticType;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
@@ -350,16 +351,16 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
                 categorysCol = data2D.colOrder(selectedCategory);
             }
             calculation = new DescriptiveStatistic()
-                    .setMean(true)
-                    .setMedian(true)
-                    .setMaximum(true)
-                    .setMinimum(true)
-                    .setUpperQuartile(true)
-                    .setLowerQuartile(true)
-                    .setUpperExtremeOutlierLine(true)
-                    .setUpperMildOutlierLine(true)
-                    .setLowerMildOutlierLine(true)
-                    .setLowerExtremeOutlierLine(true)
+                    .add(StatisticType.Mean)
+                    .add(StatisticType.Median)
+                    .add(StatisticType.MaximumQ4)
+                    .add(StatisticType.MinimumQ0)
+                    .add(StatisticType.UpperQuartile)
+                    .add(StatisticType.LowerQuartile)
+                    .add(StatisticType.UpperExtremeOutlierLine)
+                    .add(StatisticType.UpperMildOutlierLine)
+                    .add(StatisticType.LowerExtremeOutlierLine)
+                    .add(StatisticType.LowerMildOutlierLine)
                     .setScale(scale);
             switch (objectType) {
                 case Rows:

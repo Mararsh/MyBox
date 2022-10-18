@@ -40,10 +40,7 @@ public class RowFilterEditor extends TreeNodeEditor {
             baseName = manageController.baseName;
 
             if (maxInput != null) {
-                maxData = UserConfig.getLong(baseName + "MaxFilteredNumber", -1);
-                if (maxData > 0) {
-                    maxInput.setText(maxData + "");
-                }
+                maxData = -1;
                 maxInput.setStyle(null);
                 maxInput.textProperty().addListener(new ChangeListener<String>() {
                     @Override
@@ -55,12 +52,10 @@ public class RowFilterEditor extends TreeNodeEditor {
                         if (maxs == null || maxs.isBlank()) {
                             maxData = -1;
                             maxInput.setStyle(null);
-                            UserConfig.setLong(baseName + "MaxFilteredNumber", -1);
                         } else {
                             try {
                                 maxData = Long.parseLong(maxs);
                                 maxInput.setStyle(null);
-                                UserConfig.setLong(baseName + "MaxFilteredNumber", maxData);
                             } catch (Exception e) {
                                 maxInput.setStyle(UserConfig.badStyle());
                             }
