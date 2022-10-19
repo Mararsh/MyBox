@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -35,16 +34,6 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
     public void initControls() {
         try {
             super.initControls();
-
-            groupController.setParameters(this);
-            groupController.columnsController.selectedNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    makeSortList();
-                }
-            });
-
-            sortController.setParameters(this, message("Sort"), message("Sort"));
 
             if (playController != null) {
                 playController.setParameters(this);
@@ -87,44 +76,6 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
 
             displayAllCheck.visibleProperty().bind(allPagesRadio.selectedProperty());
 
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void refreshControls() {
-        try {
-            super.refreshControls();
-
-            groupController.refreshControls();
-
-            if (!data2D.isValid()) {
-                sortController.loadNames(null);
-                return;
-            }
-            makeSortList();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    public void makeSortList() {
-        try {
-            List<String> names = new ArrayList<>();
-            names.add(message("Count") + "-" + message("Descending"));
-            names.add(message("Count") + "-" + message("Ascending"));
-            if (groupController.byEqualValues()) {
-                List<String> groups = groupController.groupNames;
-                if (groups != null) {
-                    for (String name : groups) {
-                        names.add(name + "-" + message("Descending"));
-                        names.add(name + "-" + message("Ascending"));
-                    }
-                }
-            }
-            sortController.loadNames(names);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

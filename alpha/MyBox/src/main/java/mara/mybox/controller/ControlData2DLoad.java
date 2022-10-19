@@ -162,6 +162,15 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     /*
         data
      */
+    public void loadData(Data2D data) {
+        if (data == null) {
+            loadNull();
+            return;
+        }
+        setData(data);
+        readDefinition();
+    }
+
     public void loadDef(Data2DDefinition def) {
         if (def == null) {
             loadNull();

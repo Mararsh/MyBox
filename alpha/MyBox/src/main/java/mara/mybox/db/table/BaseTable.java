@@ -144,6 +144,9 @@ public abstract class BaseTable<D> {
                     if (value == null) {
                         d = Double.NaN;
                     } else {
+                        if (!(value instanceof Double)) {
+                            MyBoxLog.console(value + "  " + value.getClass());
+                        }
                         d = (double) value;
                     }
                     if (DoubleTools.invalidDouble(d)) {
@@ -228,7 +231,11 @@ public abstract class BaseTable<D> {
                     if (value == null) {
                         s = AppValues.InvalidShort;
                     } else {
-                        s = (short) value;
+                        if (value instanceof Integer) { // sometime value becomes Integer...
+                            s = (short) ((int) value);
+                        } else {
+                            s = (short) value;
+                        }
                     }
                     if (s == AppValues.InvalidShort) {
                         if (notNull) {

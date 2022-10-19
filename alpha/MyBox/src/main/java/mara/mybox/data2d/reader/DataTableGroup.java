@@ -40,11 +40,12 @@ public class DataTableGroup {
 
     protected GroupType type;
     protected Data2D originalData;
-    protected DataTable sourceData; // Results of "Data2D_Convert.toTmpTable(...)"
+    protected DataTable sourceData;
     protected String groupName;
     protected List<String> groupNames, copyNames, sorts, targetNames;
     protected InvalidAs invalidAs;
-    protected int max, scale, splitNumber;
+    protected int scale, splitNumber;
+    protected long max;
     protected double splitInterval;
     protected List<DataFilter> conditions;
     protected List<Double> splitList;
@@ -78,7 +79,9 @@ public class DataTableGroup {
         SingleFile, MultipleFiles, Table, TmpTable
     }
 
-    public DataTableGroup(DataTable sourceData) {
+    // This class is based on results of "Data2D_Convert.toTmpTable(...)"
+    public DataTableGroup(Data2D originalData, DataTable sourceData) {
+        this.originalData = originalData;
         this.sourceData = sourceData;
     }
 
@@ -149,7 +152,7 @@ public class DataTableGroup {
             targetColNames.add(message("Group"));
             targetColNames.add(parameterName);
             targetColumns = new ArrayList<>();
-            targetColumns.add(new Data2DColumn(message("Group"), ColumnDefinition.ColumnType.String));
+            targetColumns.add(new Data2DColumn(message("Group"), ColumnDefinition.ColumnType.Long));
             targetColumns.add(new Data2DColumn(parameterName, ColumnDefinition.ColumnType.String, 200));
             for (String name : targetNames) {
                 Data2DColumn c = sourceData.columnByName(sourceData.mappedColumnName(name));
@@ -743,11 +746,12 @@ public class DataTableGroup {
                         insert = conn.prepareStatement(tableTarget.insertStatement());
                     }
                     Data2DRow data2DRow = tableTarget.newRow();
-                    data2DRow.setColumnValue(message("Group"), message("Group") + groupid);
+                    data2DRow.setColumnValue(message("Group"), groupid);
                     data2DRow.setColumnValue(parameterName, parameterValue);
                     for (int i = 2; i < targetColNames.size(); i++) {
                         String name = targetColNames.get(i);
-                        data2DRow.setColumnValue(name, sourceRow.get(sourceData.mappedColumnName(name)));
+                        data2DRow.setColumnValue(targetData.mappedColumnName(name),
+                                sourceRow.get(sourceData.mappedColumnName(name)));
                     }
                     tableTarget.insertData(conn, insert, data2DRow);
                     if (++count % DerbyBase.BatchSize == 0) {
@@ -767,14 +771,14 @@ public class DataTableGroup {
                         csvPrinter.printRecord(targetColNames);
                     }
                     List<String> fileRow = new ArrayList<>();
-                    fileRow.add(message("Group") + groupid);
+                    fileRow.add(groupid + "");
                     fileRow.add(parameterValue);
                     for (int i = 2; i < targetColumns.size(); i++) {
                         Data2DColumn column = targetColumns.get(i);
                         String name = column.getColumnName();
                         Object v = sourceRow.get(sourceData.mappedColumnName(name));
                         String s = column.toString(v);
-                        if (column.needScale()) {
+                        if (column.needScale() && scale >= 0) {
                             s = DoubleTools.scaleString(s, invalidAs, scale);
                         }
                         fileRow.add(s);
@@ -905,6 +909,10 @@ public class DataTableGroup {
         return groupid;
     }
 
+    public String getParameterName() {
+        return parameterName;
+    }
+
     /*
         set
      */
@@ -948,7 +956,7 @@ public class DataTableGroup {
         return this;
     }
 
-    public DataTableGroup setMax(int max) {
+    public DataTableGroup setMax(long max) {
         this.max = max;
         return this;
     }

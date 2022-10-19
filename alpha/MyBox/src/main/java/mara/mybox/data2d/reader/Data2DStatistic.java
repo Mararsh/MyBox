@@ -143,7 +143,7 @@ public class Data2DStatistic extends Data2DOperator {
                 if (statisticCalculation.include(StatisticType.GeometricMean)) {
                     statisticData[c].geometricMean = statisticData[c].geometricMean * v;
                 }
-                if (statisticCalculation.include(StatisticType.SumSquares)) {
+                if (statisticCalculation.include(StatisticType.SumOfSquares)) {
                     statisticData[c].sumSquares += v * v;
                 }
                 if (statisticCalculation.include(StatisticType.Skewness)) {
@@ -215,7 +215,7 @@ public class Data2DStatistic extends Data2DOperator {
                 if (statisticCalculation.include(StatisticType.GeometricMean)) {
                     statisticAll.geometricMean = statisticAll.geometricMean * v;
                 }
-                if (statisticCalculation.include(StatisticType.SumSquares)) {
+                if (statisticCalculation.include(StatisticType.SumOfSquares)) {
                     statisticAll.sumSquares += v * v;
                 }
                 if (statisticCalculation.include(StatisticType.Skewness)) {

@@ -162,7 +162,7 @@ public class DoubleStatistic {
                 if (options.include(StatisticType.GeometricMean)) {
                     geometricMean = geometricMean * v;
                 }
-                if (options.include(StatisticType.SumSquares)) {
+                if (options.include(StatisticType.SumOfSquares)) {
                     sumSquares += v * v;
                 }
             }
@@ -282,7 +282,7 @@ public class DoubleStatistic {
 
     private void calculateMode() {
         try {
-            if (valids == null || count <= 0) {
+            if (options == null || valids == null || count <= 0) {
                 return;
             }
             if (!options.include(StatisticType.Mode)) {
@@ -296,6 +296,9 @@ public class DoubleStatistic {
     }
 
     public List<String> toStringList() {
+        if (options == null) {
+            return null;
+        }
         int scale = options.getScale();
         List<String> list = new ArrayList<>();
         for (StatisticType type : options.types) {
@@ -318,7 +321,7 @@ public class DoubleStatistic {
                 case GeometricMean:
                     list.add(NumberTools.format(geometricMean, scale));
                     break;
-                case SumSquares:
+                case SumOfSquares:
                     list.add(NumberTools.format(sumSquares, scale));
                     break;
                 case PopulationVariance:
@@ -358,12 +361,16 @@ public class DoubleStatistic {
                     list.add(NumberTools.format(lowerExtremeOutlierLine, scale));
                     break;
                 case Mode:
-                    try {
-                    list.add(NumberTools.format((double) modeValue, scale));
-                } catch (Exception e) {
-                    list.add(modeValue.toString());
-                }
-                break;
+                    if (modeValue == null) {
+                        list.add(null);
+                    } else {
+                        try {
+                            list.add(NumberTools.format((double) modeValue, scale));
+                        } catch (Exception e) {
+                            list.add(modeValue.toString());
+                        }
+                    }
+                    break;
             }
         }
         return list;

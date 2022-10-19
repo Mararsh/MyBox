@@ -234,20 +234,19 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         if (conn == null || referredName == null) {
             return -1;
         }
-        MyBoxLog.console(referredName);
         try ( PreparedStatement statement = conn.prepareStatement("DROP TABLE " + referredName)) {
             if (statement.executeUpdate() < 0) {
                 return -2;
             }
         } catch (Exception e) {
-            MyBoxLog.error(e);
+//            MyBoxLog.error(e);
             return -3;
         }
         try ( PreparedStatement statement = conn.prepareStatement(Delete_UserTable)) {
             statement.setString(1, DerbyBase.stringValue(DerbyBase.savedName(referredName)));
             return statement.executeUpdate();
         } catch (Exception e) {
-            MyBoxLog.error(e);
+//            MyBoxLog.error(e);
             return -1;
         }
     }

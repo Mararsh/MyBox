@@ -14,10 +14,14 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.Data2D_Operations.ObjectType;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFilter;
+import mara.mybox.data2d.DataTable;
+import mara.mybox.data2d.reader.DataTableGroup;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -129,7 +133,9 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                     }
                 });
 
-                sortController.setParameters(this, message("Sort"), message("Sort"));
+                if (sortController != null) {
+                    sortController.setParameters(this, message("Sort"), message("DataSortLabel"));
+                }
             }
 
             maxData = UserConfig.getInt(baseName + "MaxDataNumber", -1);
@@ -448,6 +454,71 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
 
         };
         start(task);
+    }
+
+    public DataTableGroup groupData(DataTableGroup.TargetType targetType,
+            List<String> copyNames, List<String> sorts, long max, int dscale) {
+        try {
+            if (groupController == null) {
+                return null;
+            }
+            Data2D tmp2D = data2D.cloneAll();
+            List<Data2DColumn> tmpColumns = new ArrayList<>();
+            for (Data2DColumn column : data2D.columns) {
+                Data2DColumn tmpColumn = column.cloneAll();
+                String name = tmpColumn.getColumnName();
+                if (groupController.groupName != null && groupController.groupName.equals(name)) {
+                    tmpColumn.setType(ColumnDefinition.ColumnType.Double);
+                }
+                tmpColumns.add(tmpColumn);
+            }
+            tmp2D.setColumns(tmpColumns);
+            tmp2D.startTask(task, filterController.filter);
+            DataTable tmpTable;
+            List<Integer> colIndices = data2D.columnIndices();
+            if (isAllPages()) {
+                tmpTable = tmp2D.toTmpTable(task, colIndices, false, false, invalidAs);
+            } else {
+                outputData = filtered(colIndices, false);
+                if (outputData == null || outputData.isEmpty()) {
+                    return null;
+                }
+                tmpTable = tmp2D.toTmpTable(task, colIndices, outputData, false, false, invalidAs);
+                outputData = null;
+            }
+            tmp2D.stopFilter();
+            List<String> tnames = new ArrayList<>();
+            if (groupController.groupName != null) {
+                tnames.add(groupController.groupName);
+            } else if (groupController.groupNames != null) {
+                tnames.addAll(groupController.groupNames);
+            }
+            for (String name : copyNames) {
+                if (!tnames.contains(name)) {
+                    tnames.add(name);
+                }
+            }
+            DataTableGroup group = new DataTableGroup(data2D, tmpTable)
+                    .setType(groupController.groupType())
+                    .setGroupNames(groupController.groupNames)
+                    .setGroupName(groupController.groupName)
+                    .setSplitInterval(groupController.splitInterval())
+                    .setSplitNumber(groupController.splitNumber())
+                    .setSplitList(groupController.splitList())
+                    .setConditions(groupController.groupConditions)
+                    .setCopyNames(copyNames)
+                    .setSorts(sorts).setMax(max)
+                    .setScale(dscale).setInvalidAs(invalidAs).setTask(task)
+                    .setTargetType(targetType)
+                    .setTargetNames(tnames);
+            return group;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
     protected void startOperation() {

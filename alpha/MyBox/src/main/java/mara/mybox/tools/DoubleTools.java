@@ -30,6 +30,9 @@ public class DoubleTools {
 
     public static String scaleString(String string, InvalidAs invalidAs, int scale) {
         try {
+            if (scale < 0) {
+                return string;
+            }
             double d = toDouble(string, invalidAs);
             return scaleString(d, scale);
         } catch (Exception e) {
@@ -177,6 +180,9 @@ public class DoubleTools {
 
     public static String scaleString(double v, int scale) {
         try {
+            if (scale < 0) {
+                return v + "";
+            }
             NumberFormat formatter = NumberFormat.getInstance();
             formatter.setMaximumFractionDigits(scale);
             formatter.setMinimumFractionDigits(0);

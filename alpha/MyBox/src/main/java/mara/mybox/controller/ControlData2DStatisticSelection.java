@@ -239,7 +239,7 @@ public class ControlData2DStatisticSelection extends BaseController {
                 calculation.add(StatisticType.GeometricMean);
             }
             if (sumOfSquaresCheck.isSelected()) {
-                calculation.add(StatisticType.SumSquares);
+                calculation.add(StatisticType.SumOfSquares);
             }
             if (populationStandardDeviationCheck.isSelected()) {
                 calculation.add(StatisticType.PopulationStandardDeviation);

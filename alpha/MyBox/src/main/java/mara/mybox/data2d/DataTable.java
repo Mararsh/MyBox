@@ -438,6 +438,10 @@ public class DataTable extends Data2D {
         }
     }
 
+    public int drop(Connection conn) {
+        return drop(conn, sheet);
+    }
+
     public int drop(Connection conn, String name) {
         if (name == null || name.isBlank()) {
             return -4;
@@ -750,6 +754,7 @@ public class DataTable extends Data2D {
                     column.setStatistic(colStatistic);
                 }
                 colStatistic.invalidAs = selections.invalidAs;
+                colStatistic.options = selections;
                 sData[c] = colStatistic;
                 if (selections.include(StatisticType.Median)) {
                     colStatistic.medianValue = percentile(conn, column, 50);

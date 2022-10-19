@@ -18,7 +18,6 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -172,23 +171,6 @@ License:    Apache License Version 2.0
                                                 </ScrollPane>
                                             </content>
                                         </Tab>
-                                        <Tab fx:id="statisticTab" text="%Statistic">
-                                            <content>
-                                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                                                    <content>
-                                                        <VBox fx:id="statisticBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                            <padding>
-                                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                                            </padding>
-                                                            <children>
-                                                                <CheckBox fx:id="onlyStatisticCheck" minHeight="-Infinity" mnemonicParsing="false" text="%StatisticOnlyNumbers" wrapText="true" />
-                                                                <fx:include fx:id="calculation" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlSelection.fxml" VBox.vgrow="ALWAYS" />
-                                                            </children>
-                                                        </VBox>
-                                                    </content>
-                                                </ScrollPane>
-                                            </content>
-                                        </Tab>
                                         <Tab fx:id="optionsTab" text="%Options">
                                             <content>
                                                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
@@ -198,7 +180,36 @@ License:    Apache License Version 2.0
                                                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                                             </padding>
                                                             <children>
-                                                                  <fx:include fx:id="sort" minHeight="-Infinity" prefHeight="200.0" source="ControlSelection.fxml" />
+                                                <VBox fx:id="columnCheckBoxsBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                   <children>
+                                                      <FlowPane hgap="2.0" vgap="2.0">
+                                                         <children>
+                                                            <Label text="%ColumnsCalculated" />
+                                                            <Label text="%NoSelectionMeansAll" />
+                                                            <Button fx:id="selectAllColumnsButton" mnemonicParsing="false" onAction="#selectAllColumns">
+                                                               <graphic>
+                                                                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                     <image>
+                                                                        <Image url="@../buttons/Red/iconSelectAll.png" />
+                                                                     </image>
+                                                                  </ImageView>
+                                                               </graphic>
+                                                            </Button>
+                                                            <Button fx:id="selectNoneColumnsButton" mnemonicParsing="false" onAction="#selectNoneColumn">
+                                                               <graphic>
+                                                                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                     <image>
+                                                                        <Image url="@../buttons/Red/iconSelectNone.png" />
+                                                                     </image>
+                                                                  </ImageView>
+                                                               </graphic>
+                                                            </Button>
+                                                         </children>
+                                                      </FlowPane>
+                                                      <FlowPane fx:id="columnsPane" hgap="2.0" vgap="2.0" />
+                                                   </children>
+                                                </VBox>
+                                                <fx:include fx:id="statistic" source="ControlData2DStatisticSelections.fxml" />
                                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="ALWAYS">
                                                                     <children>
                                                       <HBox alignment="CENTER_LEFT" spacing="2.0">
@@ -207,12 +218,6 @@ License:    Apache License Version 2.0
                                                             <ComboBox fx:id="scaleSelector" editable="true" prefWidth="120.0" />
                                                          </children>
                                                       </HBox>
-                                                                        <FlowPane fx:id="maxPane" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
-                                                                            <children>
-                                                                                <Label minHeight="-Infinity" text="%MaxResultsTake" wrapText="true" />
-                                                                                <TextField fx:id="maxInput" prefWidth="100.0" />
-                                                                            </children>
-                                                                        </FlowPane>
                                                                         <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
                                                                             <children>
                                                                                 <Label text="%ToInvalidNumber" />
@@ -291,15 +296,16 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </CheckBox>
+                              <CheckBox fx:id="parametersCheck" mnemonicParsing="false" text="%GroupParameters" />
                                     </children>
                                 </HBox>
                                 <TabPane fx:id="chartTabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                                     <tabs>
-                                        <Tab fx:id="resultsTab1" text="%Values">
+                                        <Tab fx:id="groupDataTab" text="%GroupData">
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                     <children>
-                                                        <fx:include fx:id="values" source="ControlData2DResults.fxml" />
+                                                        <fx:include fx:id="groupData" source="ControlData2DResults.fxml" />
                                                     </children>
                                                     <padding>
                                                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -307,6 +313,18 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </Tab>
+                              <Tab fx:id="statisticDataTab" text="%StatisticData">
+                                 <content>
+                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                       <children>
+                                          <fx:include fx:id="statisticData" source="ControlData2DResults.fxml" />
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                       </padding>
+                                    </VBox>
+                                 </content>
+                              </Tab>
                                         <Tab text="%XYChart" fx:id="xyChartTab">
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">

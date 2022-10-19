@@ -42,7 +42,7 @@ public class DescriptiveStatistic {
     public StatisticObject statisticObject = StatisticObject.Columns;
 
     public enum StatisticType {
-        Count, Sum, Mean, GeometricMean, SumSquares, Skewness, Mode,
+        Count, Sum, Mean, GeometricMean, SumOfSquares, Skewness, Mode,
         PopulationVariance, SampleVariance, PopulationStandardDeviation, SampleStandardDeviation,
         MinimumQ0, LowerQuartile, Median, UpperQuartile, MaximumQ4,
         LowerExtremeOutlierLine, LowerMildOutlierLine, UpperMildOutlierLine, UpperExtremeOutlierLine
@@ -89,7 +89,7 @@ public class DescriptiveStatistic {
                 || include(StatisticType.Count)
                 || include(StatisticType.Skewness)
                 || include(StatisticType.GeometricMean)
-                || include(StatisticType.SumSquares)
+                || include(StatisticType.SumOfSquares)
                 || needVariance();
     }
 
@@ -290,7 +290,7 @@ public class DescriptiveStatistic {
                 case GeometricMean:
                     row.add(NumberTools.format(statistic.getGeometricMean(), scale));
                     break;
-                case SumSquares:
+                case SumOfSquares:
                     row.add(NumberTools.format(statistic.getSumSquares(), scale));
                     break;
                 case PopulationVariance:

@@ -115,6 +115,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
                     column.setStatistic(colStatistic);
                 }
                 colStatistic.invalidAs = selections.invalidAs;
+                colStatistic.options = selections;
                 sData[c] = colStatistic;
             }
             Data2DOperator reader = Data2DStatistic.create(this)
