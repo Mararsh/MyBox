@@ -1,10 +1,12 @@
 package mara.mybox.fxml.chart;
 
+import java.sql.Connection;
 import javafx.geometry.Side;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -65,13 +67,13 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
     }
 
     public XYChartOptions initXYChartOptions() {
-        try {
-            if (chartName == null) {
-                return this;
-            }
-            initChartOptions();
+        if (chartName == null) {
+            return this;
+        }
+        initChartOptions();
+        try ( Connection conn = DerbyBase.getConnection()) {
 
-            isXY = UserConfig.getBoolean(chartName + "XY", true);
+            isXY = UserConfig.getBoolean(conn, chartName + "XY", true);
             switch (chartType) {
                 case Bubble:
                     categoryIsNumbers = true;
@@ -90,36 +92,36 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
                     labelLocation = LabelLocation.Above;
                     break;
                 default:
-                    categoryIsNumbers = UserConfig.getBoolean(chartName + "CategoryIsNumbers", false);
+                    categoryIsNumbers = UserConfig.getBoolean(conn, chartName + "CategoryIsNumbers", false);
                     labelLocation = LabelLocation.Below;
                     break;
             }
-            displayCategoryMark = UserConfig.getBoolean(chartName + "DisplayCategoryMark", true);
-            displayCategoryTick = UserConfig.getBoolean(chartName + "DisplayCategoryTick", true);
-            displayNumberMark = UserConfig.getBoolean(chartName + "DisplayNumberMark", true);
-            displayNumberTick = UserConfig.getBoolean(chartName + "DisplayNumberTick", true);
-            plotAnimated = UserConfig.getBoolean(chartName + "PlotAnimated", false);
+            displayCategoryMark = UserConfig.getBoolean(conn, chartName + "DisplayCategoryMark", true);
+            displayCategoryTick = UserConfig.getBoolean(conn, chartName + "DisplayCategoryTick", true);
+            displayNumberMark = UserConfig.getBoolean(conn, chartName + "DisplayNumberMark", true);
+            displayNumberTick = UserConfig.getBoolean(conn, chartName + "DisplayNumberTick", true);
+            plotAnimated = UserConfig.getBoolean(conn, chartName + "PlotAnimated", false);
 
-            altRowsFill = UserConfig.getBoolean(chartName + "AltRowsFill", false);
-            altColumnsFill = UserConfig.getBoolean(chartName + "AltColumnsFill", false);
-            displayVlines = UserConfig.getBoolean(chartName + "DisplayVlines", true);
-            displayHlines = UserConfig.getBoolean(chartName + "DisplayHlines", true);
-            displayVZero = UserConfig.getBoolean(chartName + "DisplayVZero", true);
-            displayHZero = UserConfig.getBoolean(chartName + "DisplayHZero", true);
-            dotted = UserConfig.getBoolean(chartName + "Dotted", false);
+            altRowsFill = UserConfig.getBoolean(conn, chartName + "AltRowsFill", false);
+            altColumnsFill = UserConfig.getBoolean(conn, chartName + "AltColumnsFill", false);
+            displayVlines = UserConfig.getBoolean(conn, chartName + "DisplayVlines", true);
+            displayHlines = UserConfig.getBoolean(conn, chartName + "DisplayHlines", true);
+            displayVZero = UserConfig.getBoolean(conn, chartName + "DisplayVZero", true);
+            displayHZero = UserConfig.getBoolean(conn, chartName + "DisplayHZero", true);
+            dotted = UserConfig.getBoolean(conn, chartName + "Dotted", false);
 
-            categoryFontSize = UserConfig.getInt(chartName + "CategoryFontSize", 10);
-            categoryMargin = UserConfig.getInt(chartName + "CategoryMargin", 2);
-            categoryTickRotation = UserConfig.getInt(chartName + "CategoryTickRotation", 90);
-            numberFontSize = UserConfig.getInt(chartName + "NumberFontSize", 10);
-            numberTickRotation = UserConfig.getInt(chartName + "NumberTickRotation", 0);
-            lineWidth = UserConfig.getInt(chartName + "LineWidth", 2);
-            barGap = UserConfig.getDouble(chartName + "BarGap", 2d);
-            categoryGap = UserConfig.getDouble(chartName + "CategoryGap", 20d);
+            categoryFontSize = UserConfig.getInt(conn, chartName + "CategoryFontSize", 10);
+            categoryMargin = UserConfig.getInt(conn, chartName + "CategoryMargin", 2);
+            categoryTickRotation = UserConfig.getInt(conn, chartName + "CategoryTickRotation", 90);
+            numberFontSize = UserConfig.getInt(conn, chartName + "NumberFontSize", 10);
+            numberTickRotation = UserConfig.getInt(conn, chartName + "NumberTickRotation", 0);
+            lineWidth = UserConfig.getInt(conn, chartName + "LineWidth", 2);
+            barGap = UserConfig.getDouble(conn, chartName + "BarGap", 2d);
+            categoryGap = UserConfig.getDouble(conn, chartName + "CategoryGap", 20d);
 
-            bubbleStyle = UserConfig.getString(chartName + "BubbleStyle", DefaultBubbleStyle);
+            bubbleStyle = UserConfig.getString(conn, chartName + "BubbleStyle", DefaultBubbleStyle);
 
-            String saved = UserConfig.getString(chartName + "LabelLocation", labelLocation.name());
+            String saved = UserConfig.getString(conn, chartName + "LabelLocation", labelLocation.name());
             if (saved != null) {
                 for (LabelLocation type : LabelLocation.values()) {
                     if (type.name().equals(saved)) {
@@ -130,7 +132,7 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
             }
 
             categorySide = Side.BOTTOM;
-            saved = UserConfig.getString(chartName + "CategorySide", "BOTTOM");
+            saved = UserConfig.getString(conn, chartName + "CategorySide", "BOTTOM");
             if (saved != null) {
                 for (Side value : Side.values()) {
                     if (value.name().equals(saved)) {
@@ -141,7 +143,7 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
             }
 
             numberSide = Side.LEFT;
-            saved = UserConfig.getString(chartName + "NumberSide", "LEFT");
+            saved = UserConfig.getString(conn, chartName + "NumberSide", "LEFT");
             if (saved != null) {
                 for (Side value : Side.values()) {
                     if (value.name().equals(saved)) {
@@ -152,7 +154,7 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
             }
 
             categoryCoordinate = ChartCoordinate.Cartesian;
-            saved = UserConfig.getString(chartName + "CategoryCoordinate", "Cartesian");
+            saved = UserConfig.getString(conn, chartName + "CategoryCoordinate", "Cartesian");
             if (saved != null) {
                 for (ChartCoordinate value : ChartCoordinate.values()) {
                     if (value.name().equals(saved)) {
@@ -163,7 +165,7 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
             }
 
             numberCoordinate = ChartCoordinate.Cartesian;
-            saved = UserConfig.getString(chartName + "NumberCoordinate", "Cartesian");
+            saved = UserConfig.getString(conn, chartName + "NumberCoordinate", "Cartesian");
             if (saved != null) {
                 for (ChartCoordinate value : ChartCoordinate.values()) {
                     if (value.name().equals(saved)) {
@@ -174,7 +176,7 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
             }
 
             sizeCoordinate = ChartCoordinate.Cartesian;
-            saved = UserConfig.getString(chartName + "SizeCoordinate", "Cartesian");
+            saved = UserConfig.getString(conn, chartName + "SizeCoordinate", "Cartesian");
             if (saved != null) {
                 for (ChartCoordinate value : ChartCoordinate.values()) {
                     if (value.name().equals(saved)) {

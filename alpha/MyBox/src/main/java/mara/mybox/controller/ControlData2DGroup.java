@@ -118,13 +118,13 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
 
             } else if (valueRangeRadio.isSelected()) {
                 groupBox.getChildren().addAll(columnBox, splitBox);
-                commentsLabel.setText(message("GroupIntervalComments"));
+                commentsLabel.setText(message("GroupRangeComments"));
                 splitController.isPositiveInteger = false;
                 splitController.checkSplitType();
 
             } else if (rowsRangeRadio.isSelected()) {
                 groupBox.getChildren().add(splitBox);
-                commentsLabel.setText(message("GroupNumberComments"));
+                commentsLabel.setText(message("GroupRowsComments"));
                 splitController.isPositiveInteger = true;
                 splitController.checkSplitType();
 

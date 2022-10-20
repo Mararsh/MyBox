@@ -6,10 +6,18 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.Tab;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.FlowPane;
 import mara.mybox.calculation.DescriptiveStatistic;
 import mara.mybox.calculation.DescriptiveStatistic.StatisticObject;
+import mara.mybox.calculation.DescriptiveStatistic.StatisticType;
 import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.DataTableGroupStatistic;
 import mara.mybox.data2d.reader.DataTableGroup;
 import mara.mybox.db.data.Data2DColumn;
@@ -19,7 +27,6 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.chart.PieChartMaker;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -29,11 +36,14 @@ import mara.mybox.value.UserConfig;
 public class Data2DGroupStatisticController extends Data2DChartGroupXYController {
 
     protected DescriptiveStatistic calculation;
+    protected DataTable groupData;
     protected DataFileCSV statisticFile;
     protected PieChartMaker pieMaker;
     protected List<List<String>> pieData;
     protected List<Data2DColumn> pieColumns;
 
+    @FXML
+    protected Tab xyChartTab, pieChartTab;
     @FXML
     protected ControlData2DStatisticSelection statisticController;
     @FXML
@@ -41,7 +51,11 @@ public class Data2DGroupStatisticController extends Data2DChartGroupXYController
     @FXML
     protected ControlData2DChartPie pieChartController;
     @FXML
-    protected CheckBox parametersCheck;
+    protected FlowPane columnsDisplayPane, valuesDisplayPane;
+    @FXML
+    protected RadioButton xyParametersRadio, pieParametersRadio;
+    @FXML
+    protected ToggleGroup pieCategoryGroup;
 
     public Data2DGroupStatisticController() {
         baseTitle = message("GroupStatistic");
@@ -67,18 +81,21 @@ public class Data2DGroupStatisticController extends Data2DChartGroupXYController
             statisticDataController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    xyChartTab.setDisable(false);
+                    pieChartTab.setDisable(false);
                     refreshAction();
                 }
             });
 
-            parametersCheck.setSelected(UserConfig.getBoolean(baseName + "Parameters", true));
-            parametersCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            pieCategoryGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "Parameters", parametersCheck.isSelected());
-                    refreshAction();
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    makeCharts(false, true);
                 }
             });
+
+            xyChartTab.setDisable(true);
+            pieChartTab.setDisable(true);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -90,9 +107,12 @@ public class Data2DGroupStatisticController extends Data2DChartGroupXYController
         if (task != null) {
             task.cancel();
         }
+        groupData = null;
         statisticFile = null;
         groupDataController.loadNull();
         statisticDataController.loadNull();
+        xyChartTab.setDisable(true);
+        pieChartTab.setDisable(true);
         calculation = statisticController.pickValues()
                 .setStatisticObject(StatisticObject.Columns)
                 .setScale(scale)
@@ -101,6 +121,14 @@ public class Data2DGroupStatisticController extends Data2DChartGroupXYController
                 .setData2D(data2D)
                 .setColsIndices(checkedColsIndices)
                 .setColsNames(checkedColsNames);
+        columnsDisplayPane.getChildren().clear();
+        for (String c : checkedColsNames) {
+            columnsDisplayPane.getChildren().add(new CheckBox(c));
+        }
+        valuesDisplayPane.getChildren().clear();
+        for (StatisticType t : calculation.types) {
+            valuesDisplayPane.getChildren().add(new CheckBox(message(t.name())));
+        }
         task = new SingletonTask<Void>(this) {
 
             private DataTableGroup group;
@@ -109,13 +137,14 @@ public class Data2DGroupStatisticController extends Data2DChartGroupXYController
             @Override
             protected boolean handle() {
                 try {
-                    group = groupData(DataTableGroup.TargetType.TmpTable,
+                    group = groupData(DataTableGroup.TargetType.Table,
                             checkedColsNames, null, -1, scale);
                     if (!group.run()) {
                         return false;
                     }
+                    groupData = group.getTargetData();
                     Platform.runLater(() -> {
-                        groupDataController.loadData(group.getTargetData());
+                        groupDataController.loadData(groupData);
                     });
                     statistic = new DataTableGroupStatistic()
                             .setGroups(group)
@@ -152,12 +181,21 @@ public class Data2DGroupStatisticController extends Data2DChartGroupXYController
     @FXML
     @Override
     public void refreshAction() {
-        outputColumns = null;
-        outputData = null;
-        pieColumns = null;
-        pieData = null;
-        chartMaker.clearChart();
-        pieMaker.clearChart();
+        makeCharts(true, true);
+    }
+
+    @FXML
+    public void makeCharts(boolean forXY, boolean forPie) {
+        if (forXY) {
+            outputColumns = null;
+            outputData = null;
+            chartMaker.clearChart();
+        }
+        if (forPie) {
+            pieColumns = null;
+            pieData = null;
+            pieMaker.clearChart();
+        }
         if (statisticFile == null) {
             return;
         }
@@ -170,17 +208,38 @@ public class Data2DGroupStatisticController extends Data2DChartGroupXYController
             protected boolean handle() {
                 try {
                     statisticFile.startTask(backgroundTask, null);
-                    makeChartData();
-                    return outputData != null;
+
+                    List<List<String>> resultsData;
+                    if (displayAllCheck.isSelected()) {
+                        resultsData = statisticFile.allRows(false);
+                    } else {
+                        resultsData = statisticDataController.data2D.tableRowsWithoutNumber();
+                    }
+                    if (resultsData == null) {
+                        return false;
+                    }
+                    if (forXY && !makeXYData(resultsData)) {
+                        return false;
+                    }
+                    if (forPie && !makePieData(resultsData)) {
+                        return false;
+                    }
+                    return true;
                 } catch (Exception e) {
                     error = e.toString();
+                    MyBoxLog.error(e);
                     return false;
                 }
             }
 
             @Override
             protected void whenSucceeded() {
-                drawChart();
+                if (forXY) {
+                    drawXYChart();
+                }
+                if (forPie) {
+                    drawPieChart();
+                }
             }
 
             @Override
@@ -199,72 +258,122 @@ public class Data2DGroupStatisticController extends Data2DChartGroupXYController
         start(backgroundTask, false);
     }
 
-    public void makeChartData() {
+    protected boolean makeXYData(List<List<String>> resultsData) {
         try {
-            List<List<String>> resultsData;
-            if (displayAllCheck.isSelected()) {
-                resultsData = statisticFile.allRows(false);
-            } else {
-                resultsData = statisticDataController.data2D.tableRowsWithoutNumber();
-            }
             if (resultsData == null) {
-                return;
+                return false;
             }
-            categoryColumn = statisticFile.columns.get(parametersCheck.isSelected() ? 1 : 0);
-            Data2DColumn countColumn = statisticFile.columns.get(2);
-
             outputColumns = new ArrayList<>();
-            outputColumns.add(categoryColumn);
-            int colSize = statisticFile.columns.size();
-            if (colSize > 3) {
-                outputColumns.addAll(statisticFile.columns.subList(3, colSize));
-            } else {
-                outputColumns.add(countColumn);
+            Data2DColumn xyCategoryColumn
+                    = statisticFile.columns.get(xyParametersRadio.isSelected() ? 1 : 0);
+            outputColumns.add(xyCategoryColumn);
+
+            List<String> colNames = new ArrayList<>();
+            List<String> allName = new ArrayList<>();
+            for (Node n : columnsDisplayPane.getChildren()) {
+                CheckBox cb = (CheckBox) n;
+                String name = cb.getText();
+                if (cb.isSelected()) {
+                    colNames.add(name);
+                }
+                allName.add(name);
+            }
+            if (colNames.isEmpty()) {
+                if (allName.isEmpty()) {
+                    error = message("SelectToHanlde") + ": " + message("ColumnsDisplayed");
+                    return false;
+                }
+                colNames = allName;
             }
 
-            pieColumns = new ArrayList<>();
-            pieColumns.add(categoryColumn);
-            pieColumns.add(countColumn);
-
+            List<String> sTypes = new ArrayList<>();
+            List<String> allTypes = new ArrayList<>();
+            for (Node n : valuesDisplayPane.getChildren()) {
+                CheckBox cb = (CheckBox) n;
+                String tname = cb.getText();
+                if (cb.isSelected()) {
+                    sTypes.add(tname);
+                }
+                allTypes.add(tname);
+            }
+            if (sTypes.isEmpty()) {
+                if (allTypes.isEmpty()) {
+                    error = message("SelectToHanlde") + ": " + message("ValuesDisplayed");
+                    return false;
+                }
+                sTypes = allTypes;
+            }
+            List<Integer> cols = new ArrayList<>();
+            for (String stype : sTypes) {
+                if (message("Count").equals(stype)) {
+                    outputColumns.add(statisticFile.column(2));
+                    cols.add(2);
+                } else {
+                    for (String col : colNames) {
+                        int colIndex = statisticFile.colOrder(col + "_" + stype);
+                        outputColumns.add(statisticFile.column(colIndex));
+                        cols.add(colIndex);
+                    }
+                }
+            }
             outputData = new ArrayList<>();
-            pieData = new ArrayList<>();
             for (List<String> data : resultsData) {
                 List<String> xyRow = new ArrayList<>();
-                String category = data.get(parametersCheck.isSelected() ? 1 : 0);
-                String count = data.get(2);
+                String category = data.get(xyParametersRadio.isSelected() ? 1 : 0);
                 xyRow.add(category);
-                if (colSize > 3) {
-                    xyRow.addAll(data.subList(3, colSize));
-                } else {
-                    xyRow.add(count);
+                for (int colIndex : cols) {
+                    xyRow.add(data.get(colIndex));
                 }
                 outputData.add(xyRow);
+            }
+
+            selectedCategory = xyCategoryColumn.getColumnName();
+            selectedValue = message("Statistic");
+            String title = chartTitle();
+            initChart(title, xyCategoryColumn.isNumberType());
+            return true;
+        } catch (Exception e) {
+            error = e.toString();
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    protected boolean makePieData(List<List<String>> resultsData) {
+        try {
+            if (resultsData == null) {
+                return false;
+            }
+            pieColumns = new ArrayList<>();
+            Data2DColumn pieCategoryColumn
+                    = statisticFile.columns.get(pieParametersRadio.isSelected() ? 1 : 0);
+            pieColumns.add(pieCategoryColumn);
+            pieColumns.add(statisticFile.columns.get(2));
+
+            pieData = new ArrayList<>();
+            for (List<String> data : resultsData) {
+                String category = data.get(pieParametersRadio.isSelected() ? 1 : 0);
+                String count = data.get(2);
                 List<String> pieRow = new ArrayList<>();
                 pieRow.add(category);
                 pieRow.add(count);
                 pieData.add(pieRow);
             }
 
-            selectedCategory = categoryColumn.getColumnName();
-            selectedValue = message("Statistic");
+            selectedCategory = pieCategoryColumn.getColumnName();
             String title = chartTitle();
-            initChart(title, categoryColumn.isNumberType());
-
             pieMaker.init(message("PieChart"))
                     .setDefaultChartTitle(title + " - " + message("Count"))
-                    .setChartTitle(title + " - " + message("Count"))
                     .setDefaultCategoryLabel(selectedCategory)
-                    .setCategoryLabel(selectedCategory)
                     .setDefaultValueLabel(message("Count"))
                     .setValueLabel(message("Count"))
                     .setInvalidAs(invalidAs);
 
+            return true;
         } catch (Exception e) {
-            if (backgroundTask != null) {
-                backgroundTask.setError(e.toString());
-            } else {
-                MyBoxLog.error(e);
-            }
+            error = e.toString();
+            MyBoxLog.error(e);
+            return false;
         }
     }
 
@@ -298,6 +407,11 @@ public class Data2DGroupStatisticController extends Data2DChartGroupXYController
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    @FXML
+    public void okXYchart() {
+        makeCharts(true, false);
     }
 
 

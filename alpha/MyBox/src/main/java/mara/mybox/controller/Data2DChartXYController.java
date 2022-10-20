@@ -144,11 +144,8 @@ public class Data2DChartXYController extends BaseData2DChartController {
             UserConfig.setBoolean(chartName + "CategoryIsNumbers", categoryIsNumbers);
             chartMaker.init(chartTypesController.chartType, chartName)
                     .setDefaultChartTitle(title)
-                    .setChartTitle(title)
                     .setDefaultCategoryLabel(selectedCategory)
-                    .setCategoryLabel(selectedCategory)
                     .setDefaultValueLabel(selectedValue)
-                    .setValueLabel(selectedValue)
                     .setInvalidAs(invalidAs);
             return true;
         } catch (Exception e) {
