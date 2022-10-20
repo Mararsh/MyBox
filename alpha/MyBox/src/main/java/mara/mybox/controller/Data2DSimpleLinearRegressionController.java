@@ -45,8 +45,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
     protected Map<String, String> residualPalette;
 
     @FXML
-    protected CheckBox displayAllCheck, textCheck,
-            fittedPointsCheck, fittedLineCheck, residualStdCheck;
+    protected CheckBox textCheck, fittedPointsCheck, fittedLineCheck, residualStdCheck;
     @FXML
     protected ControlData2DChartXY fittingController, residualController;
     @FXML
@@ -94,17 +93,6 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
 
     public void initChartTab() {
         try {
-
-            displayAllCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayAll", true));
-            displayAllCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
-                if (isSettingValues) {
-                    return;
-                }
-                UserConfig.setBoolean(baseName + "DisplayAll", displayAllCheck.isSelected());
-                noticeMemory();
-            });
-
-            displayAllCheck.visibleProperty().bind(allPagesRadio.selectedProperty());
 
             fittedPointsCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayFittedPoints", false));
             fittedPointsCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
@@ -159,11 +147,6 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-    }
-
-    @Override
-    public void noticeMemory() {
-        noticeLabel.setVisible(isAllPages() && displayAllCheck.isSelected());
     }
 
     @Override

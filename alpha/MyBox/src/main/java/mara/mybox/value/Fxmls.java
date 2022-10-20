@@ -220,6 +220,7 @@ public class Fxmls {
     public static final String Data2DLocationDistributionFxml = "/fxml/Data2DLocationDistribution.fxml";
     public static final String Data2DRowFilterEditFxml = "/fxml/Data2DRowFilterEdit.fxml";
     public static final String RowFilterFxml = "/fxml/RowFilter.fxml";
+    public static final String Data2DChartGroupXYFxml = "/fxml/Data2DChartGroupXY.fxml";
 
     public static final String JShellFxml = "/fxml/JShell.fxml";
     public static final String JexlFxml = "/fxml/Jexl.fxml";

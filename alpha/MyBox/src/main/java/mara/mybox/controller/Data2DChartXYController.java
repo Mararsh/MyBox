@@ -60,7 +60,6 @@ public class Data2DChartXYController extends BaseData2DChartController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     typeChanged();
-                    refreshAction();
                 }
             });
 
@@ -86,8 +85,23 @@ public class Data2DChartXYController extends BaseData2DChartController {
                 columnsBox.getChildren().addAll(categoryColumnsPane, columnCheckBoxsBox);
                 valuesLabel.setText(message("ValueColumns") + " " + message("NoSelectionMeansAll"));
             }
+
+            changeChartAsType();
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void changeChartAsType() {
+        if (categoryColumn == null || outputColumns == null || outputColumns.isEmpty()) {
+            return;
+        }
+        if (chartTypesController.needChangeData()) {
+            refreshAction();
+        } else {
+            initChart(categoryColumn.isNumberType());
+            drawXYChart();
         }
     }
 
@@ -97,7 +111,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
             if (!super.initData()) {
                 return false;
             }
-            String title = selectedCategory;
+
             dataColsIndices = new ArrayList<>();
             outputColumns = new ArrayList<>();
             outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
@@ -111,7 +125,6 @@ public class Data2DChartXYController extends BaseData2DChartController {
             dataColsIndices.add(categoryCol);
             outputColumns.add(categoryColumn);
             if (chartTypesController.isBubbleChart()) {
-                title += " - " + selectedValue;
                 int valueCol = data2D.colOrder(selectedValue);
                 if (valueCol < 0) {
                     outOptionsError(message("SelectToHandle") + ": " + message("Column"));
@@ -128,22 +141,39 @@ public class Data2DChartXYController extends BaseData2DChartController {
             }
             dataColsIndices.addAll(checkedColsIndices);
             outputColumns.addAll(checkedColumns);
-            title += " - " + checkedColsNames;
 
-            chartController.palette = null;
-            return initChart(title, categoryColumn.isNumberType());
+            return initChart();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return false;
         }
     }
 
-    public boolean initChart(String title, boolean categoryIsNumbers) {
+    @Override
+    public String chartTitle() {
+        String title = selectedCategory;
+        if (chartTypesController.isBubbleChart()) {
+            title += " - " + selectedValue;
+        }
+        title += " - " + checkedColsNames;
+        return title;
+    }
+
+    public boolean initChart() {
+        if (categoryColumn != null) {
+            chartController.palette = null;
+            return initChart(categoryColumn.isNumberType());
+        } else {
+            return false;
+        }
+    }
+
+    public boolean initChart(boolean categoryIsNumbers) {
         try {
             String chartName = chartTypesController.chartName;
             UserConfig.setBoolean(chartName + "CategoryIsNumbers", categoryIsNumbers);
             chartMaker.init(chartTypesController.chartType, chartName)
-                    .setDefaultChartTitle(title)
+                    .setDefaultChartTitle(chartTitle())
                     .setDefaultCategoryLabel(selectedCategory)
                     .setDefaultValueLabel(selectedValue)
                     .setInvalidAs(invalidAs);

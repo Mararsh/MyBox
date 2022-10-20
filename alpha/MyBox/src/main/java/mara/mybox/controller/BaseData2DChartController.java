@@ -5,6 +5,7 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import mara.mybox.data.StringTable;
@@ -13,6 +14,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -28,6 +30,8 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     protected ComboBox<String> categoryColumnSelector, valueColumnSelector;
     @FXML
     protected Label noticeLabel;
+    @FXML
+    protected CheckBox displayAllCheck;
 
     @Override
     public void initControls() {
@@ -35,6 +39,19 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             super.initControls();
 
             initDataTab();
+
+            if (displayAllCheck != null) {
+                displayAllCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayAll", true));
+                displayAllCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    UserConfig.setBoolean(baseName + "DisplayAll", displayAllCheck.isSelected());
+                    noticeMemory();
+                });
+
+                displayAllCheck.visibleProperty().bind(allPagesRadio.selectedProperty());
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -126,7 +143,8 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         if (noticeLabel == null) {
             return;
         }
-        noticeLabel.setVisible(isAllPages());
+        noticeLabel.setVisible(isAllPages()
+                && (displayAllCheck == null || displayAllCheck.isSelected()));
     }
 
     @Override

@@ -9,6 +9,7 @@ import mara.mybox.controller.ControlData2DEditTable;
 import mara.mybox.controller.ControlData2DLoad;
 import mara.mybox.controller.Data2DChartBoxWhiskerController;
 import mara.mybox.controller.Data2DChartComparisonBarsController;
+import mara.mybox.controller.Data2DChartGroupXYController;
 import mara.mybox.controller.Data2DChartPieController;
 import mara.mybox.controller.Data2DChartSelfComparisonBarsController;
 import mara.mybox.controller.Data2DChartXYController;
@@ -17,6 +18,7 @@ import mara.mybox.controller.Data2DConvertToDataBaseController;
 import mara.mybox.controller.Data2DDeleteController;
 import mara.mybox.controller.Data2DExportController;
 import mara.mybox.controller.Data2DFrequencyController;
+import mara.mybox.controller.Data2DGroupController;
 import mara.mybox.controller.Data2DGroupStatisticController;
 import mara.mybox.controller.Data2DLocationDistributionController;
 import mara.mybox.controller.Data2DMultipleLinearRegressionCombinationController;
@@ -29,7 +31,6 @@ import mara.mybox.controller.Data2DSetValuesController;
 import mara.mybox.controller.Data2DSimpleLinearRegressionCombinationController;
 import mara.mybox.controller.Data2DSimpleLinearRegressionController;
 import mara.mybox.controller.Data2DSortController;
-import mara.mybox.controller.Data2DGroupController;
 import mara.mybox.controller.Data2DStatisticController;
 import mara.mybox.controller.Data2DTransposeController;
 import mara.mybox.controller.DataTableQueryController;
@@ -389,9 +390,9 @@ public class Data2DMenuTools {
 
             Menu chartMenu = new Menu(message("DynamicCharts"), StyleTools.getIconImage("iconGraph.png"));
 
-            menu = new MenuItem(message("XYChart"), StyleTools.getIconImage("iconXYChart.png"));
+            menu = new MenuItem(message("GroupData") + " - " + message("XYChart"), StyleTools.getIconImage("iconXYChart.png"));
             menu.setOnAction((ActionEvent event) -> {
-                Data2DChartXYController.open(controller);
+                Data2DChartGroupXYController.open(controller);
             });
             menu.setDisable(empty);
             chartMenu.getItems().add(menu);

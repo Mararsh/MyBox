@@ -120,22 +120,10 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
 
             if (groupController != null) {
                 groupController.setParameters(this);
-                groupController.columnsController.selectedNotify.addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        makeSortList();
-                    }
-                });
-                groupController.typeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                    @Override
-                    public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                        makeSortList();
-                    }
-                });
+            }
 
-                if (sortController != null) {
-                    sortController.setParameters(this, message("Sort"), message("DataSortLabel"));
-                }
+            if (sortController != null) {
+                sortController.setParameters(this, message("Sort"), message("DataSortLabel"));
             }
 
             maxData = UserConfig.getInt(baseName + "MaxDataNumber", -1);
@@ -506,7 +494,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                     .setSplitNumber(groupController.splitNumber())
                     .setSplitList(groupController.splitList())
                     .setConditions(groupController.groupConditions)
-                    .setCopyNames(copyNames)
                     .setSorts(sorts).setMax(max)
                     .setScale(dscale).setInvalidAs(invalidAs).setTask(task)
                     .setTargetType(targetType)

@@ -640,13 +640,10 @@ public class ImagesPlayController extends BaseImagesListController {
                 return;
             }
             imageInformation = imageInfos.get(index);
-            long interval;
             if (imageInformation != null) {
-                interval = imageInformation.getDuration();
-            } else {
-                interval = playController.interval;
+                playController.currentDelay
+                        = (long) (imageInformation.getDuration() / playController.speed);
             }
-            playController.currentDelay = (long) (interval / playController.speed);
             frameIndex = index;
             image = thumb(imageInformation);
             imageView.setImage(image);

@@ -100,7 +100,7 @@ public class DataTableGroupStatistic {
             csvPrinter.printRecord(header);
             try ( ResultSet query = conn.prepareStatement(sql).executeQuery();
                      PreparedStatement insert = conn.prepareStatement(tableGroup.insertStatement());) {
-                while (query.next() && task != null && !task.isCancelled()) {
+                while (query.next()) {
                     if (task == null || task.isCancelled()) {
                         query.close();
                         csvPrinter.close();

@@ -40,12 +40,14 @@ public class ControlPlay extends BaseController {
     @FXML
     protected Label totalLabel;
 
+    public ControlPlay() {
+        frameNodify = new SimpleBooleanProperty();
+        stopNodify = new SimpleBooleanProperty();
+        intervalNodify = new SimpleBooleanProperty();
+    }
+
     public void setParameters(BaseController parent) {
         try {
-            frameNodify = new SimpleBooleanProperty();
-            stopNodify = new SimpleBooleanProperty();
-            intervalNodify = new SimpleBooleanProperty();
-
             this.parentController = parent;
             this.baseName = parent.baseName;
             clear();
@@ -194,11 +196,15 @@ public class ControlPlay extends BaseController {
             if (framesNumber < 1) {
                 return;
             }
+            currentDelay = (long) (interval / speed);
             displayFrame(startIndex);
             int nextIndex = nextIndex();
             if (nextIndex < 0) {
                 setPauseButton(true);
                 return;
+            }
+            if (currentDelay <= 0) {
+                currentDelay = 200;
             }
             timer = new Timer();
             timer.schedule(new TimerTask() {

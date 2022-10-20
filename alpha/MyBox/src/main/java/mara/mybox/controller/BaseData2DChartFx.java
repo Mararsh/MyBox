@@ -70,13 +70,18 @@ public abstract class BaseData2DChartFx extends BaseController {
         try {
             this.chart = chart;
             chartPane.getChildren().clear();
-            chartPane.getChildren().add(chart);
-
+            if (chart != null) {
+                chartPane.getChildren().add(chart);
+            }
             buttonsPane.setDisable(chart == null);
 
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
+    }
+
+    public void clearChart() {
+        setChart(null);
     }
 
     public void redraw() {

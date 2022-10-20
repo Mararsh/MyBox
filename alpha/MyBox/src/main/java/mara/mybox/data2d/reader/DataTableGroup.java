@@ -42,7 +42,7 @@ public class DataTableGroup {
     protected Data2D originalData;
     protected DataTable sourceData;
     protected String groupName;
-    protected List<String> groupNames, copyNames, sorts, targetNames;
+    protected List<String> groupNames, sorts, targetNames;
     protected InvalidAs invalidAs;
     protected int scale, splitNumber;
     protected long max;
@@ -53,7 +53,7 @@ public class DataTableGroup {
     protected SingletonTask task;
     protected boolean ok;
 
-    protected String sourceSheet, parameterName, parameterValue, parameterValueForFilename;
+    protected String sourceSheet, idColName, parameterName, parameterValue, parameterValueForFilename;
     protected List<Data2DColumn> sourceColumns;
     protected long count, groupid, groupCurrentSize;
 
@@ -143,16 +143,17 @@ public class DataTableGroup {
             groupid = 0;
             groupCurrentSize = 0;
             count = 0;
+            idColName = message("Group");
             targetData = null;
             insert = null;
             csvPrinter = null;
             csvFiles = new ArrayList<>();
 
             targetColNames = new ArrayList<>();
-            targetColNames.add(message("Group"));
+            targetColNames.add(idColName);
             targetColNames.add(parameterName);
             targetColumns = new ArrayList<>();
-            targetColumns.add(new Data2DColumn(message("Group"), ColumnDefinition.ColumnType.Long));
+            targetColumns.add(new Data2DColumn(idColName, ColumnDefinition.ColumnType.Long));
             targetColumns.add(new Data2DColumn(parameterName, ColumnDefinition.ColumnType.String, 200));
             for (String name : targetNames) {
                 Data2DColumn c = sourceData.columnByName(sourceData.mappedColumnName(name));
@@ -227,7 +228,7 @@ public class DataTableGroup {
             try ( ResultSet query = conn.prepareStatement(sql).executeQuery()) {
                 Map<String, Object> sourceRow, lastRow = null;
                 Map<String, Object> groupMap = new HashMap<>();
-                boolean groupChanged = true;
+                boolean groupChanged;
                 conn.setAutoCommit(false);
                 while (query.next() && task != null && !task.isCancelled()) {
                     if (task == null || task.isCancelled()) {
@@ -263,7 +264,7 @@ public class DataTableGroup {
                         }
                         if (groupChanged) {
                             groupChanged();
-                            parameterValueForFilename = message("Group") + groupid;
+                            parameterValueForFilename = idColName + groupid;
                             parameterValue = null;
                             groupMap.clear();
                             for (String name : groupNames) {
@@ -746,7 +747,7 @@ public class DataTableGroup {
                         insert = conn.prepareStatement(tableTarget.insertStatement());
                     }
                     Data2DRow data2DRow = tableTarget.newRow();
-                    data2DRow.setColumnValue(message("Group"), groupid);
+                    data2DRow.setColumnValue(idColName, groupid);
                     data2DRow.setColumnValue(parameterName, parameterValue);
                     for (int i = 2; i < targetColNames.size(); i++) {
                         String name = targetColNames.get(i);
@@ -879,7 +880,6 @@ public class DataTableGroup {
                     break;
 
             }
-
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -913,6 +913,10 @@ public class DataTableGroup {
         return parameterName;
     }
 
+    public String getIdColName() {
+        return idColName;
+    }
+
     /*
         set
      */
@@ -938,11 +942,6 @@ public class DataTableGroup {
 
     public DataTableGroup setGroupName(String groupName) {
         this.groupName = groupName;
-        return this;
-    }
-
-    public DataTableGroup setCopyNames(List<String> copyNames) {
-        this.copyNames = copyNames;
         return this;
     }
 

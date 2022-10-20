@@ -33,7 +33,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-8-10
  * @License Apache License Version 2.0
  */
-public class Data2DGroupStatisticController extends Data2DChartGroupXYController {
+public class Data2DGroupStatisticController extends Data2DChartXYController {
 
     protected DescriptiveStatistic calculation;
     protected DataTable groupData;
@@ -94,12 +94,29 @@ public class Data2DGroupStatisticController extends Data2DChartGroupXYController
                 }
             });
 
+            chartTypesController.disableBubbleChart();
             xyChartTab.setDisable(true);
             pieChartTab.setDisable(true);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @Override
+    public boolean initData() {
+        if (!groupController.pickValues()) {
+            return false;
+        }
+        checkObject();
+        checkInvalidAs();
+        return true;
+    }
+
+    @Override
+    public boolean initChart() {
+        chartController.palette = null;
+        return initChart(false);
     }
 
     @Override
@@ -176,12 +193,6 @@ public class Data2DGroupStatisticController extends Data2DChartGroupXYController
 
         };
         start(task);
-    }
-
-    @FXML
-    @Override
-    public void refreshAction() {
-        makeCharts(true, true);
     }
 
     @FXML
@@ -265,7 +276,7 @@ public class Data2DGroupStatisticController extends Data2DChartGroupXYController
             }
             outputColumns = new ArrayList<>();
             Data2DColumn xyCategoryColumn
-                    = statisticFile.columns.get(xyParametersRadio.isSelected() ? 1 : 0);
+                    = statisticFile.column(xyParametersRadio.isSelected() ? 1 : 0);
             outputColumns.add(xyCategoryColumn);
 
             List<String> colNames = new ArrayList<>();
@@ -329,9 +340,7 @@ public class Data2DGroupStatisticController extends Data2DChartGroupXYController
 
             selectedCategory = xyCategoryColumn.getColumnName();
             selectedValue = message("Statistic");
-            String title = chartTitle();
-            initChart(title, xyCategoryColumn.isNumberType());
-            return true;
+            return initChart();
         } catch (Exception e) {
             error = e.toString();
             MyBoxLog.error(e);
@@ -412,6 +421,18 @@ public class Data2DGroupStatisticController extends Data2DChartGroupXYController
     @FXML
     public void okXYchart() {
         makeCharts(true, false);
+    }
+
+    @FXML
+    @Override
+    public void refreshAction() {
+        makeCharts(true, true);
+    }
+
+    @Override
+    public void typeChanged() {
+        initChart();
+        okXYchart();
     }
 
 
