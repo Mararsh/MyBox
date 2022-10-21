@@ -214,6 +214,12 @@ License:    Apache License Version 2.0
                                                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                                                     </padding>
                                                                 </VBox>
+                                                <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                                   <children>
+                                                      <Label minHeight="-Infinity" text="%DecimalScale" wrapText="true" />
+                                                      <ComboBox fx:id="scaleSelector" editable="true" prefWidth="120.0" />
+                                                   </children>
+                                                </HBox>
                                                                 <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
                                                                     <children>
                                                                         <Label text="%ToInvalidNumber">
@@ -278,21 +284,25 @@ License:    Apache License Version 2.0
                             <children>
                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                            <children>
-                              <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
-                                 <graphic>
-                                    <ImageView fx:id="leftPaneControl1" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconDoubleLeft.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </CheckBox>
                               <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../buttons/Red/iconTips.png" />
                                  </image>
                               </ImageView>
-                              <fx:include fx:id="chartTypes" maxWidth="1.7976931348623157E308" source="ControlChartXYSelection.fxml" HBox.hgrow="ALWAYS" />
+                              <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <fx:include fx:id="chartTypes" maxWidth="1.7976931348623157E308" source="ControlChartXYSelection.fxml" HBox.hgrow="ALWAYS" />
+                                    <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
+                                       <graphic>
+                                          <ImageView fx:id="leftPaneControl1" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconDoubleLeft.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </CheckBox>
+                                 </children>
+                              </HBox>
                               <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
                                  <graphic>
                                     <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">

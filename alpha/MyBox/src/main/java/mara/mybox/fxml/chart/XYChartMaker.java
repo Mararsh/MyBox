@@ -185,7 +185,7 @@ public class XYChartMaker<X, Y> extends XYChartOptions<X, Y> {
             lineChart = new LabeledLineChart(xAxis, yAxis).setMaker(this);
             if (sort == Sort.X) {
                 lineChart.setAxisSortingPolicy​(LineChart.SortingPolicy.X_AXIS);
-            } else if (sort == Sort.X) {
+            } else if (sort == Sort.Y) {
                 lineChart.setAxisSortingPolicy​(LineChart.SortingPolicy.Y_AXIS);
             } else {
                 lineChart.setAxisSortingPolicy​(LineChart.SortingPolicy.NONE);

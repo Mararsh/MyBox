@@ -150,11 +150,6 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
     }
 
     @Override
-    public void afterRefreshControls() {
-        okAction();
-    }
-
-    @Override
     public boolean initData() {
         try {
             if (!super.initData()) {

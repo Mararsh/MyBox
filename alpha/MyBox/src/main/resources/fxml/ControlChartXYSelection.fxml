@@ -12,8 +12,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.FlowPane?>
 
-
-          <FlowPane fx:id="thisPane" alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="200.0" vgap="2.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlChartXYSelection">
+<FlowPane fx:id="thisPane" alignment="CENTER_LEFT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="200.0" vgap="2.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlChartXYSelection">
               <children>
                   <RadioButton fx:id="barChartRadio" mnemonicParsing="false" selected="true">
                       <graphic>

@@ -59,8 +59,7 @@ public class GeographyCodeMapController extends BaseMapFramesController {
     @Override
     public void drawPoints() {
         try {
-            if (webEngine == null || !mapLoaded
-                    || geographyCodes == null || geographyCodes.isEmpty()) {
+            if (webEngine == null || !mapLoaded) {
                 return;
             }
             webEngine.executeScript("clearMap();");

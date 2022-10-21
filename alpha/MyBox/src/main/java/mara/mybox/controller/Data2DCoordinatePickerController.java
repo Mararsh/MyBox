@@ -52,6 +52,7 @@ public class Data2DCoordinatePickerController extends CoordinatePickerController
             }
             if (loNames.isEmpty() || laNames.isEmpty()) {
                 close();
+                return;
             }
             longitudeSelector.getItems().addAll(loNames);
             longitudeSelector.getSelectionModel().select(0);
@@ -64,7 +65,7 @@ public class Data2DCoordinatePickerController extends CoordinatePickerController
                 double la = Double.valueOf(row.get(laIndex + 1));
                 loadCoordinate(lo, la);
             } catch (Exception ex) {
-                MyBoxLog.error(ex);
+//                MyBoxLog.console(ex);
             }
 
         } catch (Exception e) {
@@ -96,8 +97,9 @@ public class Data2DCoordinatePickerController extends CoordinatePickerController
                 }
             }
 
-            if (loNames.isEmpty() || laNames.isEmpty()) {
+            if (loInput == null || laInput == null) {
                 close();
+                return;
             }
             longitudeSelector.getItems().addAll(loNames);
             longitudeSelector.getSelectionModel().select(0);
@@ -109,7 +111,7 @@ public class Data2DCoordinatePickerController extends CoordinatePickerController
                 double la = Double.valueOf(laInput.getText());
                 loadCoordinate(lo, la);
             } catch (Exception ex) {
-                MyBoxLog.error(ex);
+//                MyBoxLog.console(ex);
             }
 
         } catch (Exception e) {

@@ -11,6 +11,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
@@ -19,7 +20,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="500.0" prefWidth="700.0" spacing="10.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DAddRowsController">
+<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="700.0" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DAddRowsController">
     <children>
         <HBox alignment="CENTER" VBox.vgrow="NEVER">
             <children>
@@ -73,7 +74,18 @@ License:    Apache License Version 2.0
             </children>
         </HBox>
       <Separator prefWidth="200.0" />
-      <fx:include fx:id="rowEdit" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DRowEdit.fxml" VBox.vgrow="ALWAYS" />
+      <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+         <content>
+            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+               <children>
+                  <fx:include fx:id="rowEdit" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DRowEdit.fxml" VBox.vgrow="ALWAYS" />
+               </children>
+               <padding>
+                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+               </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
         <HBox alignment="CENTER_RIGHT" spacing="5.0">
             <children>
                 <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">

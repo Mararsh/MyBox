@@ -150,14 +150,15 @@ License:    Apache License Version 2.0
           </SplitPane>
       <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="572.0" spacing="5.0">
          <children>
-            <Label text="%Longitude" />
+            <Label minWidth="-Infinity" text="%Longitude" wrapText="true" />
             <ComboBox fx:id="longitudeSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-            <Label layoutX="10.0" layoutY="14.0" text="%Latitude" />
+            <Label layoutX="10.0" layoutY="14.0" minWidth="-Infinity" text="%Latitude" wrapText="true" />
             <ComboBox fx:id="latitudeSelector" layoutX="27.0" layoutY="10.0" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
-      <HBox alignment="CENTER_RIGHT" spacing="5.0">
+      <HBox alignment="CENTER_LEFT" spacing="5.0">
          <children>
+            <Label fx:id="valuesLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
             <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

@@ -45,7 +45,7 @@ public class Data2DSetStylesController extends BaseController {
     @FXML
     protected FlowPane columnsPane;
     @FXML
-    protected ControlData2DFilter filterController;
+    protected ControlData2DRowFilter filterController;
     @FXML
     protected ControlData2DStyle editController;
 

@@ -197,14 +197,14 @@ public class LocationInMapController extends GeographyCodeMapController {
                     dataArea.setText(BaseDataAdaptor.displayData(geoTable, geographyCode, null, false));
                     setButtons();
                     try {
-                        if (geographyCodes == null) {
+                        if (geographyCodes == null
+                                || multipleCheck == null || !multipleCheck.isSelected()) {
                             geographyCodes = new ArrayList<>();
-                        } else if (!multipleCheck.isSelected()) {
-                            geographyCodes.clear();
                         }
                         geographyCodes.add((GeographyCode) geographyCode.clone());
                         drawPoints();
                     } catch (Exception e) {
+//                        MyBoxLog.console(e.toString());
                     }
                 }
 

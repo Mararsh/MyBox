@@ -251,7 +251,7 @@ public class ColumnDefinition extends BaseData {
                 case Datetime:
                 case Date:
                 case Era:
-                    return DateTools.encodeDate(value, fixTwoDigitYear) != null;
+                    return DateTools.encodeEra(value, fixTwoDigitYear) != null;
                 default:
                     return true;
             }

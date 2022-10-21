@@ -89,10 +89,6 @@ public class BaseData2DRegressionController extends BaseData2DChartController {
         }
     }
 
-    @Override
-    public void afterRefreshControls() {
-    }
-
     @FXML
     public void editModelAction() {
         modelController.editAction();

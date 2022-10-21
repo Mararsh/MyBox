@@ -14,6 +14,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -29,6 +30,8 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
     protected List<String> copyNames, sorts;
     protected String parameterName, parameterValue;
 
+    @FXML
+    protected ControlData2DResults groupDataController;
     @FXML
     protected ControlPlay playController;
 
@@ -105,6 +108,8 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
                 copyNames.add(data2D.columnName(i));
             }
 
+            MyBoxLog.console(checkedColsNames);
+
             groupData = null;
             framesNumber = -1;
             parameterName = null;
@@ -130,6 +135,7 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
             task.cancel();
         }
         playController.clear();
+        groupDataController.loadNull();
         task = new SingletonTask<Void>(this) {
 
             private DataTableGroup group;
@@ -157,6 +163,7 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
                         popError(message("NoData"));
                         return;
                     }
+                    groupDataController.loadData(groupData);
                     outputColumns = new ArrayList<>();
                     for (int i : dataColsIndices) {
                         outputColumns.add(data2D.column(i));
@@ -183,6 +190,11 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
     public String chartTitle() {
         return message("Group") + groupid + " - " + parameterValue + "\n"
                 + super.chartTitle();
+    }
+
+    @Override
+    public String categoryName() {
+        return selectedCategory;
     }
 
     @Override
@@ -223,11 +235,14 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
                             parameterValue = query.getString(2);
                         }
                         List<String> row = new ArrayList<>();
-                        for (int i : dataColsIndices) {
-                            Data2DColumn column = data2D.column(i);
+                        for (Data2DColumn column : outputColumns) {
                             String name = column.getColumnName();
                             String gname = groupData.mappedColumnName(name);
-                            row.add(column.toString(query.getObject(gname)));
+                            String s = column.toString(query.getObject(gname));
+                            if (s != null && column.needScale() && scale >= 0) {
+                                s = DoubleTools.scaleString(s, invalidAs, scale);
+                            }
+                            row.add(s);
                         }
                         outputData.add(row);
                     }
@@ -236,6 +251,15 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
                     error = e.toString();
                     return false;
                 }
+            }
+
+            @Override
+            protected void whenFailed() {
+                playController.pauseAction();
+                if (!isCancelled()) {
+                    return;
+                }
+                super.whenFailed();
             }
 
             @Override

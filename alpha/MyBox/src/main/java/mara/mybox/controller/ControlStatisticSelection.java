@@ -17,7 +17,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-12-12
  * @License Apache License Version 2.0
  */
-public class ControlData2DStatisticSelection extends BaseController {
+public class ControlStatisticSelection extends BaseController {
 
     protected BaseData2DHandleController handleController;
     protected DescriptiveStatistic calculation;

@@ -524,6 +524,9 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     }
 
     public boolean includeCoordinate() {
+        if (columns == null) {
+            return false;
+        }
         boolean hasLongitude = false, haslatitude = false;
         for (Data2DColumn column : columns) {
             if (column.getType() == ColumnType.Longitude) {

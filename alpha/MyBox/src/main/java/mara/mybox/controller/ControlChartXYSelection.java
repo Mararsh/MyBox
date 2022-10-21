@@ -16,38 +16,37 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class ControlChartXYSelection extends BaseController {
-    
+
     protected ChartType chartType, lastType;
     protected String chartName;
     protected SimpleBooleanProperty typeNodify;
-    
+
     @FXML
     protected ToggleGroup chartGroup;
     @FXML
     protected RadioButton barChartRadio, stackedBarChartRadio, lineChartRadio, scatterChartRadio,
             bubbleChartRadio, areaChartRadio, stackedAreaChartRadio;
-    
+
     @Override
     public void initControls() {
         try {
             super.initControls();
             typeNodify = new SimpleBooleanProperty();
-            
+
             lastType = null;
             chartType = null;
-            
+
             checkType();
             chartGroup.selectedToggleProperty().addListener(
                     (ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) -> {
                         checkType();
-                        
                     });
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     public ChartType checkType() {
         try {
             lastType = chartType;
@@ -73,28 +72,30 @@ public class ControlChartXYSelection extends BaseController {
                 chartType = ChartType.Bubble;
                 chartName = message("BubbleChart");
             }
-            
+
             typeNodify.set(!typeNodify.get());
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
         return chartType;
     }
-    
+
     public boolean isBubbleChart() {
         return bubbleChartRadio.isSelected();
     }
-    
+
     public boolean needChangeData() {
         return lastType == ChartType.Bubble || chartType == ChartType.Bubble;
     }
-    
+
     public void disableBubbleChart() {
         if (bubbleChartRadio.isSelected()) {
             barChartRadio.setSelected(true);
         }
-        bubbleChartRadio.setDisable(true);
+        if (thisPane.getChildren().contains(bubbleChartRadio)) {
+            thisPane.getChildren().remove(bubbleChartRadio);
+        }
     }
-    
+
 }

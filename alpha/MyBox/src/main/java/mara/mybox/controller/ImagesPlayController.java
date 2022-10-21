@@ -661,7 +661,7 @@ public class ImagesPlayController extends BaseImagesListController {
             }
 
         } catch (Exception e) {
-            playController.clear();
+            playController.pauseAction();
             MyBoxLog.error(e.toString());
         }
     }

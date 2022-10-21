@@ -19,7 +19,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-6-1
  * @License Apache License Version 2.0
  */
-public class ControlData2DFilter extends ControlData2DRowExpression {
+public class ControlData2DRowFilter extends ControlData2DRowExpression {
 
     protected long maxFilteredNumber = -1;
     protected DataFilter filter;
@@ -29,7 +29,7 @@ public class ControlData2DFilter extends ControlData2DRowExpression {
     @FXML
     protected TextField maxInput;
 
-    public ControlData2DFilter() {
+    public ControlData2DRowFilter() {
         TipsLabelKey = "RowFilterTips";
         category = TreeNode.RowFilter;
     }

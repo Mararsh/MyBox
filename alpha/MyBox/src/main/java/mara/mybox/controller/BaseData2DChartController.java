@@ -13,6 +13,7 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -25,6 +26,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
     protected String selectedCategory, selectedValue;
     protected List<Integer> dataColsIndices;
+    protected boolean needRowNumber = true;
 
     @FXML
     protected ComboBox<String> categoryColumnSelector, valueColumnSelector;
@@ -88,7 +90,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         try {
             super.refreshControls();
             makeOptions();
-            afterRefreshControls();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -123,10 +124,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-    }
-
-    public void afterRefreshControls() {
-        okAction();
     }
 
     @Override
@@ -166,7 +163,9 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             }
             dataColsIndices.addAll(checkedColsIndices);
             outputColumns = new ArrayList<>();
-            outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
+            if (needRowNumber) {
+                outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
+            }
             outputColumns.addAll(checkedColumns);
             return true;
         } catch (Exception e) {
@@ -225,11 +224,46 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     }
 
     public void readData() {
-        if (isAllPages()) {
-            outputData = data2D.allRows(dataColsIndices, true);
-        } else {
-            outputData = filtered(dataColsIndices, true);
+        try {
+            if (isAllPages()) {
+                outputData = data2D.allRows(dataColsIndices, needRowNumber);
+            } else {
+                outputData = filtered(dataColsIndices, needRowNumber);
+            }
+            if (outputData == null || outputColumns == null
+                    || scaleSelector == null || scale < 0) {
+                return;
+            }
+            boolean needScale = false;
+            for (int i = 0; i < outputColumns.size(); i++) {
+                Data2DColumn column = outputColumns.get(i);
+                if (column.needScale()) {
+                    needScale = true;
+                    break;
+                }
+            }
+            if (!needScale) {
+                return;
+            }
+            List<List<String>> scaled = new ArrayList<>();
+            for (List<String> row : outputData) {
+                List<String> srow = new ArrayList<>();
+                for (int i = 0; i < outputColumns.size(); i++) {
+                    Data2DColumn column = outputColumns.get(i);
+                    String s = row.get(i);
+                    if (s == null || !column.needScale() || scale < 0) {
+                        srow.add(s);
+                    } else {
+                        srow.add(DoubleTools.scaleString(s, invalidAs, scale));
+                    }
+                }
+                scaled.add(srow);
+            }
+            outputData = scaled;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
+
     }
 
     public void outputData() {

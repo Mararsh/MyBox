@@ -175,8 +175,13 @@ public class Data2DChartXYController extends BaseData2DChartController {
             chartMaker.init(chartTypesController.chartType, chartName)
                     .setDefaultChartTitle(chartTitle())
                     .setDefaultCategoryLabel(selectedCategory)
-                    .setDefaultValueLabel(selectedValue)
                     .setInvalidAs(invalidAs);
+            if (chartTypesController.isBubbleChart()) {
+                chartMaker.setDefaultValueLabel(selectedValue);
+            } else if (checkedColsNames != null) {
+                chartMaker.setDefaultValueLabel(checkedColsNames.toString());
+            }
+            MyBoxLog.console(checkedColsNames);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

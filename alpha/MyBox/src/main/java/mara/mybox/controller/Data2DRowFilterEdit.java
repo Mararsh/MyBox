@@ -16,7 +16,7 @@ public class Data2DRowFilterEdit extends BaseInputController {
     protected BaseData2DHandleController handleController;
 
     @FXML
-    protected ControlData2DFilter filterController;
+    protected ControlData2DRowFilter filterController;
 
     public Data2DRowFilterEdit() {
     }

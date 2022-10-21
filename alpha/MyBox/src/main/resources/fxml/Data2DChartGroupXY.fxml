@@ -256,12 +256,6 @@ License:    Apache License Version 2.0
                                                                                 <RadioButton fx:id="zeroNonnumericRadio" mnemonicParsing="false" text="%SetAsZero" toggleGroup="$nonnumericGroup" />
                                                                             </children>
                                                                         </FlowPane>
-                                                                        <CheckBox fx:id="displayAllCheck" mnemonicParsing="false" text="%DisplayAllDataInChart" />
-                                                                        <Label fx:id="noticeLabel" minHeight="-Infinity" text="%AllRowsLoadComments" wrapText="true">
-                                                                            <VBox.margin>
-                                                                                <Insets top="10.0" />
-                                                                            </VBox.margin>
-                                                                        </Label>
                                                                     </children>
                                                                 </VBox>
                                                                 <HBox alignment="CENTER_LEFT" spacing="5.0">
@@ -308,6 +302,12 @@ License:    Apache License Version 2.0
                             <children>
                                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
+                                        <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/Red/iconTips.png" />
+                                            </image>
+                                        </ImageView>
+                              <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                         <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
                                             <graphic>
                                                 <ImageView fx:id="leftPaneControl1" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -317,45 +317,53 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </CheckBox>
-                                        <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconTips.png" />
-                                            </image>
-                                        </ImageView>
-                              <fx:include fx:id="chartTypes" maxWidth="1.7976931348623157E308" source="ControlChartXYSelection.fxml" HBox.hgrow="ALWAYS" />
-                              <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
-                                 <graphic>
-                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconRefresh.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
                                     </children>
                                 </HBox>
-                        <SplitPane dividerPositions="0.4" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                           <items>
-                              <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                        <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                          <tabs>
+                            <Tab fx:id="chartTab" text="%XYChart">
                                  <content>
-                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                    <SplitPane dividerPositions="0.4" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                       <items>
+                                          <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                                             <content>
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                   <children>
+                                                      <fx:include fx:id="play" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlPlay.fxml" VBox.vgrow="ALWAYS" />
+                                                   </children>
+                                                </VBox>
+                                             </content>
+                                          </ScrollPane>
+                                          <ScrollPane fitToHeight="true" fitToWidth="true" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                                             <content>
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                   <children>
+                                                      <fx:include fx:id="chartTypes" maxWidth="1.7976931348623157E308" source="ControlChartXYSelection.fxml" HBox.hgrow="ALWAYS" />
+                                                      <fx:include fx:id="chart" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DChartXY.fxml" VBox.vgrow="ALWAYS" />
+                                                   </children>
+                                                </VBox>
+                                             </content>
+                                          </ScrollPane>
+                                       </items>
+                                       <padding>
+                                          <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                       </padding>
+                                    </SplitPane>
+                                 </content></Tab>
+                              <Tab fx:id="groupDataTab" text="%GroupData">
+                                 <content>
+                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                        <children>
-                                          <fx:include fx:id="play" source="ControlPlay.fxml" />
+                                          <fx:include fx:id="groupData" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DResults.fxml" VBox.vgrow="ALWAYS" />
                                        </children>
+                                       <padding>
+                                          <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                       </padding>
                                     </VBox>
                                  </content>
-                              </ScrollPane>
-                              <ScrollPane fitToHeight="true" fitToWidth="true" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                                 <content>
-                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                       <children>
-                                          <fx:include fx:id="chart" source="ControlData2DChartXY.fxml" />
-                                       </children>
-                                    </VBox>
-                                 </content>
-                              </ScrollPane>
-                           </items>
-                        </SplitPane>
+                              </Tab>
+                          </tabs>
+                        </TabPane>
                             </children>
                         </VBox>
                     </content>

@@ -31,7 +31,7 @@ public class Data2DStatisticController extends BaseData2DHandleController {
     protected String selectedCategory;
 
     @FXML
-    protected ControlData2DStatisticSelection statisticController;
+    protected ControlStatisticSelection statisticController;
     @FXML
     protected VBox dataOptionsBox;
     @FXML

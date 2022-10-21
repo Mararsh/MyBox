@@ -45,7 +45,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
     @FXML
     protected Tab xyChartTab, pieChartTab;
     @FXML
-    protected ControlData2DStatisticSelection statisticController;
+    protected ControlStatisticSelection statisticController;
     @FXML
     protected ControlData2DResults groupDataController, statisticDataController;
     @FXML
@@ -98,9 +98,16 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             xyChartTab.setDisable(true);
             pieChartTab.setDisable(true);
 
+            displayAllCheck.visibleProperty().unbind();
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @Override
+    public void noticeMemory() {
+        noticeLabel.setVisible(displayAllCheck.isSelected());
     }
 
     @Override

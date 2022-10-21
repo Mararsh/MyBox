@@ -191,7 +191,7 @@ License:    Apache License Version 2.0
                                                 <FlowPane fx:id="columnsPane" hgap="2.0" vgap="2.0" />
                                             </children>
                                         </VBox>
-                              <fx:include fx:id="statistic" source="ControlData2DStatisticSelections.fxml" />
+                                        <fx:include fx:id="statistic" source="ControlStatisticSelections.fxml" />
                                         <VBox fx:id="dataOptionsBox" layoutX="20.0" layoutY="316.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                             <children>
                                                 <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="500.0" vgap="5.0">

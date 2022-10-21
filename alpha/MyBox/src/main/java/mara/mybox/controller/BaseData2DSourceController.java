@@ -44,7 +44,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
     @FXML
     protected VBox dataBox;
     @FXML
-    protected ControlData2DFilter filterController;
+    protected ControlData2DRowFilter filterController;
     @FXML
     protected FlowPane columnsPane, otherColumnsPane;
 

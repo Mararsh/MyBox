@@ -14,6 +14,7 @@ import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleTools;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -356,22 +357,12 @@ public class ChartOptions<X, Y> {
     }
 
     public String getCategoryLabel() {
-        categoryLabel = categoryLabel == null ? defaultCategoryLabel : categoryLabel;
+        categoryLabel = categoryLabel == null ? getDefaultCategoryLabel() : categoryLabel;
         return categoryLabel;
     }
 
     public ChartOptions setCategoryLabel(String categoryLabel) {
         this.categoryLabel = categoryLabel;
-        return this;
-    }
-
-    public String getValueLabel() {
-        valueLabel = valueLabel == null ? defaultValueLabel : valueLabel;
-        return valueLabel;
-    }
-
-    public ChartOptions setValueLabel(String valueLabel) {
-        this.valueLabel = valueLabel;
         return this;
     }
 
@@ -386,22 +377,34 @@ public class ChartOptions<X, Y> {
     }
 
     public String getDefaultCategoryLabel() {
+        defaultCategoryLabel = defaultCategoryLabel == null ? message("Category") : defaultCategoryLabel;
         return defaultCategoryLabel;
     }
 
     public ChartOptions setDefaultCategoryLabel(String defaultCategoryLabel) {
         this.defaultCategoryLabel = defaultCategoryLabel;
-        this.categoryLabel = defaultCategoryLabel;
+        setCategoryLabel(defaultCategoryLabel);
+        return this;
+    }
+
+    public String getValueLabel() {
+        valueLabel = valueLabel == null ? getDefaultValueLabel() : valueLabel;
+        return valueLabel;
+    }
+
+    public ChartOptions setValueLabel(String valueLabel) {
+        this.valueLabel = valueLabel;
         return this;
     }
 
     public String getDefaultValueLabel() {
+        defaultValueLabel = defaultValueLabel == null ? message("Value") : defaultValueLabel;
         return defaultValueLabel;
     }
 
     public ChartOptions setDefaultValueLabel(String defaultValueLabel) {
         this.defaultValueLabel = defaultValueLabel;
-        this.valueLabel = defaultValueLabel;
+        setValueLabel(defaultValueLabel);
         return this;
     }
 

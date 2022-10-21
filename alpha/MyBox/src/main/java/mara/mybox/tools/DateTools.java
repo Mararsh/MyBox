@@ -215,7 +215,7 @@ public class DateTools {
             format = eraFormatEnd(s);
 
         } else {
-            return encodeDate(s, fixTwoDigitYear);
+            return encodeDate(s, Languages.locale(), fixTwoDigitYear);
         }
         Date d = stringToDatetime(s, format, locale, fixTwoDigitYear);
 //        MyBoxLog.debug(s + "  " + locale.getLanguage() + " " + format + "  " + locale + "  "
@@ -224,11 +224,12 @@ public class DateTools {
     }
 
     public static Date encodeDate(String strDate, boolean fixTwoDigitYear) {
-        return encodeDate(strDate, Languages.locale(), fixTwoDigitYear);
+        return encodeEra(strDate, fixTwoDigitYear);
     }
 
     public static Date encodeDate(String strDate, Locale locale, boolean fixTwoDigitYear) {
         try {
+//            MyBoxLog.console(strDate + "   " + locale + "   " + fixTwoDigitYear);
             if (strDate == null || strDate.isBlank()) {
                 return null;
             }
