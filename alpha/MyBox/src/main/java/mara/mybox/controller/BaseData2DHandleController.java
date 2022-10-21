@@ -25,6 +25,7 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -517,6 +518,50 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);
+        }
+    }
+
+    public List<List<String>> readData(List<Integer> cols, boolean needRowNumber) {
+        try {
+            List<List<String>> data;
+            if (isAllPages()) {
+                data = data2D.allRows(cols, needRowNumber);
+            } else {
+                data = filtered(cols, needRowNumber);
+            }
+            if (data == null || scaleSelector == null || scale < 0) {
+                return data;
+            }
+            boolean needScale = false;
+            for (int c : cols) {
+                if (data2D.column(c).needScale()) {
+                    needScale = true;
+                    break;
+                }
+            }
+            if (!needScale) {
+                return data;
+            }
+            List<List<String>> scaled = new ArrayList<>();
+            for (List<String> row : data) {
+                List<String> srow = new ArrayList<>();
+                if (needRowNumber) {
+                    srow.add(row.get(0));
+                }
+                for (int i = 0; i < cols.size(); i++) {
+                    String s = row.get(needRowNumber ? i + 1 : i);
+                    if (s == null || !data2D.column(cols.get(i)).needScale() || scale < 0) {
+                        srow.add(s);
+                    } else {
+                        srow.add(DoubleTools.scaleString(s, invalidAs, scale));
+                    }
+                }
+                scaled.add(srow);
+            }
+            return scaled;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
         }
     }
 

@@ -29,6 +29,7 @@ import mara.mybox.fxml.chart.BoxWhiskerChart;
 import mara.mybox.fxml.chart.ChartOptions.ChartType;
 import mara.mybox.fxml.chart.XYChartMaker;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -410,11 +411,18 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
             }
 
             List<List<String>> transposed = new ArrayList<>();
-            for (int r = 1; r < outputColumns.size(); ++r) {
+            for (int col = 1; col < outputColumns.size(); ++col) {
+                Data2DColumn column = outputColumns.get(col);
                 List<String> row = new ArrayList<>();
-                row.add(outputColumns.get(r).getColumnName());
+                row.add(column.getColumnName());
                 for (int c = 0; c < outputData.size(); ++c) {
-                    row.add(outputData.get(c).get(r));
+                    String s = outputData.get(c).get(col);
+                    if (s == null || !column.needScale() || scale < 0) {
+                        row.add(s);
+                    } else {
+                        row.add(DoubleTools.scaleString(s, invalidAs, scale));
+                    }
+                    row.add(outputData.get(c).get(col));
                 }
                 transposed.add(row);
             }

@@ -129,6 +129,41 @@ License:    Apache License Version 2.0
                                                       </children>
                                                   </FlowPane>
                                                   <TextArea fx:id="dataArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" wrapText="true" VBox.vgrow="ALWAYS" />
+                                    <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                       <children>
+                                          <Label minWidth="-Infinity" text="%Longitude" wrapText="true" />
+                                          <ComboBox fx:id="longitudeSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="503.0" spacing="5.0">
+                                       <children>
+                                          <Label minWidth="-Infinity" text="%Latitude" wrapText="true" />
+                                          <ComboBox fx:id="latitudeSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                       <children>
+                                          <Label fx:id="valuesLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
+                                             <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/Red/iconCancel.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                          <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+                                             <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/Red/iconOK.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                    </HBox>
                                               </children>
                                           </VBox>
                                       </content>
@@ -148,37 +183,6 @@ License:    Apache License Version 2.0
                   </ScrollPane>
               </items>
           </SplitPane>
-      <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="572.0" spacing="5.0">
-         <children>
-            <Label minWidth="-Infinity" text="%Longitude" wrapText="true" />
-            <ComboBox fx:id="longitudeSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-            <Label layoutX="10.0" layoutY="14.0" minWidth="-Infinity" text="%Latitude" wrapText="true" />
-            <ComboBox fx:id="latitudeSelector" layoutX="27.0" layoutY="10.0" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-         </children>
-      </HBox>
-      <HBox alignment="CENTER_LEFT" spacing="5.0">
-         <children>
-            <Label fx:id="valuesLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconCancel.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconOK.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-         </children>
-      </HBox>
       </children>
       <padding>
           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

@@ -220,6 +220,12 @@ License:    Apache License Version 2.0
                                                                         <FlowPane fx:id="columnsPane" hgap="2.0" vgap="2.0" />
                                                                     </children>
                                                                 </VBox>
+                                                <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                                   <children>
+                                                      <Label minHeight="-Infinity" text="%DecimalScale" wrapText="true" />
+                                                      <ComboBox fx:id="scaleSelector" editable="true" prefWidth="120.0" />
+                                                   </children>
+                                                </HBox>
                                                                 <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
                                                                     <children>
                                                                         <Label text="%ToInvalidNumber">

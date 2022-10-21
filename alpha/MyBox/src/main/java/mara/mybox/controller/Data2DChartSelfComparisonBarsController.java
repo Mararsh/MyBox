@@ -22,7 +22,6 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
     protected Normalization normalization;
     protected double[][] bars;
     protected boolean allNeg, allPos;
-    protected List<List<String>> otherData;
     protected Color[] colors;
 
     public Data2DChartSelfComparisonBarsController() {
@@ -33,17 +32,13 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
     @Override
     public void readData() {
         try {
-            if (isAllPages()) {
-                outputData = data2D.allRows(dataColsIndices, true);
-            } else {
-                outputData = filtered(dataColsIndices, true);
-            }
+            outputData = readData(dataColsIndices, true);
             if (outputData == null) {
                 return;
             }
             normalization = null;
             int rowsNumber = outputData.size();
-            int colsNumber = checkedColsIndices.size();
+            int colsNumber = dataColsIndices.size();
             String[][] data = new String[rowsNumber][colsNumber];
             allNeg = true;
             allPos = true;
@@ -54,11 +49,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
                     data[r][c] = s;
                     double d = DoubleTools.toDouble(s, invalidAs);
                     if (DoubleTools.invalidDouble(d)) {
-                        if (invalidAs == InvalidAs.Zero) {
-                            d = 0;
-                        } else {
-                            continue;
-                        }
+                        continue;
                     }
                     if (d > 0) {
                         allNeg = false;
@@ -70,17 +61,13 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
             bars = DoubleTools.toDouble(calculate(data), InvalidAs.Zero);
             otherData = null;
             if (otherColsIndices != null) {
-                if (isAllPages()) {
-                    otherData = data2D.allRows(otherColsIndices, false);
-                } else {
-                    otherData = filtered(otherColsIndices, false);
-                }
+                otherData = readData(otherColsIndices, false);
             }
-
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
             }
+            MyBoxLog.error(e);
         }
     }
 
@@ -106,6 +93,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
             if (task != null) {
                 task.setError(e.toString());
             }
+            MyBoxLog.error(e);
         }
         return null;
     }
@@ -117,7 +105,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
                 return null;
             }
             int rowsNumber = bars.length;
-            int colsNumber = checkedColsIndices.size();
+            int colsNumber = dataColsIndices.size();
 
             StringBuilder s = new StringBuilder();
             s.append(jsBody());
@@ -135,11 +123,15 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
             if (allRadio.isSelected()) {
                 if (absoluateRadio.isSelected()) {
                     s.append("<P class=\"Calculated\" align=center>").append(message("MaxAbsolute")).append(": ")
-                            .append(normalization.getMaxAbs()).append("</P>\n");
+                            .append(DoubleTools.scale(normalization.getMaxAbs(), scale))
+                            .append("</P>\n");
                 } else {
                     s.append("<P class=\"Calculated\" align=center>").append(message("Maximum")).append(": ")
-                            .append(normalization.getMax()).append("&nbsp;".repeat(8))
-                            .append(message("Minimum")).append(": ").append(normalization.getMin()).append("</P>\n");
+                            .append(DoubleTools.scale(normalization.getMax(), scale))
+                            .append("&nbsp;".repeat(8))
+                            .append(message("Minimum")).append(": ")
+                            .append(DoubleTools.scale(normalization.getMin(), scale))
+                            .append("</P>\n");
                 }
             }
 
@@ -154,7 +146,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
                     s.append("<TH class=\"Calculated\">").append(message("Minimum")).append("</TH>\n");
                 }
             }
-            for (int col : checkedColsIndices) {
+            for (int col : dataColsIndices) {
                 s.append("<TH>").append(data2D.columnName(col)).append("</TH>\n");
             }
             int otherColsNumber = otherColsIndices != null ? otherColsIndices.size() : 0;
@@ -170,10 +162,10 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
             }
 
             Normalization[] normalizationValues = normalization.getValues();
-            colors = new Color[checkedColsIndices.size()];
+            colors = new Color[colsNumber];
             Random random = new Random();
             for (int i = 0; i < colsNumber; i++) {
-                Color color = randomColor ? null : data2D.column(checkedColsIndices.get(i)).getColor();
+                Color color = randomColor ? null : data2D.column(dataColsIndices.get(i)).getColor();
                 if (color == null) {
                     color = FxColorTools.randomColor(random);
                 }
@@ -190,12 +182,15 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
                 if (rowsRadio.isSelected()) {
                     if (absoluateRadio.isSelected()) {
                         s.append("<TD align=center class=\"Calculated\">")
-                                .append(normalizationValues[r].getMaxAbs()).append("</TD>\n");
+                                .append(DoubleTools.scale(normalizationValues[r].getMaxAbs(), scale))
+                                .append("</TD>\n");
                     } else {
                         s.append("<TD align=center class=\"Calculated\">")
-                                .append(normalizationValues[r].getMax()).append("</TD>\n");
+                                .append(DoubleTools.scale(normalizationValues[r].getMax(), scale))
+                                .append("</TD>\n");
                         s.append("<TD align=center class=\"Calculated\">")
-                                .append(normalizationValues[r].getMin()).append("</TD>\n");
+                                .append(DoubleTools.scale(normalizationValues[r].getMin(), scale))
+                                .append("</TD>\n");
                     }
                 }
                 for (int i = 0; i < colsNumber; i++) {
@@ -203,7 +198,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
                             .append(valueBar(tableRow.get(i + 1), bars[r][i], colors[i], allNeg, allPos))
                             .append("</TD>\n");
                 }
-                if (otherData != null) {
+                if (otherColsNumber > 0) {
                     List<String> otherRow = otherData.get(r);
                     for (int i = 0; i < otherColsNumber; i++) {
                         s.append("<TD class=\"Others\">").append(otherRow.get(i)).append("</TD>\n");
@@ -232,13 +227,14 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
         if (normalizationValues == null) {
             return;
         }
-        int colsNumber = checkedColsIndices.size();
+        int colsNumber = dataColsIndices.size();
         if (absoluateRadio.isSelected()) {
             s.append("<TR class=\"Calculated\">\n");
             s.append("<TD class=\"RowNumber\"></TD>\n");
             for (int i = 0; i < colsNumber; i++) {
                 s.append("<TD align=center>")
-                        .append(message("MaxAbsolute")).append(": ").append(normalizationValues[i].getMaxAbs())
+                        .append(message("MaxAbsolute")).append(": ")
+                        .append(DoubleTools.scale(normalizationValues[i].getMaxAbs(), scale))
                         .append("</TD>\n");
             }
             if (otherColsIndices != null) {
@@ -252,7 +248,8 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
             s.append("<TD class=\"RowNumber\"></TD>\n");
             for (int i = 0; i < colsNumber; i++) {
                 s.append("<TD align=center>")
-                        .append(message("Maximum")).append(": ").append(normalizationValues[i].getMax())
+                        .append(message("Maximum")).append(": ")
+                        .append(DoubleTools.scale(normalizationValues[i].getMax(), scale))
                         .append("</TD>\n");
             }
             if (otherColsIndices != null) {
@@ -266,7 +263,8 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
             s.append("<TD class=\"RowNumber\"></TD>\n");
             for (int i = 0; i < colsNumber; i++) {
                 s.append("<TD align=center >")
-                        .append(message("Minimum")).append(": ").append(normalizationValues[i].getMin())
+                        .append(message("Minimum")).append(": ")
+                        .append(DoubleTools.scale(normalizationValues[i].getMin(), scale))
                         .append("</TD>\n");
             }
             if (otherColsIndices != null) {
@@ -336,7 +334,6 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
         }
         return s.toString();
     }
-
 
     /*
         static
