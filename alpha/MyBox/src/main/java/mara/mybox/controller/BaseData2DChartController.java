@@ -8,7 +8,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -250,25 +249,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     @Override
     public void refreshAction() {
         okAction();
-    }
-
-    public StringTable dataHtmlTable() {
-        try {
-            List<String> names = new ArrayList<>();
-            if (outputColumns != null) {
-                for (Data2DColumn c : outputColumns) {
-                    names.add(c.getColumnName());
-                }
-            }
-            StringTable table = new StringTable(names);
-            for (List<String> row : outputData) {
-                table.add(row);
-            }
-            return table;
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return null;
-        }
     }
 
 }

@@ -4,6 +4,7 @@ import java.io.File;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -76,6 +77,37 @@ public class HelpTools {
             File htmFile = HtmlWriteTools.writeHtml(table.html());
             return htmFile;
 
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static File aboutCoordinateSystem() {
+        try {
+            StringTable table = new StringTable(null, Languages.message("AboutCoordinateSystem"));
+            table.newLinkRow("ChinaCommonGeospatialInformationServices", "https://www.tianditu.gov.cn/");
+            table.newLinkRow("", "https://www.tianditu.gov.cn/world_coronavirusmap/");
+            table.newLinkRow("ChineseCoordinateSystems", "https://politics.stackexchange.com/questions/40991/why-must-chinese-maps-be-obfuscated");
+            table.newLinkRow("", "https://zhuanlan.zhihu.com/p/62243160");
+            table.newLinkRow("", "https://blog.csdn.net/qq_36377037/article/details/86479796");
+            table.newLinkRow("", "https://www.zhihu.com/question/31204062?sort=created");
+            table.newLinkRow("", "https://blog.csdn.net/ssxueyi/article/details/102622156");
+            table.newLinkRow("EPSGCodes", "http://epsg.io/4490");
+            table.newLinkRow("", "http://epsg.io/4479");
+            table.newLinkRow("", "http://epsg.io/4326");
+            table.newLinkRow("", "http://epsg.io/3857");
+            table.newLinkRow("TrackingData", "https://www.microsoft.com/en-us/download/details.aspx?id=52367");
+            table.newLinkRow("", "https://www.datarepository.movebank.org/discover");
+            table.newLinkRow("", "https://sumo.dlr.de/docs/Data/Scenarios/TAPASCologne.html");
+            table.newLinkRow("", "https://blog.csdn.net/souvenir001/article/details/52180335");
+            table.newLinkRow("", "https://www.cnblogs.com/genghenggao/p/9625511.html");
+            table.newLinkRow("TianDiTuAPI", "http://lbs.tianditu.gov.cn/api/js4.0/guide.html");
+            table.newLinkRow("TianDiTuKey", "https://console.tianditu.gov.cn/api/key");
+            table.newLinkRow("GaoDeAPI", "https://lbs.amap.com/api/javascript-api/summary");
+            table.newLinkRow("GaoDeKey", "https://console.amap.com/dev/index");
+            File htmFile = HtmlWriteTools.writeHtml(table.html());
+            return htmFile;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;

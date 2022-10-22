@@ -2,8 +2,6 @@ package mara.mybox.controller;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,12 +17,10 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.BaseData;
 import mara.mybox.db.data.BaseDataAdaptor;
 import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.QueryCondition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.BaseTable;
-import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -43,7 +39,7 @@ public class DataExportController extends BaseTaskController {
     protected BaseTable table;
     protected String currentSQL;
     protected long startTime, dataSize;
-    protected boolean currentPage = false, epidemicReportTop;
+    protected boolean currentPage = false;
     protected List<ColumnDefinition> columns;
     protected int top;
 
@@ -179,16 +175,8 @@ public class DataExportController extends BaseTaskController {
             return;
         }
         top = queryController.savedCondition.getTop();
-        epidemicReportTop = false;
         Platform.runLater(() -> {
             if (startButton.getUserData() == null) {
-                if (table instanceof TableEpidemicReport && top > 0) {
-                    epidemicReportTop = true;
-                    if (!validTopOrder()) {
-                        alertError(Languages.message("TimeAsOrderWhenSetTop"));
-                        return;
-                    }
-                }
                 start();
                 StyleTools.setNameIcon(startButton, Languages.message("Stop"), "iconStop.png");
                 startButton.applyCss();
@@ -221,14 +209,6 @@ public class DataExportController extends BaseTaskController {
 
                 @Override
                 protected boolean handle() {
-                    if (epidemicReportTop) {
-                        return handleEpidemicReportTop();
-                    } else {
-                        return commonHandle();
-                    }
-                }
-
-                private boolean commonHandle() {
                     try {
                         String filePrefix = targetNameInput.getText().trim();
 
@@ -302,8 +282,6 @@ public class DataExportController extends BaseTaskController {
                                     GeographyCode code = TableGeographyCode.readResults(results);
                                     TableGeographyCode.decodeAncestors(conn, code);
                                     data = code;
-                                } else if (table instanceof TableEpidemicReport) {
-                                    data = TableEpidemicReport.statisticViewQuery(conn, results, true);
                                 } else {
                                     data = (BaseData) (table.readData(results));
                                 }
@@ -337,100 +315,6 @@ public class DataExportController extends BaseTaskController {
                             row.add(display);
                         }
                         convertController.writeRow(row);
-                        return true;
-                    } catch (Exception e) {
-                        updateLogs(e.toString());
-                        return false;
-                    }
-                }
-
-                private boolean handleEpidemicReportTop() {
-                    try ( Connection conn = DerbyBase.getConnection()) {
-                        conn.setReadOnly(true);
-                        String where = queryController.savedCondition.getWhere();
-                        String order = queryController.savedCondition.getOrder();
-                        currentSQL = queryController.savedCondition.getPrefix() + " "
-                                + (where == null || where.isBlank() ? "" : " WHERE " + where)
-                                + (order == null || order.isBlank() ? "" : " ORDER BY " + order);
-                        updateLogs(currentSQL + "\n" + Languages.message("NumberTopDataDaily") + ": " + top);
-                        List<EpidemicReport> reports = new ArrayList();
-                        try ( ResultSet results = conn.createStatement().executeQuery(currentSQL)) {
-                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                            String lastDate = null;
-                            List<EpidemicReport> timeReports = new ArrayList();
-                            while (results.next()) {
-                                if (task == null || isCancelled()) {
-                                    return false;
-                                }
-                                EpidemicReport report = TableEpidemicReport.statisticViewQuery(conn, results, false);
-                                String date = dateFormat.format(report.getTime());
-                                long locationid = report.getLocationid();
-                                boolean existed = false;
-                                if (lastDate == null || !date.equals(lastDate)) {
-                                    if (timeReports.size() > 0) {
-                                        updateLogs(MessageFormat.format(Languages.message("ReadTopDateData"), timeReports.size(), lastDate));
-                                        reports.addAll(timeReports);
-                                    }
-                                    timeReports = new ArrayList();
-                                    lastDate = date;
-                                } else {
-                                    if (timeReports.size() >= top) {
-                                        continue;
-                                    }
-                                    for (EpidemicReport timeReport : timeReports) {
-                                        if (task == null || isCancelled()) {
-                                            return false;
-                                        }
-                                        if (timeReport.getDataSet().equals(report.getDataSet())
-                                                && timeReport.getLocationid() == locationid) {
-                                            existed = true;
-                                            break;
-                                        }
-                                    }
-                                }
-                                if (!existed) {
-                                    GeographyCode location = TableGeographyCode.readCode(conn, locationid, true);
-                                    report.setLocation(location);
-                                    timeReports.add(report);
-                                }
-                            }
-                            if (timeReports.size() > 0) {
-                                updateLogs(MessageFormat.format(Languages.message("ReadTopDateData"), timeReports.size(), lastDate));
-                                reports.addAll(timeReports);
-                            }
-                        }
-
-                        dataSize = reports.size();
-                        updateLogs(Languages.message("DataSize") + ": " + dataSize);
-                        if (dataSize == 0) {
-                            return false;
-                        }
-                        return writeFiles(reports);
-                    } catch (Exception e) {
-                        MyBoxLog.error(e.toString());
-                        return false;
-                    }
-                }
-
-                private boolean writeFiles(List<EpidemicReport> reports) {
-                    try {
-                        String filePrefix = targetNameInput.getText().trim();
-                        int count = 0;
-                        if (!convertController.setParameters(filePrefix, skip)) {
-                            return false;
-                        }
-                        for (EpidemicReport report : reports) {
-                            if (cancelled) {
-                                updateLogs(Languages.message("Cancelled") + " " + filePrefix);
-                                return false;
-                            }
-                            writeRow(report);
-                            count++;
-                            if (verboseCheck.isSelected() && (count % 50 == 0)) {
-                                updateLogs(Languages.message("Exported") + " " + count + ": " + filePrefix);
-                            }
-                        }
-                        convertController.closeWriters();
                         return true;
                     } catch (Exception e) {
                         updateLogs(e.toString());

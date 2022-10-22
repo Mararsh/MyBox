@@ -23,7 +23,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -242,7 +241,7 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
             @Override
             protected boolean handle() {
                 try {
-                    long maxDataNumber = filterController.filter.getMaxPassed();
+                    long maxDataNumber = filterController.maxFilteredNumber;
                     maxDataNumber = Math.min(maxDataNumber > 0 ? maxDataNumber : Integer.MAX_VALUE,
                             mapController.mapOptions.getDataMax());
                     filterController.filter.setMaxPassed(maxDataNumber);
@@ -368,8 +367,7 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                         } else {
                             markSize = mapController.mapOptions.getMarkerSize();
                         }
-                        mapController.drawPoint(code.getLongitude(), code.getLatitude(),
-                                code.getLabel(), code.getInfo(),
+                        mapController.drawPoint(code,
                                 mapController.mapOptions.getMarkerImageFile().getAbsolutePath(),
                                 markSize,
                                 mapController.mapOptions.getTextColor());
@@ -379,7 +377,7 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                                     + ", " + code.getLatitude() + ");");
                             centered = true;
                         }
-                        mapController.titleLabel.setText(Languages.message("DataNumber") + ":" + index);
+                        mapController.titleLabel.setText(message("DataNumber") + ":" + index);
                         if (checkEnd()) {
                             return;
                         }

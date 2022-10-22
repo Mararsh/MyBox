@@ -61,11 +61,6 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
     }
 
     @FXML
-    protected void openEpidemicReports(ActionEvent event) {
-        loadScene(Fxmls.EpidemicReportsFxml);
-    }
-
-    @FXML
     protected void dataInSystemClipboard(ActionEvent event) {
         DataInSystemClipboardController.oneOpen();
     }

@@ -17,13 +17,11 @@ import mara.mybox.db.table.TableData2DCell;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.db.table.TableData2DStyle;
-import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableImageScope;
-import mara.mybox.db.table.TableLocationData;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.db.table.TableNamedValues;
 import mara.mybox.db.table.TableStringValues;
@@ -61,12 +59,6 @@ public class BaseDataAdaptor {
 
         } else if (data instanceof GeographyCode) {
             return new TableGeographyCode();
-
-        } else if (data instanceof EpidemicReport) {
-            return new TableEpidemicReport();
-
-        } else if (data instanceof Location) {
-            return new TableLocationData();
 
         } else if (data instanceof ImageEditHistory) {
             return new TableImageEditHistory();
@@ -147,12 +139,6 @@ public class BaseDataAdaptor {
 
         } else if (data instanceof GeographyCode) {
             return GeographyCode.valid((GeographyCode) data);
-
-        } else if (data instanceof EpidemicReport) {
-            return EpidemicReport.valid((EpidemicReport) data);
-
-        } else if (data instanceof Location) {
-            return Location.valid((Location) data);
 
         } else if (data instanceof ColumnDefinition) {
             return ColumnDefinition.valid((ColumnDefinition) data);
@@ -239,12 +225,6 @@ public class BaseDataAdaptor {
         } else if (data instanceof GeographyCode) {
             return GeographyCode.getValue((GeographyCode) data, name);
 
-        } else if (data instanceof EpidemicReport) {
-            return EpidemicReport.getValue((EpidemicReport) data, name);
-
-        } else if (data instanceof Location) {
-            return Location.getValue((Location) data, name);
-
         } else if (data instanceof ImageEditHistory) {
             return ImageEditHistory.getValue((ImageEditHistory) data, name);
 
@@ -317,12 +297,6 @@ public class BaseDataAdaptor {
         }
         if (data instanceof GeographyCode) {
             return GeographyCode.setValue((GeographyCode) data, name, value);
-
-        } else if (data instanceof EpidemicReport) {
-            return EpidemicReport.setValue((EpidemicReport) data, name, value);
-
-        } else if (data instanceof Location) {
-            return Location.setValue((Location) data, name, value);
 
         } else if (data instanceof MyBoxLog) {
             return MyBoxLog.setValue((MyBoxLog) data, name, value);
@@ -440,12 +414,6 @@ public class BaseDataAdaptor {
         }
         if (data instanceof GeographyCode) {
             return GeographyCode.displayColumn((GeographyCode) data, column, value);
-
-        } else if (data instanceof EpidemicReport) {
-            return EpidemicReport.displayColumn((EpidemicReport) data, column, value);
-
-        } else if (data instanceof Location) {
-            return Location.displayColumn((Location) data, column, value);
 
         } else if (data instanceof MyBoxLog) {
             return MyBoxLog.displayColumn((MyBoxLog) data, column, value);

@@ -422,7 +422,6 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
                     } else {
                         row.add(DoubleTools.scaleString(s, invalidAs, scale));
                     }
-                    row.add(outputData.get(c).get(col));
                 }
                 transposed.add(row);
             }
@@ -525,9 +524,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
             chartMaker.setDefaultChartTitle((selectedCategory != null ? selectedCategory + " - " : "") + calculation.getColsNames())
                     .setChartTitle(chartMaker.getChartTitle())
                     .setDefaultCategoryLabel(selectedCategory)
-                    .setCategoryLabel(selectedCategory)
-                    .setDefaultValueLabel(calculation.getColsNames().toString())
-                    .setValueLabel(chartMaker.getDefaultValueLabel());
+                    .setDefaultValueLabel(calculation.getColsNames().toString());
             chartController.writeXYChart(outputColumns, outputData, displayCols, false);
             chartMaker.getBoxWhiskerChart()
                     .setBoxWidth(boxWidth)

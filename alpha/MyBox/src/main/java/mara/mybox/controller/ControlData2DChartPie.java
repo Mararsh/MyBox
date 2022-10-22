@@ -40,6 +40,7 @@ public class ControlData2DChartPie extends BaseData2DChartFx {
     public void writeChart(List<Data2DColumn> columns, List<List<String>> data, boolean hasRowNumber) {
         this.columns = columns;
         this.data = data;
+        this.rowNumber = hasRowNumber;
         pieMaker.makeChart();
         setChart(pieMaker.getPieChart());
         pieMaker.writeChart(columns, data, hasRowNumber);

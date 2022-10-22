@@ -186,19 +186,20 @@ public class ControlMapOptions extends BaseController {
                 dataMaximumSelector.getItems().addAll(Arrays.asList(
                         "300", "500", "200", "100", "1000", "2000", "5000", "10000", "50"
                 ));
-                dataMaximumSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                    try {
-                        int v = Integer.parseInt(newValue);
-                        if (v > 0) {
-                            mapOptions.setDataMax(v);
-                            dataMaximumSelector.getEditor().setStyle(null);
-                        } else {
-                            dataMaximumSelector.getEditor().setStyle(UserConfig.badStyle());
-                        }
-                    } catch (Exception e) {
-                        dataMaximumSelector.getEditor().setStyle(UserConfig.badStyle());
-                    }
-                });
+                dataMaximumSelector.getSelectionModel().selectedItemProperty().addListener(
+                        (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                            try {
+                                int v = Integer.parseInt(newValue);
+                                if (v > 0) {
+                                    mapOptions.setDataMax(v);
+                                    dataMaximumSelector.getEditor().setStyle(null);
+                                } else {
+                                    dataMaximumSelector.getEditor().setStyle(UserConfig.badStyle());
+                                }
+                            } catch (Exception e) {
+                                dataMaximumSelector.getEditor().setStyle(UserConfig.badStyle());
+                            }
+                        });
             }
 
             if (standardLayerCheck != null) {

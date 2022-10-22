@@ -24,8 +24,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.web.WebView?>
 
-
-  <VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.CoordinatePickerController">
+<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.CoordinatePickerController">
       <children>
           <SplitPane fx:id="splitPane" dividerPositions="0.6" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
               <items>
@@ -34,6 +33,33 @@ License:    Apache License Version 2.0
                           <HBox alignment="CENTER_LEFT" spacing="5.0">
                               <children>
                                   <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
+                           <graphic>
+                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconPop.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button fx:id="htmlButton" mnemonicParsing="false" onAction="#htmlAction">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconHtml.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button fx:id="dataButton" mnemonicParsing="false" onAction="#dataAction">
+                           <graphic>
+                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconData.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
                                   <Button fx:id="clearMapButton" mnemonicParsing="false" onAction="#clearAction">
                                       <graphic>
                                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

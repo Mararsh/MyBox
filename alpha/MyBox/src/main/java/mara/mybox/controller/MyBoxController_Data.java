@@ -120,15 +120,9 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
             loadScene(Fxmls.ConvertCoordinateFxml);
         });
 
-        MenuItem EpidemicReport = new MenuItem(message("EpidemicReport"));
-        EpidemicReport.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.EpidemicReportsFxml);
-        });
-
         Menu Location = new Menu(message("Location"));
         Location.getItems().addAll(
-                GeographyCode, LocationInMap, ConvertCoordinate, new SeparatorMenuItem(),
-                EpidemicReport
+                GeographyCode, LocationInMap, ConvertCoordinate
         );
 
         MenuItem MatricesManage = new MenuItem(message("MatricesManage"));

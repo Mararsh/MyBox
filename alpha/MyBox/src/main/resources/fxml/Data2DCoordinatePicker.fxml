@@ -34,6 +34,33 @@ License:    Apache License Version 2.0
                           <HBox alignment="CENTER_LEFT" spacing="5.0">
                               <children>
                                   <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
+                           <graphic>
+                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconPop.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button fx:id="htmlButton" mnemonicParsing="false" onAction="#htmlAction">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconHtml.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button fx:id="dataButton" mnemonicParsing="false" onAction="#dataAction">
+                           <graphic>
+                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconData.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
                                   <Button fx:id="clearMapButton" mnemonicParsing="false" onAction="#clearAction">
                                       <graphic>
                                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

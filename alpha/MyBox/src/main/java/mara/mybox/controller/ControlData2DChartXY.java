@@ -16,7 +16,6 @@ public class ControlData2DChartXY extends BaseData2DChartFx {
 
     protected XYChartMaker<Axis, Axis> chartMaker;
     protected List<Integer> colIndics;
-    protected boolean rowNumber;
     protected Data2DChartXYOptionsController optionsController;
 
     public ControlData2DChartXY() {

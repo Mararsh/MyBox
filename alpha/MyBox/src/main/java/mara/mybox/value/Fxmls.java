@@ -269,16 +269,6 @@ public class Fxmls {
     public static final String ConvertCoordinateFxml = "/fxml/ConvertCoordinate.fxml";
     public static final String Data2DCoordinatePickerFxml = "/fxml/Data2DCoordinatePicker.fxml";
 
-    public static final String EpidemicReportsFxml = "/fxml/EpidemicReports.fxml";
-    public static final String EpidemicReportEditFxml = "/fxml/EpidemicReportEdit.fxml";
-    public static final String EpidemicReportsEditFxml = "/fxml/EpidemicReportsEdit.fxml";
-    public static final String EpidemicReportsImportInternalCSVFxml = "/fxml/EpidemicReportsImportInternalCSV.fxml";
-    public static final String EpidemicReportsImportExternalCSVFxml = "/fxml/EpidemicReportsImportExternalCSV.fxml";
-    public static final String EpidemicReportsImport621ExternalFxml = "/fxml/EpidemicReportsImport621External.fxml";
-    public static final String EpidemicReportsImportJHUTimeSeriesFxml = "/fxml/EpidemicReportsImportJHUTimeSeries.fxml";
-    public static final String EpidemicReportsImportJHUDailyFxml = "/fxml/EpidemicReportsImportJHUDaily.fxml";
-    public static final String EpidemicReportsStatisticFxml = "/fxml/EpidemicReportsStatistic.fxml";
-
     public static final String DataQueryFxml = "/fxml/DataQuery.fxml";
     public static final String DataExportFxml = "/fxml/DataExport.fxml";
 

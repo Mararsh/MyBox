@@ -7,26 +7,19 @@ import java.util.Date;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Transform;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
@@ -207,47 +200,6 @@ public abstract class BaseMapFramesController extends BaseMapController {
         setPause(true);
     }
 
-    @FXML
-    protected void popSnapMenu(MouseEvent mouseEvent) {
-        try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-
-            MenuItem menu;
-
-            menu = new MenuItem(Languages.message("HtmlDataAndCurrentFrame"));
-            menu.setOnAction((ActionEvent event) -> {
-                snapHtml();
-            });
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(Languages.message("SnapCurrentFrame"));
-            menu.setOnAction((ActionEvent event) -> {
-                snapCurrentFrame();
-            });
-            popMenu.getItems().add(menu);
-
-            snapAllMenu();
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(Languages.message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent event) -> {
-                popMenu.hide();
-                popMenu = null;
-            });
-            popMenu.getItems().add(menu);
-
-            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
     protected String snapFrameName() {
         String name = titleLabel.getText();
         if (name.isBlank()) {
@@ -256,26 +208,6 @@ public abstract class BaseMapFramesController extends BaseMapController {
         name += (!frameLabel.getText().isBlank() ? "_" + frameLabel.getText() : "");
         name += "_dpi" + dpi;
         return FileNameTools.filter(name);
-    }
-
-    protected void snapAllMenu() {
-        MenuItem menu = new MenuItem(Languages.message("JpgAllFrames"));
-        menu.setOnAction((ActionEvent event) -> {
-            snapAllFrames("jpg");
-        });
-        popMenu.getItems().add(menu);
-
-        menu = new MenuItem(Languages.message("PngAllFrames"));
-        menu.setOnAction((ActionEvent event) -> {
-            snapAllFrames("png");
-        });
-        popMenu.getItems().add(menu);
-
-        menu = new MenuItem(Languages.message("GifAllFrames"));
-        menu.setOnAction((ActionEvent event) -> {
-            snapAllFrames("gif");
-        });
-        popMenu.getItems().add(menu);
     }
 
     protected void snapCurrentFrame() {
@@ -324,10 +256,6 @@ public abstract class BaseMapFramesController extends BaseMapController {
             };
             start(task);
         }
-
-    }
-
-    protected void snapAllFrames(String format) {
 
     }
 

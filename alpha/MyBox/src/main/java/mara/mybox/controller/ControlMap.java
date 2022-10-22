@@ -2,29 +2,32 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.transform.Transform;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
 import mara.mybox.data.MapOptions;
 import mara.mybox.data.StringTable;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.HtmlStyles;
@@ -33,13 +36,11 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.LocationTools;
-import mara.mybox.tools.TextFileTools;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.FileFilters;
-import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.SystemConfig;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -48,11 +49,32 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlMap extends BaseController {
 
-    protected String title;
+    protected String mapTitle;
     protected WebEngine webEngine;
     protected boolean mapLoaded;
     protected MapOptions mapOptions;
     protected SimpleBooleanProperty drawNotify, dataNotify;
+    protected List<MapPoint> mapPoints;
+
+    public class MapPoint {
+
+        public double longitude, latitude;
+        public String label, info;
+
+        public MapPoint(double longitude, double latitude, String label, String info) {
+            this.longitude = longitude;
+            this.latitude = latitude;
+            this.label = label;
+            this.info = info;
+        }
+
+        public MapPoint(GeographyCode code) {
+            this.longitude = code.getLongitude();
+            this.latitude = code.getLatitude();
+            this.label = code.getLabel();
+            this.info = code.getInfo();
+        }
+    }
 
     @FXML
     protected WebView mapView;
@@ -89,6 +111,10 @@ public class ControlMap extends BaseController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    public void setMapTitle(String title) {
+        mapTitle = title;
     }
 
     public void initOptionsControls() {
@@ -139,6 +165,7 @@ public class ControlMap extends BaseController {
             timer = null;
         }
         mapLoaded = false;
+        mapPoints = null;
         if (mapOptionsController != null) {
             mapOptionsController.optionsBox.setDisable(true);
         }
@@ -205,7 +232,7 @@ public class ControlMap extends BaseController {
     }
 
     public void setMapSize() {
-        if (!mapLoaded || isSettingValues) {
+        if (!mapLoaded || isSettingValues || webEngine == null) {
             return;
         }
         Platform.runLater(() -> {
@@ -414,50 +441,38 @@ public class ControlMap extends BaseController {
         }
     }
 
-    protected void drawPoint(GeographyCode code) {
-        drawPoint(code.getLongitude(), code.getLatitude(), code.getLabel(), code.getInfo());
-    }
-
-    protected void drawPoint(double longitude, double latitude, String label, String info) {
+    protected void drawPoint(GeographyCode code, String markerImage, int markSize, Color textColor) {
         try {
-            drawPoint(longitude, latitude, label, info,
-                    mapOptions.getMarkerImageFile().getAbsolutePath(),
-                    mapOptions.getMarkerSize(),
-                    mapOptions.getTextColor());
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-    }
-
-    protected void drawPoint(double longitude, double latitude,
-            String label, String info, String markerImage, int markSize, Color textColor) {
-        try {
-            if (webEngine == null || !mapLoaded
-                    || !LocationTools.validCoordinate(longitude, latitude)) {
+            if (code == null || webEngine == null || !mapLoaded
+                    || !LocationTools.validCoordinate(code.getLongitude(), code.getLatitude())) {
                 return;
             }
             String pLabel = "";
             if (mapOptions.isMarkerLabel()) {
-                pLabel += label;
+                pLabel += code.getLabel();
             }
             if (mapOptions.isMarkerCoordinate()) {
                 if (!pLabel.isBlank()) {
                     pLabel += "</BR>";
                 }
-                pLabel += longitude + "," + latitude;
+                pLabel += code.getLongitude() + "," + code.getLatitude();
             }
             pLabel = jsString(pLabel);
-            String pInfo = jsString(mapOptions.isPopInfo() ? info : null);
+            String pInfo = jsString(mapOptions.isPopInfo() ? code.getInfo() : null);
             String pImage = markerImage;
             pImage = (pImage == null || pImage.trim().isBlank())
                     ? "null" : "'" + pImage.replaceAll("\\\\", "/") + "'";
             String pColor = textColor == null ? "null" : "'" + FxColorTools.color2rgb(textColor) + "'";
             webEngine.executeScript("addMarker("
-                    + longitude + "," + latitude
+                    + code.getLongitude() + "," + code.getLatitude()
                     + ", " + pLabel + ", " + pInfo + ", " + pImage
                     + ", " + markSize
                     + ", " + mapOptions.getTextSize()
                     + ", " + pColor + ", " + mapOptions.isBold() + ");");
+            if (mapPoints == null) {
+                mapPoints = new ArrayList<>();
+            }
+            mapPoints.add(new MapPoint(code));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -473,6 +488,7 @@ public class ControlMap extends BaseController {
     public void clearAction() {
         if (mapLoaded) {
             webEngine.executeScript("clearMap();");
+            mapPoints = null;
         }
         if (titleLabel != null) {
             titleLabel.setText("");
@@ -484,121 +500,150 @@ public class ControlMap extends BaseController {
         drawPoints();
     }
 
-    @FXML
-    public void aboutCoordinateSystem() {
-        try {
-            StringTable table = new StringTable(null, Languages.message("AboutCoordinateSystem"));
-            table.newLinkRow("ChinaCommonGeospatialInformationServices", "https://www.tianditu.gov.cn/");
-            table.newLinkRow("", "https://www.tianditu.gov.cn/world_coronavirusmap/");
-            table.newLinkRow("ChineseCoordinateSystems", "https://politics.stackexchange.com/questions/40991/why-must-chinese-maps-be-obfuscated");
-            table.newLinkRow("", "https://zhuanlan.zhihu.com/p/62243160");
-            table.newLinkRow("", "https://blog.csdn.net/qq_36377037/article/details/86479796");
-            table.newLinkRow("", "https://www.zhihu.com/question/31204062?sort=created");
-            table.newLinkRow("", "https://blog.csdn.net/ssxueyi/article/details/102622156");
-            table.newLinkRow("EPSGCodes", "http://epsg.io/4490");
-            table.newLinkRow("", "http://epsg.io/4479");
-            table.newLinkRow("", "http://epsg.io/4326");
-            table.newLinkRow("", "http://epsg.io/3857");
-            table.newLinkRow("TrackingData", "https://www.microsoft.com/en-us/download/details.aspx?id=52367");
-            table.newLinkRow("", "https://www.datarepository.movebank.org/discover");
-            table.newLinkRow("", "https://sumo.dlr.de/docs/Data/Scenarios/TAPASCologne.html");
-            table.newLinkRow("", "https://blog.csdn.net/souvenir001/article/details/52180335");
-            table.newLinkRow("", "https://www.cnblogs.com/genghenggao/p/9625511.html");
-            table.newLinkRow("TianDiTuAPI", "http://lbs.tianditu.gov.cn/api/js4.0/guide.html");
-            table.newLinkRow("TianDiTuKey", "https://console.tianditu.gov.cn/api/key");
-            table.newLinkRow("GaoDeAPI", "https://lbs.amap.com/api/javascript-api/summary");
-            table.newLinkRow("GaoDeKey", "https://console.amap.com/dev/index");
-            File htmFile = HtmlWriteTools.writeHtml(table.html());
-            openLink(htmFile);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
     protected String snapName() {
         String name = titleLabel.getText();
         if (name.isBlank()) {
-            name = (Languages.message("Locations") + "_" + DateTools.datetimeToString(new Date()));
+            name = (message("Locations") + "_" + DateTools.datetimeToString(new Date()));
         }
-        name += "_dpi" + dpi;
         return FileNameTools.filter(name);
     }
 
-    public void snapHtml() {
-        final String htmlTitle = snapName();
-        File htmlFile = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
-                htmlTitle, FileFilters.HtmlExtensionFilter);
-        if (htmlFile == null) {
-            return;
+    @FXML
+    @Override
+    public boolean popAction() {
+        ImagePopController.openImage(this, snapMap());
+        return true;
+    }
+
+    public Image snapMap() {
+        return NodeTools.snap(snapBox);
+    }
+
+    @FXML
+    public void htmlAction() {
+        Image mapSnap = snapMap();
+        if (task != null) {
+            task.cancel();
         }
-        recordFileWritten(htmlFile, VisitHistory.FileType.Html);
+        task = new SingletonTask<Void>(this) {
+            private String html;
 
-        double scale = NodeTools.dpiScale(dpi);
-        scale = scale > 1 ? scale : 1;
-        SnapshotParameters snapPara = new SnapshotParameters();
-        snapPara.setFill(Color.TRANSPARENT);
-        snapPara.setTransform(Transform.scale(scale, scale));
-        final Image mapSnap = snapBox.snapshot(snapPara, null);
+            @Override
+            protected boolean handle() {
+                try {
+                    String title = mapTitle == null ? titleLabel.getText() : mapTitle;
+                    if (title == null || title.isBlank()) {
+                        title = message("Locations") + "_" + DateTools.datetimeToString(new Date());
+                    }
+                    StringBuilder s = new StringBuilder();
+                    s.append("<h1  class=\"center\">").append(title).append("</h1>\n");
+                    s.append("<hr>\n");
 
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
+                    File imageFile = new File(AppPaths.getGeneratedPath() + File.separator
+                            + DateTools.nowFileString() + ".jpg");
+                    BufferedImage bufferedImage = SwingFXUtils.fromFXImage(mapSnap, null);
+                    ImageFileWriters.writeImageFile(bufferedImage, "jpg", imageFile.getAbsolutePath());
+                    s.append("<h2  class=\"center\">").append(message("Image")).append("</h2>\n");
+                    s.append("<div align=\"center\"><img src=\"").append(imageFile.toURI().toString())
+                            .append("\"  style=\"max-width:95%;\"></div>\n");
+                    s.append("<hr>\n");
 
-                @Override
-                protected boolean handle() {
-                    try {
-                        String subPath = FileNameTools.prefix(htmlFile.getName());
-                        String path = htmlFile.getParent() + "/" + subPath;
-                        (new File(path)).mkdirs();
-
-                        StringBuilder s = new StringBuilder();
-                        s.append("<h1  class=\"center\">").append(htmlTitle).append("</h1>\n");
-                        s.append("<hr>\n");
-
-                        if (task == null || isCancelled()) {
-                            return false;
-                        }
-
-                        s.append(writePointsTable());
-                        if (task == null || isCancelled()) {
-                            return false;
-                        }
-
-                        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(mapSnap, null);
-                        ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "map.jpg");
-                        String imageName = subPath + "/map.jpg";
-                        s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"max-width:95%;\"></div>\n");
-                        s.append("<hr>\n");
-                        if (task == null || isCancelled()) {
-                            return false;
-                        }
-
-                        String html = HtmlWriteTools.html(htmlTitle, HtmlStyles.styleValue("Default"), s.toString());
-                        TextFileTools.writeFile(htmlFile, html, Charset.forName("utf-8"));
-
-                        if (task == null || isCancelled()) {
-                            return false;
-                        }
-                        return htmlFile.exists();
-                    } catch (Exception e) {
-                        error = e.toString();
-                        MyBoxLog.error(e.toString());
+                    if (task == null || task.isCancelled()) {
                         return false;
                     }
 
+                    if (mapPoints != null && !mapPoints.isEmpty()) {
+                        List<String> names = new ArrayList<>();
+                        names.addAll(Arrays.asList(message("Longitude"), message("Latitude"),
+                                message("Label"), message("Information")));
+                        StringTable table = new StringTable(names);
+                        for (MapPoint code : mapPoints) {
+                            if (task == null || task.isCancelled()) {
+                                return false;
+                            }
+                            List<String> row = new ArrayList<>();
+                            row.add(code.longitude + "");
+                            row.add(code.latitude + "");
+                            row.add(code.label == null ? null : code.label.replaceAll("\n", "<BR>"));
+                            row.add(code.info == null ? null : code.info.replaceAll("\n", "<BR>"));
+                            table.add(row);
+                        }
+                        s.append(table.div());
+                    }
+
+                    html = HtmlWriteTools.html(title, HtmlStyles.styleValue("Default"), s.toString());
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    MyBoxLog.error(e.toString());
+                    return false;
                 }
 
-                @Override
-                protected void whenSucceeded() {
-                    browseURI(htmlFile.toURI());
-                }
+            }
 
-            };
-            start(task);
+            @Override
+            protected void whenSucceeded() {
+                HtmlEditorController.load(html);
+            }
+
+        };
+        start(task);
+    }
+
+    @FXML
+    public void dataAction() {
+        if (mapPoints == null || mapPoints.isEmpty()) {
+            popError(message("NoData"));
+            return;
         }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
 
+            private List<Data2DColumn> columns;
+            private List<List<String>> data;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    columns = new ArrayList<>();
+                    columns.add(new Data2DColumn(message("Longitude"), ColumnType.Longitude));
+                    columns.add(new Data2DColumn(message("Latitude"), ColumnType.Latitude));
+                    columns.add(new Data2DColumn(message("Label"), ColumnType.String, 160));
+                    columns.add(new Data2DColumn(message("Information"), ColumnType.String, 300));
+
+                    data = new ArrayList<>();
+                    for (MapPoint code : mapPoints) {
+                        if (task == null || task.isCancelled()) {
+                            return false;
+                        }
+                        List<String> row = new ArrayList<>();
+                        row.add(code.longitude + "");
+                        row.add(code.latitude + "");
+                        row.add(code.label == null ? null : code.label.replaceAll("<BR>", "\n"));
+                        row.add(code.info == null ? null : code.info.replaceAll("<BR>", "\n"));
+                        data.add(row);
+                    }
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                DataManufactureController.open(columns, data);
+            }
+
+        };
+        start(task);
+    }
+
+    @FXML
+    public void aboutCoordinateSystem() {
+        openLink(HelpTools.aboutCoordinateSystem());
     }
 
     @Override

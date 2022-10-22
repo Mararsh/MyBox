@@ -117,9 +117,9 @@ public class GeographyCodeMapController extends BaseMapFramesController {
                                         }
                                         frameEnd = false;
                                         GeographyCode code = points.get(index);
-                                        drawPoint(code.getLongitude(), code.getLatitude(),
-                                                code.getName(),
-                                                BaseDataAdaptor.displayData(geoTable, code, null, true),
+                                        code.setLabel(code.getName());
+                                        code.setInfo(BaseDataAdaptor.displayData(geoTable, code, null, true));
+                                        drawPoint(code,
                                                 mapOptions.getMarkerImageFile().getAbsolutePath(),
                                                 mapOptions.getMarkerSize(),
                                                 mapOptions.getTextColor());
@@ -177,21 +177,11 @@ public class GeographyCodeMapController extends BaseMapFramesController {
     }
 
     protected void drawGeographyCodes(List<GeographyCode> codes, String title) {
-        this.title = title;
-        if (this.title == null) {
-            this.title = "";
-        } else {
-            this.title = this.title.replaceAll("\n", " ");
-        }
-        titleLabel.setText(this.title);
+        mapTitle = title == null ? "" : title.replaceAll("\n", " ");
+        titleLabel.setText(mapTitle);
         frameLabel.setText("");
         geographyCodes = codes;
         drawPoints();
-    }
-
-    @Override
-    protected void snapAllMenu() {
-
     }
 
     @FXML
