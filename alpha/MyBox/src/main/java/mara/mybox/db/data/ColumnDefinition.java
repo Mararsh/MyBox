@@ -317,6 +317,15 @@ public class ColumnDefinition extends BaseData {
                 || type == ColumnType.Era || type == ColumnType.Color;
     }
 
+    public boolean isDoubleType() {
+        return type == ColumnType.Double;
+    }
+
+    public boolean isDBDoubleType() {
+        return type == ColumnType.Double
+                || type == ColumnType.Longitude || type == ColumnType.Latitude;
+    }
+
     public boolean isDateType() {
         return type == ColumnType.Datetime || type == ColumnType.Date || type == ColumnType.Era;
     }

@@ -8,20 +8,24 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import javafx.application.Platform;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageConvertTools;
-import mara.mybox.data2d.Data2D_Convert;
+import mara.mybox.data.GeoCoordinateSystem;
+import static mara.mybox.data2d.Data2D_Convert.createTable;
 import mara.mybox.data2d.DataTable;
 import static mara.mybox.db.DerbyBase.BatchSize;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorPaletteName;
 import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.db.data.Data2DCell;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.data.Data2DStyle;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeLevel;
@@ -36,6 +40,7 @@ import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.db.table.TableConvolutionKernel;
+import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableData2DCell;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
@@ -187,64 +192,197 @@ public class DataMigration {
             statement.executeUpdate("ALTER TABLE Data2D_Column DROP COLUMN time_format");
             statement.executeUpdate("ALTER TABLE Data2D_Column DROP COLUMN values_list");
 
-            statement.executeUpdate("ALTER TABLE Location_Data ADD COLUMN dataset VARCHAR(" + StringMaxLength + ")");
-            statement.executeUpdate("ALTER TABLE Location_Data ADD COLUMN from_time VARCHAR(64)");
-            statement.executeUpdate("ALTER TABLE Location_Data ADD COLUMN to_time VARCHAR(64)");
-            statement.executeUpdate("UPDATE Location_Data AS A SET dataset=(select B.data_set FROM Dataset AS B WHERE A.datasetid=B.dsid )");
-            statement.executeUpdate("UPDATE Location_Data AS A SET location_image=(select B.dataset_image FROM Dataset AS B WHERE A.datasetid=B.dsid )");
+            updateIn661MoveLocations(conn);
+            updateIn661MoveEpidemicReports(conn);
+
+            statement.executeUpdate("DELETE FROM VISIT_HISTORY WHERE resource_type=4 AND resource_value='Location Data'");
+            statement.executeUpdate("DELETE FROM VISIT_HISTORY WHERE resource_type=4 AND resource_value='位置数据'");
+            statement.executeUpdate("DELETE FROM VISIT_HISTORY WHERE resource_type=4 AND resource_value='Epidemic Report'");
+            statement.executeUpdate("DELETE FROM VISIT_HISTORY WHERE resource_type=4 AND resource_value='疫情报告'");
+
+            Platform.runLater(() -> {
+                if ("zh".equals(Locale.getDefault().getLanguage().toLowerCase())) {
+                    PopTools.alertInformation(null, "功能'位置数据'和'疫情报告'已被移除。\n"
+                            + "它们已存在的数据可在菜单'数据 - 数据库 - 数据库表'下访问。");
+                } else {
+                    PopTools.alertInformation(null, "Functions 'Location Data' and 'Epidemic Report' have been removed.\n"
+                            + "Their existed data can be accessed under menu 'Data - Database - Database Table'.");
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    private static void updateIn661MoveLocations(Connection conn) {
+        try ( Statement statement = conn.createStatement()) {
+            DataTable locations = new DataTable();
+            TableData2D tableLocations = locations.getTableData2D();
+            String tableName = message("LocationData");
+            if (tableLocations.exist(conn, tableName) == 1) {
+                tableName = message("LocationData") + "_" + DateTools.nowString3();
+            }
+            List<Data2DColumn> columns = new ArrayList<>();
+            columns.add(new Data2DColumn(message("DataSet"), ColumnType.String));
+            columns.add(new Data2DColumn(message("Label"), ColumnType.String));
+            columns.add(new Data2DColumn(message("Address"), ColumnType.String));
+            columns.add(new Data2DColumn(message("Longitude"), ColumnType.Longitude));
+            columns.add(new Data2DColumn(message("Latitude"), ColumnType.Latitude));
+            columns.add(new Data2DColumn(message("Altitude"), ColumnType.Double));
+            columns.add(new Data2DColumn(message("Precision"), ColumnType.Double));
+            columns.add(new Data2DColumn(message("Speed"), ColumnType.Double));
+            columns.add(new Data2DColumn(message("Direction"), ColumnType.Short));
+            columns.add(new Data2DColumn(message("CoordinateSystem"), ColumnType.String));
+            columns.add(new Data2DColumn(message("DataValue"), ColumnType.Double));
+            columns.add(new Data2DColumn(message("DataSize"), ColumnType.Double));
+            columns.add(new Data2DColumn(message("StartTime"), ColumnType.Era));
+            columns.add(new Data2DColumn(message("EndTime"), ColumnType.Era));
+            columns.add(new Data2DColumn(message("Image"), ColumnType.String));
+            columns.add(new Data2DColumn(message("Comments"), ColumnType.String));
+            locations = createTable(null, conn, tableName, columns, null, null, null, false);
+            tableLocations = locations.getTableData2D();
+            long count = 0;
+            try ( ResultSet query = statement.executeQuery("SELECT * FROM Location_Data_View");
+                     PreparedStatement insert = conn.prepareStatement(tableLocations.insertStatement())) {
+                conn.setAutoCommit(false);
+                while (query.next()) {
+                    try {
+                        Data2DRow data2DRow = tableLocations.newRow();
+                        data2DRow.setColumnValue(message("DataSet"), query.getString("data_set"));
+                        data2DRow.setColumnValue(message("Label"), query.getString("label"));
+                        data2DRow.setColumnValue(message("Address"), query.getString("address"));
+                        data2DRow.setColumnValue(message("Longitude"), query.getDouble("longitude"));
+                        data2DRow.setColumnValue(message("Latitude"), query.getDouble("latitude"));
+                        data2DRow.setColumnValue(message("Altitude"), query.getDouble("altitude"));
+                        data2DRow.setColumnValue(message("Precision"), query.getDouble("precision"));
+                        data2DRow.setColumnValue(message("Speed"), query.getDouble("speed"));
+                        data2DRow.setColumnValue(message("Direction"), query.getShort("direction"));
+                        data2DRow.setColumnValue(message("CoordinateSystem"), GeoCoordinateSystem.name(query.getShort("coordinate_system")));
+                        data2DRow.setColumnValue(message("DataValue"), query.getDouble("data_value"));
+                        data2DRow.setColumnValue(message("DataSize"), query.getDouble("data_size"));
+                        data2DRow.setColumnValue(message("StartTime"), DateTools.datetimeToString(query.getLong("start_time")));
+                        data2DRow.setColumnValue(message("EndTime"), DateTools.datetimeToString(query.getLong("end_time")));
+                        data2DRow.setColumnValue(message("Image"), query.getString("dataset_image"));
+                        data2DRow.setColumnValue(message("Comments"), query.getString("location_comments"));
+                        tableLocations.insertData(conn, insert, data2DRow);
+                        if (++count % DerbyBase.BatchSize == 0) {
+                            conn.commit();
+                        }
+                    } catch (Exception e) {
+                        MyBoxLog.console(e);
+                    }
+                }
+                conn.commit();
+            }
+            conn.setAutoCommit(true);
+
             statement.executeUpdate("DROP INDEX Dataset_unique_index");
             statement.executeUpdate("DROP VIEW Location_Data_View");
             statement.executeUpdate("ALTER TABLE  Location_Data DROP CONSTRAINT  Location_Data_datasetid_fk");
-            statement.executeUpdate("ALTER TABLE Location_Data DROP COLUMN datasetid");
             statement.executeUpdate("DROP TABLE Dataset");
+            statement.executeUpdate("DROP TABLE Location_Data");
 
-            DataTable locations = new DataTable();
-            locations.readDefinitionFromDB(conn, "Location_Data");
-            String tmpTable = Data2D_Convert.tmpTableName();
-            statement.executeUpdate("CREATE TABLE " + tmpTable + " (time BIGINT,  PRIMARY KEY ( time ) )");
-            statement.executeUpdate("INSERT INTO " + tmpTable + " (time ) SELECT DISTINCT start_time FROM Location_Data WHERE start_time IS NOT NULL");
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    private static void updateIn661MoveEpidemicReports(Connection conn) {
+        try ( Statement statement = conn.createStatement()) {
+            DataTable reports = new DataTable();
+            TableData2D tableReports = reports.getTableData2D();
+            String tableName = message("EpidemicReport");
+            if (tableReports.exist(conn, tableName) == 1) {
+                tableName = message("EpidemicReport") + "_" + DateTools.nowString3();
+            }
+            List<Data2DColumn> columns = new ArrayList<>();
+            columns.add(new Data2DColumn(message("DataSet"), ColumnType.String));
+            columns.add(new Data2DColumn(message("Time"), ColumnType.Datetime));
+            columns.add(new Data2DColumn(message("Address"), ColumnType.String));
+            columns.add(new Data2DColumn(message("Longitude"), ColumnType.Longitude));
+            columns.add(new Data2DColumn(message("Latitude"), ColumnType.Latitude));
+            columns.add(new Data2DColumn(message("Level"), ColumnType.String));
+            columns.add(new Data2DColumn(message("Continent"), ColumnType.String));
+            columns.add(new Data2DColumn(message("Country"), ColumnType.String));
+            columns.add(new Data2DColumn(message("Province"), ColumnType.String));
+            columns.add(new Data2DColumn(message("CoordinateSystem"), ColumnType.String));
+            columns.add(new Data2DColumn(message("Confirmed"), ColumnType.Long));
+            columns.add(new Data2DColumn(message("Healed"), ColumnType.Long));
+            columns.add(new Data2DColumn(message("Dead"), ColumnType.Long));
+            columns.add(new Data2DColumn(message("IncreasedConfirmed"), ColumnType.Long));
+            columns.add(new Data2DColumn(message("IncreasedHealed"), ColumnType.Long));
+            columns.add(new Data2DColumn(message("IncreasedDead"), ColumnType.Long));
+            columns.add(new Data2DColumn(message("Source"), ColumnType.String)); // 1:predefined 2:added 3:filled 4:statistic others:unknown
+            columns.add(new Data2DColumn(message("Comments"), ColumnType.String));
+            reports = createTable(null, conn, tableName, columns, null, null, null, false);
+            tableReports = reports.getTableData2D();
             long count = 0;
-            try ( ResultSet query = conn.createStatement().executeQuery("SELECT time FROM " + tmpTable)) {
+            try ( ResultSet query = statement.executeQuery("SELECT * FROM Epidemic_Report");
+                     PreparedStatement insert = conn.prepareStatement(tableReports.insertStatement())) {
                 conn.setAutoCommit(false);
                 while (query.next()) {
                     try {
-                        long time = query.getLong("time");
-                        statement.executeUpdate("UPDATE Location_Data SET from_time='"
-                                + DateTools.datetimeToString(time) + "' WHERE start_time=" + time);
-                        if (count++ >= 100) {
-                            conn.commit();
+                        Data2DRow data2DRow = tableReports.newRow();
+                        data2DRow.setColumnValue(message("DataSet"), query.getString("data_set"));
+                        data2DRow.setColumnValue(message("Time"), query.getTimestamp("time"));
+                        long locationid = query.getLong("locationid");
+                        GeographyCode code = TableGeographyCode.readCode(conn, locationid, true);
+                        if (code != null) {
+                            try {
+                                data2DRow.setColumnValue(message("Address"), code.getName());
+                                data2DRow.setColumnValue(message("Longitude"), code.getLongitude());
+                                data2DRow.setColumnValue(message("Latitude"), code.getLatitude());
+                                data2DRow.setColumnValue(message("Level"), code.getLevelName());
+                                data2DRow.setColumnValue(message("Continent"), code.getContinentName());
+                                data2DRow.setColumnValue(message("Country"), code.getCountryName());
+                                data2DRow.setColumnValue(message("Province"), code.getProvinceName());
+                                data2DRow.setColumnValue(message("CoordinateSystem"), code.getCoordinateSystem().name());
+                                data2DRow.setColumnValue(message("Comments"), code.getFullName());
+                            } catch (Exception e) {
+                                MyBoxLog.console(e);
+                            }
                         }
-                    } catch (Exception e) {
-                    }
-                }
-                conn.commit();
-            }
-            statement.executeUpdate("DELETE FROM " + tmpTable);
-            statement.executeUpdate("INSERT INTO " + tmpTable + " (time ) SELECT DISTINCT end_time FROM Location_Data WHERE end_time IS NOT NULL");
-            count = 0;
-            try ( ResultSet query = conn.createStatement().executeQuery("SELECT time FROM " + tmpTable)) {
-                conn.setAutoCommit(false);
-                while (query.next()) {
-                    try {
-                        long time = query.getLong("time");
-                        statement.executeUpdate("UPDATE Location_Data SET to_time='"
-                                + DateTools.datetimeToString(time) + "' WHERE end_time=" + time);
-                        if (count++ >= 100) {
-                            conn.commit();
-                        }
-                    } catch (Exception e) {
-                    }
-                }
-                conn.commit();
-            }
+                        data2DRow.setColumnValue(message("Confirmed"), query.getLong("confirmed"));
+                        data2DRow.setColumnValue(message("Healed"), query.getLong("healed"));
+                        data2DRow.setColumnValue(message("Dead"), query.getLong("dead"));
+                        data2DRow.setColumnValue(message("IncreasedConfirmed"), query.getLong("increased_confirmed"));
+                        data2DRow.setColumnValue(message("IncreasedHealed"), query.getLong("increased_healed"));
+                        data2DRow.setColumnValue(message("IncreasedDead"), query.getLong("increased_dead"));
+                        short sd = query.getShort("source");
+                        String source;
+                        source = switch (sd) {
+                            case 1 ->
+                                message("PredefinedData");
+                            case 2 ->
+                                message("InputtedData");
+                            case 3 ->
+                                message("FilledData");
+                            case 4 ->
+                                message("StatisticData");
+                            default ->
+                                message("Unknown");
+                        };
+                        data2DRow.setColumnValue(message("Source"), source);
 
+                        tableReports.insertData(conn, insert, data2DRow);
+                        if (++count % DerbyBase.BatchSize == 0) {
+                            conn.commit();
+                        }
+                    } catch (Exception e) {
+                        MyBoxLog.console(e);
+                    }
+                }
+                conn.commit();
+            }
             conn.setAutoCommit(true);
-            statement.executeUpdate("DROP TABLE " + tmpTable);
-            statement.executeUpdate("ALTER TABLE Location_Data DROP COLUMN start_time");
-            statement.executeUpdate("ALTER TABLE Location_Data DROP COLUMN end_time");
 
-            statement.executeUpdate("DELETE FROM VISIT_HISTORY WHERE resource_type=4 AND resource_value='LocationData'");
-            statement.executeUpdate("DELETE FROM VISIT_HISTORY WHERE resource_type=4 AND resource_value='位置数据'");
+            statement.executeUpdate("DROP INDEX Epidemic_Report_DatasetTimeDesc_index");
+            statement.executeUpdate("DROP INDEX Epidemic_Report_DatasetTimeAsc_index");
+            statement.executeUpdate("DROP INDEX Epidemic_Report_timeAsc_index");
+            statement.executeUpdate("DROP VIEW Epidemic_Report_Statistic_View");
+            statement.executeUpdate("ALTER TABLE  Epidemic_Report DROP CONSTRAINT  Epidemic_Report_locationid_fk");
+            statement.executeUpdate("DROP TABLE Epidemic_Report");
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -1362,6 +1500,7 @@ public class DataMigration {
                     FxFileTools.getInternalFile("/doc/en/MyBox-Overview-en.pdf", "doc", "MyBox-Overview-en.pdf", true);
                     MyBoxLog.info("Internal doc loaded.");
                 } catch (Exception e) {
+                    MyBoxLog.console(e.toString());
                 }
             }
         }.start();

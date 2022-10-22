@@ -167,7 +167,8 @@ public class DataTable extends Data2D {
                     for (Data2DColumn scolumn : savedColumns) {
                         if (dbColumn.getColumnName().equalsIgnoreCase(scolumn.getColumnName())) {
                             dbColumn.setIndex(scolumn.getIndex());
-                            if (dbColumn.isStringType() && scolumn.isDBStringType()) {
+                            if (dbColumn.isStringType() && scolumn.isDBStringType()
+                                    || dbColumn.isDoubleType() && scolumn.isDBDoubleType()) {
                                 dbColumn.setType(scolumn.getType());
                             }
                             dbColumn.setFormat(scolumn.getFormat());
