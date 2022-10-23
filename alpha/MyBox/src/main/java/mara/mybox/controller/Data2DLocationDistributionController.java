@@ -3,9 +3,6 @@ package mara.mybox.controller;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -14,7 +11,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.paint.Color;
 import mara.mybox.data.GeoCoordinateSystem;
+import mara.mybox.data.MapPoint;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.GeographyCode;
@@ -36,6 +35,7 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
     protected List<Integer> dataColsIndices;
     protected ToggleGroup csGroup;
     protected double maxValue, minValue;
+    protected List<MapPoint> dataPoints;
 
     @FXML
     protected ComboBox<String> labelSelector, longitudeSelector, latitudeSelector, sizeSelector;
@@ -135,15 +135,12 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
             if (message("zh", "ChineseHistoricalCapitals").equals(dname)
                     || message("en", "ChineseHistoricalCapitals").equals(dname)) {
                 file = mapController.mapOptions.chineseHistoricalCapitalsImage();
-
             } else if (message("zh", "AutumnMovementPatternsOfEuropeanGadwalls").equals(dname)
                     || message("en", "AutumnMovementPatternsOfEuropeanGadwalls").equals(dname)) {
                 file = mapController.mapOptions.europeanGadwallsImage();
-
             } else if (message("zh", "SpermWhalesGulfOfMexico").equals(dname)
                     || message("en", "SpermWhalesGulfOfMexico").equals(dname)) {
                 file = mapController.mapOptions.spermWhalesImage();
-
             }
             if (file != null) {
                 mapOptionsController.initImageFile(file);
@@ -224,6 +221,7 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                     }
                 }
             }
+            dataPoints = null;
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -274,7 +272,7 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                             }
                         }
                     }
-                    return true;
+                    return initPoints();
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -300,114 +298,134 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
         start(task);
     }
 
-    public void drawPoints() {
-        if (!mapController.mapLoaded || outputData == null || outputData.isEmpty()) {
+    protected boolean initPoints() {
+        try {
+            dataPoints = new ArrayList<>();
+            for (List<String> row : outputData) {
+                double lo, la;
+                try {
+                    lo = Double.valueOf(row.get(1));
+                    la = Double.valueOf(row.get(2));
+                    if (!GeographyCodeTools.validCoordinate(lo, la)) {
+                        continue;
+                    }
+                } catch (Exception e) {
+                    MyBoxLog.console(e.toString());
+                    continue;
+                }
+                String info = "";
+                for (int c = 0; c < row.size(); c++) {
+                    String v = row.get(c);
+                    info += outputColumns.get(c).getColumnName() + ": "
+                            + (v == null ? "" : v) + "\n";
+                }
+                MapPoint point = new MapPoint(lo, la, row.get(0), info);
+                int markSize;
+                if (sizeColumn != null) {
+                    double v;
+                    try {
+                        v = Double.valueOf(row.get(3));
+                    } catch (Exception e) {
+                        v = 0;
+                    }
+                    markSize = markSize(v);
+                } else {
+                    markSize = mapController.mapOptions.getMarkerSize();
+                }
+                point.setMarkSize(markSize);
+                dataPoints.add(point);
+            }
+            outputData = null;
+            return true;
+        } catch (Exception e) {
+            error = e.toString();
+            return false;
+        }
+    }
+
+    protected void drawPoints() {
+        mapController.clearAction();
+        if (dataPoints == null || dataPoints.isEmpty()) {
             return;
         }
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
+        if (task != null) {
+            task.cancel();
         }
-        mapController.clearAction();
-        GeoCoordinateSystem cs
-                = new GeoCoordinateSystem(((RadioButton) csGroup.getSelectedToggle()).getText());
-        int max = mapController.mapOptions.getDataMax();
-        mapController.mapOptions.setMapSize(3);
-        timer = new Timer();
-        timer.schedule(new TimerTask() {
+        task = new SingletonTask<Void>(this) {
 
-            private boolean frameEnd = true, centered = false;
-            private int index = 0;
+            List<MapPoint> mapPoints;
 
             @Override
-            public void run() {
-                Platform.runLater(() -> {
-                    try {
-                        if (!frameEnd || timer == null) {
-                            return;
-                        }
-                        if (checkEnd()) {
-                            return;
-                        }
-                        frameEnd = false;
-                        List<String> row = outputData.get(index++);
-                        GeographyCode code = GeographyCode.create().setCoordinateSystem(cs);
+            protected boolean handle() {
+                try {
+                    int max = mapController.mapOptions.getDataMax();
+                    GeoCoordinateSystem cs
+                            = new GeoCoordinateSystem(((RadioButton) csGroup.getSelectedToggle()).getText());
+                    GeographyCode code = GeographyCode.create();
+                    int index = 0;
+                    String imageFile = mapController.mapOptions.getMarkerImageFile().getAbsolutePath();
+                    int textSize = mapController.mapOptions.getTextSize();
+                    int markSize = mapController.mapOptions.getMarkerSize();
+                    Color textColor = mapController.mapOptions.getTextColor();
+                    mapPoints = new ArrayList<>();
+                    for (MapPoint dataPoint : dataPoints) {
                         try {
-                            double lo = Double.valueOf(row.get(1));
-                            double la = Double.valueOf(row.get(2));
-                            if (!GeographyCodeTools.validCoordinate(lo, la)) {
-                                return;
+                            if (code == null) {
+                                code = GeographyCode.create();
                             }
-                            code.setLongitude(lo).setLatitude(la);
+                            code.setCoordinateSystem(cs)
+                                    .setLongitude(dataPoint.getLongitude())
+                                    .setLatitude(dataPoint.getLatitude());
                             if (mapController.mapOptions.isGaoDeMap()) {
                                 code = GeographyCodeTools.toGCJ02(code);
                             } else {
                                 code = GeographyCodeTools.toCGCS2000(code, false);
                             }
                         } catch (Exception e) {
-//                            MyBoxLog.error(e.toString());
-//                            MyBoxLog.console(row);
-                            return;
+                            MyBoxLog.console(e.toString());
+                            continue;
                         }
                         if (code == null) {
-                            return;
+                            continue;
                         }
-                        String info = "";
-                        for (int c = 0; c < row.size(); c++) {
-                            String v = row.get(c);
-                            info += outputColumns.get(c).getColumnName() + ": "
-                                    + (v == null ? "" : v) + "\n";
-                        }
-                        code.setLabel(row.get(0)).setInfo(info);
-                        int markSize;
+                        MapPoint mapPoint = new MapPoint(code);
                         if (sizeColumn != null) {
-                            double v;
-                            try {
-                                v = Double.valueOf(row.get(3));
-                            } catch (Exception e) {
-                                v = 0;
-                            }
-                            markSize = markSize(v);
-                        } else {
-                            markSize = mapController.mapOptions.getMarkerSize();
+                            markSize = dataPoint.getMarkSize();
                         }
-                        mapController.drawPoint(code,
-                                mapController.mapOptions.getMarkerImageFile().getAbsolutePath(),
-                                markSize,
-                                mapController.mapOptions.getTextColor());
-
-                        if (!centered) {
-                            mapController.webEngine.executeScript("setCenter(" + code.getLongitude()
-                                    + ", " + code.getLatitude() + ");");
-                            centered = true;
+                        mapPoint.setLabel(dataPoint.getLabel())
+                                .setInfo(dataPoint.getInfo())
+                                .setMarkSize(markSize)
+                                .setMarkerImage(imageFile)
+                                .setTextSize(textSize)
+                                .setTextColor(textColor);
+                        mapPoints.add(mapPoint);
+                        if (++index >= max) {
+                            break;
                         }
-                        mapController.titleLabel.setText(message("DataNumber") + ":" + index);
-                        if (checkEnd()) {
-                            return;
-                        }
-                        frameEnd = true;
-                    } catch (Exception e) {
-//                                        MyBoxLog.debug(e.toString());
-                    }
-                });
-            }
-
-            public boolean checkEnd() {
-                if (outputData == null || index >= outputData.size() || index >= max) {
-                    if (timer != null) {
-                        timer.cancel();
-                        timer = null;
-                    }
-                    if (mapController.mapOptions.isGaoDeMap() && mapController.mapOptions.isFitView()) {
-                        mapController.webEngine.executeScript("map.setFitView();");
                     }
                     return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
                 }
-                return false;
             }
 
-        }, 0, 1); // Interface may be blocked if put all points in map altogether.
+            @Override
+            protected void whenSucceeded() {
+            }
 
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                data2D.stopTask();
+                task = null;
+                if (ok) {
+                    mapController.drawPoints(mapPoints);
+                }
+            }
+
+        };
+        start(task);
     }
 
     // maximum marker size of GaoDe Map is 64

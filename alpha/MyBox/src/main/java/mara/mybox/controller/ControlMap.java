@@ -20,10 +20,10 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
 import mara.mybox.data.MapOptions;
+import mara.mybox.data.MapPoint;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
-import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
@@ -55,26 +55,6 @@ public class ControlMap extends BaseController {
     protected MapOptions mapOptions;
     protected SimpleBooleanProperty drawNotify, dataNotify;
     protected List<MapPoint> mapPoints;
-
-    public class MapPoint {
-
-        public double longitude, latitude;
-        public String label, info;
-
-        public MapPoint(double longitude, double latitude, String label, String info) {
-            this.longitude = longitude;
-            this.latitude = latitude;
-            this.label = label;
-            this.info = info;
-        }
-
-        public MapPoint(GeographyCode code) {
-            this.longitude = code.getLongitude();
-            this.latitude = code.getLatitude();
-            this.label = code.getLabel();
-            this.info = code.getInfo();
-        }
-    }
 
     @FXML
     protected WebView mapView;
@@ -441,38 +421,54 @@ public class ControlMap extends BaseController {
         }
     }
 
-    protected void drawPoint(GeographyCode code, String markerImage, int markSize, Color textColor) {
+    protected void drawPoint(MapPoint point) {
+        if (webEngine == null || !mapLoaded || point == null) {
+            return;
+        }
+        drawPoint(point.getLongitude(), point.getLatitude(),
+                point.getLabel(), point.getInfo(), point.getMarkSize(),
+                point.getMarkerImage(), point.getTextSize(), point.getTextColor()
+        );
+    }
+
+    protected void drawPoint(double lo, double la, String label, String info) {
+        drawPoint(lo, la, label, info,
+                mapOptions.getMarkerSize(),
+                mapOptions.getMarkerImageFile().getAbsolutePath(),
+                mapOptions.getTextSize(),
+                mapOptions.getTextColor()
+        );
+    }
+
+    protected void drawPoint(double lo, double la, String label, String info, int markSize,
+            String markerImage, int textSize, Color textColor) {
         try {
-            if (code == null || webEngine == null || !mapLoaded
-                    || !LocationTools.validCoordinate(code.getLongitude(), code.getLatitude())) {
+            if (webEngine == null || !mapLoaded
+                    || !LocationTools.validCoordinate(lo, la)) {
                 return;
             }
             String pLabel = "";
             if (mapOptions.isMarkerLabel()) {
-                pLabel += code.getLabel();
+                pLabel += label;
             }
             if (mapOptions.isMarkerCoordinate()) {
                 if (!pLabel.isBlank()) {
                     pLabel += "</BR>";
                 }
-                pLabel += code.getLongitude() + "," + code.getLatitude();
+                pLabel += lo + "," + la;
             }
             pLabel = jsString(pLabel);
-            String pInfo = jsString(mapOptions.isPopInfo() ? code.getInfo() : null);
+            String pInfo = jsString(mapOptions.isPopInfo() ? info : null);
             String pImage = markerImage;
             pImage = (pImage == null || pImage.trim().isBlank())
                     ? "null" : "'" + pImage.replaceAll("\\\\", "/") + "'";
             String pColor = textColor == null ? "null" : "'" + FxColorTools.color2rgb(textColor) + "'";
             webEngine.executeScript("addMarker("
-                    + code.getLongitude() + "," + code.getLatitude()
+                    + lo + "," + la
                     + ", " + pLabel + ", " + pInfo + ", " + pImage
                     + ", " + markSize
-                    + ", " + mapOptions.getTextSize()
+                    + ", " + textSize
                     + ", " + pColor + ", " + mapOptions.isBold() + ");");
-            if (mapPoints == null) {
-                mapPoints = new ArrayList<>();
-            }
-            mapPoints.add(new MapPoint(code));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -483,13 +479,82 @@ public class ControlMap extends BaseController {
                 : "'" + string.replaceAll("'", AppValues.MyBoxSeparator).replaceAll("\n", "</BR>") + "'";
     }
 
+    public void drawPoints(List<MapPoint> points) {
+        if (!mapLoaded || webEngine == null || points == null || points.isEmpty()) {
+            return;
+        }
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+        clearAction();
+        mapPoints = points;
+        mapOptions.setMapSize(3);
+        timer = new Timer();
+        String prefix = message("DataNumber") + ":";
+        timer.schedule(new TimerTask() {
+
+            private boolean frameEnd = true, centered = false;
+            private int index = 0;
+
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    try {
+                        if (!frameEnd || timer == null) {
+                            return;
+                        }
+                        if (mapPoints == null || mapPoints.isEmpty()) {
+                            if (timer != null) {
+                                timer.cancel();
+                                timer = null;
+                            }
+                            return;
+                        }
+                        frameEnd = false;
+                        MapPoint point = mapPoints.get(index);
+                        drawPoint(point);
+                        if (!centered) {
+                            webEngine.executeScript("setCenter("
+                                    + point.getLongitude() + ", " + point.getLatitude() + ");");
+                            centered = true;
+                        }
+                        index++;
+                        titleLabel.setText(prefix + index);
+                        if (index >= mapPoints.size()) {
+                            if (timer != null) {
+                                timer.cancel();
+                                timer = null;
+                            }
+                            if (mapOptions.isGaoDeMap() && mapOptions.isFitView()) {
+                                webEngine.executeScript("map.setFitView();");
+                            }
+                        }
+                        frameEnd = true;
+                    } catch (Exception e) {
+                        MyBoxLog.console(e);
+                    }
+                });
+            }
+
+        }, 0, 1); // Interface may be blocked if put all points in map altogether.
+
+    }
+
     @FXML
     @Override
     public void clearAction() {
-        if (mapLoaded) {
-            webEngine.executeScript("clearMap();");
-            mapPoints = null;
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
         }
+        if (webEngine != null) {
+            webEngine.getLoadWorker().cancel();
+            if (mapLoaded) {
+                webEngine.executeScript("clearMap();");
+            }
+        }
+        mapPoints = null;
         if (titleLabel != null) {
             titleLabel.setText("");
         }
@@ -561,12 +626,7 @@ public class ControlMap extends BaseController {
                             if (task == null || task.isCancelled()) {
                                 return false;
                             }
-                            List<String> row = new ArrayList<>();
-                            row.add(code.longitude + "");
-                            row.add(code.latitude + "");
-                            row.add(code.label == null ? null : code.label.replaceAll("\n", "<BR>"));
-                            row.add(code.info == null ? null : code.info.replaceAll("\n", "<BR>"));
-                            table.add(row);
+                            table.add(code.htmlValues());
                         }
                         s.append(table.div());
                     }
@@ -618,12 +678,7 @@ public class ControlMap extends BaseController {
                         if (task == null || task.isCancelled()) {
                             return false;
                         }
-                        List<String> row = new ArrayList<>();
-                        row.add(code.longitude + "");
-                        row.add(code.latitude + "");
-                        row.add(code.label == null ? null : code.label.replaceAll("<BR>", "\n"));
-                        row.add(code.info == null ? null : code.info.replaceAll("<BR>", "\n"));
-                        data.add(row);
+                        data.add(code.dataValues());
                     }
                     return true;
                 } catch (Exception e) {
@@ -649,18 +704,13 @@ public class ControlMap extends BaseController {
     @Override
     public void cleanPane() {
         try {
-            if (timer != null) {
-                timer.cancel();
-                timer = null;
-            }
+            clearAction();
             if (webEngine != null) {
-                webEngine.getLoadWorker().cancel();
                 webEngine = null;
             }
             if (mapOptionsController != null) {
                 mapOptionsController.cleanPane();
             }
-
         } catch (Exception e) {
         }
         super.cleanPane();

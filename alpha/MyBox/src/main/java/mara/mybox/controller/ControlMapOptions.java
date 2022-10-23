@@ -680,6 +680,7 @@ public class ControlMapOptions extends BaseController {
             markerImageRadio.setSelected(true);
             markerImageInput.setText(file.getAbsolutePath());
             isSettingValues = false;
+            mapOptions.setMarkerImageFile(file);
         } catch (Exception e) {
 //            MyBoxLog.error(e.toString());
         }
