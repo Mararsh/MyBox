@@ -75,7 +75,7 @@ public class FileRenameController extends BaseController {
             }
             File theFile = new File(pathLabel.getText() + FileNameTools.filter(nameInput.getText() + suffixLabel.getText()));
             if (theFile.equals(file)) {
-                popError(message("Same"));
+                popError(message("Unchanged"));
                 return;
             }
             if (theFile.exists()) {

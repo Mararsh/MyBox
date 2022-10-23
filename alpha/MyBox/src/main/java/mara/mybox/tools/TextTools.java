@@ -17,7 +17,6 @@ import javafx.scene.control.IndexRange;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.data.TextEditInformation;
-import mara.mybox.data2d.Data2D;
 import static mara.mybox.data2d.DataFileText.CommentsMarker;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
@@ -579,10 +578,6 @@ public class TextTools {
         return msg;
     }
 
-    public static String dataText(Object[][] data, String delimiterName) {
-        return dataText(data, delimiterName, null, null);
-    }
-
     public static String dataText(Object[][] data, String delimiterName,
             List<String> colsNames, List<String> rowsNames) {
         if (data == null || data.length == 0 || delimiterName == null) {
@@ -639,59 +634,6 @@ public class TextTools {
     public static String dataText(List<List<String>> rows, String delimiterName,
             List<String> colsNames, List<String> rowsNames) {
         return dataText(toArray(rows), delimiterName, colsNames, rowsNames);
-    }
-
-    public static String dataPage(Data2D data2D, String delimiterName,
-            boolean displayRowNames, boolean displayColNames) {
-        if (data2D == null || !data2D.isColumnsValid() || delimiterName == null) {
-            return "";
-        }
-        try {
-            StringBuilder s = new StringBuilder();
-            String delimiter = delimiterValue(delimiterName);
-            int rowsNumber = data2D.tableRowsNumber();
-            int colsNumber = data2D.tableColsNumber();
-            int colEnd = colsNumber - 1;
-            if (displayColNames) {
-                if (displayRowNames) {
-                    s.append(message("RowNumber")).append(delimiter);
-                }
-                List<String> colNames = data2D.columnNames();
-                for (int c = 0; c <= colEnd; c++) {
-                    s.append(colNames.get(c));
-                    if (c < colEnd) {
-                        s.append(delimiter);
-                    }
-                }
-                s.append("\n");
-            }
-            Object v;
-            int rowEnd = rowsNumber - 1;
-            List<String> rowNames = data2D.rowNames();
-            for (int i = 0; i <= rowEnd; i++) {
-                if (displayRowNames) {
-                    s.append(rowNames.get(i)).append(delimiter);
-                }
-                List<String> rowValues = data2D.tableRowWithoutNumber(i);
-                if (rowValues == null) {
-                    continue;
-                }
-                for (int c = 0; c <= colEnd; c++) {
-                    v = rowValues.get(c);
-                    s.append(v == null ? "" : v.toString().replaceAll("\n", "\\\\n"));
-                    if (c < colEnd) {
-                        s.append(delimiter);
-                    }
-                }
-                if (i < rowEnd) {
-                    s.append("\n");
-                }
-            }
-            return s.toString();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return "";
-        }
     }
 
     public static boolean validLine(String line) {

@@ -12,6 +12,7 @@ import javafx.scene.control.TextArea;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -20,9 +21,8 @@ import mara.mybox.value.UserConfig;
  * @Author Mara
  * @CreateDate 2021-10-18
  * @License Apache License Version 2.0
- *
  */
-public class ControlData2DEditText extends BaseController {
+public class ControlData2DEditCSV extends BaseController {
 
     protected ControlData2D dataController;
     protected ControlData2DEdit editController;
@@ -102,39 +102,54 @@ public class ControlData2DEditText extends BaseController {
     }
 
     public void loadData() {
-        try {
-            if (isSettingValues) {
-                return;
-            }
-            status = null;
-            loadText();
-            status(data2D.isTableChanged() ? Status.Applied : Status.Loaded);
-        } catch (Exception e) {
-            MyBoxLog.console(e.toString());
+        if (isSettingValues) {
+            return;
         }
+        status = null;
+        loadText();
+        status(data2D.isTableChanged() ? Status.Applied : Status.Loaded);
     }
 
     public void loadText() {
-        try {
-            if (!checkData()) {
-                return;
-            }
-            String delimiter = TextTools.delimiterValue(delimiterName);
-            String label = "";
-            for (String name : data2D.columnNames()) {
-                if (!label.isEmpty()) {
-                    label += delimiter;
-                }
-                label += name;
-            }
-            columnsLabel.setText(label);
-            String text = TextTools.dataPage(data2D, delimiterName, false, false);
-            isSettingValues = true;
-            textArea.setText(text);
-            isSettingValues = false;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
+        if (!checkData()) {
+            return;
         }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+            private String text;
+
+            @Override
+            protected boolean handle() {
+                text = data2D.encodeCSV(task, delimiterName, false, false);
+                return text != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                String delimiter = TextTools.delimiterValue(delimiterName);
+                String label = "";
+                for (String name : data2D.columnNames()) {
+                    if (!label.isEmpty()) {
+                        label += delimiter;
+                    }
+                    label += name;
+                }
+                columnsLabel.setText(label);
+                isSettingValues = true;
+                textArea.setText(text);
+                isSettingValues = false;
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                task = null;
+            }
+
+        };
+        start(task);
     }
 
     public void status(Status newStatus) {
@@ -165,53 +180,72 @@ public class ControlData2DEditText extends BaseController {
     @FXML
     @Override
     public void okAction() {
-        if (status != Status.Modified || !checkData() || delimiterName == null) {
+        if (status != Status.Modified) {
+            popInformation(message("Unchanged"));
+            return;
+        }
+        if (!checkData() || delimiterName == null) {
             popError(message("InvalidData"));
             return;
         }
-        try {
-            List<List<String>> rows = new ArrayList<>();
-            String text = textArea.getText();
-            if (text != null && !text.isEmpty()) {
-                int colsNumber = data2D.columnsNumber();
-                String[] lines = text.split("\n");
-                int rowIndex = 0;
-                for (String line : lines) {
-                    line = line.trim();
-                    if (line.isEmpty()) {
-                        continue;
-                    }
-                    List<String> row = TextTools.parseLine(line, delimiterName);
-                    if (row == null || row.isEmpty()) {
-                        continue;
-                    }
-                    int len = row.size();
-                    if (len > colsNumber) {
-                        row = row.subList(0, colsNumber);
-                    } else {
-                        for (int c = len; c < colsNumber; c++) {
-                            row.add(null);
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+            private List<List<String>> rows;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    rows = new ArrayList<>();
+                    String text = textArea.getText();
+                    if (text != null && !text.isEmpty()) {
+                        int colsNumber = data2D.columnsNumber();
+                        List<List<String>> data = data2D.decodeCSV(task, text, delimiterName, false);
+                        if (data == null) {
+                            return false;
+                        }
+                        long startindex = data2D.getStartRowOfCurrentPage();
+                        for (int i = 0; i < data.size(); i++) {
+                            List<String> drow = data.get(i);
+                            List<String> nrow = new ArrayList<>();
+                            nrow.add((startindex + i) + "");
+                            int len = drow.size();
+                            if (len > colsNumber) {
+                                nrow.addAll(drow.subList(0, colsNumber));
+                            } else {
+                                nrow.addAll(drow);
+                                for (int c = len; c < colsNumber; c++) {
+                                    nrow.add(null);
+                                }
+                            }
+                            rows.add(nrow);
                         }
                     }
-                    List<String> nrow = new ArrayList<>();
-                    for (String s : row) {
-                        if (s == null || !data2D.supportMultipleLine()) {
-                            nrow.add(s);
-                        } else {
-                            nrow.add(s.replaceAll("\\\\n", "\n"));
-                        }
-                    }
-                    nrow.add(0, (data2D.getStartRowOfCurrentPage() + rowIndex++) + "");
-                    rows.add(nrow);
+                    return rows != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
                 }
             }
-            isSettingValues = true;
-            tableController.updateData(rows, false);
-            isSettingValues = false;
-            status(Status.Applied);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+
+            @Override
+            protected void whenSucceeded() {
+                isSettingValues = true;
+                tableController.updateData(rows, false);
+                isSettingValues = false;
+                status(Status.Applied);
+                popInformation(message("UpdateSuccessfully"));
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                task = null;
+            }
+
+        };
+        start(task);
     }
 
     @FXML

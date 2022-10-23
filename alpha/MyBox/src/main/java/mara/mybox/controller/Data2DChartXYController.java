@@ -181,7 +181,6 @@ public class Data2DChartXYController extends BaseData2DChartController {
             } else if (checkedColsNames != null) {
                 chartMaker.setDefaultValueLabel(checkedColsNames.toString());
             }
-            MyBoxLog.console(checkedColsNames);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

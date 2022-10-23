@@ -434,7 +434,7 @@ public class ControlFindReplace extends BaseController {
         }
         if (replaceString.equals(findString)) {
             if (operation == Operation.ReplaceAll || operation == Operation.ReplaceFirst) {
-                popError(message("Same"));
+                popError(message("Unchanged"));
                 return false;
             }
         }

@@ -123,7 +123,7 @@ public class DataMatrix extends Data2D {
         if (targetData == null || !targetData.isMatrix()) {
             return false;
         }
-        return save(null, (DataMatrix) targetData, columns, tableRowsWithoutNumber());
+        return save(null, (DataMatrix) targetData, columns, tableRows(false));
     }
 
     @Override
@@ -159,7 +159,7 @@ public class DataMatrix extends Data2D {
         }
         double[][] data = new double[(int) rowsNumber][(int) colsNumber];
         for (int r = 0; r < rowsNumber; r++) {
-            List<String> row = tableRowWithoutNumber(r);
+            List<String> row = tableRow(r, false);
             for (int c = 0; c < row.size(); c++) {
                 data[r][c] = toDouble(row.get(c));
             }

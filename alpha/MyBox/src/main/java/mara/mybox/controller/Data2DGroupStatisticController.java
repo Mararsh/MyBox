@@ -231,7 +231,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
                     if (displayAllCheck.isSelected()) {
                         resultsData = statisticFile.allRows(false);
                     } else {
-                        resultsData = statisticDataController.data2D.tableRowsWithoutNumber();
+                        resultsData = statisticDataController.data2D.tableRows(false);
                     }
                     if (resultsData == null) {
                         return false;

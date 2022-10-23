@@ -25,7 +25,7 @@ public class ControlData2DEdit extends BaseController {
     @FXML
     protected Tab textTab, tableTab;
     @FXML
-    protected ControlData2DEditText textController;
+    protected ControlData2DEditCSV csvController;
     @FXML
     protected ControlData2DEditTable tableController;
     @FXML
@@ -38,7 +38,7 @@ public class ControlData2DEdit extends BaseController {
             tableData2DColumn = dataController.tableData2DColumn;
 
             tableController.setParameters(this);
-            textController.setParameters(this);
+            csvController.setParameters(this);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -49,7 +49,7 @@ public class ControlData2DEdit extends BaseController {
         try {
             data2D = data;
             tableController.setData(data);
-            textController.setData(data);
+            csvController.setData(data);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -57,7 +57,7 @@ public class ControlData2DEdit extends BaseController {
     }
 
     public boolean isChanged() {
-        return data2D != null && data2D.isTableChanged() || textController.isChanged();
+        return data2D != null && data2D.isTableChanged() || csvController.isChanged();
     }
 
     @Override
@@ -67,7 +67,7 @@ public class ControlData2DEdit extends BaseController {
                 return tableController.keyEventsFilter(event);
 
             } else if (textTab.isSelected()) {
-                return textController.keyEventsFilter(event);
+                return csvController.keyEventsFilter(event);
 
             }
             return false;

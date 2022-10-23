@@ -267,7 +267,7 @@ public class DataFileText extends DataFile {
                 if (task == null || task.isCancelled()) {
                     return false;
                 }
-                TextFileTools.writeLine(writer, tableRowWithoutNumber(r), delimiter);
+                TextFileTools.writeLine(writer, tableRow(r, false), delimiter);
             }
             return true;
         } catch (Exception e) {
@@ -279,7 +279,7 @@ public class DataFileText extends DataFile {
         }
     }
 
-    public File tmpFile(String dname, List<String> cols, List<List<String>> data) {
+    public File tmpTxtFile(String dname, List<String> cols, List<List<String>> data) {
         try {
             if (cols == null || cols.isEmpty()) {
                 if (data == null || data.isEmpty()) {

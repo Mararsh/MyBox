@@ -28,7 +28,7 @@ License:    Apache License Version 2.0
     <children>
         <HBox alignment="CENTER" VBox.vgrow="NEVER">
             <children>
-                <Label contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%CopyFilterQuery" textAlignment="CENTER" VBox.vgrow="NEVER" />
+                <Label contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%CopyFilterQueryConvert" textAlignment="CENTER" VBox.vgrow="NEVER" />
             </children>
         </HBox>
         <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">

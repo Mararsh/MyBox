@@ -125,7 +125,7 @@ public class ControlData2DSimpleLinearRegressionTable extends ControlData2DLoad 
             popError(message("NoData"));
             return;
         }
-        DataManufactureController.open(data2D.getColumns(), data2D.tableRowsWithoutNumber());
+        DataManufactureController.open(data2D.getColumns(), data2D.tableRows(false));
     }
 
     @FXML

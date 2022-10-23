@@ -119,7 +119,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
 
             } else if (eraRadio.isSelected()) {
                 optionsBox.getChildren().addAll(formatBox, fixYearCheck);
-                formatInput.setText(TimeFormats.EraDateEnd);
+                formatInput.setText(TimeFormats.DateA + " G");
 
             } else if (doubleRadio.isSelected() || floatRadio.isSelected()
                     || longRadio.isSelected() || intRadio.isSelected() || shortRadio.isSelected()) {
@@ -388,16 +388,16 @@ public class ControlData2DColumnEdit extends BaseChildController {
 
         } else if (eraRadio.isSelected()) {
             List<String> values = new ArrayList<>();
-            values.add(TimeFormats.EraDatetimeEnd);
-            values.add(TimeFormats.EraDatetimeMsEnd);
-            values.add(TimeFormats.EraDateEnd);
-            values.add(TimeFormats.EraMonthEnd);
-            values.add(TimeFormats.EraYearEnd);
-            values.add(TimeFormats.EraDatetimeStart);
-            values.add(TimeFormats.EraDatetimeMsStart);
-            values.add(TimeFormats.EraDateStart);
-            values.add(TimeFormats.EraMonthStart);
-            values.add(TimeFormats.EraYearStart);
+            values.add(TimeFormats.DatetimeA + " G");
+            values.add(TimeFormats.DatetimeMsA + " G");
+            values.add(TimeFormats.DateA + " G");
+            values.add(TimeFormats.MonthA + " G");
+            values.add(TimeFormats.YearA + " G");
+            values.add("G" + TimeFormats.DatetimeA);
+            values.add("G" + TimeFormats.DatetimeMsA);
+            values.add("G" + TimeFormats.DateA);
+            values.add("G" + TimeFormats.MonthA);
+            values.add("G" + TimeFormats.YearA);
             popExamples(mouseEvent, values, "DateFormat",
                     "https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/SimpleDateFormat.html");
 

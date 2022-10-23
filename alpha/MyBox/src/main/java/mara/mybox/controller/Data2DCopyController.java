@@ -14,7 +14,7 @@ import static mara.mybox.value.Languages.message;
 public class Data2DCopyController extends BaseData2DHandleController {
 
     public Data2DCopyController() {
-        baseTitle = message("CopyFilterQuery");
+        baseTitle = message("CopyFilterQueryConvert");
     }
 
     @Override

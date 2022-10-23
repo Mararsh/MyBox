@@ -283,7 +283,7 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
 
             @Override
             protected void whenSucceeded() {
-                drawPoints();
+
             }
 
             @Override
@@ -291,6 +291,9 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                 super.finalAction();
                 data2D.stopTask();
                 task = null;
+                if (ok) {
+                    drawPoints();
+                }
             }
 
         };
@@ -309,6 +312,7 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
         GeoCoordinateSystem cs
                 = new GeoCoordinateSystem(((RadioButton) csGroup.getSelectedToggle()).getText());
         int max = mapController.mapOptions.getDataMax();
+        mapController.mapOptions.setMapSize(3);
         timer = new Timer();
         timer.schedule(new TimerTask() {
 
@@ -402,7 +406,7 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                 return false;
             }
 
-        }, 0, 2); // Interface may be blocked if put all points in map altogether.
+        }, 0, 1); // Interface may be blocked if put all points in map altogether.
 
     }
 

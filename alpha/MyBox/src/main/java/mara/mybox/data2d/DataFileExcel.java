@@ -257,7 +257,7 @@ public class DataFileExcel extends DataFile {
                 if (task == null || task.isCancelled()) {
                     return index;
                 }
-                List<String> values = tableRowWithoutNumber(r);
+                List<String> values = tableRow(r, false);
                 Row targetRow = targetSheet.createRow(index++);
                 for (int col = 0; col < values.size(); col++) {
                     Cell targetCell = targetRow.createCell(col, CellType.STRING);

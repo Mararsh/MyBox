@@ -26,6 +26,8 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
+import static mara.mybox.tools.TmpFileTools.getPathTempFile;
+import mara.mybox.value.AppPaths;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -170,7 +172,7 @@ public class DataFileCSV extends DataFileText {
                 if (task == null || task.isCancelled()) {
                     return false;
                 }
-                csvPrinter.printRecord(tableRowWithoutNumber(r));
+                csvPrinter.printRecord(tableRow(r, false));
             }
             return true;
         } catch (Exception e) {
@@ -192,36 +194,6 @@ public class DataFileCSV extends DataFileText {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    @Override
-    public File tmpFile(String dname, List<String> cols, List<List<String>> data) {
-        if (cols == null || cols.isEmpty()) {
-            if (data == null || data.isEmpty()) {
-                return null;
-            }
-        }
-        File tmpFile = tmpFile(dname, "tmp", ".csv");
-        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(tmpFile)) {
-            if (cols != null && !cols.isEmpty()) {
-                csvPrinter.printRecord(cols);
-            }
-            if (data != null) {
-                for (int r = 0; r < data.size(); r++) {
-                    if (task != null && task.isCancelled()) {
-                        break;
-                    }
-                    csvPrinter.printRecord(data.get(r));
-                }
-            }
-        } catch (Exception e) {
-            MyBoxLog.console(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            return null;
-        }
-        return tmpFile;
     }
 
     public DataFileCSV savePageAs(String dname) {
@@ -251,6 +223,86 @@ public class DataFileCSV extends DataFileText {
             return dataFileCSV;
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static File csvFile(SingletonTask task, File tmpFile,
+            String delimeter, List<String> cols, List<List<String>> data) {
+        if (tmpFile == null) {
+            return null;
+        }
+        if (cols == null || cols.isEmpty()) {
+            if (data == null || data.isEmpty()) {
+                return null;
+            }
+        }
+        if (delimeter == null || delimeter.isEmpty()) {
+            delimeter = ",";
+        }
+        boolean hasHeader = cols != null && !cols.isEmpty();
+        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(tmpFile, delimeter, hasHeader)) {
+            if (hasHeader) {
+                csvPrinter.printRecord(cols);
+            }
+            if (data != null) {
+                for (int r = 0; r < data.size(); r++) {
+                    if (task != null && task.isCancelled()) {
+                        csvPrinter.close();
+                        return null;
+                    }
+                    csvPrinter.printRecord(data.get(r));
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            return null;
+        }
+        return tmpFile;
+    }
+
+    public static DataFileCSV save(String dname, SingletonTask task, String delimeter,
+            List<Data2DColumn> cols, List<List<String>> data) {
+        try {
+            if (cols == null || cols.isEmpty()) {
+                if (data == null || data.isEmpty()) {
+                    return null;
+                }
+            }
+            List<Data2DColumn> targetColumns = new ArrayList<>();
+            List<String> names = null;
+            if (cols != null) {
+                names = new ArrayList<>();
+                for (Data2DColumn c : cols) {
+                    names.add(c.getColumnName());
+                    targetColumns.add(c.cloneAll().setD2cid(-1).setD2id(-1));
+                }
+            }
+            DataFileCSV dataFileCSV = new DataFileCSV();
+            dataFileCSV.setTask(task);
+            File tmpFile = getPathTempFile(AppPaths.getGeneratedPath(), dname, ".csv");
+            tmpFile = csvFile(task, tmpFile, delimeter, names, data);
+            if (tmpFile == null) {
+                return null;
+            }
+            dataFileCSV.setColumns(targetColumns)
+                    .setFile(tmpFile)
+                    .setCharset(Charset.forName("UTF-8"))
+                    .setDelimiter(delimeter)
+                    .setHasHeader(!targetColumns.isEmpty())
+                    .setColsNumber(targetColumns.size())
+                    .setRowsNumber(data.size());
+            dataFileCSV.saveAttributes();
+            dataFileCSV.stopTask();
+            return dataFileCSV;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -301,44 +353,6 @@ public class DataFileCSV extends DataFileText {
             return null;
         }
 
-    }
-
-    public static DataFileCSV save(String dname, SingletonTask task, List<Data2DColumn> cols, List<List<String>> data) {
-        try {
-            if (cols == null || cols.isEmpty()) {
-                if (data == null || data.isEmpty()) {
-                    return null;
-                }
-            }
-            List<Data2DColumn> targetColumns = new ArrayList<>();
-            List<String> names = null;
-            if (cols != null) {
-                names = new ArrayList<>();
-                for (Data2DColumn c : cols) {
-                    names.add(c.getColumnName());
-                    targetColumns.add(c.cloneAll().setD2cid(-1).setD2id(-1));
-                }
-            }
-            DataFileCSV dataFileCSV = new DataFileCSV();
-            dataFileCSV.setTask(task);
-            File file = dataFileCSV.tmpFile(dname, names, data);
-            dataFileCSV.setColumns(targetColumns)
-                    .setFile(file)
-                    .setCharset(Charset.forName("UTF-8"))
-                    .setDelimiter(",")
-                    .setHasHeader(!targetColumns.isEmpty())
-                    .setColsNumber(targetColumns.size())
-                    .setRowsNumber(data.size());
-            dataFileCSV.saveAttributes();
-            dataFileCSV.stopTask();
-            return dataFileCSV;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e.toString());
-            return null;
-        }
     }
 
     public static void openCSV(BaseController controller, DataFileCSV csvFile, String target) {

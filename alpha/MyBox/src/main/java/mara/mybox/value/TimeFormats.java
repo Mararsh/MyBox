@@ -33,28 +33,6 @@ public class TimeFormats {
     public static final String DatetimeMsE = "MM/dd/yyyy HH:mm:ss.SSS";
     public static final String DatetimeZoneE = "MM/dd/yyyy HH:mm:ss Z";
 
-    public static final String EraDatetimeEnd = "y-M-d H:m:s G";
-    public static final String EraDatetimeMsEnd = "y-M-d H:m:s.S G";
-    public static final String EraDateEnd = "y-M-d G";
-    public static final String EraMonthEnd = "y-M G";
-    public static final String EraYearEnd = "y G";
-
-    public static final String EraDatetimeStart = "Gy-M-d H:m:s";
-    public static final String EraDatetimeMsStart = "Gy-M-d H:m:s.S";
-    public static final String EraDateStart = "Gy-M-d";
-    public static final String EraMonthStart = "Gy-M";
-    public static final String EraYearStart = "Gy";
-
-    public static final String EraDatetimeEndE = "M/d/y H:m:s G";
-    public static final String EraDatetimeMsEndE = "M/d/y H:m:s.S G";
-    public static final String EraDateEndE = "M/d/y G";
-    public static final String EraMonthEndE = "M/d G";
-
-    public static final String EraDatetimeStartE = "GM/d/y H:m:s";
-    public static final String EraDatetimeMsStartE = "GM/d/y H:m:s.S";
-    public static final String EraDateStartE = "GM/d/y";
-    public static final String EraMonthStartE = "GM/y";
-
     public static final String DatetimeA = "y-M-d H:m:s";
     public static final String DatetimeMsA = "y-M-d H:m:s.S";
     public static final String DateA = "y-M-d";
@@ -62,5 +40,10 @@ public class TimeFormats {
     public static final String YearA = "y";
     public static final String TimeA = "H:m:s";
     public static final String TimeMsA = "H:m:s.S";
+
+    public static final String DatetimeB = "M/d/y H:m:s";
+    public static final String DatetimeMsB = "M/d/y H:m:s.S";
+    public static final String DateB = "M/d/y";
+    public static final String MonthB = "M/y";
 
 }

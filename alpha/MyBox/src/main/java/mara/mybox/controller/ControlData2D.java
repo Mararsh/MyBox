@@ -56,7 +56,7 @@ public class ControlData2D extends BaseController {
     protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;
     protected ControlData2DEditTable tableController;
-    protected ControlData2DEditText textController;
+    protected ControlData2DEditCSV csvController;
     protected final SimpleBooleanProperty statusNotify, loadedNotify, savedNotify;
     protected ControlFileBackup backupController;
 
@@ -91,7 +91,7 @@ public class ControlData2D extends BaseController {
             super.initValues();
 
             tableController = editController.tableController;
-            textController = editController.textController;
+            csvController = editController.csvController;
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -286,10 +286,10 @@ public class ControlData2D extends BaseController {
         }
         editController.tableTab.setText(title);
 
-        title = message("Text");
-        if (textController.status == ControlData2DEditText.Status.Applied) {
+        title = "CSV";
+        if (csvController.status == ControlData2DEditCSV.Status.Applied) {
             title += "*";
-        } else if (textController.status == ControlData2DEditText.Status.Modified) {
+        } else if (csvController.status == ControlData2DEditCSV.Status.Modified) {
             title += "**";
         }
         editController.textTab.setText(title);
@@ -336,13 +336,13 @@ public class ControlData2D extends BaseController {
 
         tableController.resetStatus();
 
-        if (textController.task != null) {
-            textController.task.cancel();
+        if (csvController.task != null) {
+            csvController.task.cancel();
         }
-        if (textController.backgroundTask != null) {
-            textController.backgroundTask.cancel();
+        if (csvController.backgroundTask != null) {
+            csvController.backgroundTask.cancel();
         }
-        textController.status = null;
+        csvController.status = null;
 
         if (attributesController.task != null) {
             attributesController.task.cancel();
@@ -369,7 +369,7 @@ public class ControlData2D extends BaseController {
         }
         if (attributesController.status == ControlData2DAttributes.Status.Modified
                 || columnsController.status == ControlData2DColumns.Status.Modified
-                || textController.status == ControlData2DEditText.Status.Modified) {
+                || csvController.status == ControlData2DEditCSV.Status.Modified) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
             alert.setHeaderText(getMyStage().getTitle());
@@ -388,9 +388,9 @@ public class ControlData2D extends BaseController {
                 return -99;
             }
             if (result.get() == buttonApply) {
-                if (textController.status == ControlData2DEditText.Status.Modified) {
-                    textController.okAction();
-                    if (textController.status != ControlData2DEditText.Status.Applied) {
+                if (csvController.status == ControlData2DEditCSV.Status.Modified) {
+                    csvController.okAction();
+                    if (csvController.status != ControlData2DEditCSV.Status.Applied) {
                         return -2;
                     }
                 }

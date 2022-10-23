@@ -173,12 +173,15 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         return -1;
     }
 
-    public List<String> tableRowWithoutNumber(int rowIndex) {
+    public List<String> tableRow(int rowIndex, boolean withRowNumber) {
         try {
-            List<String> rowStrings = tableData().get(rowIndex);
+            List<String> trow = tableData().get(rowIndex);
             List<String> row = new ArrayList<>();
+            if (withRowNumber) {
+                row.add(trow.get(0));
+            }
             for (int i = 0; i < columns.size(); i++) {
-                String v = rowStrings.get(i + 1);
+                String v = trow.get(i + 1);
                 row.add(columns.get(i).savedValue(v));
             }
             return row;
@@ -187,17 +190,11 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         }
     }
 
-    public List<List<String>> tableRowsWithoutNumber() {
+    public List<List<String>> tableRows(boolean withRowNumber) {
         try {
             List<List<String>> rows = new ArrayList<>();
-            List<List<String>> data = tableData();
-            for (int i = 0; i < data.size(); i++) {
-                List<String> trow = data.get(i);
-                List<String> row = new ArrayList<>();
-                for (int j = 0; j < columns.size(); j++) {
-                    String v = trow.get(j + 1);
-                    row.add(columns.get(j).savedValue(v));
-                }
+            for (int i = 0; i < tableData().size(); i++) {
+                List<String> row = tableRow(i, withRowNumber);
                 rows.add(row);
             }
             return rows;

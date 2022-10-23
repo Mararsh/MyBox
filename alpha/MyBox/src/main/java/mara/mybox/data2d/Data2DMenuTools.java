@@ -195,7 +195,7 @@ public class Data2DMenuTools {
                 trimMenu.getItems().add(menu);
             }
 
-            menu = new MenuItem(message("CopyFilterQuery"), StyleTools.getIconImage("iconCopy.png"));
+            menu = new MenuItem(message("CopyFilterQueryConvert"), StyleTools.getIconImage("iconCopy.png"));
             menu.setOnAction((ActionEvent event) -> {
                 controller.copyAction();
             });
