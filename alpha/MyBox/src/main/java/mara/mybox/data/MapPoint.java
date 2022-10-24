@@ -59,6 +59,7 @@ public class MapPoint {
         row.add(latitude + "");
         row.add(label == null ? null : label.replaceAll("<BR>", "\n"));
         row.add(info == null ? null : info.replaceAll("<BR>", "\n"));
+        row.add(cs.messageName());
         return row;
     }
 
@@ -68,6 +69,7 @@ public class MapPoint {
         row.add(latitude + "");
         row.add(label == null ? null : label.replaceAll("\n", "<BR>"));
         row.add(info == null ? null : info.replaceAll("\n", "<BR>"));
+        row.add(cs.messageName());
         return row;
     }
 

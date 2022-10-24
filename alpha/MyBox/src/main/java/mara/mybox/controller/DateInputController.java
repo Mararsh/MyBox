@@ -43,7 +43,7 @@ public class DateInputController extends BaseInputController {
     }
 
     public Date getDate() {
-        return DateTools.encodeEra(timeInput.getText());
+        return DateTools.encodeDate(timeInput.getText());
     }
 
     @Override

@@ -434,8 +434,8 @@ public class ControlTimeTree extends ControlConditionTree {
         if (!isEra) {
             return " " + fieldName + " BETWEEN '" + start + "' AND '" + end + "'";
         } else {
-            long startTime = DateTools.encodeEra(start).getTime();
-            long endTime = DateTools.encodeEra(end).getTime();
+            long startTime = DateTools.encodeDate(start).getTime();
+            long endTime = DateTools.encodeDate(end).getTime();
             return " " + fieldName + " BETWEEN " + startTime + " AND " + endTime;
         }
     }

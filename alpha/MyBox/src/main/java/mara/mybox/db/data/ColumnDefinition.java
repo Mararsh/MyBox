@@ -251,7 +251,7 @@ public class ColumnDefinition extends BaseData {
                 case Datetime:
                 case Date:
                 case Era:
-                    return DateTools.encodeEra(value, fixTwoDigitYear) != null;
+                    return DateTools.encodeDate(value, fixTwoDigitYear) != null;
                 default:
                     return true;
             }
@@ -406,8 +406,20 @@ public class ColumnDefinition extends BaseData {
                 case Color:
                 case File:
                 case Image:
-                case Era:
                     return results.getString(savedName);
+                case Era:
+                    Object eo = results.getObject(savedName);
+                    if (eo == null) {
+                        return null;
+                    }
+                    try {
+                        long lv = Long.parseLong(eo.toString());
+                        if (lv >= 10000 || lv <= -10000) {
+                            return lv;
+                        }
+                    } catch (Exception e) {
+                        return eo.toString();
+                    }
                 case Double:
                 case Longitude:
                 case Latitude:
@@ -494,7 +506,7 @@ public class ColumnDefinition extends BaseData {
                     return (short) Math.round(Double.parseDouble(string.replaceAll(",", "")));
                 case Datetime:
                 case Date:
-                    return DateTools.encodeEra(string);
+                    return DateTools.encodeDate(string);
                 case Era:
                     return DateTools.textEra(string);
                 default:
@@ -523,9 +535,18 @@ public class ColumnDefinition extends BaseData {
             }
             switch (type) {
                 case Datetime:
-                    return DateTools.datetimeToString((Date) value);
                 case Date:
-                    return DateTools.dateToString((Date) value);
+                    return DateTools.datetimeToString((Date) value, format);
+                case Era: {
+                    try {
+                        long lv = Long.parseLong(value.toString());
+                        if (lv >= 10000 || lv <= -10000) {
+                            return DateTools.datetimeToString(new Date(lv), format);
+                        }
+                    } catch (Exception exx) {
+                        return value + "";
+                    }
+                }
                 default:
                     return value + "";
             }
@@ -558,8 +579,16 @@ public class ColumnDefinition extends BaseData {
                     return DateTools.datetimeToString((Date) o, format);
                 case Date:
                     return DateTools.datetimeToString((Date) o, format);
-                case Era:
-                    return DateTools.datetimeToString(DateTools.encodeEra(string), format);
+                case Era: {
+                    try {
+                        long lv = Long.parseLong(o.toString());
+                        if (lv >= 10000 || lv <= -10000) {
+                            return DateTools.datetimeToString(new Date(lv), format);
+                        }
+                    } catch (Exception ex) {
+                        return DateTools.datetimeToString(DateTools.encodeDate(string), format);
+                    }
+                }
                 case Enumeration:
                 case Longitude:
                 case Latitude:
@@ -598,7 +627,6 @@ public class ColumnDefinition extends BaseData {
             case File:
             case Image:
             case Color:
-            case Era:
                 if (v != null) {
                     return "'" + defaultValue + "'";
                 } else {
@@ -611,6 +639,7 @@ public class ColumnDefinition extends BaseData {
             case Short:
             case Longitude:
             case Latitude:
+            case Era:
                 if (v != null) {
                     return v + "";
                 } else {
@@ -647,7 +676,6 @@ public class ColumnDefinition extends BaseData {
             case File:
             case Image:
             case Color:
-            case Era:
                 if (v != null) {
                     return defaultValue;
                 } else {
@@ -660,6 +688,7 @@ public class ColumnDefinition extends BaseData {
             case Short:
             case Longitude:
             case Latitude:
+            case Era:
                 if (v != null) {
                     return v;
                 } else {

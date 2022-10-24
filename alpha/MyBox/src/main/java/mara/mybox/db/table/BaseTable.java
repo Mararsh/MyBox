@@ -21,6 +21,7 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.HtmlStyles;
+import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.HtmlWriteTools;
@@ -122,7 +123,6 @@ public abstract class BaseTable<D> {
                 case File:
                 case Image:
                 case Enumeration:
-                case Era:
                     if (value == null) {
                         if (notNull) {
                             statement.setString(index, (String) column.defaultValue());
@@ -195,6 +195,36 @@ public abstract class BaseTable<D> {
                         }
                     } else {
                         statement.setLong(index, l);
+                    }
+                    break;
+                case Era:
+                    long el;
+                    if (value == null) {
+                        el = AppValues.InvalidLong;
+                    } else {
+                        try {
+                            el = Long.parseLong(value + "");
+                            if (el < 10000 && el > -10000) {
+                                Date ed = DateTools.encodeDate((String) value);
+                                el = ed.getTime();
+                            }
+                        } catch (Exception ex) {
+                            try {
+                                Date ed = DateTools.encodeDate((String) value);
+                                el = ed.getTime();
+                            } catch (Exception e) {
+                                el = AppValues.InvalidLong;
+                            }
+                        }
+                    }
+                    if (LongTools.invalidLong(el)) {
+                        if (notNull) {
+                            statement.setDouble(index, AppValues.InvalidLong);
+                        } else {
+                            statement.setNull(index, Types.BIGINT);
+                        }
+                    } else {
+                        statement.setLong(index, el);
                     }
                     break;
                 case Integer:
@@ -479,9 +509,6 @@ public abstract class BaseTable<D> {
             case Enumeration:
                 def += "VARCHAR(" + column.getLength() + ")";
                 break;
-            case Era:
-                def += "VARCHAR(64)";
-                break;
             case Color:
                 def += "VARCHAR(16)";
                 break;
@@ -510,6 +537,9 @@ public abstract class BaseTable<D> {
                 break;
             case Date:
                 def += "DATE";
+                break;
+            case Era:
+                def += "BIGINT";
                 break;
             case Blob:
                 def += "BLOB";

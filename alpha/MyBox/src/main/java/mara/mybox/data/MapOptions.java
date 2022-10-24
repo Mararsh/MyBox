@@ -114,6 +114,34 @@ public class MapOptions {
         mapController.drawPoints();
     }
 
+    public int textSize() {
+        if (textSize <= 0) {
+            textSize = 12;
+        }
+        return textSize;
+    }
+
+    public int markSize() {
+        if (markerSize <= 0) {
+            markerSize = 24;
+        }
+        return markerSize;
+    }
+
+    public String image() {
+        if (markerImageFile == null) {
+            markerImageFile = pointImage();
+        }
+        return markerImageFile.getAbsolutePath();
+    }
+
+    public Color textColor() {
+        if (textColor == null) {
+            textColor = Color.BLACK;
+        }
+        return textColor;
+    }
+
     public File circleImage() {
         String path = "/" + StyleTools.getIconPath();
         return FxFileTools.getInternalFile(path + "iconCircle.png", "map",

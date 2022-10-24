@@ -427,21 +427,13 @@ public class ControlMap extends BaseController {
         }
         drawPoint(point.getLongitude(), point.getLatitude(),
                 point.getLabel(), point.getInfo(), point.getMarkSize(),
-                point.getMarkerImage(), point.getTextSize(), point.getTextColor()
-        );
-    }
-
-    protected void drawPoint(double lo, double la, String label, String info) {
-        drawPoint(lo, la, label, info,
-                mapOptions.getMarkerSize(),
-                mapOptions.getMarkerImageFile().getAbsolutePath(),
-                mapOptions.getTextSize(),
-                mapOptions.getTextColor()
+                point.getMarkerImage(), point.getTextSize(), point.getTextColor(),
+                point.isIsBold()
         );
     }
 
     protected void drawPoint(double lo, double la, String label, String info, int markSize,
-            String markerImage, int textSize, Color textColor) {
+            String markerImage, int textSize, Color textColor, boolean isBold) {
         try {
             if (webEngine == null || !mapLoaded
                     || !LocationTools.validCoordinate(lo, la)) {
@@ -457,18 +449,20 @@ public class ControlMap extends BaseController {
                 }
                 pLabel += lo + "," + la;
             }
-            pLabel = jsString(pLabel);
-            String pInfo = jsString(mapOptions.isPopInfo() ? info : null);
-            String pImage = markerImage;
-            pImage = (pImage == null || pImage.trim().isBlank())
-                    ? "null" : "'" + pImage.replaceAll("\\\\", "/") + "'";
-            String pColor = textColor == null ? "null" : "'" + FxColorTools.color2rgb(textColor) + "'";
+            String pImage = markerImage != null ? markerImage : mapOptions.image();
+            Color pColor = textColor != null ? textColor : mapOptions.textColor();
+            int mSize = markSize > 0 ? markSize : mapOptions.markSize();
+            int tSize = textSize > 0 ? textSize : mapOptions.textSize();
             webEngine.executeScript("addMarker("
                     + lo + "," + la
-                    + ", " + pLabel + ", " + pInfo + ", " + pImage
-                    + ", " + markSize
-                    + ", " + textSize
-                    + ", " + pColor + ", " + mapOptions.isBold() + ");");
+                    + ", " + jsString(pLabel)
+                    + ", " + jsString(mapOptions.isPopInfo() ? info : null)
+                    + ", '" + pImage.replaceAll("\\\\", "/") + "'"
+                    + ", " + (mSize > 0 ? mSize : 24)
+                    + ", " + (tSize > 0 ? tSize : 12)
+                    + ", '" + FxColorTools.color2rgb(pColor) + "'"
+                    + ", " + isBold + ");");
+            titleLabel.setText(label);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -520,7 +514,7 @@ public class ControlMap extends BaseController {
                             centered = true;
                         }
                         index++;
-                        titleLabel.setText(prefix + index);
+                        bottomLabel.setText(prefix + index);
                         if (index >= mapPoints.size()) {
                             if (timer != null) {
                                 timer.cancel();
@@ -557,6 +551,9 @@ public class ControlMap extends BaseController {
         mapPoints = null;
         if (titleLabel != null) {
             titleLabel.setText("");
+        }
+        if (bottomLabel != null) {
+            bottomLabel.setText("");
         }
     }
 
@@ -620,7 +617,7 @@ public class ControlMap extends BaseController {
                     if (mapPoints != null && !mapPoints.isEmpty()) {
                         List<String> names = new ArrayList<>();
                         names.addAll(Arrays.asList(message("Longitude"), message("Latitude"),
-                                message("Label"), message("Information")));
+                                message("Label"), message("Information"), message("CoordinateSystem")));
                         StringTable table = new StringTable(names);
                         for (MapPoint code : mapPoints) {
                             if (task == null || task.isCancelled()) {
@@ -672,6 +669,7 @@ public class ControlMap extends BaseController {
                     columns.add(new Data2DColumn(message("Latitude"), ColumnType.Latitude));
                     columns.add(new Data2DColumn(message("Label"), ColumnType.String, 160));
                     columns.add(new Data2DColumn(message("Information"), ColumnType.String, 300));
+                    columns.add(new Data2DColumn(message("CoordinateSystem"), ColumnType.String, 80));
 
                     data = new ArrayList<>();
                     for (MapPoint code : mapPoints) {

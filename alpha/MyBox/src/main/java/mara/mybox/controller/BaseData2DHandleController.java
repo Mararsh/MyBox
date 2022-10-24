@@ -41,6 +41,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
     protected int scale, defaultScale = 2, maxData = -1;
     protected ObjectType objectType;
     protected InvalidAs invalidAs = InvalidAs.Skip;
+    protected List<String> orders;
 
     @FXML
     protected ControlData2DGroup groupController;
@@ -245,8 +246,9 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
 
             if (groupController != null) {
                 groupController.refreshControls();
-                makeSortList();
             }
+
+            makeSortList();
 
             checkOptions();
         } catch (Exception e) {
@@ -305,10 +307,11 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             invalidAs = InvalidAs.Zero;
         } else if (blankNonnumericRadio != null && blankNonnumericRadio.isSelected()) {
             invalidAs = InvalidAs.Blank;
-        } else {
+        } else if (skipNonnumericRadio != null && skipNonnumericRadio.isSelected()) {
             invalidAs = InvalidAs.Skip;
+        } else {
+            invalidAs = InvalidAs.Blank;
         }
-
     }
 
     public void rowNumberCheckChanged() {
@@ -358,6 +361,12 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
 
             checkObject();
             checkInvalidAs();
+
+            if (sortController != null) {
+                orders = sortController.selectedNames();
+            } else {
+                orders = null;
+            }
 
             outputColumns = data2D.targetColumns(checkedColsIndices, otherColsIndices, showRowNumber(), null);
 
@@ -445,37 +454,97 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         start(task);
     }
 
+    public DataTable filteredData(List<Integer> colIndices) {
+        try {
+            if (colIndices == null) {
+                return null;
+            }
+            Data2D tmp2D = data2D.cloneAll();
+            if (groupController != null) {
+                List<Data2DColumn> tmpColumns = new ArrayList<>();
+                for (Data2DColumn column : data2D.columns) {
+                    Data2DColumn tmpColumn = column.cloneAll();
+                    String name = tmpColumn.getColumnName();
+                    if (groupController.groupName != null && groupController.groupName.equals(name)) {
+                        tmpColumn.setType(ColumnDefinition.ColumnType.Double);
+                    }
+                    tmpColumns.add(tmpColumn);
+                }
+                tmp2D.setColumns(tmpColumns);
+            }
+            tmp2D.startTask(task, filterController.filter);
+            DataTable tmpTable;
+            boolean showRowNumber = showRowNumber();
+            if (isAllPages()) {
+                tmpTable = tmp2D.toTmpTable(task, colIndices, showRowNumber, false, invalidAs);
+            } else {
+                outputData = filtered(colIndices, showRowNumber);
+                if (outputData == null || outputData.isEmpty()) {
+                    return null;
+                }
+                tmpTable = tmp2D.toTmpTable(task, colIndices, outputData, showRowNumber, false, invalidAs);
+                outputData = null;
+            }
+            tmp2D.stopFilter();
+            return tmpTable;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public List<String> sortNames() {
+        try {
+            if (orders == null || orders.isEmpty()) {
+                return null;
+            }
+            List<String> names = new ArrayList<>();
+            for (String order : orders) {
+                String name;
+                if (order.endsWith("-" + message("Ascending"))) {
+                    name = order.substring(0, order.length() - ("-" + message("Ascending")).length());
+                } else {
+                    name = order.substring(0, order.length() - ("-" + message("Descending")).length());
+                }
+                if (!names.contains(name)) {
+                    names.add(name);
+                }
+            }
+            return names;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public DataFileCSV sortedData(String dname, List<Integer> colIndices) {
+        try {
+            DataTable tmpTable = filteredData(colIndices);
+            if (tmpTable == null) {
+                return null;
+            }
+            DataFileCSV csvData = tmpTable.sort(dname, task, orders, maxData, showColNames());
+            tmpTable.drop();
+            return csvData;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public DataTableGroup groupData(DataTableGroup.TargetType targetType,
             List<String> copyNames, List<String> sorts, long max, int dscale) {
         try {
             if (groupController == null) {
                 return null;
             }
-            Data2D tmp2D = data2D.cloneAll();
-            List<Data2DColumn> tmpColumns = new ArrayList<>();
-            for (Data2DColumn column : data2D.columns) {
-                Data2DColumn tmpColumn = column.cloneAll();
-                String name = tmpColumn.getColumnName();
-                if (groupController.groupName != null && groupController.groupName.equals(name)) {
-                    tmpColumn.setType(ColumnDefinition.ColumnType.Double);
-                }
-                tmpColumns.add(tmpColumn);
-            }
-            tmp2D.setColumns(tmpColumns);
-            tmp2D.startTask(task, filterController.filter);
-            DataTable tmpTable;
-            List<Integer> colIndices = data2D.columnIndices();
-            if (isAllPages()) {
-                tmpTable = tmp2D.toTmpTable(task, colIndices, false, false, invalidAs);
-            } else {
-                outputData = filtered(colIndices, false);
-                if (outputData == null || outputData.isEmpty()) {
-                    return null;
-                }
-                tmpTable = tmp2D.toTmpTable(task, colIndices, outputData, false, false, invalidAs);
-                outputData = null;
-            }
-            tmp2D.stopFilter();
+            DataTable tmpTable = filteredData(data2D.columnIndices());
             List<String> tnames = new ArrayList<>();
             if (groupController.groupName != null) {
                 tnames.add(groupController.groupName);

@@ -715,7 +715,7 @@ public class PopTools {
             values.add(DateTools.datetimeToString(d, "G" + TimeFormats.MonthA, Locale.ENGLISH, null));
             values.add(DateTools.datetimeToString(d, "G" + TimeFormats.YearA, Locale.ENGLISH, null));
 
-            Date bc = DateTools.encodeEra("770-3-9 12:56:33.498 BC");
+            Date bc = DateTools.encodeDate("770-3-9 12:56:33.498 BC");
             values.add(DateTools.datetimeToString(bc, TimeFormats.DatetimeA + " G", Locale.ENGLISH, null));
             values.add(DateTools.datetimeToString(bc, TimeFormats.DatetimeMsA + " G", Locale.ENGLISH, null));
             values.add(DateTools.datetimeToString(bc, TimeFormats.DateA + " G", Locale.ENGLISH, null));

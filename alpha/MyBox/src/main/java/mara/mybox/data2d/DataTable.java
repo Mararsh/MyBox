@@ -168,7 +168,8 @@ public class DataTable extends Data2D {
                         if (dbColumn.getColumnName().equalsIgnoreCase(scolumn.getColumnName())) {
                             dbColumn.setIndex(scolumn.getIndex());
                             if (dbColumn.isStringType() && scolumn.isDBStringType()
-                                    || dbColumn.isDoubleType() && scolumn.isDBDoubleType()) {
+                                    || dbColumn.isDoubleType() && scolumn.isDBDoubleType()
+                                    || dbColumn.isNumberType() && scolumn.isDateType()) {
                                 dbColumn.setType(scolumn.getType());
                             }
                             dbColumn.setFormat(scolumn.getFormat());
@@ -230,6 +231,22 @@ public class DataTable extends Data2D {
 
     @Override
     public List<String> readColumnNames() {
+        return null;
+    }
+
+    @Override
+    public Data2DColumn columnByName(String name) {
+        try {
+            if (name == null || name.isBlank()) {
+                return null;
+            }
+            for (Data2DColumn c : columns) {
+                if (name.equalsIgnoreCase(c.getColumnName())) {
+                    return c;
+                }
+            }
+        } catch (Exception e) {
+        }
         return null;
     }
 
@@ -453,30 +470,35 @@ public class DataTable extends Data2D {
     // Based on results of "Data2D_Convert.toTmpTable(...)"
     public DataFileCSV sort(String dname, SingletonTask task,
             List<String> orders, int maxData, boolean includeColName) {
-        if (orders == null || orders.isEmpty() || sourceColumns == null) {
+        if (sourceColumns == null) {
             return null;
         }
-
         File csvFile = tmpFile(dname, "sort", ".csv");
-        String sql = null;
+        String sql;
         try {
             String name;
             boolean asc;
-            for (String order : orders) {
-                asc = order.endsWith("-" + message("Ascending"));
-                if (asc) {
-                    name = order.substring(0, order.length() - ("-" + message("Ascending")).length());
-                } else {
-                    name = order.substring(0, order.length() - ("-" + message("Descending")).length());
+            String orderby = null;
+            if (orders == null || orders.isEmpty()) {
+                orderby = "";
+            } else {
+                for (String order : orders) {
+                    asc = order.endsWith("-" + message("Ascending"));
+                    if (asc) {
+                        name = order.substring(0, order.length() - ("-" + message("Ascending")).length());
+                    } else {
+                        name = order.substring(0, order.length() - ("-" + message("Descending")).length());
+                    }
+                    name = mappedColumnName(name) + (asc ? " ASC" : " DESC");
+                    if (orderby == null) {
+                        orderby = name;
+                    } else {
+                        orderby += ", " + name;
+                    }
                 }
-                name = mappedColumnName(name) + (asc ? " ASC" : " DESC");
-                if (sql == null) {
-                    sql = name;
-                } else {
-                    sql += ", " + name;
-                }
+                orderby = " ORDER BY " + orderby;
             }
-            sql = "SELECT * FROM " + sheet + " ORDER BY " + sql;
+            sql = "SELECT * FROM " + sheet + orderby;
             if (maxData > 0) {
                 sql += " FETCH FIRST " + maxData + " ROWS ONLY";
             }
@@ -489,15 +511,14 @@ public class DataTable extends Data2D {
             return null;
         }
         try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile);
-                 Connection conn = DerbyBase.getConnection();
-                 PreparedStatement statement = conn.prepareStatement(sql);
-                 ResultSet results = statement.executeQuery()) {
+                 ResultSet query = DerbyBase.getConnection()
+                        .prepareStatement(sql).executeQuery()) {
             if (includeColName) {
                 csvPrinter.printRecord(sourceColumnNames());
             }
             rowIndex = 0;
-            while (results.next() && task != null && !task.isCancelled()) {
-                Data2DRow dataRow = tableData2D.readData(results);
+            while (query.next() && task != null && !task.isCancelled()) {
+                Data2DRow dataRow = tableData2D.readData(query);
                 List<String> rowValues = new ArrayList<>();
                 for (int i = 1; i < columns.size(); i++) {  // skip id column
                     Data2DColumn column = columns.get(i);
@@ -511,7 +532,7 @@ public class DataTable extends Data2D {
             targetData.setColumns(sourceColumns)
                     .setFile(csvFile).setDataName(dname)
                     .setCharset(Charset.forName("UTF-8"))
-                    .setDelimiter(",").setHasHeader(true)
+                    .setDelimiter(",").setHasHeader(includeColName)
                     .setColsNumber(sourceColumns.size()).setRowsNumber(rowIndex);
             return targetData;
         } catch (Exception e) {
@@ -641,7 +662,7 @@ public class DataTable extends Data2D {
                  PreparedStatement statement = conn.prepareStatement(query);
                  ResultSet results = statement.executeQuery()) {
             if (results != null) {
-                targetData = DataFileCSV.save(dname, task, results, rowNumberName, dscale, invalidAs);
+                targetData = DataFileCSV.save(this, dname, task, results, rowNumberName, dscale, invalidAs);
             }
         } catch (Exception e) {
             if (task != null) {
@@ -917,39 +938,6 @@ public class DataTable extends Data2D {
             return targetData;
         } else {
             return null;
-        }
-    }
-
-    // Based on results of "Data2D_Convert.toTmpTable(...)"
-    // first column is id and rows do not include ids.
-    public long save(SingletonTask task, Connection conn, List<List<String>> rows, InvalidAs invalidAs) {
-        try {
-            if (conn == null || rows == null || rows.isEmpty()) {
-                return -1;
-            }
-            int count = 0;
-            conn.setAutoCommit(false);
-            for (List<String> row : rows) {
-                Data2DRow data2DRow = tableData2D.newRow();
-                for (int i = 1; i < columns.size(); i++) {
-                    Data2DColumn column = columns.get(i);
-                    data2DRow.setColumnValue(column.getColumnName(), column.fromString(row.get(i - 1), invalidAs));
-                }
-                tableData2D.insertData(conn, data2DRow);
-                if (++count % DerbyBase.BatchSize == 0) {
-                    conn.commit();
-                }
-            }
-            conn.commit();
-            conn.setAutoCommit(true);
-            return count;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            } else {
-                MyBoxLog.error(e);
-            }
-            return -4;
         }
     }
 

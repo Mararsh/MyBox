@@ -20,6 +20,7 @@ import mara.mybox.data2d.reader.Data2DWriteTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -116,7 +117,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             boolean includeRowNumber, boolean toNumbers, InvalidAs invalidAs) {
         try ( Connection conn = DerbyBase.getConnection()) {
             DataTable dataTable = createTmpTable(task, conn, tmpTableName(dataName()), cols, includeRowNumber, toNumbers);
-            dataTable.save(task, conn, rows, invalidAs);
+            writeTableData(task, conn, dataTable, cols, rows, includeRowNumber, invalidAs);
             return dataTable;
         } catch (Exception e) {
             if (task != null) {
@@ -208,6 +209,56 @@ public abstract class Data2D_Convert extends Data2D_Edit {
 
     public long writeTableData(SingletonTask task, Connection conn, DataTable dataTable) {
         return writeTableData(task, conn, dataTable, null, false, InvalidAs.Blank);
+    }
+
+    public long writeTableData(SingletonTask task, Connection conn,
+            DataTable dataTable, List<Integer> cols, List<List<String>> rows,
+            boolean includeRowNumber, InvalidAs invalidAs) {
+        try {
+            if (conn == null || dataTable == null || cols == null || cols.isEmpty()) {
+                return -1;
+            }
+            if (columns == null || columns.isEmpty()) {
+                readColumns(conn);
+            }
+            if (columns == null || columns.isEmpty()) {
+                return -2;
+            }
+            int count = 0;
+            conn.setAutoCommit(false);
+            TableData2D tableData2D = dataTable.getTableData2D();
+            List<String> colNames = new ArrayList<>();
+            if (includeRowNumber) {
+                colNames.add(dataTable.mappedColumnName(message("SourceRowNumber")));
+            }
+            for (int i = 0; i < cols.size(); i++) {
+                Data2DColumn sourceColumn = columns.get(cols.get(i));
+                String colName = dataTable.mappedColumnName(sourceColumn.getColumnName());
+                colNames.add(colName);
+            }
+            for (List<String> row : rows) {
+                Data2DRow data2DRow = tableData2D.newRow();
+                for (int i = 0; i < colNames.size(); i++) {
+                    String name = colNames.get(i);
+                    Data2DColumn targetColumn = dataTable.columnByName(name);
+                    data2DRow.setColumnValue(name, targetColumn.fromString(row.get(i), invalidAs));
+                }
+                tableData2D.insertData(conn, data2DRow);
+                if (++count % DerbyBase.BatchSize == 0) {
+                    conn.commit();
+                }
+            }
+            conn.commit();
+            conn.setAutoCommit(true);
+            return count;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
+            return -4;
+        }
     }
 
     public DataTable singleColumn(SingletonTask task, List<Integer> cols, boolean asDouble) {
@@ -574,15 +625,12 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         }
     }
 
-    /*  
-        to/from CSV
-     */
-    public static DataFileCSV save(String dname, SingletonTask task, ResultSet results, String rowNumberName) {
-        return save(dname, task, results, rowNumberName, 8, InvalidAs.Blank);
+    public static DataFileCSV save(SingletonTask task, ResultSet results) {
+        return save(null, null, task, results, null, 8, InvalidAs.Blank);
     }
 
-    public static DataFileCSV save(String dname, SingletonTask task, ResultSet results, String rowNumberName,
-            int dscale, InvalidAs invalidAs) {
+    public static DataFileCSV save(DataTable dataTable, String dname, SingletonTask task,
+            ResultSet results, String rowNumberName, int dscale, InvalidAs invalidAs) {
         try {
             if (results == null) {
                 return null;
@@ -598,18 +646,25 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                     names.add(rowNumberName);
                 }
                 ResultSetMetaData meta = results.getMetaData();
-
                 for (int col = 1; col <= meta.getColumnCount(); col++) {
                     String name = meta.getColumnName(col);
                     names.add(name);
-                    Data2DColumn dc = new Data2DColumn(name,
-                            ColumnDefinition.sqlColumnType(meta.getColumnType(col)),
-                            meta.isNullable(col) == ResultSetMetaData.columnNoNulls);
+                    Data2DColumn dc = null;
+                    if (dataTable != null) {
+                        dc = dataTable.columnByName(name);
+                        if (dc != null) {
+                            dc = dc.cloneAll().setD2cid(-1).setD2id(-1);
+                        }
+                    }
+                    if (dc == null) {
+                        dc = new Data2DColumn(name,
+                                ColumnDefinition.sqlColumnType(meta.getColumnType(col)),
+                                meta.isNullable(col) == ResultSetMetaData.columnNoNulls);
+                    }
                     db2Columns.add(dc);
                 }
                 csvPrinter.printRecord(names);
                 colsSize = names.size();
-
                 while (results.next() && task != null && !task.isCancelled()) {
                     count++;
                     if (rowNumberName != null) {
@@ -654,6 +709,9 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         }
     }
 
+    /*  
+        to/from CSV
+     */
     public static DataFileExcel toExcel(SingletonTask task, DataFileCSV csvData) {
         if (task == null || csvData == null) {
             return null;

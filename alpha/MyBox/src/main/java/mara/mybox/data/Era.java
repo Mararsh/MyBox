@@ -34,7 +34,7 @@ public class Era {
     }
 
     public Era(String s) {
-        Date d = DateTools.encodeEra(s);
+        Date d = DateTools.encodeDate(s);
         if (d != null) {
             value = d.getTime();
         }

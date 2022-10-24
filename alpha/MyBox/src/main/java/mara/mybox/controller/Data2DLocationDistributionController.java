@@ -14,6 +14,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import mara.mybox.data.GeoCoordinateSystem;
 import mara.mybox.data.MapPoint;
+import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.GeographyCode;
@@ -21,6 +22,7 @@ import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -31,7 +33,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class Data2DLocationDistributionController extends BaseData2DHandleController {
 
-    protected Data2DColumn labelColumn, longColumn, laColumn, sizeColumn;
+    protected String labelCol, longCol, laCol, sizeCol;
     protected List<Integer> dataColsIndices;
     protected ToggleGroup csGroup;
     protected double maxValue, minValue;
@@ -71,7 +73,7 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
             mapController.dataNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    startOperation();
+                    okAction();
                 }
             });
 
@@ -168,59 +170,61 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                 return false;
             }
             dataColsIndices = new ArrayList<>();
-            outputColumns = new ArrayList<>();
-            int col = data2D.colOrder(labelSelector.getValue());
+            labelCol = labelSelector.getValue();
+            int col = data2D.colOrder(labelCol);
             if (col < 0) {
                 outOptionsError(message("SelectToHandle") + ": " + message("Label"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
-            labelColumn = data2D.column(col);
             dataColsIndices.add(col);
-            outputColumns.add(labelColumn);
 
-            col = data2D.colOrder(longitudeSelector.getValue());
+            longCol = longitudeSelector.getValue();
+            col = data2D.colOrder(longCol);
             if (col < 0) {
                 outOptionsError(message("SelectToHandle") + ": " + message("Longitude"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
-            longColumn = data2D.column(col);
             dataColsIndices.add(col);
-            outputColumns.add(longColumn);
 
-            col = data2D.colOrder(latitudeSelector.getValue());
+            laCol = latitudeSelector.getValue();
+            col = data2D.colOrder(laCol);
             if (col < 0) {
                 outOptionsError(message("SelectToHandle") + ": " + message("Latitude"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
-            laColumn = data2D.column(col);
             dataColsIndices.add(col);
-            outputColumns.add(laColumn);
 
-            String sizeName = sizeSelector.getValue();
-            if (sizeName == null || message("NotSet").equals(sizeName)) {
-                col = -1;
+            sizeCol = sizeSelector.getValue();
+            if (sizeCol == null || message("NotSet").equals(sizeCol)) {
+                sizeCol = null;
             } else {
-                col = data2D.colOrder(sizeName);
-            }
-            if (col >= 0) {
-                sizeColumn = data2D.column(col);
-                dataColsIndices.add(col);
-                outputColumns.add(sizeColumn);
-            } else {
-                sizeColumn = null;
+                col = data2D.colOrder(sizeCol);
+                if (col >= 0) {
+                    dataColsIndices.add(col);
+                }
             }
 
             if (otherColsIndices != null) {
                 for (int c : otherColsIndices) {
                     if (!dataColsIndices.contains(c)) {
                         dataColsIndices.add(c);
-                        outputColumns.add(data2D.column(c));
                     }
                 }
             }
+
+            List<String> sortNames = sortNames();
+            if (sortNames != null) {
+                for (String name : sortNames) {
+                    int c = data2D.colOrder(name);
+                    if (!dataColsIndices.contains(c)) {
+                        dataColsIndices.add(c);
+                    }
+                }
+            }
+
             dataPoints = null;
             return true;
         } catch (Exception e) {
@@ -243,18 +247,13 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                     maxDataNumber = Math.min(maxDataNumber > 0 ? maxDataNumber : Integer.MAX_VALUE,
                             mapController.mapOptions.getDataMax());
                     filterController.filter.setMaxPassed(maxDataNumber);
-                    data2D.startTask(task, filterController.filter);
-                    if (isAllPages()) {
-                        outputData = data2D.allRows(dataColsIndices, false);
-                    } else {
-                        outputData = filtered(dataColsIndices, false);
-                    }
-                    data2D.stopFilter();
-                    if (outputData == null || outputData.isEmpty()) {
-                        error = message("NoData");
+                    DataFileCSV csvData = sortedData(data2D.dataName(), dataColsIndices);
+                    if (csvData == null) {
                         return false;
                     }
-                    if (sizeColumn != null) {
+                    outputData = csvData.allRows(false);
+                    FileDeleteTools.delete(csvData.getFile());
+                    if (sizeCol != null) {
                         maxValue = -Double.MAX_VALUE;
                         minValue = Double.MAX_VALUE;
                         double size;
@@ -272,7 +271,7 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                             }
                         }
                     }
-                    return initPoints();
+                    return initPoints(csvData);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -298,33 +297,52 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
         start(task);
     }
 
-    protected boolean initPoints() {
+    protected boolean initPoints(DataFileCSV csvData) {
         try {
             dataPoints = new ArrayList<>();
+            GeoCoordinateSystem cs
+                    = new GeoCoordinateSystem(((RadioButton) csGroup.getSelectedToggle()).getText());
+            GeographyCode code = GeographyCode.create();
+            int longIndex = csvData.colOrder(longCol);
+            int laIndex = csvData.colOrder(laCol);
+            int labelIndex = csvData.colOrder(labelCol);
+            int sizeIndex = csvData.colOrder(sizeCol);
             for (List<String> row : outputData) {
                 double lo, la;
                 try {
-                    lo = Double.valueOf(row.get(1));
-                    la = Double.valueOf(row.get(2));
+                    lo = Double.valueOf(row.get(longIndex));
+                    la = Double.valueOf(row.get(laIndex));
                     if (!GeographyCodeTools.validCoordinate(lo, la)) {
                         continue;
+                    }
+                    if (code == null) {
+                        code = GeographyCode.create();
+                    }
+                    code.setCoordinateSystem(cs).setLongitude(lo).setLatitude(la);
+                    if (mapController.mapOptions.isGaoDeMap()) {
+                        code = GeographyCodeTools.toGCJ02(code);
+                    } else {
+                        code = GeographyCodeTools.toCGCS2000(code, false);
                     }
                 } catch (Exception e) {
                     MyBoxLog.console(e.toString());
                     continue;
                 }
+                if (code == null) {
+                    continue;
+                }
+                MapPoint point = new MapPoint(code);
                 String info = "";
-                for (int c = 0; c < row.size(); c++) {
-                    String v = row.get(c);
-                    info += outputColumns.get(c).getColumnName() + ": "
+                for (int i = 0; i < row.size(); i++) {
+                    String v = row.get(i);
+                    info += csvData.columnName(i) + ": "
                             + (v == null ? "" : v) + "\n";
                 }
-                MapPoint point = new MapPoint(lo, la, row.get(0), info);
                 int markSize;
-                if (sizeColumn != null) {
+                if (sizeCol != null) {
                     double v;
                     try {
-                        v = Double.valueOf(row.get(3));
+                        v = Double.valueOf(row.get(sizeIndex));
                     } catch (Exception e) {
                         v = 0;
                     }
@@ -332,7 +350,7 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                 } else {
                     markSize = mapController.mapOptions.getMarkerSize();
                 }
-                point.setMarkSize(markSize);
+                point.setLabel(row.get(labelIndex)).setInfo(info).setMarkSize(markSize);
                 dataPoints.add(point);
             }
             outputData = null;
@@ -359,45 +377,28 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
             protected boolean handle() {
                 try {
                     int max = mapController.mapOptions.getDataMax();
-                    GeoCoordinateSystem cs
-                            = new GeoCoordinateSystem(((RadioButton) csGroup.getSelectedToggle()).getText());
-                    GeographyCode code = GeographyCode.create();
                     int index = 0;
-                    String imageFile = mapController.mapOptions.getMarkerImageFile().getAbsolutePath();
-                    int textSize = mapController.mapOptions.getTextSize();
-                    int markSize = mapController.mapOptions.getMarkerSize();
-                    Color textColor = mapController.mapOptions.getTextColor();
+                    String image = mapController.mapOptions.image();
+                    int textSize = mapController.mapOptions.textSize();
+                    int markSize = mapController.mapOptions.markSize();
+                    Color textColor = mapController.mapOptions.textColor();
+                    boolean isBold = mapController.mapOptions.isBold();
                     mapPoints = new ArrayList<>();
                     for (MapPoint dataPoint : dataPoints) {
-                        try {
-                            if (code == null) {
-                                code = GeographyCode.create();
-                            }
-                            code.setCoordinateSystem(cs)
-                                    .setLongitude(dataPoint.getLongitude())
-                                    .setLatitude(dataPoint.getLatitude());
-                            if (mapController.mapOptions.isGaoDeMap()) {
-                                code = GeographyCodeTools.toGCJ02(code);
-                            } else {
-                                code = GeographyCodeTools.toCGCS2000(code, false);
-                            }
-                        } catch (Exception e) {
-                            MyBoxLog.console(e.toString());
-                            continue;
-                        }
-                        if (code == null) {
-                            continue;
-                        }
-                        MapPoint mapPoint = new MapPoint(code);
-                        if (sizeColumn != null) {
+                        if (sizeCol != null) {
                             markSize = dataPoint.getMarkSize();
                         }
-                        mapPoint.setLabel(dataPoint.getLabel())
+                        MapPoint mapPoint = new MapPoint()
+                                .setLongitude(dataPoint.getLongitude())
+                                .setLatitude(dataPoint.getLatitude())
+                                .setLabel(dataPoint.getLabel())
                                 .setInfo(dataPoint.getInfo())
                                 .setMarkSize(markSize)
-                                .setMarkerImage(imageFile)
+                                .setMarkerImage(image)
                                 .setTextSize(textSize)
-                                .setTextColor(textColor);
+                                .setTextColor(textColor)
+                                .setCs(dataPoint.getCs())
+                                .setIsBold(isBold);
                         mapPoints.add(mapPoint);
                         if (++index >= max) {
                             break;
