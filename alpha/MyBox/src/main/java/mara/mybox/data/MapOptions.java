@@ -223,7 +223,7 @@ public class MapOptions {
     }
 
     public MapOptions setMapSize(int mapSize) {
-        if (mapSize <= 0 || this.mapSize == mapSize) {
+        if (mapSize <= 0) {
             return this;
         }
         this.mapSize = mapSize;
@@ -257,7 +257,9 @@ public class MapOptions {
     public MapOptions setFitView(boolean fitView) {
         this.fitView = fitView;
         UserConfig.setBoolean(baseName + "FitView", fitView);
-        drawPoints();
+        if (mapController != null && !mapController.isIsSettingValues()) {
+            mapController.setFitView();
+        }
         return this;
     }
 

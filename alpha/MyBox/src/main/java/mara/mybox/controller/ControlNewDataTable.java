@@ -223,11 +223,9 @@ public class ControlNewDataTable extends BaseController {
             for (int col : columnIndices) {
                 Data2DColumn sourceColumn = data2D.getColumns().get(col);
                 String name = sourceColumn.getColumnName();
-                if (dataTable.getColumnsMap() != null) {
-                    String tableColumnName = dataTable.getColumnsMap().get(name);
-                    if (tableColumnName != null) {
-                        name = tableColumnName;
-                    }
+                String tableColumnName = dataTable.tmpColumnName(name);
+                if (tableColumnName != null) {
+                    name = tableColumnName;
                 }
                 data2DRow.setColumnValue(name, sourceColumn.fromString(pageRow.get(col + 1), invalidAs));
             }

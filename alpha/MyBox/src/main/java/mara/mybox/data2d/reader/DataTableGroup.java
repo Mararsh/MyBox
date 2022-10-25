@@ -156,7 +156,7 @@ public class DataTableGroup {
             targetColumns.add(new Data2DColumn(idColName, ColumnDefinition.ColumnType.Long));
             targetColumns.add(new Data2DColumn(parameterName, ColumnDefinition.ColumnType.String, 200));
             for (String name : targetNames) {
-                Data2DColumn c = sourceData.columnByName(sourceData.mappedColumnName(name));
+                Data2DColumn c = sourceData.columnByName(sourceData.tmpColumnName(name));
                 targetColumns.add(c.cloneAll().setD2cid(-1).setD2id(-1));
                 targetColNames.add(name);
             }
@@ -195,7 +195,7 @@ public class DataTableGroup {
             String orderBy = null;
             List<String> mappedGroupNames = new ArrayList<>();
             for (String group : groupNames) {
-                String name = sourceData.mappedColumnName(group);
+                String name = sourceData.tmpColumnName(group);
                 if (orderBy == null) {
                     orderBy = name;
                 } else {
@@ -220,7 +220,7 @@ public class DataTableGroup {
                     } else {
                         continue;
                     }
-                    name = sourceData.mappedColumnName(name);
+                    name = sourceData.tmpColumnName(name);
                     orderBy += ", " + name + stype;
                 }
             }
@@ -268,7 +268,7 @@ public class DataTableGroup {
                             parameterValue = null;
                             groupMap.clear();
                             for (String name : groupNames) {
-                                Object v = sourceRow.get(sourceData.mappedColumnName(name));
+                                Object v = sourceRow.get(sourceData.tmpColumnName(name));
                                 groupMap.put(name, v);
 
                             }
@@ -309,7 +309,7 @@ public class DataTableGroup {
             if (groupName == null || groupName.isBlank()) {
                 return false;
             }
-            String mappedGroupName = sourceData.mappedColumnName(groupName);
+            String mappedGroupName = sourceData.tmpColumnName(groupName);
             double maxValue = Double.NaN, minValue = Double.NaN;
             String sql = "SELECT MAX(" + mappedGroupName + ") AS dmax, MIN("
                     + mappedGroupName + ") AS dmin FROM " + sourceSheet;
@@ -386,7 +386,7 @@ public class DataTableGroup {
                     || splitList == null || splitList.isEmpty()) {
                 return false;
             }
-            String mappedGroupName = sourceData.mappedColumnName(groupName);
+            String mappedGroupName = sourceData.tmpColumnName(groupName);
             String condition;
 
             conn.setAutoCommit(false);
@@ -474,7 +474,7 @@ public class DataTableGroup {
                 } else {
                     continue;
                 }
-                name = sourceData.mappedColumnName(name);
+                name = sourceData.tmpColumnName(name);
                 if (orderBy == null) {
                     orderBy = name + stype;
                 } else {
@@ -663,12 +663,13 @@ public class DataTableGroup {
                         fmax <= 0 ? Long.MAX_VALUE : fmax);
                 String script = filter.getFilledScript();
                 if (script != null && !script.isBlank()) {
-                    for (String name : sourceData.getColumnsMap().keySet()) {
-                        String mappedName = sourceData.getColumnsMap().get(name);
-                        script = findReplace.replaceStringAll(script, "#{" + name + "}", "#{" + mappedName + "}");
+                    for (Data2DColumn column : sourceData.sourceColumns()) {
+                        String sourceName = column.getColumnName();
+                        String tmpName = sourceData.tmpColumnName(sourceName);
+                        script = findReplace.replaceStringAll(script, "#{" + sourceName + "}", "#{" + tmpName + "}");
                         for (StatisticType stype : StatisticType.values()) {
-                            script = findReplace.replaceStringAll(script, "#{" + name + "-" + message(stype.name()) + "}",
-                                    "#{" + mappedName + "-" + message(stype.name()) + "}");
+                            script = findReplace.replaceStringAll(script, "#{" + sourceName + "-" + message(stype.name()) + "}",
+                                    "#{" + tmpName + "-" + message(stype.name()) + "}");
                         }
                         filter.setFilledScript(script);
                     }
@@ -739,10 +740,6 @@ public class DataTableGroup {
                         }
                         targetData = DataTable.createTable(task, conn,
                                 tableName, targetColumns, null, null, null, true);
-                        for (String name : sourceData.getColumnsMap().keySet()) {
-                            targetData.getColumnsMap().put(name,
-                                    targetData.getColumnsMap().get(sourceData.getColumnsMap().get(name)));
-                        }
                         tableTarget = targetData.getTableData2D();
                         insert = conn.prepareStatement(tableTarget.insertStatement());
                     }
@@ -751,8 +748,8 @@ public class DataTableGroup {
                     data2DRow.setColumnValue(parameterName, parameterValue);
                     for (int i = 2; i < targetColNames.size(); i++) {
                         String name = targetColNames.get(i);
-                        data2DRow.setColumnValue(targetData.mappedColumnName(name),
-                                sourceRow.get(sourceData.mappedColumnName(name)));
+                        data2DRow.setColumnValue(targetData.tmpColumnName(name),
+                                sourceRow.get(sourceData.tmpColumnName(name)));
                     }
                     tableTarget.insertData(conn, insert, data2DRow);
                     if (++count % DerbyBase.BatchSize == 0) {
@@ -777,7 +774,7 @@ public class DataTableGroup {
                     for (int i = 2; i < targetColumns.size(); i++) {
                         Data2DColumn column = targetColumns.get(i);
                         String name = column.getColumnName();
-                        Object v = sourceRow.get(sourceData.mappedColumnName(name));
+                        Object v = sourceRow.get(sourceData.tmpColumnName(name));
                         String s = column.toString(v);
                         if (column.needScale() && scale >= 0) {
                             s = DoubleTools.scaleString(s, invalidAs, scale);

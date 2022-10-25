@@ -22,32 +22,32 @@ import mara.mybox.value.Languages;
  * @License Apache License Version 2.0
  */
 public class GeographyCodeMapController extends BaseMapFramesController {
-    
+
     protected TableGeographyCode geoTable;
     protected BaseDataManageController dataController;
     protected List<GeographyCode> geographyCodes;
-    
+
     public GeographyCodeMapController() {
         baseTitle = Languages.message("Map") + " - " + Languages.message("GeographyCode");
     }
-    
+
     @Override
     public void initValues() {
         try {
             super.initValues();
-            
+
             geoTable = new TableGeographyCode();
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     public void initMap(BaseDataManageController dataController) {
         this.dataController = dataController;
         super.checkFirstRun(dataController);
     }
-    
+
     @Override
     public void setDataMax() {
         if (!mapLoaded || isSettingValues) {
@@ -55,7 +55,7 @@ public class GeographyCodeMapController extends BaseMapFramesController {
         }
         dataController.reloadChart();
     }
-    
+
     @Override
     public void drawPoints() {
         if (webEngine == null || !mapLoaded
@@ -69,17 +69,20 @@ public class GeographyCodeMapController extends BaseMapFramesController {
             task.cancel();
         }
         task = new SingletonTask<Void>(this) {
-            
+
             List<MapPoint> points;
-            
+
             @Override
             protected boolean handle() {
                 points = new ArrayList<>();
                 GeographyCode tcode;
-                int markSize = mapOptions.getMarkerSize();
-                String markImage = mapOptions.getMarkerImageFile().getAbsolutePath();
-                int textSize = mapOptions.getTextSize();
-                Color textColor = mapOptions.getTextColor();
+                int max = mapOptions.getDataMax();
+                String image = mapOptions.image();
+                int textSize = mapOptions.textSize();
+                int markSize = mapOptions.markSize();
+                Color textColor = mapOptions.textColor();
+                boolean isBold = mapOptions.isBold();
+                int index = 0;
                 for (GeographyCode code : geographyCodes) {
                     if (!validCoordinate(code)) {
                         continue;
@@ -93,14 +96,18 @@ public class GeographyCodeMapController extends BaseMapFramesController {
                     mapPoint.setLabel(code.getName())
                             .setInfo(BaseDataAdaptor.displayData(geoTable, code, null, true))
                             .setMarkSize(markSize)
-                            .setMarkerImage(markImage)
+                            .setMarkerImage(image)
                             .setTextSize(textSize)
-                            .setTextColor(textColor);
+                            .setTextColor(textColor)
+                            .setIsBold(isBold);
                     points.add(mapPoint);
+                    if (++index >= max) {
+                        break;
+                    }
                 }
                 return true;
             }
-            
+
             @Override
             protected void whenSucceeded() {
                 drawPoints(points);
@@ -108,12 +115,12 @@ public class GeographyCodeMapController extends BaseMapFramesController {
         };
         start(task, "Loading map data");
     }
-    
+
     protected List<String> displayNames() {
         return Arrays.asList("level", "coordinate_system", "longitude", "latitude",
                 "chinese_name", "english_name", "alias1", "code1", "area", "population");
     }
-    
+
     @Override
     protected String writePointsTable() {
         if (geographyCodes == null || geographyCodes.isEmpty()) {
@@ -128,7 +135,7 @@ public class GeographyCodeMapController extends BaseMapFramesController {
         }
         return BaseDataAdaptor.htmlDataList(geoTable, list, displayNames());
     }
-    
+
     protected void drawGeographyCodes(List<GeographyCode> codes, String title) {
         mapTitle = title == null ? "" : title.replaceAll("\n", " ");
         titleLabel.setText(mapTitle);
@@ -136,7 +143,7 @@ public class GeographyCodeMapController extends BaseMapFramesController {
         geographyCodes = codes;
         drawPoints();
     }
-    
+
     @FXML
     @Override
     public void clearAction() {
@@ -147,12 +154,12 @@ public class GeographyCodeMapController extends BaseMapFramesController {
         titleLabel.setText("");
         frameLabel.setText("");
     }
-    
+
     @Override
     public void reloadData() {
         if (dataController != null) {
             dataController.reloadChart();
         }
     }
-    
+
 }

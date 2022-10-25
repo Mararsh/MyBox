@@ -10,14 +10,15 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.web.WebView?>
 
 <VBox fx:id="thisPane" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlMap">
       <children>
-      <FlowPane fx:id="buttonsPane" alignment="CENTER_RIGHT" hgap="2.0" vgap="2.0">
+      <HBox alignment="CENTER_LEFT" spacing="2.0">
          <children>
+            <Label fx:id="topLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
             <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
                <graphic>
                   <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -64,7 +65,7 @@ License:    Apache License Version 2.0
                           </graphic>
                       </Button>
          </children>
-      </FlowPane>
+      </HBox>
               <VBox fx:id="snapBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
                   <children>
                         <Label fx:id="titleLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" />

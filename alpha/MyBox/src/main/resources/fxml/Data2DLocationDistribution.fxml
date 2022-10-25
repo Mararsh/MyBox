@@ -303,11 +303,54 @@ License:    Apache License Version 2.0
                                 </CheckBox>
                             </children>
                         </HBox>
-                        <VBox fx:id="snapBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
-                            <children>
-                                <fx:include fx:id="map" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlMap.fxml" VBox.vgrow="ALWAYS" />
-                            </children>
-                        </VBox>
+                  <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                     <tabs>
+                        <Tab fx:id="chartTab" text="%Map">
+                           <content>
+                              <SplitPane dividerPositions="0.4" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                 <items>
+                                    <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                                       <content>
+                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                             <children>
+                                                <fx:include fx:id="play" source="ControlPlay.fxml" />
+                                                <CheckBox fx:id="accumulateCheck" mnemonicParsing="false" text="%Accumulate" />
+                                                <CheckBox fx:id="centerCheck" mnemonicParsing="false" text="%MoveCenter" />
+                                                <CheckBox fx:id="linkCheck" mnemonicParsing="false" text="%Link" />
+                                             </children>
+                                          </VBox>
+                                       </content>
+                                    </ScrollPane>
+                                    <ScrollPane fitToHeight="true" fitToWidth="true" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                                       <content>
+                                                <VBox fx:id="snapBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                    <children>
+                                                        <fx:include fx:id="map" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlMap.fxml" VBox.vgrow="ALWAYS" />
+                                                    </children>
+                                                </VBox>
+                                       </content>
+                                    </ScrollPane>
+                                 </items>
+                                 <padding>
+                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                 </padding>
+                              </SplitPane>
+                           </content>
+                        </Tab>
+                        <Tab fx:id="dataTab" text="%Data">
+                           <content>
+                              <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                 <children>
+                                    <fx:include fx:id="values" source="ControlData2DResults.fxml" />
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                 </padding>
+                              </VBox>
+                           </content>
+                        </Tab>
+                     </tabs>
+                  </TabPane>
                     </children>
                 </VBox>
             </items>

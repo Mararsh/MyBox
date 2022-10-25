@@ -6,6 +6,7 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -20,9 +21,9 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -38,6 +39,8 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
     protected ToggleGroup csGroup;
     protected double maxValue, minValue;
     protected List<MapPoint> dataPoints;
+    protected int framesNumber, frameid, lastFrameid;
+    protected boolean frameEnd = true;
 
     @FXML
     protected ComboBox<String> labelSelector, longitudeSelector, latitudeSelector, sizeSelector;
@@ -49,6 +52,12 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
     protected ControlMapOptions mapOptionsController;
     @FXML
     protected ControlMap mapController;
+    @FXML
+    protected ControlPlay playController;
+    @FXML
+    protected CheckBox accumulateCheck, centerCheck, linkCheck;
+    @FXML
+    protected ControlData2DResults valuesController;
 
     public Data2DLocationDistributionController() {
         baseTitle = message("LocationDistribution");
@@ -84,6 +93,15 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                 csGroup.getToggles().add(rb);
             }
             ((RadioButton) csPane.getChildren().get(0)).setSelected(true);
+
+            playController.setParameters(this);
+
+            playController.frameNodify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    displayFrame(playController.currentIndex);
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -186,7 +204,9 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
-            dataColsIndices.add(col);
+            if (!dataColsIndices.contains(col)) {
+                dataColsIndices.add(col);
+            }
 
             laCol = latitudeSelector.getValue();
             col = data2D.colOrder(laCol);
@@ -195,14 +215,16 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
-            dataColsIndices.add(col);
+            if (!dataColsIndices.contains(col)) {
+                dataColsIndices.add(col);
+            }
 
             sizeCol = sizeSelector.getValue();
             if (sizeCol == null || message("NotSet").equals(sizeCol)) {
                 sizeCol = null;
             } else {
                 col = data2D.colOrder(sizeCol);
-                if (col >= 0) {
+                if (col >= 0 && !dataColsIndices.contains(col)) {
                     dataColsIndices.add(col);
                 }
             }
@@ -226,6 +248,8 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
             }
 
             dataPoints = null;
+            framesNumber = -1;
+            frameid = -1;
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -238,7 +262,10 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
         if (task != null) {
             task.cancel();
         }
+        valuesController.loadNull();
         task = new SingletonTask<Void>(this) {
+
+            private DataFileCSV csvData;
 
             @Override
             protected boolean handle() {
@@ -247,12 +274,12 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                     maxDataNumber = Math.min(maxDataNumber > 0 ? maxDataNumber : Integer.MAX_VALUE,
                             mapController.mapOptions.getDataMax());
                     filterController.filter.setMaxPassed(maxDataNumber);
-                    DataFileCSV csvData = sortedData(data2D.dataName(), dataColsIndices);
+                    csvData = sortedData(data2D.dataName(), dataColsIndices);
                     if (csvData == null) {
                         return false;
                     }
+                    csvData.saveAttributes();
                     outputData = csvData.allRows(false);
-                    FileDeleteTools.delete(csvData.getFile());
                     if (sizeCol != null) {
                         maxValue = -Double.MAX_VALUE;
                         minValue = Double.MAX_VALUE;
@@ -290,6 +317,7 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                 task = null;
                 if (ok) {
                     drawPoints();
+                    valuesController.loadData(csvData);
                 }
             }
 
@@ -362,12 +390,13 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
     }
 
     protected void drawPoints() {
+        if (task != null) {
+            task.cancel();
+        }
+        playController.clear();
         mapController.clearAction();
         if (dataPoints == null || dataPoints.isEmpty()) {
             return;
-        }
-        if (task != null) {
-            task.cancel();
         }
         task = new SingletonTask<Void>(this) {
 
@@ -421,7 +450,11 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                 data2D.stopTask();
                 task = null;
                 if (ok) {
-                    mapController.drawPoints(mapPoints);
+                    frameEnd = true;
+                    framesNumber = dataPoints.size();
+                    lastFrameid = -1;
+                    mapController.setPoints(mapPoints);
+                    playController.play(framesNumber, 0, framesNumber - 1);
                 }
             }
 
@@ -436,6 +469,35 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
         }
         double size = 60d * (value - minValue) / (maxValue - minValue);
         return Math.min(60, Math.max(10, (int) size));
+    }
+
+    public void displayFrame(int index) {
+        if (!frameEnd || mapController.mapPoints == null
+                || framesNumber <= 0 || index < 0 || index > framesNumber) {
+            playController.clear();
+            return;
+        }
+        frameEnd = false;
+        frameid = index + 1;
+        if (!accumulateCheck.isSelected() || frameid == 1) {
+            mapController.webEngine.executeScript("clearMap();");
+        }
+        MapPoint point = mapController.mapPoints.get(index);
+        mapController.drawPoint(point);
+        if (linkCheck.isSelected() && lastFrameid >= 1) {
+            MapPoint lastPoint = mapController.mapPoints.get(lastFrameid);
+            String pColor = "'" + FxColorTools.color2rgb(point.getTextColor()) + "'";
+            mapController.webEngine.executeScript("drawLine("
+                    + lastPoint.getLongitude() + ", " + lastPoint.getLatitude() + ", "
+                    + point.getLongitude() + ", " + point.getLatitude()
+                    + ", " + pColor + ");");
+        }
+        if (centerCheck.isSelected() || frameid == 1) {
+            mapController.webEngine.executeScript("setCenter("
+                    + point.getLongitude() + ", " + point.getLatitude() + ");");
+        }
+        lastFrameid = frameid;
+        frameEnd = true;
     }
 
     /*

@@ -49,7 +49,7 @@ public class Data2DWriteTable extends Data2DOperator {
             for (int col : cols) {
                 if (col >= 0 && col < len) {
                     Data2DColumn sourceColumn = data2D.getColumns().get(col);
-                    String colName = writerTable.mappedColumnName(sourceColumn.getColumnName());
+                    String colName = writerTable.tmpColumnName(sourceColumn.getColumnName());
                     Data2DColumn targetColumn = writerTable.columnByName(colName);
                     data2DRow.setColumnValue(colName, targetColumn.fromString(sourceRow.get(col), invalidAs));
                 }
@@ -58,7 +58,7 @@ public class Data2DWriteTable extends Data2DOperator {
                 return;
             }
             if (includeRowNumber) {
-                data2DRow.setColumnValue(writerTable.mappedColumnName(message("SourceRowNumber")), rowIndex);
+                data2DRow.setColumnValue(writerTable.tmpColumnName(message("SourceRowNumber")), rowIndex);
             }
             writerTableData2D.insertData(conn, data2DRow);
             if (++count % DerbyBase.BatchSize == 0) {

@@ -73,7 +73,7 @@ public class DataTableGroupStatistic {
             header.add(parameterName);
             header.add(message("Count"));
             for (String name : calNames) {
-                Data2DColumn c = groupResults.columnByName(groupResults.mappedColumnName(name));
+                Data2DColumn c = groupResults.columnByName(groupResults.tmpColumnName(name));
                 groupColumns.add(c.cloneAll().setD2cid(-1).setD2id(-1));
                 groupColNames.add(name);
                 for (StatisticType type : calculation.types) {
@@ -84,10 +84,6 @@ public class DataTableGroupStatistic {
                 }
             }
             groupData = DataTable.createTable(task, conn, groupColumns);
-            for (String name : groupResults.getColumnsMap().keySet()) {
-                groupData.getColumnsMap().put(name,
-                        groupData.getColumnsMap().get(groupResults.getColumnsMap().get(name)));
-            }
             tableGroup = groupData.getTableData2D();
             long currentGroupid;
             String currentParameterValue;
@@ -111,9 +107,9 @@ public class DataTableGroupStatistic {
                     currentParameterValue = query.getString(parameterName);
                     Data2DRow data2DRow = tableGroup.newRow();
                     for (String name : calNames) {
-                        String tname = groupResults.mappedColumnName(name);
+                        String tname = groupResults.tmpColumnName(name);
                         Object v = query.getObject(tname);
-                        data2DRow.setColumnValue(groupData.mappedColumnName(name), v);
+                        data2DRow.setColumnValue(groupData.tmpColumnName(name), v);
                     }
                     if (groupid > 0 && groupid != currentGroupid) {
                         conn.commit();

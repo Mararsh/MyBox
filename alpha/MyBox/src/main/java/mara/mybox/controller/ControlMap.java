@@ -55,13 +55,14 @@ public class ControlMap extends BaseController {
     protected MapOptions mapOptions;
     protected SimpleBooleanProperty drawNotify, dataNotify;
     protected List<MapPoint> mapPoints;
+    protected int interval;
 
     @FXML
     protected WebView mapView;
     @FXML
     protected ControlMapOptions mapOptionsController;
     @FXML
-    protected Label titleLabel;
+    protected Label topLabel, titleLabel;
     @FXML
     protected VBox snapBox;
 
@@ -81,6 +82,7 @@ public class ControlMap extends BaseController {
             drawNotify = new SimpleBooleanProperty();
             dataNotify = new SimpleBooleanProperty();
             mapOptions = new MapOptions(this);
+            interval = 1;
 
             initWebEngine();
 
@@ -331,6 +333,17 @@ public class ControlMap extends BaseController {
         });
     }
 
+    public void setFitView() {
+        if (!mapLoaded || isSettingValues) {
+            return;
+        }
+        if (mapOptions.isGaoDeMap() && mapOptions.isFitView()) {
+            Platform.runLater(() -> {
+                webEngine.executeScript("map.setFitView();");
+            });
+        }
+    }
+
     public void setDataMax() {
         if (!mapLoaded || isSettingValues) {
             return;
@@ -473,19 +486,36 @@ public class ControlMap extends BaseController {
                 : "'" + string.replaceAll("'", AppValues.MyBoxSeparator).replaceAll("\n", "</BR>") + "'";
     }
 
-    public void drawPoints(List<MapPoint> points) {
-        if (!mapLoaded || webEngine == null || points == null || points.isEmpty()) {
-            return;
-        }
+    public void setPoints(List<MapPoint> points) {
         if (timer != null) {
             timer.cancel();
             timer = null;
         }
         clearAction();
-        mapPoints = points;
         mapOptions.setMapSize(3);
+        mapOptions.setFitView(false);
+        mapPoints = points;
+        if (mapPoints != null && !mapPoints.isEmpty()) {
+            webEngine.executeScript("setCenter("
+                    + mapPoints.get(0).getLongitude() + ", " + mapPoints.get(0).getLatitude() + ");");
+            if (topLabel != null) {
+                topLabel.setText(message("DataNumber") + ":" + points.size());
+            } else {
+                bottomLabel.setText(message("DataNumber") + ":" + points.size());
+            }
+        }
+    }
+
+    public void drawPoints(List<MapPoint> points) {
+        setPoints(points);
+        if (!mapLoaded || webEngine == null || points == null || points.isEmpty()) {
+            return;
+        }
         timer = new Timer();
-        String prefix = message("DataNumber") + ":";
+        int size = points.size();
+        if (interval <= 0) {
+            interval = 1;
+        }
         timer.schedule(new TimerTask() {
 
             private boolean frameEnd = true, centered = false;
@@ -514,15 +544,13 @@ public class ControlMap extends BaseController {
                             centered = true;
                         }
                         index++;
-                        bottomLabel.setText(prefix + index);
+                        bottomLabel.setText(index + " / " + size);
                         if (index >= mapPoints.size()) {
                             if (timer != null) {
                                 timer.cancel();
                                 timer = null;
                             }
-                            if (mapOptions.isGaoDeMap() && mapOptions.isFitView()) {
-                                webEngine.executeScript("map.setFitView();");
-                            }
+                            setFitView();
                         }
                         frameEnd = true;
                     } catch (Exception e) {
@@ -531,8 +559,7 @@ public class ControlMap extends BaseController {
                 });
             }
 
-        }, 0, 1); // Interface may be blocked if put all points in map altogether.
-
+        }, 0, interval);
     }
 
     @FXML
@@ -548,7 +575,9 @@ public class ControlMap extends BaseController {
                 webEngine.executeScript("clearMap();");
             }
         }
-        mapPoints = null;
+        if (topLabel != null) {
+            topLabel.setText("");
+        }
         if (titleLabel != null) {
             titleLabel.setText("");
         }

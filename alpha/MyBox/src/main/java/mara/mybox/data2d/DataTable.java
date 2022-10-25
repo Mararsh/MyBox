@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import mara.mybox.calculation.DescriptiveStatistic;
 import mara.mybox.calculation.DescriptiveStatistic.StatisticType;
@@ -37,7 +36,6 @@ import org.apache.commons.math3.stat.Frequency;
 public class DataTable extends Data2D {
 
     protected TableData2D tableData2D;
-    protected Map<String, String> columnsMap;
     protected List<Data2DColumn> sourceColumns;
 
     public DataTable() {
@@ -269,64 +267,54 @@ public class DataTable extends Data2D {
         }
     }
 
-    public String mappedColumnName(String sourceName) {
-        if (columnsMap == null || columnsMap.isEmpty()
-                || !columnsMap.containsKey(sourceName)) {
+    public String tmpColumnName(String sourceName) {
+        if (sourceColumns == null) {
             return sourceName;
         }
-        return columnsMap.get(sourceName);
+        int index = tmpIndex(sourceName);
+        if (index < 0) {
+            return null;
+        }
+        return columns.get(index).getColumnName();
     }
 
-    public String sourceColumnName(String mappedName) {
-        if (columnsMap == null || columnsMap.isEmpty()
-                || !columnsMap.containsValue(mappedName)) {
-            return mappedName;
+    public int tmpIndex(String sourceName) {
+        if (sourceName == null || sourceColumns == null) {
+            return -1;
         }
-        for (String sourceName : columnsMap.keySet()) {
-            String v = columnsMap.get(sourceName);
-            if (mappedName == null) {
-                if (v == null) {
-                    return sourceName;
-                }
-            } else {
-                if (mappedName.equals(v)) {
-                    return sourceName;
-                }
+        for (int i = 0; i < sourceColumns.size(); i++) {
+            Data2DColumn column = sourceColumns.get(i);
+            if (sourceName.equals(column.getColumnName())) {
+                return i + 1;
             }
         }
-        return mappedName;
+        return -1;
     }
 
-    public Data2DColumn sourceColumn(Data2DColumn mappedColumn) {
-        if (columnsMap == null || columnsMap.isEmpty()
-                || mappedColumn == null) {
-            return null;
+    public String sourceColumnName(String tmpName) {
+        if (tmpName == null || sourceColumns == null) {
+            return tmpName;
         }
-        String sourceColumnName = sourceColumnName(mappedColumn.getColumnName());
-        if (sourceColumnName == null) {
-            return null;
-        }
-        List<Data2DColumn> sColumns = sourceColumns();
-        if (sColumns == null) {
-            return null;
-        }
-        for (Data2DColumn column : sColumns) {
-            if (sourceColumnName.equals(column.getColumnName())) {
-                return column;
+        try {
+            int index = colOrder(tmpName);
+            if (index < 0) {
+                return null;
             }
+            return sourceColumns.get(index - 1).getColumnName();
+        } catch (Exception e) {
+            return null;
         }
-        return null;
     }
 
     public List<Data2DColumn> sourceColumns() {
-        if (columnsMap == null || columnsMap.isEmpty() || sourceColumns == null) {
+        if (sourceColumns == null) {
             return columns;
         }
         return sourceColumns;
     }
 
     public List<String> sourceColumnNames() {
-        if (columnsMap == null || columnsMap.isEmpty() || sourceColumns == null) {
+        if (sourceColumns == null) {
             return columnNames();
         }
         List<String> names = new ArrayList<>();
@@ -489,7 +477,7 @@ public class DataTable extends Data2D {
                     } else {
                         name = order.substring(0, order.length() - ("-" + message("Descending")).length());
                     }
-                    name = mappedColumnName(name) + (asc ? " ASC" : " DESC");
+                    name = tmpColumnName(name) + (asc ? " ASC" : " DESC");
                     if (orderby == null) {
                         orderby = name;
                     } else {
@@ -558,7 +546,7 @@ public class DataTable extends Data2D {
             int rNumber = 0;
             List<Data2DColumn> targetColumns = new ArrayList<>();
             List<Data2DColumn> dataColumns = new ArrayList<>();
-            if (firstColumnAsNames && columns.get(1).getColumnName().equals(mappedColumnName(message("SourceRowNumber")))) {
+            if (firstColumnAsNames && columns.get(1).getColumnName().equals(tmpColumnName(message("SourceRowNumber")))) {
                 dataColumns.add(columns.get(2));
                 dataColumns.add(columns.get(1));
                 for (int i = 3; i < columns.size(); i++) {
@@ -968,14 +956,6 @@ public class DataTable extends Data2D {
 
     public void setTableData2D(TableData2D tableData2D) {
         this.tableData2D = tableData2D;
-    }
-
-    public Map<String, String> getColumnsMap() {
-        return columnsMap;
-    }
-
-    public void setColumnsMap(Map<String, String> columnsMap) {
-        this.columnsMap = columnsMap;
     }
 
     public List<Data2DColumn> getSourceColumns() {

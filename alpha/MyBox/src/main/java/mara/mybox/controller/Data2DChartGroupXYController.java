@@ -237,7 +237,7 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
                         List<String> row = new ArrayList<>();
                         for (Data2DColumn column : outputColumns) {
                             String name = column.getColumnName();
-                            String gname = groupData.mappedColumnName(name);
+                            String gname = groupData.tmpColumnName(name);
                             String s = column.toString(query.getObject(gname));
                             if (s != null && column.needScale() && scale >= 0) {
                                 s = DoubleTools.scaleString(s, invalidAs, scale);
@@ -276,7 +276,6 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
 
         };
         start(backgroundTask, false);
-
     }
 
     protected String orderBy() {
@@ -298,7 +297,7 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
                 } else {
                     continue;
                 }
-                name = groupData.mappedColumnName(name);
+                name = groupData.tmpColumnName(name);
                 if (orderBy == null) {
                     orderBy = name + stype;
                 } else {
