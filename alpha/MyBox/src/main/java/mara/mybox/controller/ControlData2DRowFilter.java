@@ -84,7 +84,9 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
             return;
         }
         scriptInput.setText(node.getValue());
-        maxInput.setText("");
+        if (maxInput != null) {
+            maxInput.setText("");
+        }
         trueRadio.setSelected(true);
         String more = node.getMore();
         if (more != null && more.contains(TreeNode.TagsSeparater)) {
@@ -96,7 +98,7 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
                     trueRadio.setSelected(true);
                 }
                 long max = Long.parseLong(v[1]);
-                if (max > 0) {
+                if (max > 0 && maxInput != null) {
                     maxInput.setText(max + "");
                 }
             } catch (Exception e) {
@@ -108,7 +110,9 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
     public void clear() {
         isSettingValues = true;
         scriptInput.clear();
-        maxInput.clear();
+        if (maxInput != null) {
+            maxInput.clear();
+        }
         placeholdersList.getItems().clear();
         trueRadio.setSelected(true);
         isSettingValues = false;
@@ -133,7 +137,9 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
                 othersRadio.setSelected(true);
             }
         }
-        maxInput.setText(max > 0 ? max + "" : "");
+        if (maxInput != null) {
+            maxInput.setText(max > 0 ? max + "" : "");
+        }
         isSettingValues = false;
         filter.setSourceScript(script);
         filter.setReversed(!isTrue);

@@ -284,7 +284,7 @@ public class DataTable extends Data2D {
         }
         for (int i = 0; i < sourceColumns.size(); i++) {
             Data2DColumn column = sourceColumns.get(i);
-            if (sourceName.equals(column.getColumnName())) {
+            if (sourceName.equalsIgnoreCase(column.getColumnName())) {
                 return i + 1;
             }
         }

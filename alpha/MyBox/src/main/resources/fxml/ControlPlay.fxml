@@ -15,7 +15,6 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
 
-
 <VBox fx:id="thisPane" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlPlay">
    <children>
       <FlowPane alignment="CENTER_LEFT" hgap="5.0" layoutX="10.0" layoutY="10.0" prefWrapLength="200.0" vgap="5.0">
@@ -46,6 +45,7 @@ License:    Apache License Version 2.0
               </Button>
          </children>
       </FlowPane>
+      <FlowPane alignment="CENTER_LEFT" hgap="5.0" layoutX="10.0" layoutY="53.0" prefWrapLength="200.0" vgap="5.0" />
       <FlowPane alignment="CENTER_LEFT" hgap="5.0" layoutX="10.0" layoutY="53.0" prefWrapLength="200.0" vgap="5.0">
          <children>
             <CheckBox fx:id="loopCheck" minHeight="-Infinity" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%Loop" wrapText="true" />
@@ -92,6 +92,5 @@ License:    Apache License Version 2.0
               </Button>
          </children>
       </FlowPane>
-      <FlowPane alignment="CENTER_LEFT" hgap="5.0" layoutX="10.0" layoutY="53.0" prefWrapLength="200.0" vgap="5.0" />
    </children>
 </VBox>

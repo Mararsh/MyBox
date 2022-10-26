@@ -673,8 +673,8 @@ public class ControlData2D extends BaseController {
 
             popMenu.getItems().addAll(Data2DMenuTools.trimMenu(tableController));
             popMenu.getItems().addAll(Data2DMenuTools.calMenu(tableController));
-            popMenu.getItems().addAll(Data2DMenuTools.staticChartsMenu(tableController));
-            popMenu.getItems().addAll(Data2DMenuTools.dynamicChartsMenu(tableController));
+            popMenu.getItems().addAll(Data2DMenuTools.chartsMenu(tableController));
+            popMenu.getItems().addAll(Data2DMenuTools.groupChartsMenu(tableController));
 
             popMenu.getItems().add(new SeparatorMenuItem());
 

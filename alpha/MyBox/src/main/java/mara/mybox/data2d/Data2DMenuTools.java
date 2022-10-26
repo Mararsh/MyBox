@@ -7,6 +7,7 @@ import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.controller.ControlData2D;
 import mara.mybox.controller.ControlData2DEditTable;
 import mara.mybox.controller.ControlData2DLoad;
+import mara.mybox.controller.Data2DAddRowsController;
 import mara.mybox.controller.Data2DChartBoxWhiskerController;
 import mara.mybox.controller.Data2DChartComparisonBarsController;
 import mara.mybox.controller.Data2DChartGroupXYController;
@@ -134,6 +135,13 @@ public class Data2DMenuTools {
             boolean empty = invalidData || tableController.getTableData().isEmpty();
 
             Menu modifyMenu = new Menu(message("Modify"), StyleTools.getIconImage("iconEdit.png"));
+
+            menu = new MenuItem(message("AddRows"), StyleTools.getIconImage("iconNewItem.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DAddRowsController.open(tableController);
+            });
+            menu.setDisable(empty);
+            modifyMenu.getItems().add(menu);
 
             menu = new MenuItem(message("SetValues"), StyleTools.getIconImage("iconEqual.png"));
             menu.setOnAction((ActionEvent event) -> {
@@ -316,14 +324,14 @@ public class Data2DMenuTools {
         }
     }
 
-    public static Menu staticChartsMenu(ControlData2DLoad controller) {
+    public static Menu chartsMenu(ControlData2DLoad controller) {
         try {
             MenuItem menu;
             Data2D data2D = controller.getData2D();
             boolean invalidData = data2D == null || !data2D.isValid();
             boolean empty = invalidData || controller.getTableData().isEmpty();
 
-            Menu chartMenu = new Menu(message("StaticCharts"), StyleTools.getIconImage("iconCharts.png"));
+            Menu chartMenu = new Menu(message("Charts"), StyleTools.getIconImage("iconCharts.png"));
 
             menu = new MenuItem(message("XYChart"), StyleTools.getIconImage("iconXYChart.png"));
             menu.setOnAction((ActionEvent event) -> {
@@ -381,14 +389,14 @@ public class Data2DMenuTools {
         }
     }
 
-    public static Menu dynamicChartsMenu(ControlData2DLoad controller) {
+    public static Menu groupChartsMenu(ControlData2DLoad controller) {
         try {
             MenuItem menu;
             Data2D data2D = controller.getData2D();
             boolean invalidData = data2D == null || !data2D.isValid();
             boolean empty = invalidData || controller.getTableData().isEmpty();
 
-            Menu chartMenu = new Menu(message("DynamicCharts"), StyleTools.getIconImage("iconGraph.png"));
+            Menu chartMenu = new Menu(message("GroupCharts"), StyleTools.getIconImage("iconGraph.png"));
 
             menu = new MenuItem(message("GroupData") + " - " + message("XYChart"), StyleTools.getIconImage("iconXYChart.png"));
             menu.setOnAction((ActionEvent event) -> {

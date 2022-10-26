@@ -75,8 +75,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
                 }
             });
 
-            statisticController.countCheck.setSelected(true);
-            statisticController.countCheck.setDisable(true);
+            statisticController.mustCount();
 
             statisticDataController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override

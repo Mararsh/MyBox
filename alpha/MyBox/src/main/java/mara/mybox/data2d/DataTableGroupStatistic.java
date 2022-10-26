@@ -66,15 +66,16 @@ public class DataTableGroupStatistic {
             conn = dconn;
             groupColumns = new ArrayList<>();
             groupColNames = new ArrayList<>();
-            idColName = message("Group");
+            idColName = groups.getIdColName();
             parameterName = groups.getParameterName();
             List<String> header = new ArrayList<>();
             header.add(idColName);
             header.add(parameterName);
             header.add(message("Count"));
             for (String name : calNames) {
-                Data2DColumn c = groupResults.columnByName(groupResults.tmpColumnName(name));
-                groupColumns.add(c.cloneAll().setD2cid(-1).setD2id(-1));
+                Data2DColumn c = groupResults.columnByName(groupResults.tmpColumnName(name)).cloneAll();
+                c.setD2cid(-1).setD2id(-1).setColumnName(name);
+                groupColumns.add(c);
                 groupColNames.add(name);
                 for (StatisticType type : calculation.types) {
                     if (type == StatisticType.Count) {
@@ -94,6 +95,8 @@ public class DataTableGroupStatistic {
             csvFile = getPathTempFile(AppPaths.getGeneratedPath(), dname, ".csv");
             csvPrinter = CsvTools.csvPrinter(csvFile);
             csvPrinter.printRecord(header);
+            String mappedIdColName = groupResults.tmpColumnName(idColName);
+            String mappedParameterName = groupResults.tmpColumnName(parameterName);
             try ( ResultSet query = conn.prepareStatement(sql).executeQuery();
                      PreparedStatement insert = conn.prepareStatement(tableGroup.insertStatement());) {
                 while (query.next()) {
@@ -103,12 +106,11 @@ public class DataTableGroupStatistic {
                         conn.close();
                         return false;
                     }
-                    currentGroupid = query.getLong(idColName);
-                    currentParameterValue = query.getString(parameterName);
+                    currentGroupid = query.getLong(mappedIdColName);
+                    currentParameterValue = query.getString(mappedParameterName);
                     Data2DRow data2DRow = tableGroup.newRow();
                     for (String name : calNames) {
-                        String tname = groupResults.tmpColumnName(name);
-                        Object v = query.getObject(tname);
+                        Object v = query.getObject(groupResults.tmpColumnName(name));
                         data2DRow.setColumnValue(groupData.tmpColumnName(name), v);
                     }
                     if (groupid > 0 && groupid != currentGroupid) {
@@ -135,14 +137,14 @@ public class DataTableGroupStatistic {
             groupColNames = new ArrayList<>();
             List<Data2DColumn> fileColumns = new ArrayList<>();
             fileColumns.add(new Data2DColumn(idColName, ColumnType.Long));
-            fileColumns.add(new Data2DColumn(groups.getParameterName(), ColumnType.String, 200));
+            fileColumns.add(new Data2DColumn(parameterName, ColumnType.String, 200));
             fileColumns.add(new Data2DColumn(message("Count"), ColumnType.Long));
             for (String name : calNames) {
                 for (StatisticType type : calculation.types) {
                     if (type == StatisticType.Count) {
                         continue;
                     }
-                    fileColumns.add(new Data2DColumn(name + "_" + message(type.name()), ColumnType.Double));
+                    fileColumns.add(new Data2DColumn(name + "_" + message(type.name()), ColumnType.Double, 200));
                 }
             }
             targetFile.setColumns(fileColumns).setDataSize(count)

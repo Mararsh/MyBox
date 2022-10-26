@@ -223,6 +223,11 @@ public class ControlStatisticSelection extends BaseController {
         }
     }
 
+    public void mustCount() {
+        countCheck.setSelected(true);
+        countCheck.setDisable(true);
+    }
+
     public DescriptiveStatistic pickValues() {
         try {
             calculation = new DescriptiveStatistic();
@@ -325,7 +330,9 @@ public class ControlStatisticSelection extends BaseController {
     @Override
     public void selectNoneAction() {
         isSettingValues = true;
-        countCheck.setSelected(false);
+        if (!countCheck.isDisabled()) {
+            countCheck.setSelected(false);
+        }
         summationCheck.setSelected(false);
         meanCheck.setSelected(false);
         sumOfSquaresCheck.setSelected(false);

@@ -108,8 +108,6 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
                 copyNames.add(data2D.columnName(i));
             }
 
-            MyBoxLog.console(checkedColsNames);
-
             groupData = null;
             framesNumber = -1;
             parameterName = null;

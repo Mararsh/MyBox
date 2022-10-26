@@ -54,6 +54,7 @@ public class DataTableGroup {
     protected boolean ok;
 
     protected String sourceSheet, idColName, parameterName, parameterValue, parameterValueForFilename;
+    protected String mappedIdColName, mappedParameterName;
     protected List<Data2DColumn> sourceColumns;
     protected long count, groupid, groupCurrentSize;
 
@@ -156,8 +157,9 @@ public class DataTableGroup {
             targetColumns.add(new Data2DColumn(idColName, ColumnDefinition.ColumnType.Long));
             targetColumns.add(new Data2DColumn(parameterName, ColumnDefinition.ColumnType.String, 200));
             for (String name : targetNames) {
-                Data2DColumn c = sourceData.columnByName(sourceData.tmpColumnName(name));
-                targetColumns.add(c.cloneAll().setD2cid(-1).setD2id(-1));
+                Data2DColumn c = sourceData.columnByName(sourceData.tmpColumnName(name)).cloneAll();
+                c.setD2cid(-1).setD2id(-1).setColumnName(name);
+                targetColumns.add(c);
                 targetColNames.add(name);
             }
 
@@ -270,7 +272,6 @@ public class DataTableGroup {
                             for (String name : groupNames) {
                                 Object v = sourceRow.get(sourceData.tmpColumnName(name));
                                 groupMap.put(name, v);
-
                             }
                             parameterValue = groupMap.toString();
                         }
@@ -742,10 +743,12 @@ public class DataTableGroup {
                                 tableName, targetColumns, null, null, null, true);
                         tableTarget = targetData.getTableData2D();
                         insert = conn.prepareStatement(tableTarget.insertStatement());
+                        mappedIdColName = targetData.tmpColumnName(idColName);
+                        mappedParameterName = targetData.tmpColumnName(parameterName);
                     }
                     Data2DRow data2DRow = tableTarget.newRow();
-                    data2DRow.setColumnValue(idColName, groupid);
-                    data2DRow.setColumnValue(parameterName, parameterValue);
+                    data2DRow.setColumnValue(mappedIdColName, groupid);
+                    data2DRow.setColumnValue(mappedParameterName, parameterValue);
                     for (int i = 2; i < targetColNames.size(); i++) {
                         String name = targetColNames.get(i);
                         data2DRow.setColumnValue(targetData.tmpColumnName(name),
@@ -863,11 +866,10 @@ public class DataTableGroup {
             switch (targetType) {
                 case Table:
                     if (targetData != null) {
-                        targetData.setColumns(targetColumns).setDataSize(count)
+                        targetData.setDataSize(count)
                                 .setDataName(originalData.dataName() + "_" + parameterName)
-                                .setColsNumber(targetColumns.size())
                                 .setRowsNumber(count);
-                        Data2D.saveAttributes(conn, targetData, targetColumns);
+                        targetData.saveAttributes();
                     }
                     break;
 

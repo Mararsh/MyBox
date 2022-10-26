@@ -103,6 +103,8 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                 }
             });
 
+            linkCheck.visibleProperty().bind(accumulateCheck.selectedProperty());
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -400,7 +402,8 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
         }
         task = new SingletonTask<Void>(this) {
 
-            List<MapPoint> mapPoints;
+            private List<MapPoint> mapPoints;
+            private List<String> labels;
 
             @Override
             protected boolean handle() {
@@ -413,6 +416,7 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                     Color textColor = mapController.mapOptions.textColor();
                     boolean isBold = mapController.mapOptions.isBold();
                     mapPoints = new ArrayList<>();
+                    labels = new ArrayList<>();
                     for (MapPoint dataPoint : dataPoints) {
                         if (sizeCol != null) {
                             markSize = dataPoint.getMarkSize();
@@ -429,6 +433,7 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                                 .setCs(dataPoint.getCs())
                                 .setIsBold(isBold);
                         mapPoints.add(mapPoint);
+                        labels.add(dataPoint.getLabel());
                         if (++index >= max) {
                             break;
                         }
@@ -454,7 +459,7 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                     framesNumber = dataPoints.size();
                     lastFrameid = -1;
                     mapController.setPoints(mapPoints);
-                    playController.play(framesNumber, 0, framesNumber - 1);
+                    playController.play(labels);
                 }
             }
 
@@ -478,13 +483,13 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
             return;
         }
         frameEnd = false;
-        frameid = index + 1;
+        frameid = index;
         if (!accumulateCheck.isSelected() || frameid == 1) {
             mapController.webEngine.executeScript("clearMap();");
         }
         MapPoint point = mapController.mapPoints.get(index);
         mapController.drawPoint(point);
-        if (linkCheck.isSelected() && lastFrameid >= 1) {
+        if (linkCheck.isVisible() && linkCheck.isSelected() && lastFrameid >= 1) {
             MapPoint lastPoint = mapController.mapPoints.get(lastFrameid);
             String pColor = "'" + FxColorTools.color2rgb(point.getTextColor()) + "'";
             mapController.webEngine.executeScript("drawLine("

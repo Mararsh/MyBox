@@ -52,17 +52,13 @@ public class ControlPlay extends BaseController {
             this.baseName = parent.baseName;
             clear();
 
-            frameSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            frameSelector.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
                 @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                public void changed(ObservableValue ov, Number oldValue, Number newValue) {
                     if (isSettingValues) {
                         return;
                     }
-                    try {
-                        int v = Integer.valueOf(newValue);
-                        pauseFrame(v - 1);
-                    } catch (Exception e) {
-                    }
+                    pauseFrame(newValue.intValue());
                 }
             });
 
@@ -89,7 +85,8 @@ public class ControlPlay extends BaseController {
             });
 
             intervalSelector.getItems().addAll(Arrays.asList(
-                    "500", "200", "100", "1000", "50", "2000", "300", "3000", "20", "10", "6000", "30000", "12000", "60000"
+                    "500", "200", "100", "1000", "50", "2000", "300", "3000", "20", "10",
+                    "5", "2", "1", "6000", "30000", "12000", "60000"
             ));
             interval = UserConfig.getInt(baseName + "Interval", 500);
             if (interval <= 0) {
@@ -140,7 +137,7 @@ public class ControlPlay extends BaseController {
 
     // from, to, frameIndex are 0-based. Include to.
     // Displayed values are 1-based while internal values are 0-based
-    public synchronized boolean play(int total, int from, int to) {
+    public synchronized boolean play(List<String> frames, int from, int to) {
         try {
             if (timer != null) {
                 timer.cancel();
@@ -148,13 +145,12 @@ public class ControlPlay extends BaseController {
             currentIndex = 0;
             frameSelector.getItems().clear();
             totalLabel.setText("");
-            framesNumber = total;
+            framesNumber = frames.size();
             if (framesNumber < 1) {
                 return false;
             }
             fromFrame = from;
             toFrame = to;
-            List<String> frames = new ArrayList<>();
             if (fromFrame < 0 || fromFrame >= framesNumber) {
                 fromFrame = 0;
             }
@@ -165,21 +161,62 @@ public class ControlPlay extends BaseController {
                 return false;
             }
             isSettingValues = true;
-            for (int i = fromFrame + 1; i <= toFrame + 1; ++i) {
-                frames.add(i + "");
-            }
             frameSelector.getItems().addAll(frames);
-            totalLabel.setText("/" + total);
+            totalLabel.setText("/" + framesNumber);
             if (reverseCheck.isSelected()) {
-                frameSelector.setValue((toFrame + 1) + "");
+                frameSelector.getSelectionModel().select(toFrame);
                 isSettingValues = false;
                 startFrame(toFrame);
             } else {
-                frameSelector.setValue((fromFrame + 1) + "");
+                frameSelector.getSelectionModel().select(fromFrame);
                 isSettingValues = false;
                 startFrame(fromFrame);
             }
             return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return false;
+        }
+    }
+
+    public synchronized boolean play(int total, int from, int to) {
+        try {
+            if (total < 1) {
+                return false;
+            }
+            int f = from;
+            int t = to;
+            if (f < 0 || f >= total) {
+                f = 0;
+            }
+            if (t < 0 || t >= total) {
+                t = total - 1;
+            }
+            if (f > t) {
+                return false;
+            }
+            List<String> frames = new ArrayList<>();
+            for (int i = f + 1; i <= t + 1; ++i) {
+                frames.add(i + "");
+            }
+            return play(frames, f, t);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return false;
+        }
+    }
+
+    public synchronized boolean play(List<String> frames) {
+        try {
+            int size = frames.size();
+            if (size == 0) {
+                return false;
+            }
+            List<String> names = new ArrayList<>();
+            for (int i = 0; i < size; i++) {
+                names.add((i + 1) + "  " + frames.get(i));
+            }
+            return play(names, 0, size - 1);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return false;
@@ -266,7 +303,7 @@ public class ControlPlay extends BaseController {
                 return;
             }
             isSettingValues = true;
-            frameSelector.getSelectionModel().select((currentIndex + 1) + "");
+            frameSelector.getSelectionModel().select(currentIndex);
             isSettingValues = false;
             speed = speed <= 0 ? 1 : speed;
             frameNodify.set(!frameNodify.get());
