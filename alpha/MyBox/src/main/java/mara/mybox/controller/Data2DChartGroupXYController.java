@@ -27,8 +27,9 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
 
     protected DataTable groupData;
     protected int framesNumber, groupid;
-    protected List<String> copyNames, sorts;
-    protected String parameterName, parameterValue;
+    protected List<String> dataColsNames, sorts;
+    protected String parameterName, parameterValue, orderby;
+    protected boolean frameEnd = true;
 
     @FXML
     protected ControlData2DResults groupDataController;
@@ -50,6 +51,14 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     displayFrame(playController.currentIndex);
+                }
+            });
+
+            groupDataController.loadedNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    initChart(false);
+                    drawXYChart();
                 }
             });
 
@@ -103,9 +112,11 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
                 return false;
             }
             dataColsIndices.addAll(checkedColsIndices);
-            copyNames = new ArrayList<>();
+            dataColsNames = new ArrayList<>();
+            outputColumns = new ArrayList<>();
             for (int i : dataColsIndices) {
-                copyNames.add(data2D.columnName(i));
+                dataColsNames.add(data2D.columnName(i));
+                outputColumns.add(data2D.column(i));
             }
 
             groupData = null;
@@ -123,7 +134,6 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
 
     @Override
     public boolean initChart() {
-        chartController.palette = null;
         return initChart(false);
     }
 
@@ -142,11 +152,12 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
             protected boolean handle() {
                 try {
                     group = groupData(DataTableGroup.TargetType.Table,
-                            copyNames, sorts, maxData, scale);
+                            dataColsNames, sorts, maxData, scale);
                     group.run();
                     framesNumber = (int) group.groupNumber();
                     groupData = group.getTargetData();
                     parameterName = group.getParameterName();
+                    orderby = orderBy();
                     return framesNumber > 0 && groupData != null;
                 } catch (Exception e) {
                     error = e.toString();
@@ -156,28 +167,15 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
 
             @Override
             protected void whenSucceeded() {
-                try {
-                    if (groupData == null) {
-                        popError(message("NoData"));
-                        return;
-                    }
-                    groupDataController.loadData(groupData);
-                    outputColumns = new ArrayList<>();
-                    for (int i : dataColsIndices) {
-                        outputColumns.add(data2D.column(i));
-                    }
-                    chartController.palette = null;
-                    initChart(false);
-                    drawXYChart();
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
                 task = null;
+                if (ok) {
+                    groupDataController.loadData(groupData);
+                }
             }
 
         };
@@ -199,9 +197,9 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
     public void drawXYChart() {
         try {
             if (groupData == null || framesNumber <= 0) {
-                popError(message("NoData"));
                 return;
             }
+            frameEnd = true;
             playController.play(framesNumber, 0, framesNumber - 1);
 
         } catch (Exception e) {
@@ -210,10 +208,12 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
     }
 
     public void displayFrame(int index) {
-        if (groupData == null || framesNumber <= 0 || index < 0 || index > framesNumber) {
+        if (!frameEnd || groupData == null
+                || framesNumber <= 0 || index < 0 || index > framesNumber) {
             playController.clear();
             return;
         }
+        frameEnd = false;
         groupid = index + 1;
         parameterValue = null;
         if (backgroundTask != null) {
@@ -225,7 +225,7 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
             protected boolean handle() {
                 outputData = new ArrayList<>();
                 String sql = "SELECT * FROM " + groupData.getSheet()
-                        + " WHERE " + message("Group") + "=" + groupid + orderBy();
+                        + " WHERE " + message("Group") + "=" + groupid + orderby;
                 try ( Connection conn = DerbyBase.getConnection();
                          ResultSet query = conn.prepareStatement(sql).executeQuery()) {
                     while (query.next() && backgroundTask != null && !backgroundTask.isCancelled()) {
@@ -246,6 +246,7 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
                     }
                     return true;
                 } catch (Exception e) {
+                    MyBoxLog.console(e.toString());
                     error = e.toString();
                     return false;
                 }
@@ -253,23 +254,23 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
 
             @Override
             protected void whenFailed() {
-                playController.pauseAction();
-                if (!isCancelled()) {
-                    return;
-                }
-                super.whenFailed();
             }
 
             @Override
             protected void whenSucceeded() {
-                chartMaker.setDefaultChartTitle(chartTitle());
-                chartController.writeXYChart(outputColumns, outputData, null, false);
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
                 backgroundTask = null;
+                if (ok) {
+                    chartMaker.setDefaultChartTitle(chartTitle());
+                    chartController.writeXYChart(outputColumns, outputData, null, false);
+                    frameEnd = true;
+                } else {
+                    playController.pauseAction();
+                }
             }
 
         };

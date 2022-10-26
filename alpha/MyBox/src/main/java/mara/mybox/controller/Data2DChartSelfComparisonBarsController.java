@@ -32,7 +32,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
     @Override
     public void readData() {
         try {
-            outputData = readData(dataColsIndices, true);
+            outputData = scaledData(dataColsIndices, true);
             if (outputData == null) {
                 return;
             }
@@ -61,7 +61,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
             bars = DoubleTools.toDouble(calculate(data), InvalidAs.Zero);
             otherData = null;
             if (otherColsIndices != null) {
-                otherData = readData(otherColsIndices, false);
+                otherData = scaledData(otherColsIndices, false);
             }
         } catch (Exception e) {
             if (task != null) {

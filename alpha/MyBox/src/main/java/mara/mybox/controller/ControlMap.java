@@ -351,6 +351,13 @@ public class ControlMap extends BaseController {
         dataNotify.set(!dataNotify.get());
     }
 
+    public void setMinLevel() {
+        if (isSettingValues) {
+            return;
+        }
+        mapOptions.setMapSize(mapOptions.isGaoDeMap() ? 3 : 1);
+    }
+
     protected void mapClicked(double longitude, double latitude) {
 
     }
@@ -492,7 +499,7 @@ public class ControlMap extends BaseController {
             timer = null;
         }
         clearAction();
-        mapOptions.setMapSize(3);
+        setMinLevel();
         mapOptions.setFitView(false);
         mapPoints = points;
         if (mapPoints != null && !mapPoints.isEmpty()) {

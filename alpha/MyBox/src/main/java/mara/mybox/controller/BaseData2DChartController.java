@@ -193,7 +193,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                     data2D.startTask(task, filterController.filter);
                     readData();
                     data2D.stopFilter();
-                    return true;
+                    return outputData != null && !outputData.isEmpty();
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                     error = e.toString();
@@ -203,11 +203,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
             @Override
             protected void whenSucceeded() {
-                if (outputData == null || outputData.isEmpty()) {
-                    popError(message("NoData"));
-                    return;
-                }
-                outputData();
             }
 
             @Override
@@ -215,6 +210,9 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                 super.finalAction();
                 data2D.stopTask();
                 task = null;
+                if (ok) {
+                    outputData();
+                }
             }
 
         };
@@ -222,7 +220,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     }
 
     public void readData() {
-        outputData = readData(dataColsIndices, needRowNumber);
+        outputData = scaledData(dataColsIndices, needRowNumber);
     }
 
     public void outputData() {

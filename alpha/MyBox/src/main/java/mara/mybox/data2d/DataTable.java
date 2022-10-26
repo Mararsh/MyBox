@@ -268,14 +268,19 @@ public class DataTable extends Data2D {
     }
 
     public String tmpColumnName(String sourceName) {
-        if (sourceColumns == null) {
-            return sourceName;
-        }
-        int index = tmpIndex(sourceName);
-        if (index < 0) {
+        try {
+            if (sourceColumns == null) {
+                return sourceName;
+            }
+            int index = tmpIndex(sourceName);
+            if (index < 0) {
+                return null;
+            }
+            return columns.get(index).getColumnName();
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
             return null;
         }
-        return columns.get(index).getColumnName();
     }
 
     public int tmpIndex(String sourceName) {

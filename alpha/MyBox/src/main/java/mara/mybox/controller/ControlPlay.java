@@ -139,28 +139,27 @@ public class ControlPlay extends BaseController {
     // Displayed values are 1-based while internal values are 0-based
     public synchronized boolean play(List<String> frames, int from, int to) {
         try {
-            if (timer != null) {
-                timer.cancel();
-            }
-            currentIndex = 0;
-            frameSelector.getItems().clear();
-            totalLabel.setText("");
-            framesNumber = frames.size();
-            if (framesNumber < 1) {
+            clear();
+            int s = frames.size();
+            if (s < 1) {
                 return false;
             }
-            fromFrame = from;
-            toFrame = to;
-            if (fromFrame < 0 || fromFrame >= framesNumber) {
-                fromFrame = 0;
+            int f = from;
+            int t = to;
+            if (f < 0 || f >= s) {
+                f = 0;
             }
-            if (toFrame < 0 || toFrame >= framesNumber) {
-                toFrame = framesNumber - 1;
+            if (t < 0 || t >= s) {
+                t = s - 1;
             }
-            if (fromFrame > toFrame) {
+            if (f > t) {
                 return false;
             }
             isSettingValues = true;
+            fromFrame = f;
+            toFrame = t;
+            currentIndex = 0;
+            framesNumber = frames.size();
             frameSelector.getItems().addAll(frames);
             totalLabel.setText("/" + framesNumber);
             if (reverseCheck.isSelected()) {
@@ -394,11 +393,16 @@ public class ControlPlay extends BaseController {
         if (task != null && !task.isQuit()) {
             task.cancel();
         }
+        stopNodify.set(!stopNodify.get());
+
+        isSettingValues = true;
         framesNumber = 0;
         currentIndex = 0;
         fromFrame = 0;
         toFrame = -1;
-        stopNodify.set(!stopNodify.get());
+        frameSelector.getItems().clear();
+        totalLabel.setText("");
+        isSettingValues = false;
     }
 
     @Override

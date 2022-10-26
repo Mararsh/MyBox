@@ -57,7 +57,7 @@ public class Data2DSortController extends BaseData2DHandleController {
     @Override
     public boolean handleRows() {
         try {
-            DataFileCSV csvData = sortedData(targetController.name(), checkedColsIndices);
+            DataFileCSV csvData = sortedData(targetController.name(), checkedColsIndices, showRowNumber());
             if (csvData == null) {
                 return false;
             }
@@ -79,7 +79,7 @@ public class Data2DSortController extends BaseData2DHandleController {
 
     @Override
     public DataFileCSV generatedFile() {
-        return sortedData(targetController.name(), checkedColsIndices);
+        return sortedData(targetController.name(), checkedColsIndices, showRowNumber());
     }
 
     /*

@@ -79,11 +79,11 @@ public class Data2DChartXYController extends BaseData2DChartController {
 
             if (chartTypesController.isBubbleChart()) {
                 columnsBox.getChildren().addAll(categoryColumnsPane, valueColumnPane, columnCheckBoxsBox);
-                valuesLabel.setText(message("SizeColumns") + " " + message("NoSelectionMeansAll"));
+                valuesLabel.setText(message("SizeColumns"));
 
             } else {
                 columnsBox.getChildren().addAll(categoryColumnsPane, columnCheckBoxsBox);
-                valuesLabel.setText(message("ValueColumns") + " " + message("NoSelectionMeansAll"));
+                valuesLabel.setText(message("ValueColumns"));
             }
 
             changeChartAsType();
@@ -161,7 +161,6 @@ public class Data2DChartXYController extends BaseData2DChartController {
 
     public boolean initChart() {
         if (categoryColumn != null) {
-            chartController.palette = null;
             return initChart(categoryColumn.isNumberType());
         } else {
             return false;
@@ -181,6 +180,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
             } else if (checkedColsNames != null) {
                 chartMaker.setDefaultValueLabel(checkedColsNames.toString());
             }
+            chartController.palette = null;
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

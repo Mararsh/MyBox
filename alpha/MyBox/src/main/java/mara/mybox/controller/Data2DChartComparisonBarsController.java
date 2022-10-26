@@ -118,7 +118,7 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
     @Override
     public void readData() {
         try {
-            outputData = readData(dataColsIndices, true);
+            outputData = scaledData(dataColsIndices, true);
             if (outputData == null) {
                 return;
             }
@@ -139,7 +139,7 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
             bars = DoubleTools.toDouble(normalization.calculate(), InvalidAs.Zero);
             otherData = null;
             if (otherColsIndices != null) {
-                otherData = readData(otherColsIndices, false);
+                otherData = scaledData(otherColsIndices, false);
             }
         } catch (Exception e) {
             if (task != null) {

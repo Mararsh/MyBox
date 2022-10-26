@@ -276,7 +276,7 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                     maxDataNumber = Math.min(maxDataNumber > 0 ? maxDataNumber : Integer.MAX_VALUE,
                             mapController.mapOptions.getDataMax());
                     filterController.filter.setMaxPassed(maxDataNumber);
-                    csvData = sortedData(data2D.dataName(), dataColsIndices);
+                    csvData = sortedData(data2D.dataName(), dataColsIndices, false);
                     if (csvData == null) {
                         return false;
                     }

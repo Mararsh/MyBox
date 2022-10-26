@@ -454,7 +454,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         start(task);
     }
 
-    public DataTable filteredData(List<Integer> colIndices) {
+    public DataTable filteredData(List<Integer> colIndices, boolean showRowNumber) {
         try {
             if (colIndices == null) {
                 return null;
@@ -474,7 +474,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             }
             tmp2D.startTask(task, filterController.filter);
             DataTable tmpTable;
-            boolean showRowNumber = showRowNumber();
             if (isAllPages()) {
                 tmpTable = tmp2D.toTmpTable(task, colIndices, showRowNumber, false, invalidAs);
             } else {
@@ -520,9 +519,9 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         }
     }
 
-    public DataFileCSV sortedData(String dname, List<Integer> colIndices) {
+    public DataFileCSV sortedData(String dname, List<Integer> colIndices, boolean showRowNumber) {
         try {
-            DataTable tmpTable = filteredData(colIndices);
+            DataTable tmpTable = filteredData(colIndices, showRowNumber);
             if (tmpTable == null) {
                 return null;
             }
@@ -544,7 +543,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             if (groupController == null) {
                 return null;
             }
-            DataTable tmpTable = filteredData(data2D.columnIndices());
+            DataTable tmpTable = filteredData(data2D.columnIndices(), showRowNumber());
             List<String> tnames = new ArrayList<>();
             if (groupController.groupName != null) {
                 tnames.add(groupController.groupName);
@@ -590,7 +589,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         }
     }
 
-    public List<List<String>> readData(List<Integer> cols, boolean needRowNumber) {
+    public List<List<String>> scaledData(List<Integer> cols, boolean needRowNumber) {
         try {
             List<List<String>> data;
             if (isAllPages()) {
