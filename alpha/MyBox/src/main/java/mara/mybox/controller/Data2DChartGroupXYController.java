@@ -29,7 +29,6 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
     protected int framesNumber, groupid;
     protected List<String> dataColsNames, sorts;
     protected String parameterName, parameterValue, orderby;
-    protected boolean frameEnd = true;
 
     @FXML
     protected ControlData2DResults groupDataController;
@@ -47,18 +46,10 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
 
             playController.setParameters(this);
 
-            playController.frameNodify.addListener(new ChangeListener<Boolean>() {
+            playController.frameStartNodify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     displayFrame(playController.currentIndex);
-                }
-            });
-
-            groupDataController.loadedNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    initChart(false);
-                    drawXYChart();
                 }
             });
 
@@ -165,6 +156,36 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
                 }
             }
 
+            protected String orderBy() {
+                if (groupData == null) {
+                    return null;
+                }
+                String orderBy = null;
+                if (sorts != null && !sorts.isEmpty()) {
+                    int desclen = ("-" + message("Descending")).length();
+                    int asclen = ("-" + message("Ascending")).length();
+                    String name, stype;
+                    for (String sort : sorts) {
+                        if (sort.endsWith("-" + message("Descending"))) {
+                            name = sort.substring(0, sort.length() - desclen);
+                            stype = " DESC";
+                        } else if (sort.endsWith("-" + message("Ascending"))) {
+                            name = sort.substring(0, sort.length() - asclen);
+                            stype = " ASC";
+                        } else {
+                            continue;
+                        }
+                        name = groupData.tmpColumnName(name);
+                        if (orderBy == null) {
+                            orderBy = name + stype;
+                        } else {
+                            orderBy += ", " + name + stype;
+                        }
+                    }
+                }
+                return orderBy == null ? "" : " ORDER BY " + orderBy;
+            }
+
             @Override
             protected void whenSucceeded() {
             }
@@ -174,7 +195,9 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
                 super.finalAction();
                 task = null;
                 if (ok) {
-                    groupDataController.loadData(groupData);
+                    groupDataController.loadData(groupData.cloneAll());
+                    initChart(false);
+                    drawXYChart();
                 }
             }
 
@@ -199,7 +222,6 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
             if (groupData == null || framesNumber <= 0) {
                 return;
             }
-            frameEnd = true;
             playController.play(framesNumber, 0, framesNumber - 1);
 
         } catch (Exception e) {
@@ -207,13 +229,11 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
         }
     }
 
-    public void displayFrame(int index) {
-        if (!frameEnd || groupData == null
-                || framesNumber <= 0 || index < 0 || index > framesNumber) {
+    public synchronized void displayFrame(int index) {
+        if (groupData == null || framesNumber <= 0 || index < 0 || index > framesNumber) {
             playController.clear();
             return;
         }
-        frameEnd = false;
         groupid = index + 1;
         parameterValue = null;
         if (backgroundTask != null) {
@@ -267,44 +287,11 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
                 if (ok) {
                     chartMaker.setDefaultChartTitle(chartTitle());
                     chartController.writeXYChart(outputColumns, outputData, null, false);
-                    frameEnd = true;
-                } else {
-                    playController.pauseAction();
                 }
             }
 
         };
         start(backgroundTask, false);
-    }
-
-    protected String orderBy() {
-        if (groupData == null) {
-            return null;
-        }
-        String orderBy = null;
-        if (sorts != null && !sorts.isEmpty()) {
-            int desclen = ("-" + message("Descending")).length();
-            int asclen = ("-" + message("Ascending")).length();
-            String name, stype;
-            for (String sort : sorts) {
-                if (sort.endsWith("-" + message("Descending"))) {
-                    name = sort.substring(0, sort.length() - desclen);
-                    stype = " DESC";
-                } else if (sort.endsWith("-" + message("Ascending"))) {
-                    name = sort.substring(0, sort.length() - asclen);
-                    stype = " ASC";
-                } else {
-                    continue;
-                }
-                name = groupData.tmpColumnName(name);
-                if (orderBy == null) {
-                    orderBy = name + stype;
-                } else {
-                    orderBy += ", " + name + stype;
-                }
-            }
-        }
-        return orderBy == null ? "" : " ORDER BY " + orderBy;
     }
 
     /*

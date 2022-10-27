@@ -149,6 +149,7 @@ public class ControlData2DSimpleLinearRegressionTable extends ControlData2DLoad 
                 controller.alphaSelector.getSelectionModel().select(regressController.alpha + "");
                 controller.cloneOptions(regressController);
                 controller.setParameters(regressController.tableController);
+                controller.okAction();
                 controller.requestMouse();
             } catch (Exception e) {
                 MyBoxLog.error(e.toString());

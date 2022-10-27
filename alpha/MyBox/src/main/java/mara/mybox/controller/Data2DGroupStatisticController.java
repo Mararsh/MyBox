@@ -167,7 +167,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
                     }
                     groupData = group.getTargetData();
                     Platform.runLater(() -> {
-                        groupDataController.loadData(groupData);
+                        groupDataController.loadData(groupData.cloneAll());
                     });
                     statistic = new DataTableGroupStatistic()
                             .setGroups(group)
@@ -187,7 +187,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
 
             @Override
             protected void whenSucceeded() {
-                statisticDataController.loadData(statisticFile);
+                statisticDataController.loadData(statisticFile.cloneAll());
             }
 
             @Override

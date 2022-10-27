@@ -61,14 +61,14 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
             while (handledNames.contains(cName)) {
                 cName += random.nextInt(10);
             }
-            outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Long));
+            outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Long, 200));
             handledNames.add(cName);
 
             cName = freName + "_" + message("CountPercentage");
             while (handledNames.contains(cName)) {
                 cName += random.nextInt(10);
             }
-            outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+            outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, 200));
             handledNames.add(cName);
 
             frequency = caseInsensitiveCheck.isSelected()

@@ -18,6 +18,22 @@ public class Data2DCopyController extends BaseData2DHandleController {
     }
 
     @Override
+    public boolean initData() {
+        try {
+            if (!super.initData()) {
+                return false;
+            }
+
+            outputColumns = data2D.targetColumns(checkedColsIndices, otherColsIndices, showRowNumber(), null);
+
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    @Override
     public DataFileCSV generatedFile() {
         return data2D.copy(targetController.name(),
                 checkedColsIndices, rowNumberCheck.isSelected(), colNameCheck.isSelected());

@@ -29,7 +29,7 @@ public class ControlPlay extends BaseController {
     protected int interval, framesNumber, currentIndex, fromFrame, toFrame;
     protected double speed;
     protected long currentDelay;
-    protected SimpleBooleanProperty frameNodify, stopNodify, intervalNodify;
+    protected SimpleBooleanProperty frameStartNodify, stopNodify, intervalNodify;
 
     @FXML
     protected ComboBox<String> speedSelector, intervalSelector, frameSelector;
@@ -41,7 +41,7 @@ public class ControlPlay extends BaseController {
     protected Label totalLabel;
 
     public ControlPlay() {
-        frameNodify = new SimpleBooleanProperty();
+        frameStartNodify = new SimpleBooleanProperty();
         stopNodify = new SimpleBooleanProperty();
         intervalNodify = new SimpleBooleanProperty();
     }
@@ -293,7 +293,6 @@ public class ControlPlay extends BaseController {
         return correctIndex(index);
     }
 
-    // index is 0-based
     protected void displayFrame(int index) {
         try {
             currentIndex = correctIndex(index);
@@ -305,7 +304,7 @@ public class ControlPlay extends BaseController {
             frameSelector.getSelectionModel().select(currentIndex);
             isSettingValues = false;
             speed = speed <= 0 ? 1 : speed;
-            frameNodify.set(!frameNodify.get());
+            frameStartNodify.set(!frameStartNodify.get());
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -409,7 +408,7 @@ public class ControlPlay extends BaseController {
     public void cleanPane() {
         try {
             clear();
-            frameNodify = null;
+            frameStartNodify = null;
             stopNodify = null;
             intervalNodify = null;
         } catch (Exception e) {

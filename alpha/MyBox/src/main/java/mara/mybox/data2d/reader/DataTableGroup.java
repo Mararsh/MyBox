@@ -311,6 +311,7 @@ public class DataTableGroup {
                 return false;
             }
             String mappedGroupName = sourceData.tmpColumnName(groupName);
+
             double maxValue = Double.NaN, minValue = Double.NaN;
             String sql = "SELECT MAX(" + mappedGroupName + ") AS dmax, MIN("
                     + mappedGroupName + ") AS dmin FROM " + sourceSheet;
@@ -333,14 +334,16 @@ public class DataTableGroup {
                 return false;
             }
             long maxGroup = Long.MAX_VALUE;
+            double interval = splitInterval;
             if (type == GroupType.ValueSplitNumber) {
                 if (splitNumber == 0) {
                     return false;
                 }
-                splitInterval = (maxValue - minValue) / splitNumber;
+                interval = (maxValue - minValue) / splitNumber;
                 maxGroup = splitNumber;
             }
             double from = minValue, to;
+            int fscale = sourceData.columnByName(mappedGroupName).needScale() ? scale : 0;
             String condition;
             String orderBy = valueOrderBy();
             conn.setAutoCommit(false);
@@ -348,21 +351,21 @@ public class DataTableGroup {
                 if (task == null || task.isCancelled()) {
                     return false;
                 }
-                to = from + splitInterval;
+                to = from + interval;
                 if (groupid < maxGroup) {
                     groupChanged();
                 }
                 if (to >= maxValue || groupid >= maxGroup) {
                     condition = mappedGroupName + " >= " + from;
-                    String bs = DoubleTools.scaleString(from, scale);
-                    String es = DoubleTools.scaleString(maxValue, scale);
+                    String bs = DoubleTools.scaleString(from, fscale);
+                    String es = DoubleTools.scaleString(maxValue, fscale);
                     parameterValue = "[" + bs + "," + es + "]";
                     parameterValueForFilename = bs + "-" + es;
                     from = maxValue + 1;
                 } else {
                     condition = mappedGroupName + " >= " + from + " AND " + mappedGroupName + " < " + to;
-                    String bs = DoubleTools.scaleString(from, scale);
-                    String es = DoubleTools.scaleString(to, scale);
+                    String bs = DoubleTools.scaleString(from, fscale);
+                    String es = DoubleTools.scaleString(to, fscale);
                     parameterValue = "[" + bs + "," + es + ")";
                     parameterValueForFilename = bs + "-" + es;
                     from = to;

@@ -1,11 +1,9 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -32,21 +30,6 @@ public class Data2DSortController extends BaseData2DHandleController {
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
-            List<String> colsNames = new ArrayList<>();
-            for (String name : checkedColsNames) {
-                if (!colsNames.contains(name)) {
-                    colsNames.add(name);
-                }
-            }
-            for (String name : sortNames) {
-                if (!colsNames.contains(name)) {
-                    colsNames.add(name);
-                }
-            }
-            checkedColsIndices = new ArrayList<>();
-            for (String name : colsNames) {
-                checkedColsIndices.add(data2D.colOrder(name));
-            }
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -56,30 +39,14 @@ public class Data2DSortController extends BaseData2DHandleController {
 
     @Override
     public boolean handleRows() {
-        try {
-            DataFileCSV csvData = sortedData(targetController.name(), checkedColsIndices, showRowNumber());
-            if (csvData == null) {
-                return false;
-            }
-            outputData = csvData.allRows(false);
-            FileDeleteTools.delete(csvData.getFile());
-            outputColumns = csvData.columns;
-            if (showColNames()) {
-                outputData.add(0, csvData.columnNames());
-            }
-            return true;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e.toString());
-            return false;
-        }
+        MyBoxLog.console(checkedColsIndices);
+        outputData = sortedData(checkedColsIndices, showRowNumber());
+        return outputData != null && !outputData.isEmpty();
     }
 
     @Override
     public DataFileCSV generatedFile() {
-        return sortedData(targetController.name(), checkedColsIndices, showRowNumber());
+        return sortedFile(targetController.name(), checkedColsIndices, showRowNumber());
     }
 
     /*

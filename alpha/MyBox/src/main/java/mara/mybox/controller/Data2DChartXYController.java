@@ -111,7 +111,6 @@ public class Data2DChartXYController extends BaseData2DChartController {
             if (!super.initData()) {
                 return false;
             }
-
             dataColsIndices = new ArrayList<>();
             outputColumns = new ArrayList<>();
             outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));

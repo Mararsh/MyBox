@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import javafx.scene.paint.Color;
@@ -32,7 +33,10 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
     @Override
     public void readData() {
         try {
-            outputData = scaledData(dataColsIndices, true);
+            List<Integer> cols = new ArrayList<>();
+            cols.addAll(dataColsIndices);
+            cols.addAll(otherColsIndices);
+            outputData = scaledData(cols, true);
             if (outputData == null) {
                 return;
             }
@@ -59,10 +63,6 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
                 }
             }
             bars = DoubleTools.toDouble(calculate(data), InvalidAs.Zero);
-            otherData = null;
-            if (otherColsIndices != null) {
-                otherData = scaledData(otherColsIndices, false);
-            }
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -171,13 +171,14 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
                 }
                 colors[i] = color;
             }
+            int otherStart = dataColsIndices.size() + 1;
             for (int r = 0; r < rowsNumber; r++) {
-                List<String> tableRow = outputData.get(r);
+                List<String> row = outputData.get(r);
 
                 s.append("<TR>\n");
 
                 s.append("<TD align=center class=\"RowNumber\">")
-                        .append(message("Row")).append(tableRow.get(0)).append("</TD>\n");
+                        .append(message("Row")).append(row.get(0)).append("</TD>\n");
 
                 if (rowsRadio.isSelected()) {
                     if (absoluateRadio.isSelected()) {
@@ -195,14 +196,11 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
                 }
                 for (int i = 0; i < colsNumber; i++) {
                     s.append("<TD>")
-                            .append(valueBar(tableRow.get(i + 1), bars[r][i], colors[i], allNeg, allPos))
+                            .append(valueBar(row.get(i + 1), bars[r][i], colors[i], allNeg, allPos))
                             .append("</TD>\n");
                 }
-                if (otherColsNumber > 0) {
-                    List<String> otherRow = otherData.get(r);
-                    for (int i = 0; i < otherColsNumber; i++) {
-                        s.append("<TD class=\"Others\">").append(otherRow.get(i)).append("</TD>\n");
-                    }
+                for (int i = otherStart; i < row.size(); i++) {
+                    s.append("<TD class=\"Others\">").append(row.get(i)).append("</TD>\n");
                 }
                 s.append("</TR>\n");
             }

@@ -461,7 +461,7 @@ public class DataTable extends Data2D {
     }
 
     // Based on results of "Data2D_Convert.toTmpTable(...)"
-    public DataFileCSV sort(String dname, SingletonTask task,
+    public DataFileCSV sort(String dname, SingletonTask task, int colsLen,
             List<String> orders, int maxData, boolean includeColName) {
         if (sourceColumns == null) {
             return null;
@@ -513,7 +513,7 @@ public class DataTable extends Data2D {
             while (query.next() && task != null && !task.isCancelled()) {
                 Data2DRow dataRow = tableData2D.readData(query);
                 List<String> rowValues = new ArrayList<>();
-                for (int i = 1; i < columns.size(); i++) {  // skip id column
+                for (int i = 1; i <= colsLen; i++) {  // skip id column
                     Data2DColumn column = columns.get(i);
                     Object v = dataRow.getColumnValue(column.getColumnName());
                     rowValues.add(column.toString(v));
@@ -522,11 +522,12 @@ public class DataTable extends Data2D {
                 rowIndex++;
             }
             DataFileCSV targetData = new DataFileCSV();
-            targetData.setColumns(sourceColumns)
+            List<Data2DColumn> tcolumns = sourceColumns.subList(0, colsLen);
+            targetData.setColumns(tcolumns)
                     .setFile(csvFile).setDataName(dname)
                     .setCharset(Charset.forName("UTF-8"))
                     .setDelimiter(",").setHasHeader(includeColName)
-                    .setColsNumber(sourceColumns.size()).setRowsNumber(rowIndex);
+                    .setColsNumber(tcolumns.size()).setRowsNumber(rowIndex);
             return targetData;
         } catch (Exception e) {
             if (task != null) {

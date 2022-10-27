@@ -26,6 +26,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.FileDeleteTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -368,8 +369,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                 orders = null;
             }
 
-            outputColumns = data2D.targetColumns(checkedColsIndices, otherColsIndices, showRowNumber(), null);
-
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -454,7 +453,19 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         start(task);
     }
 
-    public DataTable filteredData(List<Integer> colIndices, boolean showRowNumber) {
+    protected void startOperation() {
+        try {
+            if (isAllPages()) {
+                handleAllTask();
+            } else {
+                handleRowsTask();
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    public DataTable filteredTable(List<Integer> colIndices, boolean needRowNumber) {
         try {
             if (colIndices == null) {
                 return null;
@@ -475,13 +486,13 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             tmp2D.startTask(task, filterController.filter);
             DataTable tmpTable;
             if (isAllPages()) {
-                tmpTable = tmp2D.toTmpTable(task, colIndices, showRowNumber, false, invalidAs);
+                tmpTable = tmp2D.toTmpTable(task, colIndices, needRowNumber, false, invalidAs);
             } else {
-                outputData = filtered(colIndices, showRowNumber);
+                outputData = filtered(colIndices, needRowNumber);
                 if (outputData == null || outputData.isEmpty()) {
                     return null;
                 }
-                tmpTable = tmp2D.toTmpTable(task, colIndices, outputData, showRowNumber, false, invalidAs);
+                tmpTable = tmp2D.toTmpTable(task, colIndices, outputData, needRowNumber, false, invalidAs);
                 outputData = null;
             }
             tmp2D.stopFilter();
@@ -490,6 +501,21 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             if (task != null) {
                 task.setError(e.toString());
             }
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public List<List<String>> filteredData(List<Integer> colIndices, boolean needRowNumber) {
+        try {
+            List<List<String>> data;
+            if (isAllPages()) {
+                data = data2D.allRows(colIndices, needRowNumber);
+            } else {
+                data = filtered(colIndices, needRowNumber);
+            }
+            return data;
+        } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
         }
@@ -519,13 +545,44 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         }
     }
 
-    public DataFileCSV sortedData(String dname, List<Integer> colIndices, boolean showRowNumber) {
+    public List<Integer> sortIndices() {
         try {
-            DataTable tmpTable = filteredData(colIndices, showRowNumber);
+            if (orders == null || orders.isEmpty()) {
+                return null;
+            }
+            List<Integer> cols = new ArrayList<>();
+            for (String name : sortNames()) {
+                int col = data2D.colOrder(name);
+                if (!cols.contains(col)) {
+                    cols.add(col);
+                }
+            }
+            return cols;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public DataFileCSV sortedFile(String dname, List<Integer> colIndices, boolean needRowNumber) {
+        try {
+            List<Integer> cols = new ArrayList<>();
+            cols.addAll(colIndices);
+            List<Integer> sortCols = sortIndices();
+            if (sortCols != null) {
+                for (int col : sortCols) {
+                    if (!cols.contains(col)) {
+                        cols.add(col);
+                    }
+                }
+            }
+            DataTable tmpTable = filteredTable(cols, needRowNumber);
             if (tmpTable == null) {
                 return null;
             }
-            DataFileCSV csvData = tmpTable.sort(dname, task, orders, maxData, showColNames());
+            DataFileCSV csvData = tmpTable.sort(dname, task,
+                    colIndices.size() + (needRowNumber ? 1 : 0),
+                    orders, maxData, showColNames());
             tmpTable.drop();
             return csvData;
         } catch (Exception e) {
@@ -537,13 +594,35 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         }
     }
 
+    public List<List<String>> sortedData(List<Integer> colIndices, boolean needRowNumber) {
+        try {
+            DataFileCSV csvData = sortedFile(data2D.dataName(), colIndices, needRowNumber);
+            if (csvData == null) {
+                return null;
+            }
+            outputData = csvData.allRows(false);
+            if (showColNames()) {
+                outputData.add(0, csvData.columnNames());
+            }
+            FileDeleteTools.delete(csvData.getFile());
+            outputColumns = csvData.columns;
+            return outputData;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
     public DataTableGroup groupData(DataTableGroup.TargetType targetType,
             List<String> copyNames, List<String> sorts, long max, int dscale) {
         try {
             if (groupController == null) {
                 return null;
             }
-            DataTable tmpTable = filteredData(data2D.columnIndices(), showRowNumber());
+            DataTable tmpTable = filteredTable(data2D.columnIndices(), showRowNumber());
             List<String> tnames = new ArrayList<>();
             if (groupController.groupName != null) {
                 tnames.add(groupController.groupName);
@@ -577,27 +656,25 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         }
     }
 
-    protected void startOperation() {
-        try {
-            if (isAllPages()) {
-                handleAllTask();
-            } else {
-                handleRowsTask();
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
     public List<List<String>> scaledData(List<Integer> cols, boolean needRowNumber) {
         try {
             List<List<String>> data;
-            if (isAllPages()) {
-                data = data2D.allRows(cols, needRowNumber);
+            if (maxData > 0
+                    || (sortController != null && orders != null && !orders.isEmpty())) {
+                data = sortedData(cols, needRowNumber);
             } else {
-                data = filtered(cols, needRowNumber);
+                data = filteredData(cols, needRowNumber);
             }
-            if (data == null || scaleSelector == null || scale < 0) {
+            return scale(data, cols, needRowNumber);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public List<List<String>> scale(List<List<String>> data, List<Integer> cols, boolean needRowNumber) {
+        try {
+            if (data == null || cols == null || scaleSelector == null || scale < 0) {
                 return data;
             }
             boolean needScale = false;

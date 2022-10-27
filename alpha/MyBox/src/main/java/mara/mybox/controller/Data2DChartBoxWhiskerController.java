@@ -345,7 +345,6 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
             if (!super.initData()) {
                 return false;
             }
-            chartController.palette = null;
             categorysCol = -1;
             if (rowsRadio.isSelected() && selectedCategory != null
                     && categoryColumnSelector.getSelectionModel().getSelectedIndex() != 0) {
@@ -379,9 +378,9 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
                     .setColsNames(checkedColsNames)
                     .setCategoryName(categorysCol >= 0 ? selectedCategory : null)
                     .setInvalidAs(invalidAs);
-            if (categorysCol >= 0) {
-                dataColsIndices.add(0, categorysCol);
-            }
+
+            chartController.palette = null;
+
             return calculation.prepare();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -393,6 +392,12 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
     public void readData() {
         try {
             boolean ok;
+            dataColsIndices = new ArrayList<>();
+            categorysCol = -1;
+            if (rowsRadio.isSelected() && categorysCol >= 0) {
+                dataColsIndices.add(categorysCol);
+            }
+            dataColsIndices.addAll(checkedColsIndices);
             calculation.setTask(task);
             if (isAllPages()) {
                 ok = handlePages();

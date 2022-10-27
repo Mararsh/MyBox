@@ -1,8 +1,6 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -11,7 +9,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
-import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import static mara.mybox.value.Languages.message;
@@ -31,7 +28,6 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
     protected int barWidth = 100, categorysCol;
     protected EventListener clickListener;
     protected boolean randomColor;
-    protected List<List<String>> otherData;
 
     @FXML
     protected ToggleGroup compareGroup;
@@ -315,38 +311,7 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
             popError(message("NoData"));
             return;
         }
-        try {
-            List<Data2DColumn> allColumns = new ArrayList<>();
-            allColumns.addAll(outputColumns);
-            MyBoxLog.console(dataColsIndices);
-            List<Integer> moreCols = new ArrayList<>();
-            MyBoxLog.console(otherColsIndices);
-            if (otherColsIndices != null) {
-                for (int c = 0; c < otherColsIndices.size(); c++) {
-                    int col = otherColsIndices.get(c);
-                    if (!dataColsIndices.contains(col)) {
-                        allColumns.add(data2D.column(col));
-                        moreCols.add(c);
-                    }
-                }
-            }
-            if (moreCols.isEmpty() || otherData == null) {
-                DataManufactureController.open(allColumns, outputData);
-                return;
-            }
-            List<List<String>> allData = new ArrayList<>();
-            for (int r = 0; r < outputData.size(); r++) {
-                List<String> row = outputData.get(r);
-                List<String> orow = otherData.get(r);
-                for (int c : moreCols) {
-                    row.add(orow.get(c));
-                }
-                allData.add(row);
-            }
-            DataManufactureController.open(allColumns, allData);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+        DataManufactureController.open(outputColumns, outputData);
     }
 
     @FXML

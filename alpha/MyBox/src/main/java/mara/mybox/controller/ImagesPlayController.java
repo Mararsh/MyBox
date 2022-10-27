@@ -136,7 +136,7 @@ public class ImagesPlayController extends BaseImagesListController {
 
             playController.setParameters(this);
 
-            playController.frameNodify.addListener(new ChangeListener<Boolean>() {
+            playController.frameStartNodify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     displayFrame(playController.currentIndex);
@@ -648,7 +648,7 @@ public class ImagesPlayController extends BaseImagesListController {
             image = thumb(imageInformation);
             imageView.setImage(image);
             if (image == null) {
-                playController.pause();
+//                playController.pause();
                 return;
             }
             refinePane();

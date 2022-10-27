@@ -40,7 +40,6 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
     protected double maxValue, minValue;
     protected List<MapPoint> dataPoints;
     protected int framesNumber, frameid, lastFrameid;
-    protected boolean frameEnd = true;
 
     @FXML
     protected ComboBox<String> labelSelector, longitudeSelector, latitudeSelector, sizeSelector;
@@ -96,7 +95,7 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
 
             playController.setParameters(this);
 
-            playController.frameNodify.addListener(new ChangeListener<Boolean>() {
+            playController.frameStartNodify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     displayFrame(playController.currentIndex);
@@ -276,7 +275,7 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                     maxDataNumber = Math.min(maxDataNumber > 0 ? maxDataNumber : Integer.MAX_VALUE,
                             mapController.mapOptions.getDataMax());
                     filterController.filter.setMaxPassed(maxDataNumber);
-                    csvData = sortedData(data2D.dataName(), dataColsIndices, false);
+                    csvData = sortedFile(data2D.dataName(), dataColsIndices, false);
                     if (csvData == null) {
                         return false;
                     }
@@ -455,7 +454,6 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                 data2D.stopTask();
                 task = null;
                 if (ok) {
-                    frameEnd = true;
                     framesNumber = dataPoints.size();
                     lastFrameid = -1;
                     mapController.setPoints(mapPoints);
@@ -477,12 +475,11 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
     }
 
     public void displayFrame(int index) {
-        if (!frameEnd || mapController.mapPoints == null
+        if (mapController.mapPoints == null
                 || framesNumber <= 0 || index < 0 || index > framesNumber) {
             playController.clear();
             return;
         }
-        frameEnd = false;
         frameid = index;
         if (!accumulateCheck.isSelected() || frameid == 1) {
             mapController.webEngine.executeScript("clearMap();");
@@ -502,7 +499,6 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                     + point.getLongitude() + ", " + point.getLatitude() + ");");
         }
         lastFrameid = frameid;
-        frameEnd = true;
     }
 
     /*
