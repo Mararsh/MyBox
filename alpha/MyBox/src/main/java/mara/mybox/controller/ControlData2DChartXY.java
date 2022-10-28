@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.chart.Axis;
@@ -15,7 +16,6 @@ import mara.mybox.fxml.chart.XYChartMaker;
 public class ControlData2DChartXY extends BaseData2DChartFx {
 
     protected XYChartMaker<Axis, Axis> chartMaker;
-    protected List<Integer> colIndics;
     protected Data2DChartXYOptionsController optionsController;
 
     public ControlData2DChartXY() {
@@ -33,19 +33,21 @@ public class ControlData2DChartXY extends BaseData2DChartFx {
     }
 
     public void writeXYChart(List<Data2DColumn> columns, List<List<String>> data) {
-        writeXYChart(columns, data, null, true);
+        List<Integer> valueIndices = new ArrayList<>();
+        for (int i = 1; i < columns.size(); i++) {
+            valueIndices.add(i);
+        }
+        writeXYChart(columns, data, 0, valueIndices);
     }
 
     public void writeXYChart(List<Data2DColumn> columns, List<List<String>> data,
-            List<Integer> colIndics, boolean rowNumber) {
+            int catgoryCol, List<Integer> valueCols) {
         this.columns = columns;
         this.data = data;
-        this.colIndics = colIndics;
-        this.rowNumber = rowNumber;
         chartMaker.setPalette(makePalette());
         chartMaker.makeChart();
         setChart(chartMaker.getXyChart());
-        chartMaker.writeXYChart(columns, data, colIndics, rowNumber);
+        chartMaker.writeXYChart(columns, data, catgoryCol, valueCols);
         if (optionsController != null && optionsController.isShowing()
                 && !chartMaker.getChartName().equals(optionsController.chartName)) {
             optionsController.close();

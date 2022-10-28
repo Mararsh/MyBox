@@ -27,7 +27,6 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
 
     protected DataTable groupData;
     protected int framesNumber, groupid;
-    protected List<String> dataColsNames, sorts;
     protected String parameterName, parameterValue, orderby;
 
     @FXML
@@ -72,49 +71,14 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
     @Override
     public boolean initData() {
         try {
-            if (!groupController.pickValues()) {
+            if (!super.initData()) {
                 return false;
-            }
-            checkObject();
-            checkInvalidAs();
-
-            dataColsIndices = new ArrayList<>();
-            selectedCategory = categoryColumnSelector.getSelectionModel().getSelectedItem();
-            int categoryCol = data2D.colOrder(selectedCategory);
-            if (categoryCol < 0) {
-                outOptionsError(message("SelectToHandle") + ": " + message("Column"));
-                tabPane.getSelectionModel().select(optionsTab);
-                return false;
-            }
-            dataColsIndices.add(categoryCol);
-            if (chartTypesController.isBubbleChart()) {
-                selectedValue = valueColumnSelector.getSelectionModel().getSelectedItem();
-                int valueCol = data2D.colOrder(selectedValue);
-                if (valueCol < 0) {
-                    outOptionsError(message("SelectToHandle") + ": " + message("Column"));
-                    tabPane.getSelectionModel().select(optionsTab);
-                    return false;
-                }
-                dataColsIndices.add(valueCol);
-            }
-            if (checkedColsIndices == null || checkedColsIndices.isEmpty()) {
-                outOptionsError(message("SelectToHandle") + ": " + message("Column"));
-                tabPane.getSelectionModel().select(optionsTab);
-                return false;
-            }
-            dataColsIndices.addAll(checkedColsIndices);
-            dataColsNames = new ArrayList<>();
-            outputColumns = new ArrayList<>();
-            for (int i : dataColsIndices) {
-                dataColsNames.add(data2D.columnName(i));
-                outputColumns.add(data2D.column(i));
             }
 
             groupData = null;
             framesNumber = -1;
             parameterName = null;
             parameterValue = null;
-            sorts = sortController.selectedNames();
             groupid = -1;
             return true;
         } catch (Exception e) {
@@ -143,47 +107,17 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
             protected boolean handle() {
                 try {
                     group = groupData(DataTableGroup.TargetType.Table,
-                            dataColsNames, sorts, maxData, scale);
+                            outputNames, orders, maxData, scale);
                     group.run();
                     framesNumber = (int) group.groupNumber();
                     groupData = group.getTargetData();
                     parameterName = group.getParameterName();
-                    orderby = orderBy();
+                    orderby = group.orderByString();
                     return framesNumber > 0 && groupData != null;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
                 }
-            }
-
-            protected String orderBy() {
-                if (groupData == null) {
-                    return null;
-                }
-                String orderBy = null;
-                if (sorts != null && !sorts.isEmpty()) {
-                    int desclen = ("-" + message("Descending")).length();
-                    int asclen = ("-" + message("Ascending")).length();
-                    String name, stype;
-                    for (String sort : sorts) {
-                        if (sort.endsWith("-" + message("Descending"))) {
-                            name = sort.substring(0, sort.length() - desclen);
-                            stype = " DESC";
-                        } else if (sort.endsWith("-" + message("Ascending"))) {
-                            name = sort.substring(0, sort.length() - asclen);
-                            stype = " ASC";
-                        } else {
-                            continue;
-                        }
-                        name = groupData.tmpColumnName(name);
-                        if (orderBy == null) {
-                            orderBy = name + stype;
-                        } else {
-                            orderBy += ", " + name + stype;
-                        }
-                    }
-                }
-                return orderBy == null ? "" : " ORDER BY " + orderBy;
             }
 
             @Override
@@ -222,8 +156,8 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
             if (groupData == null || framesNumber <= 0) {
                 return;
             }
+            makeIndices();
             playController.play(framesNumber, 0, framesNumber - 1);
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -286,7 +220,8 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
                 backgroundTask = null;
                 if (ok) {
                     chartMaker.setDefaultChartTitle(chartTitle());
-                    chartController.writeXYChart(outputColumns, outputData, null, false);
+                    chartController.writeXYChart(outputColumns, outputData,
+                            categoryIndex, valueIndices);
                 }
             }
 

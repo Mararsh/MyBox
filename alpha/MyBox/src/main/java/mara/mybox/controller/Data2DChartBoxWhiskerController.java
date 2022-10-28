@@ -352,15 +352,15 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
             }
             calculation = new DescriptiveStatistic()
                     .add(StatisticType.Mean)
-                    .add(StatisticType.Median)
-                    .add(StatisticType.MaximumQ4)
                     .add(StatisticType.MinimumQ0)
-                    .add(StatisticType.UpperQuartile)
                     .add(StatisticType.LowerQuartile)
-                    .add(StatisticType.UpperExtremeOutlierLine)
-                    .add(StatisticType.UpperMildOutlierLine)
+                    .add(StatisticType.Median)
+                    .add(StatisticType.UpperQuartile)
+                    .add(StatisticType.MaximumQ4)
                     .add(StatisticType.LowerExtremeOutlierLine)
                     .add(StatisticType.LowerMildOutlierLine)
+                    .add(StatisticType.UpperMildOutlierLine)
+                    .add(StatisticType.UpperExtremeOutlierLine)
                     .setScale(scale);
             switch (objectType) {
                 case Rows:
@@ -393,11 +393,10 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
         try {
             boolean ok;
             dataColsIndices = new ArrayList<>();
-            categorysCol = -1;
-            if (rowsRadio.isSelected() && categorysCol >= 0) {
+            dataColsIndices.addAll(checkedColsIndices);
+            if (categorysCol >= 0 && !dataColsIndices.contains(categorysCol)) {
                 dataColsIndices.add(categorysCol);
             }
-            dataColsIndices.addAll(checkedColsIndices);
             calculation.setTask(task);
             if (isAllPages()) {
                 ok = handlePages();
@@ -433,17 +432,11 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
             outputColumns = new ArrayList<>();
             outputColumns.add(new Data2DColumn(categoryName(), ColumnDefinition.ColumnType.String));
             String prefix = (allRadio.isSelected() ? message("All") : message("Column")) + "-";
-            outputColumns.add(new Data2DColumn(prefix + message("Mean"), ColumnDefinition.ColumnType.Double));
-            outputColumns.add(new Data2DColumn(prefix + message("MinimumQ0"), ColumnDefinition.ColumnType.Double));
-            outputColumns.add(new Data2DColumn(prefix + message("LowerQuartile"), ColumnDefinition.ColumnType.Double));
-            outputColumns.add(new Data2DColumn(prefix + message("Median"), ColumnDefinition.ColumnType.Double));
-            outputColumns.add(new Data2DColumn(prefix + message("UpperQuartile"), ColumnDefinition.ColumnType.Double));
-            outputColumns.add(new Data2DColumn(prefix + message("MaximumQ4"), ColumnDefinition.ColumnType.Double));
-            outputColumns.add(new Data2DColumn(prefix + message("UpperExtremeOutlierLine"), ColumnDefinition.ColumnType.Double));
-            outputColumns.add(new Data2DColumn(prefix + message("UpperMildOutlierLine"), ColumnDefinition.ColumnType.Double));
-            outputColumns.add(new Data2DColumn(prefix + message("LowerMildOutlierLine"), ColumnDefinition.ColumnType.Double));
-            outputColumns.add(new Data2DColumn(prefix + message("LowerExtremeOutlierLine"), ColumnDefinition.ColumnType.Double));
+            for (StatisticType type : calculation.types) {
+                outputColumns.add(new Data2DColumn(prefix + message(type.name()), ColumnDefinition.ColumnType.Double));
+            }
             outputData = transposed;
+
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -509,28 +502,24 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
                 return;
             }
 
-            List<Integer> displayCols;
-            if (outliersCheck.isSelected() && meanCheck.isSelected()) {
-                displayCols = null;
-            } else {
-                displayCols = new ArrayList<>();
-                if (meanCheck.isSelected()) {
-                    displayCols.add(1);
-                }
-                for (int i = 2; i < 7; i++) {
+            List<Integer> displayCols = new ArrayList<>();
+            if (meanCheck.isSelected()) {
+                displayCols.add(1);
+            }
+            for (int i = 2; i < 7; i++) {
+                displayCols.add(i);
+            }
+            if (outliersCheck.isSelected()) {
+                for (int i = 7; i < 11; i++) {
                     displayCols.add(i);
                 }
-                if (outliersCheck.isSelected()) {
-                    for (int i = 7; i < 11; i++) {
-                        displayCols.add(i);
-                    }
-                }
             }
-            chartMaker.setDefaultChartTitle((selectedCategory != null ? selectedCategory + " - " : "") + calculation.getColsNames())
+            chartMaker.setDefaultChartTitle((selectedCategory != null
+                    ? selectedCategory + " - " : "") + calculation.getColsNames())
                     .setChartTitle(chartMaker.getChartTitle())
                     .setDefaultCategoryLabel(selectedCategory)
                     .setDefaultValueLabel(calculation.getColsNames().toString());
-            chartController.writeXYChart(outputColumns, outputData, displayCols, false);
+            chartController.writeXYChart(outputColumns, outputData, 0, displayCols);
             chartMaker.getBoxWhiskerChart()
                     .setBoxWidth(boxWidth)
                     .setHandleMean(meanCheck.isSelected())

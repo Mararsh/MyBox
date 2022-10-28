@@ -303,54 +303,34 @@ public class XYChartMaker<X, Y> extends XYChartOptions<X, Y> {
         }
     }
 
-    /*
-        write data
-     */
-    public void writeXYChart(List<Data2DColumn> columns, List<List<String>> data) {
-        writeXYChart(columns, data, null, true);
-    }
-
-    /* 
-        When hasRowNumber is true:
-            The first column is row number
-            The second columns is "Category"
-        When hasRowNumber is false:
-            The first column is "Category"
-        Left columns are "Value"
-        if "colIndics" is not null, only contained columns are displayed
-     */
     public void writeXYChart(List<Data2DColumn> columns, List<List<String>> data,
-            List<Integer> colIndics, boolean hasRowNumber) {
+            int categoryIndex, List<Integer> valueIndices) {
         try {
-            if (columns == null || data == null) {
+            if (columns == null || data == null || categoryIndex < 0
+                    || valueIndices == null || valueIndices.isEmpty()) {
                 return;
             }
             if (chartType == ChartType.Bubble) {
-                writeBubbleChart(columns, data, colIndics, hasRowNumber);
+                writeBubbleChart(columns, data, categoryIndex, valueIndices.get(0),
+                        valueIndices.subList(1, valueIndices.size()));
                 return;
             }
             xyChart.getData().clear();
             XYChart.Data xyData;
-            int index = 0, startIndex = hasRowNumber ? 1 : 0;
-            for (int col = 1 + startIndex; col < columns.size(); col++) {
-                if (colIndics != null && !colIndics.contains(col)) {
-                    continue;
-                }
-                Data2DColumn column = columns.get(col);
+            int index = 0;
+            for (int colIndex : valueIndices) {
+                Data2DColumn column = columns.get(colIndex);
                 String colName = column.getColumnName();
                 XYChart.Series series = new XYChart.Series();
                 series.setName(colName);
 
                 double numberValue;
                 for (List<String> rowData : data) {
-                    if (startIndex >= rowData.size() || col >= rowData.size()) {
-                        continue;
-                    }
-                    String category = rowData.get(startIndex);
+                    String category = rowData.get(categoryIndex);
                     if (category == null) {
                         category = "";
                     }
-                    numberValue = scaleValue(rowData.get(col));
+                    numberValue = scaleValue(rowData.get(colIndex));
                     if (DoubleTools.invalidDouble(numberValue)) {
                         if (invalidAs == InvalidAs.Zero) {
                             numberValue = 0;
@@ -400,25 +380,17 @@ public class XYChartMaker<X, Y> extends XYChartOptions<X, Y> {
         }
     }
 
-    /*
-        The first column is row number
-        The second columns is "Category"
-        The third columns is "Value"
-        Left columns are "Size"
-     */
     public void writeBubbleChart(List<Data2DColumn> columns, List<List<String>> data,
-            List<Integer> colIndics, boolean rowNumber) {
+            int catgoryCol, int numberCol, List<Integer> sizeCols) {
         try {
-            if (columns == null || data == null) {
+            if (columns == null || data == null || catgoryCol < 0
+                    || numberCol < 0 || sizeCols == null || sizeCols.isEmpty()) {
                 return;
             }
             xyChart.getData().clear();
             XYChart.Data xyData;
-            int index = 0, startIndex = rowNumber ? 1 : 0;
-            for (int col = 2 + startIndex; col < columns.size(); col++) {
-                if (colIndics != null && !colIndics.contains(col)) {
-                    continue;
-                }
+            int index = 0;
+            for (int col : sizeCols) {
                 Data2DColumn column = columns.get(col);
                 String colName = column.getColumnName();
                 XYChart.Series series = new XYChart.Series();
@@ -427,9 +399,9 @@ public class XYChartMaker<X, Y> extends XYChartOptions<X, Y> {
                 double categoryValue, categoryCoordinateValue, numberValue, numberCoordinateValue,
                         sizeValue, sizeCoordinateValue;
                 for (List<String> rowData : data) {
-                    categoryValue = scaleValue(rowData.get(startIndex));
+                    categoryValue = scaleValue(rowData.get(catgoryCol));
                     categoryCoordinateValue = ChartTools.coordinateValue(categoryCoordinate, categoryValue);
-                    numberValue = scaleValue(rowData.get(startIndex + 1));
+                    numberValue = scaleValue(rowData.get(numberCol));
                     numberCoordinateValue = ChartTools.coordinateValue(numberCoordinate, numberValue);
                     sizeValue = scaleValue(rowData.get(col));
                     if (sizeValue <= 0) {

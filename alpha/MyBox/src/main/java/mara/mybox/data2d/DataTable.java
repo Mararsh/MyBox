@@ -116,9 +116,8 @@ public class DataTable extends Data2D {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
-            } else {
-                MyBoxLog.error(e);
             }
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -263,6 +262,14 @@ public class DataTable extends Data2D {
             return data2DRow;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
+            return null;
+        }
+    }
+
+    public String tmpColumnName(int index) {
+        try {
+            return columns.get(index + 1).getColumnName();
+        } catch (Exception e) {
             return null;
         }
     }
@@ -461,6 +468,7 @@ public class DataTable extends Data2D {
     }
 
     // Based on results of "Data2D_Convert.toTmpTable(...)"
+    // columns may be duplicated
     public DataFileCSV sort(String dname, SingletonTask task, int colsLen,
             List<String> orders, int maxData, boolean includeColName) {
         if (sourceColumns == null) {
@@ -506,10 +514,23 @@ public class DataTable extends Data2D {
         try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile);
                  ResultSet query = DerbyBase.getConnection()
                         .prepareStatement(sql).executeQuery()) {
-            if (includeColName) {
-                csvPrinter.printRecord(sourceColumnNames());
+            List<Data2DColumn> targetColumns = new ArrayList<>();
+            Random random = new Random();
+            List<String> names = new ArrayList<>();
+            for (int i = 0; i < colsLen; i++) {
+                Data2DColumn column = sourceColumns.get(i).cloneAll();
+                String name = column.getColumnName();
+                while (names.contains(name)) {
+                    name += random.nextInt(10);
+                }
+                names.add(name);
+                column.setD2cid(-1).setD2id(-1).setColumnName(name);
+                targetColumns.add(column);
             }
-            rowIndex = 0;
+            if (includeColName) {
+                csvPrinter.printRecord(names);
+            }
+            long count = 0;
             while (query.next() && task != null && !task.isCancelled()) {
                 Data2DRow dataRow = tableData2D.readData(query);
                 List<String> rowValues = new ArrayList<>();
@@ -519,15 +540,14 @@ public class DataTable extends Data2D {
                     rowValues.add(column.toString(v));
                 }
                 csvPrinter.printRecord(rowValues);
-                rowIndex++;
+                count++;
             }
             DataFileCSV targetData = new DataFileCSV();
-            List<Data2DColumn> tcolumns = sourceColumns.subList(0, colsLen);
-            targetData.setColumns(tcolumns)
+            targetData.setColumns(targetColumns)
                     .setFile(csvFile).setDataName(dname)
                     .setCharset(Charset.forName("UTF-8"))
                     .setDelimiter(",").setHasHeader(includeColName)
-                    .setColsNumber(tcolumns.size()).setRowsNumber(rowIndex);
+                    .setColsNumber(targetColumns.size()).setRowsNumber(count);
             return targetData;
         } catch (Exception e) {
             if (task != null) {

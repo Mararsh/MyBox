@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -387,6 +388,33 @@ public abstract class Data2D_Data extends Data2D_Attributes {
             }
             return names;
         } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public List<Data2DColumn> makeColumns(List<Integer> indices, boolean rowNumber) {
+        return makeColumns(columns, indices, rowNumber);
+    }
+
+    public static List<Data2DColumn> makeColumns(List<Data2DColumn> sourceColumns,
+            List<Integer> indices, boolean rowNumber) {
+        try {
+            if (indices == null || sourceColumns == null || sourceColumns.isEmpty()) {
+                return null;
+            }
+            List<Data2DColumn> targetCcolumns = new ArrayList<>();
+            if (rowNumber) {
+                targetCcolumns.add(new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.String));
+            }
+            for (Integer i : indices) {
+                Data2DColumn column = sourceColumns.get(i).cloneAll();
+                String name = column.getColumnName();
+                column.setD2cid(-1).setD2id(-1).setColumnName(name);
+                targetCcolumns.add(column);
+            }
+            return targetCcolumns;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
             return null;
         }
     }

@@ -15,6 +15,8 @@ import static mara.mybox.value.Languages.message;
  */
 public class DoubleTools {
 
+    public static NumberFormat numberFormat;
+
     public static boolean invalidDouble(double value) {
         return Double.isNaN(value) || Double.isInfinite(value)
                 || value == AppValues.InvalidDouble;
@@ -178,17 +180,24 @@ public class DoubleTools {
         }
     }
 
+    public static NumberFormat numberFormat() {
+        numberFormat = NumberFormat.getInstance();
+        numberFormat.setMinimumFractionDigits(0);
+        numberFormat.setGroupingUsed(false);
+        numberFormat.setRoundingMode(RoundingMode.HALF_UP);
+        return numberFormat;
+    }
+
     public static String scaleString(double v, int scale) {
         try {
             if (scale < 0) {
                 return v + "";
             }
-            NumberFormat formatter = NumberFormat.getInstance();
-            formatter.setMaximumFractionDigits(scale);
-            formatter.setMinimumFractionDigits(0);
-            formatter.setGroupingUsed(false);
-            formatter.setRoundingMode(RoundingMode.HALF_UP);
-            return formatter.format(v);
+            if (numberFormat == null) {
+                numberFormat();
+            }
+            numberFormat.setMaximumFractionDigits(scale);
+            return numberFormat.format(v);
         } catch (Exception e) {
             MyBoxLog.console(e);
             return v + "";

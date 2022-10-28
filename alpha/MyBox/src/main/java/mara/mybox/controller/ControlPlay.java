@@ -16,7 +16,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -30,6 +30,7 @@ public class ControlPlay extends BaseController {
     protected double speed;
     protected long currentDelay;
     protected SimpleBooleanProperty frameStartNodify, stopNodify, intervalNodify;
+    protected boolean stopped;
 
     @FXML
     protected ComboBox<String> speedSelector, intervalSelector, frameSelector;
@@ -155,6 +156,7 @@ public class ControlPlay extends BaseController {
             if (f > t) {
                 return false;
             }
+            stopped = false;
             isSettingValues = true;
             fromFrame = f;
             toFrame = t;
@@ -234,9 +236,12 @@ public class ControlPlay extends BaseController {
             }
             currentDelay = (long) (interval / speed);
             displayFrame(startIndex);
+            if (stopped) {
+                return;
+            }
             int nextIndex = nextIndex();
             if (nextIndex < 0) {
-                setPauseButton(true);
+                pause();
                 return;
             }
             if (currentDelay <= 0) {
@@ -247,6 +252,9 @@ public class ControlPlay extends BaseController {
                 @Override
                 public void run() {
                     Platform.runLater(() -> {
+                        if (stopped) {
+                            return;
+                        }
                         startFrame(nextIndex);
                     });
                 }
@@ -312,16 +320,14 @@ public class ControlPlay extends BaseController {
 
     protected void setPauseButton(boolean setAsPaused) {
         if (setAsPaused) {
-            StyleTools.setNameIcon(pauseButton, Languages.message("Play"), "iconPlay.png");
+            StyleTools.setNameIcon(pauseButton, message("Play"), "iconPlay.png");
             previousButton.setDisable(false);
             nextButton.setDisable(false);
-            pauseButton.setUserData("Paused");
             stopNodify.set(!stopNodify.get());
         } else {
-            StyleTools.setNameIcon(pauseButton, Languages.message("Pause"), "iconPause.png");
+            StyleTools.setNameIcon(pauseButton, message("Pause"), "iconPause.png");
             previousButton.setDisable(true);
             nextButton.setDisable(true);
-            pauseButton.setUserData("Playing");
         }
         pauseButton.applyCss();
     }
@@ -329,12 +335,11 @@ public class ControlPlay extends BaseController {
     @FXML
     public void pauseAction() {
         try {
-            if (pauseButton.getUserData().equals("Playing")) {
-                pauseFrame(currentIndex);
-
-            } else if (pauseButton.getUserData().equals("Paused")) {
+            if (stopped) {
+                stopped = false;
                 startFrame(currentIndex);
-
+            } else {
+                pause();
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -352,6 +357,7 @@ public class ControlPlay extends BaseController {
 
     public void pause() {
         try {
+            stopped = true;
             if (timer != null) {
                 timer.cancel();
             }
@@ -386,13 +392,13 @@ public class ControlPlay extends BaseController {
     }
 
     public void clear() {
+        stopped = true;
         if (timer != null) {
             timer.cancel();
         }
         if (task != null && !task.isQuit()) {
             task.cancel();
         }
-        stopNodify.set(!stopNodify.get());
 
         isSettingValues = true;
         framesNumber = 0;
@@ -402,6 +408,8 @@ public class ControlPlay extends BaseController {
         frameSelector.getItems().clear();
         totalLabel.setText("");
         isSettingValues = false;
+
+        stopNodify.set(!stopNodify.get());
     }
 
     @Override

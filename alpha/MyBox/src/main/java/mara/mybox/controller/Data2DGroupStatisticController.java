@@ -343,7 +343,6 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
                 }
                 outputData.add(xyRow);
             }
-
             selectedCategory = xyCategoryColumn.getColumnName();
             selectedValue = message("Statistic");
             return initChart();
@@ -405,7 +404,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
                 popError(message("NoData"));
                 return;
             }
-            chartController.writeXYChart(outputColumns, outputData, null, false);
+            chartController.writeXYChart(outputColumns, outputData);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -418,7 +417,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
                 popError(message("NoData"));
                 return;
             }
-            pieChartController.writeChart(pieColumns, pieData, false);
+            pieChartController.writeChart(pieColumns, pieData);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

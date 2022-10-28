@@ -42,6 +42,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
     protected int scale, defaultScale = 2, maxData = -1;
     protected ObjectType objectType;
     protected InvalidAs invalidAs = InvalidAs.Skip;
+    protected List<Integer> dataColsIndices;
     protected List<String> orders;
 
     @FXML
@@ -508,13 +509,13 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
 
     public List<List<String>> filteredData(List<Integer> colIndices, boolean needRowNumber) {
         try {
-            List<List<String>> data;
             if (isAllPages()) {
-                data = data2D.allRows(colIndices, needRowNumber);
+                outputData = data2D.allRows(colIndices, needRowNumber);
             } else {
-                data = filtered(colIndices, needRowNumber);
+                outputData = filtered(colIndices, needRowNumber);
             }
-            return data;
+            outputColumns = data2D.makeColumns(colIndices, needRowNumber);
+            return outputData;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
@@ -596,6 +597,9 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
 
     public List<List<String>> sortedData(List<Integer> colIndices, boolean needRowNumber) {
         try {
+            if (maxData <= 0 && (sortController == null || orders == null || orders.isEmpty())) {
+                return filteredData(colIndices, needRowNumber);
+            }
             DataFileCSV csvData = sortedFile(data2D.dataName(), colIndices, needRowNumber);
             if (csvData == null) {
                 return null;
@@ -617,21 +621,21 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
     }
 
     public DataTableGroup groupData(DataTableGroup.TargetType targetType,
-            List<String> copyNames, List<String> sorts, long max, int dscale) {
+            List<String> copyNames, List<String> orders, long max, int dscale) {
         try {
             if (groupController == null) {
                 return null;
             }
             DataTable tmpTable = filteredTable(data2D.columnIndices(), showRowNumber());
-            List<String> tnames = new ArrayList<>();
+            List<String> targetNames = new ArrayList<>();
             if (groupController.groupName != null) {
-                tnames.add(groupController.groupName);
+                targetNames.add(groupController.groupName);
             } else if (groupController.groupNames != null) {
-                tnames.addAll(groupController.groupNames);
+                targetNames.addAll(groupController.groupNames);
             }
             for (String name : copyNames) {
-                if (!tnames.contains(name)) {
-                    tnames.add(name);
+                if (!targetNames.contains(name)) {
+                    targetNames.add(name);
                 }
             }
             DataTableGroup group = new DataTableGroup(data2D, tmpTable)
@@ -642,10 +646,10 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                     .setSplitNumber(groupController.splitNumber())
                     .setSplitList(groupController.splitList())
                     .setConditions(groupController.groupConditions)
-                    .setSorts(sorts).setMax(max)
+                    .setOrders(orders).setMax(max)
                     .setScale(dscale).setInvalidAs(invalidAs).setTask(task)
                     .setTargetType(targetType)
-                    .setTargetNames(tnames);
+                    .setTargetNames(targetNames);
             return group;
         } catch (Exception e) {
             if (task != null) {
@@ -656,16 +660,11 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         }
     }
 
-    public List<List<String>> scaledData(List<Integer> cols, boolean needRowNumber) {
+    public List<List<String>> scaledData(List<Integer> colIndices, boolean needRowNumber) {
         try {
-            List<List<String>> data;
-            if (maxData > 0
-                    || (sortController != null && orders != null && !orders.isEmpty())) {
-                data = sortedData(cols, needRowNumber);
-            } else {
-                data = filteredData(cols, needRowNumber);
-            }
-            return scale(data, cols, needRowNumber);
+            List<List<String>> data = sortedData(colIndices, needRowNumber);
+            data = scale(data, colIndices, needRowNumber);
+            return data;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;

@@ -1,13 +1,12 @@
 package mara.mybox.tools;
 
-import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
+import static mara.mybox.tools.DoubleTools.numberFormat;
 import mara.mybox.value.AppValues;
 
 /**
@@ -72,11 +71,11 @@ public class FloatTools {
 
     public static float scale(float v, int scale) {
         try {
-            NumberFormat formatter = NumberFormat.getInstance();
-            formatter.setMaximumFractionDigits(scale);
-            formatter.setRoundingMode(RoundingMode.HALF_UP);
-            formatter.setGroupingUsed(false);
-            return Float.valueOf(formatter.format(v));
+            if (numberFormat == null) {
+                numberFormat();
+            }
+            numberFormat.setMaximumFractionDigits(scale);
+            return Float.valueOf(numberFormat.format(v));
         } catch (Exception e) {
             return v;
         }

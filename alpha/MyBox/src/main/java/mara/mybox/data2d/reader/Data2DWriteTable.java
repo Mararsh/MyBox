@@ -30,7 +30,8 @@ public class Data2DWriteTable extends Data2DOperator {
 
     @Override
     public boolean checkParameters() {
-        if (cols == null || cols.isEmpty() || conn == null || writerTable == null || invalidAs == null) {
+        if (cols == null || cols.isEmpty() || conn == null
+                || writerTable == null || invalidAs == null) {
             return false;
         }
         if (invalidAs == InvalidAs.Skip) {
@@ -46,10 +47,11 @@ public class Data2DWriteTable extends Data2DOperator {
         try {
             Data2DRow data2DRow = writerTableData2D.newRow();
             int len = sourceRow.size();
-            for (int col : cols) {
+            int offset = includeRowNumber ? 1 : 0;
+            for (int i = 0; i < cols.size(); i++) {
+                int col = cols.get(i);
                 if (col >= 0 && col < len) {
-                    Data2DColumn sourceColumn = data2D.getColumns().get(col);
-                    String colName = writerTable.tmpColumnName(sourceColumn.getColumnName());
+                    String colName = writerTable.tmpColumnName(i + offset);
                     Data2DColumn targetColumn = writerTable.columnByName(colName);
                     data2DRow.setColumnValue(colName, targetColumn.fromString(sourceRow.get(col), invalidAs));
                 }

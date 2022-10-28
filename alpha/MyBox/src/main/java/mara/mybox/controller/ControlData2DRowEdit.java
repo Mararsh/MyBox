@@ -183,7 +183,7 @@ public class ControlData2DRowEdit extends BaseController {
                 Button dateButton = new Button();
                 dateButton.setGraphic(StyleTools.getIconImage("iconExamples.png"));
                 NodeStyleTools.setTooltip(dateButton, new Tooltip(message("Example")));
-                dateButton.setOnMouseEntered(new EventHandler<MouseEvent>() {
+                dateButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
                         switch (column.getType()) {
@@ -236,7 +236,7 @@ public class ControlData2DRowEdit extends BaseController {
                 Button paletteButton = new Button();
                 paletteButton.setGraphic(StyleTools.getIconImage("iconPalette.png"));
                 NodeStyleTools.setTooltip(paletteButton, new Tooltip(message("ColorPalette")));
-                paletteButton.setOnMouseEntered(new EventHandler<MouseEvent>() {
+                paletteButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
                         try {

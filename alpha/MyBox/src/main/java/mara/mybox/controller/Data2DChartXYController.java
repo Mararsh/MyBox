@@ -1,13 +1,13 @@
 package mara.mybox.controller;
 
 import java.util.ArrayList;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
-import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
@@ -25,6 +25,10 @@ public class Data2DChartXYController extends BaseData2DChartController {
 
     protected XYChartMaker chartMaker;
     protected Data2DColumn categoryColumn;
+    protected List<String> valueNames;
+    protected int categoryIndex;
+    protected List<Integer> valueIndices;
+    protected List<String> outputNames;
 
     @FXML
     protected ControlChartXYSelection chartTypesController;
@@ -112,8 +116,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
                 return false;
             }
             dataColsIndices = new ArrayList<>();
-            outputColumns = new ArrayList<>();
-            outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
+            valueNames = new ArrayList<>();
             int categoryCol = data2D.colOrder(selectedCategory);
             if (categoryCol < 0) {
                 outOptionsError(message("SelectToHandle") + ": " + message("Column"));
@@ -122,7 +125,6 @@ public class Data2DChartXYController extends BaseData2DChartController {
             }
             categoryColumn = data2D.column(categoryCol);
             dataColsIndices.add(categoryCol);
-            outputColumns.add(categoryColumn);
             if (chartTypesController.isBubbleChart()) {
                 int valueCol = data2D.colOrder(selectedValue);
                 if (valueCol < 0) {
@@ -130,16 +132,25 @@ public class Data2DChartXYController extends BaseData2DChartController {
                     tabPane.getSelectionModel().select(optionsTab);
                     return false;
                 }
-                dataColsIndices.add(valueCol);
-                outputColumns.add(data2D.column(valueCol));
+                if (!dataColsIndices.contains(valueCol)) {
+                    dataColsIndices.add(valueCol);
+                }
+                valueNames.add(selectedValue);
             }
-            if (checkedColsIndices == null || checkedColsIndices.isEmpty()) {
-                outOptionsError(message("SelectToHandle") + ": " + message("Column"));
-                tabPane.getSelectionModel().select(optionsTab);
-                return false;
+            for (int col : checkedColsIndices) {
+                if (!dataColsIndices.contains(col)) {
+                    dataColsIndices.add(col);
+                }
+                valueNames.add(data2D.columnName(col));
             }
-            dataColsIndices.addAll(checkedColsIndices);
-            outputColumns.addAll(checkedColumns);
+
+            outputColumns = new ArrayList<>();
+            outputNames = new ArrayList<>();
+            for (int col : dataColsIndices) {
+                Data2DColumn c = data2D.column(col);
+                outputColumns.add(c);
+                outputNames.add(c.getColumnName());
+            }
 
             return initChart();
         } catch (Exception e) {
@@ -192,13 +203,37 @@ public class Data2DChartXYController extends BaseData2DChartController {
         drawXYChart();
     }
 
+    public void makeIndices() {
+        try {
+            if (outputColumns == null || outputColumns.isEmpty()) {
+                popError(message("NoData"));
+                return;
+            }
+            categoryIndex = -1;
+            valueIndices = new ArrayList<>();
+            for (int i = 0; i < outputColumns.size(); i++) {
+                String name = outputColumns.get(i).getColumnName();
+                if (name.equals(selectedCategory)) {
+                    categoryIndex = i;
+                }
+                if (valueNames.contains(name)) {
+                    valueIndices.add(i);
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     public void drawXYChart() {
         try {
             if (outputData == null || outputData.isEmpty()) {
                 popError(message("NoData"));
                 return;
             }
-            chartController.writeXYChart(outputColumns, outputData);
+            makeIndices();
+            chartController.writeXYChart(outputColumns, outputData,
+                    categoryIndex, valueIndices);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

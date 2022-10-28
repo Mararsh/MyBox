@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.chart.PieChartMaker;
@@ -54,8 +52,6 @@ public class Data2DChartPieController extends BaseData2DChartController {
                 return false;
             }
             dataColsIndices = new ArrayList<>();
-            outputColumns = new ArrayList<>();
-            outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
             int categoryCol = data2D.colOrder(selectedCategory);
             if (categoryCol < 0) {
                 outOptionsError(message("SelectToHandle") + ": " + message("CategoryColumn"));
@@ -63,15 +59,16 @@ public class Data2DChartPieController extends BaseData2DChartController {
                 return false;
             }
             dataColsIndices.add(categoryCol);
-            outputColumns.add(data2D.column(categoryCol));
+
             int valueCol = data2D.colOrder(selectedValue);
             if (valueCol < 0) {
                 outOptionsError(message("SelectToHandle") + ": " + message("ValueColumn"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
-            dataColsIndices.add(valueCol);
-            outputColumns.add(data2D.column(valueCol));
+            if (!dataColsIndices.contains(valueCol)) {
+                dataColsIndices.add(valueCol);
+            }
 
             pieMaker.init(message("PieChart"))
                     .setDefaultChartTitle(selectedCategory + " - " + selectedValue)
@@ -100,7 +97,18 @@ public class Data2DChartPieController extends BaseData2DChartController {
                 popError(message("NoData"));
                 return;
             }
-            chartController.writeChart(outputColumns, outputData, true);
+            int categoryIndex = -1;
+            int valueIndex = -1;
+            for (int i = 0; i < outputColumns.size(); i++) {
+                String name = outputColumns.get(i).getColumnName();
+                if (name.equals(selectedCategory)) {
+                    categoryIndex = i;
+                }
+                if (name.equals(selectedValue)) {
+                    valueIndex = i;
+                }
+            }
+            chartController.writeChart(outputColumns, outputData, categoryIndex, valueIndex);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

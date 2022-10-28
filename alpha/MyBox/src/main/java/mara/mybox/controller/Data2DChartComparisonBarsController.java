@@ -95,11 +95,19 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
             }
             col1 = data2D.colOrder(selectedValue);
             col2 = data2D.colOrder(selectedValue2);
+
             dataColsIndices = new ArrayList<>();
             dataColsIndices.add(col1);
-            dataColsIndices.add(col2);
+            if (!dataColsIndices.contains(col2)) {
+                dataColsIndices.add(col2);
+            }
             if (!dataColsIndices.contains(categorysCol)) {
                 dataColsIndices.add(categorysCol);
+            }
+            for (int col : otherColsIndices) {
+                if (!dataColsIndices.contains(col)) {
+                    dataColsIndices.add(col);
+                }
             }
 
             return true;
@@ -112,13 +120,11 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
     @Override
     public void readData() {
         try {
-            List<Integer> cols = new ArrayList<>();
-            cols.addAll(dataColsIndices);
-            cols.addAll(otherColsIndices);
-            outputData = scaledData(cols, true);
+            outputData = scaledData(dataColsIndices, true);
             if (outputData == null) {
                 return;
             }
+            outputColumns = data2D.makeColumns(dataColsIndices, true);
             normalization = null;
             rowsNumber = outputData.size();
             String[] data = new String[2 * rowsNumber];
@@ -191,8 +197,13 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
                 }
             }
             s.append("</TR>\n");
-            int categoryPos = dataColsIndices.indexOf(categorysCol);
-            int otherStart = dataColsIndices.size() + 1;
+            int categoryIndex = dataColsIndices.indexOf(categorysCol) + 1;
+            int col1Index = dataColsIndices.indexOf(col1) + 1;
+            int col2Index = dataColsIndices.indexOf(col2) + 1;
+            List<Integer> otherIndices = new ArrayList<>();
+            for (int col : otherColsIndices) {
+                otherIndices.add(dataColsIndices.indexOf(col) + 1);
+            }
             for (int r = 0; r < rowsNumber; r++) {
                 List<String> row = outputData.get(r);
                 s.append("<TR>\n");
@@ -201,25 +212,17 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
                         .append(message("Row")).append(row.get(0)).append("</TD>\n");
 
                 s.append("<TD align=right>")
-                        .append("<SPAN class=\"DataValue\">").append(row.get(1)).append("</SPAN>")
+                        .append("<SPAN class=\"DataValue\">").append(row.get(col1Index)).append("</SPAN>")
                         .append(bar(bars[r], color1)).append("</TD>\n");
 
-                String cv;
-                if (categoryPos >= 0) {
-                    cv = row.get(categoryPos + 1);
-                } else if (row.size() > 3) {
-                    cv = row.get(3);
-                } else {
-                    cv = "";
-                }
-                s.append("<TD align=center class=\"Category\">").append(cv).append("</TD>\n");
+                s.append("<TD align=center class=\"Category\">").append(row.get(categoryIndex)).append("</TD>\n");
 
                 s.append("<TD align=left>")
                         .append(bar(bars[r + rowsNumber], color2))
-                        .append("<SPAN class=\"DataValue\">").append(row.get(2)).append("</SPAN>")
+                        .append("<SPAN class=\"DataValue\">").append(row.get(col2Index)).append("</SPAN>")
                         .append("</TD>\n");
-                for (int i = otherStart; i < row.size(); i++) {
-                    s.append("<TD class=\"Others\">").append(row.get(i)).append("</TD>\n");
+                for (int index : otherIndices) {
+                    s.append("<TD class=\"Others\">").append(row.get(index)).append("</TD>\n");
                 }
                 s.append("</TR>\n");
             }

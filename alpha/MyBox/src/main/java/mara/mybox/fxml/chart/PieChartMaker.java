@@ -7,7 +7,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Side;
 import javafx.scene.chart.PieChart;
-import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -62,16 +61,7 @@ public class PieChartMaker extends PieChartOptions {
         }
     }
 
-    /* 
-        When hasRowNumber is true:
-            The first column is row number
-            The second columns is "Category"
-            The third columns is "Value"
-        When hasRowNumber is false:
-            The first columns is "Category"
-            The second columns is "Value"
-     */
-    public void writeChart(List<Data2DColumn> columns, List<List<String>> data, boolean hasRowNumber) {
+    public void writeChart(List<List<String>> data, int catgoryCol, int valueCol) {
         try {
             Random random = new Random();
             ObservableList<PieChart.Data> pieData = FXCollections.observableArrayList();
@@ -80,9 +70,8 @@ public class PieChartMaker extends PieChartOptions {
                 pieChart.setLegendSide(Side.TOP);
             }
             double total = 0;
-            int startIndex = hasRowNumber ? 1 : 0;
             for (List<String> rowData : data) {
-                double d = scaleValue(rowData.get(startIndex + 1));
+                double d = scaleValue(rowData.get(valueCol));
                 if (d > 0) {
                     total += d;
                 }
@@ -93,11 +82,11 @@ public class PieChartMaker extends PieChartOptions {
             String label;
             List<String> paletteList = new ArrayList();
             for (List<String> rowData : data) {
-                String name = rowData.get(startIndex);
+                String name = rowData.get(catgoryCol);
                 if (name == null) {
                     name = "";
                 }
-                double d = doubleValue(rowData.get(startIndex + 1));
+                double d = doubleValue(rowData.get(valueCol));
                 if (d <= 0 || DoubleTools.invalidDouble(d)) {
                     continue;
                 }

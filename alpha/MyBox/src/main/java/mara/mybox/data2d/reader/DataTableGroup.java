@@ -42,7 +42,7 @@ public class DataTableGroup {
     protected Data2D originalData;
     protected DataTable sourceData;
     protected String groupName;
-    protected List<String> groupNames, sorts, targetNames;
+    protected List<String> groupNames, orders, targetNames;
     protected InvalidAs invalidAs;
     protected int scale, splitNumber;
     protected long max;
@@ -205,19 +205,19 @@ public class DataTableGroup {
                 }
                 mappedGroupNames.add(name);
             }
-            if (sorts != null && !sorts.isEmpty()) {
+            if (orders != null && !orders.isEmpty()) {
                 int desclen = ("-" + message("Descending")).length();
                 int asclen = ("-" + message("Ascending")).length();
                 String name, stype;
-                for (String sort : sorts) {
-                    if (groupNames.contains(sort)) {
+                for (String order : orders) {
+                    if (groupNames.contains(order)) {
                         continue;
                     }
-                    if (sort.endsWith("-" + message("Descending"))) {
-                        name = sort.substring(0, sort.length() - desclen);
+                    if (order.endsWith("-" + message("Descending"))) {
+                        name = order.substring(0, order.length() - desclen);
                         stype = " DESC";
-                    } else if (sort.endsWith("-" + message("Ascending"))) {
-                        name = sort.substring(0, sort.length() - asclen);
+                    } else if (order.endsWith("-" + message("Ascending"))) {
+                        name = order.substring(0, order.length() - asclen);
                         stype = " ASC";
                     } else {
                         continue;
@@ -345,7 +345,7 @@ public class DataTableGroup {
             double from = minValue, to;
             int fscale = sourceData.columnByName(mappedGroupName).needScale() ? scale : 0;
             String condition;
-            String orderBy = valueOrderBy();
+            String orderBy = orderByString();
             conn.setAutoCommit(false);
             while (from <= maxValue) {
                 if (task == null || task.isCancelled()) {
@@ -395,7 +395,7 @@ public class DataTableGroup {
 
             conn.setAutoCommit(false);
             double from, to;
-            String orderBy = valueOrderBy();
+            String orderBy = orderByString();
             for (int i = 0; i < splitList.size();) {
                 if (task == null || task.isCancelled()) {
                     return false;
@@ -462,33 +462,6 @@ public class DataTableGroup {
         }
     }
 
-    private String valueOrderBy() {
-        String orderBy = null;
-        if (sorts != null && !sorts.isEmpty()) {
-            int desclen = ("-" + message("Descending")).length();
-            int asclen = ("-" + message("Ascending")).length();
-            String name, stype;
-            for (String sort : sorts) {
-                if (sort.endsWith("-" + message("Descending"))) {
-                    name = sort.substring(0, sort.length() - desclen);
-                    stype = " DESC";
-                } else if (sort.endsWith("-" + message("Ascending"))) {
-                    name = sort.substring(0, sort.length() - asclen);
-                    stype = " ASC";
-                } else {
-                    continue;
-                }
-                name = sourceData.tmpColumnName(name);
-                if (orderBy == null) {
-                    orderBy = name + stype;
-                } else {
-                    orderBy += ", " + name + stype;
-                }
-            }
-        }
-        return orderBy == null ? "" : " ORDER BY " + orderBy;
-    }
-
     private boolean byRowsInteval() {
         try {
             long total = 0;
@@ -510,7 +483,7 @@ public class DataTableGroup {
                 maxGroup = splitNumber;
             }
             conn.setAutoCommit(false);
-            String orderBy = valueOrderBy();
+            String orderBy = orderByString();
             sql = "SELECT * FROM " + sourceSheet + orderBy;
             long rowIndex = 0, from, to, interval = Math.round(splitInterval);
             try ( ResultSet query = conn.prepareStatement(sql).executeQuery()) {
@@ -573,7 +546,7 @@ public class DataTableGroup {
                 return false;
             }
             long from, to;
-            String orderBy = valueOrderBy();
+            String orderBy = orderByString();
             String sql;
             for (int i = 0; i < splitList.size();) {
                 if (task == null || task.isCancelled()) {
@@ -648,7 +621,7 @@ public class DataTableGroup {
             FindReplaceString findReplace = FindReplaceString.create().
                     setOperation(FindReplaceString.Operation.ReplaceAll)
                     .setIsRegex(false).setCaseInsensitive(false).setMultiline(false);
-            String orderBy = valueOrderBy();
+            String orderBy = orderByString();
             long rowIndex;
             String sql;
             for (DataFilter filter : conditions) {
@@ -891,6 +864,33 @@ public class DataTableGroup {
         }
     }
 
+    public String orderByString() {
+        String orderBy = null;
+        if (orders != null && !orders.isEmpty()) {
+            int desclen = ("-" + message("Descending")).length();
+            int asclen = ("-" + message("Ascending")).length();
+            String name, stype;
+            for (String order : orders) {
+                if (order.endsWith("-" + message("Descending"))) {
+                    name = order.substring(0, order.length() - desclen);
+                    stype = " DESC";
+                } else if (order.endsWith("-" + message("Ascending"))) {
+                    name = order.substring(0, order.length() - asclen);
+                    stype = " ASC";
+                } else {
+                    continue;
+                }
+                name = sourceData.tmpColumnName(name);
+                if (orderBy == null) {
+                    orderBy = name + stype;
+                } else {
+                    orderBy += ", " + name + stype;
+                }
+            }
+        }
+        return orderBy == null ? "" : " ORDER BY " + orderBy;
+    }
+
 
     /*
         get
@@ -947,8 +947,8 @@ public class DataTableGroup {
         return this;
     }
 
-    public DataTableGroup setSorts(List<String> sorts) {
-        this.sorts = sorts;
+    public DataTableGroup setOrders(List<String> sorts) {
+        this.orders = sorts;
         return this;
     }
 

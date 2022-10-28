@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -8,8 +7,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import static mara.mybox.value.Languages.message;
@@ -23,8 +20,6 @@ import mara.mybox.value.UserConfig;
 public abstract class BaseData2DChartController extends BaseData2DHandleController {
 
     protected String selectedCategory, selectedValue;
-    protected List<Integer> dataColsIndices;
-    protected boolean needRowNumber = true;
 
     @FXML
     protected ComboBox<String> categoryColumnSelector, valueColumnSelector;
@@ -154,17 +149,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             if (valueColumnSelector != null) {
                 selectedValue = valueColumnSelector.getSelectionModel().getSelectedItem();
             }
-            dataColsIndices = new ArrayList<>();
-            if (!notSelectColumnsInTable && (checkedColsIndices == null || checkedColsIndices.isEmpty())) {
-                outOptionsError(message("SelectToHandle") + ": " + message("Columns"));
-                return false;
-            }
-            dataColsIndices.addAll(checkedColsIndices);
-            outputColumns = new ArrayList<>();
-            if (needRowNumber) {
-                outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
-            }
-            outputColumns.addAll(checkedColumns);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -220,7 +204,8 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     }
 
     public void readData() {
-        outputData = scaledData(dataColsIndices, needRowNumber);
+        outputData = scaledData(dataColsIndices, true);
+        outputColumns = data2D.makeColumns(dataColsIndices, true);
     }
 
     public void outputData() {

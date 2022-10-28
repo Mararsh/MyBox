@@ -59,8 +59,7 @@ public class Data2DGroupController extends BaseData2DHandleController {
                     } else {
                         targetType = TargetType.Table;
                     }
-                    group = groupData(targetType, checkedColsNames,
-                            sortController.selectedNames(), maxData, 4);
+                    group = groupData(targetType, checkedColsNames, orders, maxData, 4);
                     return group.run();
                 } catch (Exception e) {
                     error = e.toString();

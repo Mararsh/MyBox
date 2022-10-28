@@ -37,13 +37,17 @@ public class ControlData2DChartPie extends BaseData2DChartFx {
         return null;
     }
 
-    public void writeChart(List<Data2DColumn> columns, List<List<String>> data, boolean hasRowNumber) {
+    public void writeChart(List<Data2DColumn> columns, List<List<String>> data) {
+        writeChart(columns, data, 0, 1);
+    }
+
+    public void writeChart(List<Data2DColumn> columns, List<List<String>> data,
+            int catgoryCol, int valueCol) {
         this.columns = columns;
         this.data = data;
-        this.rowNumber = hasRowNumber;
         pieMaker.makeChart();
         setChart(pieMaker.getPieChart());
-        pieMaker.writeChart(columns, data, hasRowNumber);
+        pieMaker.writeChart(data, catgoryCol, valueCol);
         if (optionsController != null && optionsController.isShowing()
                 && !pieMaker.getChartName().equals(optionsController.chartName)) {
             optionsController.close();

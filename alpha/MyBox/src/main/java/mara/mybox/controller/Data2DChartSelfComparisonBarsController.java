@@ -33,16 +33,21 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
     @Override
     public void readData() {
         try {
-            List<Integer> cols = new ArrayList<>();
-            cols.addAll(dataColsIndices);
-            cols.addAll(otherColsIndices);
-            outputData = scaledData(cols, true);
+            dataColsIndices = new ArrayList<>();
+            dataColsIndices.addAll(checkedColsIndices);
+            for (int col : otherColsIndices) {
+                if (!dataColsIndices.contains(col)) {
+                    dataColsIndices.add(col);
+                }
+            }
+            outputData = scaledData(dataColsIndices, true);
             if (outputData == null) {
                 return;
             }
+            outputColumns = data2D.makeColumns(dataColsIndices, true);
             normalization = null;
             int rowsNumber = outputData.size();
-            int colsNumber = dataColsIndices.size();
+            int colsNumber = checkedColsIndices.size();
             String[][] data = new String[rowsNumber][colsNumber];
             allNeg = true;
             allPos = true;
@@ -105,7 +110,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
                 return null;
             }
             int rowsNumber = bars.length;
-            int colsNumber = dataColsIndices.size();
+            int colsNumber = checkedColsIndices.size();
 
             StringBuilder s = new StringBuilder();
             s.append(jsBody());
@@ -146,7 +151,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
                     s.append("<TH class=\"Calculated\">").append(message("Minimum")).append("</TH>\n");
                 }
             }
-            for (int col : dataColsIndices) {
+            for (int col : checkedColsIndices) {
                 s.append("<TH>").append(data2D.columnName(col)).append("</TH>\n");
             }
             int otherColsNumber = otherColsIndices != null ? otherColsIndices.size() : 0;
@@ -165,13 +170,16 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
             colors = new Color[colsNumber];
             Random random = new Random();
             for (int i = 0; i < colsNumber; i++) {
-                Color color = randomColor ? null : data2D.column(dataColsIndices.get(i)).getColor();
+                Color color = randomColor ? null : data2D.column(checkedColsIndices.get(i)).getColor();
                 if (color == null) {
                     color = FxColorTools.randomColor(random);
                 }
                 colors[i] = color;
             }
-            int otherStart = dataColsIndices.size() + 1;
+            List<Integer> otherIndices = new ArrayList<>();
+            for (int col : otherColsIndices) {
+                otherIndices.add(dataColsIndices.indexOf(col) + 1);
+            }
             for (int r = 0; r < rowsNumber; r++) {
                 List<String> row = outputData.get(r);
 
@@ -199,8 +207,8 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
                             .append(valueBar(row.get(i + 1), bars[r][i], colors[i], allNeg, allPos))
                             .append("</TD>\n");
                 }
-                for (int i = otherStart; i < row.size(); i++) {
-                    s.append("<TD class=\"Others\">").append(row.get(i)).append("</TD>\n");
+                for (int index : otherIndices) {
+                    s.append("<TD class=\"Others\">").append(row.get(index)).append("</TD>\n");
                 }
                 s.append("</TR>\n");
             }
@@ -225,7 +233,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
         if (normalizationValues == null) {
             return;
         }
-        int colsNumber = dataColsIndices.size();
+        int colsNumber = checkedColsIndices.size();
         if (absoluateRadio.isSelected()) {
             s.append("<TR class=\"Calculated\">\n");
             s.append("<TD class=\"RowNumber\"></TD>\n");

@@ -41,7 +41,6 @@ public abstract class BaseData2DChartFx extends BaseController {
     protected Chart chart;
     protected List<List<String>> data, checkedData;
     protected List<Data2DColumn> columns, checkedColumns;
-    protected boolean rowNumber;
     protected ChartType chartType;
     protected Map<String, String> palette;
     protected SimpleBooleanProperty redrawNotify;
@@ -275,6 +274,9 @@ public abstract class BaseData2DChartFx extends BaseController {
         start(dataTask, false);
     }
 
+    /*
+        remove duplicated columns
+     */
     public void checkData() {
         checkedData = data;
         checkedColumns = columns;

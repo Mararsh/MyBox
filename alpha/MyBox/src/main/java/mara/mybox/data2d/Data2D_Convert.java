@@ -98,15 +98,16 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             boolean includeRowNumber, boolean toNumbers, InvalidAs invalidAs) {
         try ( Connection conn = DerbyBase.getConnection()) {
             DataTable dataTable = createTmpTable(task, conn, tmpTableName(dataName()), cols, includeRowNumber, toNumbers);
-            dataTable.setDataName(dataName());
-            writeTableData(task, conn, dataTable, cols, includeRowNumber, invalidAs);
+            if (dataTable != null) {
+                dataTable.setDataName(dataName());
+                writeTableData(task, conn, dataTable, cols, includeRowNumber, invalidAs);
+            }
             return dataTable;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
-            } else {
-                MyBoxLog.error(e.toString());
             }
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -127,7 +128,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         }
     }
 
-    // "cols" should not contain duplicated values
+    // "cols" may contain duplicated values
     public DataTable createTmpTable(SingletonTask task, Connection conn,
             String targetName, List<Integer> cols, boolean includeRowNumber, boolean toNumbers) {
         try {
@@ -197,9 +198,8 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
-            } else {
-                MyBoxLog.error(e.toString());
             }
+            MyBoxLog.error(e.toString());
             return -5;
         }
     }
@@ -337,7 +337,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                     columeName += random.nextInt(10);
                 }
                 dataColumn.setColumnName(columeName);
-                validNames.add(columeName);
+                validNames.add(columeName.toUpperCase());
                 if (keys != null && !keys.isEmpty()) {
                     dataColumn.setIsPrimaryKey(keys.contains(sourceColumnName));
                 }
@@ -383,7 +383,6 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                 return null;
             }
             tableData2D = dataTable.getTableData2D();
-//            MyBoxLog.console(tableData2D.createTableStatement());
             if (conn.createStatement().executeUpdate(tableData2D.createTableStatement()) < 0) {
                 return null;
             }
@@ -393,9 +392,8 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
-            } else {
-                MyBoxLog.error(e.toString());
             }
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
