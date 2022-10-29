@@ -77,5 +77,6 @@ License:    Apache License Version 2.0
       </FlowPane>
       <Label fx:id="columnsLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="Label" wrapText="true" />
           <TextArea fx:id="textArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="%DataInputComments" VBox.vgrow="ALWAYS" />
+      <Label layoutX="10.0" layoutY="38.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%CSVComments" wrapText="true" />
     </children>
 </VBox>

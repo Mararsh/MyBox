@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -7,8 +8,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import mara.mybox.data2d.reader.DataTableGroup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -20,6 +23,9 @@ import mara.mybox.value.UserConfig;
 public abstract class BaseData2DChartController extends BaseData2DHandleController {
 
     protected String selectedCategory, selectedValue;
+    protected List<String> dataNames;
+    protected DataTableGroup group;
+    protected int framesNumber, groupid;
 
     @FXML
     protected ComboBox<String> categoryColumnSelector, valueColumnSelector;
@@ -27,6 +33,10 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     protected Label noticeLabel;
     @FXML
     protected CheckBox displayAllCheck;
+    @FXML
+    protected ControlData2DResults groupDataController;
+    @FXML
+    protected ControlPlay playController;
 
     @Override
     public void initControls() {
@@ -46,6 +56,16 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                 });
 
                 displayAllCheck.visibleProperty().bind(allPagesRadio.selectedProperty());
+            }
+
+            if (playController != null) {
+                playController.setParameters(this);
+                playController.frameStartNodify.addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        loadFrame(playController.currentIndex);
+                    }
+                });
             }
 
         } catch (Exception e) {
@@ -149,6 +169,10 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             if (valueColumnSelector != null) {
                 selectedValue = valueColumnSelector.getSelectionModel().getSelectedItem();
             }
+
+            group = null;
+            framesNumber = -1;
+            groupid = -1;
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -166,6 +190,14 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
     @Override
     protected void startOperation() {
+        if (groupController != null) {
+            startGroup();
+        } else {
+            startNoGroup();
+        }
+    }
+
+    protected void startNoGroup() {
         if (task != null) {
             task.cancel();
         }
@@ -203,9 +235,86 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         start(task);
     }
 
+    protected void startGroup() {
+        if (task != null) {
+            task.cancel();
+        }
+        playController.clear();
+        groupDataController.loadNull();
+        group = null;
+        framesNumber = -1;
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try {
+                    group = groupData(DataTableGroup.TargetType.Table,
+                            dataNames, orders, maxData, scale);
+                    group.run();
+                    framesNumber = (int) group.groupsNumber();
+                    return framesNumber > 0;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                task = null;
+                if (ok) {
+                    groupDataController.loadData(group.getTargetData().cloneAll());
+                    displayFrames();
+                }
+            }
+
+        };
+        start(task);
+    }
+
     public void readData() {
-        outputData = scaledData(dataColsIndices, true);
-        outputColumns = data2D.makeColumns(dataColsIndices, true);
+        try {
+            outputData = sortedData(dataColsIndices, true);
+            outputColumns = data2D.makeColumns(dataColsIndices, true);
+            if (outputData == null || scaleSelector == null) {
+                return;
+            }
+            boolean needScale = false;
+            for (int c : dataColsIndices) {
+                if (data2D.column(c).needScale()) {
+                    needScale = true;
+                    break;
+                }
+            }
+            if (!needScale) {
+                return;
+            }
+            List<List<String>> scaled = new ArrayList<>();
+            for (List<String> row : outputData) {
+                List<String> srow = new ArrayList<>();
+                srow.add(row.get(0));
+                for (int i = 0; i < dataColsIndices.size(); i++) {
+                    String s = row.get(i + 1);
+                    if (s == null || !data2D.column(dataColsIndices.get(i)).needScale()) {
+                        srow.add(s);
+                    } else {
+                        srow.add(DoubleTools.scaleString(s, invalidAs, scale));
+                    }
+                }
+                scaled.add(srow);
+            }
+            outputData = scaled;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+        }
     }
 
     public void outputData() {
@@ -232,6 +341,77 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     @Override
     public void refreshAction() {
         okAction();
+    }
+
+    public void initFrames() {
+
+    }
+
+    public void displayFrames() {
+        try {
+            if (group == null || framesNumber <= 0) {
+                return;
+            }
+            initFrames();
+            playController.play(framesNumber, 0, framesNumber - 1);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public synchronized void loadFrame(int index) {
+        if (group == null || framesNumber <= 0 || index < 0 || index > framesNumber) {
+            playController.clear();
+            return;
+        }
+        groupid = index + 1;
+        if (backgroundTask != null) {
+            backgroundTask.cancel();
+        }
+        backgroundTask = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                outputData = group.queryGroup(backgroundTask, groupid, outputColumns);
+                return outputData != null && !outputData.isEmpty();
+            }
+
+            @Override
+            protected void whenFailed() {
+            }
+
+            @Override
+            protected void whenSucceeded() {
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                backgroundTask = null;
+                if (ok) {
+                    drawFrame();
+                }
+            }
+
+        };
+        start(backgroundTask, false);
+    }
+
+    public void drawFrame() {
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            if (playController != null) {
+                playController.clear();
+            }
+            if (groupDataController != null) {
+                groupDataController.loadData(null);
+            }
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
 }

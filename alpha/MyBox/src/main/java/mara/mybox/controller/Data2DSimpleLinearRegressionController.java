@@ -155,20 +155,25 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
             if (!super.initData()) {
                 return false;
             }
-            dataColsIndices = new ArrayList<>();
             int categoryCol = data2D.colOrder(selectedCategory);
             if (categoryCol < 0) {
                 outOptionsError(message("SelectToHandle") + ": " + message("CategoryColumn"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
-            dataColsIndices.add(categoryCol);
             int valueCol = data2D.colOrder(selectedValue);
             if (valueCol < 0) {
                 outOptionsError(message("SelectToHandle") + ": " + message("ValueColumn"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
+            if (categoryCol == valueCol) {
+                outOptionsError(message("IndependentVariableShouldNotDependentVariable"));
+                tabPane.getSelectionModel().select(optionsTab);
+                return false;
+            }
+            dataColsIndices = new ArrayList<>();
+            dataColsIndices.add(categoryCol);
             dataColsIndices.add(valueCol);
             simpleRegression = null;
             regressionFile = null;
@@ -248,11 +253,12 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
             }
             residualData = new ArrayList<>();
             residualInside = 0;
+            double x, y;
             for (int i = 0; i < outputData.size(); i++) {
                 List<String> rowData = outputData.get(i);
                 List<String> residualRow = new ArrayList<>();
-                double x = DoubleTools.toDouble(rowData.get(1), invalidAs);
-                double y = DoubleTools.toDouble(rowData.get(2), invalidAs);
+                x = DoubleTools.toDouble(rowData.get(1), invalidAs);
+                y = DoubleTools.toDouble(rowData.get(2), invalidAs);
                 double predict = intercept + slope * x;
                 double residual = y - predict;
                 residualRow.add(rowData.get(0));
@@ -301,14 +307,11 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
                 popError(message("NoData"));
                 return;
             }
-
             fittingMaker.setDefaultChartTitle(selectedCategory + "_" + selectedValue + " - " + message("SimpleRegressionChart"))
                     .setChartTitle(fittingMaker.getDefaultChartTitle())
                     .setDefaultCategoryLabel(selectedCategory)
-                    .setCategoryLabel(selectedCategory)
-                    .setDefaultValueLabel(selectedValue)
-                    .setValueLabel(selectedValue);
-            fittingController.writeXYChart(outputColumns, outputData);
+                    .setDefaultValueLabel(selectedValue);
+            fittingController.writeXYChart(outputColumns, outputData, 1);
             fittingMaker.getSimpleRegressionChart()
                     .setDisplayText(textCheck.isSelected())
                     .setDisplayFittedPoints(fittedPointsCheck.isSelected())
@@ -328,10 +331,8 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
             residualMaker.setDefaultChartTitle((selectedCategory + "_" + selectedValue + " - " + message("Residual")))
                     .setChartTitle(fittingMaker.getDefaultChartTitle())
                     .setDefaultCategoryLabel(residualColumns.get(1).getColumnName())
-                    .setCategoryLabel(residualMaker.getDefaultCategoryLabel())
-                    .setDefaultValueLabel(message("Residual"))
-                    .setValueLabel(message("Residual"));
-            residualController.writeXYChart(residualColumns, residualData);
+                    .setDefaultValueLabel(message("Residual"));
+            residualController.writeXYChart(residualColumns, residualData, 1);
             randomColorResidual();
         } catch (Exception e) {
             MyBoxLog.error(e);

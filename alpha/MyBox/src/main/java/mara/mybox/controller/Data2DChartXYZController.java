@@ -25,7 +25,6 @@ import static mara.mybox.value.Languages.message;
  */
 public class Data2DChartXYZController extends BaseData2DHandleController {
 
-    protected List<Integer> dataColsIndices;
     protected int seriesSize;
     protected File chartFile;
 
@@ -235,14 +234,8 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
             @Override
             protected boolean handle() {
                 try {
-                    data2D.startTask(task, filterController.filter);
                     chartFile = null;
-                    if (isAllPages()) {
-                        outputData = data2D.allRows(dataColsIndices, false);
-                    } else {
-                        outputData = filtered(dataColsIndices, false);
-                    }
-                    data2D.stopFilter();
+                    outputData = filteredData(dataColsIndices, false);
                     if (outputData == null || outputData.isEmpty()) {
                         error = message("NoData");
                         return false;

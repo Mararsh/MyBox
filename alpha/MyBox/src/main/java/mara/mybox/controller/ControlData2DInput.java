@@ -2,20 +2,16 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.nio.charset.Charset;
-import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.Clipboard;
-import mara.mybox.data.StringTable;
-import mara.mybox.data2d.DataFileText;
-import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.TextFileTools;
@@ -30,24 +26,16 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlData2DInput extends BaseController {
 
-    protected ControlData2DLoad loadController;
-    protected DataFileText dataFileText;
-    protected List<List<String>> data;
-    protected List<String> columnNames;
     protected String delimiterName;
-    protected SimpleBooleanProperty statusNotify;
-    protected ChangeListener<Boolean> delimiterListener;
 
     @FXML
     protected TextArea textArea;
     @FXML
     protected CheckBox nameCheck;
     @FXML
-    protected ControlWebView htmlController;
-
-    public ControlData2DInput() {
-        statusNotify = new SimpleBooleanProperty(false);
-    }
+    protected Button refreshButton;
+    @FXML
+    protected ControlData2DResults dataController;
 
     @Override
     public void setStageStatus() {
@@ -58,9 +46,6 @@ public class ControlData2DInput extends BaseController {
     public void initControls() {
         try {
             super.initControls();
-            htmlController.setParent(this);
-
-            dataFileText = new DataFileText();
 
             delimiterName = UserConfig.getString(baseName + "InputDelimiter", ",");
 
@@ -69,23 +54,13 @@ public class ControlData2DInput extends BaseController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "WithNames", nameCheck.isSelected());
-                    goAction();
+                    refreshAction();
                 }
             });
 
-            goButton.disableProperty().bind(textArea.textProperty().isNull()
+            refreshButton.disableProperty().bind(textArea.textProperty().isNull()
                     .or(textArea.textProperty().isEmpty()));
-            editButton.setDisable(true);
 
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    public void setParameters(ControlData2DLoad parent, String text) {
-        try {
-            loadController = parent;
-            load(text);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -99,7 +74,7 @@ public class ControlData2DInput extends BaseController {
             }
             textArea.setText(text);
             delimiterName = null;  // guess at first 
-            goAction();
+            refreshAction();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -107,13 +82,13 @@ public class ControlData2DInput extends BaseController {
 
     @FXML
     public void delimiterActon() {
-        TextDelimiterController controller = TextDelimiterController.open(this, delimiterName, true);
+        TextDelimiterController controller = TextDelimiterController.open(this, delimiterName, false, false);
         controller.okNotify.addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 delimiterName = controller.delimiterName;
                 UserConfig.setString(baseName + "InputDelimiter", delimiterName);
-                goAction();
+                refreshAction();
                 popDone();
             }
         });
@@ -134,155 +109,66 @@ public class ControlData2DInput extends BaseController {
     }
 
     @FXML
-    @Override
-    public void goAction() {
-        dataFileText.initFile(null);
-        htmlController.loadContents("");
-        editButton.setDisable(true);
-        data = null;
-        columnNames = null;
+    public void refreshAction() {
+        dataController.loadNull();
         String text = textArea.getText();
         if (text == null || text.isBlank()) {
             popError(message("InputOrPasteText"));
             return;
         }
-        synchronized (this) {
-            if (task != null) {
-                task.cancel();
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+
+            protected DataFileCSV data2D;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    File tmpFile = TmpFileTools.getTempFile();
+                    TextFileTools.writeFile(tmpFile, text, Charset.forName("UTF-8"));
+                    data2D = new DataFileCSV(tmpFile);
+                    data2D.setCharset(Charset.forName("UTF-8"));
+                    if (delimiterName == null) {
+                        delimiterName = data2D.guessDelimiter();
+                    }
+                    data2D.setHasHeader(nameCheck.isSelected())
+                            .setDelimiter(delimiterName);
+                    return data2D != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
             }
-            task = new SingletonTask<Void>(this) {
 
-                private StringTable validateTable;
+            @Override
+            protected void whenSucceeded() {
+                dataController.loadData(data2D);
+            }
 
-                @Override
-                protected boolean handle() {
-                    try {
-                        File tmpFile = TmpFileTools.getTempFile();
-                        TextFileTools.writeFile(tmpFile, text, Charset.forName("UTF-8"));
-                        dataFileText.initFile(tmpFile);
-                        dataFileText.setHasHeader(nameCheck.isSelected());
-                        dataFileText.setCharset(Charset.forName("UTF-8"));
-                        dataFileText.setPageSize(Integer.MAX_VALUE);
-                        if (delimiterName == null || delimiterName.isEmpty()) {
-                            delimiterName = dataFileText.guessDelimiter();
-                        }
-                        if (delimiterName == null || delimiterName.isEmpty()) {
-                            delimiterName = ",";
-                        }
-                        dataFileText.setDelimiter(delimiterName);
-                        dataFileText.startTask(task, null);
-                        List<String> names = dataFileText.readColumnNames();
-                        if (isCancelled()) {
-                            return false;
-                        }
-                        if (names != null && !names.isEmpty()) {
-                            List<Data2DColumn> columns = new ArrayList<>();
-                            for (int i = 0; i < names.size(); i++) {
-                                Data2DColumn column = new Data2DColumn(names.get(i), dataFileText.defaultColumnType());
-                                column.setIndex(i);
-                                columns.add(column);
-                            }
-                            dataFileText.setColumns(columns);
-                            validateTable = Data2DColumn.validate(columns);
-                        }
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    try ( Connection conn = DerbyBase.getConnection()) {
-                        data = dataFileText.readPageData(conn);
-                    } catch (Exception e) {
-                        MyBoxLog.error(e);
-                        return false;
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    try {
-                        List<String> tcols = null;
-                        if (dataFileText.isColumnsValid()) {
-                            columnNames = new ArrayList<>();
-                            for (int i = 0; i < dataFileText.columnsNumber(); i++) {
-                                columnNames.add(dataFileText.columnName(i));
-                            }
-                            tcols = new ArrayList<>();
-                            tcols.add(message("SourceRowNumber"));
-                            tcols.addAll(columnNames);
-                        }
-                        StringTable table = new StringTable(tcols);
-                        if (data != null) {
-                            for (int i = 0; i < data.size(); i++) {
-                                List<String> row = new ArrayList<>();
-                                row.add(dataFileText.rowName(i));
-                                List<String> drow = data.get(i);
-                                drow.remove(0);
-                                row.addAll(drow);
-                                table.add(row);
-                            }
-                        }
-                        htmlController.loadContents(table.html());
-                        editButton.setDisable(false);
-                    } catch (Exception e) {
-                        MyBoxLog.console(e);
-                    }
-                }
-
-                @Override
-                protected void whenFailed() {
-                    if (isCancelled()) {
-                        return;
-                    }
-                    if (error != null) {
-                        popError(message(error));
-                    } else {
-                        popFailed();
-                    }
-                }
-
-                @Override
-                protected void finalAction() {
-                    dataFileText.stopTask();
-                    task = null;
-                    if (validateTable != null && !validateTable.isEmpty()) {
-                        validateTable.htmlTable();
-                    }
-                    statusNotify.set(statusNotify.get());
-                }
-
-            };
-            start(task);
-        }
-    }
-
-    @FXML
-    public void editAction() {
-        if (dataFileText.getColumns() == null || data == null || data.isEmpty()) {
-            popError(message("NoData"));
-            return;
-        }
-        DataFileTextController.open(null, dataFileText.getColumns(), data);
+        };
+        start(task);
     }
 
     public boolean hasData() {
-        return dataFileText != null && dataFileText.hasData();
+        Data2D data2D = dataController.data2D;
+        if (data2D == null || !data2D.isValid()) {
+            return false;
+        }
+        return !dataController.tableData.isEmpty();
     }
 
-    @Override
-    public void cleanPane() {
-        try {
-            statusNotify = null;
-            delimiterListener = null;
-            loadController = null;
-            dataFileText = null;
-            data = null;
-            columnNames = null;
-            delimiterName = null;
-            columnNames = null;
-        } catch (Exception e) {
+    public Data2D data2D() {
+        return dataController.data2D;
+    }
+
+    public List<List<String>> data() {
+        Data2D data2D = dataController.data2D;
+        if (data2D == null || !data2D.isValid()) {
+            return null;
         }
-        super.cleanPane();
+        return data2D.allRows(false);
     }
 
 }

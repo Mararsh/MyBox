@@ -123,11 +123,12 @@ public class SimpleLinearRegression extends SimpleRegression {
             return null;
         }
         List<List<String>> regressionData = new ArrayList<>();
+        double x, y;
         for (List<String> row : data) {
             try {
                 long index = Long.parseLong(row.get(0));
-                double x = DoubleTools.toDouble(row.get(1), invalidAs);
-                double y = DoubleTools.toDouble(row.get(2), invalidAs);
+                x = DoubleTools.toDouble(row.get(1), invalidAs);
+                y = DoubleTools.toDouble(row.get(2), invalidAs);
                 List<String> resultRow = addData(index, x, y);
                 regressionData.add(resultRow);
             } catch (Exception e) {

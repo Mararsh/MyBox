@@ -167,7 +167,7 @@ public class ControlData2DView extends BaseController {
 
     @FXML
     public void delimiterActon() {
-        TextDelimiterController controller = TextDelimiterController.open(this, displayDelimiterName, false);
+        TextDelimiterController controller = TextDelimiterController.open(this, displayDelimiterName, true, false);
         controller.okNotify.addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {

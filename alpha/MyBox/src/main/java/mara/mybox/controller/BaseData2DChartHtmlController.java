@@ -139,12 +139,6 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
     }
 
     @Override
-    public void rowNumberCheckChanged() {
-        super.rowNumberCheckChanged();
-        okAction();
-    }
-
-    @Override
     public boolean initData() {
         if (!super.initData()) {
             return false;

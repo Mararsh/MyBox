@@ -31,8 +31,11 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
     }
 
     @Override
-    public void readData() {
+    public boolean initData() {
         try {
+            if (!super.initData()) {
+                return false;
+            }
             dataColsIndices = new ArrayList<>();
             dataColsIndices.addAll(checkedColsIndices);
             for (int col : otherColsIndices) {
@@ -40,11 +43,21 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
                     dataColsIndices.add(col);
                 }
             }
-            outputData = scaledData(dataColsIndices, true);
+
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    @Override
+    public void readData() {
+        try {
+            super.readData();
             if (outputData == null) {
                 return;
             }
-            outputColumns = data2D.makeColumns(dataColsIndices, true);
             normalization = null;
             int rowsNumber = outputData.size();
             int colsNumber = checkedColsIndices.size();

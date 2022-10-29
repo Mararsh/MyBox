@@ -23,7 +23,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-12-13
  * @License Apache License Version 2.0
  */
-public class Data2DPercentageController extends BaseData2DHandleController {
+public class Data2DPercentageController extends BaseData2DTargetsController {
 
     protected File handleFile;
 

@@ -11,7 +11,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-11-28
  * @License Apache License Version 2.0
  */
-public class Data2DCopyController extends BaseData2DHandleController {
+public class Data2DCopyController extends BaseData2DTargetsController {
 
     public Data2DCopyController() {
         baseTitle = message("CopyFilterQueryConvert");

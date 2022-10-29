@@ -23,7 +23,6 @@ import org.apache.commons.csv.CSVPrinter;
  */
 public class Data2DGroupController extends BaseData2DHandleController {
 
-    protected List<Integer> dataColsIndices;
     protected DataFileCSV resultsFile;
     protected List<DataFileCSV> files;
     protected File currentFile;
@@ -73,7 +72,7 @@ public class Data2DGroupController extends BaseData2DHandleController {
                     DataFileCSV targetFile = group.getTargetFile();
                     if (targetFile != null) {
                         DataFileCSVController.loadCSV(targetFile);
-                        popInformation(message("GroupNumber") + ": " + group.groupNumber());
+                        popInformation(message("GroupNumber") + ": " + group.groupsNumber());
                     }
                 } else if (filesRadio.isSelected()) {
                     List<File> files = group.getCsvFiles();
@@ -85,7 +84,7 @@ public class Data2DGroupController extends BaseData2DHandleController {
                     DataTable targetData = group.getTargetData();
                     if (targetData != null) {
                         DataTablesController.loadTable(targetData);
-                        popInformation(message("GroupNumber") + ": " + group.groupNumber());
+                        popInformation(message("GroupNumber") + ": " + group.groupsNumber());
                     }
                 }
 

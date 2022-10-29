@@ -35,7 +35,6 @@ import static mara.mybox.value.Languages.message;
 public class Data2DLocationDistributionController extends BaseData2DHandleController {
 
     protected String labelCol, longCol, laCol, sizeCol;
-    protected List<Integer> dataColsIndices;
     protected ToggleGroup csGroup;
     protected double maxValue, minValue;
     protected List<MapPoint> dataPoints;
@@ -456,7 +455,7 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                 if (ok) {
                     framesNumber = dataPoints.size();
                     lastFrameid = -1;
-                    mapController.setPoints(mapPoints);
+                    mapController.initPoints(mapPoints);
                     playController.play(labels);
                 }
             }
@@ -499,6 +498,17 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                     + point.getLongitude() + ", " + point.getLatitude() + ");");
         }
         lastFrameid = frameid;
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            playController.clear();
+            mapController.clearAction();
+            valuesController.loadData(null);
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
     /*

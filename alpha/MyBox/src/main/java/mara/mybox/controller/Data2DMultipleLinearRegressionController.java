@@ -45,7 +45,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
             invalidAs = InvalidAs.Blank;
 
             dataColsIndices = new ArrayList<>();
-            yName = colSelector.getSelectionModel().getSelectedItem();
+            yName = categoryColumnSelector.getSelectionModel().getSelectedItem();
             yCol = data2D.colOrder(yName);
             if (yCol < 0) {
                 outOptionsError(message("SelectToHandle") + ": " + message("DependentVariable"));
@@ -89,14 +89,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
             @Override
             protected boolean handle() {
                 try {
-                    data2D.startTask(task, filterController.filter);
-                    List<List<String>> data;
-                    if (isAllPages()) {
-                        data = data2D.allRows(dataColsIndices, false);
-                    } else {
-                        data = filtered(dataColsIndices, false);
-                    }
-                    data2D.stopFilter();
+                    List<List<String>> data = filteredData(dataColsIndices, false);
                     if (data == null || data.isEmpty()) {
                         error = message("NoData");
                         return false;

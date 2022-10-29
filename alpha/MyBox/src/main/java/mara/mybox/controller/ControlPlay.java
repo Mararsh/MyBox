@@ -419,6 +419,7 @@ public class ControlPlay extends BaseController {
             frameStartNodify = null;
             stopNodify = null;
             intervalNodify = null;
+
         } catch (Exception e) {
         }
         super.cleanPane();

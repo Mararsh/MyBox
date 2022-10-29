@@ -493,18 +493,21 @@ public class ControlMap extends BaseController {
                 : "'" + string.replaceAll("'", AppValues.MyBoxSeparator).replaceAll("\n", "</BR>") + "'";
     }
 
-    public void setPoints(List<MapPoint> points) {
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
-        clearAction();
+    public void initPoints(List<MapPoint> points) {
+        setPoints(points);
         setMinLevel();
         mapOptions.setFitView(false);
         mapPoints = points;
         if (mapPoints != null && !mapPoints.isEmpty()) {
             webEngine.executeScript("setCenter("
                     + mapPoints.get(0).getLongitude() + ", " + mapPoints.get(0).getLatitude() + ");");
+        }
+    }
+
+    public void setPoints(List<MapPoint> points) {
+        clearMap();
+        mapPoints = points;
+        if (mapPoints != null && !mapPoints.isEmpty()) {
             if (topLabel != null) {
                 topLabel.setText(message("DataNumber") + ":" + points.size());
             } else {
@@ -514,15 +517,15 @@ public class ControlMap extends BaseController {
     }
 
     public void drawPoints(List<MapPoint> points) {
-        setPoints(points);
         if (!mapLoaded || webEngine == null || points == null || points.isEmpty()) {
             return;
         }
-        timer = new Timer();
+        setPoints(points);
         int size = points.size();
         if (interval <= 0) {
             interval = 1;
         }
+        timer = new Timer();
         timer.schedule(new TimerTask() {
 
             private boolean frameEnd = true, centered = false;
@@ -572,6 +575,10 @@ public class ControlMap extends BaseController {
     @FXML
     @Override
     public void clearAction() {
+        clearMap();
+    }
+
+    public void clearMap() {
         if (timer != null) {
             timer.cancel();
             timer = null;

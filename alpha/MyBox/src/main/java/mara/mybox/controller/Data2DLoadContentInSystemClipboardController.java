@@ -13,7 +13,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class Data2DLoadContentInSystemClipboardController extends BaseChildController {
 
-    protected ControlData2DLoad loadController;
+    protected ControlData2DLoad dataController;
 
     @FXML
     protected ControlData2DInput inputController;
@@ -24,7 +24,7 @@ public class Data2DLoadContentInSystemClipboardController extends BaseChildContr
 
     public void setParameters(ControlData2DLoad parent, String text) {
         try {
-            loadController = parent;
+            dataController = parent;
             inputController.load(text);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -34,11 +34,11 @@ public class Data2DLoadContentInSystemClipboardController extends BaseChildContr
     @FXML
     @Override
     public void okAction() {
-        if (inputController.data == null || inputController.data.isEmpty()) {
+        if (!inputController.hasData()) {
             popError(message("NoData"));
             return;
         }
-        loadController.loadTmpData(null, inputController.dataFileText.getColumns(), inputController.data);
+        dataController.loadData(inputController.data2D());
         close();
     }
 
@@ -47,8 +47,9 @@ public class Data2DLoadContentInSystemClipboardController extends BaseChildContr
      */
     public static Data2DLoadContentInSystemClipboardController open(ControlData2DLoad parent, String text) {
         try {
-            Data2DLoadContentInSystemClipboardController controller = (Data2DLoadContentInSystemClipboardController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.Data2DLoadContentInSystemClipboardFxml, true);
+            Data2DLoadContentInSystemClipboardController controller
+                    = (Data2DLoadContentInSystemClipboardController) WindowTools.openChildStage(
+                            parent.getMyWindow(), Fxmls.Data2DLoadContentInSystemClipboardFxml, true);
             controller.setParameters(parent, text);
             controller.requestMouse();
             return controller;

@@ -10,6 +10,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.layout.HBox;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -55,11 +56,6 @@ public class Data2DPasteContentInSystemClipboardController extends BaseChildCont
             };
             targetTableController.statusNotify.addListener(targetStatusListener);
 
-            inputController.statusNotify.addListener(
-                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        okButton.setDisable(!inputController.hasData());
-                    });
-
             makeControls(0, 0);
 
         } catch (Exception e) {
@@ -98,50 +94,69 @@ public class Data2DPasteContentInSystemClipboardController extends BaseChildCont
     @FXML
     @Override
     public void okAction() {
-        try {
-            if (inputController.data == null || inputController.data.isEmpty()) {
-                popError(message("NoData"));
-                return;
-            }
-            row = rowSelector.getSelectionModel().getSelectedIndex();
-            col = colSelector.getSelectionModel().getSelectedIndex();
-            int rowsNumber = dataTarget.tableRowsNumber();
-            int colsNumber = dataTarget.tableColsNumber();
-            if (row < 0 || row >= rowsNumber || col < 0 || col >= colsNumber) {
-                popError(message("InvalidParameters"));
-                return;
-            }
-            targetTableController.isSettingValues = true;
-            if (replaceRadio.isSelected()) {
-                for (int r = row; r < Math.min(row + inputController.data.size(), rowsNumber); r++) {
-                    List<String> tableRow = targetTableController.tableData.get(r);
-                    List<String> dataRow = inputController.data.get(r - row);
-                    for (int c = col; c < Math.min(col + dataRow.size(), colsNumber); c++) {
-                        tableRow.set(c + 1, dataRow.get(c - col));
-                    }
-                    targetTableController.tableData.set(r, tableRow);
-                }
-            } else {
-                List<List<String>> newRows = new ArrayList<>();
-                for (int r = 0; r < inputController.data.size(); r++) {
-                    List<String> newRow = targetTableController.data2D.newRow();
-                    List<String> dataRow = inputController.data.get(r);
-                    for (int c = col; c < Math.min(col + dataRow.size(), colsNumber); c++) {
-                        newRow.set(c + 1, dataRow.get(c - col));
-                    }
-                    newRows.add(newRow);
-                }
-                targetTableController.tableData.addAll(insertRadio.isSelected() ? row : row + 1, newRows);
-            }
-            targetTableController.tableView.refresh();
-            targetTableController.isSettingValues = false;
-            targetTableController.tableChanged(true);
-            popDone();
-
-            makeControls(row, col);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
+        if (!inputController.hasData()) {
+            popError(message("NoData"));
+            return;
         }
+        row = rowSelector.getSelectionModel().getSelectedIndex();
+        col = colSelector.getSelectionModel().getSelectedIndex();
+        int rowsNumber = dataTarget.tableRowsNumber();
+        int colsNumber = dataTarget.tableColsNumber();
+        if (row < 0 || row >= rowsNumber || col < 0 || col >= colsNumber) {
+            popError(message("InvalidParameters"));
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+
+            List<List<String>> data;
+
+            @Override
+            protected boolean handle() {
+                data = inputController.data();
+                return data != null && !data.isEmpty();
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                try {
+                    targetTableController.isSettingValues = true;
+                    if (replaceRadio.isSelected()) {
+                        for (int r = row; r < Math.min(row + data.size(), rowsNumber); r++) {
+                            List<String> tableRow = targetTableController.tableData.get(r);
+                            List<String> dataRow = data.get(r - row);
+                            for (int c = col; c < Math.min(col + dataRow.size(), colsNumber); c++) {
+                                tableRow.set(c + 1, dataRow.get(c - col));
+                            }
+                            targetTableController.tableData.set(r, tableRow);
+                        }
+                    } else {
+                        List<List<String>> newRows = new ArrayList<>();
+                        for (int r = 0; r < data.size(); r++) {
+                            List<String> newRow = targetTableController.data2D.newRow();
+                            List<String> dataRow = data.get(r);
+                            for (int c = col; c < Math.min(col + dataRow.size(), colsNumber); c++) {
+                                newRow.set(c + 1, dataRow.get(c - col));
+                            }
+                            newRows.add(newRow);
+                        }
+                        targetTableController.tableData.addAll(insertRadio.isSelected() ? row : row + 1, newRows);
+                    }
+                    targetTableController.tableView.refresh();
+                    targetTableController.isSettingValues = false;
+                    targetTableController.tableChanged(true);
+                    popDone();
+
+                    makeControls(row, col);
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                }
+            }
+
+        };
+        start(task);
     }
 
     @Override

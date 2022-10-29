@@ -28,7 +28,6 @@ public class Data2DChartXYController extends BaseData2DChartController {
     protected List<String> valueNames;
     protected int categoryIndex;
     protected List<Integer> valueIndices;
-    protected List<String> outputNames;
 
     @FXML
     protected ControlChartXYSelection chartTypesController;
@@ -145,11 +144,11 @@ public class Data2DChartXYController extends BaseData2DChartController {
             }
 
             outputColumns = new ArrayList<>();
-            outputNames = new ArrayList<>();
+            dataNames = new ArrayList<>();
             for (int col : dataColsIndices) {
                 Data2DColumn c = data2D.column(col);
                 outputColumns.add(c);
-                outputNames.add(c.getColumnName());
+                dataNames.add(c.getColumnName());
             }
 
             return initChart();

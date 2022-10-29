@@ -79,7 +79,7 @@ public class ControlData2DResults extends ControlData2DLoad {
     @FXML
     @Override
     public void editAction() {
-        if (data2D == null) {
+        if (data2D == null || !data2D.isValid()) {
             return;
         }
         if (data2D.isCSV()) {

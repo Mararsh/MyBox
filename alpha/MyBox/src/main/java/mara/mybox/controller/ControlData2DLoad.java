@@ -144,13 +144,15 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     public void setData(Data2D data) {
         try {
             data2D = data;
-            tableData2DDefinition = data2D.getTableData2DDefinition();
-            tableData2DColumn = data2D.getTableData2DColumn();
+            if (data2D != null) {
+                tableData2DDefinition = data2D.getTableData2DDefinition();
+                tableData2DColumn = data2D.getTableData2DColumn();
 
-            if (paginationPane != null) {
-                showPaginationPane(!data2D.isTmpData() && !data2D.isMatrix());
+                if (paginationPane != null) {
+                    showPaginationPane(!data2D.isTmpData() && !data2D.isMatrix());
+                }
+                data2D.setLoadController(this);
             }
-            data2D.setLoadController(this);
 
             validateData();
 
@@ -163,11 +165,11 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         data
      */
     public void loadData(Data2D data) {
+        setData(data);
         if (data == null) {
             loadNull();
             return;
         }
-        setData(data);
         readDefinition();
     }
 
@@ -429,6 +431,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                     return targetData != null;
                 } catch (Exception e) {
                     error = e.toString();
+                    MyBoxLog.console(error);
                     return false;
                 }
             }
@@ -531,9 +534,9 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     }
 
     public boolean validateData() {
-        boolean invalid = data2D == null || !data2D.isColumnsValid();
-        thisPane.setDisable(invalid);
-        return !invalid;
+        boolean valid = data2D != null && data2D.isValid();
+        thisPane.setDisable(!valid);
+        return valid;
     }
 
     public synchronized void resetStatus() {
@@ -716,7 +719,9 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             tableView.getColumns().remove(rowsSelectionColumn != null ? 2 : 1, tableView.getColumns().size());
             tableView.setItems(tableData);
             isSettingValues = false;
-            data2D.setLoadController(this);
+            if (data2D != null) {
+                data2D.setLoadController(this);
+            }
 
             if (!validateData()) {
                 return;

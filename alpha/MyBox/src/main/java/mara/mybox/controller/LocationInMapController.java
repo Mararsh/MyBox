@@ -194,18 +194,14 @@ public class LocationInMapController extends GeographyCodeMapController {
 
                 @Override
                 protected void whenSucceeded() {
+                    if (geographyCodes == null
+                            || multipleCheck == null || !multipleCheck.isSelected()) {
+                        geographyCodes = new ArrayList<>();
+                    }
+                    geographyCodes.add(geographyCode);
+                    drawPoints();
                     dataArea.setText(BaseDataAdaptor.displayData(geoTable, geographyCode, null, false));
                     setButtons();
-                    try {
-                        if (geographyCodes == null
-                                || multipleCheck == null || !multipleCheck.isSelected()) {
-                            geographyCodes = new ArrayList<>();
-                        }
-                        geographyCodes.add((GeographyCode) geographyCode.clone());
-                        drawPoints();
-                    } catch (Exception e) {
-//                        MyBoxLog.console(e.toString());
-                    }
                 }
 
             };
@@ -223,9 +219,7 @@ public class LocationInMapController extends GeographyCodeMapController {
     @FXML
     @Override
     public void clearAction() {
-        if (mapLoaded) {
-            webEngine.executeScript("clearMap();");
-        }
+        clearMap();
         geographyCodes.clear();
         clearCodeAction();
     }

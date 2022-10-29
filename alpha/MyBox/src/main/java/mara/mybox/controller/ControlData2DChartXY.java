@@ -33,11 +33,15 @@ public class ControlData2DChartXY extends BaseData2DChartFx {
     }
 
     public void writeXYChart(List<Data2DColumn> columns, List<List<String>> data) {
+        writeXYChart(columns, data, 0);
+    }
+
+    public void writeXYChart(List<Data2DColumn> columns, List<List<String>> data, int offset) {
         List<Integer> valueIndices = new ArrayList<>();
-        for (int i = 1; i < columns.size(); i++) {
+        for (int i = offset + 1; i < columns.size(); i++) {
             valueIndices.add(i);
         }
-        writeXYChart(columns, data, 0, valueIndices);
+        writeXYChart(columns, data, offset, valueIndices);
     }
 
     public void writeXYChart(List<Data2DColumn> columns, List<List<String>> data,

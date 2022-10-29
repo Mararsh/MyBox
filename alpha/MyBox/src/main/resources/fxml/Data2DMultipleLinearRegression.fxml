@@ -199,7 +199,7 @@ License:    Apache License Version 2.0
                                                                 <FlowPane fx:id="valueColumnPane" hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
                                                                     <children>
                                                                         <Label minHeight="-Infinity" minWidth="-Infinity" text="%DependentVariable" />
-                                                                        <ComboBox fx:id="colSelector" prefWidth="200.0" />
+                                                                        <ComboBox fx:id="categoryColumnSelector" prefWidth="200.0" />
                                                                     </children>
                                                                 </FlowPane>
                                                                 <FlowPane hgap="2.0" prefWrapLength="300.0" vgap="2.0">

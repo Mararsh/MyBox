@@ -20,7 +20,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-9-4
  * @License Apache License Version 2.0
  */
-public class Data2DSetValuesController extends BaseData2DHandleController {
+public class Data2DSetValuesController extends BaseData2DTargetsController {
 
     @FXML
     protected ControlData2DSetValue valueController;

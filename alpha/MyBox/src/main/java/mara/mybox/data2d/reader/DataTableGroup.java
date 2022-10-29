@@ -41,7 +41,7 @@ public class DataTableGroup {
     protected GroupType type;
     protected Data2D originalData;
     protected DataTable sourceData;
-    protected String groupName;
+    protected String groupName, orderByString;
     protected List<String> groupNames, orders, targetNames;
     protected InvalidAs invalidAs;
     protected int scale, splitNumber;
@@ -56,7 +56,7 @@ public class DataTableGroup {
     protected String sourceSheet, idColName, parameterName, parameterValue, parameterValueForFilename;
     protected String mappedIdColName, mappedParameterName;
     protected List<Data2DColumn> sourceColumns;
-    protected long count, groupid, groupCurrentSize;
+    protected long count, groupid, groupCurrentSize, groupsNumber;
 
     protected Connection conn;
     protected List<String> targetColNames;
@@ -142,9 +142,11 @@ public class DataTableGroup {
                 return false;
             }
             groupid = 0;
+            groupsNumber = 0;
             groupCurrentSize = 0;
             count = 0;
             idColName = message("Group");
+            orderByString = orderByString();
             targetData = null;
             insert = null;
             csvPrinter = null;
@@ -345,7 +347,6 @@ public class DataTableGroup {
             double from = minValue, to;
             int fscale = sourceData.columnByName(mappedGroupName).needScale() ? scale : 0;
             String condition;
-            String orderBy = orderByString();
             conn.setAutoCommit(false);
             while (from <= maxValue) {
                 if (task == null || task.isCancelled()) {
@@ -370,7 +371,7 @@ public class DataTableGroup {
                     parameterValueForFilename = bs + "-" + es;
                     from = to;
                 }
-                sql = "SELECT * FROM " + sourceSheet + " WHERE " + condition + orderBy;
+                sql = "SELECT * FROM " + sourceSheet + " WHERE " + condition + orderByString;
                 valueQeury(sql);
             }
             return true;
@@ -395,7 +396,6 @@ public class DataTableGroup {
 
             conn.setAutoCommit(false);
             double from, to;
-            String orderBy = orderByString();
             for (int i = 0; i < splitList.size();) {
                 if (task == null || task.isCancelled()) {
                     return false;
@@ -411,7 +411,7 @@ public class DataTableGroup {
                 String es = DoubleTools.scaleString(to, scale);
                 parameterValue = "[" + bs + "," + es + "]";
                 parameterValueForFilename = bs + "-" + es;
-                String sql = "SELECT * FROM " + sourceSheet + " WHERE " + condition + orderBy;
+                String sql = "SELECT * FROM " + sourceSheet + " WHERE " + condition + orderByString;
                 valueQeury(sql);
             }
             return true;
@@ -483,8 +483,7 @@ public class DataTableGroup {
                 maxGroup = splitNumber;
             }
             conn.setAutoCommit(false);
-            String orderBy = orderByString();
-            sql = "SELECT * FROM " + sourceSheet + orderBy;
+            sql = "SELECT * FROM " + sourceSheet + orderByString;
             long rowIndex = 0, from, to, interval = Math.round(splitInterval);
             try ( ResultSet query = conn.prepareStatement(sql).executeQuery()) {
                 Map<String, Object> sourceRow;
@@ -546,7 +545,6 @@ public class DataTableGroup {
                 return false;
             }
             long from, to;
-            String orderBy = orderByString();
             String sql;
             for (int i = 0; i < splitList.size();) {
                 if (task == null || task.isCancelled()) {
@@ -563,7 +561,7 @@ public class DataTableGroup {
                 groupChanged();
                 parameterValue = "[" + from + "," + to + "]";
                 parameterValueForFilename = from + "-" + to;
-                sql = "SELECT * FROM " + sourceSheet + orderBy
+                sql = "SELECT * FROM " + sourceSheet + orderByString
                         + " OFFSET " + from + " ROWS FETCH NEXT " + (to - from + 1) + " ROWS ONLY";
                 try ( ResultSet query = conn.prepareStatement(sql).executeQuery()) {
                     Map<String, Object> sourceRow;
@@ -621,14 +619,13 @@ public class DataTableGroup {
             FindReplaceString findReplace = FindReplaceString.create().
                     setOperation(FindReplaceString.Operation.ReplaceAll)
                     .setIsRegex(false).setCaseInsensitive(false).setMultiline(false);
-            String orderBy = orderByString();
             long rowIndex;
             String sql;
             for (DataFilter filter : conditions) {
                 if (task == null || task.isCancelled()) {
                     return false;
                 }
-                sql = "SELECT * FROM " + sourceSheet + orderBy;
+                sql = "SELECT * FROM " + sourceSheet + orderByString;
                 rowIndex = 0;
                 groupChanged();
                 long fmax = filter.getMaxPassed();
@@ -839,6 +836,7 @@ public class DataTableGroup {
 
     private void finishGroup() {
         try {
+            groupsNumber = groupid;
             switch (targetType) {
                 case Table:
                     if (targetData != null) {
@@ -891,6 +889,41 @@ public class DataTableGroup {
         return orderBy == null ? "" : " ORDER BY " + orderBy;
     }
 
+    public List<List<String>> queryGroup(SingletonTask task, long groupid, List<Data2DColumn> columns) {
+        if (targetData == null || columns == null) {
+            return null;
+        }
+        List<List<String>> data = new ArrayList<>();
+        String sql = "SELECT * FROM " + targetData.getSheet()
+                + " WHERE " + idColName + "=" + groupid + orderByString;
+        try ( Connection qconn = DerbyBase.getConnection();
+                 ResultSet query = qconn.prepareStatement(sql).executeQuery()) {
+            while (query.next() && task != null && !task.isCancelled()) {
+                if (parameterValue == null) {
+                    parameterValue = query.getString(2);
+                }
+                List<String> row = new ArrayList<>();
+                for (Data2DColumn column : columns) {
+                    String name = column.getColumnName();
+                    String gname = targetData.tmpColumnName(name);
+                    String s = column.toString(query.getObject(gname));
+                    if (s != null && column.needScale() && scale >= 0) {
+                        s = DoubleTools.scaleString(s, invalidAs, scale);
+                    }
+                    row.add(s);
+                }
+                data.add(row);
+            }
+            return data;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.console(e.toString());
+            return null;
+        }
+    }
+
 
     /*
         get
@@ -907,12 +940,16 @@ public class DataTableGroup {
         return csvFiles;
     }
 
-    public long groupNumber() {
-        return groupid;
+    public long groupsNumber() {
+        return groupsNumber;
     }
 
     public String getParameterName() {
         return parameterName;
+    }
+
+    public String getParameterValue() {
+        return parameterValue;
     }
 
     public String getIdColName() {

@@ -95,13 +95,7 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
             @Override
             protected boolean handle() {
                 try {
-                    data2D.startTask(task, filterController.filter);
-                    if (isAllPages()) {
-                        data = data2D.allRows(dataColsIndices, false);
-                    } else {
-                        data = filtered(dataColsIndices, false);
-                    }
-                    data2D.stopFilter();
+                    data = filteredData(dataColsIndices, false);
                     if (data == null || data.isEmpty()) {
                         error = message("NoData");
                         return false;

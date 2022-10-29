@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.util.List;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
@@ -12,7 +11,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-12-25
  * @License Apache License Version 2.0
  */
-public class Data2DSortController extends BaseData2DHandleController {
+public class Data2DSortController extends BaseData2DTargetsController {
 
     public Data2DSortController() {
         baseTitle = message("Sort");
@@ -24,8 +23,7 @@ public class Data2DSortController extends BaseData2DHandleController {
             if (!super.initData()) {
                 return false;
             }
-            List<String> sortNames = sortNames();
-            if (sortNames == null || sortNames.isEmpty()) {
+            if (orders == null || orders.isEmpty()) {
                 outOptionsError(message("SelectToHandle") + ": " + message("Order"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
@@ -39,7 +37,6 @@ public class Data2DSortController extends BaseData2DHandleController {
 
     @Override
     public boolean handleRows() {
-        MyBoxLog.console(checkedColsIndices);
         outputData = sortedData(checkedColsIndices, showRowNumber());
         return outputData != null && !outputData.isEmpty();
     }

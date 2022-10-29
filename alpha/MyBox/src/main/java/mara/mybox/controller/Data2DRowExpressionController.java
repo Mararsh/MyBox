@@ -25,7 +25,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-7-1
  * @License Apache License Version 2.0
  */
-public class Data2DRowExpressionController extends BaseData2DHandleController {
+public class Data2DRowExpressionController extends BaseData2DTargetsController {
 
     protected String expression;
 

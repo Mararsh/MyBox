@@ -120,11 +120,10 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
     @Override
     public void readData() {
         try {
-            outputData = scaledData(dataColsIndices, true);
+            super.readData();
             if (outputData == null) {
                 return;
             }
-            outputColumns = data2D.makeColumns(dataColsIndices, true);
             normalization = null;
             rowsNumber = outputData.size();
             String[] data = new String[2 * rowsNumber];
