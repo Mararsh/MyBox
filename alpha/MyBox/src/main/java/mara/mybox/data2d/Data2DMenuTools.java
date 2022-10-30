@@ -10,6 +10,9 @@ import mara.mybox.controller.ControlData2DLoad;
 import mara.mybox.controller.Data2DAddRowsController;
 import mara.mybox.controller.Data2DChartBoxWhiskerController;
 import mara.mybox.controller.Data2DChartComparisonBarsController;
+import mara.mybox.controller.Data2DChartGroupComparisonBarsController;
+import mara.mybox.controller.Data2DChartGroupPieController;
+import mara.mybox.controller.Data2DChartGroupSelfComparisonBarsController;
 import mara.mybox.controller.Data2DChartGroupXYController;
 import mara.mybox.controller.Data2DChartPieController;
 import mara.mybox.controller.Data2DChartSelfComparisonBarsController;
@@ -405,9 +408,9 @@ public class Data2DMenuTools {
             menu.setDisable(empty);
             chartMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("PieChart"), StyleTools.getIconImage("iconPieChart.png"));
+            menu = new MenuItem(message("GroupData") + " - " + message("PieChart"), StyleTools.getIconImage("iconPieChart.png"));
             menu.setOnAction((ActionEvent event) -> {
-                Data2DChartPieController.open(controller);
+                Data2DChartGroupPieController.open(controller);
             });
             menu.setDisable(empty);
             chartMenu.getItems().add(menu);
@@ -419,16 +422,16 @@ public class Data2DMenuTools {
             menu.setDisable(empty);
             chartMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("SelfComparisonBarsChart"), StyleTools.getIconImage("iconBarChartH.png"));
+            menu = new MenuItem(message("GroupData") + " - " + message("SelfComparisonBarsChart"), StyleTools.getIconImage("iconBarChartH.png"));
             menu.setOnAction((ActionEvent event) -> {
-                Data2DChartSelfComparisonBarsController.open(controller);
+                Data2DChartGroupSelfComparisonBarsController.open(controller);
             });
             menu.setDisable(empty);
             chartMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("ComparisonBarsChart"), StyleTools.getIconImage("iconComparisonBarsChart.png"));
+            menu = new MenuItem(message("GroupData") + " - " + message("ComparisonBarsChart"), StyleTools.getIconImage("iconComparisonBarsChart.png"));
             menu.setOnAction((ActionEvent event) -> {
-                Data2DChartComparisonBarsController.open(controller);
+                Data2DChartGroupComparisonBarsController.open(controller);
             });
             menu.setDisable(empty);
             chartMenu.getItems().add(menu);

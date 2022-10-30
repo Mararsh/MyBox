@@ -215,6 +215,7 @@ License:    Apache License Version 2.0
                                     <TextField fx:id="maxInput" prefWidth="100.0" />
                                  </children>
                               </FlowPane>
+                              <CheckBox fx:id="rowNumberCheck" mnemonicParsing="false" text="%RowNumber" />
                                         <VBox fx:id="columnCheckBoxsBox1" layoutX="20.0" layoutY="20.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                             <children>
                                                 <FlowPane hgap="5.0" vgap="5.0">

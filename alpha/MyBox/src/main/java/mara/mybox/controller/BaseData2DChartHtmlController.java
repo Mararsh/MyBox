@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -28,6 +29,7 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
     protected int barWidth = 100, categorysCol;
     protected EventListener clickListener;
     protected boolean randomColor;
+    protected List<Integer> otherIndices;
 
     @FXML
     protected ToggleGroup compareGroup;
@@ -139,6 +141,11 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
     }
 
     @Override
+    public boolean showRowNumber() {
+        return true;
+    }
+
+    @Override
     public boolean initData() {
         if (!super.initData()) {
             return false;
@@ -152,36 +159,7 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
     }
 
     @Override
-    protected void startOperation() {
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonTask<Void>(this) {
-
-            @Override
-            protected boolean handle() {
-                try {
-                    data2D.startTask(task, filterController.filter);
-                    readData();
-                    data2D.stopFilter();
-                    return outputData != null;
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                writeHtml();
-            }
-
-        };
-        start(task);
-    }
-
-    protected void writeHtml() {
+    public void outputData() {
         if (task != null) {
             task.cancel();
         }
@@ -191,14 +169,8 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
 
             @Override
             protected boolean handle() {
-                try {
-                    html = makeHtml();
-                    return html != null;
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                    error = e.toString();
-                    return false;
-                }
+                html = makeHtml();
+                return html != null;
             }
 
             @Override
@@ -288,7 +260,7 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
     @FXML
     public void randomColors() {
         randomColor = true;
-        writeHtml();
+        outputData();
     }
 
     public void pageLoaded() {

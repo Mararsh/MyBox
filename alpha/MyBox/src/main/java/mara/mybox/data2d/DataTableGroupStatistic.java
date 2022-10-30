@@ -169,6 +169,7 @@ public class DataTableGroupStatistic {
         try {
 //            MyBoxLog.console(groupid + "   " + parameterValue);
             groupData.resetStatistic();
+            groupData.setScale(groups.getScale());
             List<Integer> cols = groupData.columnIndices().subList(1, groupData.columnsNumber());
             DoubleStatistic[] sData = null;
             if (calculation.needNonStored()) {

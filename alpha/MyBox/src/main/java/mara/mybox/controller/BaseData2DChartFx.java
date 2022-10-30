@@ -39,8 +39,8 @@ import static mara.mybox.value.Languages.message;
 public abstract class BaseData2DChartFx extends BaseController {
 
     protected Chart chart;
-    protected List<List<String>> data, checkedData;
-    protected List<Data2DColumn> columns, checkedColumns;
+    protected List<List<String>> data;
+    protected List<Data2DColumn> columns;
     protected ChartType chartType;
     protected Map<String, String> palette;
     protected SimpleBooleanProperty redrawNotify;
@@ -207,15 +207,14 @@ public abstract class BaseData2DChartFx extends BaseController {
                             .append("\"  style=\"max-width:95%;\"></div>\n");
                     s.append("<hr>\n");
 
-                    checkData();
                     List<String> names = new ArrayList<>();
-                    if (checkedColumns != null) {
-                        for (Data2DColumn c : checkedColumns) {
+                    if (columns != null) {
+                        for (Data2DColumn c : columns) {
                             names.add(c.getColumnName());
                         }
                     }
                     StringTable table = new StringTable(names);
-                    for (List<String> row : checkedData) {
+                    for (List<String> row : data) {
                         table.add(row);
                     }
 
@@ -235,82 +234,13 @@ public abstract class BaseData2DChartFx extends BaseController {
                 HtmlEditorController.load(html);
             }
 
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                checkedColumns = null;
-                checkedData = null;
-            }
-
         };
         start(htmlTask, false);
     }
 
     @FXML
     public void dataAction() {
-        if (data == null || data.isEmpty()) {
-            popError(message("NoData"));
-            return;
-        }
-        SingletonTask dataTask = new SingletonTask<Void>(this) {
-
-            @Override
-            protected boolean handle() {
-                try {
-                    checkData();
-                    return checkedData != null;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                DataManufactureController.open(checkedColumns, checkedData);
-            }
-
-        };
-        start(dataTask, false);
-    }
-
-    /*
-        remove duplicated columns
-     */
-    public void checkData() {
-        checkedData = data;
-        checkedColumns = columns;
-        if (columns == null || columns.isEmpty()) {
-            return;
-        }
-        List<Integer> indice = new ArrayList<>();
-        List<String> names = new ArrayList<>();
-        for (int i = 0; i < columns.size(); i++) {
-            String name = columns.get(i).getColumnName();
-            if (!names.contains(name)) {
-                names.add(name);
-                indice.add(i);
-            }
-        }
-        if (indice.size() == columns.size()) {
-            return;
-        }
-        checkedData = new ArrayList<>();
-        checkedColumns = new ArrayList<>();
-        for (int i = 0; i < columns.size(); i++) {
-            if (indice.contains(i)) {
-                checkedColumns.add(columns.get(i));
-            }
-        }
-        for (List<String> row : data) {
-            List<String> checkedRow = new ArrayList<>();
-            for (int i = 0; i < columns.size(); i++) {
-                if (indice.contains(i)) {
-                    checkedRow.add(row.get(i));
-                }
-            }
-            checkedData.add(checkedRow);
-        }
+        DataManufactureController.open(columns, data);
     }
 
     @Override

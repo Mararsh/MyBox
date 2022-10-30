@@ -42,9 +42,10 @@ public class DataTableGroup {
     protected Data2D originalData;
     protected DataTable sourceData;
     protected String groupName, orderByString;
-    protected List<String> groupNames, orders, targetNames;
+    protected List<String> groupNames, orders, targetNames, parameterValues;
     protected InvalidAs invalidAs;
-    protected int scale, splitNumber;
+    protected int splitNumber, splitScale;
+    protected short scale;
     protected long max;
     protected double splitInterval;
     protected List<DataFilter> conditions;
@@ -56,11 +57,11 @@ public class DataTableGroup {
     protected String sourceSheet, idColName, parameterName, parameterValue, parameterValueForFilename;
     protected String mappedIdColName, mappedParameterName;
     protected List<Data2DColumn> sourceColumns;
-    protected long count, groupid, groupCurrentSize, groupsNumber;
+    protected long count, groupid, groupCurrentSize;
 
     protected Connection conn;
     protected List<String> targetColNames;
-    protected List<Data2DColumn> targetColumns;
+    protected List<Data2DColumn> targetColumns, finalColumns;
 
     protected DataTable targetData;
     protected TableData2D tableTarget;
@@ -142,10 +143,10 @@ public class DataTableGroup {
                 return false;
             }
             groupid = 0;
-            groupsNumber = 0;
             groupCurrentSize = 0;
             count = 0;
             idColName = message("Group");
+            parameterValues = new ArrayList<>();
             orderByString = orderByString();
             targetData = null;
             insert = null;
@@ -276,6 +277,7 @@ public class DataTableGroup {
                                 groupMap.put(name, v);
                             }
                             parameterValue = groupMap.toString();
+                            parameterValues.add(parameterValue);
                         }
                         if (++groupCurrentSize <= max || max <= 0) {
                             writeRow(sourceRow);
@@ -345,7 +347,7 @@ public class DataTableGroup {
                 maxGroup = splitNumber;
             }
             double from = minValue, to;
-            int fscale = sourceData.columnByName(mappedGroupName).needScale() ? scale : 0;
+            int rscale = sourceData.columnByName(mappedGroupName).needScale() ? splitScale : 0;
             String condition;
             conn.setAutoCommit(false);
             while (from <= maxValue) {
@@ -358,19 +360,20 @@ public class DataTableGroup {
                 }
                 if (to >= maxValue || groupid >= maxGroup) {
                     condition = mappedGroupName + " >= " + from;
-                    String bs = DoubleTools.scaleString(from, fscale);
-                    String es = DoubleTools.scaleString(maxValue, fscale);
+                    String bs = DoubleTools.scaleString(from, rscale);
+                    String es = DoubleTools.scaleString(maxValue, rscale);
                     parameterValue = "[" + bs + "," + es + "]";
                     parameterValueForFilename = bs + "-" + es;
                     from = maxValue + 1;
                 } else {
                     condition = mappedGroupName + " >= " + from + " AND " + mappedGroupName + " < " + to;
-                    String bs = DoubleTools.scaleString(from, fscale);
-                    String es = DoubleTools.scaleString(to, fscale);
+                    String bs = DoubleTools.scaleString(from, rscale);
+                    String es = DoubleTools.scaleString(to, rscale);
                     parameterValue = "[" + bs + "," + es + ")";
                     parameterValueForFilename = bs + "-" + es;
                     from = to;
                 }
+                parameterValues.add(parameterValue);
                 sql = "SELECT * FROM " + sourceSheet + " WHERE " + condition + orderByString;
                 valueQeury(sql);
             }
@@ -407,10 +410,9 @@ public class DataTableGroup {
                     continue;
                 }
                 condition = mappedGroupName + " >= " + from + " AND " + mappedGroupName + " <= " + to;
-                String bs = DoubleTools.scaleString(from, scale);
-                String es = DoubleTools.scaleString(to, scale);
-                parameterValue = "[" + bs + "," + es + "]";
-                parameterValueForFilename = bs + "-" + es;
+                parameterValue = "[" + from + "," + to + "]";
+                parameterValueForFilename = from + "-" + to;
+                parameterValues.add(parameterValue);
                 String sql = "SELECT * FROM " + sourceSheet + " WHERE " + condition + orderByString;
                 valueQeury(sql);
             }
@@ -509,6 +511,7 @@ public class DataTableGroup {
                             }
                             parameterValue = "[" + from + "," + to + "]";
                             parameterValueForFilename = from + "-" + to;
+                            parameterValues.add(parameterValue);
                         }
                         if (++groupCurrentSize <= max || max <= 0) {
                             writeRow(sourceRow);
@@ -561,6 +564,7 @@ public class DataTableGroup {
                 groupChanged();
                 parameterValue = "[" + from + "," + to + "]";
                 parameterValueForFilename = from + "-" + to;
+                parameterValues.add(parameterValue);
                 sql = "SELECT * FROM " + sourceSheet + orderByString
                         + " OFFSET " + from + " ROWS FETCH NEXT " + (to - from + 1) + " ROWS ONLY";
                 try ( ResultSet query = conn.prepareStatement(sql).executeQuery()) {
@@ -633,6 +637,7 @@ public class DataTableGroup {
                         + (filter.isReversed() ? "\n" + message("Reverse") : "")
                         + (fmax > 0 ? "\n" + message("MaximumNumber") + ": " + fmax : "");
                 parameterValueForFilename = message("Condition") + groupid;
+                parameterValues.add(parameterValue);
                 fmax = Math.min(max <= 0 ? Long.MAX_VALUE : max,
                         fmax <= 0 ? Long.MAX_VALUE : fmax);
                 String script = filter.getFilledScript();
@@ -715,6 +720,7 @@ public class DataTableGroup {
                         targetData = DataTable.createTable(task, conn,
                                 tableName, targetColumns, null, null, null, true);
                         tableTarget = targetData.getTableData2D();
+                        finalColumns = targetData.getColumns();
                         insert = conn.prepareStatement(tableTarget.insertStatement());
                         mappedIdColName = targetData.tmpColumnName(idColName);
                         mappedParameterName = targetData.tmpColumnName(parameterName);
@@ -722,9 +728,9 @@ public class DataTableGroup {
                     Data2DRow data2DRow = tableTarget.newRow();
                     data2DRow.setColumnValue(mappedIdColName, groupid);
                     data2DRow.setColumnValue(mappedParameterName, parameterValue);
-                    for (int i = 2; i < targetColNames.size(); i++) {
-                        String name = targetColNames.get(i);
-                        data2DRow.setColumnValue(targetData.tmpColumnName(name),
+                    for (int i = 2; i < targetColumns.size(); i++) {
+                        String name = targetColumns.get(i).getColumnName();
+                        data2DRow.setColumnValue(finalColumns.get(i + 1).getColumnName(),
                                 sourceRow.get(sourceData.tmpColumnName(name)));
                     }
                     tableTarget.insertData(conn, insert, data2DRow);
@@ -736,13 +742,19 @@ public class DataTableGroup {
                 case SingleFile:
                 case MultipleFiles:
                     if (csvPrinter == null) {
+                        targetFile = new DataFileCSV();
                         String fname = originalData.dataName() + "_" + parameterName;
                         if (targetType == TargetType.MultipleFiles) {
                             fname += "_" + parameterValueForFilename;
                         }
                         csvFile = getPathTempFile(AppPaths.getGeneratedPath(), fname, ".csv");
+                        finalColumns = targetFile.fixColumnNames(targetColumns);
+                        targetFile.setColumns(finalColumns)
+                                .setFile(csvFile).setCharset(Charset.forName("UTF-8"))
+                                .setDelimiter(",").setHasHeader(true).setScale(scale)
+                                .setColsNumber(finalColumns.size());
                         csvPrinter = CsvTools.csvPrinter(csvFile);
-                        csvPrinter.printRecord(targetColNames);
+                        csvPrinter.printRecord(targetFile.columnNames());
                     }
                     List<String> fileRow = new ArrayList<>();
                     fileRow.add(groupid + "");
@@ -793,15 +805,11 @@ public class DataTableGroup {
     private void writeCurrentCSV() {
         try {
             if (csvFile != null && csvFile.exists()) {
-                targetFile = new DataFileCSV();
-                targetFile.setColumns(targetColumns).setDataSize(count)
+                targetFile.setDataSize(count)
                         .setDataName(originalData.dataName() + "_" + parameterName
                                 + (targetType == TargetType.MultipleFiles ? "_" + parameterValueForFilename : ""))
-                        .setFile(csvFile).setCharset(Charset.forName("UTF-8"))
-                        .setDelimiter(",").setHasHeader(true)
-                        .setColsNumber(targetColumns.size())
                         .setRowsNumber(count);
-                Data2D.saveAttributes(conn, targetFile, targetColumns);
+                Data2D.saveAttributes(conn, targetFile, finalColumns);
                 csvFiles.add(csvFile);
             }
         } catch (Exception e) {
@@ -836,13 +844,12 @@ public class DataTableGroup {
 
     private void finishGroup() {
         try {
-            groupsNumber = groupid;
             switch (targetType) {
                 case Table:
                     if (targetData != null) {
                         targetData.setDataSize(count)
                                 .setDataName(originalData.dataName() + "_" + parameterName)
-                                .setRowsNumber(count);
+                                .setRowsNumber(count).setScale(scale);
                         targetData.saveAttributes();
                     }
                     break;
@@ -889,6 +896,15 @@ public class DataTableGroup {
         return orderBy == null ? "" : " ORDER BY " + orderBy;
     }
 
+    public String parameterValue(int index) {
+        try {
+            return parameterValues.get(index);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    // groupid is 1-based
     public List<List<String>> queryGroup(SingletonTask task, long groupid, List<Data2DColumn> columns) {
         if (targetData == null || columns == null) {
             return null;
@@ -941,19 +957,23 @@ public class DataTableGroup {
     }
 
     public long groupsNumber() {
-        return groupsNumber;
+        return parameterValues == null ? 0 : parameterValues.size();
     }
 
     public String getParameterName() {
         return parameterName;
     }
 
-    public String getParameterValue() {
-        return parameterValue;
+    public List<String> getParameterValues() {
+        return parameterValues;
     }
 
     public String getIdColName() {
         return idColName;
+    }
+
+    public short getScale() {
+        return scale;
     }
 
     /*
@@ -999,8 +1019,13 @@ public class DataTableGroup {
         return this;
     }
 
-    public DataTableGroup setScale(int scale) {
+    public DataTableGroup setScale(short scale) {
         this.scale = scale;
+        return this;
+    }
+
+    public DataTableGroup setSplitScale(int splitScale) {
+        this.splitScale = splitScale;
         return this;
     }
 

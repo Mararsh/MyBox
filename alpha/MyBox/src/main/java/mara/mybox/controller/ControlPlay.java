@@ -140,6 +140,9 @@ public class ControlPlay extends BaseController {
     // Displayed values are 1-based while internal values are 0-based
     public synchronized boolean play(List<String> frames, int from, int to) {
         try {
+            if (frames == null || frames.isEmpty()) {
+                return false;
+            }
             clear();
             int s = frames.size();
             if (s < 1) {
@@ -162,7 +165,16 @@ public class ControlPlay extends BaseController {
             toFrame = t;
             currentIndex = 0;
             framesNumber = frames.size();
-            frameSelector.getItems().addAll(frames);
+            List<String> names = new ArrayList<>();
+            for (String frame : frames) {
+                String v = frame.replaceAll("\n", " ");
+                int len = v.length();
+                if (len > 100) {
+                    v = v.substring(0, 100);
+                }
+                names.add(v);
+            }
+            frameSelector.getItems().addAll(names);
             totalLabel.setText("/" + framesNumber);
             if (reverseCheck.isSelected()) {
                 frameSelector.getSelectionModel().select(toFrame);
@@ -209,6 +221,9 @@ public class ControlPlay extends BaseController {
 
     public synchronized boolean play(List<String> frames) {
         try {
+            if (frames == null || frames.isEmpty()) {
+                return false;
+            }
             int size = frames.size();
             if (size == 0) {
                 return false;

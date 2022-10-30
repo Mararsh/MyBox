@@ -6,6 +6,7 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -58,6 +59,8 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
     @FXML
     protected RadioButton columnsRadio, rowsRadio, allRadio,
             skipNonnumericRadio, zeroNonnumericRadio, blankNonnumericRadio;
+    @FXML
+    protected CheckBox rowNumberCheck, colNameCheck;
     @FXML
     protected ImageView tableTipsView;
 
@@ -257,6 +260,14 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         } else {
             invalidAs = InvalidAs.Blank;
         }
+    }
+
+    public boolean showColNames() {
+        return colNameCheck != null && colNameCheck.isSelected();
+    }
+
+    public boolean showRowNumber() {
+        return rowNumberCheck != null && rowNumberCheck.isSelected();
     }
 
     // Check when selections are changed
@@ -574,9 +585,10 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                     .setSplitInterval(groupController.splitInterval())
                     .setSplitNumber(groupController.splitNumber())
                     .setSplitList(groupController.splitList())
+                    .setSplitScale(groupController.scale)
                     .setConditions(groupController.groupConditions)
                     .setOrders(orders).setMax(max)
-                    .setScale(dscale).setInvalidAs(invalidAs).setTask(task)
+                    .setScale((short) dscale).setInvalidAs(invalidAs).setTask(task)
                     .setTargetType(targetType)
                     .setTargetNames(targetNames);
             return group;
@@ -587,14 +599,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             MyBoxLog.error(e);
             return null;
         }
-    }
-
-    public boolean showColNames() {
-        return false;
-    }
-
-    public boolean showRowNumber() {
-        return false;
     }
 
     public void cloneOptions(BaseData2DHandleController sourceController) {

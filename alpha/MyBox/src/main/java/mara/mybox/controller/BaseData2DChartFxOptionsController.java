@@ -80,7 +80,10 @@ public abstract class BaseData2DChartFxOptionsController extends BaseController 
                 }
             });
 
-            int scale = options.getScale();
+            int scale = UserConfig.getInt(chartName + "Scale", 2);
+            if (scale < 0) {
+                scale = 2;
+            }
             scaleSelector.getItems().addAll(
                     Arrays.asList("2", "1", "0", "3", "4", "5", "6", "7", "8", "10", "12", "15")
             );

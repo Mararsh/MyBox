@@ -18,6 +18,7 @@ import static mara.mybox.value.Languages.message;
 public class Data2DChartPieController extends BaseData2DChartController {
 
     protected PieChartMaker pieMaker;
+    protected int categoryIndex, valueIndex;
 
     @FXML
     protected ControlData2DChartPie chartController;
@@ -59,6 +60,7 @@ public class Data2DChartPieController extends BaseData2DChartController {
                 return false;
             }
             dataColsIndices.add(categoryCol);
+            categoryIndex = showRowNumber() ? 1 : 0;
 
             int valueCol = data2D.colOrder(selectedValue);
             if (valueCol < 0) {
@@ -66,19 +68,35 @@ public class Data2DChartPieController extends BaseData2DChartController {
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
-            if (!dataColsIndices.contains(valueCol)) {
+            if (categoryCol != valueCol) {
+                valueIndex = categoryIndex + 1;
                 dataColsIndices.add(valueCol);
+            } else {
+                valueIndex = categoryIndex;
             }
 
-            pieMaker.init(message("PieChart"))
-                    .setDefaultChartTitle(selectedCategory + " - " + selectedValue)
-                    .setChartTitle(pieMaker.getDefaultChartTitle())
-                    .setDefaultCategoryLabel(selectedCategory)
-                    .setCategoryLabel(selectedCategory)
-                    .setDefaultValueLabel(selectedValue)
-                    .setValueLabel(selectedValue)
-                    .setInvalidAs(invalidAs);
+            outputColumns = data2D.makeColumns(dataColsIndices, showRowNumber());
 
+            return initChart();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return false;
+        }
+    }
+
+    @Override
+    public String chartTitle() {
+        return selectedCategory + " - " + selectedValue;
+    }
+
+    public boolean initChart() {
+        try {
+            pieMaker.init(message("PieChart"))
+                    .setDefaultChartTitle(chartTitle())
+                    .setDefaultCategoryLabel(selectedCategory)
+                    .setDefaultValueLabel(selectedValue)
+                    .setInvalidAs(invalidAs);
+            chartController.palette = null;
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -92,26 +110,7 @@ public class Data2DChartPieController extends BaseData2DChartController {
     }
 
     public void drawPieChart() {
-        try {
-            if (outputData == null || outputData.isEmpty()) {
-                popError(message("NoData"));
-                return;
-            }
-            int categoryIndex = -1;
-            int valueIndex = -1;
-            for (int i = 0; i < outputColumns.size(); i++) {
-                String name = outputColumns.get(i).getColumnName();
-                if (name.equals(selectedCategory)) {
-                    categoryIndex = i;
-                }
-                if (name.equals(selectedValue)) {
-                    valueIndex = i;
-                }
-            }
-            chartController.writeChart(outputColumns, outputData, categoryIndex, valueIndex);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+        chartController.writeChart(outputColumns, outputData, categoryIndex, valueIndex);
     }
 
     /*

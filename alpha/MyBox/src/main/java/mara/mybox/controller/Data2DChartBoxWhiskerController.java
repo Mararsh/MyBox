@@ -350,6 +350,13 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
                     && categoryColumnSelector.getSelectionModel().getSelectedIndex() != 0) {
                 categorysCol = data2D.colOrder(selectedCategory);
             }
+
+            dataColsIndices = new ArrayList<>();
+            dataColsIndices.addAll(checkedColsIndices);
+            if (categorysCol >= 0 && !dataColsIndices.contains(categorysCol)) {
+                dataColsIndices.add(categorysCol);
+            }
+
             calculation = new DescriptiveStatistic()
                     .add(StatisticType.Mean)
                     .add(StatisticType.MinimumQ0)
@@ -392,11 +399,6 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
     public void readData() {
         try {
             boolean ok;
-            dataColsIndices = new ArrayList<>();
-            dataColsIndices.addAll(checkedColsIndices);
-            if (categorysCol >= 0 && !dataColsIndices.contains(categorysCol)) {
-                dataColsIndices.add(categorysCol);
-            }
             calculation.setTask(task);
             if (isAllPages()) {
                 ok = handlePages();

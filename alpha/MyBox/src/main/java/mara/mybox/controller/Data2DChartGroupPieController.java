@@ -7,18 +7,13 @@ import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
- * @CreateDate 2022-10-14
+ * @CreateDate 2022-10-30
  * @License Apache License Version 2.0
  */
-public class Data2DChartGroupXYController extends Data2DChartXYController {
+public class Data2DChartGroupPieController extends Data2DChartPieController {
 
-    public Data2DChartGroupXYController() {
-        baseTitle = message("GroupData") + " - " + message("XYChart");
-    }
-
-    @Override
-    public boolean initChart() {
-        return initChart(false);
+    public Data2DChartGroupPieController() {
+        baseTitle = message("GroupData") + " - " + message("PieChart");
     }
 
     @Override
@@ -31,12 +26,7 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
     }
 
     @Override
-    public String categoryName() {
-        return selectedCategory;
-    }
-
-    @Override
-    public void drawXYChart() {
+    public void drawPieChart() {
         drawFrame();
     }
 
@@ -45,17 +35,17 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
         if (outputData == null) {
             return;
         }
-        chartMaker.setDefaultChartTitle(chartTitle());
-        super.drawXYChart();
+        pieMaker.setDefaultChartTitle(chartTitle());
+        super.drawPieChart();
     }
 
     /*
         static
      */
-    public static Data2DChartGroupXYController open(ControlData2DLoad tableController) {
+    public static Data2DChartGroupPieController open(ControlData2DLoad tableController) {
         try {
-            Data2DChartGroupXYController controller = (Data2DChartGroupXYController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DChartGroupXYFxml, false);
+            Data2DChartGroupPieController controller = (Data2DChartGroupPieController) WindowTools.openChildStage(
+                    tableController.getMyWindow(), Fxmls.Data2DChartGroupPieFxml, false);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

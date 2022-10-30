@@ -194,6 +194,7 @@ License:    Apache License Version 2.0
                                                                                 <ComboBox fx:id="scaleSelector" editable="true" prefWidth="120.0" />
                                                                             </children>
                                                                         </HBox>
+                                                      <CheckBox fx:id="rowNumberCheck" mnemonicParsing="false" text="%RowNumber" />
                                                                         <Label fx:id="noticeLabel" minHeight="-Infinity" text="%AllRowsLoadComments" wrapText="true">
                                                                             <VBox.margin>
                                                                                 <Insets top="10.0" />

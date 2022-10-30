@@ -24,7 +24,7 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
     @FXML
     protected ControlData2DTarget targetController;
     @FXML
-    protected CheckBox rowNumberCheck, colNameCheck;
+    protected CheckBox colNameCheck;
     @FXML
     protected ComboBox<String> colSelector;
 
@@ -218,16 +218,6 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
 
         };
         start(task);
-    }
-
-    @Override
-    public boolean showColNames() {
-        return colNameCheck != null && colNameCheck.isSelected();
-    }
-
-    @Override
-    public boolean showRowNumber() {
-        return rowNumberCheck != null && rowNumberCheck.isSelected();
     }
 
     public boolean handleRows() {

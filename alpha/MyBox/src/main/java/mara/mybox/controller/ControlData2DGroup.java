@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.util.Arrays;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -17,6 +18,7 @@ import mara.mybox.data2d.DataFilter;
 import mara.mybox.data2d.reader.DataTableGroup.GroupType;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -31,6 +33,7 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
     protected List<String> groupNames, conditionVariables;
     protected List<DataFilter> groupConditions;
     protected GroupType groupType;
+    protected int scale;
 
     @FXML
     protected ControlSelection columnsController;
@@ -41,9 +44,9 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
     @FXML
     protected VBox groupBox, columnsBox, conditionsBox, splitBox;
     @FXML
-    protected HBox columnBox;
+    protected HBox columnBox, scaleBox;
     @FXML
-    protected ComboBox<String> columnSelector;
+    protected ComboBox<String> columnSelector, scaleSelector;
     @FXML
     protected ControlSplit splitController;
     @FXML
@@ -62,6 +65,39 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
 
             columnsController.setParameters(this, message("Column"), message("GroupBy"));
             splitController.setParameters(this);
+
+            splitController.splitGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue<? extends Toggle> v, Toggle ov, Toggle nv) {
+                    setScaleSelector();
+                }
+            });
+
+            scale = UserConfig.getInt(baseName + "Scale", 2);
+            if (scale < 0) {
+                scale = 2;
+            }
+            scaleSelector.getItems().addAll(
+                    Arrays.asList("2", "1", "0", "3", "4", "5", "6", "7", "8", "10", "12", "15")
+            );
+            scaleSelector.getSelectionModel().select(scale + "");
+            scaleSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        int v = Integer.parseInt(newValue);
+                        if (v >= 0) {
+                            scale = v;
+                            scaleSelector.getEditor().setStyle(null);
+                            UserConfig.setInt(baseName + "Scale", scale);
+                        } else {
+                            scaleSelector.getEditor().setStyle(UserConfig.badStyle());
+                        }
+                    } catch (Exception e) {
+                        scaleSelector.getEditor().setStyle(UserConfig.badStyle());
+                    }
+                }
+            });
 
             typeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -134,9 +170,15 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
 
             }
 
+            setScaleSelector();
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    public void setScaleSelector() {
+        scaleBox.setVisible(valueRangeRadio.isSelected() && !splitController.listRadio.isSelected());
     }
 
     public boolean pickValues() {

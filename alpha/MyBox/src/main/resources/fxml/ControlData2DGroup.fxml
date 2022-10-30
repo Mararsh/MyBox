@@ -52,6 +52,12 @@ License:    Apache License Version 2.0
             <VBox fx:id="splitBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                <children>
                   <fx:include fx:id="split" source="ControlSplit.fxml" />
+                  <HBox fx:id="scaleBox" alignment="CENTER_LEFT" spacing="2.0">
+                     <children>
+                        <Label minHeight="-Infinity" text="%RangeDecimalScale" wrapText="true" />
+                        <ComboBox fx:id="scaleSelector" editable="true" prefWidth="120.0" />
+                     </children>
+                  </HBox>
                </children>
             </VBox>
                               <VBox fx:id="conditionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">

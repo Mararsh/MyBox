@@ -9,6 +9,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import mara.mybox.data2d.reader.DataTableGroup;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DoubleTools;
@@ -23,7 +24,6 @@ import mara.mybox.value.UserConfig;
 public abstract class BaseData2DChartController extends BaseData2DHandleController {
 
     protected String selectedCategory, selectedValue;
-    protected List<String> dataNames;
     protected DataTableGroup group;
     protected int framesNumber, groupid;
 
@@ -197,6 +197,9 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         }
     }
 
+    /*
+        no group
+     */
     protected void startNoGroup() {
         if (task != null) {
             task.cancel();
@@ -235,58 +238,17 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         start(task);
     }
 
-    protected void startGroup() {
-        if (task != null) {
-            task.cancel();
-        }
-        playController.clear();
-        groupDataController.loadNull();
-        group = null;
-        framesNumber = -1;
-        task = new SingletonTask<Void>(this) {
-
-            @Override
-            protected boolean handle() {
-                try {
-                    group = groupData(DataTableGroup.TargetType.Table,
-                            dataNames, orders, maxData, scale);
-                    group.run();
-                    framesNumber = (int) group.groupsNumber();
-                    return framesNumber > 0;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-            }
-
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                task = null;
-                if (ok) {
-                    groupDataController.loadData(group.getTargetData().cloneAll());
-                    displayFrames();
-                }
-            }
-
-        };
-        start(task);
-    }
-
     public void readData() {
         try {
-            outputData = sortedData(dataColsIndices, true);
-            outputColumns = data2D.makeColumns(dataColsIndices, true);
+            boolean showRowNumber = showRowNumber();
+            outputData = sortedData(dataColsIndices, showRowNumber);
             if (outputData == null || scaleSelector == null) {
                 return;
             }
+            outputColumns = data2D.makeColumns(dataColsIndices, showRowNumber);
             boolean needScale = false;
-            for (int c : dataColsIndices) {
-                if (data2D.column(c).needScale()) {
+            for (Data2DColumn c : outputColumns) {
+                if (c.needScale()) {
                     needScale = true;
                     break;
                 }
@@ -297,10 +259,9 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             List<List<String>> scaled = new ArrayList<>();
             for (List<String> row : outputData) {
                 List<String> srow = new ArrayList<>();
-                srow.add(row.get(0));
-                for (int i = 0; i < dataColsIndices.size(); i++) {
-                    String s = row.get(i + 1);
-                    if (s == null || !data2D.column(dataColsIndices.get(i)).needScale()) {
+                for (int i = 0; i < outputColumns.size(); i++) {
+                    String s = row.get(i);
+                    if (s == null || !outputColumns.get(i).needScale()) {
                         srow.add(s);
                     } else {
                         srow.add(DoubleTools.scaleString(s, invalidAs, scale));
@@ -343,20 +304,78 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         okAction();
     }
 
+    /*
+        group
+     */
+    protected void startGroup() {
+        if (task != null) {
+            task.cancel();
+        }
+        playController.clear();
+        groupDataController.loadNull();
+        group = null;
+        framesNumber = -1;
+        task = new SingletonTask<Void>(this) {
+
+            List<String> groupLabels;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    outputColumns = data2D.makeColumns(dataColsIndices, showRowNumber());
+                    List<String> dataNames = new ArrayList<>();
+                    for (Data2DColumn c : outputColumns) {
+                        dataNames.add(c.getColumnName());
+                    }
+                    List<String> sortNames = sortNames();
+                    if (sortNames != null) {
+                        for (String name : sortNames) {
+                            if (!dataNames.contains(name)) {
+                                dataNames.add(name);
+                            }
+                        }
+                    }
+                    group = groupData(DataTableGroup.TargetType.Table,
+                            dataNames, orders, maxData, scale);
+                    group.run();
+                    List<String> values = group.getParameterValues();
+                    framesNumber = values.size();
+                    groupLabels = new ArrayList<>();
+                    for (int i = 0; i < framesNumber; i++) {
+                        groupLabels.add(values.get(i));
+                    }
+                    return framesNumber > 0;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                task = null;
+                if (ok) {
+                    groupDataController.loadData(group.getTargetData().cloneAll());
+                    initFrames();
+                    playController.play(groupLabels);
+                }
+            }
+
+        };
+        start(task);
+    }
+
     public void initFrames() {
 
     }
 
-    public void displayFrames() {
-        try {
-            if (group == null || framesNumber <= 0) {
-                return;
-            }
-            initFrames();
-            playController.play(framesNumber, 0, framesNumber - 1);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+    public boolean initFrame() {
+        return outputData != null && !outputData.isEmpty();
     }
 
     public synchronized void loadFrame(int index) {
@@ -364,7 +383,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             playController.clear();
             return;
         }
-        groupid = index + 1;
+        groupid = index + 1;  // groupid is 1-based
         if (backgroundTask != null) {
             backgroundTask.cancel();
         }
@@ -373,7 +392,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             @Override
             protected boolean handle() {
                 outputData = group.queryGroup(backgroundTask, groupid, outputColumns);
-                return outputData != null && !outputData.isEmpty();
+                return initFrame();
             }
 
             @Override

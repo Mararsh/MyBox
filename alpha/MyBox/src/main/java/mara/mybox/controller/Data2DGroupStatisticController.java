@@ -47,7 +47,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
     @FXML
     protected ControlStatisticSelection statisticController;
     @FXML
-    protected ControlData2DResults groupDataController, statisticDataController;
+    protected ControlData2DResults statisticDataController;
     @FXML
     protected ControlData2DChartPie pieChartController;
     @FXML

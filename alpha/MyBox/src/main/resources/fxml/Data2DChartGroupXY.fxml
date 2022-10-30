@@ -232,7 +232,7 @@ License:    Apache License Version 2.0
                                                             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                                          </padding>
                                                       </VBox>
-                                                      <fx:include fx:id="sort" source="ControlSelection.fxml" />
+                                                      <fx:include fx:id="sort" minHeight="100.0" prefHeight="200.0" source="ControlSelection.fxml" />
                                                       <FlowPane fx:id="maxPane" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
                                                          <children>
                                                             <Label minHeight="-Infinity" text="%MaxRowsInEachGroup" wrapText="true" />
@@ -256,6 +256,7 @@ License:    Apache License Version 2.0
                                                                                 <RadioButton fx:id="zeroNonnumericRadio" mnemonicParsing="false" text="%SetAsZero" toggleGroup="$nonnumericGroup" />
                                                                             </children>
                                                                         </FlowPane>
+                                                      <CheckBox fx:id="rowNumberCheck" mnemonicParsing="false" text="%RowNumber" />
                                                                     </children>
                                                                 </VBox>
                                                                 <HBox alignment="CENTER_LEFT" spacing="5.0">
@@ -317,9 +318,18 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </CheckBox>
+                              <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconRefresh.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
                                     </children>
                                 </HBox>
-                        <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                        <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                           <tabs>
                             <Tab fx:id="chartTab" text="%XYChart">
                                  <content>
