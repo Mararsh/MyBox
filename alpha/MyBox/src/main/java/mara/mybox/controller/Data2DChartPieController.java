@@ -96,7 +96,6 @@ public class Data2DChartPieController extends BaseData2DChartController {
                     .setDefaultCategoryLabel(selectedCategory)
                     .setDefaultValueLabel(selectedValue)
                     .setInvalidAs(invalidAs);
-            chartController.palette = null;
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

@@ -10,6 +10,7 @@ import mara.mybox.controller.ControlData2DLoad;
 import mara.mybox.controller.Data2DAddRowsController;
 import mara.mybox.controller.Data2DChartBoxWhiskerController;
 import mara.mybox.controller.Data2DChartComparisonBarsController;
+import mara.mybox.controller.Data2DChartGroupBoxWhiskerController;
 import mara.mybox.controller.Data2DChartGroupComparisonBarsController;
 import mara.mybox.controller.Data2DChartGroupPieController;
 import mara.mybox.controller.Data2DChartGroupSelfComparisonBarsController;
@@ -415,9 +416,9 @@ public class Data2DMenuTools {
             menu.setDisable(empty);
             chartMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("BoxWhiskerChart"), StyleTools.getIconImage("iconBoxWhiskerChart.png"));
+            menu = new MenuItem(message("GroupData") + " - " + message("BoxWhiskerChart"), StyleTools.getIconImage("iconBoxWhiskerChart.png"));
             menu.setOnAction((ActionEvent event) -> {
-                Data2DChartBoxWhiskerController.open(controller);
+                Data2DChartGroupBoxWhiskerController.open(controller);
             });
             menu.setDisable(empty);
             chartMenu.getItems().add(menu);

@@ -164,9 +164,9 @@ License:    Apache License Version 2.0
                                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                        </padding>
                                        <content>
-                                          <VBox prefHeight="200.0" prefWidth="100.0" spacing="5.0">
+                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                              <children>
-                                                <fx:include fx:id="group" source="ControlData2DGroup.fxml" />
+                                                <fx:include fx:id="group" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DGroup.fxml" VBox.vgrow="ALWAYS" />
                                              </children>
                                           </VBox>
                                        </content>

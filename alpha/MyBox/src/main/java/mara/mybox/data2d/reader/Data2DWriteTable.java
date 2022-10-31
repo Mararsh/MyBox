@@ -9,7 +9,6 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -47,20 +46,20 @@ public class Data2DWriteTable extends Data2DOperator {
         try {
             Data2DRow data2DRow = writerTableData2D.newRow();
             int len = sourceRow.size();
-            int offset = includeRowNumber ? 1 : 0;
+            int offset = includeRowNumber ? 2 : 1;
             for (int i = 0; i < cols.size(); i++) {
                 int col = cols.get(i);
                 if (col >= 0 && col < len) {
-                    String colName = writerTable.tmpColumnName(i + offset);
-                    Data2DColumn targetColumn = writerTable.columnByName(colName);
-                    data2DRow.setColumnValue(colName, targetColumn.fromString(sourceRow.get(col), invalidAs));
+                    Data2DColumn targetColumn = writerTable.column(i + offset);
+                    data2DRow.setColumnValue(targetColumn.getColumnName(),
+                            targetColumn.fromString(sourceRow.get(col), invalidAs));
                 }
             }
             if (data2DRow.isEmpty()) {
                 return;
             }
             if (includeRowNumber) {
-                data2DRow.setColumnValue(writerTable.tmpColumnName(message("SourceRowNumber")), rowIndex);
+                data2DRow.setColumnValue(writerTable.column(1).getColumnName(), rowIndex);
             }
             writerTableData2D.insertData(conn, data2DRow);
             if (++count % DerbyBase.BatchSize == 0) {

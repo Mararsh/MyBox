@@ -170,12 +170,6 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
                 Bounds regionBounds1 = data1.get(i).getNode().getBoundsInParent();
                 Bounds regionBounds0 = data0.get(i).getNode().getBoundsInParent();
 
-                boxs[i] = new Rectangle();
-                boxs[i].setWidth(boxWidth);
-                boxs[i].setFill(Color.TRANSPARENT);
-                boxs[i].setStyle("-fx-stroke-width:1px; -fx-stroke:black;");
-                getPlotChildren().add(boxs[i]);
-
                 vLines[i] = new Line();
                 getPlotChildren().add(vLines[i]);
                 vLines[i].setStyle("-fx-stroke-dash-array: 4;-fx-stroke-width:1px; -fx-stroke:black;");
@@ -191,6 +185,12 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
                 minLines[i] = new Line();
                 getPlotChildren().add(minLines[i]);
                 minLines[i].setStyle("-fx-stroke-width:2px;-fx-stroke:" + color0);
+
+                boxs[i] = new Rectangle();
+                boxs[i].setWidth(boxWidth);
+                boxs[i].setFill(Color.TRANSPARENT);
+                boxs[i].setStyle("-fx-stroke-width:1px; -fx-stroke:black;");
+                getPlotChildren().add(boxs[i]);
 
                 if (chartMaker.isXY) {
                     double y4 = regionBounds4.getMinY() + regionBounds4.getHeight() / 2;

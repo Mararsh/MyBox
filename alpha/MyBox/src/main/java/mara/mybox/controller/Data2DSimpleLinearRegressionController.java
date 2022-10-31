@@ -179,8 +179,6 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
             regressionFile = null;
             regressionData = null;
 
-            fittingController.palette = null;
-            residualController.palette = null;
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

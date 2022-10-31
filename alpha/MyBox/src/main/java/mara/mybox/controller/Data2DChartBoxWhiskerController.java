@@ -322,13 +322,15 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
     @Override
     public void objectChanged() {
         super.objectChanged();
-        if (rowsRadio.isSelected()) {
-            if (!dataOptionsBox.getChildren().contains(categoryColumnsPane)) {
-                dataOptionsBox.getChildren().add(1, categoryColumnsPane);
-            }
-        } else {
-            if (dataOptionsBox.getChildren().contains(categoryColumnsPane)) {
-                dataOptionsBox.getChildren().remove(categoryColumnsPane);
+        if (rowsRadio != null && dataOptionsBox != null) {
+            if (rowsRadio.isSelected()) {
+                if (!dataOptionsBox.getChildren().contains(categoryColumnsPane)) {
+                    dataOptionsBox.getChildren().add(1, categoryColumnsPane);
+                }
+            } else {
+                if (dataOptionsBox.getChildren().contains(categoryColumnsPane)) {
+                    dataOptionsBox.getChildren().remove(categoryColumnsPane);
+                }
             }
         }
         noticeMemory();
@@ -336,7 +338,9 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
 
     @Override
     public void noticeMemory() {
-        noticeLabel.setVisible(isAllPages() && rowsRadio.isSelected());
+        if (noticeLabel != null) {
+            noticeLabel.setVisible(isAllPages() && rowsRadio != null && rowsRadio.isSelected());
+        }
     }
 
     @Override
@@ -346,7 +350,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
                 return false;
             }
             categorysCol = -1;
-            if (rowsRadio.isSelected() && selectedCategory != null
+            if (rowsRadio != null && rowsRadio.isSelected() && selectedCategory != null
                     && categoryColumnSelector.getSelectionModel().getSelectedIndex() != 0) {
                 categorysCol = data2D.colOrder(selectedCategory);
             }
@@ -386,8 +390,6 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
                     .setCategoryName(categorysCol >= 0 ? selectedCategory : null)
                     .setInvalidAs(invalidAs);
 
-            chartController.palette = null;
-
             return calculation.prepare();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -410,9 +412,73 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
                 outputData = null;
                 return;
             }
+            makeChartData();
+
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            outputData = null;
+        }
+    }
+
+    public boolean handleSelected() {
+        try {
+            outputData = filtered(dataColsIndices, rowsRadio != null && rowsRadio.isSelected() && categorysCol < 0);
+            if (outputData == null) {
+                return false;
+            }
+            calculation.setTask(task);
+            return calculation.statisticData(outputData);
+        } catch (Exception e) {
+            error = e.toString();
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            return false;
+        }
+    }
+
+    public boolean handlePages() {
+        try {
+            if (rowsRadio != null && rowsRadio.isSelected()) {
+                outputData = data2D.allRows(dataColsIndices, rowsRadio.isSelected() && categorysCol < 0);
+                if (outputData == null) {
+                    return false;
+                }
+                calculation.setTask(task);
+                return calculation.statisticData(outputData);
+            }
+            DataTable tmpTable = data2D.toTmpTable(task, dataColsIndices, false, true, invalidAs);
+            if (tmpTable == null) {
+                outputData = null;
+                return false;
+            }
+            tmpTable.startTask(task, null);
+            calculation.setData2D(tmpTable).setInvalidAs(invalidAs)
+                    .setColsIndices(tmpTable.columnIndices().subList(1, tmpTable.columnsNumber()))
+                    .setColsNames(tmpTable.columnNames().subList(1, tmpTable.columnsNumber()));
+            boolean ok = calculation.statisticAllByColumns();
+            tmpTable.stopFilter();
+            tmpTable.drop();
+            return ok;
+        } catch (Exception e) {
+            error = e.toString();
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            return false;
+        }
+    }
+
+    public void makeChartData() {
+        try {
+            if (calculation == null) {
+                return;
+            }
             outputColumns = calculation.getOutputColumns();
             outputData = calculation.getOutputData();
-            if (rowsRadio.isSelected()) {
+            if (rowsRadio != null && rowsRadio.isSelected()) {
                 return;
             }
 
@@ -447,63 +513,17 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
         }
     }
 
-    public boolean handleSelected() {
-        try {
-            outputData = filtered(dataColsIndices, rowsRadio.isSelected() && categorysCol < 0);
-            if (outputData == null) {
-                return false;
-            }
-            calculation.setTask(task);
-            return calculation.statisticData(outputData);
-        } catch (Exception e) {
-            error = e.toString();
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            return false;
-        }
-    }
-
-    public boolean handlePages() {
-        try {
-            if (rowsRadio.isSelected()) {
-                outputData = data2D.allRows(dataColsIndices, rowsRadio.isSelected() && categorysCol < 0);
-                if (outputData == null) {
-                    return false;
-                }
-                calculation.setTask(task);
-                return calculation.statisticData(outputData);
-            }
-            DataTable tmpTable = data2D.toTmpTable(task, dataColsIndices, false, true, invalidAs);
-            if (tmpTable == null) {
-                outputData = null;
-                return false;
-            }
-            tmpTable.startTask(task, null);
-            calculation.setData2D(tmpTable).setInvalidAs(invalidAs)
-                    .setColsIndices(tmpTable.columnIndices().subList(1, tmpTable.columnsNumber()))
-                    .setColsNames(tmpTable.columnNames().subList(1, tmpTable.columnsNumber()));
-            boolean ok = calculation.statisticAllByColumns();
-            tmpTable.stopFilter();
-            tmpTable.drop();
-            return ok;
-        } catch (Exception e) {
-            error = e.toString();
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            return false;
-        }
-    }
-
     @Override
     public void drawChart() {
+        drawChartBoxWhisker();
+    }
+
+    public void drawChartBoxWhisker() {
         try {
             if (outputData == null || outputData.isEmpty()) {
                 popError(message("NoData"));
                 return;
             }
-
             List<Integer> displayCols = new ArrayList<>();
             if (meanCheck.isSelected()) {
                 displayCols.add(1);
@@ -531,6 +551,11 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    @Override
+    public String chartTitle() {
+        return data2D.displayName() + " - " + message("BoxWhiskerChart");
     }
 
     public void setLinesStyle() {

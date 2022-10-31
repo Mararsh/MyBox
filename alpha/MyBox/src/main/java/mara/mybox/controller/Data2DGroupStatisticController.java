@@ -37,7 +37,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
 
     protected DescriptiveStatistic calculation;
     protected DataTable groupData;
-    protected DataFileCSV statisticFile;
+    protected DataFileCSV mixFile;
     protected PieChartMaker pieMaker;
     protected List<List<String>> pieData;
     protected List<Data2DColumn> pieColumns;
@@ -47,7 +47,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
     @FXML
     protected ControlStatisticSelection statisticController;
     @FXML
-    protected ControlData2DResults statisticDataController;
+    protected ControlData2DResults statisticDataController, statisticMixedController;
     @FXML
     protected ControlData2DChartPie pieChartController;
     @FXML
@@ -77,7 +77,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
 
             statisticController.mustCount();
 
-            statisticDataController.loadedNotify.addListener(new ChangeListener<Boolean>() {
+            statisticMixedController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     xyChartTab.setDisable(false);
@@ -121,7 +121,6 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
 
     @Override
     public boolean initChart() {
-        chartController.palette = null;
         return initChart(false);
     }
 
@@ -131,9 +130,10 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             task.cancel();
         }
         groupData = null;
-        statisticFile = null;
+        mixFile = null;
         groupDataController.loadNull();
         statisticDataController.loadNull();
+        statisticMixedController.loadNull();
         xyChartTab.setDisable(true);
         pieChartTab.setDisable(true);
         calculation = statisticController.pickValues()
@@ -170,15 +170,15 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
                         groupDataController.loadData(groupData.cloneAll());
                     });
                     statistic = new DataTableGroupStatistic()
-                            .setGroups(group)
+                            .setGroups(group).setMix(true)
                             .setCalculation(calculation)
                             .setCalNames(checkedColsNames)
                             .setTask(task);
                     if (!statistic.run()) {
                         return false;
                     }
-                    statisticFile = statistic.getTargetFile();
-                    return statisticFile != null;
+                    mixFile = statistic.getMixData();
+                    return mixFile != null;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -187,7 +187,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
 
             @Override
             protected void whenSucceeded() {
-                statisticDataController.loadData(statisticFile.cloneAll());
+
             }
 
             @Override
@@ -195,6 +195,10 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
                 super.finalAction();
                 data2D.stopTask();
                 task = null;
+                if (ok) {
+                    statisticDataController.loadData(statistic.getStatisticData().cloneAll());
+                    statisticMixedController.loadData(mixFile.cloneAll());
+                }
             }
 
         };
@@ -213,7 +217,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             pieData = null;
             pieMaker.clearChart();
         }
-        if (statisticFile == null) {
+        if (mixFile == null) {
             return;
         }
         if (backgroundTask != null) {
@@ -224,13 +228,13 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             @Override
             protected boolean handle() {
                 try {
-                    statisticFile.startTask(backgroundTask, null);
+                    mixFile.startTask(backgroundTask, null);
 
                     List<List<String>> resultsData;
                     if (displayAllCheck.isSelected()) {
-                        resultsData = statisticFile.allRows(false);
+                        resultsData = mixFile.allRows(false);
                     } else {
-                        resultsData = statisticDataController.data2D.tableRows(false);
+                        resultsData = statisticMixedController.data2D.tableRows(false);
                     }
                     if (resultsData == null) {
                         return false;
@@ -267,7 +271,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                statisticFile.stopTask();
+                mixFile.stopTask();
                 backgroundTask = null;
             }
 
@@ -282,7 +286,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             }
             outputColumns = new ArrayList<>();
             Data2DColumn xyCategoryColumn
-                    = statisticFile.column(xyParametersRadio.isSelected() ? 1 : 0);
+                    = mixFile.column(xyParametersRadio.isSelected() ? 1 : 0);
             outputColumns.add(xyCategoryColumn);
 
             List<String> colNames = new ArrayList<>();
@@ -323,12 +327,12 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             List<Integer> cols = new ArrayList<>();
             for (String stype : sTypes) {
                 if (message("Count").equals(stype)) {
-                    outputColumns.add(statisticFile.column(2));
+                    outputColumns.add(mixFile.column(2));
                     cols.add(2);
                 } else {
                     for (String col : colNames) {
-                        int colIndex = statisticFile.colOrder(col + "_" + stype);
-                        outputColumns.add(statisticFile.column(colIndex));
+                        int colIndex = mixFile.colOrder(col + "_" + stype);
+                        outputColumns.add(mixFile.column(colIndex));
                         cols.add(colIndex);
                     }
                 }
@@ -360,9 +364,9 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             }
             pieColumns = new ArrayList<>();
             Data2DColumn pieCategoryColumn
-                    = statisticFile.columns.get(pieParametersRadio.isSelected() ? 1 : 0);
+                    = mixFile.columns.get(pieParametersRadio.isSelected() ? 1 : 0);
             pieColumns.add(pieCategoryColumn);
-            pieColumns.add(statisticFile.columns.get(2));
+            pieColumns.add(mixFile.columns.get(2));
 
             pieData = new ArrayList<>();
             for (List<String> data : resultsData) {

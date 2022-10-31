@@ -387,6 +387,75 @@ public class DoubleStatistic {
         return doubles;
     }
 
+    public double value(StatisticType type) {
+        if (type == null) {
+            return Double.NaN;
+        }
+        switch (type) {
+            case Count:
+                return count;
+
+            case Sum:
+                return sum;
+
+            case Mean:
+                return mean;
+
+            case MaximumQ4:
+                return maximum;
+
+            case MinimumQ0:
+                return minimum;
+
+            case GeometricMean:
+                return geometricMean;
+
+            case SumOfSquares:
+                return sumSquares;
+
+            case PopulationVariance:
+                return populationVariance;
+
+            case SampleVariance:
+                return sampleVariance;
+
+            case PopulationStandardDeviation:
+                return populationStandardDeviation;
+
+            case SampleStandardDeviation:
+                return sampleStandardDeviation;
+
+            case Skewness:
+                return skewness;
+
+            case Median:
+                return median;
+
+            case UpperQuartile:
+                return upperQuartile;
+
+            case LowerQuartile:
+                return lowerQuartile;
+
+            case UpperExtremeOutlierLine:
+                return upperExtremeOutlierLine;
+
+            case UpperMildOutlierLine:
+                return upperMildOutlierLine;
+
+            case LowerMildOutlierLine:
+                return lowerMildOutlierLine;
+
+            case LowerExtremeOutlierLine:
+                return lowerExtremeOutlierLine;
+
+            case Mode:
+                return mode;
+
+        }
+        return Double.NaN;
+    }
+
     /*
         static methods
      */

@@ -309,8 +309,11 @@ public abstract class BaseTableViewController<P> extends BaseController {
     public void updateStatus() {
         checkSelected();
         if (dataSizeLabel != null) {
+            int tsize = tableData == null ? 0 : tableData.size();
+            long start = startRowOfCurrentPage + 1;
+            long end = start + tsize - 1;
             dataSizeLabel.setText(message("Rows") + ": "
-                    + (tableData == null ? 0 : tableData.size())
+                    + start + "-" + end + "(" + tsize + ")"
                     + (dataSize > 0 ? "/" + dataSize : ""));
         }
     }

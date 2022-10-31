@@ -60,6 +60,7 @@ public abstract class BaseData2DChartFx extends BaseController {
     public void initControls() {
         try {
             super.initControls();
+            palette = new HashMap<>();
             buttonsPane.setDisable(true);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -90,9 +91,6 @@ public abstract class BaseData2DChartFx extends BaseController {
 
     public Map<String, String> makePalette() {
         try {
-            if (palette == null) {
-                palette = new HashMap();
-            }
             if (columns == null) {
                 return palette;
             }
@@ -118,19 +116,15 @@ public abstract class BaseData2DChartFx extends BaseController {
     @FXML
     public void randomColors() {
         try {
-            if (palette == null) {
-                palette = new HashMap();
-            } else {
-                palette.clear();
+            if (columns == null) {
+                return;
             }
-            if (columns != null) {
-                Random random = new Random();
-                for (int i = 0; i < columns.size(); i++) {
-                    Data2DColumn column = columns.get(i);
-                    Color color = FxColorTools.randomColor(random);
-                    String rgb = FxColorTools.color2rgb(color);
-                    palette.put(column.getColumnName(), rgb);
-                }
+            Random random = new Random();
+            for (int i = 0; i < columns.size(); i++) {
+                Data2DColumn column = columns.get(i);
+                Color color = FxColorTools.randomColor(random);
+                String rgb = FxColorTools.color2rgb(color);
+                palette.put(column.getColumnName(), rgb);
             }
             redraw();
         } catch (Exception e) {

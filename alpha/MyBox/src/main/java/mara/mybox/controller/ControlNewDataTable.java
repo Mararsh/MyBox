@@ -220,14 +220,12 @@ public class ControlNewDataTable extends BaseController {
     public void importRow(Connection conn, List<String> pageRow, InvalidAs invalidAs) {
         try {
             Data2DRow data2DRow = tableData2D.newRow();
-            for (int col : columnIndices) {
-                Data2DColumn sourceColumn = data2D.getColumns().get(col);
-                String name = sourceColumn.getColumnName();
-                String tableColumnName = dataTable.tmpColumnName(name);
-                if (tableColumnName != null) {
-                    name = tableColumnName;
-                }
-                data2DRow.setColumnValue(name, sourceColumn.fromString(pageRow.get(col + 1), invalidAs));
+            for (int i = 0; i < columnIndices.size(); i++) {
+                int col = columnIndices.get(i);
+                Data2DColumn sourceColumn = data2D.column(col);
+                Data2DColumn targetColumn = dataTable.column(i + 1);
+                data2DRow.setColumnValue(targetColumn.getColumnName(),
+                        sourceColumn.fromString(pageRow.get(col + 1), invalidAs));
             }
             tableData2D.insertData(conn, data2DRow);
             if (++count % DerbyBase.BatchSize == 0) {

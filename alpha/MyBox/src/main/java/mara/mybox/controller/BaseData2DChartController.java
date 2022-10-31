@@ -361,7 +361,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                 task = null;
                 if (ok) {
                     groupDataController.loadData(group.getTargetData().cloneAll());
-                    initFrames();
                     playController.play(groupLabels);
                 }
             }
@@ -370,8 +369,8 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         start(task);
     }
 
-    public void initFrames() {
-
+    protected boolean handleGroups() {
+        return framesNumber > 0;
     }
 
     public boolean initFrame() {
@@ -391,8 +390,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
             @Override
             protected boolean handle() {
-                outputData = group.queryGroup(backgroundTask, groupid, outputColumns);
-                return initFrame();
+                return makeFrameData();
             }
 
             @Override
@@ -414,6 +412,11 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
         };
         start(backgroundTask, false);
+    }
+
+    protected boolean makeFrameData() {
+        outputData = group.groupData(backgroundTask, groupid, outputColumns);
+        return initFrame();
     }
 
     public void drawFrame() {

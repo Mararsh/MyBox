@@ -351,7 +351,12 @@ public abstract class Data2D_Filter extends Data2D_Data {
                 return null;
             }
             String cellStyle = null;
-            long dataRowIndex = Long.parseLong(tableRow.get(0)) - 1;
+            long dataRowIndex;
+            try {
+                dataRowIndex = Long.parseLong(tableRow.get(0)) - 1;
+            } catch (Exception e) {
+                dataRowIndex = -1;
+            }
             for (Data2DStyle style : styles) {
                 String names = style.getColumns();
                 if (names != null && !names.isBlank()) {
@@ -363,10 +368,10 @@ public abstract class Data2D_Filter extends Data2D_Data {
                     }
                 }
                 long rowStart = style.getRowStart();
-                if (dataRowIndex < rowStart) {
-                    continue;
-                }
                 if (rowStart >= 0) {
+                    if (dataRowIndex <= 0 || dataRowIndex < rowStart) {
+                        continue;
+                    }
                     long rowEnd = style.getRowEnd();
                     if (rowEnd >= 0 && dataRowIndex >= rowEnd) {
                         continue;

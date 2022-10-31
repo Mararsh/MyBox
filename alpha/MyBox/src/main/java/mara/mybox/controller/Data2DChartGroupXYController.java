@@ -31,11 +31,6 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
     }
 
     @Override
-    public String categoryName() {
-        return selectedCategory;
-    }
-
-    @Override
     public void drawXYChart() {
         drawFrame();
     }

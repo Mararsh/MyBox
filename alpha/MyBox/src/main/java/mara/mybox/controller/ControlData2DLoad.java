@@ -570,6 +570,9 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
 
     @Override
     public void notifyLoaded() {
+        if (loadedNotify == null) {
+            return;
+        }
         notifyStatus();
         loadedNotify.set(!loadedNotify.get());
         if (data2D.getFile() != null) {

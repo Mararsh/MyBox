@@ -905,7 +905,7 @@ public class DataTableGroup {
     }
 
     // groupid is 1-based
-    public List<List<String>> queryGroup(SingletonTask task, long groupid, List<Data2DColumn> columns) {
+    public List<List<String>> groupData(SingletonTask task, long groupid, List<Data2DColumn> columns) {
         if (targetData == null || columns == null) {
             return null;
         }
@@ -939,7 +939,6 @@ public class DataTableGroup {
             return null;
         }
     }
-
 
     /*
         get
