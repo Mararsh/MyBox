@@ -3,7 +3,7 @@ package mara.mybox.controller;
 import javafx.fxml.FXML;
 import mara.mybox.data2d.Data2D_Operations.ObjectType;
 import mara.mybox.data2d.DataTable;
-import mara.mybox.data2d.DataTableGroupStatistic;
+import mara.mybox.data2d.reader.DataTableGroupStatistic;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -33,7 +33,7 @@ public class Data2DChartGroupBoxWhiskerController extends Data2DChartBoxWhiskerC
 
             objectType = ObjectType.Columns;
 
-            statistic = new DataTableGroupStatistic().setMix(false);
+            statistic = new DataTableGroupStatistic().setCountChart(false);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -55,7 +55,7 @@ public class Data2DChartGroupBoxWhiskerController extends Data2DChartBoxWhiskerC
     }
 
     @Override
-    protected boolean handleGroups() {
+    protected boolean initGroups() {
         try {
             if (group == null || framesNumber <= 0) {
                 return false;
@@ -76,9 +76,16 @@ public class Data2DChartGroupBoxWhiskerController extends Data2DChartBoxWhiskerC
     }
 
     @Override
+    protected void loadChartData() {
+        statisticDataController.loadData(statisticData.cloneAll());
+        super.loadChartData();
+    }
+
+    @Override
     protected boolean makeFrameData() {
         try {
-
+            outputColumns = statisticData.getColumns().subList(3, statisticData.getColumns().size());
+            outputData = statistic.groupData(backgroundTask, groupid);
             return outputData != null && !outputData.isEmpty();
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -88,11 +95,11 @@ public class Data2DChartGroupBoxWhiskerController extends Data2DChartBoxWhiskerC
 
     @Override
     public void drawFrame() {
-//        if (outputData == null) {
-//            return;
-//        }
-//        chartMaker.setDefaultChartTitle(chartTitle());
-//        super.drawChartBoxWhisker();
+        if (outputData == null) {
+            return;
+        }
+        chartMaker.setDefaultChartTitle(chartTitle());
+        super.drawChartBoxWhisker();
     }
 
 

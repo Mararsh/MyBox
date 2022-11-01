@@ -113,11 +113,13 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
         try {
             super.makeOptions();
 
-            isSettingValues = true;
-            selectedCategory = categoryColumnSelector.getSelectionModel().getSelectedItem();
-            categoryColumnSelector.getItems().add(0, message("RowNumber"));
-            categoryColumnSelector.setValue(selectedCategory);
-            isSettingValues = false;
+            if (categoryColumnSelector != null) {
+                isSettingValues = true;
+                selectedCategory = categoryColumnSelector.getSelectionModel().getSelectedItem();
+                categoryColumnSelector.getItems().add(0, message("RowNumber"));
+                categoryColumnSelector.setValue(selectedCategory);
+                isSettingValues = false;
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -390,6 +392,10 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
                     .setCategoryName(categorysCol >= 0 ? selectedCategory : null)
                     .setInvalidAs(invalidAs);
 
+            chartMaker.setDefaultChartTitle(chartTitle())
+                    .setDefaultCategoryLabel(selectedCategory)
+                    .setDefaultValueLabel(checkedColsNames.toString());
+
             return calculation.prepare();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -412,6 +418,12 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
                 outputData = null;
                 return;
             }
+            outputColumns = calculation.getOutputColumns();
+            outputData = calculation.getOutputData();
+            if (rowsRadio != null && rowsRadio.isSelected()) {
+                return;
+            }
+
             makeChartData();
 
         } catch (Exception e) {
@@ -473,15 +485,9 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
 
     public void makeChartData() {
         try {
-            if (calculation == null) {
+            if (outputData == null || outputColumns == null) {
                 return;
             }
-            outputColumns = calculation.getOutputColumns();
-            outputData = calculation.getOutputData();
-            if (rowsRadio != null && rowsRadio.isSelected()) {
-                return;
-            }
-
             List<List<String>> transposed = new ArrayList<>();
             for (int col = 1; col < outputColumns.size(); ++col) {
                 Data2DColumn column = outputColumns.get(col);
@@ -536,11 +542,6 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
                     displayCols.add(i);
                 }
             }
-            chartMaker.setDefaultChartTitle((selectedCategory != null
-                    ? selectedCategory + " - " : "") + calculation.getColsNames())
-                    .setChartTitle(chartMaker.getChartTitle())
-                    .setDefaultCategoryLabel(selectedCategory)
-                    .setDefaultValueLabel(calculation.getColsNames().toString());
             chartController.writeXYChart(outputColumns, outputData, 0, displayCols);
             chartMaker.getBoxWhiskerChart()
                     .setBoxWidth(boxWidth)

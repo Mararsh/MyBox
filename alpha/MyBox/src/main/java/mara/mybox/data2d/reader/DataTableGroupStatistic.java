@@ -1,4 +1,4 @@
-package mara.mybox.data2d;
+package mara.mybox.data2d.reader;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -10,7 +10,9 @@ import java.util.List;
 import mara.mybox.calculation.DescriptiveStatistic;
 import mara.mybox.calculation.DescriptiveStatistic.StatisticType;
 import mara.mybox.calculation.DoubleStatistic;
-import mara.mybox.data2d.reader.DataTableGroup;
+import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
@@ -34,7 +36,7 @@ public class DataTableGroupStatistic {
 
     protected DataTableGroup groups;
     protected DataTable groupResults;
-    protected List<String> calNames, row;
+    protected List<String> calNames;
     protected DescriptiveStatistic calculation;
     protected short scale;
 
@@ -44,15 +46,15 @@ public class DataTableGroupStatistic {
 
     protected DataTable groupData, statisticData;
     protected TableData2D tableGroup, tableStatistic;
-    protected long groupid, mixCount, statisticCount;
+    protected long groupid, chartRowsCount, statisticRowsCount;
     protected PreparedStatement statisticInsert;
 
     protected SingletonTask task;
-    protected boolean mix, ok;
+    protected boolean countChart, ok;
 
-    protected File mixFile;
-    protected CSVPrinter mixPrinter;
-    protected DataFileCSV mixData;
+    protected File chartFile;
+    protected CSVPrinter chartPrinter;
+    protected DataFileCSV chartData;
 
     public boolean run() {
         if (groups == null || calNames == null
@@ -77,7 +79,7 @@ public class DataTableGroupStatistic {
                 while (query.next()) {
                     if (task == null || task.isCancelled()) {
                         query.close();
-                        mixPrinter.close();
+                        chartPrinter.close();
                         conn.close();
                         return false;
                     }
@@ -135,28 +137,28 @@ public class DataTableGroupStatistic {
             tableStatistic = statisticData.getTableData2D();
             statisticInsert = conn.prepareStatement(tableStatistic.insertStatement());
 
-            if (mix) {
-                mixData = new DataFileCSV();
-                List<Data2DColumn> mixColumns = new ArrayList<>();
-                mixColumns.add(new Data2DColumn(idColName, ColumnType.Long));
-                mixColumns.add(new Data2DColumn(parameterName, ColumnType.String, 200));
-                mixColumns.add(new Data2DColumn(message("Count"), ColumnType.Long));
+            if (countChart) {
+                chartData = new DataFileCSV();
+                List<Data2DColumn> chartColumns = new ArrayList<>();
+                chartColumns.add(new Data2DColumn(idColName, ColumnType.Long));
+                chartColumns.add(new Data2DColumn(parameterName, ColumnType.String, 200));
+                chartColumns.add(new Data2DColumn(message("Count"), ColumnType.Long));
                 for (String name : calNames) {
                     for (StatisticType type : calculation.types) {
                         if (type == StatisticType.Count) {
                             continue;
                         }
-                        mixColumns.add(new Data2DColumn(name + "_" + message(type.name()), ColumnType.Double, 200));
+                        chartColumns.add(new Data2DColumn(name + "_" + message(type.name()), ColumnType.Double, 200));
                     }
                 }
-                String mixname = dname + "_Mixed";
-                mixFile = getPathTempFile(AppPaths.getGeneratedPath(), mixname, ".csv");
-                mixData.setColumns(mixColumns).setDataName(mixname)
-                        .setFile(mixFile).setCharset(Charset.forName("UTF-8"))
+                String chartname = dname + "_Chart";
+                chartFile = getPathTempFile(AppPaths.getGeneratedPath(), chartname, ".csv");
+                chartData.setColumns(chartColumns).setDataName(chartname)
+                        .setFile(chartFile).setCharset(Charset.forName("UTF-8"))
                         .setDelimiter(",").setHasHeader(true)
-                        .setColsNumber(mixColumns.size()).setScale(scale);
-                mixPrinter = CsvTools.csvPrinter(mixFile);
-                mixPrinter.printRecord(mixData.columnNames());
+                        .setColsNumber(chartColumns.size()).setScale(scale);
+                chartPrinter = CsvTools.csvPrinter(chartFile);
+                chartPrinter.printRecord(chartData.columnNames());
             }
 
             groupColumns = new ArrayList<>();
@@ -169,9 +171,9 @@ public class DataTableGroupStatistic {
             tableGroup = groupData.getTableData2D();
 
             groupid = 0;
-            mixCount = 0;
-            statisticCount = 0;
-            row = new ArrayList<>();
+            chartRowsCount = 0;
+            statisticRowsCount = 0;
+
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -214,13 +216,13 @@ public class DataTableGroupStatistic {
                             DoubleTools.scale(s.value(type), scale));
                 }
                 tableStatistic.insertData(conn, statisticInsert, data2DRow);
-                if (++statisticCount % DerbyBase.BatchSize == 0) {
+                if (++statisticRowsCount % DerbyBase.BatchSize == 0) {
                     conn.commit();
                 }
             }
 
-            if (mix) {
-                row.clear();
+            if (countChart) {
+                List<String> row = new ArrayList<>();
                 row.add(groupid + "");
                 row.add(parameterValue);
                 row.add(sData[0].count + "");
@@ -231,8 +233,8 @@ public class DataTableGroupStatistic {
                         row.addAll(vs.subList(1, size));
                     }
                 }
-                mixPrinter.printRecord(row);
-                mixCount++;
+                chartPrinter.printRecord(row);
+                chartRowsCount++;
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -247,14 +249,14 @@ public class DataTableGroupStatistic {
             groupData.drop(conn);
             conn.commit();
 
-            statisticData.setDataSize(statisticCount).setRowsNumber(statisticCount);
+            statisticData.setDataSize(statisticRowsCount).setRowsNumber(statisticRowsCount);
             Data2D.saveAttributes(conn, statisticData, statisticData.getColumns());
 
-            if (mix) {
-                mixPrinter.flush();
-                mixPrinter.close();
-                mixData.setDataSize(mixCount).setRowsNumber(mixCount);
-                Data2D.saveAttributes(conn, mixData, mixData.getColumns());
+            if (countChart) {
+                chartPrinter.flush();
+                chartPrinter.close();
+                chartData.setDataSize(chartRowsCount).setRowsNumber(chartRowsCount);
+                Data2D.saveAttributes(conn, chartData, chartData.getColumns());
             }
 
             ok = true;
@@ -268,11 +270,42 @@ public class DataTableGroupStatistic {
         return ok;
     }
 
+    // groupid is 1-based
+    public List<List<String>> groupData(SingletonTask task, long groupid) {
+        if (statisticData == null || groupid < 1 || groupid > statisticRowsCount) {
+            return null;
+        }
+        List<List<String>> data = new ArrayList<>();
+        String sql = "SELECT * FROM " + statisticData.getSheet()
+                + " WHERE " + idColName + "=" + groupid;
+        try ( Connection qconn = DerbyBase.getConnection();
+                 ResultSet query = qconn.prepareStatement(sql).executeQuery()) {
+            while (query.next() && task != null && !task.isCancelled()) {
+                List<String> vrow = new ArrayList<>();
+                for (int i = 3; i < statisticData.getColumns().size(); i++) {
+                    Data2DColumn column = statisticData.getColumns().get(i);
+                    String name = column.getColumnName();
+                    String s = column.toString(query.getObject(name));
+                    vrow.add(s);
+                }
+                data.add(vrow);
+            }
+            return data;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.console(e.toString());
+            return null;
+        }
+    }
+
+
     /*
         get
      */
-    public DataFileCSV getMixData() {
-        return mixData;
+    public DataFileCSV getChartData() {
+        return chartData;
     }
 
     public DataTable getStatisticData() {
@@ -302,8 +335,8 @@ public class DataTableGroupStatistic {
         return this;
     }
 
-    public DataTableGroupStatistic setMix(boolean mix) {
-        this.mix = mix;
+    public DataTableGroupStatistic setCountChart(boolean countChart) {
+        this.countChart = countChart;
         return this;
     }
 

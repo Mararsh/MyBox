@@ -1,12 +1,16 @@
 package mara.mybox.controller;
 
 import java.util.ArrayList;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.chart.PieChartMaker;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -18,7 +22,7 @@ import static mara.mybox.value.Languages.message;
 public class Data2DChartPieController extends BaseData2DChartController {
 
     protected PieChartMaker pieMaker;
-    protected int categoryIndex, valueIndex;
+    protected int categoryIndex, valueIndex, percentageIndex;
 
     @FXML
     protected ControlData2DChartPie chartController;
@@ -104,12 +108,51 @@ public class Data2DChartPieController extends BaseData2DChartController {
     }
 
     @Override
+    public void readData() {
+        super.readData();
+        countPercentage();
+    }
+
+    public void countPercentage() {
+        try {
+            if (outputData == null || outputColumns == null) {
+                return;
+            }
+            percentageIndex = outputColumns.size();
+            outputColumns.add(new Data2DColumn(message("Percentage"), ColumnDefinition.ColumnType.Double));
+            double sum = 0, value;
+            for (List<String> data : outputData) {
+                try {
+                    sum += Double.valueOf(data.get(valueIndex));
+                } catch (Exception e) {
+                }
+            }
+            List<List<String>> pdata = new ArrayList<>();
+            for (List<String> row : outputData) {
+                try {
+                    value = Double.valueOf(row.get(valueIndex));
+                    row.add(DoubleTools.percentage(value, sum, scale));
+                    pdata.add(row);
+                } catch (Exception e) {
+                }
+            }
+
+            outputData = pdata;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+        }
+    }
+
+    @Override
     public void drawChart() {
         drawPieChart();
     }
 
     public void drawPieChart() {
-        chartController.writeChart(outputColumns, outputData, categoryIndex, valueIndex);
+        chartController.writeChart(outputColumns, outputData, categoryIndex, valueIndex, percentageIndex);
     }
 
     /*

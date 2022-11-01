@@ -5,7 +5,6 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.Data2DColumn;
@@ -23,8 +22,6 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
 
     @FXML
     protected ControlData2DTarget targetController;
-    @FXML
-    protected CheckBox colNameCheck;
     @FXML
     protected ComboBox<String> colSelector;
 

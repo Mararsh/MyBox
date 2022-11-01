@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -12,19 +11,22 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.FlowPane;
 import mara.mybox.calculation.DescriptiveStatistic;
 import mara.mybox.calculation.DescriptiveStatistic.StatisticObject;
 import mara.mybox.calculation.DescriptiveStatistic.StatisticType;
 import mara.mybox.data2d.DataFileCSV;
-import mara.mybox.data2d.DataTable;
-import mara.mybox.data2d.DataTableGroupStatistic;
 import mara.mybox.data2d.reader.DataTableGroup;
+import mara.mybox.data2d.reader.DataTableGroupStatistic;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.chart.PieChartMaker;
+import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -36,8 +38,7 @@ import static mara.mybox.value.Languages.message;
 public class Data2DGroupStatisticController extends Data2DChartXYController {
 
     protected DescriptiveStatistic calculation;
-    protected DataTable groupData;
-    protected DataFileCSV mixFile;
+    protected DataFileCSV dataFile;
     protected PieChartMaker pieMaker;
     protected List<List<String>> pieData;
     protected List<Data2DColumn> pieColumns;
@@ -47,7 +48,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
     @FXML
     protected ControlStatisticSelection statisticController;
     @FXML
-    protected ControlData2DResults statisticDataController, statisticMixedController;
+    protected ControlData2DResults statisticDataController, chartDataController;
     @FXML
     protected ControlData2DChartPie pieChartController;
     @FXML
@@ -77,7 +78,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
 
             statisticController.mustCount();
 
-            statisticMixedController.loadedNotify.addListener(new ChangeListener<Boolean>() {
+            chartDataController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     xyChartTab.setDisable(false);
@@ -98,6 +99,12 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             pieChartTab.setDisable(true);
 
             displayAllCheck.visibleProperty().unbind();
+            displayAllCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    refreshAction();
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -105,8 +112,13 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
     }
 
     @Override
-    public void noticeMemory() {
-        noticeLabel.setVisible(displayAllCheck.isSelected());
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+            NodeStyleTools.setTooltip(displayAllCheck, new Tooltip(message("AllRowsLoadComments")));
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
     }
 
     @Override
@@ -129,11 +141,10 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
         if (task != null) {
             task.cancel();
         }
-        groupData = null;
-        mixFile = null;
+        dataFile = null;
         groupDataController.loadNull();
         statisticDataController.loadNull();
-        statisticMixedController.loadNull();
+        chartDataController.loadNull();
         xyChartTab.setDisable(true);
         pieChartTab.setDisable(true);
         calculation = statisticController.pickValues()
@@ -165,20 +176,16 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
                     if (!group.run()) {
                         return false;
                     }
-                    groupData = group.getTargetData();
-                    Platform.runLater(() -> {
-                        groupDataController.loadData(groupData.cloneAll());
-                    });
                     statistic = new DataTableGroupStatistic()
-                            .setGroups(group).setMix(true)
+                            .setGroups(group).setCountChart(true)
                             .setCalculation(calculation)
                             .setCalNames(checkedColsNames)
                             .setTask(task);
                     if (!statistic.run()) {
                         return false;
                     }
-                    mixFile = statistic.getMixData();
-                    return mixFile != null;
+                    dataFile = statistic.getChartData();
+                    return dataFile != null;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -196,8 +203,9 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
                 data2D.stopTask();
                 task = null;
                 if (ok) {
+                    chartDataController.loadData(dataFile.cloneAll());
+                    groupDataController.loadData(group.getTargetData().cloneAll());
                     statisticDataController.loadData(statistic.getStatisticData().cloneAll());
-                    statisticMixedController.loadData(mixFile.cloneAll());
                 }
             }
 
@@ -217,7 +225,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             pieData = null;
             pieMaker.clearChart();
         }
-        if (mixFile == null) {
+        if (dataFile == null) {
             return;
         }
         if (backgroundTask != null) {
@@ -228,13 +236,13 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             @Override
             protected boolean handle() {
                 try {
-                    mixFile.startTask(backgroundTask, null);
+                    dataFile.startTask(backgroundTask, null);
 
                     List<List<String>> resultsData;
                     if (displayAllCheck.isSelected()) {
-                        resultsData = mixFile.allRows(false);
+                        resultsData = dataFile.allRows(false);
                     } else {
-                        resultsData = statisticMixedController.data2D.tableRows(false);
+                        resultsData = chartDataController.data2D.tableRows(false);
                     }
                     if (resultsData == null) {
                         return false;
@@ -271,7 +279,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                mixFile.stopTask();
+                dataFile.stopTask();
                 backgroundTask = null;
             }
 
@@ -286,7 +294,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             }
             outputColumns = new ArrayList<>();
             Data2DColumn xyCategoryColumn
-                    = mixFile.column(xyParametersRadio.isSelected() ? 1 : 0);
+                    = dataFile.column(xyParametersRadio.isSelected() ? 1 : 0);
             outputColumns.add(xyCategoryColumn);
 
             List<String> colNames = new ArrayList<>();
@@ -327,12 +335,12 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             List<Integer> cols = new ArrayList<>();
             for (String stype : sTypes) {
                 if (message("Count").equals(stype)) {
-                    outputColumns.add(mixFile.column(2));
+                    outputColumns.add(dataFile.column(2));
                     cols.add(2);
                 } else {
                     for (String col : colNames) {
-                        int colIndex = mixFile.colOrder(col + "_" + stype);
-                        outputColumns.add(mixFile.column(colIndex));
+                        int colIndex = dataFile.colOrder(col + "_" + stype);
+                        outputColumns.add(dataFile.column(colIndex));
                         cols.add(colIndex);
                     }
                 }
@@ -364,18 +372,30 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             }
             pieColumns = new ArrayList<>();
             Data2DColumn pieCategoryColumn
-                    = mixFile.columns.get(pieParametersRadio.isSelected() ? 1 : 0);
+                    = dataFile.columns.get(pieParametersRadio.isSelected() ? 1 : 0);
             pieColumns.add(pieCategoryColumn);
-            pieColumns.add(mixFile.columns.get(2));
+            pieColumns.add(dataFile.columns.get(2));
+            pieColumns.add(new Data2DColumn(message("Percentage"), ColumnDefinition.ColumnType.Double));
 
             pieData = new ArrayList<>();
+            double sum = 0, count;
             for (List<String> data : resultsData) {
-                String category = data.get(pieParametersRadio.isSelected() ? 1 : 0);
-                String count = data.get(2);
-                List<String> pieRow = new ArrayList<>();
-                pieRow.add(category);
-                pieRow.add(count);
-                pieData.add(pieRow);
+                try {
+                    sum += Double.valueOf(data.get(2));
+                } catch (Exception e) {
+                }
+            }
+            for (List<String> data : resultsData) {
+                try {
+                    String category = data.get(pieParametersRadio.isSelected() ? 1 : 0);
+                    List<String> pieRow = new ArrayList<>();
+                    pieRow.add(category);
+                    count = Double.valueOf(data.get(2));
+                    pieRow.add((long) count + "");
+                    pieRow.add(DoubleTools.percentage(count, sum, scale));
+                    pieData.add(pieRow);
+                } catch (Exception e) {
+                }
             }
 
             selectedCategory = pieCategoryColumn.getColumnName();

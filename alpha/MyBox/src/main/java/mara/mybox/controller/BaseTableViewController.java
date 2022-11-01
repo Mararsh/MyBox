@@ -313,7 +313,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
             long start = startRowOfCurrentPage + 1;
             long end = start + tsize - 1;
             dataSizeLabel.setText(message("Rows") + ": "
-                    + start + "-" + end + "(" + tsize + ")"
+                    + "[" + start + "-" + end + "]" + tsize
                     + (dataSize > 0 ? "/" + dataSize : ""));
         }
     }

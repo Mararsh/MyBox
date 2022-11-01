@@ -147,9 +147,9 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
             pageStart = currentSelection.getStart();
             pageEnd = len == 0 ? pageStart + 1 : currentSelection.getEnd();
         }
-        String info = message("SelectionInPage") + ": "
+        String info = message("SelectionInPage") + ": ["
                 + StringTools.format(pageStart + 1) + " - " + StringTools.format(pageEnd)
-                + " (" + StringTools.format(len == 0 ? 0 : pageEnd - pageStart) + ")";
+                + "] " + StringTools.format(len == 0 ? 0 : pageEnd - pageStart);
         if (sourceInformation != null && sourceInformation.getPagesNumber() > 1 && sourceInformation.getCurrentPage() > 0) {
             long fileStart = sourceInformation.getCurrentPageObjectStart() + pageStart;
             long fileEnd = len == 0 ? fileStart + 1 : sourceInformation.getCurrentPageObjectStart() + pageEnd;
@@ -365,13 +365,13 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
                 .append(": ").append(sourceInformation.getCharset().name()).append("\n");
         if (pagesNumber > 1) {
             s.append(editType == Edit_Type.Bytes ? message("BytesRangeInPage") : message("CharactersRangeInPage"))
-                    .append(": ").append(StringTools.format(pageObjectStart + 1))
+                    .append(": [").append(StringTools.format(pageObjectStart + 1))
                     .append(" - ").append(StringTools.format(pageObjectEnd))
-                    .append(" ( ").append(StringTools.format(pageObjectsNumber)).append(" )").append("\n");
+                    .append("] ").append(StringTools.format(pageObjectsNumber)).append("\n");
             s.append(message("LinesRangeInPage"))
-                    .append(": ").append(StringTools.format(pageLineStart + 1))
+                    .append(": [").append(StringTools.format(pageLineStart + 1))
                     .append(" - ").append(StringTools.format(pageLineEnd))
-                    .append(" ( ").append(StringTools.format(pageLinesNumber)).append(" )").append("\n");
+                    .append("] ").append(StringTools.format(pageLinesNumber)).append("\n");
         } else {
             s.append(editType == Edit_Type.Bytes ? message("BytesNumberInPage") : message("CharactersNumberInPage"))
                     .append(": ").append(StringTools.format(pageObjectsNumber)).append("\n");

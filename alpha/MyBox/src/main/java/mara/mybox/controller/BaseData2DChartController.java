@@ -338,13 +338,9 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                     group = groupData(DataTableGroup.TargetType.Table,
                             dataNames, orders, maxData, scale);
                     group.run();
-                    List<String> values = group.getParameterValues();
-                    framesNumber = values.size();
-                    groupLabels = new ArrayList<>();
-                    for (int i = 0; i < framesNumber; i++) {
-                        groupLabels.add(values.get(i));
-                    }
-                    return framesNumber > 0;
+                    groupLabels = group.getParameterValues();
+                    framesNumber = groupLabels.size();
+                    return initGroups();
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -360,7 +356,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                 super.finalAction();
                 task = null;
                 if (ok) {
-                    groupDataController.loadData(group.getTargetData().cloneAll());
+                    loadChartData();
                     playController.play(groupLabels);
                 }
             }
@@ -369,8 +365,12 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         start(task);
     }
 
-    protected boolean handleGroups() {
+    protected boolean initGroups() {
         return framesNumber > 0;
+    }
+
+    protected void loadChartData() {
+        groupDataController.loadData(group.getTargetData().cloneAll());
     }
 
     public boolean initFrame() {

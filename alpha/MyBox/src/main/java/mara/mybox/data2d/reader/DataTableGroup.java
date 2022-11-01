@@ -359,18 +359,19 @@ public class DataTableGroup {
                     groupChanged();
                 }
                 if (to >= maxValue || groupid >= maxGroup) {
-                    condition = mappedGroupName + " >= " + from;
                     String bs = DoubleTools.scaleString(from, rscale);
                     String es = DoubleTools.scaleString(maxValue, rscale);
                     parameterValue = "[" + bs + "," + es + "]";
                     parameterValueForFilename = bs + "-" + es;
+                    condition = mappedGroupName + " >= " + from;
                     from = maxValue + 1;
                 } else {
-                    condition = mappedGroupName + " >= " + from + " AND " + mappedGroupName + " < " + to;
                     String bs = DoubleTools.scaleString(from, rscale);
                     String es = DoubleTools.scaleString(to, rscale);
                     parameterValue = "[" + bs + "," + es + ")";
                     parameterValueForFilename = bs + "-" + es;
+                    to = Double.valueOf(es);
+                    condition = mappedGroupName + " >= " + from + " AND " + mappedGroupName + " < " + to;
                     from = to;
                 }
                 parameterValues.add(parameterValue);

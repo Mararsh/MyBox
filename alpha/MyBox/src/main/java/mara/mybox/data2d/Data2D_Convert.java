@@ -383,6 +383,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                 return null;
             }
             tableData2D = dataTable.getTableData2D();
+//            MyBoxLog.console(tableData2D.createTableStatement());
             if (conn.createStatement().executeUpdate(tableData2D.createTableStatement()) < 0) {
                 return null;
             }

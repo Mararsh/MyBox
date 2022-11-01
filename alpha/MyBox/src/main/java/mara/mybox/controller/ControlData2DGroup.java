@@ -42,7 +42,7 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
     @FXML
     protected RadioButton valuesRadio, valueRangeRadio, conditionsRadio, rowsRangeRadio;
     @FXML
-    protected VBox groupBox, columnsBox, conditionsBox, splitBox;
+    protected VBox groupBox, columnsBox, conditionsBox, splitBox, labelBox;
     @FXML
     protected HBox columnBox, scaleBox;
     @FXML
@@ -149,23 +149,23 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
             commentsLabel.setText("");
 
             if (valuesRadio.isSelected()) {
-                groupBox.getChildren().add(columnsBox);
+                groupBox.getChildren().addAll(columnsBox, labelBox);
                 commentsLabel.setText(message("GroupValuesComments"));
 
             } else if (valueRangeRadio.isSelected()) {
-                groupBox.getChildren().addAll(columnBox, splitBox);
+                groupBox.getChildren().addAll(columnBox, splitBox, labelBox);
                 commentsLabel.setText(message("GroupRangeComments"));
                 splitController.isPositiveInteger = false;
                 splitController.checkSplitType();
 
             } else if (rowsRangeRadio.isSelected()) {
-                groupBox.getChildren().add(splitBox);
+                groupBox.getChildren().addAll(splitBox, labelBox);
                 commentsLabel.setText(message("GroupRowsComments"));
                 splitController.isPositiveInteger = true;
                 splitController.checkSplitType();
 
             } else if (conditionsRadio.isSelected()) {
-                groupBox.getChildren().add(conditionsBox);
+                groupBox.getChildren().addAll(conditionsBox, labelBox);
                 commentsLabel.setText(message("GroupConditionsComments"));
 
             }

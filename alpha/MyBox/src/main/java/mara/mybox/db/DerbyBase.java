@@ -843,8 +843,9 @@ public class DerbyBase {
             return name;
         }
         String s = "";
-        for (int i = 0; i < name.length(); i++) {
-            char c = name.charAt(i);
+        String sname = name.replaceAll("（|）", "_");
+        for (int i = 0; i < sname.length(); i++) {
+            char c = sname.charAt(i);
             if ((c > 64 && c < 91) || (c > 96 && c < 123) || c < 0 || c > 127) {
                 s += c;
                 continue;

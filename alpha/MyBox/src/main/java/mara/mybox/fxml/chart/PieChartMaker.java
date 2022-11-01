@@ -61,23 +61,13 @@ public class PieChartMaker extends PieChartOptions {
         }
     }
 
-    public void writeChart(List<List<String>> data, int catgoryCol, int valueCol) {
+    public void writeChart(List<List<String>> data, int catgoryCol, int valueCol, int percentageCol) {
         try {
             Random random = new Random();
             ObservableList<PieChart.Data> pieData = FXCollections.observableArrayList();
             pieChart.setData(pieData);
             if (legendSide == null) {
                 pieChart.setLegendSide(Side.TOP);
-            }
-            double total = 0;
-            for (List<String> rowData : data) {
-                double d = scaleValue(rowData.get(valueCol));
-                if (d > 0) {
-                    total += d;
-                }
-            }
-            if (total == 0) {
-                return;
             }
             String label;
             List<String> paletteList = new ArrayList();
@@ -90,7 +80,7 @@ public class PieChartMaker extends PieChartOptions {
                 if (d <= 0 || DoubleTools.invalidDouble(d)) {
                     continue;
                 }
-                double percent = DoubleTools.scale(d * 100 / total, scale);
+                double percent = doubleValue(rowData.get(percentageCol));
                 String value = NumberTools.format(d, scale);
                 switch (labelType) {
                     case Category:

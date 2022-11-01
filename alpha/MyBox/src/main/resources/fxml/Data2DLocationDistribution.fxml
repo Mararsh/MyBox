@@ -157,115 +157,111 @@ License:    Apache License Version 2.0
                                         </Tab>
                                         <Tab fx:id="optionsTab" text="%DataOptions">
                                             <content>
-                                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                                                    <content>
-                                          <VBox>
-                                             <children>
-                                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-                                                   <content>
-                                                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
-                                                                        <children>
-                                                            <fx:include fx:id="sort" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" prefHeight="200.0" source="ControlSelection.fxml" VBox.vgrow="ALWAYS" />
-                                                                              <VBox fx:id="columnsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                                                  <children>
-                                                                                      <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
-                                                                                          <children>
-                                                                                              <Label minHeight="-Infinity" minWidth="-Infinity" text="%Label" />
-                                                                                              <ComboBox fx:id="labelSelector" prefWidth="200.0" />
-                                                                                          </children>
-                                                                                      </FlowPane>
-                                                                                      <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
-                                                                                          <children>
-                                                                                              <Label minHeight="-Infinity" minWidth="-Infinity" text="%Longitude" />
-                                                                                              <ComboBox fx:id="longitudeSelector" prefWidth="200.0" />
-                                                                                          </children>
-                                                                                      </FlowPane>
-                                                                                      <FlowPane hgap="2.0" layoutX="15.0" layoutY="43.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
-                                                                                          <children>
-                                                                                              <Label minHeight="-Infinity" minWidth="-Infinity" text="%Latitude" />
-                                                                                              <ComboBox fx:id="latitudeSelector" prefWidth="200.0" />
-                                                                                          </children>
-                                                                                      </FlowPane>
-                                                                  <FlowPane hgap="2.0" layoutX="15.0" layoutY="71.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                       <children>
+                                          <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                             <content>
+                                                              <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                                                  <children>
+                                                      <fx:include fx:id="sort" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" prefHeight="200.0" source="ControlSelection.fxml" VBox.vgrow="ALWAYS" />
+                                                                        <VBox fx:id="columnsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                                            <children>
+                                                                                <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+                                                                                    <children>
+                                                                                        <Label minHeight="-Infinity" minWidth="-Infinity" text="%Label" />
+                                                                                        <ComboBox fx:id="labelSelector" prefWidth="200.0" />
+                                                                                    </children>
+                                                                                </FlowPane>
+                                                                                <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+                                                                                    <children>
+                                                                                        <Label minHeight="-Infinity" minWidth="-Infinity" text="%Longitude" />
+                                                                                        <ComboBox fx:id="longitudeSelector" prefWidth="200.0" />
+                                                                                    </children>
+                                                                                </FlowPane>
+                                                                                <FlowPane hgap="2.0" layoutX="15.0" layoutY="43.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+                                                                                    <children>
+                                                                                        <Label minHeight="-Infinity" minWidth="-Infinity" text="%Latitude" />
+                                                                                        <ComboBox fx:id="latitudeSelector" prefWidth="200.0" />
+                                                                                    </children>
+                                                                                </FlowPane>
+                                                            <FlowPane hgap="2.0" layoutX="15.0" layoutY="71.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+                                                               <children>
+                                                                  <Label minHeight="-Infinity" minWidth="-Infinity" text="%Size" />
+                                                                  <ComboBox fx:id="sizeSelector" prefWidth="200.0" />
+                                                               </children>
+                                                            </FlowPane>
+                                                            <VBox fx:id="otherColumnsBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                               <children>
+                                                                  <FlowPane hgap="2.0" vgap="2.0">
                                                                      <children>
-                                                                        <Label minHeight="-Infinity" minWidth="-Infinity" text="%Size" />
-                                                                        <ComboBox fx:id="sizeSelector" prefWidth="200.0" />
+                                                                        <Label text="%OtherPoppedValues" />
+                                                                        <Button fx:id="selectAllOtherColumnsButton" mnemonicParsing="false" onAction="#selectAllOtherColumns">
+                                                                           <graphic>
+                                                                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                                 <image>
+                                                                                    <Image url="@../buttons/Red/iconSelectAll.png" />
+                                                                                 </image>
+                                                                              </ImageView>
+                                                                           </graphic>
+                                                                        </Button>
+                                                                        <Button fx:id="selectNoneOtherColumnsButton" mnemonicParsing="false" onAction="#selectNoneOtherColumn">
+                                                                           <graphic>
+                                                                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                                 <image>
+                                                                                    <Image url="@../buttons/Red/iconSelectNone.png" />
+                                                                                 </image>
+                                                                              </ImageView>
+                                                                           </graphic>
+                                                                        </Button>
                                                                      </children>
                                                                   </FlowPane>
-                                                                  <VBox fx:id="otherColumnsBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                                                     <children>
-                                                                        <FlowPane hgap="2.0" vgap="2.0">
-                                                                           <children>
-                                                                              <Label text="%OtherPoppedValues" />
-                                                                              <Button fx:id="selectAllOtherColumnsButton" mnemonicParsing="false" onAction="#selectAllOtherColumns">
-                                                                                 <graphic>
-                                                                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                                       <image>
-                                                                                          <Image url="@../buttons/Red/iconSelectAll.png" />
-                                                                                       </image>
-                                                                                    </ImageView>
-                                                                                 </graphic>
-                                                                              </Button>
-                                                                              <Button fx:id="selectNoneOtherColumnsButton" mnemonicParsing="false" onAction="#selectNoneOtherColumn">
-                                                                                 <graphic>
-                                                                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                                       <image>
-                                                                                          <Image url="@../buttons/Red/iconSelectNone.png" />
-                                                                                       </image>
-                                                                                    </ImageView>
-                                                                                 </graphic>
-                                                                              </Button>
-                                                                           </children>
-                                                                        </FlowPane>
-                                                                        <FlowPane fx:id="otherColumnsPane" hgap="2.0" vgap="2.0" />
-                                                                     </children>
-                                                                  </VBox>
-                                                                                      <VBox layoutX="15.0" layoutY="99.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                                                                          <children> 
-                                                                                              <Label minHeight="-Infinity" minWidth="-Infinity" text="%CoordinateSystem" />
-                                                                                              <FlowPane fx:id="csPane" hgap="2.0" />
-                                                                                          </children>
-                                                                                      </VBox>
-                                                                                  </children>
-                                                                                  <padding>
-                                                                                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                                                                  </padding>
-                                                                              </VBox>
-                                                                              <Label fx:id="noticeLabel" minHeight="-Infinity" text="%AllRowsLoadComments" wrapText="true" />
-                                                                        </children>
-                                                                        <padding>
-                                                                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                                                        </padding>
-                                                                    </VBox>
-                                                   </content>
-                                                </ScrollPane>
-                                                                <HBox alignment="CENTER_LEFT" spacing="2.0">
-                                                                    <children>
-                                                                        <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" />
-                                                                        <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/Red/iconCancel.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                        <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/Red/iconOK.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                    </children>
-                                                                </HBox>
-                                             </children>
-                                          </VBox>
-                                                    </content>
-                                                </ScrollPane>
+                                                                  <FlowPane fx:id="otherColumnsPane" hgap="2.0" vgap="2.0" />
+                                                               </children>
+                                                            </VBox>
+                                                                                <VBox layoutX="15.0" layoutY="99.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                                                    <children> 
+                                                                                        <Label minHeight="-Infinity" minWidth="-Infinity" text="%CoordinateSystem" />
+                                                                                        <FlowPane fx:id="csPane" hgap="2.0" />
+                                                                                    </children>
+                                                                                </VBox>
+                                                                            </children>
+                                                                            <padding>
+                                                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                                            </padding>
+                                                                        </VBox>
+                                                                        <Label fx:id="noticeLabel" minHeight="-Infinity" text="%AllRowsLoadComments" wrapText="true" />
+                                                                  </children>
+                                                                  <padding>
+                                                                      <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                                  </padding>
+                                                              </VBox>
+                                             </content>
+                                          </ScrollPane>
+                                                          <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                                              <children>
+                                                                  <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" />
+                                                                  <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
+                                                                      <graphic>
+                                                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                              <image>
+                                                                                  <Image url="@../buttons/Red/iconCancel.png" />
+                                                                              </image>
+                                                                          </ImageView>
+                                                                      </graphic>
+                                                                  </Button>
+                                                                  <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+                                                                      <graphic>
+                                                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                              <image>
+                                                                                  <Image url="@../buttons/Red/iconOK.png" />
+                                                                              </image>
+                                                                          </ImageView>
+                                                                      </graphic>
+                                                                  </Button>
+                                                              </children>
+                                                          </HBox>
+                                       </children>
+                                    </VBox>
                                             </content>
                                         </Tab>
                                         <Tab fx:id="mapOptionsTab" text="%MapOptions">
@@ -277,7 +273,7 @@ License:    Apache License Version 2.0
                                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                                             </padding>
                                                             <children>
-                                                                <fx:include fx:id="mapOptions" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlMapOptions.fxml" />
+                                                                <fx:include fx:id="mapOptions" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlMapOptions.fxml" VBox.vgrow="ALWAYS" />
                                                             </children>
                                                         </VBox>
                                                     </content>

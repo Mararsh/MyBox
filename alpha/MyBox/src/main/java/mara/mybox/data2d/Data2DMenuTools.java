@@ -437,13 +437,6 @@ public class Data2DMenuTools {
             menu.setDisable(empty);
             chartMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("XYZChart"), StyleTools.getIconImage("iconXYZChart.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DChartXYZController.open(controller);
-            });
-            menu.setDisable(invalidData || data2D == null || data2D.columnsNumber() < 3);
-            chartMenu.getItems().add(menu);
-
             menu = new MenuItem(message("LocationDistribution"), StyleTools.getIconImage("iconLocation.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DLocationDistributionController.open(controller);
