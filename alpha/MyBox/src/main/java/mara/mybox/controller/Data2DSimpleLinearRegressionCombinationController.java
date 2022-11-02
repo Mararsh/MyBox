@@ -84,7 +84,7 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
                     if (isAllPages()) {
                         data2D.simpleLinearRegression(null, dataColsIndices, simpleRegression, false);
                     } else {
-                        simpleRegression.addData(filtered(dataColsIndices, true), invalidAs);
+                        simpleRegression.addData(tableFiltered(dataColsIndices, true), invalidAs);
                     }
                     List<String> row = new ArrayList<>();
                     row.add(yName);

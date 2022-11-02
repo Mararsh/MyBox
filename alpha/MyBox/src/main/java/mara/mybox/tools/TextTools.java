@@ -538,8 +538,8 @@ public class TextTools {
     }
 
     public static String delimiterMessage(String delimiterName) {
-        if (delimiterName == null) {
-            return null;
+        if (delimiterName == null || delimiterName.isEmpty()) {
+            return message("Unknown");
         }
         String msg;
         switch (delimiterName) {

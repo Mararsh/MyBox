@@ -1,16 +1,7 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.RadioButton;
-import javafx.scene.layout.HBox;
-import mara.mybox.data2d.Data2D;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -22,19 +13,10 @@ import static mara.mybox.value.Languages.message;
  */
 public class Data2DPasteContentInSystemClipboardController extends BaseChildController {
 
-    protected ControlData2DLoad targetTableController;
-    protected Data2D dataTarget;
-    protected int row, col;
-    protected ChangeListener<Boolean> targetStatusListener;
-
     @FXML
     protected ControlData2DInput inputController;
     @FXML
-    protected HBox pasteBox, wayBox;
-    @FXML
-    protected ComboBox<String> rowSelector, colSelector;
-    @FXML
-    protected RadioButton replaceRadio, insertRadio, appendRadio;
+    protected ControlData2DPaste pasteController;
 
     public Data2DPasteContentInSystemClipboardController() {
         baseTitle = message("PasteContentInSystemClipboard");
@@ -43,132 +25,12 @@ public class Data2DPasteContentInSystemClipboardController extends BaseChildCont
     public void setParameters(ControlData2DLoad target, String text) {
         try {
             this.parentController = target;
-            targetTableController = target;
-            dataTarget = targetTableController.data2D;
-
+            pasteController.setParameters(inputController.sourceController, target);
             inputController.load(text);
 
-            targetStatusListener = new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    makeControls(row, col);
-                }
-            };
-            targetTableController.statusNotify.addListener(targetStatusListener);
-
-            makeControls(0, 0);
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-    }
-
-    public void makeControls(int row, int col) {
-        try {
-            if (dataTarget == null) {
-                return;
-            }
-            List<String> rows = new ArrayList<>();
-            for (long i = 0; i < dataTarget.tableRowsNumber(); i++) {
-                rows.add("" + (i + 1));
-            }
-            if (!rows.isEmpty()) {
-                rowSelector.getItems().setAll(rows);
-                rowSelector.getSelectionModel().select(row);
-            } else {
-                rowSelector.getItems().clear();
-            }
-
-            List<String> names = dataTarget.columnNames();
-            if (names != null && !names.isEmpty()) {
-                colSelector.getItems().setAll(names);
-                colSelector.getSelectionModel().select(col);
-            } else {
-                colSelector.getItems().clear();
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
-    @Override
-    public void okAction() {
-        if (!inputController.hasData()) {
-            popError(message("NoData"));
-            return;
-        }
-        row = rowSelector.getSelectionModel().getSelectedIndex();
-        col = colSelector.getSelectionModel().getSelectedIndex();
-        int rowsNumber = dataTarget.tableRowsNumber();
-        int colsNumber = dataTarget.tableColsNumber();
-        if (row < 0 || row >= rowsNumber || col < 0 || col >= colsNumber) {
-            popError(message("InvalidParameters"));
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonTask<Void>(this) {
-
-            List<List<String>> data;
-
-            @Override
-            protected boolean handle() {
-                data = inputController.data();
-                return data != null && !data.isEmpty();
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                try {
-                    targetTableController.isSettingValues = true;
-                    if (replaceRadio.isSelected()) {
-                        for (int r = row; r < Math.min(row + data.size(), rowsNumber); r++) {
-                            List<String> tableRow = targetTableController.tableData.get(r);
-                            List<String> dataRow = data.get(r - row);
-                            for (int c = col; c < Math.min(col + dataRow.size(), colsNumber); c++) {
-                                tableRow.set(c + 1, dataRow.get(c - col));
-                            }
-                            targetTableController.tableData.set(r, tableRow);
-                        }
-                    } else {
-                        List<List<String>> newRows = new ArrayList<>();
-                        for (int r = 0; r < data.size(); r++) {
-                            List<String> newRow = targetTableController.data2D.newRow();
-                            List<String> dataRow = data.get(r);
-                            for (int c = col; c < Math.min(col + dataRow.size(), colsNumber); c++) {
-                                newRow.set(c + 1, dataRow.get(c - col));
-                            }
-                            newRows.add(newRow);
-                        }
-                        targetTableController.tableData.addAll(insertRadio.isSelected() ? row : row + 1, newRows);
-                    }
-                    targetTableController.tableView.refresh();
-                    targetTableController.isSettingValues = false;
-                    targetTableController.tableChanged(true);
-                    popDone();
-
-                    makeControls(row, col);
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
-            }
-
-        };
-        start(task);
-    }
-
-    @Override
-    public void cleanPane() {
-        try {
-            targetTableController.statusNotify.removeListener(targetStatusListener);
-            targetStatusListener = null;
-            targetTableController = null;
-            dataTarget = null;
-        } catch (Exception e) {
-        }
-        super.cleanPane();
     }
 
     /*

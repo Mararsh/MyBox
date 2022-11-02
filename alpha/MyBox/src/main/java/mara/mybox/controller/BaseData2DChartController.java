@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -26,6 +27,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     protected String selectedCategory, selectedValue;
     protected DataTableGroup group;
     protected int framesNumber, groupid;
+    protected Thread frameThread;
 
     @FXML
     protected ComboBox<String> categoryColumnSelector, valueColumnSelector;
@@ -59,13 +61,13 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             }
 
             if (playController != null) {
-                playController.setParameters(this);
-                playController.frameStartNodify.addListener(new ChangeListener<Boolean>() {
+                frameThread = new Thread() {
                     @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    public void run() {
                         loadFrame(playController.currentIndex);
                     }
-                });
+                };
+                playController.setParameters(this, frameThread);
             }
 
         } catch (Exception e) {
@@ -383,39 +385,18 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             return;
         }
         groupid = index + 1;  // groupid is 1-based
-        if (backgroundTask != null) {
-            backgroundTask.cancel();
-        }
-        backgroundTask = new SingletonTask<Void>(this) {
-
-            @Override
-            protected boolean handle() {
-                return makeFrameData();
-            }
-
-            @Override
-            protected void whenFailed() {
-            }
-
-            @Override
-            protected void whenSucceeded() {
-            }
-
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                backgroundTask = null;
-                if (ok) {
+        if (makeFrameData()) {
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
                     drawFrame();
                 }
-            }
-
-        };
-        start(backgroundTask, false);
+            });
+        }
     }
 
     protected boolean makeFrameData() {
-        outputData = group.groupData(backgroundTask, groupid, outputColumns);
+        outputData = group.groupData(groupid, outputColumns);
         return initFrame();
     }
 

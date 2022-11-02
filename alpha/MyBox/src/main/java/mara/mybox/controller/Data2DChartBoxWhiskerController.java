@@ -436,7 +436,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
 
     public boolean handleSelected() {
         try {
-            outputData = filtered(dataColsIndices, rowsRadio != null && rowsRadio.isSelected() && categorysCol < 0);
+            outputData = tableFiltered(dataColsIndices, rowsRadio != null && rowsRadio.isSelected() && categorysCol < 0);
             if (outputData == null) {
                 return false;
             }

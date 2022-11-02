@@ -165,7 +165,7 @@ public class Data2DRowExpressionController extends BaseData2DTargetsController {
     public boolean handleRows() {
         try {
             boolean showRowNumber = showRowNumber();
-            outputData = filtered(showRowNumber);
+            outputData = tableFiltered(showRowNumber);
             if (outputData == null) {
                 error = message("SelectToHandle");
                 return false;

@@ -197,10 +197,10 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
                     regressionData = simpleRegression.addData(outputData, invalidAs);
                 } else {
                     regressionFile = data2D.simpleLinearRegression(null, dataColsIndices, simpleRegression, true);
-                    outputData = filtered(dataColsIndices, true);
+                    outputData = tableFiltered(dataColsIndices, true);
                 }
             } else {
-                outputData = filtered(dataColsIndices, true);
+                outputData = tableFiltered(dataColsIndices, true);
                 regressionData = simpleRegression.addData(outputData, invalidAs);
             }
             if (outputData == null) {

@@ -8,13 +8,19 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.Clipboard;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.DataFileText;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.TextFileTools;
+import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -27,27 +33,41 @@ import mara.mybox.value.UserConfig;
 public class ControlData2DInput extends BaseController {
 
     protected String delimiterName;
+    protected DataFileText textData;
 
     @FXML
     protected TextArea textArea;
     @FXML
+    protected ToggleGroup formatGroup;
+    @FXML
+    protected RadioButton csvRadio, textsRadio;
+    @FXML
     protected CheckBox nameCheck;
     @FXML
-    protected Button refreshButton;
+    protected Label delimiterLabel, commentsLabel;
     @FXML
-    protected ControlData2DResults dataController;
-
-    @Override
-    public void setStageStatus() {
-        setAsPop(baseName);
-    }
+    protected BaseData2DSourceController sourceController;
+    @FXML
+    protected Button refreshButton;
 
     @Override
     public void initControls() {
         try {
             super.initControls();
 
+            sourceController.setParameters(this);
+
             delimiterName = UserConfig.getString(baseName + "InputDelimiter", ",");
+            labelDelimiter();
+
+            formatGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    checkFormat();
+                    refreshAction();
+                }
+            });
+            checkFormat();
 
             nameCheck.setSelected(UserConfig.getBoolean(baseName + "WithNames", false));
             nameCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -66,6 +86,22 @@ public class ControlData2DInput extends BaseController {
         }
     }
 
+    public void checkFormat() {
+        if (csvRadio.isSelected()) {
+            commentsLabel.setText(message("CSVComments"));
+            if (TextTools.BlanksName.equals(delimiterName)) {
+                delimiterName = TextTools.BlankName;
+            }
+        } else {
+            commentsLabel.setText(message("TextDataComments"));
+        }
+    }
+
+    public void labelDelimiter() {
+        delimiterLabel.setText(message("Delimiter") + ": "
+                + TextTools.delimiterMessage(delimiterName));
+    }
+
     public void load(String text) {
         try {
             if (text == null || text.isBlank()) {
@@ -82,14 +118,14 @@ public class ControlData2DInput extends BaseController {
 
     @FXML
     public void delimiterActon() {
-        TextDelimiterController controller = TextDelimiterController.open(this, delimiterName, false, false);
+        TextDelimiterController controller = TextDelimiterController.open(this, delimiterName, true, textsRadio.isSelected());
         controller.okNotify.addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 delimiterName = controller.delimiterName;
                 UserConfig.setString(baseName + "InputDelimiter", delimiterName);
                 refreshAction();
-                popDone();
+                controller.close();
             }
         });
     }
@@ -110,7 +146,8 @@ public class ControlData2DInput extends BaseController {
 
     @FXML
     public void refreshAction() {
-        dataController.loadNull();
+        labelDelimiter();
+        sourceController.loadNull();
         String text = textArea.getText();
         if (text == null || text.isBlank()) {
             popError(message("InputOrPasteText"));
@@ -121,21 +158,23 @@ public class ControlData2DInput extends BaseController {
         }
         task = new SingletonTask<Void>(this) {
 
-            protected DataFileCSV data2D;
-
             @Override
             protected boolean handle() {
                 try {
                     File tmpFile = TmpFileTools.getTempFile();
                     TextFileTools.writeFile(tmpFile, text, Charset.forName("UTF-8"));
-                    data2D = new DataFileCSV(tmpFile);
-                    data2D.setCharset(Charset.forName("UTF-8"));
-                    if (delimiterName == null) {
-                        delimiterName = data2D.guessDelimiter();
+                    if (csvRadio.isSelected()) {
+                        textData = new DataFileCSV();
+                    } else {
+                        textData = new DataFileText();
                     }
-                    data2D.setHasHeader(nameCheck.isSelected())
+                    textData.setFile(tmpFile).setCharset(Charset.forName("UTF-8"));
+                    if (delimiterName == null) {
+                        delimiterName = textData.guessDelimiter();
+                    }
+                    textData.setHasHeader(nameCheck.isSelected())
                             .setDelimiter(delimiterName);
-                    return data2D != null;
+                    return textData != null;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -144,31 +183,37 @@ public class ControlData2DInput extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                dataController.loadData(data2D);
+                labelDelimiter();
+                sourceController.loadData(textData);
             }
 
         };
         start(task);
     }
 
+    @FXML
+    public void editAction() {
+        if (hasData()) {
+            popError(message("NoData"));
+            return;
+        }
+        Data2D.open(textData);
+    }
+
     public boolean hasData() {
-        Data2D data2D = dataController.data2D;
-        if (data2D == null || !data2D.isValid()) {
-            return false;
-        }
-        return !dataController.tableData.isEmpty();
+        return sourceController.hasData();
     }
 
-    public Data2D data2D() {
-        return dataController.data2D;
+    public boolean checkData() {
+        return hasData() && sourceController.checkSelections();
     }
 
-    public List<List<String>> data() {
-        Data2D data2D = dataController.data2D;
-        if (data2D == null || !data2D.isValid()) {
-            return null;
-        }
-        return data2D.allRows(false);
+    public List<List<String>> data(SingletonTask task) {
+        return sourceController.selectedData(task);
+    }
+
+    public List<String> checkedColsNames() {
+        return sourceController.checkedColsNames;
     }
 
 }

@@ -2,16 +2,11 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.stage.Window;
-import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -23,17 +18,14 @@ import static mara.mybox.value.Languages.message;
  */
 public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxClipboardController {
 
-    protected ControlData2DEditTable targetTableController;
-    protected Data2D dataTarget;
-    protected int row, col;
-    protected ChangeListener<Boolean> targetStatusListener;
-
     @FXML
     protected ComboBox<String> rowSelector, colSelector;
     @FXML
     protected RadioButton replaceRadio, insertRadio, appendRadio;
     @FXML
     protected BaseData2DSourceController sourceController;
+    @FXML
+    protected ControlData2DPaste pasteController;
 
     public Data2DPasteContentInMyBoxClipboardController() {
         baseTitle = message("PasteContentInMyBoxClipboard");
@@ -58,157 +50,11 @@ public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxCli
 
     public void setParameters(ControlData2DEditTable target) {
         try {
-            this.parentController = target;
-            targetTableController = target;
-            dataTarget = target.data2D.cloneAll();
-
             sourceController.setParameters(this);
-
-            targetStatusListener = new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    makeControls(row, col);
-                }
-            };
-            targetTableController.statusNotify.addListener(targetStatusListener);
-
-            makeControls(0, 0);
-
+            pasteController.setParameters(sourceController, target);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
-    }
-
-    public void makeControls(int row, int col) {
-        try {
-            if (dataTarget == null) {
-                return;
-            }
-            List<String> rows = new ArrayList<>();
-            for (long i = 0; i < dataTarget.tableRowsNumber(); i++) {
-                rows.add("" + (i + 1));
-            }
-            if (!rows.isEmpty()) {
-                rowSelector.getItems().setAll(rows);
-                rowSelector.getSelectionModel().select(row);
-            } else {
-                rowSelector.getItems().clear();
-            }
-
-            List<String> names = dataTarget.columnNames();
-            if (names != null && !names.isEmpty()) {
-                colSelector.getItems().setAll(names);
-                colSelector.getSelectionModel().select(col);
-            } else {
-                colSelector.getItems().clear();
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
-    @Override
-    public void okAction() {
-        if (!sourceController.data2D.hasData()) {
-            popError(message("NoData"));
-            return;
-        }
-        if (!sourceController.checkSelections()) {
-            return;
-        }
-        row = rowSelector.getSelectionModel().getSelectedIndex();
-        col = colSelector.getSelectionModel().getSelectedIndex();
-        int targetRowsNumber = dataTarget.tableRowsNumber();
-        int targetColsNumber = dataTarget.tableColsNumber();
-        if (row < 0 || row >= targetRowsNumber || col < 0 || col >= targetColsNumber) {
-            popError(message("InvalidParameters"));
-            return;
-        }
-        task = new SingletonTask<Void>(this) {
-            List<List<String>> data;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    sourceController.data2D.startTask(task, sourceController.filterController.filter);
-                    if (!sourceController.data2D.fillFilterStatistic()) {
-                        return false;
-                    }
-                    if (sourceController.isAllPages()) {
-                        DataFileCSV csv = sourceController.data2D.copy(null, sourceController.checkedColsIndices, false, true);
-                        if (csv == null) {
-                            error = message("InvalidData");
-                            return false;
-                        }
-                        data = csv.allRows(false);
-                    } else {
-                        data = sourceController.filtered(false);
-                    }
-                    sourceController.data2D.stopTask();
-
-                    if (data == null || data.isEmpty()) {
-                        error = message("SelectToHandle");
-                        return false;
-                    }
-                    return true;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                try {
-                    targetTableController.isSettingValues = true;
-                    if (replaceRadio.isSelected()) {
-                        for (int r = row; r < Math.min(row + data.size(), targetRowsNumber); r++) {
-                            List<String> tableRow = targetTableController.tableData.get(r);
-                            List<String> dataRow = data.get(r - row);
-                            for (int c = col; c < Math.min(col + dataRow.size(), targetColsNumber); c++) {
-                                tableRow.set(c + 1, dataRow.get(c - col));
-                            }
-                            targetTableController.tableData.set(r, tableRow);
-                        }
-                    } else {
-                        List<List<String>> newRows = new ArrayList<>();
-                        for (int r = 0; r < data.size(); r++) {
-                            List<String> newRow = targetTableController.data2D.newRow();
-                            List<String> dataRow = data.get(r);
-                            for (int c = col; c < Math.min(col + dataRow.size(), targetColsNumber); c++) {
-                                newRow.set(c + 1, dataRow.get(c - col));
-                            }
-                            newRows.add(newRow);
-                        }
-                        targetTableController.tableData.addAll(insertRadio.isSelected() ? row : row + 1, newRows);
-                    }
-                    targetTableController.tableView.refresh();
-                    targetTableController.isSettingValues = false;
-                    targetTableController.tableChanged(true);
-                    popDone();
-                    makeControls(row, col);
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
-            }
-
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                sourceController.data2D.stopTask();
-                task = null;
-            }
-
-        };
-        start(task);
-
-    }
-
-    @FXML
-    @Override
-    public void cancelAction() {
-        close();
     }
 
     @Override
@@ -221,19 +67,6 @@ public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxCli
     public boolean keyF6() {
         close();
         return false;
-    }
-
-    @Override
-    public void cleanPane() {
-        try {
-            targetTableController.statusNotify.removeListener(targetStatusListener);
-            targetStatusListener = null;
-            targetTableController = null;
-            sourceController = null;
-            dataTarget = null;
-        } catch (Exception e) {
-        }
-        super.cleanPane();
     }
 
 

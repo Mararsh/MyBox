@@ -164,13 +164,39 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     /*
         data
      */
+    public void resetData() {
+        resetStatus();
+        dataSizeLoaded = true;
+        if (data2D != null) {
+            data2D.resetData();
+        }
+        isSettingValues = true;
+        tableData.clear();
+        isSettingValues = false;
+        notifyLoaded();
+        thisPane.setDisable(true);
+    }
+
     public void loadData(Data2D data) {
-        setData(data);
         if (data == null) {
             loadNull();
             return;
         }
+        setData(data);
         readDefinition();
+    }
+
+    public void loadNull() {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                if (dataController != null) {
+                    dataController.loadNull();
+                } else {
+                    resetData();
+                }
+            }
+        });
     }
 
     public void loadDef(Data2DDefinition def) {
@@ -238,22 +264,6 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         start(task);
     }
 
-    public synchronized void loadData() {
-        try {
-            makeColumns();
-            if (!validateData()) {
-                dataSizeLoaded = true;
-                tableChanged(false);
-                notifyLoaded();
-                return;
-            }
-            dataSizeLoaded = false;
-            loadPage(data2D.getCurrentPage());
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     public boolean checkInvalidFile() {
         if (data2D == null) {
             return false;
@@ -285,20 +295,22 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         return false;
     }
 
-    public void loadNull() {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                if (dataController != null) {
-                    dataController.loadNull();
-                } else {
-                    if (data2D != null) {
-                        data2D.resetData();
-                    }
-                    loadData();
-                }
+    public synchronized void loadData() {
+        try {
+            makeColumns();
+            if (!validateData()) {
+                resetData();
+                return;
             }
-        });
+            dataSizeLoaded = false;
+            loadPage(data2D.getCurrentPage());
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void loadTmpData(List<String> cols, List<List<String>> data) {
+        loadTmpData(null, data2D.toColumns(cols), data);
     }
 
     public synchronized void loadTmpData(String name, List<Data2DColumn> cols, List<List<String>> data) {
@@ -575,7 +587,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         }
         notifyStatus();
         loadedNotify.set(!loadedNotify.get());
-        if (data2D.getFile() != null) {
+        if (data2D != null && data2D.getFile() != null) {
             recordFileOpened(data2D.getFile());
         }
         if (dataController != null) {

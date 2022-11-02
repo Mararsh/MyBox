@@ -130,7 +130,7 @@ public class Data2DSpliceController extends BaseData2DController {
                         csvA = dataAController.data2D.copy(null, dataAController.checkedColsIndices, false, true);
                     } else {
                         csvA = DataFileCSV.save(null, task, ",", dataAController.checkedColumns,
-                                dataAController.filtered(false));
+                                dataAController.tableFiltered(false));
                     }
                     dataAController.data2D.stopTask();
                     if (csvA == null) {
@@ -146,7 +146,7 @@ public class Data2DSpliceController extends BaseData2DController {
                         csvB = dataBController.data2D.copy(null, dataBController.checkedColsIndices, false, true);
                     } else {
                         csvB = DataFileCSV.save(null, task, ",", dataBController.checkedColumns,
-                                dataBController.filtered(false));
+                                dataBController.tableFiltered(false));
                     }
                     dataBController.data2D.stopTask();
                     if (csvB == null) {

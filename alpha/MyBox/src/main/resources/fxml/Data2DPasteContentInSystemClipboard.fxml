@@ -7,20 +7,11 @@ License:    Apache License Version 2.0
 -->
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.ToggleGroup?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.FlowPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="500.0" prefWidth="700.0" spacing="5.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DPasteContentInSystemClipboardController">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="500.0" prefWidth="700.0" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DPasteContentInSystemClipboardController">
     <children>
       <SplitPane fx:id="splitPane" dividerPositions="0.8" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
          <items>
@@ -40,56 +31,7 @@ License:    Apache License Version 2.0
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                      <children>
-                        <VBox spacing="5.0">
-                           <children>
-                              <Label minHeight="-Infinity" minWidth="-Infinity" text="%PasteLocation" wrapText="true" />
-                              <FlowPane fx:id="pastePane" alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="300.0" vgap="2.0">
-                                 <children>
-                                    <Label text="%TableRow" />
-                                    <ComboBox fx:id="rowSelector" prefWidth="100.0" />
-                                 </children>
-                              </FlowPane>
-                              <FlowPane fx:id="pastePane1" alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="300.0" vgap="2.0">
-                                 <children>
-                                    <Label minWidth="-Infinity" text="%Column" />
-                                    <ComboBox fx:id="colSelector" prefWidth="100.0" />
-                                 </children>
-                              </FlowPane>
-                           </children>
-                        </VBox>
-                        <VBox spacing="5.0">
-                           <children>
-                              <RadioButton fx:id="replaceRadio" mnemonicParsing="false" selected="true" text="%Replace">
-                                 <toggleGroup>
-                                    <ToggleGroup fx:id="opGroup" />
-                                 </toggleGroup>
-                              </RadioButton>
-                              <RadioButton fx:id="insertRadio" mnemonicParsing="false" text="%InsertAbove" toggleGroup="$opGroup" />
-                              <RadioButton fx:id="appendRadio" mnemonicParsing="false" text="%AppendBelow" toggleGroup="$opGroup" />
-                           </children>
-                        </VBox>
-                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
-                           <children>
-                              <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconCancel.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
-                              <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconOK.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
-                           </children>
-                        </HBox>
+                        <fx:include fx:id="paste" source="ControlData2DPaste.fxml" />
                      </children>
                   </VBox>
                </content>

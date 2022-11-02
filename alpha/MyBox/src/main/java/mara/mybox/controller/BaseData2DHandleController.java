@@ -423,7 +423,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             if (isAllPages()) {
                 tmpTable = tmp2D.toTmpTable(task, colIndices, needRowNumber, false, invalidAs);
             } else {
-                outputData = filtered(colIndices, needRowNumber);
+                outputData = tableFiltered(colIndices, needRowNumber);
                 if (outputData == null || outputData.isEmpty()) {
                     return null;
                 }
@@ -447,7 +447,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             if (isAllPages()) {
                 outputData = data2D.allRows(colIndices, needRowNumber);
             } else {
-                outputData = filtered(colIndices, needRowNumber);
+                outputData = tableFiltered(colIndices, needRowNumber);
             }
             data2D.stopFilter();
             if (outputData != null) {

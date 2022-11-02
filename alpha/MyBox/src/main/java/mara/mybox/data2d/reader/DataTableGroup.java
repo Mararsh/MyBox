@@ -906,7 +906,7 @@ public class DataTableGroup {
     }
 
     // groupid is 1-based
-    public List<List<String>> groupData(SingletonTask task, long groupid, List<Data2DColumn> columns) {
+    public List<List<String>> groupData(long groupid, List<Data2DColumn> columns) {
         if (targetData == null || columns == null) {
             return null;
         }
@@ -915,7 +915,7 @@ public class DataTableGroup {
                 + " WHERE " + idColName + "=" + groupid + orderByString;
         try ( Connection qconn = DerbyBase.getConnection();
                  ResultSet query = qconn.prepareStatement(sql).executeQuery()) {
-            while (query.next() && task != null && !task.isCancelled()) {
+            while (query.next()) {
                 if (parameterValue == null) {
                     parameterValue = query.getString(2);
                 }
@@ -933,9 +933,6 @@ public class DataTableGroup {
             }
             return data;
         } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
             MyBoxLog.console(e.toString());
             return null;
         }

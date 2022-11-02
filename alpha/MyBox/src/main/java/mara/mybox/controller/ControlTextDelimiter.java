@@ -139,7 +139,7 @@ public class ControlTextDelimiter extends BaseController {
                 }
             });
 
-            if (!isRead) {
+            if (!isRead || !canRegx) {
                 if (blanksRadio.isSelected()) {
                     blankRadio.setSelected(true);
                 }

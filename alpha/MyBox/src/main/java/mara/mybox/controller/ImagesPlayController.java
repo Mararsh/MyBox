@@ -59,6 +59,7 @@ public class ImagesPlayController extends BaseImagesListController {
     protected SlideShow ppt;
     protected ImageInputStream imageInputStream;
     protected ImageReader imageReader;
+    protected Thread frameThread;
 
     @FXML
     protected ToggleGroup typeGroup;
@@ -134,14 +135,13 @@ public class ImagesPlayController extends BaseImagesListController {
 
             fileVBox.getChildren().remove(pdfBox);
 
-            playController.setParameters(this);
-
-            playController.frameStartNodify.addListener(new ChangeListener<Boolean>() {
+            frameThread = new Thread() {
                 @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                public void run() {
                     displayFrame(playController.currentIndex);
                 }
-            });
+            };
+            playController.setParameters(this, frameThread);
 
             playController.stopNodify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -150,12 +150,12 @@ public class ImagesPlayController extends BaseImagesListController {
                 }
             });
 
-            playController.intervalNodify.addListener(new ChangeListener<Boolean>() {
+            playController.timeNodify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     if (imageInfos != null) {
                         for (ImageInformation info : imageInfos) {
-                            info.setDuration(playController.interval);
+                            info.setDuration(playController.timeValue);
                         }
                     }
                 }
@@ -282,7 +282,7 @@ public class ImagesPlayController extends BaseImagesListController {
             framesNumber = imageInfos.size();
             if (!fileFormat.equalsIgnoreCase("gif")) {
                 for (int i = 0; i < framesNumber; i++) {
-                    imageInfos.get(i).setDuration(playController.interval);
+                    imageInfos.get(i).setDuration(playController.timeValue);
                 }
             }
         } catch (Exception e) {
@@ -354,7 +354,7 @@ public class ImagesPlayController extends BaseImagesListController {
                 imageInfo.setIndex(i);
                 imageInfo.setWidth(width);
                 imageInfo.setHeight(height);
-                imageInfo.setDuration(playController.interval);
+                imageInfo.setDuration(playController.timeValue);
                 imageInfos.add(imageInfo);
             }
         } catch (Exception e) {
@@ -397,7 +397,7 @@ public class ImagesPlayController extends BaseImagesListController {
             for (int i = 0; i < framesNumber; i++) {
                 ImageInformation imageInfo = new ImageInformation(sourceFile);
                 imageInfo.setIndex(i);
-                imageInfo.setDuration(playController.interval);
+                imageInfo.setDuration(playController.timeValue);
                 imageInfo.setDpi(dpi);
                 imageInfos.add(imageInfo);
             }
@@ -445,7 +445,7 @@ public class ImagesPlayController extends BaseImagesListController {
                             }
                             ImageInformation info = imageInfos.get(i);
                             if (info.getDuration() < 0) {
-                                info.setDuration(playController.interval);
+                                info.setDuration(playController.timeValue);
                             }
                         }
                         return true;
@@ -640,19 +640,20 @@ public class ImagesPlayController extends BaseImagesListController {
                 return;
             }
             imageInformation = imageInfos.get(index);
-            if (imageInformation != null) {
-                playController.currentDelay
-                        = (long) (imageInformation.getDuration() / playController.speed);
-            }
             frameIndex = index;
             image = thumb(imageInformation);
-            imageView.setImage(image);
             if (image == null) {
 //                playController.pause();
                 return;
             }
-            refinePane();
-            updateLabelsTitle();
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    imageView.setImage(image);
+                    refinePane();
+                    updateLabelsTitle();
+                }
+            });
 
             imageInformation.setThumbnail(null);
             int next = playController.nextIndex();

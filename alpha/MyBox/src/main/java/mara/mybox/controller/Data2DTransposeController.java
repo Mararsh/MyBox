@@ -53,7 +53,7 @@ public class Data2DTransposeController extends BaseData2DTargetsController {
     public boolean handleRows() {
         try {
             boolean showRowNumber = showRowNumber();
-            outputData = filtered(showRowNumber);
+            outputData = tableFiltered(showRowNumber);
             if (outputData == null) {
                 return false;
             }

@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -39,6 +40,7 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
     protected double maxValue, minValue;
     protected List<MapPoint> dataPoints;
     protected int framesNumber, frameid, lastFrameid;
+    protected Thread frameThread;
 
     @FXML
     protected ComboBox<String> labelSelector, longitudeSelector, latitudeSelector, sizeSelector;
@@ -92,14 +94,13 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
             }
             ((RadioButton) csPane.getChildren().get(0)).setSelected(true);
 
-            playController.setParameters(this);
-
-            playController.frameStartNodify.addListener(new ChangeListener<Boolean>() {
+            frameThread = new Thread() {
                 @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                public void run() {
                     displayFrame(playController.currentIndex);
                 }
-            });
+            };
+            playController.setParameters(this, frameThread);
 
             linkCheck.visibleProperty().bind(accumulateCheck.selectedProperty());
 
@@ -479,25 +480,33 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
             playController.clear();
             return;
         }
-        frameid = index;
-        if (!accumulateCheck.isSelected() || frameid == 1) {
-            mapController.webEngine.executeScript("clearMap();");
-        }
-        MapPoint point = mapController.mapPoints.get(index);
-        mapController.drawPoint(point);
-        if (linkCheck.isVisible() && linkCheck.isSelected() && lastFrameid >= 1) {
-            MapPoint lastPoint = mapController.mapPoints.get(lastFrameid);
-            String pColor = "'" + FxColorTools.color2rgb(point.getTextColor()) + "'";
-            mapController.webEngine.executeScript("drawLine("
-                    + lastPoint.getLongitude() + ", " + lastPoint.getLatitude() + ", "
-                    + point.getLongitude() + ", " + point.getLatitude()
-                    + ", " + pColor + ");");
-        }
-        if (centerCheck.isSelected() || frameid == 1) {
-            mapController.webEngine.executeScript("setCenter("
-                    + point.getLongitude() + ", " + point.getLatitude() + ");");
-        }
-        lastFrameid = frameid;
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                frameid = index;
+                if (mapController.webEngine == null) {
+                    return;
+                }
+                if (!accumulateCheck.isSelected() || frameid == 1) {
+                    mapController.webEngine.executeScript("clearMap();");
+                }
+                MapPoint point = mapController.mapPoints.get(index);
+                mapController.drawPoint(point);
+                if (linkCheck.isVisible() && linkCheck.isSelected() && lastFrameid >= 1) {
+                    MapPoint lastPoint = mapController.mapPoints.get(lastFrameid);
+                    String pColor = "'" + FxColorTools.color2rgb(point.getTextColor()) + "'";
+                    mapController.webEngine.executeScript("drawLine("
+                            + lastPoint.getLongitude() + ", " + lastPoint.getLatitude() + ", "
+                            + point.getLongitude() + ", " + point.getLatitude()
+                            + ", " + pColor + ");");
+                }
+                if (centerCheck.isSelected() || frameid == 1) {
+                    mapController.webEngine.executeScript("setCenter("
+                            + point.getLongitude() + ", " + point.getLatitude() + ");");
+                }
+                lastFrameid = frameid;
+            }
+        });
     }
 
     @Override

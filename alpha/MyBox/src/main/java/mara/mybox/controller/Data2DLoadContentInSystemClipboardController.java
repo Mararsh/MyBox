@@ -1,7 +1,9 @@
 package mara.mybox.controller;
 
+import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -13,7 +15,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class Data2DLoadContentInSystemClipboardController extends BaseChildController {
 
-    protected ControlData2DLoad dataController;
+    protected ControlData2DLoad targetController;
 
     @FXML
     protected ControlData2DInput inputController;
@@ -22,9 +24,9 @@ public class Data2DLoadContentInSystemClipboardController extends BaseChildContr
         baseTitle = message("LoadContentInSystemClipboard");
     }
 
-    public void setParameters(ControlData2DLoad parent, String text) {
+    public void setParameters(ControlData2DLoad target, String text) {
         try {
-            dataController = parent;
+            targetController = target;
             inputController.load(text);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -34,12 +36,44 @@ public class Data2DLoadContentInSystemClipboardController extends BaseChildContr
     @FXML
     @Override
     public void okAction() {
-        if (!inputController.hasData()) {
-            popError(message("NoData"));
+        if (!inputController.checkData()) {
             return;
         }
-        dataController.loadData(inputController.data2D());
-        close();
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+            List<List<String>> data;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    data = inputController.data(task);
+                    return data != null && !data.isEmpty();
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                try {
+                    targetController.loadTmpData(inputController.checkedColsNames(), data);
+                    close();
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                }
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                task = null;
+            }
+
+        };
+        start(task);
     }
 
     /*

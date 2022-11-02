@@ -219,7 +219,7 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
 
     public boolean handleRows() {
         try {
-            outputData = filtered(showRowNumber());
+            outputData = tableFiltered(showRowNumber());
             if (outputData == null) {
                 return false;
             }

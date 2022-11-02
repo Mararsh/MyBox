@@ -173,7 +173,7 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
         if (rowsRadio.isSelected() && categorysCol >= 0) {
             colsIndices.add(0, categorysCol);
         }
-        if (!calculation.statisticData(filtered(colsIndices, rowsRadio.isSelected() && categorysCol < 0))) {
+        if (!calculation.statisticData(tableFiltered(colsIndices, rowsRadio.isSelected() && categorysCol < 0))) {
             return false;
         }
         outputColumns = calculation.getOutputColumns();

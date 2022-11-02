@@ -3,8 +3,8 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
@@ -14,8 +14,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.ScheduleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -26,14 +30,19 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlPlay extends BaseController {
 
-    protected int interval, framesNumber, currentIndex, fromFrame, toFrame;
-    protected double speed;
-    protected long currentDelay;
-    protected SimpleBooleanProperty frameStartNodify, stopNodify, intervalNodify;
+    protected int framesNumber, currentIndex, fromFrame, toFrame;
+    protected long timeValue;
+    protected SimpleBooleanProperty stopNodify, timeNodify;
     protected boolean stopped;
+    protected Thread playThread, targetThread;
+    protected ScheduledFuture schedule;
 
     @FXML
-    protected ComboBox<String> speedSelector, intervalSelector, frameSelector;
+    protected ToggleGroup fixGroup;
+    @FXML
+    protected RadioButton delayRadio, intervalRadio;
+    @FXML
+    protected ComboBox<String> timeSelector, frameSelector;
     @FXML
     protected Button pauseButton;
     @FXML
@@ -42,14 +51,14 @@ public class ControlPlay extends BaseController {
     protected Label totalLabel;
 
     public ControlPlay() {
-        frameStartNodify = new SimpleBooleanProperty();
         stopNodify = new SimpleBooleanProperty();
-        intervalNodify = new SimpleBooleanProperty();
+        timeNodify = new SimpleBooleanProperty();
     }
 
-    public void setParameters(BaseController parent) {
+    public void setParameters(BaseController parent, Thread targetThread) {
         try {
             this.parentController = parent;
+            this.targetThread = targetThread;
             this.baseName = parent.baseName;
             clear();
 
@@ -63,52 +72,42 @@ public class ControlPlay extends BaseController {
                 }
             });
 
-            speed = 1.0;
-            speedSelector.getItems().addAll(Arrays.asList(
-                    "1", "1.5", "2", "0.5", "0.8", "1.2", "0.3", "3", "0.1", "5", "0.2", "8"
-            ));
-            speedSelector.setValue("1");
-            speedSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            fixGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        double v = Double.valueOf(newValue);
-                        if (v <= 0) {
-                            speedSelector.getEditor().setStyle(UserConfig.badStyle());
-                        } else {
-                            speed = v;
-                            speedSelector.getEditor().setStyle(null);
-                        }
-                    } catch (Exception e) {
-                        speedSelector.getEditor().setStyle(UserConfig.badStyle());
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    if (!isSettingValues) {
+                        startFrame(currentIndex);
                     }
                 }
             });
 
-            intervalSelector.getItems().addAll(Arrays.asList(
+            timeSelector.getItems().addAll(Arrays.asList(
                     "500", "200", "100", "1000", "50", "2000", "300", "3000", "20", "10",
                     "5", "2", "1", "6000", "30000", "12000", "60000"
             ));
-            interval = UserConfig.getInt(baseName + "Interval", 500);
-            if (interval <= 0) {
-                interval = 500;
+            timeValue = UserConfig.getInt(baseName + "Interval", 500);
+            if (timeValue <= 0) {
+                timeValue = 500;
             }
-            intervalSelector.setValue(interval + "");
-            intervalSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            timeSelector.setValue(timeValue + "");
+            timeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
                         int v = Integer.valueOf(newValue);
                         if (v <= 0) {
-                            intervalSelector.getEditor().setStyle(UserConfig.badStyle());
+                            timeSelector.getEditor().setStyle(UserConfig.badStyle());
                         } else {
-                            interval = v;
-                            intervalSelector.getEditor().setStyle(null);
+                            timeValue = v;
+                            timeSelector.getEditor().setStyle(null);
                             UserConfig.setInt(baseName + "Interval", v);
-                            intervalNodify.set(!intervalNodify.get());
+                            if (!isSettingValues) {
+                                startFrame(currentIndex);
+                                timeNodify.set(!timeNodify.get());
+                            }
                         }
                     } catch (Exception e) {
-                        speedSelector.getEditor().setStyle(UserConfig.badStyle());
+                        timeSelector.getEditor().setStyle(UserConfig.badStyle());
                     }
                 }
             });
@@ -131,6 +130,13 @@ public class ControlPlay extends BaseController {
 
             setPauseButton(false);
 
+            playThread = new Thread() {
+                @Override
+                public void run() {
+                    displayFrameTask(currentIndex);
+                }
+            };
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -138,7 +144,7 @@ public class ControlPlay extends BaseController {
 
     // from, to, frameIndex are 0-based. Include to.
     // Displayed values are 1-based while internal values are 0-based
-    public synchronized boolean play(List<String> frames, int from, int to) {
+    public boolean play(List<String> frames, int from, int to) {
         try {
             if (frames == null || frames.isEmpty()) {
                 return false;
@@ -159,12 +165,18 @@ public class ControlPlay extends BaseController {
             if (f > t) {
                 return false;
             }
-            stopped = false;
-            isSettingValues = true;
             fromFrame = f;
             toFrame = t;
             currentIndex = 0;
             framesNumber = frames.size();
+            stopped = false;
+            if (reverseCheck.isSelected()) {
+                currentIndex = toFrame;
+            } else {
+                currentIndex = fromFrame;
+            }
+            setPauseButton(false);
+            isSettingValues = true;
             List<String> names = new ArrayList<>();
             for (String frame : frames) {
                 String v = frame.replaceAll("\n", " ");
@@ -174,17 +186,10 @@ public class ControlPlay extends BaseController {
                 }
                 names.add(v);
             }
-            frameSelector.getItems().addAll(names);
+            frameSelector.getItems().setAll(names);
+            frameSelector.getSelectionModel().select(currentIndex);
             totalLabel.setText("/" + framesNumber);
-            if (reverseCheck.isSelected()) {
-                frameSelector.getSelectionModel().select(toFrame);
-                isSettingValues = false;
-                startFrame(toFrame);
-            } else {
-                frameSelector.getSelectionModel().select(fromFrame);
-                isSettingValues = false;
-                startFrame(fromFrame);
-            }
+            startFrame(currentIndex);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -192,7 +197,7 @@ public class ControlPlay extends BaseController {
         }
     }
 
-    public synchronized boolean play(int total, int from, int to) {
+    public boolean play(int total, int from, int to) {
         try {
             if (total < 1) {
                 return false;
@@ -219,7 +224,7 @@ public class ControlPlay extends BaseController {
         }
     }
 
-    public synchronized boolean play(List<String> frames) {
+    public boolean play(List<String> frames) {
         try {
             if (frames == null || frames.isEmpty()) {
                 return false;
@@ -239,43 +244,83 @@ public class ControlPlay extends BaseController {
         }
     }
 
-    // start is 0-based
-    public synchronized void startFrame(int startIndex) {
+    protected void startFrame(int index) {
         try {
-            if (timer != null) {
-                timer.cancel();
+            if (schedule != null) {
+                schedule.cancel(true);
             }
-            setPauseButton(false);
-            if (framesNumber < 1) {
+            if (playThread != null) {
+                playThread.interrupt();
+            }
+            if (targetThread != null) {
+                targetThread.interrupt();
+            }
+            if (!checkIndex(index)) {
                 return;
             }
-            currentDelay = (long) (interval / speed);
-            displayFrame(startIndex);
-            if (stopped) {
-                return;
+            if (delayRadio.isSelected()) {
+                schedule = ScheduleTools.service.scheduleWithFixedDelay(playThread,
+                        0, timeValue, TimeUnit.MILLISECONDS);
+
+            } else {
+                schedule = ScheduleTools.service.scheduleAtFixedRate(playThread,
+                        0, timeValue, TimeUnit.MILLISECONDS);
+
             }
-            int nextIndex = nextIndex();
-            if (nextIndex < 0) {
-                pause();
-                return;
-            }
-            if (currentDelay <= 0) {
-                currentDelay = 200;
-            }
-            timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    Platform.runLater(() -> {
-                        if (stopped) {
-                            return;
-                        }
-                        startFrame(nextIndex);
-                    });
-                }
-            }, currentDelay);
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    protected void displayFrameTask(int index) {
+        try {
+            if (!checkIndex(index)) {
+                return;
+            }
+            if (targetThread != null) {
+                targetThread.interrupt();
+            }
+            targetThread.run();
+
+            if (stopped) {
+                pause();
+            } else {
+                int next = nextIndex();
+                if (next >= 0) {
+                    currentIndex = next;
+                } else {
+                    pause();
+                }
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    protected boolean checkIndex(int index) {
+        try {
+            if (framesNumber < 1) {
+                return false;
+            }
+            currentIndex = correctIndex(index);
+            if (currentIndex < 0) {
+                pause();
+                return false;
+            }
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    isSettingValues = true;
+                    frameSelector.getSelectionModel().select(currentIndex);
+                    isSettingValues = false;
+                }
+            });
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return false;
         }
     }
 
@@ -300,7 +345,7 @@ public class ControlPlay extends BaseController {
         return index;
     }
 
-    public synchronized int nextIndex() {
+    public int nextIndex() {
         int index;
         if (reverseCheck.isSelected()) {
             index = currentIndex - 1;
@@ -316,29 +361,14 @@ public class ControlPlay extends BaseController {
         return correctIndex(index);
     }
 
-    protected void displayFrame(int index) {
-        try {
-            currentIndex = correctIndex(index);
-            if (currentIndex < 0) {
-                setPauseButton(true);
-                return;
-            }
-            isSettingValues = true;
-            frameSelector.getSelectionModel().select(currentIndex);
-            isSettingValues = false;
-            speed = speed <= 0 ? 1 : speed;
-            frameStartNodify.set(!frameStartNodify.get());
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
     protected void setPauseButton(boolean setAsPaused) {
         if (setAsPaused) {
             StyleTools.setNameIcon(pauseButton, message("Play"), "iconPlay.png");
             previousButton.setDisable(false);
             nextButton.setDisable(false);
-            stopNodify.set(!stopNodify.get());
+            if (stopNodify != null) {
+                stopNodify.set(!stopNodify.get());
+            }
         } else {
             StyleTools.setNameIcon(pauseButton, message("Pause"), "iconPause.png");
             previousButton.setDisable(true);
@@ -364,7 +394,7 @@ public class ControlPlay extends BaseController {
     public void pauseFrame(int frame) {
         try {
             pause();
-            displayFrame(frame);
+            displayFrameTask(frame);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -373,10 +403,22 @@ public class ControlPlay extends BaseController {
     public void pause() {
         try {
             stopped = true;
-            if (timer != null) {
-                timer.cancel();
+            if (schedule != null) {
+                schedule.cancel(true);
             }
-            setPauseButton(true);
+            schedule = null;
+            if (playThread != null) {
+                playThread.interrupt();
+            }
+            if (targetThread != null) {
+                targetThread.interrupt();
+            }
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    setPauseButton(true);
+                }
+            });
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -407,23 +449,15 @@ public class ControlPlay extends BaseController {
     }
 
     public void clear() {
-        stopped = true;
-        if (timer != null) {
-            timer.cancel();
-        }
-        if (task != null && !task.isQuit()) {
-            task.cancel();
-        }
-
-        isSettingValues = true;
+        pause();
         framesNumber = 0;
         currentIndex = 0;
         fromFrame = 0;
         toFrame = -1;
+        isSettingValues = true;
         frameSelector.getItems().clear();
         totalLabel.setText("");
         isSettingValues = false;
-
         stopNodify.set(!stopNodify.get());
     }
 
@@ -431,9 +465,8 @@ public class ControlPlay extends BaseController {
     public void cleanPane() {
         try {
             clear();
-            frameStartNodify = null;
             stopNodify = null;
-            intervalNodify = null;
+            timeNodify = null;
 
         } catch (Exception e) {
         }

@@ -14,9 +14,11 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
+import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFilter;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -175,6 +177,9 @@ public class BaseData2DSourceController extends ControlData2DLoad {
 
     public void refreshControls() {
         try {
+            if (data2D == null) {
+                return;
+            }
             if (data2D.isMutiplePages()) {
                 allPagesRadio.setDisable(false);
                 showPaginationPane(true);
@@ -566,11 +571,15 @@ public class BaseData2DSourceController extends ControlData2DLoad {
         }
     }
 
+    public boolean hasData() {
+        return data2D != null && data2D.isValid() && !tableData.isEmpty();
+    }
+
     /*
         filter
      */
     private boolean checkRowFilter() {
-        if (!filterController.checkExpression(isAllPages())) {
+        if (filterController != null && !filterController.checkExpression(isAllPages())) {
             String ferror = filterController.error;
             if (ferror != null && !ferror.isBlank()) {
                 if (filterTab != null) {
@@ -612,15 +621,15 @@ public class BaseData2DSourceController extends ControlData2DLoad {
     }
 
     // If none selected then select all
-    public List<List<String>> filtered(boolean showRowNumber) {
-        return filtered(checkedColsIndices, showRowNumber);
+    public List<List<String>> tableFiltered(boolean showRowNumber) {
+        return tableFiltered(checkedColsIndices, showRowNumber);
     }
 
-    public List<List<String>> filtered(List<Integer> cols, boolean showRowNumber) {
-        return filtered(selectedRowsIndices, cols, showRowNumber);
+    public List<List<String>> tableFiltered(List<Integer> cols, boolean showRowNumber) {
+        return tableFiltered(selectedRowsIndices, cols, showRowNumber);
     }
 
-    public List<List<String>> filtered(List<Integer> rows, List<Integer> cols, boolean showRowNumber) {
+    public List<List<String>> tableFiltered(List<Integer> rows, List<Integer> cols, boolean showRowNumber) {
         try {
             if (rows == null || rows.isEmpty()
                     || cols == null || cols.isEmpty()) {
@@ -663,6 +672,36 @@ public class BaseData2DSourceController extends ControlData2DLoad {
             return data;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public List<List<String>> selectedData(SingletonTask task) {
+        try {
+            if (data2D == null || checkedColsIndices == null) {
+                return null;
+            }
+            data2D.startTask(task, filterController != null ? filterController.filter : null);
+            if (!data2D.fillFilterStatistic()) {
+                return null;
+            }
+            List<List<String>> data;
+            if (isAllPages()) {
+                DataFileCSV csv = data2D.copy(null, checkedColsIndices, false, true);
+                if (csv == null) {
+                    return null;
+                }
+                data = csv.allRows(false);
+            } else {
+                data = tableFiltered(false);
+            }
+            data2D.stopTask();
+            return data;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.console(e);
             return null;
         }
     }
