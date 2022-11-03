@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import javafx.scene.Node;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -37,6 +38,11 @@ public class Data2DChartGroupPieController extends Data2DChartPieController {
         }
         pieMaker.setDefaultChartTitle(chartTitle());
         super.drawPieChart();
+    }
+
+    @Override
+    public Node snapNode() {
+        return chartController.chartPane;
     }
 
     /*

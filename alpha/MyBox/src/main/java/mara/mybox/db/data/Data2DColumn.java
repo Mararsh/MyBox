@@ -381,6 +381,12 @@ public class Data2DColumn extends ColumnDefinition {
     }
 
     @Override
+    public Data2DColumn setWidth(int width) {
+        this.width = width;
+        return this;
+    }
+
+    @Override
     public Data2DColumn setFixTwoDigitYear(boolean fixTwoDigitYear) {
         this.fixTwoDigitYear = fixTwoDigitYear;
         return this;

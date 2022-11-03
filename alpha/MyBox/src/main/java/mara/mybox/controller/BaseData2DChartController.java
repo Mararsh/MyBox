@@ -1,15 +1,18 @@
 package mara.mybox.controller;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import mara.mybox.data2d.reader.DataTableGroup;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -28,6 +31,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     protected DataTableGroup group;
     protected int framesNumber, groupid;
     protected Thread frameThread;
+    protected Connection conn;
 
     @FXML
     protected ComboBox<String> categoryColumnSelector, valueColumnSelector;
@@ -67,7 +71,21 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                         loadFrame(playController.currentIndex);
                     }
                 };
-                playController.setParameters(this, frameThread);
+                playController.setParameters(this, frameThread, snapNode());
+
+                playController.stopped.addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        try {
+                            if (conn != null) {
+                                conn.close();
+                                conn = null;
+                            }
+                        } catch (Exception ex) {
+                        }
+                    }
+                });
+
             }
 
         } catch (Exception e) {
@@ -379,7 +397,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         return outputData != null && !outputData.isEmpty();
     }
 
-    public synchronized void loadFrame(int index) {
+    public void loadFrame(int index) {
         if (group == null || framesNumber <= 0 || index < 0 || index > framesNumber) {
             playController.clear();
             return;
@@ -396,16 +414,31 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     }
 
     protected boolean makeFrameData() {
-        outputData = group.groupData(groupid, outputColumns);
-        return initFrame();
+        try {
+            if (conn == null || conn.isClosed()) {
+                conn = DerbyBase.getConnection();
+            }
+            outputData = group.groupData(conn, groupid, outputColumns);
+            return initFrame();
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
+            return false;
+        }
     }
 
     public void drawFrame() {
     }
 
+    public Node snapNode() {
+        return null;
+    }
+
     @Override
     public void cleanPane() {
         try {
+            if (conn != null) {
+                conn.close();
+            }
             if (playController != null) {
                 playController.clear();
             }

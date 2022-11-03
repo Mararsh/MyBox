@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -22,7 +23,7 @@ import mara.mybox.value.Languages;
 public class LoadingController extends BaseController {
 
     private Task<?> loadingTask;
-    private boolean isCanceled;
+    protected SimpleBooleanProperty canceled;
 
     @FXML
     protected ProgressIndicator progressIndicator;
@@ -33,6 +34,7 @@ public class LoadingController extends BaseController {
 
     public LoadingController() {
         baseTitle = Languages.message("LoadingPage");
+        canceled = new SimpleBooleanProperty();
     }
 
     public void init(final Task<?> task) {
@@ -40,7 +42,7 @@ public class LoadingController extends BaseController {
             infoLabel.setText(Languages.message("Handling..."));
             infoLabel.requestFocus();
             loadingTask = task;
-            isCanceled = false;
+            canceled.set(false);
             progressIndicator.setProgress(-1F);
             if (timeLabel != null) {
                 showTimer();
@@ -80,7 +82,7 @@ public class LoadingController extends BaseController {
     @FXML
     @Override
     public void cancelAction() {
-        isCanceled = true;
+        canceled.set(true);
         if (loadingTask != null) {
             if (parentController != null) {
                 parentController.taskCanceled(loadingTask);
@@ -107,6 +109,10 @@ public class LoadingController extends BaseController {
 
     public boolean isRunning() {
         return timer != null;
+    }
+
+    public boolean canceled() {
+        return canceled != null && canceled.get();
     }
 
     public void setProgress(float value) {
@@ -146,14 +152,6 @@ public class LoadingController extends BaseController {
 
     public void setLoadingTask(Task<?> loadingTask) {
         this.loadingTask = loadingTask;
-    }
-
-    public boolean isIsCanceled() {
-        return isCanceled;
-    }
-
-    public void setIsCanceled(boolean isCanceled) {
-        this.isCanceled = isCanceled;
     }
 
     public Label getTimeLabel() {

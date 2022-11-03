@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import mara.mybox.data2d.Data2D_Operations.ObjectType;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.reader.DataTableGroupStatistic;
@@ -102,6 +103,10 @@ public class Data2DChartGroupBoxWhiskerController extends Data2DChartBoxWhiskerC
         super.drawChartBoxWhisker();
     }
 
+    @Override
+    public Node snapNode() {
+        return chartController.chartPane;
+    }
 
     /*
         static

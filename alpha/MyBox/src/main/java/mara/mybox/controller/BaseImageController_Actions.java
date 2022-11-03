@@ -304,24 +304,24 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         ControllerTools.showImageMetaData(imageInformation);
     }
 
-    public void checkImage(BaseImageController controller) {
-        if (imageView == null || imageView.getImage() == null || controller == null) {
+    public void checkImage(BaseImageController imageController) {
+        if (imageView == null || imageView.getImage() == null || imageController == null) {
             return;
         }
-        controller.requestMouse();
+        imageController.requestMouse();
         if (maskRectangleLine == null || !maskRectangleLine.isVisible()) {
             if (imageChanged) {
-                controller.loadImage(imageView.getImage());
+                imageController.loadImage(imageView.getImage());
 
             } else {
                 if (imageInformation != null && imageInformation.getRegion() != null) {
-                    controller.loadRegion(imageInformation);
-                } else if (controller instanceof ImageSampleController || controller instanceof ImageSplitController) {
-                    controller.loadImage(imageFile(), imageInformation, imageView.getImage(), imageChanged);
+                    imageController.loadRegion(imageInformation);
+                } else if (imageController instanceof ImageSampleController || imageController instanceof ImageSplitController) {
+                    imageController.loadImage(imageFile(), imageInformation, imageView.getImage(), imageChanged);
                 } else if (imageInformation != null && imageInformation.isIsScaled()) {
-                    controller.loadImage(imageView.getImage());
+                    imageController.loadImage(imageView.getImage());
                 } else {
-                    controller.loadImage(imageFile(), imageInformation, imageView.getImage(), imageChanged);
+                    imageController.loadImage(imageFile(), imageInformation, imageView.getImage(), imageChanged);
                 }
             }
             return;
@@ -342,7 +342,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
 
                 @Override
                 protected void whenSucceeded() {
-                    controller.loadImage(targetImage);
+                    imageController.loadImage(targetImage);
                 }
             };
             start(task);

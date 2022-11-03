@@ -274,7 +274,7 @@ public class HtmlSnapController extends WebAddressController {
     }
 
     protected boolean isCanceled() {
-        if (loadingController == null || loadingController.isIsCanceled()) {
+        if (loadingController == null || loadingController.canceled()) {
             stopSnap();
             return true;
         } else {

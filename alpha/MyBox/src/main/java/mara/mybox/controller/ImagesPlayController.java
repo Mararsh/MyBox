@@ -141,23 +141,12 @@ public class ImagesPlayController extends BaseImagesListController {
                     displayFrame(playController.currentIndex);
                 }
             };
-            playController.setParameters(this, frameThread);
+            playController.setParameters(this, frameThread, null);
 
-            playController.stopNodify.addListener(new ChangeListener<Boolean>() {
+            playController.stopped.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     closeFile();
-                }
-            });
-
-            playController.timeNodify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    if (imageInfos != null) {
-                        for (ImageInformation info : imageInfos) {
-                            info.setDuration(playController.timeValue);
-                        }
-                    }
                 }
             });
 
@@ -566,7 +555,9 @@ public class ImagesPlayController extends BaseImagesListController {
                 return thumb;
             }
             info.setThumbnail(null);
-            if (fileFormat.equalsIgnoreCase("pdf")) {
+            if (fileFormat == null) {
+                info.loadThumbnail(loadWidth);
+            } else if (fileFormat.equalsIgnoreCase("pdf")) {
                 if (pdfRenderer == null) {
                     openPDF();
                 }
@@ -656,6 +647,9 @@ public class ImagesPlayController extends BaseImagesListController {
             });
 
             imageInformation.setThumbnail(null);
+            if (playController.stopped.get()) {
+                return;
+            }
             int next = playController.nextIndex();
             if (next >= 0 && index < imageInfos.size()) {
                 thumb(imageInfos.get(next));

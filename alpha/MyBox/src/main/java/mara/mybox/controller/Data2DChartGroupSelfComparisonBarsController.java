@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import javafx.scene.Node;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -31,6 +32,11 @@ public class Data2DChartGroupSelfComparisonBarsController extends Data2DChartSel
             return;
         }
         outputHtml(makeHtml());
+    }
+
+    @Override
+    public Node snapNode() {
+        return webViewController.webView;
     }
 
     /*

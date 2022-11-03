@@ -794,6 +794,13 @@ public class DataTableGroup {
                     csvPrinter = null;
                 }
             }
+            if (task != null) {
+                if (parameterValue != null) {
+                    task.setInfo(message("Group") + ": " + parameterValue);
+                } else {
+                    task.setInfo(message("Group") + ": " + groupid);
+                }
+            }
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -906,21 +913,23 @@ public class DataTableGroup {
     }
 
     // groupid is 1-based
-    public List<List<String>> groupData(long groupid, List<Data2DColumn> columns) {
-        if (targetData == null || columns == null) {
+    public List<List<String>> groupData(Connection qconn, long groupid, List<Data2DColumn> columns) {
+        if (qconn == null || targetData == null || columns == null) {
             return null;
         }
         List<List<String>> data = new ArrayList<>();
         String sql = "SELECT * FROM " + targetData.getSheet()
                 + " WHERE " + idColName + "=" + groupid + orderByString;
-        try ( Connection qconn = DerbyBase.getConnection();
-                 ResultSet query = qconn.prepareStatement(sql).executeQuery()) {
+        try ( ResultSet query = qconn.prepareStatement(sql).executeQuery()) {
             while (query.next()) {
                 if (parameterValue == null) {
                     parameterValue = query.getString(2);
                 }
                 List<String> row = new ArrayList<>();
                 for (Data2DColumn column : columns) {
+                    if (qconn == null || qconn.isClosed()) {
+                        return null;
+                    }
                     String name = column.getColumnName();
                     String gname = targetData.tmpColumnName(name);
                     String s = column.toString(query.getObject(gname));

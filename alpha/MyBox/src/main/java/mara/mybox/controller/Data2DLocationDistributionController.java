@@ -100,7 +100,7 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                     displayFrame(playController.currentIndex);
                 }
             };
-            playController.setParameters(this, frameThread);
+            playController.setParameters(this, frameThread, mapController.snapBox);
 
             linkCheck.visibleProperty().bind(accumulateCheck.selectedProperty());
 

@@ -11,21 +11,27 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class SingletonTask<Void> extends BaseTask<Void> {
-
-    BaseController controller;
-    LoadingController loading;
-
+    
+    protected BaseController controller;
+    protected LoadingController loading;
+    
     public SingletonTask(BaseController controller) {
         this.controller = controller;
     }
-
+    
+    public void setInfo(String info) {
+        if (loading != null) {
+            loading.setInfo(info);
+        }
+    }
+    
     @Override
     protected void whenSucceeded() {
         if (controller != null) {
             controller.popSuccessful();
         }
     }
-
+    
     @Override
     protected void whenFailed() {
         if (isCancelled()) {
@@ -55,17 +61,17 @@ public class SingletonTask<Void> extends BaseTask<Void> {
     public BaseController getController() {
         return controller;
     }
-
+    
     public void setController(BaseController controller) {
         this.controller = controller;
     }
-
+    
     public LoadingController getLoading() {
         return loading;
     }
-
+    
     public void setLoading(LoadingController loading) {
         this.loading = loading;
     }
-
+    
 }

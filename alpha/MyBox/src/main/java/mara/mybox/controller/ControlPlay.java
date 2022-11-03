@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,7 +10,10 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -17,9 +21,15 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.ScheduleTools;
+import mara.mybox.tools.TmpFileTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -32,10 +42,15 @@ public class ControlPlay extends BaseController {
 
     protected int framesNumber, currentIndex, fromFrame, toFrame;
     protected long timeValue;
-    protected SimpleBooleanProperty stopNodify, timeNodify;
-    protected boolean stopped;
+    protected SimpleBooleanProperty stopped;
     protected Thread playThread, targetThread;
     protected ScheduledFuture schedule;
+    protected boolean snapping;
+    protected Node snapNode;
+    protected double snapScale;
+    protected LoadingController loadingController;
+    protected SnapshotParameters snapParameters;
+    protected List<File> snaps;
 
     @FXML
     protected ToggleGroup fixGroup;
@@ -49,18 +64,26 @@ public class ControlPlay extends BaseController {
     protected CheckBox loopCheck, reverseCheck;
     @FXML
     protected Label totalLabel;
+    @FXML
+    protected VBox snapBox;
+    @FXML
+    protected ColorSet colorController;
 
     public ControlPlay() {
-        stopNodify = new SimpleBooleanProperty();
-        timeNodify = new SimpleBooleanProperty();
+        stopped = new SimpleBooleanProperty();
     }
 
-    public void setParameters(BaseController parent, Thread targetThread) {
+    public void setParameters(BaseController parent, Thread targetThread, Node snapNode) {
         try {
             this.parentController = parent;
             this.targetThread = targetThread;
+            this.snapNode = snapNode;
             this.baseName = parent.baseName;
             clear();
+
+            if (snapNode == null) {
+                snapBox.setVisible(false);
+            }
 
             frameSelector.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
                 @Override
@@ -103,7 +126,6 @@ public class ControlPlay extends BaseController {
                             UserConfig.setInt(baseName + "Interval", v);
                             if (!isSettingValues) {
                                 startFrame(currentIndex);
-                                timeNodify.set(!timeNodify.get());
                             }
                         }
                     } catch (Exception e) {
@@ -127,6 +149,8 @@ public class ControlPlay extends BaseController {
                     UserConfig.setBoolean(baseName + "Reverse", reverseCheck.isSelected());
                 }
             });
+
+            colorController.init(this, baseName + "SnapColor", Color.WHITE);
 
             setPauseButton(false);
 
@@ -165,18 +189,18 @@ public class ControlPlay extends BaseController {
             if (f > t) {
                 return false;
             }
+            stopped.set(false);
+            isSettingValues = true;
             fromFrame = f;
             toFrame = t;
             currentIndex = 0;
             framesNumber = frames.size();
-            stopped = false;
             if (reverseCheck.isSelected()) {
                 currentIndex = toFrame;
             } else {
                 currentIndex = fromFrame;
             }
             setPauseButton(false);
-            isSettingValues = true;
             List<String> names = new ArrayList<>();
             for (String frame : frames) {
                 String v = frame.replaceAll("\n", " ");
@@ -189,6 +213,7 @@ public class ControlPlay extends BaseController {
             frameSelector.getItems().setAll(names);
             frameSelector.getSelectionModel().select(currentIndex);
             totalLabel.setText("/" + framesNumber);
+            isSettingValues = false;
             startFrame(currentIndex);
             return true;
         } catch (Exception e) {
@@ -283,7 +308,15 @@ public class ControlPlay extends BaseController {
             }
             targetThread.run();
 
-            if (stopped) {
+            if (snapNode != null && snapping) {
+                Platform.runLater(() -> {
+                    snap();
+                });
+                synchronized (snapNode) {
+                    snapNode.wait();
+                }
+            }
+            if (stopped.get()) {
                 pause();
             } else {
                 int next = nextIndex();
@@ -299,6 +332,23 @@ public class ControlPlay extends BaseController {
         }
     }
 
+    public void snap() {
+        try {
+            if (loadingController != null) {
+                loadingController.setInfo(message("Snapshot") + ": " + frameSelector.getValue());
+            }
+            Image snapshot = snapNode.snapshot(snapParameters, null);
+            File tmpfile = TmpFileTools.getTempFile(".png");
+            ImageFileWriters.writeImageFile(SwingFXUtils.fromFXImage(snapshot, null), "png", tmpfile.getAbsolutePath());
+            snaps.add(tmpfile);
+            synchronized (snapNode) {
+                snapNode.notifyAll();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     protected boolean checkIndex(int index) {
         try {
             if (framesNumber < 1) {
@@ -306,6 +356,7 @@ public class ControlPlay extends BaseController {
             }
             currentIndex = correctIndex(index);
             if (currentIndex < 0) {
+                MyBoxLog.console(currentIndex);
                 pause();
                 return false;
             }
@@ -349,12 +400,12 @@ public class ControlPlay extends BaseController {
         int index;
         if (reverseCheck.isSelected()) {
             index = currentIndex - 1;
-            if (index < fromFrame && !loopCheck.isSelected()) {
+            if (index < fromFrame && (snapping || !loopCheck.isSelected())) {
                 return -1;
             }
         } else {
             index = currentIndex + 1;
-            if (index > toFrame && !loopCheck.isSelected()) {
+            if (index > toFrame && (snapping || !loopCheck.isSelected())) {
                 return -1;
             }
         }
@@ -366,9 +417,6 @@ public class ControlPlay extends BaseController {
             StyleTools.setNameIcon(pauseButton, message("Play"), "iconPlay.png");
             previousButton.setDisable(false);
             nextButton.setDisable(false);
-            if (stopNodify != null) {
-                stopNodify.set(!stopNodify.get());
-            }
         } else {
             StyleTools.setNameIcon(pauseButton, message("Pause"), "iconPause.png");
             previousButton.setDisable(true);
@@ -380,8 +428,8 @@ public class ControlPlay extends BaseController {
     @FXML
     public void pauseAction() {
         try {
-            if (stopped) {
-                stopped = false;
+            if (stopped.get()) {
+                stopped.set(false);
                 startFrame(currentIndex);
             } else {
                 pause();
@@ -402,7 +450,16 @@ public class ControlPlay extends BaseController {
 
     public void pause() {
         try {
-            stopped = true;
+            stopped.set(true);
+            if (snapNode != null) {
+                synchronized (snapNode) {
+                    snapNode.notifyAll();
+                }
+            }
+            if (snapping) {
+                outSnaps();
+            }
+            snapping = false;
             if (schedule != null) {
                 schedule.cancel(true);
             }
@@ -413,6 +470,7 @@ public class ControlPlay extends BaseController {
             if (targetThread != null) {
                 targetThread.interrupt();
             }
+
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
@@ -458,16 +516,62 @@ public class ControlPlay extends BaseController {
         frameSelector.getItems().clear();
         totalLabel.setText("");
         isSettingValues = false;
-        stopNodify.set(!stopNodify.get());
+    }
+
+    @FXML
+    public void snapAction() {
+        if (snapNode == null) {
+            return;
+        }
+        pause();
+        if (loadingController != null) {
+            loadingController.closeStage();
+            loadingController = null;
+        }
+        loadingController = parentController.handling();
+        loadingController.canceled.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                if (newValue) {
+                    pause();
+                }
+            }
+        });
+        stopped.set(false);
+        snapping = true;
+        snaps = new ArrayList<>();
+        snapScale = NodeTools.dpiScale(dpi);
+        snapParameters = new SnapshotParameters();
+        snapParameters.setFill(colorController.color());
+        snapParameters.setTransform(javafx.scene.transform.Transform.scale(snapScale, snapScale));
+        if (reverseCheck.isSelected()) {
+            currentIndex = framesNumber - 1;
+        } else {
+            currentIndex = 0;
+        }
+        schedule = ScheduleTools.service.scheduleWithFixedDelay(playThread,
+                0, 200, TimeUnit.MILLISECONDS);
+    }
+
+    public void outSnaps() {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                if (loadingController != null) {
+                    loadingController.closeStage();
+                    loadingController = null;
+                }
+                if (snaps != null && !snaps.isEmpty()) {
+                    ImagesEditorController.open(snaps);
+                }
+            }
+        });
     }
 
     @Override
     public void cleanPane() {
         try {
             clear();
-            stopNodify = null;
-            timeNodify = null;
-
         } catch (Exception e) {
         }
         super.cleanPane();

@@ -20,16 +20,16 @@ License:    Apache License Version 2.0
     <children>
       <VBox maxWidth="1.7976931348623157E308" spacing="5.0">
          <children>
-            <Label minHeight="-Infinity" minWidth="-Infinity" text="%PasteLocation" wrapText="true" />
+            <Label minWidth="-Infinity" text="%PasteLocation" wrapText="true" />
             <HBox maxWidth="1.7976931348623157E308">
                <children>
-                  <Label text="%TableRow" />
+                  <Label minWidth="-Infinity" text="%TableRow" wrapText="true" />
                   <ComboBox fx:id="rowSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
             <HBox maxWidth="1.7976931348623157E308">
                <children>
-                  <Label minWidth="-Infinity" text="%Column" />
+                  <Label minWidth="-Infinity" text="%Column" wrapText="true" />
                   <ComboBox fx:id="colSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
@@ -37,13 +37,13 @@ License:    Apache License Version 2.0
       </VBox>
       <VBox spacing="5.0">
          <children>
-            <RadioButton fx:id="replaceRadio" mnemonicParsing="false" selected="true" text="%Replace">
+            <RadioButton fx:id="replaceRadio" minWidth="-Infinity" mnemonicParsing="false" selected="true" text="%Replace" wrapText="true">
                <toggleGroup>
                   <ToggleGroup fx:id="opGroup" />
                </toggleGroup>
             </RadioButton>
-            <RadioButton fx:id="insertRadio" mnemonicParsing="false" text="%InsertAbove" toggleGroup="$opGroup" />
-            <RadioButton fx:id="appendRadio" mnemonicParsing="false" text="%AppendBelow" toggleGroup="$opGroup" />
+            <RadioButton fx:id="insertRadio" minWidth="-Infinity" mnemonicParsing="false" text="%InsertAbove" toggleGroup="$opGroup" wrapText="true" />
+            <RadioButton fx:id="appendRadio" minWidth="-Infinity" mnemonicParsing="false" text="%AppendBelow" toggleGroup="$opGroup" wrapText="true" />
          </children>
       </VBox>
       <HBox alignment="CENTER_LEFT" spacing="2.0">

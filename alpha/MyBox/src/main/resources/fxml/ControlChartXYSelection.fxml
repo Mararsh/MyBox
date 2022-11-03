@@ -14,6 +14,11 @@ License:    Apache License Version 2.0
 
 <FlowPane fx:id="thisPane" alignment="CENTER_LEFT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="200.0" vgap="2.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlChartXYSelection">
               <children>
+      <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../buttons/Red/iconTips.png" />
+         </image>
+      </ImageView>
                   <RadioButton fx:id="barChartRadio" mnemonicParsing="false" selected="true">
                       <graphic>
                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

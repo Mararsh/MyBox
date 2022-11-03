@@ -41,7 +41,6 @@ public class Data2DChartXYController extends BaseData2DChartController {
 
     public Data2DChartXYController() {
         baseTitle = message("XYChart");
-        TipsLabelKey = "DataChartXYTips";
     }
 
     @Override

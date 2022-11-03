@@ -27,6 +27,10 @@ public class ControlChartXYSelection extends BaseController {
     protected RadioButton barChartRadio, stackedBarChartRadio, lineChartRadio, scatterChartRadio,
             bubbleChartRadio, areaChartRadio, stackedAreaChartRadio;
 
+    public ControlChartXYSelection() {
+        TipsLabelKey = "DataChartXYTips";
+    }
+
     @Override
     public void initControls() {
         try {

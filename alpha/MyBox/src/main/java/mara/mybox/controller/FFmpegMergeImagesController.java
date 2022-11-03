@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -78,6 +79,14 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
                         checkExt();
                     });
             checkExt();
+
+            stopCheck.setSelected(UserConfig.getBoolean(baseName + "StopAsAudio", false));
+            stopCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "StopAsAudio", stopCheck.isSelected());
+                }
+            });
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(

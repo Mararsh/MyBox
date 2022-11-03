@@ -236,6 +236,10 @@ public class DataTableGroupStatistic {
                 chartPrinter.printRecord(row);
                 chartRowsCount++;
             }
+
+            if (task != null) {
+                task.setInfo(message("Statistic") + ": " + parameterValue);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
             if (task != null) {

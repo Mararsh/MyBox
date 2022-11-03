@@ -1520,6 +1520,7 @@ public class DataMigration {
                             "JShellCode_Examples_en.txt", "JShellCode_Examples_zh.txt",
                             "JEXLCode_Examples_en.txt", "JEXLCode_Examples_zh.txt",
                             "MathFunction_Examples_en.txt", "MathFunction_Examples_zh.txt",
+                            "RowFilter_Examples_zh.txt", "RowFilter_Examples_en.txt",
                             "WebFavorite_Examples_en.txt", "WebFavorite_Examples_zh.txt"
                     );
                     for (String name : names) {

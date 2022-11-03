@@ -272,8 +272,7 @@ public class NodeTools {
 
     public static double dpiScale(double dpi) {
         try {
-            double scale = dpi / screenDpi();
-            return scale > 1 ? scale : 1;
+            return dpi / screenDpi();
         } catch (Exception e) {
             return 1;
         }
