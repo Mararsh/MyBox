@@ -19,7 +19,7 @@ public abstract class Data2DOperator {
     protected SingletonTask task;
     protected List<Integer> cols, otherCols;
     protected int colsLen, scale = -1;
-    protected boolean includeRowNumber;
+    protected boolean includeRowNumber, formatValues;
     protected List<String> sourceRow;
     protected long rowIndex; // 1-based 
     protected CSVPrinter csvPrinter;
@@ -120,6 +120,11 @@ public abstract class Data2DOperator {
 
     public Data2DOperator setInvalidAs(InvalidAs invalidAs) {
         this.invalidAs = invalidAs;
+        return this;
+    }
+
+    public Data2DOperator setFormatValues(boolean formatValues) {
+        this.formatValues = formatValues;
         return this;
     }
 

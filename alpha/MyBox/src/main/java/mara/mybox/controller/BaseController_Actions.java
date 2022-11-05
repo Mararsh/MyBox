@@ -398,6 +398,12 @@ public abstract class BaseController_Actions extends BaseController_Interface {
             controller.parentController = myController;
 
             if (task != null) {
+                if (task instanceof SingletonTask) {
+                    SingletonTask sTask = (SingletonTask) task;
+                    sTask.setController(myController);
+                    sTask.setSelf(sTask);
+                    sTask.setLoading(controller);
+                }
                 task.setOnSucceeded((WorkerStateEvent event) -> {
                     controller.closeStage();
                 });
@@ -411,7 +417,6 @@ public abstract class BaseController_Actions extends BaseController_Interface {
                 });
             }
             return controller;
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
@@ -434,8 +439,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         LoadingController controller = null;
         if (handling) {
             controller = handling(task, info);
-        }
-        if (task instanceof SingletonTask) {
+        } else if (task instanceof SingletonTask) {
             SingletonTask sTask = (SingletonTask) task;
             sTask.setController(myController);
             sTask.setSelf(sTask);

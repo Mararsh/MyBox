@@ -6,8 +6,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
@@ -15,21 +13,15 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.controller.ControlData2D;
-import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
-import mara.mybox.db.data.Data2DRow;
-import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
 
 /**
  * @Author Mara
@@ -781,9 +773,10 @@ public class Data2DExampleTools {
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = new DataFileCSV();
                 List<Data2DColumn> columns = new ArrayList<>();
-                columns.add(new Data2DColumn(message(lang, "Date"), ColumnType.Date, 110)
-                        .setFixTwoDigitYear(true).setFormat("yyyy-MM-dd"));
-                columns.add(new Data2DColumn(message(lang, "Country"), ColumnType.String, 240));
+                columns.add(new Data2DColumn(message(lang, "Date"), ColumnType.Date)
+                        .setFixTwoDigitYear(false).setFormat("yyyy-MM-dd"));
+                columns.add(new Data2DColumn(message(lang, "Country"), ColumnType.String));
+                columns.add(new Data2DColumn(message(lang, "Province"), ColumnType.String));
                 columns.add(new Data2DColumn(message(lang, "Confirmed"), ColumnType.Integer));
                 columns.add(new Data2DColumn(message(lang, "Healed"), ColumnType.Integer));
                 columns.add(new Data2DColumn(message(lang, "Dead"), ColumnType.Integer));
@@ -794,7 +787,6 @@ public class Data2DExampleTools {
                 if (makeExampleFile(lang, "EpidemicReports", data)) {
                     controller.loadCSVFile(data);
                 }
-//                parseCSSEGISandData();
             });
             locationMenu.getItems().add(menu);
 
@@ -853,151 +845,6 @@ public class Data2DExampleTools {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return false;
-        }
-    }
-
-    public static void parseCSSEGISandData() {
-        try ( Connection conn = DerbyBase.getConnection()) {
-            List<Data2DColumn> columns = new ArrayList<>();
-            columns.add(new Data2DColumn("Date", ColumnType.String, true, true));
-            columns.add(new Data2DColumn("Country", ColumnType.String, true, true));
-            columns.add(new Data2DColumn("Confirmed", ColumnType.String));
-            columns.add(new Data2DColumn("Recovered", ColumnType.String));
-            columns.add(new Data2DColumn("Dead", ColumnType.String));
-            columns.add(new Data2DColumn("Longitude", ColumnType.String));
-            columns.add(new Data2DColumn("Latitude", ColumnType.String));
-
-            DataTable countryTable = DataTable.createTable(null, conn, "CSSEGISandData_country", columns, null, null, null, true);
-            TableData2D tableCountry = countryTable.getTableData2D();
-
-            conn.setAutoCommit(false);
-
-            long recoveryCount = 0;
-            MyBoxLog.console("D:/下载/time_series_covid19_recovered_global.csv");
-            File srcFile = new File("D:/下载/time_series_covid19_recovered_global.csv");
-            try ( PreparedStatement countryInsert = conn.prepareStatement(tableCountry.insertStatement());
-                     CSVParser parser = CsvTools.csvParser(srcFile, ",", true)) {
-                List<String> header = parser.getHeaderNames();
-                for (CSVRecord record : parser) {
-                    String provice = record.get("Province/State");
-                    if (provice != null && !provice.isBlank()) {
-                        continue;
-                    }
-                    String country = record.get("Country/Region");
-                    String latitude = record.get("Lat");
-                    String longitude = record.get("Long");
-                    MyBoxLog.console(country + "  " + recoveryCount);
-                    for (int i = 4; i < record.size(); i++) {
-                        Data2DRow countryRow = tableCountry.newRow();
-                        countryRow.setColumnValue("Date", header.get(i));
-                        countryRow.setColumnValue("Country", country);
-                        countryRow.setColumnValue("Longitude", longitude);
-                        countryRow.setColumnValue("Latitude", latitude);
-                        countryRow.setColumnValue("Recovered", record.get(i));
-                        tableCountry.insertData(conn, countryInsert, countryRow);
-                        if (++recoveryCount % DerbyBase.BatchSize == 0) {
-                            conn.commit();
-                        }
-                    }
-                }
-                conn.commit();
-                MyBoxLog.console(recoveryCount);
-            } catch (Exception e) {
-                MyBoxLog.error(e.toString());
-            }
-
-            long deadCount = 0;
-            MyBoxLog.console("D:/下载/time_series_covid19_deaths_global.csv");
-            srcFile = new File("D:/下载/time_series_covid19_deaths_global.csv");
-            try ( PreparedStatement countryQuery = conn.prepareStatement("SELECT * FROM CSSEGISandData_country WHERE Date=? AND Country=?");
-                     PreparedStatement countryInsert = conn.prepareStatement(tableCountry.insertStatement());
-                     PreparedStatement countryUpdate = conn.prepareStatement(tableCountry.updateStatement());
-                     CSVParser parser = CsvTools.csvParser(srcFile, ",", true)) {
-                List<String> header = parser.getHeaderNames();
-                for (CSVRecord record : parser) {
-                    String provice = record.get("Province/State");
-                    if (provice != null && !provice.isBlank()) {
-                        continue;
-                    }
-                    String country = record.get("Country/Region");
-                    String latitude = record.get("Lat");
-                    String longitude = record.get("Long");
-                    MyBoxLog.console(country + "  " + deadCount + "    " + (int) (deadCount * 100 / recoveryCount) + "%");
-                    for (int i = 4; i < record.size(); i++) {
-                        countryQuery.setString(1, header.get(i));
-                        countryQuery.setString(2, country);
-                        Data2DRow countryRow = tableCountry.query(conn, countryQuery);
-                        if (countryRow == null) {
-                            countryRow = tableCountry.newRow();
-                            countryRow.setColumnValue("Date", header.get(i));
-                            countryRow.setColumnValue("Country", country);
-                            countryRow.setColumnValue("Longitude", longitude);
-                            countryRow.setColumnValue("Latitude", latitude);
-                            countryRow.setColumnValue("Dead", record.get(i));
-                            tableCountry.insertData(conn, countryInsert, countryRow);
-                        } else {
-                            countryRow.setColumnValue("Dead", record.get(i));
-                            tableCountry.updateData(conn, countryUpdate, countryRow);
-                        }
-                        if (++deadCount % DerbyBase.BatchSize == 0) {
-                            conn.commit();
-                        }
-                    }
-                }
-                conn.commit();
-                MyBoxLog.console(deadCount);
-            } catch (Exception e) {
-                MyBoxLog.error(e.toString());
-            }
-
-            long confirmedCount = 0;
-            MyBoxLog.console("D:/下载/time_series_covid19_confirmed_global.csv");
-            srcFile = new File("D:/下载/time_series_covid19_confirmed_global.csv");
-            try ( PreparedStatement countryQuery = conn.prepareStatement("SELECT * FROM CSSEGISandData_country WHERE Date=? AND Country=?");
-                     PreparedStatement countryInsert = conn.prepareStatement(tableCountry.insertStatement());
-                     PreparedStatement countryUpdate = conn.prepareStatement(tableCountry.updateStatement());
-                     CSVParser parser = CsvTools.csvParser(srcFile, ",", true)) {
-                List<String> header = parser.getHeaderNames();
-                for (CSVRecord record : parser) {
-                    String provice = record.get("Province/State");
-                    if (provice != null && !provice.isBlank()) {
-                        continue;
-                    }
-                    String country = record.get("Country/Region");
-                    String latitude = record.get("Lat");
-                    String longitude = record.get("Long");
-                    MyBoxLog.console(country + "  " + confirmedCount + "    " + (int) (confirmedCount * 100 / deadCount) + "%");
-                    for (int i = 4; i < record.size(); i++) {
-                        countryQuery.setString(1, header.get(i));
-                        countryQuery.setString(2, country);
-                        Data2DRow countryRow = tableCountry.query(conn, countryQuery);
-                        if (countryRow == null) {
-                            countryRow = tableCountry.newRow();
-                            countryRow.setColumnValue("Date", header.get(i));
-                            countryRow.setColumnValue("Country", country);
-                            countryRow.setColumnValue("Longitude", longitude);
-                            countryRow.setColumnValue("Latitude", latitude);
-                            countryRow.setColumnValue("Confirmed", record.get(i));
-                            tableCountry.insertData(conn, countryInsert, countryRow);
-                        } else {
-                            countryRow.setColumnValue("Confirmed", record.get(i));
-                            tableCountry.updateData(conn, countryUpdate, countryRow);
-                        }
-                        if (++confirmedCount % DerbyBase.BatchSize == 0) {
-                            conn.commit();
-                        }
-                    }
-                }
-                conn.commit();
-                MyBoxLog.console(confirmedCount);
-            } catch (Exception e) {
-                MyBoxLog.error(e.toString());
-            }
-
-            Data2D.open(countryTable);
-//            Data2D.open(allTable);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
         }
     }
 

@@ -57,7 +57,7 @@ License:    Apache License Version 2.0
                                 <ToggleGroup fx:id="nonnumericGroup" />
                             </toggleGroup>
                         </RadioButton>
-                        <RadioButton fx:id="zeroNonnumericRadio" mnemonicParsing="false" text="%Zero"  toggleGroup="$nonnumericGroup" />
+                        <RadioButton fx:id="zeroNonnumericRadio" mnemonicParsing="false" text="%Zero" toggleGroup="$nonnumericGroup" />
                         <RadioButton fx:id="blankNonnumericRadio" layoutX="263.0" layoutY="14.0" mnemonicParsing="false" text="%Blank" toggleGroup="$nonnumericGroup" />
                     </children>
                 </FlowPane>

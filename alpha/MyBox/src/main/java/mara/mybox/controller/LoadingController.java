@@ -9,18 +9,17 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.TextArea;
-import javafx.scene.layout.Region;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DateTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
  * @CreateDate 2018-6-11 8:14:06
  * @License Apache License Version 2.0
  */
-public class LoadingController extends BaseController {
+public class LoadingController extends BaseLogs {
 
     private Task<?> loadingTask;
     protected SimpleBooleanProperty canceled;
@@ -28,19 +27,14 @@ public class LoadingController extends BaseController {
     @FXML
     protected ProgressIndicator progressIndicator;
     @FXML
-    protected Label infoLabel, timeLabel;
-    @FXML
-    protected TextArea text;
+    protected Label timeLabel;
 
     public LoadingController() {
-        baseTitle = Languages.message("LoadingPage");
         canceled = new SimpleBooleanProperty();
     }
 
     public void init(final Task<?> task) {
         try {
-            infoLabel.setText(Languages.message("Handling..."));
-            infoLabel.requestFocus();
             loadingTask = task;
             canceled.set(false);
             progressIndicator.setProgress(-1F);
@@ -48,6 +42,15 @@ public class LoadingController extends BaseController {
                 showTimer();
             }
             getMyStage().toFront();
+            if (task != null && (task instanceof SingletonTask)) {
+                SingletonTask stask = (SingletonTask) task;
+                setTitle(stask.getController().getTitle());
+                setInfo(getTitle());
+            } else {
+                setInfo(message("Handling..."));
+            }
+            logsTextArea.requestFocus();
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -59,8 +62,8 @@ public class LoadingController extends BaseController {
                 timer.cancel();
             }
             final Date startTime = new Date();
-            final String prefix = Languages.message("StartTime") + ": " + DateTools.nowString()
-                    + "   " + Languages.message("ElapsedTime") + ": ";
+            final String prefix = message("StartTime") + ": " + DateTools.nowString()
+                    + "   " + message("ElapsedTime") + ": ";
             timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override
@@ -82,6 +85,11 @@ public class LoadingController extends BaseController {
     @FXML
     @Override
     public void cancelAction() {
+        clear();
+        closeStage();
+    }
+
+    public void clear() {
         canceled.set(true);
         if (loadingTask != null) {
             if (parentController != null) {
@@ -94,17 +102,10 @@ public class LoadingController extends BaseController {
             timer.cancel();
             timer = null;
         }
-        this.closeStage();
     }
 
     public void setInfo(String info) {
-        Platform.runLater(() -> {
-            infoLabel.setText(info);
-            infoLabel.setWrapText(true);
-            infoLabel.setMinHeight(Region.USE_PREF_SIZE);
-            infoLabel.applyCss();
-        });
-
+        updateLogs(info);
     }
 
     public boolean isRunning() {
@@ -130,22 +131,6 @@ public class LoadingController extends BaseController {
         this.progressIndicator = progressIndicator;
     }
 
-    public Label getInfoLabel() {
-        return infoLabel;
-    }
-
-    public void setInfoLabel(Label infoLabel) {
-        this.infoLabel = infoLabel;
-    }
-
-    public TextArea getText() {
-        return text;
-    }
-
-    public void setText(TextArea text) {
-        this.text = text;
-    }
-
     public Task<?> getLoadingTask() {
         return loadingTask;
     }
@@ -165,10 +150,7 @@ public class LoadingController extends BaseController {
     @Override
     public void cleanPane() {
         try {
-            if (loadingTask != null && !loadingTask.isDone()) {
-                loadingTask.cancel();
-                loadingTask = null;
-            }
+            clear();
         } catch (Exception e) {
         }
         super.cleanPane();

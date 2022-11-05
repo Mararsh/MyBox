@@ -1391,11 +1391,30 @@ public abstract class BaseTable<D> {
         String sql = updateStatement();
         int count = 0;
         try ( PreparedStatement statement = conn.prepareStatement(sql)) {
-            for (D data : dataList) {
-                if (setUpdateStatement(conn, statement, data)) {
-                    count += statement.executeUpdate();
+            for (int i = 0; i < dataList.size(); ++i) {
+                D data = dataList.get(i);
+                if (!setDeleteStatement(conn, statement, data)) {
+                    continue;
+                }
+                statement.addBatch();
+                if (i > 0 && (i % BatchSize == 0)) {
+                    int[] res = statement.executeBatch();
+                    for (int r : res) {
+                        if (r > 0) {
+                            count += r;
+                        }
+                    }
+                    conn.commit();
+                    statement.clearBatch();
                 }
             }
+            int[] res = statement.executeBatch();
+            for (int r : res) {
+                if (r > 0) {
+                    count += r;
+                }
+            }
+            conn.commit();
         } catch (Exception e) {
             MyBoxLog.error(e, sql);
         }

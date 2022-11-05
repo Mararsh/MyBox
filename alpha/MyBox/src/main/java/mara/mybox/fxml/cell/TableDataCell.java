@@ -65,7 +65,7 @@ public class TableDataCell extends TableAutoCommitCell<List<String>, String> {
     }
 
     public void displayData(String item) {
-        setText(dataColumn.display(item, trucSize));
+        setText(dataColumn.format(item, trucSize));
     }
 
 }

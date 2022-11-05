@@ -197,7 +197,7 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
         if (targetNode == null) {
             return null;
         }
-        TreeNode newNode = new TreeNode(targetNode, name, null);
+        TreeNode newNode = new TreeNode(targetNode, name);
         newNode = tableTreeNode.insertData(newNode);
         return newNode;
     }
@@ -401,7 +401,7 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
             return null;
         }
         try {
-            TreeNode newNode = new TreeNode(targetNode, sourceNode.getTitle(), sourceNode.getValue());
+            TreeNode newNode = sourceNode.copyTo(targetNode);
             newNode = tableTreeNode.insertData(conn, newNode);
             if (newNode == null) {
                 return null;

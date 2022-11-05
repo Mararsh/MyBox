@@ -75,7 +75,9 @@ public class DataTableReader extends Data2DReader {
     @Override
     public void readPage() {
         rowIndex = data2D.startRowOfCurrentPage;
-        try ( PreparedStatement statement = conn.prepareStatement(readerTable.pageQuery());
+        String sql = readerTable.pageQuery();
+        task.setInfo(sql);
+        try ( PreparedStatement statement = conn.prepareStatement(sql);
                  ResultSet results = statement.executeQuery()) {
             while (results.next()) {
                 makeRecord(readerTableData2D.readData(results));
@@ -95,6 +97,7 @@ public class DataTableReader extends Data2DReader {
     public void readRows() {
         rowIndex = 0;
         String sql = "SELECT * FROM " + readerTable.getSheet();
+        task.setInfo(sql);
         try ( PreparedStatement statement = conn.prepareStatement(sql);
                  ResultSet results = statement.executeQuery()) {
             while (results.next() && !readerStopped()) {

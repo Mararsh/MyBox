@@ -11,6 +11,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -24,6 +25,8 @@ public class DataTableWriter extends Data2DWriter {
     protected int writeCount;
     protected Data2DRow sourceTableRow;
     protected Connection conn;
+    protected PreparedStatement update;
+    protected PreparedStatement delete;
 
     public DataTableWriter(DataTable data) {
         init(data);
@@ -48,11 +51,18 @@ public class DataTableWriter extends Data2DWriter {
         count = 0;
         writeCount = 0;
         String sql = "SELECT * FROM " + sourceTable.getSheet();
+        if (task != null) {
+            task.setInfo(sql);
+        }
         try ( Connection dconn = DerbyBase.getConnection();
                  PreparedStatement statement = dconn.prepareStatement(sql);
-                 ResultSet results = statement.executeQuery()) {
+                 ResultSet results = statement.executeQuery();
+                 PreparedStatement dUpdate = conn.prepareStatement(tableData2D.updateStatement());
+                 PreparedStatement dDelete = conn.prepareStatement(tableData2D.deleteStatement())) {
             conn = dconn;
             conn.setAutoCommit(false);
+            update = dUpdate;
+            delete = dDelete;
             while (results.next() && !writerStopped() && !data2D.filterReachMaxPassed()) {
                 sourceTableRow = tableData2D.readData(results);
                 makeRecord();
@@ -62,8 +72,9 @@ public class DataTableWriter extends Data2DWriter {
                 rowIndex++;
                 handleRow();
             }
+            update.executeBatch();
+            delete.executeBatch();
             conn.commit();
-            conn.close();
         } catch (Exception e) {
             MyBoxLog.error(e);
             if (task != null) {
@@ -107,9 +118,15 @@ public class DataTableWriter extends Data2DWriter {
                 String name = column.getColumnName();
                 sourceTableRow.setColumnValue(name, column.fromString(targetRow.get(i), InvalidAs.Blank));
             }
-            tableData2D.updateData(conn, sourceTableRow);
-            if (writeCount++ % DerbyBase.BatchSize == 0) {
-                conn.commit();
+            if (tableData2D.setUpdateStatement(conn, update, sourceTableRow)) {
+                update.addBatch();
+                if (++count % DerbyBase.BatchSize == 0) {
+                    update.executeBatch();
+                    conn.commit();
+                    if (task != null) {
+                        task.setInfo(message("Updated") + ": " + count);
+                    }
+                }
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -122,10 +139,17 @@ public class DataTableWriter extends Data2DWriter {
     @Override
     public void deleteRow(boolean needDelete) {
         try {
-            if (needDelete) {
-                tableData2D.deleteData(conn, sourceTableRow);
-                if (++writeCount % DerbyBase.BatchSize == 0) {
+            if (!needDelete) {
+                return;
+            }
+            if (tableData2D.setDeleteStatement(conn, delete, sourceTableRow)) {
+                delete.addBatch();
+                if (++count % DerbyBase.BatchSize == 0) {
+                    delete.executeBatch();
                     conn.commit();
+                    if (task != null) {
+                        task.setInfo(message("Deleted") + ": " + count);
+                    }
                 }
             }
         } catch (Exception e) {

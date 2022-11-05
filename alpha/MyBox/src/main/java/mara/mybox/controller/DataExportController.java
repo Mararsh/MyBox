@@ -202,7 +202,7 @@ public class DataExportController extends BaseTaskController {
             cancelled = false;
             tabPane.getSelectionModel().select(logsTab);
             startTime = new Date().getTime();
-            initLogs();
+            clearLogs();
             task = new SingletonTask<Void>(this) {
 
                 private final boolean skip = targetPathController.isSkip();

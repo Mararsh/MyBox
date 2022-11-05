@@ -456,7 +456,7 @@ public class ControlData2D extends BaseController {
             @Override
             protected boolean handle() {
                 try {
-                    if (backupController != null && backupController.isBack() && !data2D.isTmpData()) {
+                    if (backupController != null && backupController.needBackup() && !data2D.isTmpData()) {
                         backupController.addBackup(task, data2D.getFile());
                     }
                     data2D.startTask(task, null);

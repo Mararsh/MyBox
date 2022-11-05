@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javafx.application.Platform;
@@ -21,17 +20,18 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.ImageClipboardTools;
-import mara.mybox.fxml.converter.LongStringFromatConverter;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableImageInfoCell;
+import mara.mybox.fxml.converter.LongStringFromatConverter;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -263,44 +263,48 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
         if (files == null || files.isEmpty()) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private List<ImageInformation> infos;
-
-                @Override
-                protected boolean handle() {
-                    infos = new ArrayList<>();
-                    for (File file : files) {
-                        if (task == null || isCancelled()) {
-                            return false;
-                        }
-                        ImageFileInformation finfo = ImageFileInformation.create(file);
-                        infos.addAll(finfo.getImagesInformation());
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (!infos.isEmpty()) {
-                        if (index < 0 || index >= tableData.size()) {
-                            tableData.addAll(infos);
-                        } else {
-                            tableData.addAll(index, infos);
-                        }
-                        tableView.refresh();
-                        popDone();
-                        recordFileAdded(files);
-                    }
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+
+        task = new SingletonTask<Void>(this) {
+
+            private int offset;
+
+            @Override
+            protected boolean handle() {
+                offset = index >= 0 && index < tableData.size() ? index : tableData.size();
+                for (int i = 0; i < files.size(); i++) {
+                    File file = files.get(i);
+                    if (task == null || isCancelled()) {
+                        return false;
+                    }
+                    task.setInfo(message("Add") + ": " + file);
+                    ImageFileInformation finfo = ImageFileInformation.create(file);
+                    if (finfo == null) {
+                        continue;
+                    }
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            List<ImageInformation> infos = finfo.getImagesInformation();
+                            tableData.addAll(offset, infos);
+                            offset += infos.size();
+                        }
+                    });
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                tableView.refresh();
+                popDone();
+                recordFileAdded(files);
+            }
+
+        };
+        start(task);
     }
 
     @FXML

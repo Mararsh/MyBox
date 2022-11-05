@@ -337,7 +337,7 @@ public class HtmlEditorController extends WebAddressController {
                         if (tmpFile == null || !tmpFile.exists()) {
                             return false;
                         }
-                        if (sourceFile != null && backupController != null && backupController.isBack()) {
+                        if (sourceFile != null && backupController != null && backupController.needBackup()) {
                             backupController.addBackup(task, sourceFile);
                         }
                         return FileTools.rename(tmpFile, targetFile);

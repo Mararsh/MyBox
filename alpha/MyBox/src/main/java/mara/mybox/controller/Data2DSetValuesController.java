@@ -166,7 +166,7 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
             protected boolean handle() {
                 try {
                     if (!data2D.isTmpData() && tableController.dataController.backupController != null
-                            && tableController.dataController.backupController.isBack()) {
+                            && tableController.dataController.backupController.needBackup()) {
                         tableController.dataController.backupController.addBackup(task, data2D.getFile());
                     }
                     data2D.startTask(task, filterController.filter);

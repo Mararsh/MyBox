@@ -642,7 +642,7 @@ public class ImageViewerController extends BaseImageController {
                         if (bufferedImage == null || task == null || isCancelled()) {
                             return false;
                         }
-                        if (backupController != null && backupController.isBack() && srcFile != null) {
+                        if (backupController != null && backupController.needBackup() && srcFile != null) {
                             backupController.addBackup(task, srcFile);
                         }
                         String format = FileNameTools.suffix(targetFile.getName());

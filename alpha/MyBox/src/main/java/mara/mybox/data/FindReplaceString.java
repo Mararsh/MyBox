@@ -41,11 +41,23 @@ public class FindReplaceString {
 
     public boolean run() {
         reset();
-        if (operation == null
-                || inputString == null || inputString.isEmpty()
-                || findString == null || findString.isEmpty()) {
+        if (operation == null) {
             return false;
         }
+        if (inputString == null || inputString.isEmpty()) {
+            if (findString == null || findString.isEmpty()) {
+                if (operation == Operation.ReplaceAll || operation == Operation.ReplaceFirst) {
+                    lastReplacedLength = 0;
+                    outputString = replaceString == null ? "" : replaceString;
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        } else {
+
+        }
+
         int start, end = inputString.length();
         switch (operation) {
             case FindNext:
@@ -184,7 +196,7 @@ public class FindReplaceString {
         }
     }
 
-    public String replaceStringAll(String string, String find, String replace) {
+    public String replace(String string, String find, String replace) {
         setInputString(string).setFindString(find).setReplaceString(replace == null ? "" : replace).setAnchor(0).run();
         return outputString;
     }

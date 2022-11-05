@@ -507,9 +507,13 @@ public class DataTable extends Data2D {
             }
             return null;
         }
+        MyBoxLog.console(task != null);
+        if (task != null) {
+            MyBoxLog.console(sql);
+            task.setInfo(sql);
+        }
         try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile);
-                 ResultSet query = DerbyBase.getConnection()
-                        .prepareStatement(sql).executeQuery()) {
+                 ResultSet query = DerbyBase.getConnection().prepareStatement(sql).executeQuery()) {
             List<Data2DColumn> targetColumns = new ArrayList<>();
             Random random = new Random();
             List<String> names = new ArrayList<>();
@@ -588,8 +592,11 @@ public class DataTable extends Data2D {
                 Data2DColumn column = dataColumns.get(i);
                 String columnName = column.getColumnName();
                 List<String> rowValues = new ArrayList<>();
-                try ( PreparedStatement statement = conn.prepareStatement(
-                        "SELECT " + idName + "," + columnName + " FROM " + sheet + " ORDER BY " + idName);
+                String sql = "SELECT " + idName + "," + columnName + " FROM " + sheet + " ORDER BY " + idName;
+                if (task != null) {
+                    task.setInfo(sql);
+                }
+                try ( PreparedStatement statement = conn.prepareStatement(sql);
                          ResultSet results = statement.executeQuery()) {
                     while (results.next() && task != null && !task.isCancelled()) {
                         rowValues.add(results.getString(columnName));
@@ -668,6 +675,9 @@ public class DataTable extends Data2D {
             return null;
         }
         DataFileCSV targetData = null;
+        if (task != null) {
+            task.setInfo(query);
+        }
         try ( Connection conn = DerbyBase.getConnection();
                  PreparedStatement statement = conn.prepareStatement(query);
                  ResultSet results = statement.executeQuery()) {
@@ -691,6 +701,9 @@ public class DataTable extends Data2D {
         Object mode = null;
         String sql = "SELECT " + colName + ", count(*) AS mybox99_mode FROM " + sheet
                 + " GROUP BY " + colName + " ORDER BY mybox99_mode DESC FETCH FIRST ROW ONLY";
+        if (task != null) {
+            task.setInfo(sql);
+        }
         try ( PreparedStatement statement = conn.prepareStatement(sql);
                  ResultSet results = statement.executeQuery()) {
             if (results.next()) {
@@ -738,6 +751,9 @@ public class DataTable extends Data2D {
         String colName = column.getColumnName();
         String sql = "SELECT " + colName + " FROM " + sheet + " ORDER BY " + colName
                 + " OFFSET " + offset + " ROWS FETCH NEXT " + num + " ROWS ONLY";
+        if (task != null) {
+            task.setInfo(sql);
+        }
         try ( PreparedStatement statement = conn.prepareStatement(sql);
                  ResultSet results = statement.executeQuery()) {
             Object first = null;
@@ -890,6 +906,9 @@ public class DataTable extends Data2D {
             csvPrinter.printRecord(row);
 
             String sql = "SELECT count(*) AS mybox99_count FROM " + sheet;
+            if (task != null) {
+                task.setInfo(sql);
+            }
             try ( PreparedStatement statement = conn.prepareStatement(sql);
                      ResultSet results = statement.executeQuery()) {
                 if (results.next()) {
@@ -911,6 +930,9 @@ public class DataTable extends Data2D {
             csvPrinter.printRecord(row);
             sql = "SELECT " + colName + ", count(*) AS mybox99_count FROM " + sheet
                     + " GROUP BY " + colName + " ORDER BY mybox99_count DESC";
+            if (task != null) {
+                task.setInfo(sql);
+            }
             try ( PreparedStatement statement = conn.prepareStatement(sql);
                      ResultSet results = statement.executeQuery()) {
                 while (results.next() && task != null && !task.isCancelled()) {

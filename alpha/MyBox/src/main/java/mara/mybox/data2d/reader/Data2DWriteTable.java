@@ -1,6 +1,7 @@
 package mara.mybox.data2d.reader;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.data2d.DataTable;
@@ -20,6 +21,7 @@ public class Data2DWriteTable extends Data2DOperator {
     protected Connection conn;
     protected DataTable writerTable;
     protected TableData2D writerTableData2D;
+    protected PreparedStatement insert;
     protected long count;
 
     public static Data2DWriteTable create(Data2D_Edit data) {
@@ -29,16 +31,39 @@ public class Data2DWriteTable extends Data2DOperator {
 
     @Override
     public boolean checkParameters() {
-        if (cols == null || cols.isEmpty() || conn == null
-                || writerTable == null || invalidAs == null) {
+        try {
+            if (cols == null || cols.isEmpty() || conn == null
+                    || writerTable == null || invalidAs == null) {
+                return false;
+            }
+            if (invalidAs == InvalidAs.Skip) {
+                invalidAs = InvalidAs.Blank;
+            }
+            writerTableData2D = writerTable.getTableData2D();
+            count = 0;
+            String sql = writerTableData2D.insertStatement();
+            if (task != null) {
+                task.setInfo(sql);
+            }
+            insert = conn.prepareStatement(sql);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
             return false;
         }
-        if (invalidAs == InvalidAs.Skip) {
-            invalidAs = InvalidAs.Blank;
+    }
+
+    @Override
+    public void handleData() {
+        try {
+
+            reader.readRows();
+            insert.executeBatch();
+            conn.commit();
+            insert.close();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
-        writerTableData2D = writerTable.getTableData2D();
-        count = 0;
-        return true;
     }
 
     @Override
@@ -61,14 +86,18 @@ public class Data2DWriteTable extends Data2DOperator {
             if (includeRowNumber) {
                 data2DRow.setColumnValue(writerTable.column(1).getColumnName(), rowIndex);
             }
-            writerTableData2D.insertData(conn, data2DRow);
-            if (++count % DerbyBase.BatchSize == 0) {
-                conn.commit();
+            if (writerTableData2D.setInsertStatement(conn, insert, data2DRow)) {
+                insert.addBatch();
+                if (++count % DerbyBase.BatchSize == 0) {
+                    insert.executeBatch();
+                    conn.commit();
+                }
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
+
 
     /*
         set

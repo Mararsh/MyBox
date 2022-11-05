@@ -154,7 +154,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            initLogs();
+            clearLogs();
             StyleTools.setNameIcon(startButton, Languages.message("Stop"), "iconStop.png");
             startButton.applyCss();
             startButton.setUserData("started");

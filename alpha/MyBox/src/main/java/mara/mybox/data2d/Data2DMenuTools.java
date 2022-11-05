@@ -437,13 +437,12 @@ public class Data2DMenuTools {
             menu.setDisable(empty);
             chartMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("LocationDistribution"), StyleTools.getIconImage("iconLocation.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DLocationDistributionController.open(controller);
-            });
-            menu.setDisable(data2D == null || !data2D.includeCoordinate());
-            chartMenu.getItems().add(menu);
-
+//            menu = new MenuItem(message("LocationDistribution"), StyleTools.getIconImage("iconLocation.png"));
+//            menu.setOnAction((ActionEvent event) -> {
+//                Data2DLocationDistributionController.open(controller);
+//            });
+//            menu.setDisable(data2D == null || !data2D.includeCoordinate());
+//            chartMenu.getItems().add(menu);
             return chartMenu;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

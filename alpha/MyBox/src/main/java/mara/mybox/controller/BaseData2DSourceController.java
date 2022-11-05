@@ -49,6 +49,8 @@ public class BaseData2DSourceController extends ControlData2DLoad {
     protected ControlData2DRowFilter filterController;
     @FXML
     protected FlowPane columnsPane, otherColumnsPane;
+    @FXML
+    protected CheckBox formatValuesCheck;
 
 
     /*
@@ -664,7 +666,11 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                     if (index < 0 || index >= tableRow.size()) {
                         continue;
                     }
-                    newRow.add(tableRow.get(index));
+                    String v = tableRow.get(index);
+                    if (v != null && formatValuesCheck != null && formatValuesCheck.isSelected()) {
+                        v = data2D.column(col).format(v);
+                    }
+                    newRow.add(v);
                 }
                 data.add(newRow);
                 filteredRowsIndices.add(row);
@@ -687,7 +693,8 @@ public class BaseData2DSourceController extends ControlData2DLoad {
             }
             List<List<String>> data;
             if (isAllPages()) {
-                DataFileCSV csv = data2D.copy(null, checkedColsIndices, false, true);
+                DataFileCSV csv = data2D.copy(null, checkedColsIndices,
+                        false, true, formatValuesCheck != null && formatValuesCheck.isSelected());
                 if (csv == null) {
                     return null;
                 }

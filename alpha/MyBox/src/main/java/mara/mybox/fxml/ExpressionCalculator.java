@@ -103,9 +103,9 @@ public class ExpressionCalculator {
 
                 List<String> names = data2D.columnNames();
                 for (int i = 0; i < names.size(); i++) {
-                    filledScript = replaceStringAll(filledScript, "#{" + names.get(i) + "}", dataRow.get(i));
+                    filledScript = replace(filledScript, "#{" + names.get(i) + "}", dataRow.get(i));
                 }
-                filledScript = replaceStringAll(filledScript, "#{" + message("DataRowNumber") + "}", dataRowNumber + "");
+                filledScript = replace(filledScript, "#{" + message("DataRowNumber") + "}", dataRowNumber + "");
             }
             return filledScript;
         } catch (Exception e) {
@@ -130,10 +130,10 @@ public class ExpressionCalculator {
             for (int i = 0; i < data2D.columnsNumber(); i++) {
                 Data2DColumn column = data2D.getColumns().get(i);
                 String name = column.getColumnName();
-                filledScript = replaceStringAll(filledScript, "#{" + name + "}", tableRow.get(i + 1));
+                filledScript = replace(filledScript, "#{" + name + "}", tableRow.get(i + 1));
             }
-            filledScript = replaceStringAll(filledScript, "#{" + message("DataRowNumber") + "}", tableRow.get(0) + "");
-            filledScript = replaceStringAll(filledScript, "#{" + message("TableRowNumber") + "}",
+            filledScript = replace(filledScript, "#{" + message("DataRowNumber") + "}", tableRow.get(0) + "");
+            filledScript = replace(filledScript, "#{" + message("TableRowNumber") + "}",
                     tableRowNumber >= 0 ? (tableRowNumber + 1) + "" : message("NoTableRowNumberWhenAllPages"));
             return filledScript;
         } catch (Exception e) {
@@ -199,37 +199,37 @@ public class ExpressionCalculator {
                 Data2DColumn column = data2D.columns.get(i);
                 String name = column.getColumnName();
                 if (filledScript.contains("#{" + name + "-" + message("Mean") + "}")) {
-                    filledScript = replaceStringAll(filledScript, "#{" + name + "-" + message("Mean") + "}", "1");
+                    filledScript = replace(filledScript, "#{" + name + "-" + message("Mean") + "}", "1");
                 }
                 if (filledScript.contains("#{" + name + "-" + message("Median") + "}")) {
-                    filledScript = replaceStringAll(filledScript, "#{" + name + "-" + message("Median") + "}", "1");
+                    filledScript = replace(filledScript, "#{" + name + "-" + message("Median") + "}", "1");
                 }
                 if (filledScript.contains("#{" + name + "-" + message("Mode") + "}")) {
-                    filledScript = replaceStringAll(filledScript, "#{" + name + "-" + message("Mode") + "}", "1");
+                    filledScript = replace(filledScript, "#{" + name + "-" + message("Mode") + "}", "1");
                 }
                 if (filledScript.contains("#{" + name + "-" + message("MinimumQ0") + "}")) {
-                    filledScript = replaceStringAll(filledScript, "#{" + name + "-" + message("MinimumQ0") + "}", "1");
+                    filledScript = replace(filledScript, "#{" + name + "-" + message("MinimumQ0") + "}", "1");
                 }
                 if (filledScript.contains("#{" + name + "-" + message("LowerQuartile") + "}")) {
-                    filledScript = replaceStringAll(filledScript, "#{" + name + "-" + message("LowerQuartile") + "}", "1");
+                    filledScript = replace(filledScript, "#{" + name + "-" + message("LowerQuartile") + "}", "1");
                 }
                 if (filledScript.contains("#{" + name + "-" + message("UpperQuartile") + "}")) {
-                    filledScript = replaceStringAll(filledScript, "#{" + name + "-" + message("UpperQuartile") + "}", "1");
+                    filledScript = replace(filledScript, "#{" + name + "-" + message("UpperQuartile") + "}", "1");
                 }
                 if (filledScript.contains("#{" + name + "-" + message("MaximumQ4") + "}")) {
-                    filledScript = replaceStringAll(filledScript, "#{" + name + "-" + message("MaximumQ4") + "}", "1");
+                    filledScript = replace(filledScript, "#{" + name + "-" + message("MaximumQ4") + "}", "1");
                 }
                 if (filledScript.contains("#{" + name + "-" + message("LowerExtremeOutlierLine") + "}")) {
-                    filledScript = replaceStringAll(filledScript, "#{" + name + "-" + message("LowerExtremeOutlierLine") + "}", "1");
+                    filledScript = replace(filledScript, "#{" + name + "-" + message("LowerExtremeOutlierLine") + "}", "1");
                 }
                 if (filledScript.contains("#{" + name + "-" + message("LowerMildOutlierLine") + "}")) {
-                    filledScript = replaceStringAll(filledScript, "#{" + name + "-" + message("LowerMildOutlierLine") + "}", "1");
+                    filledScript = replace(filledScript, "#{" + name + "-" + message("LowerMildOutlierLine") + "}", "1");
                 }
                 if (filledScript.contains("#{" + name + "-" + message("UpperMildOutlierLine") + "}")) {
-                    filledScript = replaceStringAll(filledScript, "#{" + name + "-" + message("UpperMildOutlierLine") + "}", "1");
+                    filledScript = replace(filledScript, "#{" + name + "-" + message("UpperMildOutlierLine") + "}", "1");
                 }
                 if (filledScript.contains("#{" + name + "-" + message("UpperExtremeOutlierLine") + "}")) {
-                    filledScript = replaceStringAll(filledScript, "#{" + name + "-" + message("UpperExtremeOutlierLine") + "}", "1");
+                    filledScript = replace(filledScript, "#{" + name + "-" + message("UpperExtremeOutlierLine") + "}", "1");
                 }
             }
             return filledScript;
@@ -239,8 +239,8 @@ public class ExpressionCalculator {
         }
     }
 
-    public String replaceStringAll(String script, String string, String replaced) {
-        return getFindReplace().replaceStringAll(script, string, replaced);
+    public String replace(String script, String string, String replaced) {
+        return getFindReplace().replace(script, string, replaced);
     }
 
     /*
@@ -261,7 +261,7 @@ public class ExpressionCalculator {
      */
     public FindReplaceString getFindReplace() {
         if (findReplace == null) {
-            findReplace = createFindReplace();
+            findReplace = createReplaceAll();
         }
         return findReplace;
     }
@@ -277,7 +277,7 @@ public class ExpressionCalculator {
     /*
         static
      */
-    public static FindReplaceString createFindReplace() {
+    public static FindReplaceString createReplaceAll() {
         return FindReplaceString.create().setOperation(FindReplaceString.Operation.ReplaceAll)
                 .setIsRegex(false).setCaseInsensitive(false).setMultiline(false);
     }

@@ -176,6 +176,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
                     if (!group.run()) {
                         return false;
                     }
+                    task.setInfo(message("Statistic") + "...");
                     statistic = new DataTableGroupStatistic()
                             .setGroups(group).setCountChart(true)
                             .setCalculation(calculation)
@@ -194,7 +195,9 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
 
             @Override
             protected void whenSucceeded() {
-
+                chartDataController.loadData(dataFile.cloneAll());
+                groupDataController.loadData(group.getTargetData().cloneAll());
+                statisticDataController.loadData(statistic.getStatisticData().cloneAll());
             }
 
             @Override
@@ -202,11 +205,6 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
                 super.finalAction();
                 data2D.stopTask();
                 task = null;
-                if (ok) {
-                    chartDataController.loadData(dataFile.cloneAll());
-                    groupDataController.loadData(group.getTargetData().cloneAll());
-                    statisticDataController.loadData(statistic.getStatisticData().cloneAll());
-                }
             }
 
         };

@@ -230,6 +230,9 @@ public class DataTableGroup {
                 }
             }
             String sql = "SELECT * FROM " + sourceSheet + " ORDER BY " + orderBy;
+            if (task != null) {
+                task.setInfo(sql);
+            }
             try ( ResultSet query = conn.prepareStatement(sql).executeQuery()) {
                 Map<String, Object> sourceRow, lastRow = null;
                 Map<String, Object> groupMap = new HashMap<>();
@@ -319,6 +322,9 @@ public class DataTableGroup {
             double maxValue = Double.NaN, minValue = Double.NaN;
             String sql = "SELECT MAX(" + mappedGroupName + ") AS dmax, MIN("
                     + mappedGroupName + ") AS dmin FROM " + sourceSheet;
+            if (task != null) {
+                task.setInfo(sql);
+            }
             try ( ResultSet results = conn.prepareStatement(sql).executeQuery()) {
                 if (results.next()) {
                     maxValue = results.getDouble("dmax");
@@ -429,6 +435,9 @@ public class DataTableGroup {
     }
 
     private void valueQeury(String sql) {
+        if (task != null) {
+            task.setInfo(sql);
+        }
         try ( ResultSet query = conn.prepareStatement(sql).executeQuery()) {
             Map<String, Object> sourceRow;
             while (query.next()) {
@@ -456,6 +465,7 @@ public class DataTableGroup {
                     }
                 }
             }
+            insert.executeBatch();
             conn.commit();
         } catch (Exception e) {
             if (task != null) {
@@ -469,6 +479,9 @@ public class DataTableGroup {
         try {
             long total = 0;
             String sql = "SELECT COUNT(*) FROM " + sourceSheet;
+            if (task != null) {
+                task.setInfo(sql);
+            }
             try ( ResultSet query = conn.prepareStatement(sql).executeQuery()) {
                 if (query.next()) {
                     total = query.getLong(1);
@@ -487,6 +500,9 @@ public class DataTableGroup {
             }
             conn.setAutoCommit(false);
             sql = "SELECT * FROM " + sourceSheet + orderByString;
+            if (task != null) {
+                task.setInfo(sql);
+            }
             long rowIndex = 0, from, to, interval = Math.round(splitInterval);
             try ( ResultSet query = conn.prepareStatement(sql).executeQuery()) {
                 Map<String, Object> sourceRow;
@@ -568,6 +584,9 @@ public class DataTableGroup {
                 parameterValues.add(parameterValue);
                 sql = "SELECT * FROM " + sourceSheet + orderByString
                         + " OFFSET " + from + " ROWS FETCH NEXT " + (to - from + 1) + " ROWS ONLY";
+                if (task != null) {
+                    task.setInfo(sql);
+                }
                 try ( ResultSet query = conn.prepareStatement(sql).executeQuery()) {
                     Map<String, Object> sourceRow;
                     conn.setAutoCommit(false);
@@ -646,13 +665,16 @@ public class DataTableGroup {
                     for (Data2DColumn column : sourceData.sourceColumns()) {
                         String sourceName = column.getColumnName();
                         String tmpName = sourceData.tmpColumnName(sourceName);
-                        script = findReplace.replaceStringAll(script, "#{" + sourceName + "}", "#{" + tmpName + "}");
+                        script = findReplace.replace(script, "#{" + sourceName + "}", "#{" + tmpName + "}");
                         for (StatisticType stype : StatisticType.values()) {
-                            script = findReplace.replaceStringAll(script, "#{" + sourceName + "-" + message(stype.name()) + "}",
+                            script = findReplace.replace(script, "#{" + sourceName + "-" + message(stype.name()) + "}",
                                     "#{" + tmpName + "-" + message(stype.name()) + "}");
                         }
                         filter.setFilledScript(script);
                     }
+                }
+                if (task != null) {
+                    task.setInfo(sql);
                 }
                 try ( ResultSet query = conn.prepareStatement(sql).executeQuery()) {
                     Map<String, Object> sourceRow;
@@ -725,6 +747,7 @@ public class DataTableGroup {
                         insert = conn.prepareStatement(tableTarget.insertStatement());
                         mappedIdColName = targetData.tmpColumnName(idColName);
                         mappedParameterName = targetData.tmpColumnName(parameterName);
+                        task.setInfo(message("Table") + ": " + targetData.getSheet());
                     }
                     Data2DRow data2DRow = tableTarget.newRow();
                     data2DRow.setColumnValue(mappedIdColName, groupid);
@@ -734,9 +757,13 @@ public class DataTableGroup {
                         data2DRow.setColumnValue(finalColumns.get(i + 1).getColumnName(),
                                 sourceRow.get(sourceData.tmpColumnName(name)));
                     }
-                    tableTarget.insertData(conn, insert, data2DRow);
-                    if (++count % DerbyBase.BatchSize == 0) {
-                        conn.commit();
+                    if (tableTarget.setInsertStatement(conn, insert, data2DRow)) {
+                        insert.addBatch();
+                        if (++count % DerbyBase.BatchSize == 0) {
+                            insert.executeBatch();
+                            conn.commit();
+                            task.setInfo(message("Inserted") + ": " + count);
+                        }
                     }
                     break;
 
@@ -819,6 +846,9 @@ public class DataTableGroup {
                         .setRowsNumber(count);
                 Data2D.saveAttributes(conn, targetFile, finalColumns);
                 csvFiles.add(csvFile);
+                if (task != null) {
+                    task.setInfo(message("Created") + ": " + csvFile);
+                }
             }
         } catch (Exception e) {
             if (task != null) {
@@ -831,12 +861,6 @@ public class DataTableGroup {
 
     private void stopScan() {
         try {
-            if (conn != null) {
-                conn.commit();
-            }
-            if (insert != null) {
-                insert.close();
-            }
             if (csvPrinter != null) {
                 csvPrinter.flush();
                 csvPrinter.close();
@@ -855,10 +879,16 @@ public class DataTableGroup {
             switch (targetType) {
                 case Table:
                     if (targetData != null) {
+                        insert.executeBatch();
+                        conn.commit();
+                        insert.close();
                         targetData.setDataSize(count)
                                 .setDataName(originalData.dataName() + "_" + parameterName)
                                 .setRowsNumber(count).setScale(scale);
-                        targetData.saveAttributes();
+                        Data2D.saveAttributes(conn, targetData, targetData.getColumns());
+                        if (task != null) {
+                            task.setInfo(message("Created") + ": " + message("Table") + "  " + targetData.getSheet());
+                        }
                     }
                     break;
 

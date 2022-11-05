@@ -74,6 +74,9 @@ public class DataTableGroupStatistic {
             String sql = "SELECT * FROM " + groupResults.getSheet() + " ORDER BY " + idColName;
             String mappedIdColName = groupResults.tmpColumnName(idColName);
             String mappedParameterName = groupResults.tmpColumnName(parameterName);
+            if (task != null) {
+                task.setInfo(sql);
+            }
             try ( ResultSet query = conn.prepareStatement(sql).executeQuery();
                      PreparedStatement insert = conn.prepareStatement(tableGroup.insertStatement());) {
                 while (query.next()) {
@@ -91,18 +94,24 @@ public class DataTableGroupStatistic {
                         data2DRow.setColumnValue(groupData.tmpColumnName(name), v);
                     }
                     if (groupid > 0 && groupid != currentGroupid) {
+                        insert.executeBatch();
                         conn.commit();
                         statistic();
                         tableGroup.clearData(conn);
                         count = 0;
                     }
-                    tableGroup.insertData(conn, insert, data2DRow);
-                    if (++count % DerbyBase.BatchSize == 0) {
-                        conn.commit();
+                    if (tableGroup.setInsertStatement(conn, insert, data2DRow)) {
+                        insert.addBatch();
+                        if (++count % DerbyBase.BatchSize == 0) {
+                            insert.executeBatch();
+                            conn.commit();
+                            task.setInfo(message("Inserted") + ": " + count);
+                        }
                     }
                     groupid = currentGroupid;
                     parameterValue = currentParameterValue;
                 }
+                insert.executeBatch();
                 conn.commit();
                 statistic();
             }
@@ -194,6 +203,10 @@ public class DataTableGroupStatistic {
             for (int i = 1; i <= colSize; i++) {
                 cols.add(i);
             }
+            if (task != null) {
+                task.setInfo(parameterName + ": " + parameterValue + "\n"
+                        + message("Statistic") + ": " + calculation.names());
+            }
             DoubleStatistic[] sData = null;
             if (calculation.needNonStored()) {
                 sData = groupData.statisticByColumnsWithoutStored(cols, calculation);
@@ -204,7 +217,6 @@ public class DataTableGroupStatistic {
             if (sData == null) {
                 return;
             }
-
             for (int i = 0; i < colSize; i++) {
                 Data2DRow data2DRow = tableStatistic.newRow();
                 data2DRow.setColumnValue(statisticData.tmpColumnName(idColName), groupid);
@@ -215,12 +227,18 @@ public class DataTableGroupStatistic {
                     data2DRow.setColumnValue(statisticData.tmpColumnName(message(type.name())),
                             DoubleTools.scale(s.value(type), scale));
                 }
-                tableStatistic.insertData(conn, statisticInsert, data2DRow);
-                if (++statisticRowsCount % DerbyBase.BatchSize == 0) {
-                    conn.commit();
+                if (tableStatistic.setInsertStatement(conn, statisticInsert, data2DRow)) {
+                    statisticInsert.addBatch();
+                    if (++statisticRowsCount % DerbyBase.BatchSize == 0) {
+                        statisticInsert.executeBatch();
+                        conn.commit();
+                        task.setInfo(message("Inserted") + ": " + statisticRowsCount);
+                    }
                 }
             }
-
+            statisticInsert.executeBatch();
+            conn.commit();
+            task.setInfo(message("Inserted") + ": " + statisticRowsCount);
             if (countChart) {
                 List<String> row = new ArrayList<>();
                 row.add(groupid + "");
@@ -237,9 +255,6 @@ public class DataTableGroupStatistic {
                 chartRowsCount++;
             }
 
-            if (task != null) {
-                task.setInfo(message("Statistic") + ": " + parameterValue);
-            }
         } catch (Exception e) {
             MyBoxLog.error(e);
             if (task != null) {
@@ -250,8 +265,10 @@ public class DataTableGroupStatistic {
 
     private boolean finish() {
         try {
-            groupData.drop(conn);
+            statisticInsert.executeBatch();
             conn.commit();
+
+            groupData.drop(conn);
 
             statisticData.setDataSize(statisticRowsCount).setRowsNumber(statisticRowsCount);
             Data2D.saveAttributes(conn, statisticData, statisticData.getColumns());

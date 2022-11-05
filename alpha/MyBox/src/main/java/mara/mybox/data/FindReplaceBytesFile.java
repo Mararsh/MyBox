@@ -438,7 +438,6 @@ public class FindReplaceBytesFile {
                     outputStream.write(replacedBytes);
                     backString = replacedString.substring(lastReplacedLength, replacedString.length());
                     total += findReplaceString.getCount();
-                    break;
                 } else {
                     if (!backString.isEmpty()) {
                         byte[] backBytes = ByteTools.hexFormatToBytes(backString);

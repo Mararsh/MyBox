@@ -555,7 +555,11 @@ public class ColumnDefinition extends BaseData {
         }
     }
 
-    public String display(String string, int maxLen) {
+    public String format(String string) {
+        return format(string, -1);
+    }
+
+    public String format(String string, int maxLen) {
         try {
             if (string == null) {
                 return null;
@@ -595,7 +599,11 @@ public class ColumnDefinition extends BaseData {
                     return string;
                 default:
                     String s = o.toString();
-                    return s.length() > maxLen ? s.substring(0, maxLen) : s;
+                    if (maxLen > 0) {
+                        return s.length() > maxLen ? s.substring(0, maxLen) : s;
+                    } else {
+                        return s;
+                    }
             }
         } catch (Exception e) {
             return string;

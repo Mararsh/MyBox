@@ -40,11 +40,11 @@ import org.apache.commons.math3.stat.Frequency;
  * @License Apache License Version 2.0
  */
 public abstract class Data2D_Operations extends Data2D_Convert {
-    
+
     public static enum ObjectType {
         Columns, Rows, All
     }
-    
+
     public boolean export(ControlDataConvert convertController, List<Integer> cols) {
         if (convertController == null || cols == null || cols.isEmpty()) {
             return false;
@@ -54,20 +54,20 @@ public abstract class Data2D_Operations extends Data2D_Convert {
                 .setCols(cols).setTask(task).start();
         return reader != null && !reader.failed();
     }
-    
+
     public List<List<String>> allRows(List<Integer> cols, boolean rowNumber) {
         Data2DReadColumns reader = Data2DReadColumns.create(this);
         reader.setIncludeRowNumber(rowNumber)
                 .setCols(cols).setTask(task).start();
         return reader.failed() ? null : reader.getRows();
     }
-    
+
     public List<List<String>> allRows(boolean rowNumber) {
         Data2DReadRows reader = Data2DReadRows.create(this);
         reader.setIncludeRowNumber(rowNumber).setTask(task).start();
         return reader.failed() ? null : reader.getRows();
     }
-    
+
     public DoubleStatistic[] statisticByColumnsForCurrentPage(List<Integer> cols, DescriptiveStatistic selections) {
         try {
             if (cols == null || cols.isEmpty() || selections == null) {
@@ -176,7 +176,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return null;
         }
     }
-    
+
     public DataFileCSV statisticByRows(String dname, List<String> names, List<Integer> cols, DescriptiveStatistic selections) {
         if (names == null || names.isEmpty() || cols == null || cols.isEmpty()) {
             return null;
@@ -236,7 +236,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
         return sData;
     }
-    
+
     public List<Data2DColumn> targetColumns(List<Integer> cols, List<Integer> otherCols, boolean rowNumber, String suffix) {
         List<Data2DColumn> targetColumns = new ArrayList<>();
         if (rowNumber) {
@@ -257,8 +257,9 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
         return fixColumnNames(targetColumns);
     }
-    
-    public DataFileCSV copy(String dname, List<Integer> cols, boolean includeRowNumber, boolean includeColName) {
+
+    public DataFileCSV copy(String dname, List<Integer> cols,
+            boolean includeRowNumber, boolean includeColName, boolean formatValues) {
         if (cols == null || cols.isEmpty()) {
             return null;
         }
@@ -275,6 +276,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             }
             reader = Data2DCopy.create(this)
                     .setCsvPrinter(csvPrinter)
+                    .setFormatValues(formatValues)
                     .setIncludeRowNumber(includeRowNumber)
                     .setCols(cols).setTask(task).start();
         } catch (Exception e) {
@@ -298,7 +300,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return null;
         }
     }
-    
+
     public List<DataFileCSV> splitBySize(List<Integer> cols, boolean includeRowNumber, int splitSize) {
         if (cols == null || cols.isEmpty()) {
             return null;
@@ -308,7 +310,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
                 .setCols(cols).setTask(task).start();
         return reader.getFiles();
     }
-    
+
     public List<DataFileCSV> splitByList(List<Integer> cols, boolean includeRowNumber, List<Integer> list) {
         if (cols == null || cols.isEmpty() || list == null || list.isEmpty()) {
             return null;
@@ -373,9 +375,9 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             }
             return null;
         }
-        
+
     }
-    
+
     public DataFileCSV rowExpression(String dname, String script, String name, boolean errorContinue,
             List<Integer> cols, boolean includeRowNumber, boolean includeColName) {
         if (cols == null || cols.isEmpty()) {
@@ -419,7 +421,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return null;
         }
     }
-    
+
     public List<Data2DColumn> makePercentageColumns(List<Integer> cols, List<Integer> otherCols, ObjectType objectType) {
         if (objectType == null) {
             objectType = ObjectType.Columns;
@@ -443,7 +445,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
         return fixColumnNames(targetColumns);
     }
-    
+
     public DataFileCSV percentageColumns(String dname, List<Integer> cols, List<Integer> otherCols,
             int scale, String toNegative, InvalidAs invalidAs) {
         if (cols == null || cols.isEmpty()) {
@@ -502,7 +504,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return null;
         }
     }
-    
+
     public DataFileCSV percentageAll(String dname, List<Integer> cols, List<Integer> otherCols,
             int scale, String toNegative, InvalidAs invalidAs) {
         if (cols == null || cols.isEmpty()) {
@@ -561,7 +563,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return null;
         }
     }
-    
+
     public DataFileCSV percentageRows(String dname, List<Integer> cols, List<Integer> otherCols,
             int scale, String toNegative, InvalidAs invalidAs) {
         if (cols == null || cols.isEmpty()) {
@@ -600,7 +602,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return null;
         }
     }
-    
+
     public DataFileCSV frequency(String dname, Frequency frequency, String colName, int col, int scale) {
         if (frequency == null || colName == null || col < 0) {
             return null;
@@ -613,11 +615,11 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             row.add(colName + "_" + message("Count"));
             row.add(colName + "_" + message("CountPercentage"));
             csvPrinter.printRecord(row);
-            
+
             operator = Data2DFrequency.create(this)
                     .setFrequency(frequency).setColIndex(col);
             operator.setCsvPrinter(csvPrinter).setScale(scale).setTask(task).start();
-            
+
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -636,7 +638,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return null;
         }
     }
-    
+
     public DataFileCSV normalizeMinMaxColumns(String dname, List<Integer> cols, List<Integer> otherCols,
             double from, double to, boolean rowNumber, boolean colName, int scale, InvalidAs invalidAs) {
         if (cols == null || cols.isEmpty()) {
@@ -702,7 +704,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return null;
         }
     }
-    
+
     public DataFileCSV normalizeSumColumns(String dname, List<Integer> cols, List<Integer> otherCols,
             boolean rowNumber, boolean colName, int scale, InvalidAs invalidAs) {
         if (cols == null || cols.isEmpty()) {
@@ -750,7 +752,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
                     .setInvalidAs(invalidAs).setIncludeRowNumber(rowNumber)
                     .setCols(cols).setOtherCols(otherCols)
                     .setScale(scale).setTask(task).start();
-            
+
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -770,7 +772,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return null;
         }
     }
-    
+
     public DataFileCSV normalizeZscoreColumns(String dname, List<Integer> cols, List<Integer> otherCols,
             boolean rowNumber, boolean colName, int scale, InvalidAs invalidAs) {
         if (cols == null || cols.isEmpty()) {
@@ -819,7 +821,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
                     .setInvalidAs(invalidAs).setIncludeRowNumber(rowNumber)
                     .setCols(cols).setOtherCols(otherCols)
                     .setScale(scale).setTask(task).start();
-            
+
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -839,7 +841,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return null;
         }
     }
-    
+
     public DataFileCSV normalizeMinMaxAll(String dname, List<Integer> cols, List<Integer> otherCols,
             double from, double to, boolean rowNumber, boolean colName, int scale, InvalidAs invalidAs) {
         if (cols == null || cols.isEmpty()) {
@@ -885,7 +887,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
                     .setInvalidAs(invalidAs).setIncludeRowNumber(rowNumber)
                     .setCols(cols).setOtherCols(otherCols)
                     .setScale(scale).setTask(task).start();
-            
+
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -905,7 +907,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return null;
         }
     }
-    
+
     public DataFileCSV normalizeSumAll(String dname, List<Integer> cols, List<Integer> otherCols,
             boolean rowNumber, boolean colName, int scale, InvalidAs invalidAs) {
         if (cols == null || cols.isEmpty()) {
@@ -947,7 +949,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
                     .setInvalidAs(invalidAs).setIncludeRowNumber(rowNumber)
                     .setCols(cols).setOtherCols(otherCols)
                     .setScale(scale).setTask(task).start();
-            
+
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -967,7 +969,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return null;
         }
     }
-    
+
     public DataFileCSV normalizeZscoreAll(String dname, List<Integer> cols, List<Integer> otherCols,
             boolean rowNumber, boolean colName, int scale, InvalidAs invalidAs) {
         if (cols == null || cols.isEmpty()) {
@@ -1013,7 +1015,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
                     .setInvalidAs(invalidAs).setIncludeRowNumber(rowNumber)
                     .setCols(cols).setOtherCols(otherCols)
                     .setScale(scale).setTask(task).start();
-            
+
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -1033,7 +1035,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return null;
         }
     }
-    
+
     public DataFileCSV normalizeRows(String dname, Normalization.Algorithm a,
             List<Integer> cols, List<Integer> otherCols,
             double from, double to, boolean rowNumber, boolean colName, int scale, InvalidAs invalidAs) {
@@ -1077,7 +1079,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return null;
         }
     }
-    
+
     public DataFileCSV simpleLinearRegression(String dname, List<Integer> cols,
             SimpleLinearRegression simpleRegression, boolean writeFile) {
         if (cols == null || cols.isEmpty() || simpleRegression == null) {
@@ -1095,12 +1097,12 @@ public abstract class Data2D_Operations extends Data2D_Convert {
                 }
                 csvPrinter.printRecord(names);
                 tcolsNumber = names.size();
-                
+
                 operator = Data2DSimpleLinearRegression.create(this)
                         .setSimpleRegression(simpleRegression)
                         .setCsvPrinter(csvPrinter)
                         .setCols(cols).setScale(scale).setTask(task).start();
-                
+
             } catch (Exception e) {
                 if (task != null) {
                     task.setError(e.toString());
@@ -1125,5 +1127,5 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return null;
         }
     }
-    
+
 }

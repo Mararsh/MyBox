@@ -33,7 +33,7 @@ public class BaseTask<P> extends Task<P> {
 
     @Override
     protected P call() {
-        ok = true;
+        ok = false;
         if (!initValues()) {
             return null;
         }

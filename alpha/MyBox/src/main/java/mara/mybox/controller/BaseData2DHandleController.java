@@ -419,6 +419,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                 tmp2D.setColumns(tmpColumns);
             }
             tmp2D.startTask(task, filterController.filter);
+            task.setInfo(message("Filter") + "...");
             DataTable tmpTable;
             if (isAllPages()) {
                 tmpTable = tmp2D.toTmpTable(task, colIndices, needRowNumber, false, invalidAs);
@@ -578,6 +579,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                     targetNames.add(name);
                 }
             }
+            task.setInfo(message("GroupBy") + "...");
             DataTableGroup group = new DataTableGroup(data2D, tmpTable)
                     .setType(groupController.groupType())
                     .setGroupNames(groupController.groupNames)

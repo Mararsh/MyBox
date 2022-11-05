@@ -544,14 +544,16 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         return true;
     }
 
-    @Override
     public void initLogs() {
-        if (logsTextArea != null) {
+        if (logsTextArea == null) {
+            return;
+        }
+        Platform.runLater(() -> {
             logsTextArea.setText("");
             newLogs = new StringBuffer();
             logsNewlines = 0;
             logsTotalLines = 0;
-        }
+        });
     }
 
     public File getCurrentFile() {
@@ -1024,12 +1026,6 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             }
         }
         );
-    }
-
-    @FXML
-    @Override
-    public void clearLogs() {
-        logsTextArea.setText("");
     }
 
     @Override

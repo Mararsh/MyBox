@@ -210,13 +210,13 @@ public abstract class Data2D_Convert extends Data2D_Edit {
 
     public long writeTmpData(SingletonTask task, Connection conn,
             DataTable dataTable, List<List<String>> rows, boolean includeRowNumber, InvalidAs invalidAs) {
-        try {
-            if (conn == null || dataTable == null) {
-                return -1;
-            }
+        if (conn == null || dataTable == null) {
+            return -1;
+        }
+        TableData2D tableData2D = dataTable.getTableData2D();
+        try ( PreparedStatement insert = conn.prepareStatement(tableData2D.insertStatement())) {
             int count = 0;
             conn.setAutoCommit(false);
-            TableData2D tableData2D = dataTable.getTableData2D();
             int clen = dataTable.columnsNumber();
             for (List<String> row : rows) {
                 Data2DRow data2DRow = tableData2D.newRow();
@@ -225,12 +225,22 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                     data2DRow.setColumnValue(targetColumn.getColumnName(),
                             targetColumn.fromString(row.get(i - 1), invalidAs));
                 }
-                tableData2D.insertData(conn, data2DRow);
-                if (++count % DerbyBase.BatchSize == 0) {
-                    conn.commit();
+                if (tableData2D.setInsertStatement(conn, insert, data2DRow)) {
+                    insert.addBatch();
+                    if (++count % DerbyBase.BatchSize == 0) {
+                        insert.executeBatch();
+                        conn.commit();
+                        if (task != null) {
+                            task.setInfo(message("Inserted") + ": " + count);
+                        }
+                    }
                 }
             }
+            insert.executeBatch();
             conn.commit();
+            if (task != null) {
+                task.setInfo(message("Inserted") + ": " + count);
+            }
             conn.setAutoCommit(true);
             return count;
         } catch (Exception e) {
@@ -383,8 +393,11 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                 return null;
             }
             tableData2D = dataTable.getTableData2D();
-//            MyBoxLog.console(tableData2D.createTableStatement());
-            if (conn.createStatement().executeUpdate(tableData2D.createTableStatement()) < 0) {
+            String sql = tableData2D.createTableStatement();
+            if (task != null) {
+                task.setInfo(sql);
+            }
+            if (conn.createStatement().executeUpdate(sql) < 0) {
                 return null;
             }
             conn.commit();
@@ -410,8 +423,12 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         TableData2D tableData2D = dataTable.getTableData2D();
         List<Data2DColumn> dataColumns = dataTable.getColumns();
         int tcolsNumber = dataColumns.size(), trowsNumber = 0;
+        String sql = tableData2D.queryAllStatement();
+        if (task != null) {
+            task.setInfo(sql);
+        }
         try ( Connection conn = DerbyBase.getConnection();
-                 PreparedStatement statement = conn.prepareStatement(tableData2D.queryAllStatement());
+                 PreparedStatement statement = conn.prepareStatement(sql);
                  ResultSet results = statement.executeQuery();
                  CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(file, Charset.forName("UTF-8")), CsvTools.csvFormat(",", true))) {
             csvPrinter.printRecord(dataTable.columnNames());
@@ -487,8 +504,12 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         TableData2D tableData2D = dataTable.getTableData2D();
         List<Data2DColumn> dataColumns = dataTable.getColumns();
         int tcolsNumber = dataColumns.size(), trowsNumber = 0;
+        String sql = tableData2D.queryAllStatement();
+        if (task != null) {
+            task.setInfo(sql);
+        }
         try ( Connection conn = DerbyBase.getConnection();
-                 PreparedStatement statement = conn.prepareStatement(tableData2D.queryAllStatement());
+                 PreparedStatement statement = conn.prepareStatement(sql);
                  ResultSet results = statement.executeQuery();
                  Workbook targetBook = new XSSFWorkbook()) {
             Sheet targetSheet = targetBook.createSheet(targetSheetName);
@@ -544,8 +565,12 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         TableData2D tableData2D = dataTable.getTableData2D();
         List<Data2DColumn> dataColumns = dataTable.getColumns();
         int tcolsNumber = dataColumns.size();
+        String sql = tableData2D.queryAllStatement();
+        if (task != null) {
+            task.setInfo(sql);
+        }
         try ( Connection conn = DerbyBase.getConnection();
-                 PreparedStatement statement = conn.prepareStatement(tableData2D.queryAllStatement());
+                 PreparedStatement statement = conn.prepareStatement(sql);
                  ResultSet results = statement.executeQuery()) {
             while (results.next() && task != null && !task.isCancelled()) {
                 try {

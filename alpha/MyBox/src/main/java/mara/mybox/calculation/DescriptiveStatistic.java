@@ -73,6 +73,14 @@ public class DescriptiveStatistic {
         return this;
     }
 
+    public List<String> names() {
+        List<String> names = new ArrayList<>();
+        for (StatisticType type : types) {
+            names.add(message(type.name()));
+        }
+        return names;
+    }
+
     public boolean include(StatisticType type) {
         return types.contains(type);
     }
