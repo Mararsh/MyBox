@@ -22,8 +22,8 @@ public class Data2DChartGroupComparisonBarsController extends Data2DChartCompari
         if (group == null) {
             return null;
         }
-        return group.getIdColName() + groupid + " - " + group.parameterValue(groupid - 1) + "\n"
-                + super.chartTitle();
+        return super.chartTitle() + "<BR>"
+                + group.getIdColName() + groupid + " - " + group.parameterValue(groupid - 1);
     }
 
     @Override

@@ -279,7 +279,9 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
                     if (task == null || isCancelled()) {
                         return false;
                     }
-                    task.setInfo(message("Add") + ": " + file);
+                    if (task != null) {
+                        task.setInfo(message("Add") + ": " + file);
+                    }
                     ImageFileInformation finfo = ImageFileInformation.create(file);
                     if (finfo == null) {
                         continue;

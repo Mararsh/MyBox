@@ -172,7 +172,7 @@ public class DataFileCSV extends DataFileText {
                 if (task == null || task.isCancelled()) {
                     return false;
                 }
-                csvPrinter.printRecord(tableRow(r, false));
+                csvPrinter.printRecord(tableRow(r, false, false));
             }
             return true;
         } catch (Exception e) {

@@ -86,7 +86,7 @@ public class ControlData2DResults extends ControlData2DLoad {
             if (data2D.getFile() != null) {
                 DataFileCSVController.open(data2D);
             } else {
-                DataFileCSVController.open(data2D.dataName(), data2D.getColumns(), data2D.tableRows(false));
+                DataFileCSVController.open(data2D.dataName(), data2D.getColumns(), data2D.tableRows(false, false));
             }
         } else {
             Data2D.open(data2D);

@@ -52,6 +52,10 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
         addColumn(new Data2DColumn("editable", ColumnType.Boolean));
         addColumn(new Data2DColumn("on_delete", ColumnType.Short));
         addColumn(new Data2DColumn("on_update", ColumnType.Short));
+        addColumn(new Data2DColumn("invalid_as", ColumnType.Short));
+        addColumn(new Data2DColumn("fix_year", ColumnType.Boolean));
+        addColumn(new Data2DColumn("century", ColumnType.Integer));
+        addColumn(new Data2DColumn("format", ColumnType.String).setLength(StringMaxLength));
         addColumn(new Data2DColumn("default_value", ColumnType.String).setLength(StringMaxLength));
         addColumn(new Data2DColumn("max_value", ColumnType.String).setLength(StringMaxLength));
         addColumn(new Data2DColumn("min_value", ColumnType.String).setLength(StringMaxLength));
@@ -59,7 +63,6 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
         addColumn(new Data2DColumn("foreign_name", ColumnType.String).setLength(StringMaxLength));
         addColumn(new Data2DColumn("foreign_table", ColumnType.String).setLength(StringMaxLength));
         addColumn(new Data2DColumn("foreign_column", ColumnType.String).setLength(StringMaxLength));
-        addColumn(new Data2DColumn("format", ColumnType.String).setLength(StringMaxLength));
         addColumn(new Data2DColumn("description", ColumnType.String).setLength(StringMaxLength));
         return this;
     }

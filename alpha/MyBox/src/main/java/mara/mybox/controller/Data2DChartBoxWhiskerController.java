@@ -130,9 +130,11 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
         try {
             lines = new HashMap<>();
 
+            q0Check.setSelected(UserConfig.getBoolean("ChartBoxWhiskerLineQ0", false));
             q0Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    MyBoxLog.console(isSettingValues + "  " + newValue);
                     if (isSettingValues) {
                         return;
                     }

@@ -174,8 +174,11 @@ public class DataMigration {
             MyBoxLog.info("Updating tables in 6.6.1...");
 
             conn.setAutoCommit(true);
-            statement.executeUpdate("ALTER TABLE Data2D_Column ADD COLUMN scale int");
+            statement.executeUpdate("ALTER TABLE Data2D_Column ADD COLUMN scale INT");
             statement.executeUpdate("ALTER TABLE Data2D_Column ADD COLUMN format VARCHAR(" + StringMaxLength + ")");
+            statement.executeUpdate("ALTER TABLE Data2D_Column ADD COLUMN fix_year BOOLEAN");
+            statement.executeUpdate("ALTER TABLE Data2D_Column ADD COLUMN century INT");
+            statement.executeUpdate("ALTER TABLE Data2D_Column ADD COLUMN invalid_as SMALLINT");
             statement.executeUpdate("UPDATE Data2D_Column SET column_type=0  WHERE column_type=2");
             statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.Datetime + "' WHERE time_format < 2 AND column_type < 6");
             statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.Date + "' WHERE time_format=2 AND column_type < 6");

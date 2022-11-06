@@ -354,9 +354,9 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                 tableColumns.add(dataColumn);
                 tableData2D.addColumn(dataColumn);
             }
-            dataTable.setSheet(tableName);
-            dataTable.setColumns(tableColumns);
-            dataTable.setSourceColumns(sourceColumns);
+            dataTable.setSourceColumns(sourceColumns)
+                    .setColumns(tableColumns)
+                    .setTask(task).setSheet(tableName);
             return dataTable;
         } catch (Exception e) {
             if (task != null) {

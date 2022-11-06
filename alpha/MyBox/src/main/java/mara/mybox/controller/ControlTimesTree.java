@@ -189,7 +189,7 @@ public class ControlTimesTree extends ControlConditionTree {
                 for (String month : months) {
                     String start = month + "-01 00:00:00";
                     Calendar calendar = Calendar.getInstance();
-                    calendar.setTime(DateTools.encodeDate(start, false));
+                    calendar.setTime(DateTools.encodeDate(start));
                     calendar.add(Calendar.MONTH, 1);
                     calendar.add(Calendar.DATE, -1);
                     String end = new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime()) + " 23:59:59";

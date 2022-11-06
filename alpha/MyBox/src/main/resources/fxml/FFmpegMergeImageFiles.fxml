@@ -49,7 +49,7 @@ License:    Apache License Version 2.0
                                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                             </padding>
                                             <children>
-                                                <CheckBox fx:id="stopCheck" mnemonicParsing="false" text="%StopAfterAudioFinished" />
+                                                <CheckBox fx:id="stopCheck" mnemonicParsing="false" selected="true" text="%ShortestAsVideoLength" />
                                                 <fx:include fx:id="ffmpegOptions" source="ControlFFmpegOptions.fxml" HBox.hgrow="ALWAYS" />
                                             </children>
                                         </VBox>

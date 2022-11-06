@@ -126,7 +126,7 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
     }
 
     @Override
-    protected synchronized String makeHtml() {
+    protected String makeHtml() {
         if (!makeBars()) {
             return null;
         }

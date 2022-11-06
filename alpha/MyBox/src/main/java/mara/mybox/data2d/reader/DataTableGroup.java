@@ -105,8 +105,11 @@ public class DataTableGroup {
                 ok = scan();
                 stopScan();
                 if (ok) {
-                    finishGroup();
+                    ok = finishGroup();
                 }
+                dconn.commit();
+                dconn.close();
+                conn = null;
             } catch (Exception e) {
                 MyBoxLog.error(e);
                 if (task != null) {
@@ -120,6 +123,9 @@ public class DataTableGroup {
             if (ok) {
                 finishGroup();
             }
+        }
+        if (!ok) {
+            parameterValues = null;
         }
         return ok;
     }
@@ -343,6 +349,9 @@ public class DataTableGroup {
                 }
                 return false;
             }
+            if (task != null) {
+                task.setInfo("max: " + maxValue + "   min: " + minValue);
+            }
             long maxGroup = Long.MAX_VALUE;
             double interval = splitInterval;
             if (type == GroupType.ValueSplitNumber) {
@@ -465,7 +474,9 @@ public class DataTableGroup {
                     }
                 }
             }
-            insert.executeBatch();
+            if (insert != null) {
+                insert.executeBatch();
+            }
             conn.commit();
         } catch (Exception e) {
             if (task != null) {
@@ -747,7 +758,9 @@ public class DataTableGroup {
                         insert = conn.prepareStatement(tableTarget.insertStatement());
                         mappedIdColName = targetData.tmpColumnName(idColName);
                         mappedParameterName = targetData.tmpColumnName(parameterName);
-                        task.setInfo(message("Table") + ": " + targetData.getSheet());
+                        if (task != null) {
+                            task.setInfo(message("Table") + ": " + targetData.getSheet());
+                        }
                     }
                     Data2DRow data2DRow = tableTarget.newRow();
                     data2DRow.setColumnValue(mappedIdColName, groupid);
@@ -762,7 +775,9 @@ public class DataTableGroup {
                         if (++count % DerbyBase.BatchSize == 0) {
                             insert.executeBatch();
                             conn.commit();
-                            task.setInfo(message("Inserted") + ": " + count);
+                            if (task != null) {
+                                task.setInfo(message("Inserted") + ": " + count);
+                            }
                         }
                     }
                     break;
@@ -874,7 +889,7 @@ public class DataTableGroup {
         }
     }
 
-    private void finishGroup() {
+    private boolean finishGroup() {
         try {
             switch (targetType) {
                 case Table:
@@ -889,13 +904,15 @@ public class DataTableGroup {
                         if (task != null) {
                             task.setInfo(message("Created") + ": " + message("Table") + "  " + targetData.getSheet());
                         }
+                        return true;
+                    } else {
+                        return false;
                     }
-                    break;
 
                 case SingleFile:
                 case MultipleFiles:
                     writeCurrentCSV();
-                    break;
+                    return !csvFiles.isEmpty();
 
             }
         } catch (Exception e) {
@@ -905,6 +922,7 @@ public class DataTableGroup {
                 MyBoxLog.error(e.toString());
             }
         }
+        return false;
     }
 
     public String orderByString() {

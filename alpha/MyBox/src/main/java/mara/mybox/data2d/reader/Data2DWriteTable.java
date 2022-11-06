@@ -10,6 +10,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -56,11 +57,13 @@ public class Data2DWriteTable extends Data2DOperator {
     @Override
     public void handleData() {
         try {
-
             reader.readRows();
             insert.executeBatch();
             conn.commit();
             insert.close();
+            if (task != null) {
+                task.setInfo(message("Inserted") + ": " + count);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -91,6 +94,9 @@ public class Data2DWriteTable extends Data2DOperator {
                 if (++count % DerbyBase.BatchSize == 0) {
                     insert.executeBatch();
                     conn.commit();
+                    if (task != null) {
+                        task.setInfo(message("Inserted") + ": " + count);
+                    }
                 }
             }
         } catch (Exception e) {

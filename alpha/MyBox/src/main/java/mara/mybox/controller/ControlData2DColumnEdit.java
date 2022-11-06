@@ -17,9 +17,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.BaseTable;
@@ -43,12 +45,13 @@ public class ControlData2DColumnEdit extends BaseChildController {
     protected int columnIndex;
 
     @FXML
-    protected TextField nameInput, defaultInput, lengthInput, widthInput, scaleInput, formatInput;
+    protected TextField nameInput, defaultInput, lengthInput, widthInput, scaleInput, formatInput, centuryInput;
     @FXML
     protected ToggleGroup typeGroup;
     @FXML
     protected RadioButton stringRadio, doubleRadio, floatRadio, longRadio, intRadio, shortRadio, booleanRadio,
-            datetimeRadio, dateRadio, eraRadio, longitudeRadio, latitudeRadio, enumRadio, colorRadio;
+            datetimeRadio, dateRadio, eraRadio, longitudeRadio, latitudeRadio, enumRadio, colorRadio,
+            invalidAsEmptyRadio, invalidAsZeroRadio, invalidAsNullRadio;
     @FXML
     protected CheckBox notNullCheck, editableCheck, fixYearCheck;
     @FXML
@@ -59,6 +62,8 @@ public class ControlData2DColumnEdit extends BaseChildController {
     protected VBox optionsBox, enumBox;
     @FXML
     protected HBox formatBox;
+    @FXML
+    protected FlowPane fixPane, centuryPane;
 
     public ControlData2DColumnEdit() {
         TipsLabelKey = message("SqlIdentifierComments");
@@ -78,6 +83,8 @@ public class ControlData2DColumnEdit extends BaseChildController {
                     checkType();
                 }
             });
+
+            centuryPane.disableProperty().bind(fixYearCheck.selectedProperty().not());
 
             rightTipsView.setVisible(columnsController.data2D.isTable());
 
@@ -105,26 +112,28 @@ public class ControlData2DColumnEdit extends BaseChildController {
             defaultInput.clear();
             formatInput.clear();
             fixYearCheck.setSelected(false);
+            invalidAsNullRadio.setSelected(true);
 
             if (enumRadio.isSelected()) {
                 optionsBox.getChildren().add(enumBox);
 
             } else if (datetimeRadio.isSelected()) {
-                optionsBox.getChildren().addAll(formatBox, fixYearCheck);
+                optionsBox.getChildren().addAll(formatBox, fixPane);
                 formatInput.setText(TimeFormats.Datetime);
 
             } else if (dateRadio.isSelected()) {
-                optionsBox.getChildren().addAll(formatBox, fixYearCheck);
+                optionsBox.getChildren().addAll(formatBox, fixPane);
                 formatInput.setText(TimeFormats.Date);
 
             } else if (eraRadio.isSelected()) {
-                optionsBox.getChildren().addAll(formatBox, fixYearCheck);
+                optionsBox.getChildren().addAll(formatBox, fixPane);
                 formatInput.setText(TimeFormats.DateA + " G");
 
             } else if (doubleRadio.isSelected() || floatRadio.isSelected()
                     || longRadio.isSelected() || intRadio.isSelected() || shortRadio.isSelected()) {
                 optionsBox.getChildren().add(formatBox);
                 formatInput.setText(message("GroupInThousands"));
+                invalidAsZeroRadio.setSelected(true);
 
             }
 
@@ -208,6 +217,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             widthInput.setText(column.getWidth() + "");
             scaleInput.setText(column.getScale() + "");
             fixYearCheck.setSelected(column.isFixTwoDigitYear());
+            centuryInput.setText(column.getCentury() + "");
             formatInput.clear();
             enumInput.clear();
             String format = column.getFormat();
@@ -231,6 +241,15 @@ public class ControlData2DColumnEdit extends BaseChildController {
             editableCheck.setSelected(column.isEditable());
 
             colorController.setColor(column.getColor());
+
+            InvalidAs invalidAs = column.getInvalidAs();
+            if (invalidAs == InvalidAs.Blank) {
+                invalidAsEmptyRadio.setSelected(true);
+            } else if (invalidAs == InvalidAs.Zero) {
+                invalidAsZeroRadio.setSelected(true);
+            } else {
+                invalidAsNullRadio.setSelected(true);
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -275,10 +294,28 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 popError(message("InvalidParameter") + ": " + message("DecimialScale"));
                 return null;
             }
+            int century = 2000;
+            if (fixYearCheck.isSelected()) {
+                try {
+                    century = Integer.parseInt(centuryInput.getText());
+                } catch (Exception ee) {
+                    popError(message("InvalidParameter") + ": " + message("Century"));
+                    return null;
+                }
+            }
+
             String enumString = enumInput.getText();
             if (enumRadio.isSelected() && (enumString == null || enumString.isBlank())) {
                 popError(message("InvalidParameter") + ": " + message("EnumerateValues"));
                 return null;
+            }
+            InvalidAs invalidAs;
+            if (invalidAsEmptyRadio.isSelected()) {
+                invalidAs = InvalidAs.Blank;
+            } else if (invalidAsZeroRadio.isSelected()) {
+                invalidAs = InvalidAs.Zero;
+            } else {
+                invalidAs = InvalidAs.Skip;
             }
             Data2DColumn column;
             if (columnIndex >= 0) {
@@ -292,6 +329,8 @@ public class ControlData2DColumnEdit extends BaseChildController {
                     .setEditable(editableCheck.isSelected())
                     .setColor((Color) colorController.rect.getFill())
                     .setFixTwoDigitYear(fixYearCheck.isSelected())
+                    .setCentury(century)
+                    .setInvalidAs(invalidAs)
                     .setDescription(descInput.getText());
 
             String format = formatInput.getText();

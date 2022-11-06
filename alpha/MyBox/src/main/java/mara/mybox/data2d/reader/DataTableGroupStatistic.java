@@ -105,7 +105,9 @@ public class DataTableGroupStatistic {
                         if (++count % DerbyBase.BatchSize == 0) {
                             insert.executeBatch();
                             conn.commit();
-                            task.setInfo(message("Inserted") + ": " + count);
+                            if (task != null) {
+                                task.setInfo(message("Inserted") + ": " + count);
+                            }
                         }
                     }
                     groupid = currentGroupid;
@@ -117,6 +119,8 @@ public class DataTableGroupStatistic {
             }
 
             ok = finish();
+            conn.commit();
+            conn = null;
         } catch (Exception e) {
             MyBoxLog.error(e);
             if (task != null) {
@@ -196,7 +200,7 @@ public class DataTableGroupStatistic {
     private void statistic() {
         try {
             groupData.resetStatistic();
-            groupData.setScale(groups.getScale());
+            groupData.setTask(task).setScale(groups.getScale());
 
             int colSize = calNames.size();
             List<Integer> cols = new ArrayList<>();
@@ -232,13 +236,17 @@ public class DataTableGroupStatistic {
                     if (++statisticRowsCount % DerbyBase.BatchSize == 0) {
                         statisticInsert.executeBatch();
                         conn.commit();
-                        task.setInfo(message("Inserted") + ": " + statisticRowsCount);
+                        if (task != null) {
+                            task.setInfo(message("Inserted") + ": " + statisticRowsCount);
+                        }
                     }
                 }
             }
             statisticInsert.executeBatch();
             conn.commit();
-            task.setInfo(message("Inserted") + ": " + statisticRowsCount);
+            if (task != null) {
+                task.setInfo(message("Inserted") + ": " + statisticRowsCount);
+            }
             if (countChart) {
                 List<String> row = new ArrayList<>();
                 row.add(groupid + "");
@@ -292,16 +300,16 @@ public class DataTableGroupStatistic {
     }
 
     // groupid is 1-based
-    public List<List<String>> groupData(SingletonTask task, long groupid) {
-        if (statisticData == null || groupid < 1 || groupid > statisticRowsCount) {
+    public List<List<String>> groupData(Connection qconn, long groupid) {
+        if (statisticData == null || qconn == null
+                || groupid < 1 || groupid > statisticRowsCount) {
             return null;
         }
         List<List<String>> data = new ArrayList<>();
         String sql = "SELECT * FROM " + statisticData.getSheet()
                 + " WHERE " + idColName + "=" + groupid;
-        try ( Connection qconn = DerbyBase.getConnection();
-                 ResultSet query = qconn.prepareStatement(sql).executeQuery()) {
-            while (query.next() && task != null && !task.isCancelled()) {
+        try ( ResultSet query = qconn.prepareStatement(sql).executeQuery()) {
+            while (query.next() && qconn != null && !qconn.isClosed()) {
                 List<String> vrow = new ArrayList<>();
                 for (int i = 3; i < statisticData.getColumns().size(); i++) {
                     Data2DColumn column = statisticData.getColumns().get(i);
@@ -313,9 +321,6 @@ public class DataTableGroupStatistic {
             }
             return data;
         } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
             MyBoxLog.console(e.toString());
             return null;
         }

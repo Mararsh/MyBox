@@ -5,6 +5,7 @@ import javafx.scene.Node;
 import mara.mybox.data2d.Data2D_Operations.ObjectType;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.reader.DataTableGroupStatistic;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -46,8 +47,8 @@ public class Data2DChartGroupBoxWhiskerController extends Data2DChartBoxWhiskerC
         if (group == null) {
             return null;
         }
-        return group.getIdColName() + groupid + " - " + group.parameterValue(groupid - 1) + "\n"
-                + super.chartTitle();
+        return super.chartTitle() + "<BR>"
+                + group.getIdColName() + groupid + " - " + group.parameterValue(groupid - 1);
     }
 
     @Override
@@ -85,8 +86,11 @@ public class Data2DChartGroupBoxWhiskerController extends Data2DChartBoxWhiskerC
     @Override
     protected boolean makeFrameData() {
         try {
-            outputColumns = statisticData.getColumns().subList(3, statisticData.getColumns().size());
-            outputData = statistic.groupData(backgroundTask, groupid);
+            if (conn == null || conn.isClosed()) {
+                conn = DerbyBase.getConnection();
+            }
+            outputColumns = statisticData.getSourceColumns().subList(2, statisticData.getSourceColumns().size());
+            outputData = statistic.groupData(conn, groupid);
             return outputData != null && !outputData.isEmpty();
         } catch (Exception e) {
             MyBoxLog.error(e);

@@ -507,9 +507,7 @@ public class DataTable extends Data2D {
             }
             return null;
         }
-        MyBoxLog.console(task != null);
         if (task != null) {
-            MyBoxLog.console(sql);
             task.setInfo(sql);
         }
         try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile);
@@ -1006,8 +1004,9 @@ public class DataTable extends Data2D {
         return sourceColumns;
     }
 
-    public void setSourceColumns(List<Data2DColumn> sourceColumns) {
+    public DataTable setSourceColumns(List<Data2DColumn> sourceColumns) {
         this.sourceColumns = sourceColumns;
+        return this;
     }
 
 }

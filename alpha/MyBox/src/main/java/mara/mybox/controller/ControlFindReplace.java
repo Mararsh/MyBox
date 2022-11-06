@@ -4,6 +4,7 @@ import java.text.MessageFormat;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -686,8 +687,8 @@ public class ControlFindReplace extends BaseController {
     }
 
     @FXML
-    public void popFindExample(MouseEvent mouseEvent) {
-        PopTools.popRegexExamples(this, findArea, mouseEvent);
+    public void popFindExample(ActionEvent event) {
+        PopTools.popRegexExamples(this, findArea, event);
     }
 
     @FXML

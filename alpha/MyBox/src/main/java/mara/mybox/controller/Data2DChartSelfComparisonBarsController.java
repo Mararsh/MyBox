@@ -149,13 +149,13 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
 
             StringBuilder s = new StringBuilder();
             s.append(jsBody());
-            String title = data2D.displayName() + " - ";
+            String title = chartTitle();
             if (columnsRadio.isSelected()) {
-                title += message("ColumnComparison");
+                title += " " + message("ColumnComparison");
             } else if (rowsRadio.isSelected()) {
-                title += message("RowComparison");
+                title += " " + message("RowComparison");
             } else if (allRadio.isSelected()) {
-                title += message("AllComparison");
+                title += " " + message("AllComparison");
             }
             s.append("<DIV align=\"center\">\n");
             s.append("<H2>").append(title).append("</H2>\n");
@@ -275,7 +275,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
             }
             if (otherColsIndices != null) {
                 for (int col : otherColsIndices) {
-                    s.append("<TD class=\"Others\">").append("</TD>\n");
+                    s.append("<TD class=\"Others\"> </TD>\n");
                 }
             }
             s.append("</TR>\n");
@@ -290,7 +290,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
             }
             if (otherColsIndices != null) {
                 for (int col : otherColsIndices) {
-                    s.append("<TD class=\"Others\">").append("</TD>\n");
+                    s.append("<TD class=\"Others\"> </TD>\n");
                 }
             }
             s.append("</TR>\n");
@@ -305,7 +305,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
             }
             if (otherColsIndices != null) {
                 for (int col : otherColsIndices) {
-                    s.append("<TD class=\"Others\">").append("</TD>\n");
+                    s.append("<TD class=\"Others\" </TD>\n");
                 }
             }
             s.append("</TR>\n");

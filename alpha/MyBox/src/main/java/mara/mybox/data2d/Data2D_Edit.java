@@ -298,14 +298,15 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         return dataSize;
     }
 
-    public String encodeCSV(SingletonTask task, String delimiterName, boolean displayRowNames, boolean displayColNames) {
+    public String encodeCSV(SingletonTask task, String delimiterName,
+            boolean displayRowNames, boolean displayColNames, boolean formatValues) {
         if (!isColumnsValid() || delimiterName == null) {
             return "";
         }
         try {
             File tmpFile = getTempFile(".csv");
             tmpFile = DataFileCSV.csvFile(task, tmpFile, delimiterValue(delimiterName),
-                    displayColNames ? columnNames() : null, tableRows(displayRowNames));
+                    displayColNames ? columnNames() : null, tableRows(displayRowNames, formatValues));
             if (tmpFile == null || !tmpFile.exists()) {
                 return "";
             }

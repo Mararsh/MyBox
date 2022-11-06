@@ -179,10 +179,10 @@ public class TreeNodeImportController extends BaseBatchFileController {
                 tagsString = null;
                 if (line != null && !line.isBlank()) {
                     if (line.startsWith(TreeNode.TimePrefix)) {
-                        time = DateTools.encodeDate(line.substring(TreeNode.TimePrefix.length()), false);
+                        time = DateTools.encodeDate(line.substring(TreeNode.TimePrefix.length()));
                         line = reader.readLine();
                     } else {
-                        time = DateTools.encodeDate(line, false);
+                        time = DateTools.encodeDate(line);
                         if (time != null) {
                             line = reader.readLine();
                         }
@@ -267,10 +267,10 @@ public class TreeNodeImportController extends BaseBatchFileController {
                 }
                 if (line != null && !line.startsWith(AppValues.MyBoxSeparator)) {
                     if (line.startsWith(TreeNode.TimePrefix)) {
-                        time = DateTools.encodeDate(line.substring(TreeNode.TimePrefix.length()), false);
+                        time = DateTools.encodeDate(line.substring(TreeNode.TimePrefix.length()));
                         line = reader.readLine();
                     } else {
-                        time = DateTools.encodeDate(line, false);
+                        time = DateTools.encodeDate(line);
                         if (time != null) {
                             line = reader.readLine();
                         }

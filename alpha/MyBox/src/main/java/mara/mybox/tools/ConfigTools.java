@@ -5,15 +5,12 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
-
 
 /**
  * @Author Mara
@@ -44,7 +41,8 @@ public class ConfigTools {
     public static File defaultConfigFile() {
         File defaultPath = defaultDataPathFile();
         File configFile = new File(defaultPath.getAbsolutePath() + File.separator
-                + "MyBox_v" + AppValues.AppVersion + ".ini");
+                + "MyBox_v" + AppValues.AppVersion
+                + (AppValues.Alpha ? "a" : "") + ".ini");
         return configFile;
     }
 

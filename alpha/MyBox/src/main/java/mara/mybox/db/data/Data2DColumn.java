@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import javafx.scene.paint.Color;
 import mara.mybox.data.StringTable;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import static mara.mybox.db.data.ColumnDefinition.columnType;
 import static mara.mybox.db.data.ColumnDefinition.number2String;
 import mara.mybox.dev.MyBoxLog;
@@ -141,10 +142,16 @@ public class Data2DColumn extends ColumnDefinition {
                 return data.isNotNull();
             case "is_auto":
                 return data.isAuto();
+            case "invalid_as":
+                return data.getInvalidAs().ordinal();
             case "editable":
                 return data.isEditable();
+            case "fix_year":
+                return data.isFixTwoDigitYear();
             case "format":
                 return data.getFormat();
+            case "century":
+                return data.getCentury();
             case "on_delete":
                 return onDelete(data.getOnDelete());
             case "on_update":
@@ -208,6 +215,9 @@ public class Data2DColumn extends ColumnDefinition {
                 case "is_auto":
                     data.setAuto(value == null ? false : (boolean) value);
                     return true;
+                case "invalid_as":
+                    data.setInvalidAs(value == null ? InvalidAs.Skip : InvalidAs.values()[(short) value]);
+                    return true;
                 case "not_null":
                     data.setNotNull(value == null ? false : (boolean) value);
                     return true;
@@ -216,6 +226,12 @@ public class Data2DColumn extends ColumnDefinition {
                     return true;
                 case "format":
                     data.setFormat(value == null ? null : (String) value);
+                    return true;
+                case "fix_year":
+                    data.setFixTwoDigitYear(value == null ? false : (boolean) value);
+                    return true;
+                case "century":
+                    data.setCentury(value == null ? null : (int) value);
                     return true;
                 case "on_delete":
                     data.setOnDelete(onDelete((short) value));

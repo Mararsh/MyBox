@@ -92,7 +92,7 @@ public class DateTools {
         }
     }
 
-    public static Date encodeDate(String strDate, boolean fixTwoDigitYear) {
+    public static Date encodeDate(String strDate, int century) {
         if (strDate == null) {
             return null;
         }
@@ -174,36 +174,38 @@ public class DateTools {
             locale = Languages.locale();
             format = parseFormat(s);
         }
-        Date d = encodeDate(s, format, locale, fixTwoDigitYear);
+        Date d = encodeDate(s, format, locale, century);
         return d;
     }
 
     public static Date encodeDate(String strDate) {
-        return encodeDate(strDate, false);
+        return encodeDate(strDate, 0);
     }
 
-    public static Date encodeDate(String strDate, Locale locale, boolean fixTwoDigitYear) {
-        return encodeDate(strDate, parseFormat(strDate), locale, fixTwoDigitYear);
+    public static Date encodeDate(String strDate, Locale locale, int century) {
+        return encodeDate(strDate, parseFormat(strDate), locale, century);
     }
 
     public static Date encodeDate(String strDate, String format) {
-        return encodeDate(strDate, format, Locale.getDefault(), false);
+        return encodeDate(strDate, format, Locale.getDefault(), 0);
     }
 
-    public static Date encodeDate(String strDate, String format, boolean fixTwoDigitYear) {
-        return encodeDate(strDate, format, Locale.getDefault(), fixTwoDigitYear);
+    public static Date encodeDate(String strDate, String format, int century) {
+        return encodeDate(strDate, format, Locale.getDefault(), century);
     }
 
-    public static Date encodeDate(String strDate, String format, Locale locale, boolean fixTwoDigitYear) {
+    // century.  0: not fix      -1:fix as default   others:fix as value
+    public static Date encodeDate(String strDate, String format, Locale locale, int century) {
         if (strDate == null || strDate.isEmpty()
                 || format == null || format.isEmpty()) {
             return null;
         }
-//        MyBoxLog.debug(strDate + "  " + format + "  " + locale);
+//        MyBoxLog.debug(strDate + "  " + format + "  " + locale + "  " + century);
         try {
             SimpleDateFormat formatter = new SimpleDateFormat(format, locale);
-            if (!fixTwoDigitYear) {
-                formatter.set2DigitYearStart(new SimpleDateFormat("yyyy").parse("0000"));
+            if (century >= 0) {
+                formatter.set2DigitYearStart(new SimpleDateFormat("yyyy")
+                        .parse(century > 0 ? century + "" : "0000"));
             }
             return formatter.parse(strDate, new ParsePosition(0));
         } catch (Exception e) {

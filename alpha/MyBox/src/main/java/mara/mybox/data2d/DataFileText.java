@@ -267,7 +267,7 @@ public class DataFileText extends DataFile {
                 if (task == null || task.isCancelled()) {
                     return false;
                 }
-                TextFileTools.writeLine(writer, tableRow(r, false), delimiter);
+                TextFileTools.writeLine(writer, tableRow(r, false, false), delimiter);
             }
             return true;
         } catch (Exception e) {

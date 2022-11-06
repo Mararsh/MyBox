@@ -176,7 +176,9 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
                     if (!group.run()) {
                         return false;
                     }
-                    task.setInfo(message("Statistic") + "...");
+                    if (task != null) {
+                        task.setInfo(message("Statistic") + "...");
+                    }
                     statistic = new DataTableGroupStatistic()
                             .setGroups(group).setCountChart(true)
                             .setCalculation(calculation)

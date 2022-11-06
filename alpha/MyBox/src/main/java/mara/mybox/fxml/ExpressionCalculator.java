@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+import mara.mybox.calculation.DescriptiveStatistic.StatisticType;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.Data2DColumn;
@@ -100,10 +101,10 @@ public class ExpressionCalculator {
             if (filledScript.contains("#{" + message("TableRowNumber") + "}")) {
                 filledScript = message("NoTableRowNumberWhenAllPages");
             } else {
-
-                List<String> names = data2D.columnNames();
-                for (int i = 0; i < names.size(); i++) {
-                    filledScript = replace(filledScript, "#{" + names.get(i) + "}", dataRow.get(i));
+                for (int i = 0; i < data2D.columnsNumber(); i++) {
+                    Data2DColumn column = data2D.getColumns().get(i);
+                    String name = column.getColumnName();
+                    filledScript = replace(filledScript, "#{" + name + "}", column.filterValue(dataRow.get(i)));
                 }
                 filledScript = replace(filledScript, "#{" + message("DataRowNumber") + "}", dataRowNumber + "");
             }
@@ -130,7 +131,7 @@ public class ExpressionCalculator {
             for (int i = 0; i < data2D.columnsNumber(); i++) {
                 Data2DColumn column = data2D.getColumns().get(i);
                 String name = column.getColumnName();
-                filledScript = replace(filledScript, "#{" + name + "}", tableRow.get(i + 1));
+                filledScript = replace(filledScript, "#{" + name + "}", column.filterValue(tableRow.get(i + 1)));
             }
             filledScript = replace(filledScript, "#{" + message("DataRowNumber") + "}", tableRow.get(0) + "");
             filledScript = replace(filledScript, "#{" + message("TableRowNumber") + "}",
@@ -198,38 +199,8 @@ public class ExpressionCalculator {
             for (int i = 0; i < data2D.columnsNumber(); i++) {
                 Data2DColumn column = data2D.columns.get(i);
                 String name = column.getColumnName();
-                if (filledScript.contains("#{" + name + "-" + message("Mean") + "}")) {
-                    filledScript = replace(filledScript, "#{" + name + "-" + message("Mean") + "}", "1");
-                }
-                if (filledScript.contains("#{" + name + "-" + message("Median") + "}")) {
-                    filledScript = replace(filledScript, "#{" + name + "-" + message("Median") + "}", "1");
-                }
-                if (filledScript.contains("#{" + name + "-" + message("Mode") + "}")) {
-                    filledScript = replace(filledScript, "#{" + name + "-" + message("Mode") + "}", "1");
-                }
-                if (filledScript.contains("#{" + name + "-" + message("MinimumQ0") + "}")) {
-                    filledScript = replace(filledScript, "#{" + name + "-" + message("MinimumQ0") + "}", "1");
-                }
-                if (filledScript.contains("#{" + name + "-" + message("LowerQuartile") + "}")) {
-                    filledScript = replace(filledScript, "#{" + name + "-" + message("LowerQuartile") + "}", "1");
-                }
-                if (filledScript.contains("#{" + name + "-" + message("UpperQuartile") + "}")) {
-                    filledScript = replace(filledScript, "#{" + name + "-" + message("UpperQuartile") + "}", "1");
-                }
-                if (filledScript.contains("#{" + name + "-" + message("MaximumQ4") + "}")) {
-                    filledScript = replace(filledScript, "#{" + name + "-" + message("MaximumQ4") + "}", "1");
-                }
-                if (filledScript.contains("#{" + name + "-" + message("LowerExtremeOutlierLine") + "}")) {
-                    filledScript = replace(filledScript, "#{" + name + "-" + message("LowerExtremeOutlierLine") + "}", "1");
-                }
-                if (filledScript.contains("#{" + name + "-" + message("LowerMildOutlierLine") + "}")) {
-                    filledScript = replace(filledScript, "#{" + name + "-" + message("LowerMildOutlierLine") + "}", "1");
-                }
-                if (filledScript.contains("#{" + name + "-" + message("UpperMildOutlierLine") + "}")) {
-                    filledScript = replace(filledScript, "#{" + name + "-" + message("UpperMildOutlierLine") + "}", "1");
-                }
-                if (filledScript.contains("#{" + name + "-" + message("UpperExtremeOutlierLine") + "}")) {
-                    filledScript = replace(filledScript, "#{" + name + "-" + message("UpperExtremeOutlierLine") + "}", "1");
+                for (StatisticType stype : StatisticType.values()) {
+                    filledScript = replace(filledScript, "#{" + name + "-" + message(stype.name()) + "}", "1");
                 }
             }
             return filledScript;

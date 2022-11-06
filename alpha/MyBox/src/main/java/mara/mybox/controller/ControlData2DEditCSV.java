@@ -122,7 +122,7 @@ public class ControlData2DEditCSV extends BaseController {
 
             @Override
             protected boolean handle() {
-                text = data2D.encodeCSV(task, delimiterName, false, false);
+                text = data2D.encodeCSV(task, delimiterName, false, false, false);
                 return text != null;
             }
 

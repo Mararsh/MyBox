@@ -76,6 +76,9 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
                             case "CalculatedCheck":
                                 UserConfig.setBoolean(baseName + "ShowCalculatedValues", check);
                                 break;
+                            case "OthersCheck":
+                                UserConfig.setBoolean(baseName + "ShowOthers", check);
+                                break;
                         }
                     } catch (Exception e) {
                         MyBoxLog.console(e.toString());
@@ -237,7 +240,6 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
                     .append(" onclick=\"showClass('Category', this.checked);\">")
                     .append(message("Category")).append("</INPUT>\n");
         }
-
         if (otherColumnsPane != null) {
             s.append("    <INPUT id=\"OthersCheck\"  type=\"checkbox\" ")
                     .append(UserConfig.getBoolean(baseName + "ShowOthers", true) ? "checked" : "")

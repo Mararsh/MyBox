@@ -845,9 +845,9 @@ public class PopTools {
         }
     }
 
-    public static void popRegexExamples(BaseController parent, TextInputControl input, MouseEvent mouseEvent) {
+    public static void popRegexExamples(BaseController parent, TextInputControl input, Event event) {
         try {
-            MenuController controller = MenuController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+            MenuController controller = MenuController.open(parent, input, event);
             Button clearButton = new Button(message("Clear"));
             clearButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override

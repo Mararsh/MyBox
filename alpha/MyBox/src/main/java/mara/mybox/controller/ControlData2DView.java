@@ -227,6 +227,8 @@ public class ControlData2DView extends BaseController {
                     String value = dataRow.get(col + 1);
                     if (value == null) {
                         value = "";
+                    } else {
+                        value = data2D.column(col).format(value);
                     }
                     value = value.replaceAll("\n", "<BR>");
                     String style = data2D.cellStyle(styleFilter, i, data2D.columnName(col));
@@ -278,6 +280,8 @@ public class ControlData2DView extends BaseController {
                     String value = dataRow.get(col + 1);
                     if (value == null) {
                         value = "";
+                    } else {
+                        value = data2D.column(col).format(value);
                     }
                     value = value.replaceAll("\n", "<BR>");
                     String style = data2D.cellStyle(styleFilter, r, data2D.columnName(col));
@@ -323,7 +327,7 @@ public class ControlData2DView extends BaseController {
             title = data2D.titleName();
         }
         String text = data2D.encodeCSV(task, displayDelimiterName,
-                rowCheck.isSelected(), columnCheck.isSelected());
+                rowCheck.isSelected(), columnCheck.isSelected(), true);
         if (title != null && !title.isBlank()) {
             textArea.setText(title + "\n\n" + text);
         } else {
@@ -340,7 +344,7 @@ public class ControlData2DView extends BaseController {
             if (rowCheck.isSelected()) {
                 s.append(data2D.rowName(r)).append("\n");
             }
-            List<String> drow = data2D.tableRow(r, false);
+            List<String> drow = data2D.tableRow(r, false, true);
             if (drow == null) {
                 continue;
             }

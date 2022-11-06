@@ -35,7 +35,9 @@ public class DataTableReader extends Data2DReader {
             try ( Connection dconn = DerbyBase.getConnection()) {
                 conn = dconn;
                 operator.handleData();
+                conn.commit();
                 conn.close();
+                conn = null;
             } catch (Exception e) {
                 MyBoxLog.error(e);
                 if (task != null) {
@@ -76,7 +78,9 @@ public class DataTableReader extends Data2DReader {
     public void readPage() {
         rowIndex = data2D.startRowOfCurrentPage;
         String sql = readerTable.pageQuery();
-        task.setInfo(sql);
+        if (task != null) {
+            task.setInfo(sql);
+        }
         try ( PreparedStatement statement = conn.prepareStatement(sql);
                  ResultSet results = statement.executeQuery()) {
             while (results.next()) {
@@ -97,7 +101,9 @@ public class DataTableReader extends Data2DReader {
     public void readRows() {
         rowIndex = 0;
         String sql = "SELECT * FROM " + readerTable.getSheet();
-        task.setInfo(sql);
+        if (task != null) {
+            task.setInfo(sql);
+        }
         try ( PreparedStatement statement = conn.prepareStatement(sql);
                  ResultSet results = statement.executeQuery()) {
             while (results.next() && !readerStopped()) {

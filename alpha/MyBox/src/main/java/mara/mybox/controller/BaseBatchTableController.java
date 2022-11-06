@@ -636,7 +636,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
 
                     } else if (fileSelectorType == FileSelectorType.ModifiedTimeEarlierThan
                             || fileSelectorType == FileSelectorType.ModifiedTimeLaterThan) {
-                        Date d = DateTools.encodeDate(newv, true);
+                        Date d = DateTools.encodeDate(newv, -1);
                         if (d != null) {
                             fileSelectorTime = d.getTime();
                         } else {

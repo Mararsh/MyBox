@@ -15,6 +15,7 @@ import mara.mybox.data2d.reader.DataTableGroup;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
@@ -39,10 +40,11 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     protected Label noticeLabel;
     @FXML
     protected CheckBox displayAllCheck;
+
     @FXML
     protected ControlData2DResults groupDataController;
     @FXML
-    protected ControlPlay playController;
+    protected ControlGroupPlay playController;
 
     @Override
     public void initControls() {
@@ -357,7 +359,9 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                     }
                     group = groupData(DataTableGroup.TargetType.Table,
                             dataNames, orders, maxData, scale);
-                    group.run();
+                    if (!group.run()) {
+                        return false;
+                    }
                     groupLabels = group.getParameterValues();
                     framesNumber = groupLabels.size();
                     return initGroups();
@@ -390,7 +394,9 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     }
 
     protected void loadChartData() {
-        groupDataController.loadData(group.getTargetData().cloneAll());
+        if (group.getTargetData() != null) {
+            groupDataController.loadData(group.getTargetData().cloneAll());
+        }
     }
 
     public boolean initFrame() {
@@ -407,6 +413,18 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
+                    if (outputData == null) {
+                        return;
+                    }
+                    if (playController.askLarger > 0) {
+                        int size = outputData.size();
+                        if (size > playController.askLarger) {
+                            playController.pauseAction();
+                            if (!PopTools.askSure(myController, null, null, message("SureDisplayAll") + size)) {
+                                return;
+                            }
+                        }
+                    }
                     drawFrame();
                 }
             });

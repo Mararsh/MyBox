@@ -73,8 +73,17 @@ public class DataTableWriter extends Data2DWriter {
                 handleRow();
             }
             update.executeBatch();
+            conn.commit();
+            if (task != null) {
+                task.setInfo(message("Updated") + ": " + count);
+            }
             delete.executeBatch();
             conn.commit();
+            if (task != null) {
+                task.setInfo(message("Deleted") + ": " + count);
+            }
+            conn.close();
+            conn = null;
         } catch (Exception e) {
             MyBoxLog.error(e);
             if (task != null) {

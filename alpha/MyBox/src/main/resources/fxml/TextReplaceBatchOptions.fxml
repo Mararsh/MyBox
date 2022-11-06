@@ -43,15 +43,15 @@ License:    Apache License Version 2.0
         <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
             <children>
                 <Label text="%Find" />
-            <Button fx:id="historyFindButton" mnemonicParsing="false" onMouseEntered="#popFindHistories">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconHistory.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
+                <Button fx:id="historyFindButton" mnemonicParsing="false" onMouseEntered="#popFindHistories">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconHistory.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
                 <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                     <image>
                         <Image url="@../buttons/Red/iconTips.png" />
@@ -70,7 +70,7 @@ License:    Apache License Version 2.0
                 <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                     <children>
                         <CheckBox fx:id="regexCheck" mnemonicParsing="false" text="%RegularExpression" />
-                        <Button fx:id="exampleFindButton" mnemonicParsing="false" onMouseEntered="#popFindExample">
+                        <Button fx:id="exampleFindButton" mnemonicParsing="false" onAction="#popFindExample">
                             <graphic>
                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -93,15 +93,15 @@ License:    Apache License Version 2.0
         <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
             <children>
                 <Label text="%Replace" />
-            <Button fx:id="historyStringButton" mnemonicParsing="false" onMouseEntered="#popReplaceHistories">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconHistory.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
+                <Button fx:id="historyStringButton" mnemonicParsing="false" onMouseEntered="#popReplaceHistories">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconHistory.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
             </children>
         </HBox>
         <TextArea fx:id="replaceArea" prefHeight="200.0" prefWidth="200.0" />

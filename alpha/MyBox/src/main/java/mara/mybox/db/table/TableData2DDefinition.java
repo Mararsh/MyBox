@@ -339,7 +339,6 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
                 }
                 conn.commit();
             }
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

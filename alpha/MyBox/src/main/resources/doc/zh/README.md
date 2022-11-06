@@ -7,9 +7,14 @@
 2022-11-6 版本6.6.1         
          
 * 新增：                  
-     - 数据列的格式。例如对于数字类型，可以选择：以千分组、以万分组、科学计数法、无格式。                      
      - 数据列的新类型：纪元、颜色、经度、纬度、枚举型。         
-     - 编辑数据时，根据列类型和格式，显示相应的控件，例如：         
+     - 数据列的格式。例如:
+        - 对于数字类型，可选：以千分组、以万分组、科学计数法、无格式。                      
+        - 对于时间/日期/纪元类型，支持：MM/dd/yy、yy/MM/dd、毫秒、时区、T分隔、补全世纪。                      
+        - 对于枚举型，可定义数值列表。                      
+        - 列格式主要用于显示，在编辑输入数值时不会自动应用格式、而是保持原始的输入。                      
+        - 在一些界面上，如“复制”，可选“按照列的格式保存日期/时间/纪元和数字”。                      
+     - 编辑数据时，根据列类型，提供相应的控件，例如：         
         - 对于布尔类型，显示选择框。         
         - 对于枚举类型，显示下拉选择列表。         
         - 对于颜色类型，显示调色盘。         
@@ -41,12 +46,13 @@
 * 移除功能“位置数据”和“疫情报告”。         
   它们已存在的数据可以在菜单“数据-数据库-数据库表”下访问到，可作为一般数据来修改和应用。                              
 * 解决：         
-     - 行表达式无法描述“值为空”。                       
+     - 对很长的文本或字节执行“替换全部”后可能产生错误的结果。（抱歉）                       
+     - 行表达式无法描述“值为null”。                       
      - 类别值为空时数据图会出错。                       
      - 比较条图取错了一列的值。                       
      - 对当前页排序的结果有错。                       
      - 若应用了风格则保存新数据时会出错。                       
-     - 复制树形结点时可能弹出错误。                       
+     - 复制树形结点时少复制了一列。                       
  
 [此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.6.1)             
    
@@ -55,9 +61,9 @@
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases)目录下（点击此项目主页的`releases`页签）。       
 
 ### 源码
-[MyBox-6.6.1-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.6.1/MyBox-6.6.1-src.zip)   52M-       
+[MyBox-6.6.1-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.6.1/MyBox-6.6.1-src.zip)   55M-       
 
-关于源码的结构、编辑、和构建，请参考[开发指南](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-DevGuide-2.1-zh.pdf) 和
+关于源码的结构、编辑、和构建，请参考[开发指南](https://sourceforge.net/projects/mara-mybox/files/documents/dev_guide_2.1/MyBox-DevGuide-2.1-zh.pdf) 和
 [打包步骤](https://mararsh.github.io/MyBox/pack_steps.html)       
 
 
@@ -66,9 +72,9 @@
 
 | 平台 | 链接 | 大小 | 启动文件 |
 | --- | --- | --- |  --- |
-| win10 x64 | [MyBox-6.6.1-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.6.1/MyBox-6.6.1-win10-x64.zip)  | 240MB- | MyBox.exe |
-| CentOS 7 x64 | [MyBox-6.6.1-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.6.1/MyBox-6.6.1-CentOS7-x64.tar.gz)  | 260MB-  | bin/MyBox  |
-| mac x64| [MyBox-6.6.1-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.6.1/MyBox-6.6.1-mac.dmg)  | 260MB-  |  MyBox-6.6.1.app   |
+| win10 x64 | [MyBox-6.6.1-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.6.1/MyBox-6.6.1-win10-x64.zip)  | 260MB- | MyBox.exe |
+| CentOS 7 x64 | [MyBox-6.6.1-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.6.1/MyBox-6.6.1-CentOS7-x64.tar.gz)  | 280MB-  | bin/MyBox  |
+| mac x64| [MyBox-6.6.1-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.6.1/MyBox-6.6.1-mac.dmg)  | 280MB-  |  MyBox-6.6.1.app   |
 
 双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。        
   
@@ -78,9 +84,9 @@
 
 | 平台 | 链接 | 大小 | 运行需要 |
 | --- | --- | --- |  --- |
-| win | [MyBox-6.6.1-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.6.1/MyBox-6.6.1-win-jar.zip)  | 170MB- | Java 18或更高版本 |
-| linux | [MyBox-6.6.1-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.6.1/MyBox-6.6.1-linux-jar.zip)  | 190MB-  | Java 18或更高版本 |
-| mac | [MyBox-6.6.1-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.6.1/MyBox-6.6.1-mac-jar.zip)  |  180MB-  | Java 18或更高版本 |
+| win | [MyBox-6.6.1-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.6.1/MyBox-6.6.1-win-jar.zip)  | 190MB- | Java 18或更高版本 |
+| linux | [MyBox-6.6.1-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.6.1/MyBox-6.6.1-linux-jar.zip)  | 200MB-  | Java 18或更高版本 |
+| mac | [MyBox-6.6.1-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.6.1/MyBox-6.6.1-mac-jar.zip)  |  200MB-  | Java 18或更高版本 |
 
 执行以下命令来启动程序：       
 <PRE><CODE>     java   -jar   MyBox-6.6.1.jar</CODE></PRE>       
@@ -93,6 +99,7 @@
 
 ### 限制
   
+* MyBox未经足够测试，可靠性低，有的版本甚至可能出现毁坏数据的错误。       
 * 在某个输入法运行时，MyBox的窗口经常僵住。解决办法：禁用/卸载此输入法。       
 
 ## 版本迁移
@@ -129,15 +136,15 @@
 | 开发日志          | 6.6.1  | 2022-11-6 | [html](https://mararsh.github.io/MyBox/mybox_devLogs_en.html)                                                                                                                                                                                                                                 | [html](https://mararsh.github.io/MyBox/mybox_devLogs.html)                                                                                                                                                                                                                                    |
 | 快捷键            | 6.5.6   | 2022-6-11 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html)                                                                                                                                                                                                                               | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html)                                                                                                                                                                                                                                  |
 | 打包步骤          | 6.3.3   | 2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps_en.html)                                                                                                                                                                                                                                    | [html](https://mararsh.github.io/MyBox/pack_steps.html)                                                                                                                                                                                                                                       |
-| 开发指南          | 2.1     | 2020-8-27 | [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-DevGuide-2.1-en.pdf)                                                                                                                                                                                                                 | [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-DevGuide-2.1-zh.pdf)                                                                                                                                                                                                                 |
-| 用户手册-综述     | 6.6.1  | 2022-11-6 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6.1-Overview-en/MyBox-6.6.1-Overview-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-Overview-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-Overview-en.odt)                     | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6.1-Overview-zh/MyBox-6.6.1-Overview-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-Overview-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-Overview-zh.odt)                     |
-| 用户手册-文档工具 | 6.6.1  | 2022-11-6 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6.1-DocumentTools-en/MyBox-6.6.1-DocumentTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-DocumentTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-DocumentTools-en.odt) | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6.1-DocumentTools-zh/MyBox-6.6.1-DocumentTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-DocumentTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-DocumentTools-zh.odt) |
-| 用户手册-图像工具 | 6.6.1  | 2022-11-6 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6.1-ImageTools-en/MyBox-6.6.1-ImageTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-ImageTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-ImageTools-en.odt)             | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6.1-ImageTools-zh/MyBox-6.6.1-ImageTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-ImageTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-ImageTools-zh.odt)             |
-| 用户手册-文件工具 | 6.6.1  | 2022-11-6 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6.1-FileTools-en/MyBox-6.6.1-FileTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-FileTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-FileTools-en.odt)                 | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6.1-FileTools-zh/MyBox-6.6.1-FileTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-FileTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-FileTools-zh.odt)                 |
-| 用户手册-网络工具 | 6.6.1  | 2022-11-6 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6.1-NetworkTools-en/MyBox-6.6.1-NetworkTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-NetworkTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-NetworkTools-en.odt)     | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6.1-NetworkTools-zh/MyBox-6.6.1-NetworkTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-NetworkTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-NetworkTools-zh.odt)     |
-| 用户手册-数据工具 | 6.6.1  | 2022-11-6 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6.1-DataTools-en/MyBox-6.6.1-DataTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-DataTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-DataTools-en.odt)                 | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6.1-DataTools-zh/MyBox-6.6.1-DataTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-DataTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-DataTools-zh.odt)                 |
-| 用户手册-媒体工具 | 6.6.1  | 2022-11-6 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6.1-MediaTools-en/MyBox-6.6.1-MediaTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-MediaTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-MediaTools-en.odt)             | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6.1-MediaTools-zh/MyBox-6.6.1-MediaTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-MediaTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-MediaTools-zh.odt)             |
-| 用户手册-开发工具 | 6.6.1  | 2022-11-6 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6.1-DevTools-en/MyBox-6.6.1-DevTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-DevTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-DevTools-en.odt)                     | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6.1-DevTools-zh/MyBox-6.6.1-DevTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-DevTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-6.6.1-DevTools-zh.odt)                     |
+| 开发指南          | 2.1     | 2020-8-27 | [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-DevGuide-2.1-en.pdf)                                                                                                                                                                                                                 | [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-DevGuide-2.1-zh.pdf)                                                                                                                                                                                                                 |
+| 用户手册-综述     | 6.6.1  | 2022-11-6 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6.1-Overview-en/MyBox-6.6.1-Overview-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-Overview-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-Overview-en.odt)                     | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6.1-Overview-zh/MyBox-6.6.1-Overview-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-Overview-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-Overview-zh.odt)                     |
+| 用户手册-文档工具 | 6.6.1  | 2022-11-6 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6.1-DocumentTools-en/MyBox-6.6.1-DocumentTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-DocumentTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-DocumentTools-en.odt) | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6.1-DocumentTools-zh/MyBox-6.6.1-DocumentTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-DocumentTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-DocumentTools-zh.odt) |
+| 用户手册-图像工具 | 6.6.1  | 2022-11-6 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6.1-ImageTools-en/MyBox-6.6.1-ImageTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-ImageTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-ImageTools-en.odt)             | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6.1-ImageTools-zh/MyBox-6.6.1-ImageTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-ImageTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-ImageTools-zh.odt)             |
+| 用户手册-文件工具 | 6.6.1  | 2022-11-6 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6.1-FileTools-en/MyBox-6.6.1-FileTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-FileTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-FileTools-en.odt)                 | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6.1-FileTools-zh/MyBox-6.6.1-FileTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-FileTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-FileTools-zh.odt)                 |
+| 用户手册-网络工具 | 6.6.1  | 2022-11-6 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6.1-NetworkTools-en/MyBox-6.6.1-NetworkTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-NetworkTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-NetworkTools-en.odt)     | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6.1-NetworkTools-zh/MyBox-6.6.1-NetworkTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-NetworkTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-NetworkTools-zh.odt)     |
+| 用户手册-数据工具 | 6.6.1  | 2022-11-6 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6.1-DataTools-en/MyBox-6.6.1-DataTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-DataTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-DataTools-en.odt)                 | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6.1-DataTools-zh/MyBox-6.6.1-DataTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-DataTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-DataTools-zh.odt)                 |
+| 用户手册-媒体工具 | 6.6.1  | 2022-11-6 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6.1-MediaTools-en/MyBox-6.6.1-MediaTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-MediaTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-MediaTools-en.odt)             | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6.1-MediaTools-zh/MyBox-6.6.1-MediaTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-MediaTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-MediaTools-zh.odt)             |
+| 用户手册-开发工具 | 6.6.1  | 2022-11-6 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6.1-DevTools-en/MyBox-6.6.1-DevTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-DevTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-DevTools-en.odt)                     | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6.1-DevTools-zh/MyBox-6.6.1-DevTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-DevTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-DevTools-zh.odt)                     |
 
 
 # 实现基础       

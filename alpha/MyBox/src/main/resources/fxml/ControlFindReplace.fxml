@@ -78,7 +78,7 @@ License:    Apache License Version 2.0
                 <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                     <children>
                         <CheckBox fx:id="regexCheck" mnemonicParsing="false" text="%RegularExpression" />
-                        <Button fx:id="exampleFindButton" mnemonicParsing="false" onMouseEntered="#popFindExample">
+                        <Button fx:id="exampleFindButton" mnemonicParsing="false" onAction="#popFindExample">
                             <graphic>
                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                     <image>
