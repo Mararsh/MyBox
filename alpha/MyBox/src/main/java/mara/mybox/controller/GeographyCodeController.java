@@ -220,8 +220,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
 
                 @Override
                 protected boolean handle() {
-                    mapData = TableGeographyCode.queryCodes(dataQuerySQL,
-                            mapController.mapOptions.getDataMax(), true);
+                    mapData = TableGeographyCode.queryCodes(dataQuerySQL, -1, true);
                     return true;
                 }
 

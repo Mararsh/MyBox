@@ -63,6 +63,8 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
     @FXML
     protected CheckBox q0Check, q1Check, q2Check, q3Check, q4Check, e4Check, e3Check, e2Check, e1Check,
             dottedCheck, outliersCheck, meanCheck, meanLineCheck;
+    @FXML
+    protected ControlData2DResults statisticDataController;
 
     public Data2DChartBoxWhiskerController() {
         baseTitle = message("BoxWhiskerChart");
@@ -398,6 +400,8 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
                     .setDefaultCategoryLabel(selectedCategory)
                     .setDefaultValueLabel(checkedColsNames.toString());
 
+            statisticDataController.loadNull();
+
             return calculation.prepare();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -522,14 +526,20 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
     }
 
     @Override
+    public void outputData() {
+        statisticDataController.loadData(outputColumns, outputData);
+        drawChart();
+    }
+
+    @Override
     public void drawChart() {
         drawChartBoxWhisker();
     }
 
     public void drawChartBoxWhisker() {
         try {
-            if (outputData == null || outputData.isEmpty()) {
-                popError(message("NoData"));
+            chartData = chartMax();
+            if (chartData == null || chartData.isEmpty()) {
                 return;
             }
             List<Integer> displayCols = new ArrayList<>();
@@ -544,7 +554,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
                     displayCols.add(i);
                 }
             }
-            chartController.writeXYChart(outputColumns, outputData, 0, displayCols);
+            chartController.writeXYChart(outputColumns, chartData, 0, displayCols);
             chartMaker.getBoxWhiskerChart()
                     .setBoxWidth(boxWidth)
                     .setHandleMean(meanCheck.isSelected())

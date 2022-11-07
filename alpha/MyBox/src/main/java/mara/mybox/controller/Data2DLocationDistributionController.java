@@ -11,6 +11,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
@@ -27,6 +28,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -39,7 +41,7 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
     protected ToggleGroup csGroup;
     protected double maxValue, minValue;
     protected List<MapPoint> dataPoints;
-    protected int framesNumber, frameid, lastFrameid;
+    protected int chartMaxData, framesNumber, frameid, lastFrameid;
     protected Thread frameThread;
 
     @FXML
@@ -58,6 +60,8 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
     protected CheckBox accumulateCheck, centerCheck, linkCheck;
     @FXML
     protected ControlData2DResults valuesController;
+    @FXML
+    protected TextField chartMaxInput;
 
     public Data2DLocationDistributionController() {
         baseTitle = message("LocationDistribution");
@@ -93,6 +97,14 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                 csGroup.getToggles().add(rb);
             }
             ((RadioButton) csPane.getChildren().get(0)).setSelected(true);
+
+            chartMaxData = UserConfig.getInt(baseName + "ChartMaxData", 500);
+            if (chartMaxData <= 0) {
+                chartMaxData = 500;
+            }
+            if (chartMaxInput != null) {
+                chartMaxInput.setText(chartMaxData + "");
+            }
 
             frameThread = new Thread() {
                 @Override
@@ -271,10 +283,6 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
             @Override
             protected boolean handle() {
                 try {
-                    long maxDataNumber = filterController.maxFilteredNumber;
-                    maxDataNumber = Math.min(maxDataNumber > 0 ? maxDataNumber : Integer.MAX_VALUE,
-                            mapController.mapOptions.getDataMax());
-                    filterController.filter.setMaxPassed(maxDataNumber);
                     csvData = sortedFile(data2D.dataName(), dataColsIndices, false);
                     if (csvData == null) {
                         return false;
@@ -407,8 +415,6 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
             @Override
             protected boolean handle() {
                 try {
-                    int max = mapController.mapOptions.getDataMax();
-                    int index = 0;
                     String image = mapController.mapOptions.image();
                     int textSize = mapController.mapOptions.textSize();
                     int markSize = mapController.mapOptions.markSize();
@@ -416,6 +422,7 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                     boolean isBold = mapController.mapOptions.isBold();
                     mapPoints = new ArrayList<>();
                     labels = new ArrayList<>();
+                    int index = 0;
                     for (MapPoint dataPoint : dataPoints) {
                         if (sizeCol != null) {
                             markSize = dataPoint.getMarkSize();
@@ -433,7 +440,7 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                                 .setIsBold(isBold);
                         mapPoints.add(mapPoint);
                         labels.add(dataPoint.getLabel());
-                        if (++index >= max) {
+                        if (chartMaxData > 0 && ++index >= chartMaxData) {
                             break;
                         }
                     }
@@ -507,6 +514,41 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
                 lastFrameid = frameid;
             }
         });
+    }
+
+    @FXML
+    public void goMaxAction() {
+        if (chartMaxInput != null) {
+            boolean ok;
+            String s = chartMaxInput.getText();
+            if (s == null || s.isBlank()) {
+                chartMaxData = -1;
+                ok = true;
+            } else {
+                try {
+                    int v = Integer.valueOf(s);
+                    if (v > 0) {
+                        chartMaxData = v;
+
+                        ok = true;
+                    } else {
+                        ok = false;
+                    }
+                } catch (Exception ex) {
+                    ok = false;
+                }
+            }
+            if (ok) {
+                UserConfig.setInt(baseName + "ChartMaxData", chartMaxData);
+                chartMaxInput.setStyle(null);
+            } else {
+                chartMaxInput.setStyle(UserConfig.badStyle());
+                popError(message("Invalid") + ": " + message("Maximum"));
+                return;
+            }
+        }
+
+        drawPoints();
     }
 
     @Override

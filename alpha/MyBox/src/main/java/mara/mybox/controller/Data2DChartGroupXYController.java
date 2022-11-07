@@ -27,7 +27,7 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
         if (group == null) {
             return null;
         }
-        return super.chartTitle() + "<BR>"
+        return super.chartTitle() + "\n"
                 + group.getIdColName() + groupid + " - " + group.parameterValue(groupid - 1);
     }
 

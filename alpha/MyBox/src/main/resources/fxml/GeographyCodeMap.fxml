@@ -11,6 +11,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -70,6 +71,21 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </children>
                         </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" spacing="5.0">
+                     <children>
+                        <Label minHeight="-Infinity" text="%MaxDataInChart" wrapText="true" />
+                        <TextField fx:id="chartMaxInput" prefWidth="80.0" promptText="100" />
+                        <Button fx:id="goMaxButton" mnemonicParsing="false" onAction="#goMaxAction">
+                           <graphic>
+                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconGo.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                     </children>
+                  </HBox>
                         <VBox fx:id="snapBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
                             <children>
                                 <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" spacing="5.0">

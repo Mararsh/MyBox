@@ -408,4 +408,9 @@ public class Data2DColumn extends ColumnDefinition {
         return this;
     }
 
+    @Override
+    public Data2DColumn setInvalidAs(InvalidAs invalidAs) {
+        this.invalidAs = invalidAs;
+        return this;
+    }
 }

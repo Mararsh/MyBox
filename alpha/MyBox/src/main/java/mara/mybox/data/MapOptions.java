@@ -20,7 +20,7 @@ public class MapOptions {
 
     protected ControlMap mapController;
     protected String baseName, mapType, mapStyle, language;
-    protected int markerSize, textSize, mapSize, dataMax;
+    protected int markerSize, textSize, mapSize;
     protected boolean isSettingValues, isGeodetic, fitView, popInfo,
             standardLayer, satelliteLayer, roadLayer, trafficLayer,
             zoom, scale, type, symbols, bold, markerLabel, markerCoordinate;
@@ -47,7 +47,6 @@ public class MapOptions {
             markerSize = UserConfig.getInt(baseName + "MarkerSize", 24);
             textSize = UserConfig.getInt(baseName + "TextSize", 12);
             mapSize = UserConfig.getInt(baseName + "MapSize", 9);
-            dataMax = UserConfig.getInt(baseName + "DataMax", 500);
             isGeodetic = UserConfig.getBoolean(baseName + "Geodetic", true);
             fitView = UserConfig.getBoolean(baseName + "FitView", true);
             popInfo = UserConfig.getBoolean(baseName + "PopInfo", true);
@@ -230,22 +229,6 @@ public class MapOptions {
         UserConfig.setInt(baseName + "MapSize", mapSize);
         if (mapController != null && !mapController.isIsSettingValues()) {
             mapController.setMapSize();
-        }
-        return this;
-    }
-
-    public int getDataMax() {
-        return dataMax;
-    }
-
-    public MapOptions setDataMax(int dataMax) {
-        if (dataMax <= 0 || this.dataMax == dataMax) {
-            return this;
-        }
-        this.dataMax = dataMax;
-        UserConfig.setInt(baseName + "DataMax", dataMax);
-        if (mapController != null && !mapController.isIsSettingValues()) {
-            mapController.setDataMax();
         }
         return this;
     }

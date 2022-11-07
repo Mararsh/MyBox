@@ -185,6 +185,11 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
         start(task);
     }
 
+    @Override
+    public void drawChart() {
+        outputData();
+    }
+
     protected String makeHtml() {
         return null;
     }

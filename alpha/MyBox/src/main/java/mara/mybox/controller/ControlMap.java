@@ -40,7 +40,6 @@ import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.FileFilters;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.SystemConfig;
 
 /**
  * @Author Mara
@@ -102,39 +101,6 @@ public class ControlMap extends BaseController {
     public void initOptionsControls() {
         if (mapOptionsController != null) {
             mapOptionsController.setParameters(this);
-        }
-    }
-
-    public void checkFirstRun(BaseController parent) {
-        try {
-            this.parentController = parent;
-            initSplitPanes();
-
-            if (SystemConfig.getBoolean("MapRunFirstTime" + AppValues.AppVersion, true)) {
-                HtmlPopController controller = HtmlPopController.openHtml(parentController, LocationTools.gaodeMap());
-                controller.handling(message("FirstRunInfo"));
-                new Timer().schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        Platform.runLater(() -> {
-                            controller.loadAddress(LocationTools.tiandituFile(true).toURI().toString());
-                        });
-                    }
-                }, 2000);
-                new Timer().schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        Platform.runLater(() -> {
-                            SystemConfig.setBoolean("MapRunFirstTime" + AppValues.AppVersion, false);
-                            controller.closeStage();
-                            if (parentController != null) {
-                                parentController.reload();
-                            }
-                        });
-                    }
-                }, 4000);
-            }
-        } catch (Exception e) {
         }
     }
 
@@ -342,13 +308,6 @@ public class ControlMap extends BaseController {
                 webEngine.executeScript("map.setFitView();");
             });
         }
-    }
-
-    public void setDataMax() {
-        if (!mapLoaded || isSettingValues) {
-            return;
-        }
-        dataNotify.set(!dataNotify.get());
     }
 
     public void setMinLevel() {

@@ -127,6 +127,10 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
 
     @Override
     protected String makeHtml() {
+        chartData = chartMax();
+        if (chartData == null || chartData.isEmpty()) {
+            return null;
+        }
         if (!makeBars()) {
             return null;
         }
@@ -135,15 +139,15 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
 
     protected boolean makeBars() {
         try {
-            if (outputData == null) {
+            if (chartData == null) {
                 return false;
             }
             outputColumns = data2D.makeColumns(dataColsIndices, showRowNumber());
             normalization = null;
-            int rowsNumber = outputData.size();
+            int rowsNumber = chartData.size();
             String[] data = new String[2 * rowsNumber];
             for (int r = 0; r < rowsNumber; r++) {
-                List<String> tableRow = outputData.get(r);
+                List<String> tableRow = chartData.get(r);
                 data[r] = tableRow.get(col1Index);
                 data[r + rowsNumber] = tableRow.get(col2Index);
             }
@@ -171,7 +175,7 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
 
     protected String writeHtml() {
         try {
-            if (bars == null || data2D == null || normalization == null || outputData == null) {
+            if (bars == null || data2D == null || normalization == null || chartData == null) {
                 return null;
             }
             StringBuilder s = new StringBuilder();
@@ -218,9 +222,9 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
             if (color2 == null) {
                 color2 = FxColorTools.randomColor(random);
             }
-            int rowsNumber = outputData.size();
+            int rowsNumber = chartData.size();
             for (int r = 0; r < rowsNumber; r++) {
-                List<String> row = outputData.get(r);
+                List<String> row = chartData.get(r);
                 s.append("<TR>\n");
 
                 s.append("<TD align=center class=\"RowNumber\">")

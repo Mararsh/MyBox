@@ -11,11 +11,11 @@ import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import mara.mybox.data2d.reader.DataTableGroup;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
@@ -30,9 +30,10 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
     protected String selectedCategory, selectedValue;
     protected DataTableGroup group;
-    protected int framesNumber, groupid;
+    protected int chartMaxData, framesNumber, groupid;
     protected Thread frameThread;
     protected Connection conn;
+    protected List<List<String>> chartData;
 
     @FXML
     protected ComboBox<String> categoryColumnSelector, valueColumnSelector;
@@ -40,11 +41,12 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     protected Label noticeLabel;
     @FXML
     protected CheckBox displayAllCheck;
-
+    @FXML
+    protected TextField chartMaxInput;
     @FXML
     protected ControlData2DResults groupDataController;
     @FXML
-    protected ControlGroupPlay playController;
+    protected ControlPlay playController;
 
     @Override
     public void initControls() {
@@ -64,6 +66,14 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                 });
 
                 displayAllCheck.visibleProperty().bind(allPagesRadio.selectedProperty());
+            }
+
+            chartMaxData = UserConfig.getInt(baseName + "ChartMaxData", 100);
+            if (chartMaxData <= 0) {
+                chartMaxData = 100;
+            }
+            if (chartMaxInput != null) {
+                chartMaxInput.setText(chartMaxData + "");
             }
 
             if (playController != null) {
@@ -310,7 +320,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                 popError(message("NoData"));
                 return;
             }
-
+            chartMax();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -323,7 +333,83 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     @FXML
     @Override
     public void refreshAction() {
+        if (chartMaxInput != null) {
+            boolean ok;
+            try {
+                int v = Integer.valueOf(chartMaxInput.getText());
+                if (v > 0) {
+                    chartMaxData = v;
+                    UserConfig.setInt(baseName + "ChartMaxData", chartMaxData);
+                    ok = true;
+                } else {
+                    ok = false;
+                }
+            } catch (Exception ex) {
+                ok = false;
+            }
+            if (ok) {
+                chartMaxInput.setStyle(null);
+            } else {
+                chartMaxInput.setStyle(UserConfig.badStyle());
+                popError(message("Invalid") + ": " + message("Maximum"));
+                return;
+            }
+        }
+
         okAction();
+    }
+
+    public List<List<String>> chartMax() {
+        try {
+            if (outputData == null || outputData.isEmpty()) {
+                popError(message("NoData"));
+                return null;
+            }
+            if (chartMaxData > 0 && chartMaxData < outputData.size()) {
+                chartData = outputData.subList(0, chartMaxData);
+            } else {
+                chartData = outputData;
+            }
+            return chartData;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    @FXML
+    public void goMaxAction() {
+        if (chartMaxInput != null) {
+            boolean ok;
+            String s = chartMaxInput.getText();
+            if (s == null || s.isBlank()) {
+                chartMaxData = -1;
+                ok = true;
+            } else {
+                try {
+                    int v = Integer.valueOf(s);
+                    if (v > 0) {
+                        chartMaxData = v;
+
+                        ok = true;
+                    } else {
+                        ok = false;
+                    }
+                } catch (Exception ex) {
+                    ok = false;
+                }
+            }
+            if (ok) {
+                UserConfig.setInt(baseName + "ChartMaxData", chartMaxData);
+                chartMaxInput.setStyle(null);
+            } else {
+                chartMaxInput.setStyle(UserConfig.badStyle());
+                popError(message("Invalid") + ": " + message("Maximum"));
+                return;
+            }
+        }
+
+        drawChart();
     }
 
     /*
@@ -413,18 +499,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    if (outputData == null) {
-                        return;
-                    }
-                    if (playController.askLarger > 0) {
-                        int size = outputData.size();
-                        if (size > playController.askLarger) {
-                            playController.pauseAction();
-                            if (!PopTools.askSure(myController, null, null, message("SureDisplayAll") + size)) {
-                                return;
-                            }
-                        }
-                    }
                     drawFrame();
                 }
             });

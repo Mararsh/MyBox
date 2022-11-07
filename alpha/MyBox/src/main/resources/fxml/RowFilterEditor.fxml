@@ -34,70 +34,70 @@ License:    Apache License Version 2.0
                             <padding>
                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                             </padding>
-                     <children>
-                        <HBox alignment="CENTER_LEFT" layoutX="12.0" layoutY="12.0" maxWidth="1.7976931348623157E308" spacing="2.0">
-                           <children>
-                              <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../buttons/Red/iconTips.png" />
-                                 </image>
-                              </ImageView>
-                              <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
-                                 <children>
-                                    <Label minHeight="-Infinity" text="%MaxSourceDataTake" wrapText="true" />
-                                    <TextField fx:id="maxInput" prefWidth="100.0" />
-                                 </children>
-                              </HBox>
-                           </children>
-                        </HBox>
-                        <FlowPane alignment="CENTER_RIGHT" hgap="2.0" vgap="2.0">
-                           <children>
-                              <Label minHeight="-Infinity" text="%TakeSourceDataWhenExpressionEmptyOr" wrapText="true" />
-                              <RadioButton fx:id="trueRadio" mnemonicParsing="false" selected="true" text="true">
-                                 <toggleGroup>
-                                    <ToggleGroup fx:id="takeGroup" />
-                                 </toggleGroup>
-                              </RadioButton>
-                              <RadioButton fx:id="othersRadio" mnemonicParsing="false" text="%Others" toggleGroup="$takeGroup" />
-                           </children>
-                        </FlowPane>
-                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
-                           <children>
-                              <FlowPane alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" prefWrapLength="200.0" HBox.hgrow="ALWAYS">
-                                 <children>
-                                    <Button fx:id="clearScriptButton" mnemonicParsing="false" onAction="#clearValue">
-                                       <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconClear.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
-                                    <Button fx:id="historyScriptButton" mnemonicParsing="false" onAction="#showScriptHistories" onMouseEntered="#popScriptHistories">
-                                       <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconHistory.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
-                                    <Button fx:id="exampleScriptButton" mnemonicParsing="false" onAction="#showScriptExamples" onMouseEntered="#popScriptExamples">
-                                       <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconExamples.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
-                                 </children>
-                              </FlowPane>
-                           </children>
-                        </HBox>
-                        <TextArea fx:id="valueInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
-                     </children>
+                            <children>
+                                <HBox alignment="CENTER_LEFT" layoutX="12.0" layoutY="12.0" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                    <children>
+                                        <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/Red/iconTips.png" />
+                                            </image>
+                                        </ImageView>
+                                        <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
+                                            <children>
+                                                <Label minHeight="-Infinity" text="%MaxFilteredDataTake" wrapText="true" />
+                                                <TextField fx:id="maxInput" prefWidth="100.0" />
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </HBox>
+                                <FlowPane alignment="CENTER_RIGHT" hgap="2.0" vgap="2.0">
+                                    <children>
+                                        <Label minHeight="-Infinity" text="%TakeSourceDataWhenExpressionEmptyOr" wrapText="true" />
+                                        <RadioButton fx:id="trueRadio" mnemonicParsing="false" selected="true" text="true">
+                                            <toggleGroup>
+                                                <ToggleGroup fx:id="takeGroup" />
+                                            </toggleGroup>
+                                        </RadioButton>
+                                        <RadioButton fx:id="othersRadio" mnemonicParsing="false" text="%Others" toggleGroup="$takeGroup" />
+                                    </children>
+                                </FlowPane>
+                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                    <children>
+                                        <FlowPane alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" prefWrapLength="200.0" HBox.hgrow="ALWAYS">
+                                            <children>
+                                                <Button fx:id="clearScriptButton" mnemonicParsing="false" onAction="#clearValue">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconClear.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="historyScriptButton" mnemonicParsing="false" onAction="#showScriptHistories" onMouseEntered="#popScriptHistories">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconHistory.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="exampleScriptButton" mnemonicParsing="false" onAction="#showScriptExamples" onMouseEntered="#popScriptExamples">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconExamples.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                            </children>
+                                        </FlowPane>
+                                    </children>
+                                </HBox>
+                                <TextArea fx:id="valueInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
+                            </children>
                         </VBox>
                     </content>
                 </Tab>

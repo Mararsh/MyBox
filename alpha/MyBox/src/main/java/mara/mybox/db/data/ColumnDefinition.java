@@ -645,9 +645,8 @@ public class ColumnDefinition extends BaseData {
         return string;
     }
 
-    // to avoid data filter to pop syntax errors
     public String filterValue(String string) {
-        return toString(fromString(string, isNumberType() ? InvalidAs.Zero : InvalidAs.Blank));
+        return toString(fromString(string));
     }
 
     public boolean valueQuoted() {

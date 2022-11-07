@@ -5,6 +5,7 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
@@ -31,6 +32,8 @@ public class Data2DChartXYController extends BaseData2DChartController {
     @FXML
     protected ControlChartXYSelection chartTypesController;
     @FXML
+    protected CheckBox xyReverseCheck;
+    @FXML
     protected VBox columnsBox, columnCheckBoxsBox;
     @FXML
     protected Label valuesLabel;
@@ -41,6 +44,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
 
     public Data2DChartXYController() {
         baseTitle = message("XYChart");
+        TipsLabelKey = "DataChartXYTips";
     }
 
     @Override
@@ -52,6 +56,15 @@ public class Data2DChartXYController extends BaseData2DChartController {
             chartController.redrawNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    drawChart();
+                }
+            });
+
+            xyReverseCheck.setSelected(!chartMaker.isIsXY());
+            xyReverseCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    initChart();
                     drawChart();
                 }
             });
@@ -185,6 +198,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
                     .setDefaultChartTitle(chartTitle())
                     .setDefaultCategoryLabel(selectedCategory)
                     .setInvalidAs(invalidAs);
+            chartMaker.setIsXY(!xyReverseCheck.isSelected());
             if (chartTypesController.isBubbleChart()) {
                 chartMaker.setDefaultValueLabel(selectedValue);
             } else if (checkedColsNames != null) {
@@ -203,7 +217,11 @@ public class Data2DChartXYController extends BaseData2DChartController {
     }
 
     public void drawXYChart() {
-        chartController.writeXYChart(outputColumns, outputData, categoryIndex, valueIndices);
+        chartData = chartMax();
+        if (chartData == null || chartData.isEmpty()) {
+            return;
+        }
+        chartController.writeXYChart(outputColumns, chartData, categoryIndex, valueIndices);
     }
 
     /*

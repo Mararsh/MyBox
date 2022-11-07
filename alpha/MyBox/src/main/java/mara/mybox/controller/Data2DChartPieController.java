@@ -110,40 +110,8 @@ public class Data2DChartPieController extends BaseData2DChartController {
     @Override
     public void readData() {
         super.readData();
-        countPercentage();
-    }
-
-    public void countPercentage() {
-        try {
-            if (outputData == null || outputColumns == null) {
-                return;
-            }
-            percentageIndex = outputColumns.size();
-            outputColumns.add(new Data2DColumn(message("Percentage"), ColumnDefinition.ColumnType.Double));
-            double sum = 0, value;
-            for (List<String> data : outputData) {
-                try {
-                    sum += Double.valueOf(data.get(valueIndex));
-                } catch (Exception e) {
-                }
-            }
-            List<List<String>> pdata = new ArrayList<>();
-            for (List<String> row : outputData) {
-                try {
-                    value = Double.valueOf(row.get(valueIndex));
-                    row.add(DoubleTools.percentage(value, sum, scale));
-                    pdata.add(row);
-                } catch (Exception e) {
-                }
-            }
-
-            outputData = pdata;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-        }
+        percentageIndex = outputColumns.size();
+        outputColumns.add(new Data2DColumn(message("Percentage"), ColumnDefinition.ColumnType.Double));
     }
 
     @Override
@@ -152,7 +120,35 @@ public class Data2DChartPieController extends BaseData2DChartController {
     }
 
     public void drawPieChart() {
-        chartController.writeChart(outputColumns, outputData, categoryIndex, valueIndex, percentageIndex);
+        try {
+            chartData = chartMax();
+            if (chartData == null || chartData.isEmpty()) {
+                return;
+            }
+            double sum = 0, value;
+            for (List<String> data : chartData) {
+                try {
+                    sum += Double.valueOf(data.get(valueIndex));
+                } catch (Exception e) {
+                }
+            }
+            List<List<String>> pdata = new ArrayList<>();
+            for (List<String> row : chartData) {
+                try {
+                    value = Double.valueOf(row.get(valueIndex));
+                    row.add(DoubleTools.percentage(value, sum, scale));
+                    pdata.add(row);
+                } catch (Exception e) {
+                }
+            }
+            chartData = pdata;
+            chartController.writeChart(outputColumns, chartData, categoryIndex, valueIndex, percentageIndex);
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+        }
     }
 
     /*

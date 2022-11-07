@@ -13,6 +13,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.controller.ControlData2D;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -777,9 +778,9 @@ public class Data2DExampleTools {
                         .setFixTwoDigitYear(false).setFormat("yyyy-MM-dd"));
                 columns.add(new Data2DColumn(message(lang, "Country"), ColumnType.String));
                 columns.add(new Data2DColumn(message(lang, "Province"), ColumnType.String));
-                columns.add(new Data2DColumn(message(lang, "Confirmed"), ColumnType.Integer));
-                columns.add(new Data2DColumn(message(lang, "Healed"), ColumnType.Integer));
-                columns.add(new Data2DColumn(message(lang, "Dead"), ColumnType.Integer));
+                columns.add(new Data2DColumn(message(lang, "Confirmed"), ColumnType.Integer).setInvalidAs(InvalidAs.Zero));
+                columns.add(new Data2DColumn(message(lang, "Healed"), ColumnType.Integer).setInvalidAs(InvalidAs.Zero));
+                columns.add(new Data2DColumn(message(lang, "Dead"), ColumnType.Integer).setInvalidAs(InvalidAs.Zero));
                 columns.add(new Data2DColumn(message(lang, "Longitude"), ColumnType.Longitude));
                 columns.add(new Data2DColumn(message(lang, "Latitude"), ColumnType.Latitude));
                 data.setColumns(columns).setDataName(message("EpidemicReportsCOVID19"))

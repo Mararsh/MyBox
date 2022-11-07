@@ -44,7 +44,7 @@ public class ControlMapOptions extends BaseController {
             markerLabelCheck, markerCoordinateCheck;
     @FXML
     protected ComboBox<String> standardOpacitySelector, satelliteOpacitySelector,
-            roadOpacitySelector, trafficOpacitySelector, dataMaximumSelector,
+            roadOpacitySelector, trafficOpacitySelector,
             markerSizeSelector, mapSizeSelector, textSizeSelector;
     @FXML
     protected ToggleGroup mapGroup, coordinateGroup, projectionGroup,
@@ -57,10 +57,10 @@ public class ControlMapOptions extends BaseController {
     @FXML
     protected TextField markerImageInput;
     @FXML
-    protected VBox optionsBox, mapBox, dataBox, languageBox, controlsBox, layersBox, sizeBox,
+    protected VBox optionsBox, mapBox, languageBox, controlsBox, layersBox, sizeBox,
             markerTextBox, markerImageBox;
     @FXML
-    protected FlowPane baseTextPane, textColorPane, markerImagePane, dataNumberPane;
+    protected FlowPane baseTextPane, textColorPane, markerImagePane;
     @FXML
     protected ColorSet colorSetController;
 
@@ -179,26 +179,6 @@ public class ControlMapOptions extends BaseController {
                                 return;
                             }
                             mapOptions.setMarkerImageFile(new File(v));
-                        });
-            }
-
-            if (dataMaximumSelector != null) {
-                dataMaximumSelector.getItems().addAll(Arrays.asList(
-                        "300", "500", "200", "100", "1000", "2000", "5000", "10000", "50"
-                ));
-                dataMaximumSelector.getSelectionModel().selectedItemProperty().addListener(
-                        (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                            try {
-                                int v = Integer.parseInt(newValue);
-                                if (v > 0) {
-                                    mapOptions.setDataMax(v);
-                                    dataMaximumSelector.getEditor().setStyle(null);
-                                } else {
-                                    dataMaximumSelector.getEditor().setStyle(UserConfig.badStyle());
-                                }
-                            } catch (Exception e) {
-                                dataMaximumSelector.getEditor().setStyle(UserConfig.badStyle());
-                            }
                         });
             }
 
@@ -438,9 +418,6 @@ public class ControlMapOptions extends BaseController {
                 englishRadio.setSelected(true);
             } else {
                 chineseRadio.setSelected(true);
-            }
-            if (dataMaximumSelector != null) {
-                dataMaximumSelector.setValue(mapOptions.getDataMax() + "");
             }
             if (markerSizeSelector != null) {
                 markerSizeSelector.setValue(mapOptions.getMarkerSize() + "");

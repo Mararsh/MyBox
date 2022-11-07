@@ -22,7 +22,7 @@ public class Data2DChartGroupPieController extends Data2DChartPieController {
         if (group == null) {
             return null;
         }
-        return super.chartTitle() + "<BR>"
+        return super.chartTitle() + "\n"
                 + group.getIdColName() + groupid + " - " + group.parameterValue(groupid - 1);
     }
 

@@ -9,7 +9,7 @@ public class AppValues {
 
     public static final boolean Alpha = true;
     public static final String AppVersion = "6.6.1";
-    public static final String AppVersionDate = "2022-10-28";
+    public static final String AppVersionDate = "2022-11-8";
     public static final String AppDerbyUser = "mara";
     public static final String AppDerbyPassword = "mybox";
 

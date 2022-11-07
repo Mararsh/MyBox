@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javafx.fxml.FXML;
+import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import mara.mybox.data.MapPoint;
 import mara.mybox.db.data.BaseData;
@@ -15,6 +16,8 @@ import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -26,6 +29,10 @@ public class GeographyCodeMapController extends BaseMapFramesController {
     protected TableGeographyCode geoTable;
     protected BaseDataManageController dataController;
     protected List<GeographyCode> geographyCodes;
+    protected int chartMaxData;
+
+    @FXML
+    protected TextField chartMaxInput;
 
     public GeographyCodeMapController() {
         baseTitle = Languages.message("Map") + " - " + Languages.message("GeographyCode");
@@ -43,17 +50,26 @@ public class GeographyCodeMapController extends BaseMapFramesController {
         }
     }
 
-    public void initMap(BaseDataManageController dataController) {
-        this.dataController = dataController;
-        super.checkFirstRun(dataController);
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            chartMaxData = UserConfig.getInt(baseName + "ChartMaxData", 500);
+            if (chartMaxData <= 0) {
+                chartMaxData = 500;
+            }
+            if (chartMaxInput != null) {
+                chartMaxInput.setText(chartMaxData + "");
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
-    @Override
-    public void setDataMax() {
-        if (!mapLoaded || isSettingValues) {
-            return;
-        }
-        dataController.reloadChart();
+    public void initMap(BaseDataManageController dataController) {
+        this.dataController = dataController;
     }
 
     @Override
@@ -76,7 +92,6 @@ public class GeographyCodeMapController extends BaseMapFramesController {
             protected boolean handle() {
                 points = new ArrayList<>();
                 GeographyCode tcode;
-                int max = mapOptions.getDataMax();
                 String image = mapOptions.image();
                 int textSize = mapOptions.textSize();
                 int markSize = mapOptions.markSize();
@@ -101,7 +116,7 @@ public class GeographyCodeMapController extends BaseMapFramesController {
                             .setTextColor(textColor)
                             .setIsBold(isBold);
                     points.add(mapPoint);
-                    if (++index >= max) {
+                    if (chartMaxData > 0 && ++index >= chartMaxData) {
                         break;
                     }
                 }
@@ -110,6 +125,7 @@ public class GeographyCodeMapController extends BaseMapFramesController {
 
             @Override
             protected void whenSucceeded() {
+                initPoints(mapPoints);
                 drawPoints(points);
             }
         };
@@ -160,6 +176,41 @@ public class GeographyCodeMapController extends BaseMapFramesController {
         if (dataController != null) {
             dataController.reloadChart();
         }
+    }
+
+    @FXML
+    public void goMaxAction() {
+        if (chartMaxInput != null) {
+            boolean ok;
+            String s = chartMaxInput.getText();
+            if (s == null || s.isBlank()) {
+                chartMaxData = -1;
+                ok = true;
+            } else {
+                try {
+                    int v = Integer.valueOf(s);
+                    if (v > 0) {
+                        chartMaxData = v;
+
+                        ok = true;
+                    } else {
+                        ok = false;
+                    }
+                } catch (Exception ex) {
+                    ok = false;
+                }
+            }
+            if (ok) {
+                UserConfig.setInt(baseName + "ChartMaxData", chartMaxData);
+                chartMaxInput.setStyle(null);
+            } else {
+                chartMaxInput.setStyle(UserConfig.badStyle());
+                popError(message("Invalid") + ": " + message("Maximum"));
+                return;
+            }
+        }
+
+        drawPoints();
     }
 
 }

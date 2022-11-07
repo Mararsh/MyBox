@@ -303,6 +303,11 @@ License:    Apache License Version 2.0
                             <children>
                                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
+                              <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconTips.png" />
+                                 </image>
+                              </ImageView>
                               <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                         <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
                                             <graphic>
@@ -334,7 +339,28 @@ License:    Apache License Version 2.0
                                              <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                    <children>
-                                                      <fx:include fx:id="play" source="ControlGroupPlay.fxml" />
+                                                      <fx:include fx:id="play" source="ControlPlay.fxml" />
+                                                      <fx:include fx:id="chartTypes" maxWidth="1.7976931348623157E308" source="ControlChartXYSelection.fxml" HBox.hgrow="ALWAYS" />
+                                                      <CheckBox minHeight="-Infinity" mnemonicParsing="false" text="%AxisXYReverse" wrapText="true" fx:id="xyReverseCheck" />
+                                                      <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                         <children>
+                                                            <Label minHeight="-Infinity" text="%MaxDataInChart" wrapText="true" />
+                                                            <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                                               <children>
+                                                                  <TextField fx:id="chartMaxInput" prefWidth="80.0" promptText="100" />
+                                                                  <Button fx:id="goMaxButton" mnemonicParsing="false" onAction="#goMaxAction">
+                                                                     <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                           <image>
+                                                                              <Image url="@../buttons/Red/iconGo.png" />
+                                                                           </image>
+                                                                        </ImageView>
+                                                                     </graphic>
+                                                                  </Button>
+                                                               </children>
+                                                            </HBox>
+                                                         </children>
+                                                      </VBox>
                                                    </children>
                                                 </VBox>
                                              </content>
@@ -343,7 +369,6 @@ License:    Apache License Version 2.0
                                              <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                    <children>
-                                                      <fx:include fx:id="chartTypes" maxWidth="1.7976931348623157E308" source="ControlChartXYSelection.fxml" HBox.hgrow="ALWAYS" />
                                                       <fx:include fx:id="chart" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DChartXY.fxml" VBox.vgrow="ALWAYS" />
                                                    </children>
                                                 </VBox>

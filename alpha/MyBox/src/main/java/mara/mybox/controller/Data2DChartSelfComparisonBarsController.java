@@ -62,7 +62,11 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
     }
 
     @Override
-    protected synchronized String makeHtml() {
+    protected String makeHtml() {
+        chartData = chartMax();
+        if (chartData == null || chartData.isEmpty()) {
+            return null;
+        }
         if (!makeBars()) {
             return null;
         }
@@ -71,17 +75,17 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
 
     protected boolean makeBars() {
         try {
-            if (outputData == null) {
+            if (chartData == null) {
                 return false;
             }
             normalization = null;
-            int rowsNumber = outputData.size();
+            int rowsNumber = chartData.size();
             int colsNumber = valueIndices.size();
             String[][] data = new String[rowsNumber][colsNumber];
             allNeg = true;
             allPos = true;
             for (int r = 0; r < rowsNumber; r++) {
-                List<String> tableRow = outputData.get(r);
+                List<String> tableRow = chartData.get(r);
                 for (int c = 0; c < colsNumber; c++) {
                     String s = tableRow.get(valueIndices.get(c));
                     data[r][c] = s;
@@ -141,7 +145,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
 
     protected String writeHtml() {
         try {
-            if (bars == null || data2D == null || normalization == null || outputData == null) {
+            if (bars == null || data2D == null || normalization == null || chartData == null) {
                 return null;
             }
             int rowsNumber = bars.length;
@@ -211,7 +215,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
                 colors[i] = color;
             }
             for (int r = 0; r < rowsNumber; r++) {
-                List<String> row = outputData.get(r);
+                List<String> row = chartData.get(r);
 
                 s.append("<TR>\n");
 

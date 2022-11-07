@@ -64,8 +64,6 @@ public class LocationInMapController extends GeographyCodeMapController {
         try {
             super.initControls();
 
-            mapOptionsController.optionsBox.getChildren().removeAll(mapOptionsController.dataBox);
-
             setButtons();
 
             locateGroup.selectedToggleProperty().addListener(
