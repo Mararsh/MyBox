@@ -93,7 +93,7 @@ public class BaseTaskController extends BaseLogs {
                 startButton.applyCss();
                 startButton.setUserData(null);
                 updateLogs(message("Completed") + " " + message("Cost")
-                        + " " + DateTools.datetimeMsDuration(endTime, startTime));
+                        + " " + DateTools.datetimeMsDuration(endTime, startTime), true);
                 afterTask();
             }
         };

@@ -35,6 +35,11 @@ License:    Apache License Version 2.0
         </HBox>
       <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
          <children>
+            <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../buttons/Red/iconTips.png" />
+               </image>
+            </ImageView>
                 <Label minWidth="-Infinity" text="%Type" />
                 <RadioButton fx:id="stringRadio" minWidth="-Infinity" mnemonicParsing="false" selected="true" text="%String">
                     <toggleGroup>
@@ -109,7 +114,7 @@ License:    Apache License Version 2.0
                 <Label text="(&lt;= 32672)" />
          </children>
       </FlowPane>
-      <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+      <FlowPane fx:id="invalidPane" hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
          <children>
             <Label text="%ToInvalidValue" />
             <RadioButton fx:id="invalidAsNullRadio" mnemonicParsing="false" selected="true" text="%CountAsNull">

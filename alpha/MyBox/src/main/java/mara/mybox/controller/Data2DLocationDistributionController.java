@@ -7,11 +7,10 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
@@ -28,44 +27,37 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
  * @CreateDate 2022-10-11
  * @License Apache License Version 2.0
  */
-public class Data2DLocationDistributionController extends BaseData2DHandleController {
+public class Data2DLocationDistributionController extends BaseData2DChartController {
 
     protected String labelCol, longCol, laCol, sizeCol;
     protected ToggleGroup csGroup;
     protected double maxValue, minValue;
     protected List<MapPoint> dataPoints;
-    protected int chartMaxData, framesNumber, frameid, lastFrameid;
-    protected Thread frameThread;
+    protected int frameid, lastFrameid;
 
     @FXML
     protected ComboBox<String> labelSelector, longitudeSelector, latitudeSelector, sizeSelector;
-    @FXML
-    protected Label noticeLabel;
+
     @FXML
     protected FlowPane csPane;
     @FXML
     protected ControlMapOptions mapOptionsController;
     @FXML
     protected ControlMap mapController;
-    @FXML
-    protected ControlPlay playController;
+
     @FXML
     protected CheckBox accumulateCheck, centerCheck, linkCheck;
     @FXML
     protected ControlData2DResults valuesController;
-    @FXML
-    protected TextField chartMaxInput;
 
     public Data2DLocationDistributionController() {
         baseTitle = message("LocationDistribution");
-        TipsLabelKey = "";
     }
 
     @Override
@@ -98,27 +90,16 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
             }
             ((RadioButton) csPane.getChildren().get(0)).setSelected(true);
 
-            chartMaxData = UserConfig.getInt(baseName + "ChartMaxData", 500);
-            if (chartMaxData <= 0) {
-                chartMaxData = 500;
-            }
-            if (chartMaxInput != null) {
-                chartMaxInput.setText(chartMaxData + "");
-            }
-
-            frameThread = new Thread() {
-                @Override
-                public void run() {
-                    displayFrame(playController.currentIndex);
-                }
-            };
-            playController.setParameters(this, frameThread, mapController.snapBox);
-
             linkCheck.visibleProperty().bind(accumulateCheck.selectedProperty());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @Override
+    public Node snapNode() {
+        return mapController.snapBox;
     }
 
     @Override
@@ -481,15 +462,16 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
         return Math.min(60, Math.max(10, (int) size));
     }
 
-    public void displayFrame(int index) {
-        if (mapController.mapPoints == null
-                || framesNumber <= 0 || index < 0 || index > framesNumber) {
-            playController.clear();
-            return;
-        }
+    @Override
+    public void loadFrame(int index) {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                if (mapController.mapPoints == null
+                        || framesNumber <= 0 || index < 0 || index > framesNumber) {
+                    playController.clear();
+                    return;
+                }
                 frameid = index;
                 if (mapController.webEngine == null) {
                     return;
@@ -516,38 +498,8 @@ public class Data2DLocationDistributionController extends BaseData2DHandleContro
         });
     }
 
-    @FXML
-    public void goMaxAction() {
-        if (chartMaxInput != null) {
-            boolean ok;
-            String s = chartMaxInput.getText();
-            if (s == null || s.isBlank()) {
-                chartMaxData = -1;
-                ok = true;
-            } else {
-                try {
-                    int v = Integer.valueOf(s);
-                    if (v > 0) {
-                        chartMaxData = v;
-
-                        ok = true;
-                    } else {
-                        ok = false;
-                    }
-                } catch (Exception ex) {
-                    ok = false;
-                }
-            }
-            if (ok) {
-                UserConfig.setInt(baseName + "ChartMaxData", chartMaxData);
-                chartMaxInput.setStyle(null);
-            } else {
-                chartMaxInput.setStyle(UserConfig.badStyle());
-                popError(message("Invalid") + ": " + message("Maximum"));
-                return;
-            }
-        }
-
+    @Override
+    public void drawChart() {
         drawPoints();
     }
 

@@ -9,6 +9,7 @@ import mara.mybox.data.FindReplaceString;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 import org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
@@ -76,7 +77,7 @@ public class ExpressionCalculator {
 
     public void handleError(String e) {
         error = e;
-        if (e != null) {
+        if (e != null && AppValues.Alpha) {
             MyBoxLog.debug(error + "\n" + expression);
         }
     }

@@ -12,11 +12,9 @@ import java.util.Date;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.ScaleTools;
@@ -51,8 +49,6 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
     protected Tab imagesTab, audiosTab;
     @FXML
     protected ControlFFmpegAudiosTable audiosTableController;
-    @FXML
-    protected CheckBox shortestCheck;
 
     public FFmpegMergeImagesController() {
         baseTitle = message("FFmpegMergeImagesInformation");
@@ -79,14 +75,6 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
                         checkExt();
                     });
             checkExt();
-
-            shortestCheck.setSelected(UserConfig.getBoolean(baseName + "StopAsAudio", true));
-            shortestCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "StopAsAudio", shortestCheck.isSelected());
-                }
-            });
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
@@ -379,9 +367,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
             if (ffmpegOptionsController.stereoCheck != null) {
                 ffmpeg.addArguments("-ac", ffmpegOptionsController.stereoCheck.isSelected() ? "2" : "1");
             }
-            if (shortestCheck.isSelected()) {
-                ffmpeg.addArgument("-shortest");
-            }
+            ffmpeg.addArgument("-shortest");
 
             if (ffmpegOptionsController.disbaleSubtitle) {
                 ffmpeg.addArgument("-sn");

@@ -105,7 +105,7 @@ public class LoadingController extends BaseLogs {
     }
 
     public void setInfo(String info) {
-        updateLogs(info);
+        updateLogs(info, true);
     }
 
     public boolean isRunning() {

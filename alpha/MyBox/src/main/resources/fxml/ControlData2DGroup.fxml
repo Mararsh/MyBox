@@ -37,7 +37,7 @@ License:    Apache License Version 2.0
                       </FlowPane>
                       <VBox fx:id="groupBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
                           <children>
-                              <VBox fx:id="columnsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                              <VBox fx:id="columnsBox">
                                   <children>
                                       <fx:include fx:id="columns" minHeight="-Infinity" prefHeight="300.0" source="ControlSelection.fxml" />
                                   </children>

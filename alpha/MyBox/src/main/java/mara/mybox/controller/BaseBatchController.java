@@ -61,8 +61,6 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     protected FileSelectorType fileSelectorType;
     protected SimpleBooleanProperty optionsValid;
     protected ProcessParameters actualParameters, previewParameters, currentParameters;
-    protected StringBuffer newLogs;
-    protected int logsNewlines;
     protected Date processStartTime, fileStartTime;
     protected String finalTargetName;
 
@@ -544,18 +542,6 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         return true;
     }
 
-    public void initLogs() {
-        if (logsTextArea == null) {
-            return;
-        }
-        Platform.runLater(() -> {
-            logsTextArea.setText("");
-            newLogs = new StringBuffer();
-            logsNewlines = 0;
-            logsTotalLines = 0;
-        });
-    }
-
     public File getCurrentFile() {
         return sourceFiles.get(currentParameters.currentIndex);
     }
@@ -984,48 +970,6 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         Platform.runLater(() -> {
             statusLabel.setText(info);
         });
-    }
-
-    @Override
-    public void updateLogs(final String line) {
-        updateLogs(line, true, false);
-    }
-
-    protected void updateLogs(final String line, boolean immediate) {
-        updateLogs(line, true, immediate);
-    }
-
-    protected void updateLogs(final String line, boolean showTime, boolean immediate) {
-        if (logsTextArea == null) {
-            return;
-        }
-        Platform.runLater(() -> {
-            synchronized (logsTextArea) {
-                try {
-                    if (showTime) {
-                        newLogs.append(DateTools.datetimeToString(new Date())).append("  ");
-                    }
-                    newLogs.append(line).append("\n");
-                    logsNewlines++;
-                    long past = new Date().getTime() - processStartTime.getTime();
-                    if (immediate || logsTotalLines % 300 == 0 || past > 5000) {
-                        logsTextArea.appendText(newLogs.toString());
-                        logsTotalLines += logsNewlines;
-                        newLogs = new StringBuffer();
-                        logsNewlines = 0;
-                        if (logsTotalLines > logsMaxLines + logsCacheLines) {
-//                        logsTextArea.deleteText(0, newLogs.length());
-                            logsTextArea.clear();
-                            logsTotalLines = 0;
-                        }
-
-                    }
-                } catch (Exception e) {
-                    MyBoxLog.debug(e.toString());
-                }
-            }
-        }
-        );
     }
 
     @Override

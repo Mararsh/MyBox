@@ -362,6 +362,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
                 }
             } else {
                 if (!createRadio.isSelected()) {
+                    conn.commit();
                     currentNode = tableTreeNode.find(conn, parentid, name);
                 }
                 if (currentNode != null) {

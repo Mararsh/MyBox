@@ -19,41 +19,46 @@ import mara.mybox.value.UserConfig;
  */
 public class BaseLogs extends BaseController {
 
-    protected int logsMaxLines, logsTotalLines;
-    protected final int logsCacheLines = 200;
+    protected int logsMaxChars, logsTotalLines;
+    protected int logsNewlines;
+    protected StringBuffer newLogs;
+    protected long lastLogTime;
 
     @FXML
     protected CheckBox verboseCheck;
     @FXML
     protected TextArea logsTextArea;
     @FXML
-    protected TextField maxLinesinput;
+    protected TextField maxCharsinput;
 
     @Override
     public void initControls() {
         try {
             super.initControls();
 
-            logsMaxLines = UserConfig.getInt("TaskMaxLinesNumber", 5000);
-            if (logsMaxLines <= 0) {
-                logsMaxLines = 5000;
+            logsMaxChars = UserConfig.getInt("TaskMaxLinesNumber", 5000);
+            if (logsMaxChars <= 0) {
+                logsMaxChars = 5000;
             }
-            if (maxLinesinput != null) {
-                maxLinesinput.setText(logsMaxLines + "");
-                maxLinesinput.textProperty().addListener(new ChangeListener<String>() {
+            if (maxCharsinput != null) {
+                maxCharsinput.setText(logsMaxChars + "");
+                maxCharsinput.focusedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
-                    public void changed(ObservableValue<? extends String> v, String ov, String nv) {
+                    public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                         try {
-                            int iv = Integer.parseInt(maxLinesinput.getText());
+                            if (nv) {
+                                return;
+                            }
+                            int iv = Integer.parseInt(maxCharsinput.getText());
                             if (iv > 0) {
-                                logsMaxLines = iv;
-                                maxLinesinput.setStyle(null);
-                                UserConfig.setInt("TaskMaxLinesNumber", logsMaxLines);
+                                logsMaxChars = iv;
+                                maxCharsinput.setStyle(null);
+                                UserConfig.setInt("TaskMaxLinesNumber", logsMaxChars);
                             } else {
-                                maxLinesinput.setStyle(UserConfig.badStyle());
+                                maxCharsinput.setStyle(UserConfig.badStyle());
                             }
                         } catch (Exception e) {
-                            maxLinesinput.setStyle(UserConfig.badStyle());
+                            maxCharsinput.setStyle(UserConfig.badStyle());
                         }
                     }
                 });
@@ -65,22 +70,60 @@ public class BaseLogs extends BaseController {
         }
     }
 
-    public void updateLogs(final String line) {
+    public void initLogs() {
+        if (logsTextArea == null) {
+            return;
+        }
+        Platform.runLater(() -> {
+            logsTextArea.setText("");
+            newLogs = new StringBuffer();
+            logsNewlines = 0;
+            logsTotalLines = 0;
+            lastLogTime = new Date().getTime();
+        });
+    }
+
+    public void updateLogs(String line) {
+        updateLogs(line, true, false);
+    }
+
+    protected void updateLogs(String line, boolean immediate) {
+        updateLogs(line, true, immediate);
+    }
+
+    public void updateLogs(String line, boolean showTime, boolean immediate) {
         try {
             if (logsTextArea == null || line == null || line.isBlank()) {
                 return;
             }
-            Platform.runLater(() -> {
-                String s = DateTools.datetimeToString(new Date()) + "  " + line + "\n";
-                logsTextArea.appendText(s);
-                logsTotalLines++;
-                if (logsTotalLines > logsMaxLines) {
-                    int pos = logsTextArea.getText().indexOf("\n");
-                    if (pos > 0) {
-                        logsTextArea.deleteText(0, pos);
-                    }
+            synchronized (logsTextArea) {
+                if (newLogs == null) {
+                    newLogs = new StringBuffer();
                 }
-            });
+                if (showTime) {
+                    newLogs.append(DateTools.datetimeToString(new Date())).append("  ");
+                }
+                newLogs.append(line).append("\n");
+                logsNewlines++;
+                Platform.runLater(() -> {
+                    try {
+                        long ctime = new Date().getTime();
+                        if (immediate || logsNewlines > 300 || ctime - lastLogTime > 3000) {
+                            logsTextArea.appendText(newLogs.toString());
+                            logsTotalLines += logsNewlines;
+                            newLogs = new StringBuffer();
+                            logsNewlines = 0;
+                            int extra = logsTextArea.getText().length() - logsMaxChars;
+                            if (extra > 0) {
+                                logsTextArea.deleteText(0, extra);
+                            }
+                        }
+                        lastLogTime = ctime;
+                    } catch (Exception e) {
+                        MyBoxLog.debug(e.toString());
+                    }
+                });
+            }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }

@@ -29,6 +29,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -63,10 +64,18 @@ public class ControlData2DColumnEdit extends BaseChildController {
     @FXML
     protected HBox formatBox;
     @FXML
-    protected FlowPane fixPane, centuryPane;
+    protected FlowPane fixPane, centuryPane, invalidPane;
 
-    public ControlData2DColumnEdit() {
-        TipsLabelKey = message("SqlIdentifierComments");
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+            NodeStyleTools.setTooltip(rightTipsView, message("SqlIdentifierComments"));
+            NodeStyleTools.setTooltip(tipsView, message("ColumnComments"));
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
     }
 
     protected void init(ControlData2DColumns columnsController) {

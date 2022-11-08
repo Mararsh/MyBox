@@ -271,6 +271,22 @@ License:    Apache License Version 2.0
                                     </VBox>
                                             </content>
                                         </Tab>
+                                        <Tab fx:id="mapOptionsTab" text="%MapOptions">
+                                            <content>
+                                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                                                    <content>
+                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                                            <padding>
+                                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                            </padding>
+                                                            <children>
+                                                                <fx:include fx:id="mapOptions" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlMapOptions.fxml" VBox.vgrow="ALWAYS" />
+                                                            </children>
+                                                        </VBox>
+                                                    </content>
+                                                </ScrollPane>
+                                            </content>
+                                        </Tab>
                                     </tabs>
                                 </TabPane>
                             </children>
@@ -281,11 +297,6 @@ License:    Apache License Version 2.0
                     <children>
                         <HBox alignment="CENTER_LEFT" spacing="5.0">
                             <children>
-                                <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/Red/iconTips.png" />
-                                    </image>
-                                </ImageView>
                                 <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                 <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
                                     <graphic>
@@ -363,22 +374,6 @@ License:    Apache License Version 2.0
                               </VBox>
                            </content>
                         </Tab>
-                                  <Tab fx:id="mapOptionsTab" text="%MapOptions">
-                                      <content>
-                                          <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                                              <content>
-                                                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                                      <padding>
-                                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                                      </padding>
-                                                      <children>
-                                                          <fx:include fx:id="mapOptions" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlMapOptions.fxml" VBox.vgrow="ALWAYS" />
-                                                      </children>
-                                                  </VBox>
-                                              </content>
-                                          </ScrollPane>
-                                      </content>
-                                  </Tab>
                      </tabs>
                   </TabPane>
                     </children>

@@ -26,7 +26,6 @@ import mara.mybox.data.FileSynchronizeAttributes;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.SoundTools;
-import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
@@ -98,8 +97,6 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
                     }
                 }
             });
-
-            ValidationTools.setNonnegativeValidation(maxLinesinput);
 
             checkIsConditional();
             copyGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {

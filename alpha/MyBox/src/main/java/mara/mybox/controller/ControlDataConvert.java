@@ -72,7 +72,7 @@ public class ControlDataConvert extends BaseController {
     protected ComboBox<String> maxLinesSelector;
     @FXML
     protected CheckBox csvCheck, textsCheck, pdfCheck, htmlCheck, xmlCheck, jsonCheck, excelCheck,
-            myBoxClipboardCheck, rowNumberCheck, excelWithNamesCheck;
+            myBoxClipboardCheck, rowNumberCheck, excelWithNamesCheck, formatValuesCheck;
     @FXML
     protected TextArea cssArea;
     @FXML
@@ -516,9 +516,9 @@ public class ControlDataConvert extends BaseController {
         }
     }
 
-    public void writeRow(List<String> row) {
+    public void writeRow(List<String> inRow) {
         try {
-            if (row == null) {
+            if (inRow == null) {
                 return;
             }
 
@@ -531,7 +531,18 @@ public class ControlDataConvert extends BaseController {
 
             dataRowIndex++;
             if (rowNumberCheck.isSelected()) {
-                row.add(0, dataRowIndex + "");
+                inRow.add(0, dataRowIndex + "");
+            }
+            List<String> row = inRow;
+            if (formatValuesCheck.isSelected()) {
+                row = new ArrayList<>();
+                for (int i = 0; i < columns.size(); i++) {
+                    String v = inRow.get(i);
+                    if (v != null) {
+                        v = columns.get(i).format(v);
+                    }
+                    row.add(v);
+                }
             }
 
             if (csvPrinter != null) {
