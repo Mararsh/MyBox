@@ -261,7 +261,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             }
 
         };
-        start(task);
+        start(task, thisPane);
     }
 
     public boolean checkInvalidFile() {
@@ -295,7 +295,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         return false;
     }
 
-    public synchronized void loadData() {
+    public void loadData() {
         try {
             makeColumns();
             if (!validateData()) {
@@ -313,7 +313,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         loadTmpData(null, data2D.toColumns(cols), data);
     }
 
-    public synchronized void loadTmpData(String name, List<Data2DColumn> cols, List<List<String>> data) {
+    public void loadTmpData(String name, List<Data2DColumn> cols, List<List<String>> data) {
         try {
             if (data2D == null) {
                 return;
@@ -372,7 +372,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         }
     }
 
-    public synchronized boolean displayTmpData(List<List<String>> newData) {
+    public boolean displayTmpData(List<List<String>> newData) {
         try {
             makeColumns();
             isSettingValues = true;
@@ -457,7 +457,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             }
 
         };
-        start(task);
+        start(task, thisPane);
     }
 
     public void loadTableData(DataTable dataTable) {
@@ -518,7 +518,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 }
             }
         };
-        start(task);
+        start(task, thisPane);
     }
 
     public void loadMatrix(double[][] matrix) {

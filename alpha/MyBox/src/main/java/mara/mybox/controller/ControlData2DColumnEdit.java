@@ -52,7 +52,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
     @FXML
     protected RadioButton stringRadio, doubleRadio, floatRadio, longRadio, intRadio, shortRadio, booleanRadio,
             datetimeRadio, dateRadio, eraRadio, longitudeRadio, latitudeRadio, enumRadio, colorRadio,
-            invalidAsEmptyRadio, invalidAsZeroRadio, invalidAsNullRadio;
+            invalidAsEmptyRadio, invalidAsZeroRadio, invalidAsSkipRadio;
     @FXML
     protected CheckBox notNullCheck, editableCheck, fixYearCheck;
     @FXML
@@ -121,7 +121,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             defaultInput.clear();
             formatInput.clear();
             fixYearCheck.setSelected(false);
-            invalidAsNullRadio.setSelected(true);
+            invalidAsSkipRadio.setSelected(true);
 
             if (enumRadio.isSelected()) {
                 optionsBox.getChildren().add(enumBox);
@@ -257,7 +257,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             } else if (invalidAs == InvalidAs.Zero) {
                 invalidAsZeroRadio.setSelected(true);
             } else {
-                invalidAsNullRadio.setSelected(true);
+                invalidAsSkipRadio.setSelected(true);
             }
 
         } catch (Exception e) {
@@ -396,7 +396,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             values.add(message("GroupInTenThousands"));
             values.add(message("ScientificNotation"));
             values.add(message("None"));
-            popExamples(mouseEvent, values, "DecimalFormat",
+            popExamples(mouseEvent, values, message("DecimalFormat"),
                     "https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/DecimalFormat.html");
 
         } else if (longRadio.isSelected() || intRadio.isSelected() || shortRadio.isSelected()) {
@@ -404,7 +404,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             values.add(message("GroupInThousands"));
             values.add(message("GroupInTenThousands"));
             values.add(message("None"));
-            popExamples(mouseEvent, values, "DecimalFormat",
+            popExamples(mouseEvent, values, message("DecimalFormat"),
                     "https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/DecimalFormat.html");
 
         } else if (datetimeRadio.isSelected()) {
@@ -421,7 +421,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             values.add(TimeFormats.DateE);
             values.add(TimeFormats.MonthE);
             values.add(TimeFormats.DatetimeZoneE);
-            popExamples(mouseEvent, values, "DateFormat",
+            popExamples(mouseEvent, values, message("DateFormat"),
                     "https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/SimpleDateFormat.html");
 
         } else if (dateRadio.isSelected()) {
@@ -431,7 +431,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             values.add(TimeFormats.Year);
             values.add(TimeFormats.DateE);
             values.add(TimeFormats.MonthE);
-            popExamples(mouseEvent, values, "DateFormat",
+            popExamples(mouseEvent, values, message("DateFormat"),
                     "https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/SimpleDateFormat.html");
 
         } else if (eraRadio.isSelected()) {
@@ -446,7 +446,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             values.add("G" + TimeFormats.DateA);
             values.add("G" + TimeFormats.MonthA);
             values.add("G" + TimeFormats.YearA);
-            popExamples(mouseEvent, values, "DateFormat",
+            popExamples(mouseEvent, values, message("DateFormat"),
                     "https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/SimpleDateFormat.html");
 
         }

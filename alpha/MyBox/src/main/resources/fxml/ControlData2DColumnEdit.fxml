@@ -117,7 +117,7 @@ License:    Apache License Version 2.0
       <FlowPane fx:id="invalidPane" hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
          <children>
             <Label text="%ToInvalidValue" />
-            <RadioButton fx:id="invalidAsNullRadio" mnemonicParsing="false" selected="true" text="%CountAsNull">
+            <RadioButton fx:id="invalidAsSkipRadio" mnemonicParsing="false" selected="true" text="%Skip">
                <toggleGroup>
                   <ToggleGroup fx:id="invalidGroup" />
                </toggleGroup></RadioButton>

@@ -325,25 +325,6 @@ License:    Apache License Version 2.0
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                    <children>
                                                       <fx:include fx:id="play" source="ControlPlay.fxml" />
-                                                      <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                                         <children>
-                                                            <Label minHeight="-Infinity" text="%MaxDataInChart" wrapText="true" />
-                                                            <HBox alignment="CENTER_LEFT" spacing="2.0">
-                                                               <children>
-                                                                  <TextField fx:id="chartMaxInput" prefWidth="80.0" promptText="100" />
-                                                                  <Button fx:id="goMaxButton" mnemonicParsing="false" onAction="#goMaxAction">
-                                                                     <graphic>
-                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                           <image>
-                                                                              <Image url="@../buttons/Red/iconGo.png" />
-                                                                           </image>
-                                                                        </ImageView>
-                                                                     </graphic>
-                                                                  </Button>
-                                                               </children>
-                                                            </HBox>
-                                                         </children>
-                                                      </VBox>
                                                                     <Label minWidth="-Infinity" text="%BoxWidth">
                                                          <VBox.margin>
                                                             <Insets top="10.0" />
@@ -403,7 +384,26 @@ License:    Apache License Version 2.0
                                                                         <CheckBox fx:id="dottedCheck" mnemonicParsing="false" selected="true" text="%Dotted" />
                                                          </children>
                                                       </VBox>
-                                                      <FlowPane hgap="2.0" layoutX="10.0" layoutY="327.0" maxWidth="1.7976931348623157E308" vgap="2.0" />
+                                                      <CheckBox minHeight="-Infinity" mnemonicParsing="false" text="%AxisXYReverse" wrapText="true" fx:id="xyReverseCheck" />
+                                                      <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                         <children>
+                                                            <Label minHeight="-Infinity" text="%MaxDataInChart" wrapText="true" />
+                                                            <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                                               <children>
+                                                                  <TextField fx:id="chartMaxInput" prefWidth="80.0" promptText="100" />
+                                                                  <Button fx:id="goMaxButton" mnemonicParsing="false" onAction="#goMaxAction">
+                                                                     <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                           <image>
+                                                                              <Image url="@../buttons/Red/iconGo.png" />
+                                                                           </image>
+                                                                        </ImageView>
+                                                                     </graphic>
+                                                                  </Button>
+                                                               </children>
+                                                            </HBox>
+                                                         </children>
+                                                      </VBox>
                                                    </children>
                                                 </VBox>
                                              </content>

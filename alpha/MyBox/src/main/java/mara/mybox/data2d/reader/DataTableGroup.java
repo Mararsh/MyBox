@@ -151,7 +151,7 @@ public class DataTableGroup {
             groupid = 0;
             groupCurrentSize = 0;
             count = 0;
-            idColName = message("Group");
+            idColName = message("GroupID");
             parameterValues = new ArrayList<>();
             orderByString = orderByString();
             targetData = null;
@@ -838,9 +838,9 @@ public class DataTableGroup {
             }
             if (task != null) {
                 if (parameterValue != null) {
-                    task.setInfo(message("Group") + ": " + parameterValue);
+                    task.setInfo(message("GroupID") + ": " + parameterValue);
                 } else {
-                    task.setInfo(message("Group") + ": " + groupid);
+                    task.setInfo(message("GroupID") + ": " + groupid);
                 }
             }
         } catch (Exception e) {
@@ -967,7 +967,7 @@ public class DataTableGroup {
         }
         List<List<String>> data = new ArrayList<>();
         String sql = "SELECT * FROM " + targetData.getSheet()
-                + " WHERE " + idColName + "=" + groupid + orderByString;
+                + " WHERE " + targetData.tmpColumnName(idColName) + "=" + groupid + orderByString;
         try ( ResultSet query = qconn.prepareStatement(sql).executeQuery()) {
             while (query.next()) {
                 if (parameterValue == null) {

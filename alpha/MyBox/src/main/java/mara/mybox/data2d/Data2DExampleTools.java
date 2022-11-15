@@ -345,7 +345,7 @@ public class Data2DExampleTools {
         try {
             boolean isChinese = "zh".equals(lang);
 
-            Menu regressionMenu = new Menu(message("Regression"), StyleTools.getIconImage("iconLinearPgression.png"));
+            Menu regressionMenu = new Menu(message("RegressionData"), StyleTools.getIconImage("iconLinearPgression.png"));
 
             MenuItem menu = new MenuItem(message("IncomeHappiness"));
             menu.setOnAction((ActionEvent event) -> {
@@ -451,7 +451,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(isChinese ? "糖尿病" : "diabetes", ColumnType.Boolean));
                 columns.add(new Data2DColumn(isChinese ? "喷血分数" : "ejection fraction", ColumnType.Integer)
                         .setDescription("percentage of blood leaving the heart at each contraction (percentage)"));
-                columns.add(new Data2DColumn(isChinese ? "高血压" : "high blood pressure", ColumnType.Integer));
+                columns.add(new Data2DColumn(isChinese ? "高血压" : "high blood pressure", ColumnType.Boolean));
                 columns.add(new Data2DColumn(isChinese ? "血小板(kiloplatelets/mL)" : "platelets(kiloplatelets/mL)", ColumnType.Double));
                 columns.add(new Data2DColumn(isChinese ? "血清肌酸酐(mg/dL)" : "serum creatinine(mg/dL)", ColumnType.Double));
                 columns.add(new Data2DColumn(isChinese ? "血清钠(mEq/L)" : "serum sodium(mEq/L)", ColumnType.Integer));

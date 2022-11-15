@@ -1,6 +1,8 @@
 package mara.mybox.controller;
 
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -18,7 +20,9 @@ public class Data2DLoadContentInSystemClipboardController extends BaseChildContr
     protected ControlData2DLoad targetController;
 
     @FXML
-    protected ControlData2DInput inputController;
+    protected ControlData2DSystemClipboard boardController;
+    @FXML
+    protected BaseData2DSourceController sourceController;
 
     public Data2DLoadContentInSystemClipboardController() {
         baseTitle = message("LoadContentInSystemClipboard");
@@ -27,7 +31,17 @@ public class Data2DLoadContentInSystemClipboardController extends BaseChildContr
     public void setParameters(ControlData2DLoad target, String text) {
         try {
             targetController = target;
-            inputController.load(text);
+
+            sourceController.setParameters(this);
+
+            boardController.loadNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    sourceController.loadData(boardController.textData);
+                }
+            });
+            boardController.load(text);
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -36,7 +50,7 @@ public class Data2DLoadContentInSystemClipboardController extends BaseChildContr
     @FXML
     @Override
     public void okAction() {
-        if (!inputController.checkData()) {
+        if (!sourceController.hasData()) {
             return;
         }
         if (task != null) {
@@ -48,7 +62,7 @@ public class Data2DLoadContentInSystemClipboardController extends BaseChildContr
             @Override
             protected boolean handle() {
                 try {
-                    data = inputController.data(task);
+                    data = sourceController.selectedData(task);
                     return data != null && !data.isEmpty();
                 } catch (Exception e) {
                     error = e.toString();
@@ -59,7 +73,7 @@ public class Data2DLoadContentInSystemClipboardController extends BaseChildContr
             @Override
             protected void whenSucceeded() {
                 try {
-                    targetController.loadTmpData(inputController.checkedColsNames(), data);
+                    targetController.loadTmpData(sourceController.checkedColsNames, data);
                     close();
                 } catch (Exception e) {
                     MyBoxLog.error(e);
@@ -74,6 +88,11 @@ public class Data2DLoadContentInSystemClipboardController extends BaseChildContr
 
         };
         start(task);
+    }
+
+    @FXML
+    public void editAction() {
+        boardController.editAction();
     }
 
     /*

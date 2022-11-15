@@ -216,7 +216,7 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
             }
 
             if (!valid) {
-                handleController.popError(message("InvalidParameter") + ": " + message("Group"));
+                handleController.popError(message("InvalidParameter") + ": " + message("GroupID"));
                 handleController.tabPane.getSelectionModel().select(handleController.groupTab);
                 return false;
             }

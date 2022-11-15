@@ -278,9 +278,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
                         .append("</TD>\n");
             }
             if (otherColsIndices != null) {
-                for (int col : otherColsIndices) {
-                    s.append("<TD class=\"Others\"> </TD>\n");
-                }
+                s.append("<TD class=\"Others\">&nbsp;</TD>\n".repeat(otherColsIndices.size()));
             }
             s.append("</TR>\n");
         } else {
@@ -293,9 +291,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
                         .append("</TD>\n");
             }
             if (otherColsIndices != null) {
-                for (int col : otherColsIndices) {
-                    s.append("<TD class=\"Others\"> </TD>\n");
-                }
+                s.append("<TD class=\"Others\">&nbsp;</TD>\n".repeat(otherColsIndices.size()));
             }
             s.append("</TR>\n");
 
@@ -308,9 +304,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
                         .append("</TD>\n");
             }
             if (otherColsIndices != null) {
-                for (int col : otherColsIndices) {
-                    s.append("<TD class=\"Others\" </TD>\n");
-                }
+                s.append("<TD class=\"Others\">&nbsp;</TD>\n".repeat(otherColsIndices.size()));
             }
             s.append("</TR>\n");
         }

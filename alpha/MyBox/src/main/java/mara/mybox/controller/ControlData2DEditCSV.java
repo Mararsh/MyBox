@@ -149,7 +149,7 @@ public class ControlData2DEditCSV extends BaseController {
             }
 
         };
-        start(task);
+        start(task, thisPane);
     }
 
     public void status(Status newStatus) {

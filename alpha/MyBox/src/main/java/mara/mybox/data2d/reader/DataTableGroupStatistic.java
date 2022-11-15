@@ -71,8 +71,8 @@ public class DataTableGroupStatistic {
             init();
             String currentParameterValue;
             long currentGroupid, count = 0;
-            String sql = "SELECT * FROM " + groupResults.getSheet() + " ORDER BY " + idColName;
             String mappedIdColName = groupResults.tmpColumnName(idColName);
+            String sql = "SELECT * FROM " + groupResults.getSheet() + " ORDER BY " + mappedIdColName;
             String mappedParameterName = groupResults.tmpColumnName(parameterName);
             if (task != null) {
                 task.setInfo(sql);
@@ -140,9 +140,10 @@ public class DataTableGroupStatistic {
             List<Data2DColumn> valuesColumns = new ArrayList<>();
             valuesColumns.add(new Data2DColumn(idColName, ColumnType.Long));
             valuesColumns.add(new Data2DColumn(parameterName, ColumnType.String, 200));
-            valuesColumns.add(new Data2DColumn(message("Column"), ColumnType.String, 200));
+            valuesColumns.add(new Data2DColumn(message("ColumnName"), ColumnType.String, 200));
             for (StatisticType type : calculation.types) {
-                valuesColumns.add(new Data2DColumn(message(type.name()), ColumnType.Double, 150));
+                valuesColumns.add(new Data2DColumn(message("Group") + "_" + message(type.name()),
+                        ColumnType.Double, 150));
             }
             String dname = groupResults.dataName() + "_" + message("Statistic");
             statisticData = DataTable.createTable(task, conn, dname, valuesColumns, null, null, null, true);
@@ -155,7 +156,7 @@ public class DataTableGroupStatistic {
                 List<Data2DColumn> chartColumns = new ArrayList<>();
                 chartColumns.add(new Data2DColumn(idColName, ColumnType.Long));
                 chartColumns.add(new Data2DColumn(parameterName, ColumnType.String, 200));
-                chartColumns.add(new Data2DColumn(message("Count"), ColumnType.Long));
+                chartColumns.add(new Data2DColumn(message("Group") + "_" + message("Count"), ColumnType.Long));
                 for (String name : calNames) {
                     for (StatisticType type : calculation.types) {
                         if (type == StatisticType.Count) {
@@ -225,10 +226,10 @@ public class DataTableGroupStatistic {
                 Data2DRow data2DRow = tableStatistic.newRow();
                 data2DRow.setColumnValue(statisticData.tmpColumnName(idColName), groupid);
                 data2DRow.setColumnValue(statisticData.tmpColumnName(parameterName), parameterValue);
-                data2DRow.setColumnValue(statisticData.tmpColumnName(message("Column")), calNames.get(i));
+                data2DRow.setColumnValue(statisticData.tmpColumnName(message("ColumnName")), calNames.get(i));
                 DoubleStatistic s = sData[i];
                 for (StatisticType type : calculation.types) {
-                    data2DRow.setColumnValue(statisticData.tmpColumnName(message(type.name())),
+                    data2DRow.setColumnValue(statisticData.tmpColumnName(message("Group") + "_" + message(type.name())),
                             DoubleTools.scale(s.value(type), scale));
                 }
                 if (tableStatistic.setInsertStatement(conn, statisticInsert, data2DRow)) {
@@ -307,7 +308,7 @@ public class DataTableGroupStatistic {
         }
         List<List<String>> data = new ArrayList<>();
         String sql = "SELECT * FROM " + statisticData.getSheet()
-                + " WHERE " + idColName + "=" + groupid;
+                + " WHERE " + statisticData.tmpColumnName(idColName) + "=" + groupid;
         try ( ResultSet query = qconn.prepareStatement(sql).executeQuery()) {
             while (query.next() && qconn != null && !qconn.isClosed()) {
                 List<String> vrow = new ArrayList<>();

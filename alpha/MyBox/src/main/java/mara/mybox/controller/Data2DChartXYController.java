@@ -60,14 +60,16 @@ public class Data2DChartXYController extends BaseData2DChartController {
                 }
             });
 
-            xyReverseCheck.setSelected(!chartMaker.isIsXY());
-            xyReverseCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    initChart();
-                    drawChart();
-                }
-            });
+            if (xyReverseCheck != null) {
+                xyReverseCheck.setSelected(!chartMaker.isIsXY());
+                xyReverseCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        initChart();
+                        drawChart();
+                    }
+                });
+            }
 
             typeChanged();
             chartTypesController.typeNodify.addListener(new ChangeListener<Boolean>() {

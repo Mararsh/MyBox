@@ -36,6 +36,7 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -165,6 +166,8 @@ public class ControlData2DRowEdit extends BaseController {
 
             trueButton.setDisable(!column.isEditable());
             falseButton.setDisable(!column.isEditable());
+
+            falseButton.setSelected(true);
 
             inputs.put(column, group);
 
@@ -338,7 +341,7 @@ public class ControlData2DRowEdit extends BaseController {
 
                 } else if (input instanceof ToggleGroup) {
                     try {
-                        if (message("true").equals(value)) {
+                        if (StringTools.isTrue(value)) {
                             ((RadioButton) ((ToggleGroup) input).getToggles().get(0)).setSelected(true);
                         } else {
                             ((RadioButton) ((ToggleGroup) input).getToggles().get(1)).setSelected(true);

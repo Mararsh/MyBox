@@ -62,7 +62,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
     protected ToggleGroup categoryValuesGroup;
     @FXML
     protected CheckBox q0Check, q1Check, q2Check, q3Check, q4Check, e4Check, e3Check, e2Check, e1Check,
-            dottedCheck, outliersCheck, meanCheck, meanLineCheck;
+            dottedCheck, outliersCheck, meanCheck, meanLineCheck, xyReverseCheck;
     @FXML
     protected ControlData2DResults statisticDataController;
 
@@ -99,6 +99,15 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
             chartController.redrawNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    drawChart();
+                }
+            });
+
+            xyReverseCheck.setSelected(!chartMaker.isIsXY());
+            xyReverseCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    initChart();
                     drawChart();
                 }
             });
@@ -396,10 +405,6 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
                     .setCategoryName(categorysCol >= 0 ? selectedCategory : null)
                     .setInvalidAs(invalidAs);
 
-            chartMaker.setDefaultChartTitle(chartTitle())
-                    .setDefaultCategoryLabel(selectedCategory)
-                    .setDefaultValueLabel(checkedColsNames.toString());
-
             statisticDataController.loadNull();
 
             return calculation.prepare();
@@ -529,6 +534,20 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
     public void outputData() {
         statisticDataController.loadData(outputColumns, outputData);
         drawChart();
+    }
+
+    public boolean initChart() {
+        try {
+            chartMaker.setDefaultChartTitle(chartTitle())
+                    .setDefaultCategoryLabel(selectedCategory)
+                    .setDefaultValueLabel(checkedColsNames.toString())
+                    .setInvalidAs(invalidAs);
+            chartMaker.setIsXY(!xyReverseCheck.isSelected());
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return false;
+        }
     }
 
     @Override

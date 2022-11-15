@@ -18,6 +18,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -27,7 +28,7 @@ License:    Apache License Version 2.0
 
 <VBox fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DGroupStatisticController">
     <children>
-        <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+        <SplitPane fx:id="splitPane" dividerPositions="0.4" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
             <items>
                 <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                     <content>
@@ -162,9 +163,9 @@ License:    Apache License Version 2.0
                                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                                     </padding>
                                                     <content>
-                                                        <VBox prefHeight="200.0" prefWidth="100.0" spacing="5.0">
+                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                             <children>
-                                                                <fx:include fx:id="group" source="ControlData2DGroup.fxml" />
+                                                                <fx:include fx:id="group" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DGroup.fxml" VBox.vgrow="ALWAYS" />
                                                             </children>
                                                         </VBox>
                                                     </content>
@@ -186,8 +187,8 @@ License:    Apache License Version 2.0
                                                                           <children>
                                                                               <FlowPane hgap="2.0" vgap="2.0">
                                                                                   <children>
-                                                                                      <Label text="%ColumnsCalculated" />
-                                                                                      <Label text="%NoSelectionMeansAll" />
+                                                                                      <Label minHeight="-Infinity" text="%ColumnsCalculated" wrapText="true" />
+                                                                                      <Label minHeight="-Infinity" text="%NoSelectionMeansAll" wrapText="true" />
                                                                                       <Button fx:id="selectAllColumnsButton" mnemonicParsing="false" onAction="#selectAllColumns">
                                                                                           <graphic>
                                                                                               <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -211,7 +212,7 @@ License:    Apache License Version 2.0
                                                                               <FlowPane fx:id="columnsPane" hgap="2.0" vgap="2.0" />
                                                                           </children>
                                                                       </VBox>
-                                                                      <fx:include fx:id="statistic" source="ControlStatisticSelections.fxml" />
+                                                                      <fx:include fx:id="statistic" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlStatisticSelections.fxml" />
                                                                       <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="ALWAYS">
                                                                           <children>
                                                                               <HBox alignment="CENTER_LEFT" spacing="2.0">
@@ -337,7 +338,7 @@ License:    Apache License Version 2.0
                                                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                                     </padding>
                                                     <children>
-                                                        <SplitPane dividerPositions="0.3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                                        <SplitPane dividerPositions="0.4" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                                             <items>
                                                                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                                                                     <content>
@@ -385,6 +386,27 @@ License:    Apache License Version 2.0
                                                                                         </ImageView>
                                                                                     </graphic>
                                                                                 </Button>
+                                                            <fx:include fx:id="chartTypes" source="ControlChartXYSelection.fxml" />
+                                                            <CheckBox minHeight="-Infinity" mnemonicParsing="false" text="%AxisXYReverse" wrapText="true" fx:id="xyReverseCheck" />
+                                                            <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                               <children>
+                                                                  <Label minHeight="-Infinity" text="%MaxDataInChart" wrapText="true" />
+                                                                  <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                                                     <children>
+                                                                        <TextField fx:id="chartMaxInput" prefWidth="80.0" promptText="100" />
+                                                                        <Button fx:id="goMaxButton" mnemonicParsing="false" onAction="#goMaxAction">
+                                                                           <graphic>
+                                                                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                                 <image>
+                                                                                    <Image url="@../buttons/Red/iconGo.png" />
+                                                                                 </image>
+                                                                              </ImageView>
+                                                                           </graphic>
+                                                                        </Button>
+                                                                     </children>
+                                                                  </HBox>
+                                                               </children>
+                                                            </VBox>
                                                                             </children>
                                                                         </VBox>
                                                                     </content>
@@ -393,7 +415,6 @@ License:    Apache License Version 2.0
                                                                     <content>
                                                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                                             <children>
-                                                                                <fx:include fx:id="chartTypes" source="ControlChartXYSelection.fxml" />
                                                                                 <fx:include fx:id="chart" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DChartXY.fxml" VBox.vgrow="ALWAYS" />
                                                                             </children>
                                                                         </VBox>
@@ -423,6 +444,21 @@ License:    Apache License Version 2.0
                                                                 <RadioButton minHeight="-Infinity" mnemonicParsing="false" text="%GroupID" toggleGroup="$pieCategoryGroup" wrapText="true" />
                                                             </children>
                                                         </FlowPane>
+                                          <HBox alignment="CENTER_RIGHT" spacing="2.0">
+                                             <children>
+                                                <Label minHeight="-Infinity" text="%MaxDataInChart" wrapText="true" />
+                                                <TextField fx:id="pieMaxInput" prefWidth="80.0" promptText="100" />
+                                                <Button fx:id="pieMaxButton" mnemonicParsing="false" onAction="#pieMaxAction">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/Red/iconGo.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
+                                             </children>
+                                          </HBox>
                                                         <fx:include fx:id="pieChart" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DChartPie.fxml" VBox.vgrow="ALWAYS" />
                                                     </children>
                                                 </VBox>

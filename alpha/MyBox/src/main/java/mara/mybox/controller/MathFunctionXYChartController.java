@@ -81,6 +81,7 @@ public class MathFunctionXYChartController extends ControlData2DChartXY {
                     .setDefaultCategoryLabel(columns.get(0).getColumnName())
                     .setDefaultValueLabel(columns.get(1).getColumnName())
                     .setInvalidAs(InvalidAs.Skip);
+            chartMaker.setIsXY(true);
             writeXYChart(columns, data);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -100,6 +101,7 @@ public class MathFunctionXYChartController extends ControlData2DChartXY {
                     .setDefaultCategoryLabel(columns.get(0).getColumnName())
                     .setDefaultValueLabel(columns.get(1).getColumnName())
                     .setInvalidAs(InvalidAs.Skip);
+            chartMaker.setIsXY(true);
             writeXYChart(columns, data);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

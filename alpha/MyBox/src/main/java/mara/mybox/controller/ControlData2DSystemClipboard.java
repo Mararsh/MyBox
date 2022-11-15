@@ -2,7 +2,7 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.nio.charset.Charset;
-import java.util.List;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -30,10 +30,11 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-11-27
  * @License Apache License Version 2.0
  */
-public class ControlData2DInput extends BaseController {
+public class ControlData2DSystemClipboard extends BaseController {
 
     protected String delimiterName;
     protected DataFileText textData;
+    protected SimpleBooleanProperty loadNotify;
 
     @FXML
     protected TextArea textArea;
@@ -46,8 +47,6 @@ public class ControlData2DInput extends BaseController {
     @FXML
     protected Label delimiterLabel, commentsLabel;
     @FXML
-    protected BaseData2DSourceController sourceController;
-    @FXML
     protected Button refreshButton;
 
     @Override
@@ -55,7 +54,7 @@ public class ControlData2DInput extends BaseController {
         try {
             super.initControls();
 
-            sourceController.setParameters(this);
+            loadNotify = new SimpleBooleanProperty();
 
             delimiterName = UserConfig.getString(baseName + "InputDelimiter", ",");
             labelDelimiter();
@@ -147,7 +146,6 @@ public class ControlData2DInput extends BaseController {
     @FXML
     public void refreshAction() {
         labelDelimiter();
-        sourceController.loadNull();
         String text = textArea.getText();
         if (text == null || text.isBlank()) {
             popError(message("InputOrPasteText"));
@@ -184,36 +182,29 @@ public class ControlData2DInput extends BaseController {
             @Override
             protected void whenSucceeded() {
                 labelDelimiter();
-                sourceController.loadData(textData);
+                loadNotify.set(!loadNotify.get());
             }
 
         };
         start(task);
     }
 
-    @FXML
+    public boolean hasData() {
+        return textData != null && textData.isValid();
+    }
+
     public void editAction() {
-        if (hasData()) {
-            popError(message("NoData"));
+        if (textData == null || !textData.isValid()) {
             return;
         }
-        Data2D.open(textData);
+        if (textData.isCSV()) {
+            if (textData.getFile() != null) {
+                DataFileCSVController.open(textData);
+            } else {
+                DataFileCSVController.open(textData.dataName(), textData.getColumns(), textData.tableRows(false, false));
+            }
+        } else {
+            Data2D.open(textData);
+        }
     }
-
-    public boolean hasData() {
-        return sourceController.hasData();
-    }
-
-    public boolean checkData() {
-        return hasData() && sourceController.checkSelections();
-    }
-
-    public List<List<String>> data(SingletonTask task) {
-        return sourceController.selectedData(task);
-    }
-
-    public List<String> checkedColsNames() {
-        return sourceController.checkedColsNames;
-    }
-
 }

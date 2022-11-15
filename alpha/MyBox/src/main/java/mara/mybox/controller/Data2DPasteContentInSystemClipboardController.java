@@ -1,5 +1,7 @@
 package mara.mybox.controller;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
@@ -14,7 +16,9 @@ import static mara.mybox.value.Languages.message;
 public class Data2DPasteContentInSystemClipboardController extends BaseChildController {
 
     @FXML
-    protected ControlData2DInput inputController;
+    protected ControlData2DSystemClipboard boardController;
+    @FXML
+    protected BaseData2DSourceController sourceController;
     @FXML
     protected ControlData2DPaste pasteController;
 
@@ -25,12 +29,27 @@ public class Data2DPasteContentInSystemClipboardController extends BaseChildCont
     public void setParameters(ControlData2DLoad target, String text) {
         try {
             this.parentController = target;
-            pasteController.setParameters(inputController.sourceController, target);
-            inputController.load(text);
+
+            sourceController.setParameters(this);
+
+            boardController.loadNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    sourceController.loadData(boardController.textData);
+                }
+            });
+            boardController.load(text);
+
+            pasteController.setParameters(sourceController, target);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @FXML
+    public void editAction() {
+        boardController.editAction();
     }
 
     /*

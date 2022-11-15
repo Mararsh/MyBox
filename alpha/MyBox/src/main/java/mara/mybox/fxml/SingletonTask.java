@@ -20,6 +20,9 @@ public class SingletonTask<Void> extends BaseTask<Void> {
     }
 
     public void setInfo(String info) {
+        if (info == null || info.isBlank()) {
+            return;
+        }
         if (loading != null) {
             loading.setInfo(info);
         }

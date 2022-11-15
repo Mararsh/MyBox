@@ -18,7 +18,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-4-21
  * @License Apache License Version 2.0
  */
-public class ControlData2DSimpleLinearRegressionTable extends ControlData2DLoad {
+public class ControlData2DSimpleLinearRegressionTable extends ControlData2DResults {
 
     protected BaseData2DRegressionController regressController;
     protected TableColumn sortColumn;

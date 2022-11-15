@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
@@ -29,6 +30,7 @@ import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -42,6 +44,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
     protected PieChartMaker pieMaker;
     protected List<List<String>> pieData;
     protected List<Data2DColumn> pieColumns;
+    protected int pieMaxData;
 
     @FXML
     protected Tab xyChartTab, pieChartTab;
@@ -57,6 +60,8 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
     protected RadioButton xyParametersRadio, pieParametersRadio;
     @FXML
     protected ToggleGroup pieCategoryGroup;
+    @FXML
+    protected TextField pieMaxInput;
 
     public Data2DGroupStatisticController() {
         baseTitle = message("GroupStatistic");
@@ -75,6 +80,14 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
                     drawPieChart();
                 }
             });
+
+            pieMaxData = UserConfig.getInt(baseName + "PieMaxData", 100);
+            if (pieMaxData <= 0) {
+                pieMaxData = 100;
+            }
+            if (pieMaxInput != null) {
+                pieMaxInput.setText(pieMaxData + "");
+            }
 
             statisticController.mustCount();
 
@@ -424,11 +437,11 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
     @Override
     public void drawXYChart() {
         try {
-            if (outputData == null || outputData.isEmpty()) {
-                popError(message("NoData"));
+            chartData = chartMax();
+            if (chartData == null || chartData.isEmpty()) {
                 return;
             }
-            chartController.writeXYChart(outputColumns, outputData);
+            chartController.writeXYChart(outputColumns, chartData);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -441,7 +454,13 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
                 popError(message("NoData"));
                 return;
             }
-            pieChartController.writeChart(pieColumns, pieData);
+            List<List<String>> maxPieData;
+            if (pieMaxData > 0 && pieMaxData < pieData.size()) {
+                maxPieData = pieData.subList(0, pieMaxData);
+            } else {
+                maxPieData = pieData;
+            }
+            pieChartController.writeChart(pieColumns, maxPieData);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -462,6 +481,40 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
     public void typeChanged() {
         initChart();
         okXYchart();
+    }
+
+    @FXML
+    public void pieMaxAction() {
+        if (pieMaxInput != null) {
+            boolean ok;
+            String s = pieMaxInput.getText();
+            if (s == null || s.isBlank()) {
+                pieMaxData = -1;
+                ok = true;
+            } else {
+                try {
+                    int v = Integer.valueOf(s);
+                    if (v > 0) {
+                        pieMaxData = v;
+                        ok = true;
+                    } else {
+                        ok = false;
+                    }
+                } catch (Exception ex) {
+                    ok = false;
+                }
+            }
+            if (ok) {
+                UserConfig.setInt(baseName + "PieMaxData", pieMaxData);
+                pieMaxInput.setStyle(null);
+            } else {
+                pieMaxInput.setStyle(UserConfig.badStyle());
+                popError(message("Invalid") + ": " + message("Maximum"));
+                return;
+            }
+        }
+
+        drawPieChart();
     }
 
 
