@@ -31,9 +31,10 @@ public class LabeledStackedBarChart<X, Y> extends StackedBarChart<X, Y> {
         this.setMaxHeight(Double.MAX_VALUE);
         VBox.setVgrow(this, Priority.ALWAYS);
         HBox.setHgrow(this, Priority.ALWAYS);
+        chartMaker = new XYChartMaker<Axis, Axis>();
     }
 
-    public LabeledStackedBarChart   setMaker(XYChartMaker<X,Y> chartMaker) {
+    public LabeledStackedBarChart setMaker(XYChartMaker<X, Y> chartMaker) {
         this.chartMaker = chartMaker;
         return this;
     }

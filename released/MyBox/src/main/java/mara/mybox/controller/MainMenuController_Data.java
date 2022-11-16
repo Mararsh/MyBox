@@ -46,16 +46,6 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
     }
 
     @FXML
-    protected void openDataset(ActionEvent event) {
-        loadScene(Fxmls.DatasetFxml);
-    }
-
-    @FXML
-    protected void openLocationData(ActionEvent event) {
-        loadScene(Fxmls.LocationDataFxml);
-    }
-
-    @FXML
     protected void openGeographyCode(ActionEvent event) {
         loadScene(Fxmls.GeographyCodeFxml);
     }
@@ -68,16 +58,6 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
     @FXML
     protected void ConvertCoordinate(ActionEvent event) {
         loadScene(Fxmls.ConvertCoordinateFxml);
-    }
-
-    @FXML
-    protected void Dataset(ActionEvent event) {
-        loadScene(Fxmls.DatasetFxml);
-    }
-
-    @FXML
-    protected void openEpidemicReports(ActionEvent event) {
-        loadScene(Fxmls.EpidemicReportsFxml);
     }
 
     @FXML

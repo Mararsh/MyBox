@@ -50,6 +50,15 @@ public class BaseData implements Cloneable {
         }
     }
 
+    public String values() {
+        try {
+            return columnValues.toString();
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
+        }
+    }
+
     @Override
     public Object clone() throws CloneNotSupportedException {
         try {

@@ -1,0 +1,172 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    </head>
+<html>
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Information in Tree</title>
+  <style type="text/css">
+            .center { text-align:center;  max-width:95%; }
+table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;}
+th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;}
+th { font-weight:bold;  text-align:center;}
+tr { height: 1.2em;  }
+.valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;}
+.boldText { font-weight:bold;  }
+.valueText { color:#2e598a;  }
+
+        </style>
+  <script>
+    function nodeClicked(id) {
+      var obj = document.getElementById(id);
+      var objv = obj.style.display;
+      if (objv == 'none') {
+        obj.style.display = 'block';
+      } else {
+        obj.style.display = 'none';
+      }
+    }
+    function showClass(className, show) {
+      var nodes = document.getElementsByClassName(className);  　
+      if ( show) {
+           for (var i = 0 ; i < nodes.length; i++) {
+              nodes[i].style.display = '';
+           }
+       } else {
+           for (var i = 0 ; i < nodes.length; i++) {
+              nodes[i].style.display = 'none';
+           }
+       }
+    }
+  </script>
+ </head>
+ <body contenteditable="false">
+  <div>
+   <div><input type="checkbox" checked onclick="showClass('TreeNode', this.checked);">Unfold <input type="checkbox" onclick="showClass('SerialNumber', this.checked);">Sequence Number <input type="checkbox" checked onclick="showClass('NodeTag', this.checked);">Tags <input type="checkbox" checked onclick="showClass('nodeValue', this.checked);">Values
+   </div>
+   <hr>
+   <div style="padding: 2px;">
+    &nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item19')"><span class="SerialNumber">&nbsp;&nbsp;</span>Information in Tree</a>
+   </div>
+   <div class="TreeNode" id="item19">
+    <div style="padding: 2px;">
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1625')"><span class="SerialNumber">1&nbsp;&nbsp;</span>Information In Tree</a>
+    </div>
+    <div class="TreeNode" id="item1625">
+     <div style="padding: 2px;">
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1626')"><span class="SerialNumber">1.1&nbsp;&nbsp;</span>Examples</a>
+     </div>
+     <div class="TreeNode" id="item1626">
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1627')"><span class="SerialNumber">1.1.1&nbsp;&nbsp;</span>Taxonomy </a>
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         https://www.zhihu.com/question/41580677/answer/1300242801
+        </div>
+       </div>
+      </div>
+      <div class="TreeNode" id="item1627">
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1628')"><span class="SerialNumber">1.1.1.1&nbsp;&nbsp;</span>Non-cellular life</a>
+       </div>
+       <div class="TreeNode" id="item1628">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1629')"><span class="SerialNumber">1.1.1.1.1&nbsp;&nbsp;</span>Virus</a>
+        </div>
+        <div class="TreeNode" id="item1629">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.1.1.1.1&nbsp;&nbsp;</span>DNA Virus <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">Exam focus</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #0D3928; color: #FFFFFF;">Master</span> </span>
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.1.1.1.2&nbsp;&nbsp;</span>RNA Virus <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">Exam focus</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #FFF2DF; color: #000000;">Further reading</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #EDD1D8; color: #000000;">May make mistake</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #003472; color: #FFFFFF;">Confused</span> </span>
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1632')"><span class="SerialNumber">1.1.1.2&nbsp;&nbsp;</span>Cellular life</a>
+       </div>
+       <div class="TreeNode" id="item1632">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1633')"><span class="SerialNumber">1.1.1.2.1&nbsp;&nbsp;</span>Prokaryota</a>
+        </div>
+        <div class="TreeNode" id="item1633">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.1.2.1.1&nbsp;&nbsp;</span>Archaea <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #EDD1D8; color: #000000;">May make mistake</span> </span>
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1635')"><span class="SerialNumber">1.1.1.2.2&nbsp;&nbsp;</span>Eukaryote</a>
+        </div>
+        <div class="TreeNode" id="item1635">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.1.2.2.1&nbsp;&nbsp;</span>Kingdom Protista <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #EDD1D8; color: #000000;">May make mistake</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #003472; color: #FFFFFF;">Confused</span> </span>
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1637')"><span class="SerialNumber">1.1.1.2.2.2&nbsp;&nbsp;</span>Kingdom Plantae</a>
+         </div>
+         <div class="TreeNode" id="item1637">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.1.2.2.2.1&nbsp;&nbsp;</span>Spore Plant <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">Exam focus</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #0D3928; color: #FFFFFF;">Master</span> </span>
+          </div>
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1639')"><span class="SerialNumber">1.1.1.2.2.2.2&nbsp;&nbsp;</span>Seed Plant</a>
+          </div>
+          <div class="TreeNode" id="item1639">
+           <div style="padding: 2px;">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.1.2.2.2.2.1&nbsp;&nbsp;</span>Gymnospermae
+           </div>
+           <div style="padding: 2px;">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.1.2.2.2.2.2&nbsp;&nbsp;</span>Angiosperms
+           </div>
+          </div>
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1642')"><span class="SerialNumber">1.1.1.2.2.3&nbsp;&nbsp;</span>Kingdom Animalia</a>
+         </div>
+         <div class="TreeNode" id="item1642">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1643')"><span class="SerialNumber">1.1.1.2.2.3.1&nbsp;&nbsp;</span>Subkingdom Protozoa</a>
+          </div>
+          <div class="TreeNode" id="item1643">
+           <div style="padding: 2px;">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.1.2.2.3.1.1&nbsp;&nbsp;</span>Phylum Protozoa
+           </div>
+          </div>
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1645')"><span class="SerialNumber">1.1.1.2.2.3.2&nbsp;&nbsp;</span>Subkingdom Mesozoa</a>
+          </div>
+          <div class="TreeNode" id="item1645">
+           <div style="padding: 2px;">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.1.2.2.3.2.1&nbsp;&nbsp;</span>Phylum Mesozoa
+           </div>
+          </div>
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1647')"><span class="SerialNumber">1.1.1.2.2.3.3&nbsp;&nbsp;</span>Subkingdom Metazoa</a>
+          </div>
+          <div class="TreeNode" id="item1647">
+           <div style="padding: 2px;">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.1.2.2.3.3.1&nbsp;&nbsp;</span>Protostomia
+           </div>
+           <div style="padding: 2px;">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.1.2.2.3.3.2&nbsp;&nbsp;</span>Deuterostomia
+           </div>
+          </div>
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.1.2.2.4&nbsp;&nbsp;</span>Kingdom Fungi
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+   <hr>
+   <p style="font-size:0.8em">* Links and controls may be unresponsive when html page is editable.</p>
+  </div>
+ </body>
+</html>
+</html>

@@ -23,15 +23,12 @@ import mara.mybox.db.table.TableData2DCell;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.db.table.TableData2DStyle;
-import mara.mybox.db.table.TableDataset;
-import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.db.table.TableFloatMatrix;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableImageScope;
-import mara.mybox.db.table.TableLocationData;
 import mara.mybox.db.table.TableMedia;
 import mara.mybox.db.table.TableMediaList;
 import mara.mybox.db.table.TableMyBoxLog;
@@ -475,18 +472,6 @@ public class DerbyBase {
                 new TableGeographyCode().createTable(conn);
                 loadingController.info("Geography_Code");
             }
-            if (!tables.contains("Dataset".toLowerCase())) {
-                new TableDataset().createTable(conn);
-                loadingController.info("Dataset");
-            }
-            if (!tables.contains("Location_Data".toLowerCase())) {
-                new TableLocationData().createTable(conn);
-                loadingController.info("Location_Data");
-            }
-            if (!tables.contains("Epidemic_Report".toLowerCase())) {
-                new TableEpidemicReport().createTable(conn);
-                loadingController.info("Epidemic_Report");
-            }
             if (!tables.contains("Query_Condition".toLowerCase())) {
                 new TableQueryCondition().createTable(conn);
                 loadingController.info("Query_Condition");
@@ -584,34 +569,6 @@ public class DerbyBase {
 //                    MyBoxLog.error(e);
                 }
             }
-            if (!indexes.contains("Epidemic_Report_DatasetTimeDesc_index".toLowerCase())) {
-                try ( Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableEpidemicReport.Create_Index_DatasetTimeDesc);
-                } catch (Exception e) {
-//                    MyBoxLog.error(e);
-                }
-            }
-            if (!indexes.contains("Epidemic_Report_DatasetTimeAsc_index".toLowerCase())) {
-                try ( Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableEpidemicReport.Create_Index_DatasetTimeAsc);
-                } catch (Exception e) {
-//                    MyBoxLog.error(e);
-                }
-            }
-            if (!indexes.contains("Epidemic_Report_timeAsc_index".toLowerCase())) {
-                try ( Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableEpidemicReport.Create_Index_TimeAsc);
-                } catch (Exception e) {
-//                    MyBoxLog.error(e);
-                }
-            }
-            if (!indexes.contains("Dataset_unique_index".toLowerCase())) {
-                try ( Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableDataset.Create_Index_unique);
-                } catch (Exception e) {
-//                    MyBoxLog.error(e);
-                }
-            }
             if (!indexes.contains("MyBox_Log_index".toLowerCase())) {
                 try ( Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableMyBoxLog.Create_Index);
@@ -693,20 +650,6 @@ public class DerbyBase {
         try {
             List<String> views = views(conn);
             MyBoxLog.debug("Views: " + views.size());
-            if (!views.contains("Epidemic_Report_Statistic_View".toLowerCase())) {
-                try ( Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableEpidemicReport.CreateStatisticView);
-                } catch (Exception e) {
-//                    MyBoxLog.error(e);
-                }
-            }
-            if (!views.contains("Location_Data_View".toLowerCase())) {
-                try ( Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableLocationData.CreateView);
-                } catch (Exception e) {
-//                    MyBoxLog.error(e);
-                }
-            }
             if (!views.contains("Data2D_Column_View".toLowerCase())) {
                 try ( Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableData2DColumn.CreateView);
@@ -900,8 +843,9 @@ public class DerbyBase {
             return name;
         }
         String s = "";
-        for (int i = 0; i < name.length(); i++) {
-            char c = name.charAt(i);
+        String sname = name.replaceAll("（|）", "_");
+        for (int i = 0; i < sname.length(); i++) {
+            char c = sname.charAt(i);
             if ((c > 64 && c < 91) || (c > 96 && c < 123) || c < 0 || c > 127) {
                 s += c;
                 continue;

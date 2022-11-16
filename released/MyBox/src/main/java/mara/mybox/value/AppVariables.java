@@ -44,7 +44,7 @@ public class AppVariables {
     public static AlarmClockController alarmClockController;
     public static MemoryUsageSetting pdfMemUsage;
     public static int sceneFontSize, fileRecentNumber, iconSize, thumbnailWidth;
-    public static boolean closeCurrentWhenOpenTool, recordWindowsSizeLocation, controlDisplayText,
+    public static boolean isChinese, closeCurrentWhenOpenTool, recordWindowsSizeLocation, controlDisplayText,
             hidpiIcons, ignoreDbUnavailable, popErrorLogs, saveDebugLogs, detailedDebugLogs,
             isTesting, handlingExit;
     public static StyleData.StyleColor ControlColor;
@@ -75,6 +75,7 @@ public class AppVariables {
             ignoreDbUnavailable = false;
             popErrorLogs = UserConfig.getBoolean("PopErrorLogs", true);
             errorNotify = new SimpleBooleanProperty(false);
+            isChinese = Languages.isChinese();
             isTesting = false;
 
             ImageRenderHints.loadImageRenderHints();

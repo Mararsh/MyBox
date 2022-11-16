@@ -212,6 +212,9 @@ public class ControlColors extends BaseSysTableController<ColorData> {
             dataColumn.setPrefWidth(400);
             tableView.getColumns().remove(dataColumn);
 
+            colorColumn.setCellValueFactory(new PropertyValueFactory<>("color"));
+            colorColumn.setCellFactory(new TableColorCell<>());
+
             colorValueColumn.setCellValueFactory(new PropertyValueFactory<>("colorValue"));
 
             orderColumn.setCellValueFactory(new PropertyValueFactory<>("orderNumner"));
@@ -256,9 +259,6 @@ public class ControlColors extends BaseSysTableController<ColorData> {
                 refreshPalette();
             });
             colorNameColumn.getStyleClass().add("editable-column");
-
-            colorColumn.setCellValueFactory(new PropertyValueFactory<>("color"));
-            colorColumn.setCellFactory(new TableColorCell<>());
 
             rgbaColumn.setCellValueFactory(new PropertyValueFactory<>("rgba"));
             rgbColumn.setCellValueFactory(new PropertyValueFactory<>("rgb"));
@@ -312,7 +312,8 @@ public class ControlColors extends BaseSysTableController<ColorData> {
         try {
             isSettingValues = true;
             tableView.getColumns().clear();
-            tableView.getColumns().addAll(rowsSelectionColumn, colorColumn, colorNameColumn);
+            tableView.getColumns().addAll(rowsSelectionColumn, colorNameColumn,
+                    colorColumn, rgbaColumn, rgbColumn, colorValueColumn);
             if (!isAllColors()) {
                 tableView.getColumns().add(orderColumn);
             }
@@ -322,15 +323,15 @@ public class ControlColors extends BaseSysTableController<ColorData> {
                 } else {
                     dataColumn.setCellValueFactory(new PropertyValueFactory<>("colorSimpleDisplay"));
                 }
-                tableView.getColumns().addAll(colorValueColumn, rgbaColumn, rgbColumn, dataColumn);
+                tableView.getColumns().addAll(dataColumn);
 
             } else if (allColumnsCheck.isSelected()) {
-                tableView.getColumns().addAll(colorValueColumn, rgbaColumn, rgbColumn, sRGBColumn, HSBColumn,
+                tableView.getColumns().addAll(sRGBColumn, HSBColumn,
                         AdobeRGBColumn, AppleRGBColumn, ECIRGBColumn,
                         sRGBLinearColumn, AdobeRGBLinearColumn, AppleRGBLinearColumn, CalculatedCMYKColumn,
                         ECICMYKColumn, AdobeCMYKColumn, XYZColumn, CIELabColumn, LCHabColumn, CIELuvColumn, LCHuvColumn);
             } else {
-                tableView.getColumns().addAll(colorValueColumn, rgbaColumn, rgbColumn, sRGBColumn, HSBColumn);
+                tableView.getColumns().addAll(sRGBColumn, HSBColumn);
             }
             isSettingValues = false;
 
@@ -814,12 +815,12 @@ public class ControlColors extends BaseSysTableController<ColorData> {
             }
             List<String> names = new ArrayList<>();
             for (TableColumn column : tableView.getColumns()) {
-                if (!column.equals(rgbaColumn) && !column.equals(rgbColumn)
-                        && !column.equals(orderColumn)) {
+                if (!column.equals(rowsSelectionColumn) && !column.equals(orderColumn)
+                        && !column.equals(rgbaColumn) && !column.equals(rgbColumn)) {
                     names.add(column.getText());
                 }
             }
-            StringTable table = new StringTable(names, title, 0);
+            StringTable table = new StringTable(names, title, 1);
             for (ColorData data : rows) {
                 List<String> row = new ArrayList<>();
                 for (TableColumn column : tableView.getColumns()) {
@@ -879,7 +880,8 @@ public class ControlColors extends BaseSysTableController<ColorData> {
     }
 
     @Override
-    public void sourceFileChanged(File file) {
+    public void sourceFileChanged(File file
+    ) {
         PaletteTools.importPalette(this, tableColorPaletteName, tableColorPalette, tableColor,
                 file, isAllColors() ? null : currentPalette.getName(), false);
     }
@@ -929,7 +931,8 @@ public class ControlColors extends BaseSysTableController<ColorData> {
     }
 
     @Override
-    public void resetView(boolean changed) {
+    public void resetView(boolean changed
+    ) {
         super.resetView(changed);
         colorsPane.getChildren().clear();
         colorArea.clear();
@@ -970,7 +973,8 @@ public class ControlColors extends BaseSysTableController<ColorData> {
        Data
      */
     @Override
-    public long readDataSize(Connection conn) {
+    public long readDataSize(Connection conn
+    ) {
         if (isAllColors()) {
             return tableColor.size(conn);
         } else {
@@ -979,7 +983,8 @@ public class ControlColors extends BaseSysTableController<ColorData> {
     }
 
     @Override
-    public List<ColorData> readPageData(Connection conn) {
+    public List<ColorData> readPageData(Connection conn
+    ) {
         if (isAllColors()) {
             return tableColor.queryConditions(conn, null, null, startRowOfCurrentPage, pageSize);
         } else {
@@ -994,7 +999,8 @@ public class ControlColors extends BaseSysTableController<ColorData> {
     }
 
     @Override
-    protected int deleteData(List<ColorData> data) {
+    protected int deleteData(List<ColorData> data
+    ) {
         if (data == null || data.isEmpty()) {
             return 0;
         }

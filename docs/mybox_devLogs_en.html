@@ -2,550 +2,367 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
     </head>
-<html><head>
-        <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head>
-
-        
-    
-<body contenteditable="false" style="width: 900px; margin:0 auto;"><h1>Development Logs</h1>
-<p>2022-9-28 v6.6</p>
-<ul>
-    <li>Add:
+<html>
+ <head>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+ </head>
+ <body contenteditable="false" style="width: 900px; margin:0 auto;">
+  <h1>Development Logs</h1>
+<p>2022-11-16 v6.6.1</p>
+  <ul>
+   <li>Add: 
+    <ul>
+     <li>New types of data columns: Era, Color, Longitude, Latitude, Enumeration.</li>
+     <li>Formats of data columns. Example: 
+      <ul>
+       <li>To numbers, format can be: group in thousands, group in ten thousands, scientific notation, and no format.</li>
+       <li>To Date/Time/Era, following are supported in formats: MM/dd/yy, yy/MM/dd, milliseconds, time zone, T separator, patch century, etc..</li>
+       <li>To Enumeration, list of values can be defined.</li>
+       <li>This attribute is mainly for display. When data are inputted/edited, formats are not applied automatically and original inputs are kept.</li>
+       <li>In some interfaces, like “Copy” or “Export”, options “Save date/time/era and numbers as columns’ formats” can be checked.</li>
+      </ul></li>
+     <li>How columns handle invalid values, including: skip, count as empty, and count as zero.<br> This attribute is only used for display or calculation. When data are inputted/edited, invalid values are not handled automatically.</li>
+     <li>When edit data, specific controls are shown according to types and formats of columns: 
+      <ul>
+       <li>To Boolean, checkbox is provided.</li>
+       <li>To Enumeration, list view is provided with selections.</li>
+       <li>To Color, palette is provided.</li>
+       <li>To Longitude and Latitude, map can be popped to locate coordinate.</li>
+      </ul></li>
+     <li>When data contain columns of longitude and latitude, chart “Location Distribution” can be generated.</li>
+     <li>Charts of groups. With grouped data, dynamic charts of XY, Pie, Comparison Bars, Self Comparison Bars, Box Whisker can be generated in sequence of groups.</li>
+    </ul></li>
+   <li>Enhance: 
+    <ul>
+     <li>Group data as following 4 ways: 
+      <ul>
+       <li>Equal values. Select several columns and put rows into same group when they have same values of these columns.</li>
+       <li>Value range: 
         <ul>
-            <li>Math Function: calculate, data set, chart.</li>
-            <li>XYZ charts: 3D scatter chart, surface chart.</li>
-            <li>Multiple Linear Regression – Combination.</li>
-            <li>Split data by size, number, or start-end list.</li>
-            <li>Repeat/tile image.</li>
-        </ul>
-    </li>
-    <li>Enhance:
+         <li>Select one column and divide data by value ranges of this column. Following 3 selections can be for the split: 
+          <ul>
+           <li>Size of split(interval of values)</li>
+           <li>Number of split</li>
+           <li>List of “StartValue-EndValue”</li>
+          </ul></li>
+         <li>Type of the selected column is ignored, and its values are parsed as double.</li>
+        </ul></li>
+       <li>Conditions. Define some row filters and data rows are divided in groups by these row filters.</li>
+       <li>Row number. Divide data rows by their row numbers. Following 3 selections can be for the split: 
         <ul>
-            <li>&ldquo;Columns to copy&rdquo; can be set along with &ldquo;Columns to calculate&rdquo; for Normalization, Percentage, and Comparison Bars.</li>
-            <li>Input values when add new rows for data 2D.</li>
-            <li>Except for text data file, string values can be edited and saved in multiple lines.</li>
-            <li>Descriptions can be set for data and columns. Descriptions are imported for examples.</li>
-            <li>Boolean values are counted as 0/1.</li>
-            <li>Except for JavaScript manager, calculation of JavaScript uses Nashorn as engine.</li>
-            <li>Languages can be edited and saved in multiple lines.</li>
-        </ul>
-    </li>
-    <li>Performance: Images Player only pre-read one frame.</li>
-    <li>Solved. Some delimiters are handled wrongly when save text data file. Tree is not updated when node is deleted.</li>
-</ul>
-<p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.6">Closed requirements/bugs in this version</a></p>
-<p>2022-8-31 v6.5.9</p>
-<ul>
-    <li>Data. Simple Linear Regression – Combination. Multiple Linear Regression.  Group by Equal Values. Sort By multiple columns. Save example data in suitable types.
-        Data name can be set when create data. New options for Set Values. Options for invalid numbers.</li>
-    <li>Codes. Seperate operations logic from data read/write.</li>
-    <li>Documentation. ReadMe does not include mentions of tools. Update user guides for tools.</li>
-    <li>Solved. Endless errors popped and user has to reboot computer when close window while “Play Images” is running(!! Sorry).
-        Statistic for integer/long may fail. Some operations may fail when row filter includes statistic name.
-        Offset one column when edit results of Simple Linear Regression. No results in Box-and-whisker chart when calculate by rows for all pages.
-        File/Path should be null  instead of saved value when input is empty. Auto-backup of files may be cancelled by itself.。</li>
-</ul>
-<p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.9">Closed requirements/bugs in this version</a></p>
-<p>2022-8-4 v6.5.8</p>
-<ul>
-    <li>Data. Statistic names can be placeholders in row filter or row expression. No “Column filter” any more.</li>
-    <li>Solved. Maps fail. “Paste data in MyBox clipboard” pops errors. Frame index of “Play images list” may be wrong when loop in range.</li>
-</ul>
-<p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.8">Closed requirements/bugs in this version</a></p>
-<p>2022-7-28 v6.5.7</p>
-<ul>
-    <li>Data. Maximum rows number to taken in row filter. Column filter for “Set Styles”. Set as median/mean/mode of column for “Set Values”.
-        New calculation “Row Expression”. Option about whether skip or count as zero to non-numeric for Statistic/Percentage/Normalization.
-        Maximum rows numbers of results for Sort.</li>
-    <li>Performance. No memory limitation for Statistic/Sort/Transpose. Avoid switching to Fx thread frequently in non-Fx thread when calculate expression.</li>
-    <li>Interface. Option about whether pop menu when mouse hovering some buttons. Improve some interfaces to avoid messed controls.</li>
-    <li>Solved. “Rename Files” deletes source files when not match(!! Sorry). Wrong when convert/calculate data in database tables.
-        Temporary files are kept when read image in System Clipboard and disk spaces may be eaten up when monitor(!! Sorry).
-        Image OCR fails. Add/Extract alpha channel in images fail.</li>
-</ul>
-<p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.7">Closed requirements/bugs in this version</a></p>
-<p>2022-6-11 v6.5.6</p>
-<ul>
-    <li>Data. All data operations can have row filter which is boolean expression in JavaScript. Splice two data vertically or horizontally.
-        “Set Values” can be row expression. Delete data by row filter. Manage rules of “Set Styles”.</li>
-    <li>Calculation. Manage and edit JavaScript codes. Manage and edit JEXL(Java Expression Language) codes.
-        In JShell, class paths can be added, code completion suggestions can be popped(CTRL+1), and examples are better.</li>
-    <li>Chart. Parameters can be set in popped window(F12).</li>
-    <li>Solved. Some fxml files include local paths. Data should be sorted as type when click table header.
-        Error popped when click “Replace” in text menu. Wrong when statistic to all pages or database.</li>
-</ul>
-<p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.6">Closed requirements/bugs in this version</a></p>
-<p>2022-5-10 v6.5.5</p>
-<ul>
-    <li>Edit data. Set cells’ styles. Set first row as column names. Transpose can apply to all pages and the first column can be set as column names.
-        No rows limitation for results of database query. Examples of data.</li>
-    <li>Calculate data. More values of descriptive statisitc. Statistic/percentage/normalization can be against to columns/rows/all.<br>
-        Count frequency. Simple linear regression.</li>
-    <li>Data charts. Category axis can be either strings or numbers. Display data in chart. Comparison bars chart. Self-comparison bars chart. Box-whisker chart.</li>
-    <li>Information in tree. Option to show sequence numbers. Options to copy children or descendents.  Options when left-click node.</li>
-    <li>Others. Create/paste base64 of image. Input/select color in palette pane.</li>
-    <li>Solved. Auto-backup of data file does not work. Columns are not applied when statistic all pages.
-        BOM is not removed as required when save as text file. Fail to clear all colors.</li>
-</ul>
-<p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.5">Closed requirements/bugs in this version</a></p>
-<p>2022-4-3 v6.5.4</p>
-<ul>
-    <li>Information in tree. Manage nodes of tree. Edit nodes. Export/Import with tags. Output tree view. Examples.
-        Extend as: Notes, Web favoraite addresses,  JShell codes, Javascript codes, SQL codes.</li>
-    <li>Improve. Execute multiple statements in JShell. Manage and execute queries for data tables.
-        “When left click link or image” of web page has more options. Pop histories for input controls.</li>
-    <li>Solved. Options of “Word” and “html” for Image OCR in batch do not work. Error popped when save new html in editor.
-        Nothing returned when query time in tree. Wrong may happen when delimited identify is defined in data table. “Auto save” not work in File Editor.</li>
-</ul>
-<p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.4">Closed requirements/bugs in this version</a></p>
-<p>2022-3-6 v6.5.3</p>
-<ul>
-    <li>Data. Convert data to database table. Manage and edit database tables. Execute database SQL statements.</li>
-    <li>Calculation. GUI of JShell(Java interactive coding tool).</li>
-    <li>Dev. Edit data in MyBox internal tables. Start JConsole(Java Monitoring and Management Console).</li>
-    <li>Solved. “Extract images/links in html” fails. “File unarchive” makes wrong file-paths.
-        “Synchronize Directory” will loop endlessly when target path is included in source path. Missed input field for “Power of matrix”.</li>
-</ul>
-<p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.3">Closed requirements/bugs in this version</a></p>
-<p>2022-2-1 v6.5.2</p>
-<ul>
-    <li>Image. Option to show grid lines. Option to share scopes with all images. Filter color. Wirte multiple-lines texts in image with background and borders.
-        Rendering parameters when save or modify image.</li>
-    <li>Data. Select data and parameters to generate Bar/Line/Pie/Scatter/Bubble/Area Chart.</li>
-    <li>Interface. Handle all data if select none.</li>
-    <li>Codes. Pop menus are changed as child windows. Images are always handled as ARGB internally. Automatical testing: Open interfaces.
-        Reduce duplicated codes of editing data.</li>
-    <li>Solved. Handle non-alpha images(like jpg) wrongly when add texts in batch. Image is not updated after restored from backup.
-        Several functions do wrongly when handle data in multiple pages. Menu fails to pop when name includes special characters.<br>
-        Shortcuts may be triggered when input texts with pop menu being opened.</li>
-</ul>
-<p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.2">Closed requirements/bugs in this version</a></p>
-<p>Best wishes in Chinese Tiger Year!</p>
-<p>2021-12-30 v6.5.1</p>
-<ul>
-    <li>Edit Table. Start editing when single click. Submit changes when lose focus. Validate types. CheckBoxs of rows.</li>
-    <li>Edit Data. Table/Texts are major/assist edit modes, and sheet mode is expired.  Consistent interface to manage types of data.
-        Some logic are moved from controllers to objects.</li>
-    <li>Image. Improve methods of reading image files. Loading thumbnails in background. Import example palettes in color picking window.</li>
-    <li>Interface. Html/window style can be shared in all interfaces. Options of Find/Replace can be shared in all interfaces.  Snapshot of current window/node.</li>
-    <li>Solved. Can not input new lines in Notes.  “Crop” is always disabled in Image Manufacture. No extension filter is provided when save image as new file.
-        Long file names can cause histories menu or file’s backing fail.  Panes of Texts Editor and Bytes Editor can not be resized.</li>
-</ul>
-<p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.1">Closed requirements/bugs in this version</a></p>
-<p>2021-10-13 v6.4.9</p>
-<ul>
-    <li>Improve. Text editor implements pagination as lines number and counts each line break as one character.
-        Timestamp is appended in target filename for batch operations.</li>
-    <li>Add. Extract table data from html. Tabs can be closed in html/notes editor. Convert word/ppt/text as PDF.</li>
-    <li>Platform. Upgrade to java17 and javafx17. MyBox can start from path with non-ascii name. Media can be played normally on Linux.</li>
-    <li>Solved. Text/Bytes Editors read/write wrongly. Image scope is not displayed and fail to save. Inputting text may trigger shortcuts. Many functions fail to work.</li>
-</ul>
-<p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.9">Closed requirements/bugs in this version</a></p>
-<p>2021-9-21 v6.4.8</p>
-<ul>
-    <li>Data file: Optimize operations of sheet. Data text can be edited. Support text data file.  Data clipboard can be saved and managed.</li>
-    <li>Popped text/image/html can be synchronized with source. Query Color.  Images list supports PDF and PPT.</li>
-    <li>Solved problems. OCR of PDF fails to update. Stack overflow when pop context menu for matrix.  Fail to open file without suffix on Linux.</li>
-</ul>
-<p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.8">Closed requirements/bugs in this version</a></p>
-<p>Happy Moon Festival!</p>
-<p>2021-8-17 v6.4.7</p>
-<ul>
-    <li>Improve interfaces. Consistent context menus of image/html/text. Better clipboards of image/text/data. Easier editor of Markdown/html/note/image. Integrated PDF viewer.</li>
-    <li>Optimize codes. Split big classes. Adjust shortcuts. Correct colors of icons.</li>
-    <li>Solved problems.  Very slow reading of jpg file. Transparency does not work for pen and eraser in Image Manufacture.</li>
-</ul>
-<p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.7">Closed requirements/bugs in this version</a></p>
-<p>2021-7-7 v6.4.6</p>
-<ul>
-    <li>Add. Text in System Clipboard. Text in MyBox Clipboard. Context menu of all text input controls. Context menu of html.</li>
-    <li>Improve and fix. Text Editor. Clean of closed windows.</li>
-    <li>Solved problems.  Can not open microsoft documents(word/excel/ppt). Page number is empty in data tables.</li>
-</ul>
-<p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.6">Closed requirements/bugs in this version</a></p>
-<p>2021-6-24 v6.4.5</p>
-<ul>
-    <li>Add. View and convert Word files. View/convert/split/merge/extract PPT files. Edit images list. Play images list/PDF/PPT. Images in MyBox Clipboard. Paste image in batch.</li>
-    <li>Improve and fix. Image in System Clipboard. Text Editor. Bytes Editor.</li>
-    <li>Solved problems.  Error when merge html as PDF. Error When save splitted images. Chinese can not be inputted in Markdown Editor when update synchronously.</li>
-</ul>
-<p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.5">Closed requirements/bugs in this version</a></p>
-<p>2021-5-15 v6.4.4</p>
-<ul>
-    <li>Improve and fix Html Editor, Markdown Editor, and Web Browser.</li>
-    <li>Add: Manage Web Favorites, Query Web Histories, Extract Texts From Excel/Word/PowerPoint/Publisher/Visio, Functions List.</li>
-    <li>Upgrade to Java16 and javafx16.</li>
-    <li>Solved problems. Texts are stuck when input Chinese in Data Clipboard. Wrong results when convert CSV/Excel to PDF. Error interface for exporting data. Frameset is override when save html frame.</li>
-</ul>
-<p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.4">Closed requirements/bugs in this version</a></p>
-<p>2021-4-16 v6.4.3</p>
-<ul>
-    <li>Html Editor. Frame can be selected for frameset. Images list. Query elements by tag/id/name. Search string in page.</li>
-    <li>Merge colors/palettes management. Multiple palettes can be defined. Same color can have different names and orders in different palettes.
-        Improve interface of picking colors.</li>
-    <li>Notes. Search by title/contents/time. Whether query sub-notebooks. Copy notebook. Copy/move notes.</li>
-    <li>Merge data text/sheet clipboard.  Apply blend mode when mouse released in Image Manufacture-Pen.</li>
-    <li>Add. Query address by host/ip/url. Query DNS in batch. Run system command. Encode/Decode Base64.</li>
-    <li>Remove. Not install certificates for map and weibo. No bypass of SSL verification. No expired links in Epidemic reports. No invalid links in notes examples.</li>
-    <li>Solved problems.  New cert entry fails into keystore. Abnormal of some interfaces/functions when run at first time. Should do backup before some operations.<br>
-        <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.3">Closed requirements/bugs in this version</a></li>
-</ul>
-<p>2021-3-21 v6.4.2</p>
-<ul>
-    <li>Notes. Set tags of note and query notes by tags. NoteBook can be moved. Edit note in Rich Text. Set note’s style.<br>
-        Export notes in single page, html frameset, and xml and charset and style can be set for exported files.</li>
-    <li>Image Manufacture. “Text” and “Pen” support blend modes.</li>
-    <li>Add Data Sheet Clipboard. Delimiter can be set for data in Data Text/Sheet clipboard.</li>
-    <li>Solved problems.  Html Editor fails to save. Links in frameset should be handled. Download First Level Links can not handle links with special characters. File name should avoid blanks.<br>
-        <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.2">Closed requirements/bugs in this version</a></li>
-</ul>
-<p>2021-3-8 v6.4.1</p>
-<ul>
-    <li>Notes are information pieces in html format. Notebook is collection of notes and notebooks. Notebooks are organized as a tree. Examples are provided.</li>
-    <li>Web page. Menu of handling links. Buttons to edit html codes.</li>
-    <li>Data files. Merge csv/excel files.  Handle empty csv/excel file. Add/remove/rename excel sheets.</li>
-    <li>Improve. All editors support backing up automatically when save file. Image Manufacture supports square root of color distance and refresh clipboard automatically.
-        Remove unnecessary files in self-contain packages.</li>
-    <li>Solved problems. Download First Level Links fails for some addresses. OCR in batch fails when file name includes non-English. Deleting history fails in Web Browser.<br>
-        <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.1">Closed requirements/bugs in this version</a></li>
-</ul>
-<p>2021-2-11 v6.3.9</p>
-<ul>
-    <li>Improve: Frame can be selected when view/manufacture image. Always use iterator when read CSV/Excel file. Clear security attributes of PDF file.</li>
-    <li>Solved problems.  Always go back to page 1 after CSV/Excel file is saved. Fail to unarchive file.  Non-english entries of zip file are messed.<br>
-        <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.9">Closed requirements/bugs in this version</a><br>
-        Happy Spring Festival!  Best wishes in Year of the Ox!</li>
-</ul>
-<p>2021-1-27 v6.3.8</p>
-<ul>
-    <li>Add: Edit and convert csv file and excel file. Data clipboard. Edit and save matrix. Set html style in batch.</li>
-    <li>Improve: Channels’ weights can be set for image quantization. Shortcuts can omit Ctrl/Alt when focus is not in “Text Input” controls.  Stream reading when convert/export data.</li>
-    <li>Solved problems. Distance not work when replace images’ color in batch. User password and owner password are messed for PDF.<br>
-        Pagination not work in text filter interface. Table labels need translation too. BC dates are parsed incorrectly in time tree.<br>
-        <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.8">Closed requirements/bugs in this version</a></li>
-</ul>
-<p>2020-12-03 v6.3.7</p>
-<ul>
-    <li>Add: Extract ttf from ttc. Embed an open source ttf file.</li>
-    <li>Improve: high dpi icons and common icons can be selected.  Set html charset in batch.  Consistent control to select PDF font file.
-        Rendering parameters can be set when scale images. Set default video decoder on mac as VideoToolBox.</li>
-    <li>Solved problems. Source file is destoryed when decompress gzip file and it becomes larger and larger.  Charset of html may be parsed incorrectly.
-        Only one line is shown in right pane when edit bytes.<br>
-        <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.7">Closed requirements/bugs in this version</a></li>
-</ul>
-<p>2020-11-29 v6.3.6</p>
-<ul>
-    <li>Codes: Upgrade to java 15.0.1 and javafx 15.0.1(Except for mudole “javafx-web”).  MyBox logs are managed by itself and does not depend on log4j2 now.</li>
-    <li>File: Improve robustness of files’ deleting, renaming, and moving.  New function to delete files under system temporary path.</li>
-    <li>Color: Results of quantization can be imported to Color Palette.  Maximum loop can be set for Kmeans cluster quantization.<br>
-        User’s CSV file can be imported in Color Palette.  “rgb” can be key to imprt colors.</li>
-    <li>Major issues solved: Errors pop when visit  histories include deleted files.  Wrong happens when set column number for combining images.<br>
-        <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.6">Closed requirements/bugs in this version</a></li>
-</ul>
-<p>2020-11-18 v6.3.5</p>
-<ul>
-    <li>Improve: Handle regular expression in pages for document find/replace; Opitimize algorithms of image reading; Deal big image more smoothly;
-        Adjust interface of Html Editor.</li>
-    <li>Add: Each version has itself’s configuration file; Menu buttons; Document convertors; Encode/decode URL; Download first level links.</li>
-    <li>Remove: Can not change derby mode when start the tool; Delete function “Manage downloads”.</li>
-    <li>Major issues solved: Document find/replace handle pages incorrectly; Source files should not be loaded for images list;<br>
-        Infinite empty directories can happen in batch functions; Wrong in interface of Image Manufacture.<br>
-        <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.5">Closed requirements/bugs in this version</a><br>
-        Thanks helps from <a href="https://github.com/Mararsh/MyBox/issues/781">beijingjazzpanda</a>.</li>
-</ul>
-<p>2020-10-11 v6.3.4</p>
-<ul>
-    <li>Editors: Find/Replace by multiple lines, case-insensitive, from cursor, and with examples of regular expression; Pop doument; Close/Open right pane; Set whether update right pane synchronously.</li>
-    <li>OCR: Base on tesseract commandd line, support win/linux/mac, and compatible with verison 3/4/5; Set psm and all parameters, and provide parameters list.</li>
-    <li>Record screen: Support mac; Miaow when start and end; Set frame rate and bitrates by default.</li>
-    <li>Game “Mine”: Set size of grid and number of mines, and provide examlpes; Help to see all mines; Recover game when trigger mine.</li>
-    <li>Major issues solved: Locate regular expression incorrectly for Find/Replace in Editor; Incorrect logic in version migration.<br>
-        <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.4">Closed requirements/bugs in this version</a></li>
-</ul>
-<p>2020-9-27 v6.3.3</p>
-<ul>
-    <li>Image Manufacture: Show/Hide scope pane and image pane; Enlarge image size when pasted clip out of bound; Demo of blend modes; Parameter “invert” for convolution kernel.</li>
-    <li>Data Tools: Helps to input CSV; Time with milliseconds or zone; Display points one by one in map; Set of snap images for Epidemic Report.</li>
-    <li>Color: User can input colors list; Separated interfaces for setting color, picking color, and managing palette; Adjust colors order in palette.</li>
-    <li>Others: Context menu for table and image; Auto-save periodically in editors; Delay for Screen Recorder; Screen Recorder on Linux; Dev Mode.</li>
-    <li>Major issues solved:  “Clear personal settings” is to delete user configuration data instead of all data; Wrong statements for some tabes;  Shortcuts do not work on Linux; Location Data can not be created for new Data Set.<br>
-        <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.3">Closed requirements/bugs in this version</a></li>
-</ul>
-<p>This version is for China. Happy Birthday!</p>
-<p>2020-8-27 v6.3.2  Improve “Location Data”. Display data in map as “Location Distribution” or “Time Sequence”. 3 examples of datasets. Data files on movebank.org can be imported.<br>
-Improve how to display data in map. Support both TianDiTu and GaoDe map.<br>
-“Location Tool”: Convert coordinate value between decimal and DMS. Convert coordinate values as other coordinate systems.<br>
-FFmpeg application: Record desktop. Support Windows only now.<br>
-Import/Export color data in CSV format.<br>
-Full automatic script of building and packing. Development Guide v2.1.<br>
-<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.2">Closed requirements/bugs in this version</a></p>
-<p>2020-6-11 v6.3.1  Migrate to java 14.0.1 + javaFx 14.0.1(Except for module “javafx-web”) + Netbeans 11.3.<br>
-Still support migration from lower versions instead of “Truncated Version”.<br>
-Improve table “Geography Codes” to get quicker queries.  Unit of “Area” is changed from “square kilometers” to “square meters”.<br>
-Keys of map can be set.<br>
-Solved problems. Length of “Recently visited files” is not limited. Values in pie chart of “Epidemic Reports” should be percentage.<br>
-<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.1">Closed requirements/bugs in this version</a></p>
-<p>2020-5-25 v6.3  Redesign “Geography Codes” and “Epidemic Reports”.<br>
-Provide selections of audio parameters in Audio/Vedio Convertor.<br>
-Provide Common Chinese Colors and Common Japanese Colors.<br>
-Solved problems.  Cursor should stay orginial location after saving in Text Editor. Option “Count dir size” may cause some batch operations fail.<br>
-This version is for my mom. Wish all mothers loving and being loved.<br>
-<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3">Closed requirements/bugs in this version</a></p>
-<p>2020-3-3 v6.2.1  Improve “Epidemic Reports”.  Node “Except for China”: query and display data of countries other than China.<br>
-Filled Data are shown in different color.  Change filled data as normal status by editing or click button “Sure”.<br>
-Support  structure of “Country-cities” whi level and is used by countries other than China.<br>
-Solved problems. Editors of “Geography Codes” and “Epidemic Reports” work incorrectly.  May cost too much memroy when make snapshot.<br>
-<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.2.1">Closed requirements/bugs in this version</a></p>
-<p>2020-2-28 v6.2  Improve “Epidemic Reports”.  “Fill in data holes”, to add missed data as previous days automatically.<br>
-Dynamical charts. Option to set whether display values in charts. Frames duration can be set for dynamical charts/map.<br>
-Export formats include xlsx(Excel2007) now. Auto-increased field is not exported and does not affect import.<br>
-Solved problems. Negative coordinates are shown as empty. Statistic of Epidemic Reports are updated incorrectly.
-“Level” is missed in editor of Epidemic Report. Width setting is handled wrongly in Editor of animated gif.<br>
-<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.2">Closed requirements/bugs in this version</a></p>
-<p>2020-2-21 v6.1.5  Fetch Data About “New Coronavirus Pneumonia”. Extract latest in-time Chinese and global data in Baidu page. Query historical data of Chinese data since 2020-1-20 from TengXun api.<br>
-Location attributes are added.  Data are trimmed in 3 formated: html、json、xml and can be imported in table “Epidemic Reports”.<br>
-Improve “Epidemic Reports”.  Location data are in 4 levels: global, countries, provinces, cities/districts.  Statistic attributes of increased values and their charts.
-Examples data between 2020-1-20 and 2020-2-21.<br>
-Improve “Grography Codes”. Errors and missed are fixed.<br>
-Solved problems: Filtering works incorrectly in editors.<br>
-<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.1.5">Closed requirements/bugs in this version</a></p>
-<p>2020-2-11 v6.1  Location in Map: Query and diaplay location data by clicking map, inputting address, or inputting coordinate. Map options like marker, text, layers, and language.<br>
-General management base of data table: Add/Delete/Edit data; pagination; export/import; export as html.<br>
-Manage geography codes: Query and display location in map; example of countries and Chinese provinces.<br>
-Manage location data: Attribues of location and data set/label/value/size/time/image/comments. Support time of BC. Example of “China earlier cultures”(incomplete).<br>
-Location data in map: Display data distribution in map. Data values can be used as map markers/texts/pops.<br>
-Epidemic Reports: Attributes of location and epidemic data. Example of “New Coronavirus Pneumonia”(incomplete and may include wrong values). Data analysis based on dimensions of time and location.
-Time direction includes Global and China. Location direction includes countries and Chinese provinces.
-Charts: Number Bar Charts, Ratio Bar Charts, Pie Charts, and Numbers in Map based on location dimension; Number Line Charts, Ratio Line Charts, and Dynamic Numbers in Map based on time dimension.<br>
-Data and charts can be saved as html.<br>
-Ico file can be read/written/converted.<br>
-Dynamic gif: More meta data are explained; display each frame in actual intervals; intervals can be set separately for each frame when edit.<br>
-Manage colors: maintain colors library; add /remove colors in palette; display colors in simple/all columns; merged/separated columns.<br>
-Weibo Snap tool: Pages which the account liked can be snapped and saved.<br>
-File Tools: Delete all empty sub-directories under directory; delete “infinite-nested directory” which is created by bug of some softwares, like MyBox v6.0.<br>
-Improve game Elimination: Chesses can be any pictures or colors; sound can be any mp3/wav file; better algorithm; button “help me” to prompt valid step; can play game automatically.<br>
-Solved problems: “infinite-nested directory” may be generated; in “Merge images as video”, durations less than 1 second are handled wrongly, and multiple-frames image is handled wrongly;
-in “Edit html”, snapshots are incomplete for high dpi screen; Markdown file can not be opened when run MyBox first time.<br>
-This version is for China and her children, who are fighting against the evil disease. Looking forward to spring and flowers!<br>
-<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.1">Closed requirements/bugs in this version</a></p>
-<p>2020-1-2 v6.0  Pop large image in Images Browser.<br>
-Support translating MyBox online. Provide table with English as comparison. New language file can be shared with others. Put resource files under data path and MyBox will
-be aware of new languages.<br>
-Game-Elimination.  Options about chesses images, number, size, effects. Sound choices.  Counted chesses: Make scores only when eliminate selected types of chesses.<br>
-Customize rulers that how to give score when eliminate different type of connection.<br>
-Manage download tasks. Resume break points.  Read header of address.<br>
-Solved several bugs of Image Manufacture.<br>
-<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.0">Closed requirements/bugs in this version</a></p>
-<p>2019-12-26 v5.95  Improve interfaces of batch operations with multiple tabs instead of filling one page with all of controls.<br>
-Solved problems:  Avoid 414 error for Weibo Snap Tool; Controls’ diable property is messed in interface of Image Manufacture; Format does not work for Image Manufacture in batch.<br>
-Today honor Chairman Mao and his comrades who made Chinese people standing up.<br>
-<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.95">Closed requirements/bugs in this version</a></p>
-<p>2019-12-21 v5.9  Web browser which supports multiple tabs. Its histories can be manages and SSL certifcates of websites can be installed online.<br>
-Read certificates in any keystore/truststore and export as html file.  Add certificates from CA files or by download directly from websites.<br>
-Play videos/audios with options like auto-play, displaying millionseconds, loop number, random order, volumn, speed,  mute, full-screen, etc. Sounds from GuaiGuai and BenBen. Manage playlists.<br>
-Wrap functions of ffmpeg, like convert videos/audios in batch, merge images and audios as video,  read media/ffmpeg information.<br>
-Message Digest has 12 algorithms now.<br>
-Solved problems:  Updates should be submitted automatically when table cell loses focus; Concurrent exception popped when check files redanduncy;  Interface is frozen when add folder which holds lots of
-files; Fail to unarchive 7z in batch; Unknown files’ size in zip.<br>
-<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.9">Closed requirements/bugs in this version</a></p>
-<p>2019-11-18 v5.8  Upgrade to jdk13+javafx13+derby15.<br>
-Derby database can be switched between network mode and embedded mode. Notice:  Starting/Stopping Derby network mode under some env is very slow.<br>
-Create message digest for files or inputted texts. Support  MD5/SHA1/SHA256.<br>
-FIles archive/compress/unarchive/decompress. Support formats include zip, tar, 7z, ar, cpio, gzip, bzip2, xz, lzma, Pack200, DEFLATE, snappy-framed, lz4-block, lz4-framed, etc.<br>
-Check redundant files accoding to their MD5. Files tree is displayed to help user delete duplicated files. Deletion can be done as checking is running.<br>
-Conversion between html and Markdown in batch.<br>
-Solved problems: Some controls in interfaces do not work. Empty pages block WeiBo snap tool.
-Transparent pixels of background should be considerred too when blending. “Replace Color” of image does not work.<br>
-Developer Guide v2.0.<br>
-<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.8">Closed requirements/bugs in this version</a></p>
-<p>2019-10-26 v5.7  Edit Markdown. Conversion between html and Markdown.<br>
-Improve algorithms of image quantization and apply to analysing image. K-Means Clustering is to calculate mostly different colors
-while Popularity Quantization is to calculate mostly occurred colors. Image data can be saved as html file.<br>
-Operations to manage files/directories like Find, Delete, Copy, Move. Rename is made better.<br>
-More selection mode  for batch operations like by extension, by name, by size, or by modified time. Regular expression is supported.<br>
-Many interfaces are refined to balance layout of controls.<br>
-WeiBo Snap Tools is fixed. Snapshots of HiDPI screen are in right resolution now.  Images are saved as temporary files to avoid out of memory.<br>
-<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.7">Closed requirements/bugs in this version</a></p>
-<p>2019-10-01 v5.6 Configuration file is back to “User Home” and always there except for parameter in jar.<br>
-For OCR, options of image preprocessing include nine enhancement algorithms, scale ratio, binary threashold, rotation angle, whether deskew, whether invert colors.
-Options of recognization include data files list and their order, whether generate data of regions/words and the levels can be set.
-Options for OCR in batch include whether generate html or PDF, whether merge recognized texts.
-“Fast” data files of English and Chinese are included in MyBox and OCR can be done out of box on Windows.<br>
-13 types of 1-d barcodes and 3 types of 2-d barcodes can be created. Options supported. Picture can be added in QR_Code.<br>
-9 types of 1-d barcodes and 3 types of 2-d barcodes can be decoded.<br>
-One clicking to show examples of image manufacture.<br>
-Color Palette: Colors can be named; Display more data like cmyk values and cie values.<br>
-Happy Birthday, China!<br>
-<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.6">Closed requirements/bugs in this version</a></p>
-<p>2019-9-19 v5.5  Recognize texts in image and PDF(OCR) based on tess4j. Rectangle can be set for single image’s OCR. Color space and density can be set when do OCR for PDF files in batch. Currently only Windows is supported and users need download data files by themselves.<br>
-Make self-contain packages for each platform(Window/Linux/Mac).<br>
-Improve codes: Build with maven without Java 8; make self-contain packages with latest jpackage tool.<br>
-Fix bugs: WeiBo Snap tool failed to work in last version; and it never worked again on Mac after it ran first time; clicking links caused MyBox dead on Linux; normalization is unnecessary when calculate CIELuv and CIELab.<br>
-<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.5">Closed requirements/bugs in this version</a></p>
-<p>2019-9-15 v5.4 Use “Execution Path” instead of “User Path” as default “Data Path”. Record base parameters in configuration file.<br>
-User can modify base parameters on line, including maximum JVM memory usage, whether close dpi-aware, data root path, which will cause MyBox reboot itself.<br>
-Based on pdf2dom, view PDF pages in html mode and convert PDF files as html files.<br>
-Refine interface of Image Manufacture as “Visible As Need”: Left-right areas like curtain, vertical accordion menus, tabs to switch targets, more details of hiding/showing/adjusting in function areas.<br>
-Image Clipboard: multiple sources to be pasted; drag pasted image to adjust its size and location; blend mode; rotation angle. Example clips are provided.<br>
-Color Palette: size of thousands; provide 139 named colors; export as html; pick colors on current image, image history, or reference image.<br>
-New scope type “Outline” for image manufacture: extract outline of image which has transparent background as scope of operation. Example outlines are provided.<br>
-Scopes can be saved and managed.<br>
-Uniform shortcuts whose help page is provided.<br>
-Improve codes: use public APIs instead of interval classes; make sure singleton task enters exclusively and quits cleanly; write temporary file to avoid destorying original file in case of exception.<br>
-Fix bugs: 3 tools fail to work in v5.3 due to modification; shadow and 3 blend modes miss special handling of transparent pixels.<br>
-<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.4">Closed requirements/bugs in this version</a></p>
-<p>2019-8-8 v5.3  Migrated on Netbeans 11 + Java 12.<br>
-Improve batch interface: add directories, extend directories, filter file names, handle duplicated file names.<br>
-Improve image conversion: more color spaces, external ICC profile as color space, whether embed ICC, handle transparent channel.<br>
-Improve image matedata decoding: fetch embedded ICC in image.<br>
-Improve codes: reduce duplicated codes by anonymous classes and embedded fxml; adjust classes inheritance; build project for different platforms.<br>
-First version of “Development Guide”.<br>
-Fix issues: Algorithm for “Image Manufacture-Color-Opacity-premultiply” is incorrect; Fail to save image when file extension is missed on Linux;<br>
-Links do not work on Linux; Version of ICC profile is decoded/encodes incorrectly; Interface may be froozen when ICC holds too much data;<br>
-Not-decoded data in ICC prevents generation of XML.<br>
-<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.3">Closed requirements/bugs in this version</a></p>
-<p>2019-6-30 v5.2 Improve image decoding. Adobe YCCK/CMYK jpg file can be viewed.<br>
-Attributes and meta data of all images in multi-frames image file are read and displayed.<br>
-PDF file can be viewed with bookmarks(Table of contents) and thumbnails.<br>
-PDF file’s attributes like author, version, user password, user permissions, and owner password etc can be modified.<br>
-Matrices Calculation. Edit matrix data: adapt formatted data; transform matrix data into row vector, column vector, or another matrix in defined column number;<br>
-generate identify matrix, random matrix, random square matrix automatically with defined column/row number.<br>
-Unary matrix calculation: Transpose, Row Echelon Form, Reduced Row Echelon Form, Determinant By Elimination, Determinant By Complement Minor, Inverse Matrix By Elimination, Inverse Matrix By Adjoint, Matrix Rank, Adjoint Matrix, Complement Minor, Normalize, Set Decimal Scale, Set As Integer, Multiply Number, Divide By Number, Power.<br>
-Binary matrices calculation: Plus, Minus, Hadamard Product, Kronecker Product, Horizontally Merge, Vertically Merge.<br>
-Tools of Color Space: draw Chromaticity Diagram, edit ICC profile, adapt primaries of RGB Color Space, transform matrices between Linear RGB and XYZ, transform matrices between Linear RGB and Linear RGB，chromatic adaptation, standard illuminants, chromatic adaptation matrices.<br>
-Fix bugs: “414 Request-URI Too Large” is returned in WeiBo snap tool constantly; tooltip blinks at edge of screen; some links do not work.<br>
-<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.2">Closed requirements/bugs in this version</a></p>
-<p>2019-5-1 v5.1 Interface: Controls are displayed in pictures which can be selected in 5 colors and whether display texts.<br>
-Shorter tips to fit for 14 inches screen of laptop.<br>
-Image tools: Extract/Add Alpha channel.<br>
-Fix several problems, including error condition to filter transparent pixels in Image Manufacture.<br>
-Happay Labor Day!<br>
-<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.1">Closed requirements/bugs in this version</a></p>
-<p>2019-4-21 v5.0 Select scope or area by dragging anchors.<br>
-Doodle: Paste picture, draw shape(rectangle/circle/ellipse/polygon) line or fill color in shape, draw lines by<br>
-dragging mouse, in image. Stroke width and color, line dotted can be set.<br>
-View image: Set load size. Select whether show coordinate and rulers. Rotation can be saved.<br>
-Browse Images: Grid Mode/Thumnails List Mode/File List Mode. Set load size. Rotation can be saved.<br>
-Image Manufacture: Dithering can be applied to all scope types except for matting. Opacity can be made by<br>
-Premultiplied Aplha for formats not supporting alpha. Blur margins. Shadow implemented in low level.<br>
-Adjust size or margins by dragging anchors. Crop inside/outside in rectangle/circle/ellipse/polygon. Veritcal<br>
-texts.<br>
-Interface: Only display useful controls. Enough and not distracting tips. Shortcuts, major buttons, and default<br>
-buttons. Monitor memory/CPU in time. View JVM properties. Refresh/reset windows. Restore last size of<br>
-interfaces. Pop recent visited files/directories. Recent visited tools.<br>
-Codes refactoring: Implement selection logic by subclass instead of switch statement, to move judgement<br>
-outside loop. Avoid float calculation in loop. Rationalize inheritance and reduce duplication. Central<br>
-management of stages’ opening/closing to avoid threads residual.<br>
-<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.0">Closed requirements/bugs in this version</a></p>
-<p>2019-2-20 v4.9 Change image’s contrast. Multiple algorithms are supported. Dithering can be selected when<br>
-handle color quantization.<br>
-Statistic data of image’s color channels, including mean, variance, skewness, mode, midean, etc. Histograms.<br>
-Recorder of images in system clipboard. Change font size any time.<br>
-View images: copy/crop/save the selected area.<br>
-<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.9">Closed requirements/bugs in this version</a></p>
-<p>2019-1-29 v4.8 View PDF file in image mode. Density can be set. Pages can be cropped and saved as images.<br>
-Locate function in Text/Bytes Editer: Go to the position of specified character/byte/line.<br>
-Cut file, by files number, by bytes number, or by start-end list.<br>
-Merge multiple files’ bytes as a new file.<br>
-A file path can follow program as argument to be opened directly by MyBox.<br>
-On windows, the default Open Method of image/text/PDF files can be associated with MyBox.exe, to open a file by MyBox by double clicking the file name.<br>
-<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.8">Closed requirements/bugs in this version</a></p>
-<p>2019-1-15 v4.7 Edit Bytes. Input boxes of general ASCII characters. Break lines by bytes number or by some defined bytes. Find and replace in current page or in whole file, and count. Filter lines by “Include One”, “Not Include All”, “Include All”, or “Not Include Any”. Cumulative filter. Filtered results can be saved. Select whether include lines number. Select charset to decode bytes which can be viewed, scrolled, and selected synchronously. Paginate. Fit for viewing or editing very large file, such as binary file in size of several GBs. Page Size can be set. Make sure correction of finding, replacing, and filtering of bytes that are across pages.<br>
-Convert line breaks of files in batching way.<br>
-Merge “Rename Files” and “Rename Files under Directories”.<br>
-Image Blurring uses “Average Algorithm” which is good enough and quicker.<br>
-<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.7">Closed requirements/bugs in this version</a></p>
-<p>2018-12-31 v4.6 Edit Text: Detect line break automatically. Convert line break. Support LF(Unix/Linux), CR(iOS), CRLF(Windows).<br>
-Find and replace. In current page, or in whole file.<br>
-Filter lines. By “Include one of strings” or “Not include all of strings”. Cumulative filter. Filtered results can be saved.<br>
-Paginate. Fit for viewing or editing very large file, such as logs in size of several GBs. Page Size can be set. Make sure correction of finding, replacing, and filtering of strings that are across pages.<br>
-Load and display first page, and scan the file in background to count characters number and lines number. Part of functions are unavaliable while counting. Interface will be refreshed automatically after counting process is complete.<br>
-In progress interface, buttons “MyBox” and “Cancel” are added to have user use other functions or cancel current process.<br>
-<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.6">Closed requirements/bugs in this version</a></p>
-<p>2018-12-15 v4.5 Text Encoding. File charset can be either detected automatically or set manually. Target file charset can be selected to implement encoding conversion. BOM setting is supported. Hexadecimal codes can be viewed and selected synchronously. Line numbers are shown.<br>
-Text Encoding conversion in batch way.<br>
-Split image by size.<br>
-Copy image or selected part of image in system clipboard(Ctrl-c).<br>
-Crop and save part of image in interface of Image Viewer.<br>
-<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.5">Closed requirements/bugs in this version</a></p>
-<p>2018-12-03 v4.4 View/Extract/Create/Edit multiple frames image file. Support multiple frames Tiff file.<br>
-For all operations which use image as input, handle situation of multiple frames image file.<br>
-For all operations which use image as input, handle situation of big image which includes too many pixels to be loaded and displayed under limitation of available memory. Evaulate possiblility OutOfMemory and judge whether subsample image automatically. After that, show meaningful information and prompt for next<br>
-step.<br>
-Support splitting big image by only reading required part of data and writing while reading. Splitted results can be saved as multiple image files, multiple frames Tiff file, or PDF file.<br>
-Support subsampling big image with options of sample region and sample ratio.<br>
-<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.4">Closed requirements/bugs in this version</a></p>
-<p>2018-11-22 v4.3 Support animated Gif. View: set interval, pause/continue, go special frame, next/previous frame. Extract: set from/to frames, target files’ type. Create/Edit: add/delete images, adjust orders, set interval, whether loop, keep images’ size or set images’ size, save as, what you see is what you get.<br>
-Easier and better Scope for Image Manufacture. Type:All, Matting, Rectangle, Circle, Color Matching, Color Matching in Rectangle, Color Matching in Circle. Color Matching can be against red/green/blue channel, saturation, brightness, hue, or whole RGB. Points set of matting and colors set of color matching can be<br>
-added/deleted easily. All type of scope can be set as Excluded.<br>
-Merge functions of “Color”, “Filter”, “Effect”, and “Replace Color”, to reduce interface elements and user inputs.<br>
-Multiple Images Viewer: Number of files in each screen can be set; pictures are shown in balanced sizes.<br>
-<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.3">Closed requirements/bugs in this version</a></p>
-<p>2018-11-13 v4.2 Scope for Image Manufacture: All, Matting, Rectangle, Circle, Color Matching, Hue Matching, Rectrangle/Circle plus Color/Hue Matching. “Matting” is like Magic Wand of PhotoShop or “Bucket Fill” of Paint on Windows.<br>
-Scope can be applied for Color Increasing/Deceasing, Filtering, Effects, Replacing Color, and Convolution. The scope can be determined by clicking image.<br>
-Convolution Kernels Manager: Values of Gaussian Distribution can be filled in automatically; Option about how to handle pixels in edges is supported.<br>
-Directories Rename: Strings can be used to filter files to be handled.<br>
-Optimize and reorganize codes of Image Manufacture.<br>
-More shortcuts.</p>
-<p>2018-11-08 v4.1 Image Manufacture type of “Cover”. Following can be set on an image: mosaic rectangle, mosaic circle, frosted rectangle, frosted circle, or picture. Area and size can be set for masaic or frosted cover. Internal pictures or user’s pictures can be selected as cover, with options of size and opacity.<br>
-Image Manufacture type of “Convolution”. Convolution kernels can be picked to apply upon images. Batch way is supported.<br>
-Convolution Kernels Manager. Kernels for image handling can be created/edited/deleted/copied. The matrix can be normalized automatically. The kernel can be tested. Example kernels are provided.<br>
-New Image filters: Yellow/Cyan/Magenta channels.</p>
-<p>2018-11-04 v4.0 New channels of Image Color Adjustment: Yellow, Cyan, Magenta. Yellow channel can be used to generate warm-toned image.<br>
-New filter of image: Sepia, which is used to make picture old.<br>
-New image effect: Emboss. Options like direction,  radius, and whether changed as grayscale, can be set.<br>
-Images blending. Options like defining intersected area and blending mode can be set.<br>
-Online helps are enriched with important information.</p>
-<p>2018-10-26 v3.9 Embed Derby database to save program’s data. Make sure data are migrated from configuration file to db correctly.<br>
-Image manufacture: Record updating histories to return former status. Can set whether record histories or set the number of the updating histories.<br>
-English version of User Guides.</p>
-<p>2018-10-15 v3.8 Optimize codes: Split the class ImageManufacture into classes of each function.<br>
-Optimize interface: Make the tools more friendly. Set shortcuts.<br>
-In Image Manufacture, more filters like Red/Green/Blue inverting, and “Outline” for text watermark.</p>
-<p>2018-10-09 v3.7 In Weibo Snap Tool, load images sequentially by using javascript event. Make sure the minimum interval to avoid being judged as invalid access by server. Meanwhile monitor the maximum interval to avoid broken iteration due to missed picture or untriggered event by fast loading of small picture.<br>
-“Effects” of image manufacturing, including blurring, sharpening, edge detecting, posterizing, and thresholding.</p>
-<p>2018-10-04 v3.6 Optimize algorithm of Weibo Snap Tool to make sure all pictures loaded. Check codes to avoid meomry leak.<br>
-Reduce brightness and saturation of background colors in interface styles.<br>
-Add introduction about dpi-aware in document.</p>
-<p>2018-10-01 v3.5 Optimize algorithm of Weibo Snap Tool to make sure all pictures loaded.<br>
-Provide multiple interface styles.</p>
-<p>2018-09-30 v3.4 Fix bugs: 1) In Weibo Snap Tool, adjust the judge conditions of loading pages to make sure all information in the pages can be saved. 2) When close/switch window and task is running, and user select “Cancel”, current window should not be closed.<br>
-New features: 1) Can set the maximum main memory for PDF operations. 2) Can clear peasonal settings.</p>
-<p>2018-09-30 v3.3 Solve the problem of Weibo website certificate finally. Verified on Windows, CentOS, and Mac.</p>
-<p>2018-09-29 v3.2 Weibo Snap Tools: 1) Import certificate automatically on Linux and Windows to have users need not login. But have no way on Max, so users of Apple computer will have to login Weibo to use Weibo Snap Tool. 2) Can expand all comments and all pictures in the pages before make snapshots. 3) Can save the original pictures of the pages.(Cooooooool)</p>
-<p>2018-09-26 v3.1 All image operations can be done in batch way. Fix and optimize algorithms of Color manufacture. Set default font size to fit for different resoltuions in different environments. Seperate User Guides for each type of tools. Prompt user to login Weibo to install its SSL certificate before start to use Weibo Snap Tools. I am looking for the way to remove this limitation because MyBox has not any interest of touching any provate information of users.</p>
-<p>2018-09-18 v3.0 Improve Snap Tool for Weibo: Only snap meaningful area in the page, by which half time is cost and half size of PDF files is saved. Can expand the comments of messages. I am so proud of this feature! Can set the maximum size of merged PDF.<br>
-Fix bugs of Html Editor and enhance its functions.<br>
-2018-09-17 v2.14 Improve Snap Tool for Weibo: Retry times of failure; Do not mergin month’s PDF file when pages of the month is more than 10.<br>
-2018-09-15 v2.13 Show Reference Image and Scope Image seperately. Make sure no thread runnig after program exits. Compress images in PDF in batching way. Snap Tool for Weibo, backup contents of any weibo account automatically. Duration can be set. Both PDF files and html files can be saved.<br>
-Weibo pages are loaded dynamically, so locally backed pages can not be loaded and shown correctly. They are backed just for texts in the pages.<br>
-This tool might fail to work when weibo would change the accessing channel of pages in future. Who know~</p>
-<p>2018-09-11 v2.12 Combine images as PDF file, Compress images in PDF, combine PDF files, split PDF. Support Chinese written in PDF file, and system font file is locating automatically while user can input ttf file path. Prompt information is shown more smoothly and friendly. In web browser, font size can be zoom in and zoom out, and web page can be snapped into PDF file with settings of delay and PDF page size.</p>
-<p>2018-09-06 v2.11 Image combining which supports array options, background color, interval, edges, and size options. Web browser supports synchronized contents with web editor and snapshots of the whole web page in one image. Image maunfacture like shadow, arced corners, adding edges. Implement manufacture of big image and make sure performance is acceptable.</p>
-<p>2018-08-11 v2.10  Image Spliting which supports equipartition and custom. Scope of image manufacture is easier to use. No number limition is for multiple image files viewed in same screen now.</p>
-<p>2018-08-07 v2.9  Image croping. Scope, including area scope like rectangle and circle and color matching, is supported for image manufacture.</p>
-<p>2018-07-31 v2.8  Image edges’ cutting. Watermark in image. Undo and redo for image manufacture. Html editor. Text edior.</p>
-<p>2018-07-30 v2.7  Image transform, including rotating, mirroring, and shearing.</p>
-<p>2018-07-26 v2.6  Improve color replacement: Support original colors’ list and hue distance. Support opacity adjustment.</p>
-<p>2018-07-25 v2.5  Color palette. And Replace colors in image, by accurate matching of color, or by colors’ distance. Color replacement can be used to change the background color of images or eliminate color noise of images.</p>
-<p>2018-07-24 v2.4  Improve functions of Image Manufacture and Multiple Images Viewer: Smoothly switching, reference image, and pixels adjustment.</p>
-<p>2018-07-18 v2.3  Alarm clocks, with options of time and ring. Support rings of “Meow”, wav, and mp3. Can run in background. Thanks my GuaiGuai for her contribution of “Meow”.</p>
-<p>2018-07-11 v2.2  Fix bug about threads’ logic. Files rearragement that categories files under new directories according to their modify time or create time. This function can be used to handle photoes, games screenshots, or system logs which need archived based on time.</p>
-<p>2018-07-09 v2.1  Improve interface of image manufacturing and support images borwsering. Directory synchronization, with options like copying subdirectoies, new files, modified files after some time, original file’s attributes, or deleting files and directories which are not in source path, etc.</p>
-<p>2018-07-06 v2.0  Extract texts from PDF files in batching way. Convert image files to other formats in batching way. Rename files under directories, with options about files’ name and sorting. All of or part of renamed files can be recovered as originl names.</p>
-<p>2018-07-03 v1.9  Fix issues. Customize page separator line when extract texts from PDF. Improve image manufacture: Adjust saturation, lightness, and hue with parameters and provide filters like gray, invert, or binary.</p>
-<p>2018-07-01 v1.8  Extract texts from PDF files. Manufacture image: Adjust saturation, lightness, make it gray, or invert the color.</p>
-<p>2018-06-30 v1.7  Improve Pixels Calculator. Support to view multiple images in same screen.</p>
-<p>2018-06-27 v1.6  Convert image files to other formats, with options of color, size, compression, quality, etc. Pixels Calculator. Support more image formats: gif, wbmp, pnm, pcx.</p>
-<p>2018-06-24 v1.5  Extract images from PDF and save as original format. Support extracting and converting in batching way. Thanks helps from “https://shuge.org/” who asked the requirement of extracting images from PDF.</p>
-<p>2018-06-21 v1.4  Support reading/writing meta-data of images in format of png, jpg, bmp, tiff. Thanks helps from “https://shuge.org/” who asked the requirement of Meta-data of images.</p>
-<p>2018-06-15 v1.3  Fix the gray calculation in OTSU; Optimize shared codes; Support PDF password; More friendly interface .</p>
-<p>2018-06-14 v1.2  Add options of color conversion for binary image type. Save user’s choices. And optimize reading of hellp document. Thanks helps from “https://shuge.org/” who asked the requirement of binary conversion of color with threshold.</p>
-<p>2018-06-13 v1.1  Add: image format TIFF and RAW, options of Compression Type and Quality, and Help information. Thanks helps from “https://shuge.org/” who asked the requirement of TIFF format</p>
-<p>2018-06-12 v1.0  Convert each page of PDF file to an image with options of format, density, color,  compression, and quality. And user can pause/continue the conversion.</p>
-<p><a href="https://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+no%3Amilestone">Closed requirements/bugs not in any version</a></p>
-
-
-</body></html>
+         <li>Size of split(interval of row numbers)</li>
+         <li>Number of split</li>
+         <li>List of “StartNumber-EndNumber”</li>
+        </ul></li>
+      </ul></li>
+     <li>Assist mode of data editing is changed as CSV, to support values which contain delimeter or line break.</li>
+     <li>When read data in System Clipboard, both CSV parser and Text parser can be used.</li>
+     <li>Row filters can be saved in tree.</li>
+     <li>Sort conditions and maximum number of picked data can be set for all types of charts.</li>
+     <li>Parse data format with more detailed algorithm.</li>
+     <li>Parse numbers with NumberFormat.</li>
+     <li>Player: 
+      <ul>
+       <li>Implemented with ScheduledExecutorService. Support both “deplay” mode and “interval” mode.</li>
+       <li>Snapshots</li>
+      </ul></li>
+     <li>More status information are displayed for background tasks.</li>
+    </ul></li>
+   <li>Remove functions “Location Data” and “Edpidemic Reports”.<br> Their existed data can be found under menu “Data - Database - Database Table” and can be changed and used as common data.</li>
+   <li>Solved: 
+    <ul>
+     <li>Data may be damaged when do “replace all” for long texts/bytes(Sorry).</li>
+     <li>Screen Recorder does not work.</li>
+     <li>Row expressions have no way to describe “value is null”.</li>
+     <li>When value of category is null, charts may pop errors.</li>
+     <li>Comparison bars chart picks wrong values for one column.</li>
+     <li>Sort for current page may cause error.</li>
+     <li>When save new data which have applied styles, errors will pop.</li>
+     <li>When copy nodes in tree, errors may pop.</li>
+    </ul></li>
+  </ul>
+  <p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.6.1">Closed requirements/bugs in this version</a></p>
+  <p>2022-9-28 v6.6</p>
+  <ul>
+   <li>Add: 
+    <ul>
+     <li>Math Function: calculate, data set, chart.</li>
+     <li>XYZ charts: 3D scatter chart, surface chart.</li>
+     <li>Multiple Linear Regression – Combination.</li>
+     <li>Split data by size, number, or start-end list.</li>
+     <li>Repeat/tile image.</li>
+    </ul></li>
+   <li>Enhance: 
+    <ul>
+     <li>“Columns to copy” can be set along with “Columns to calculate” for Normalization, Percentage, and Comparison Bars.</li>
+     <li>Input values when add new rows for data 2D.</li>
+     <li>Except for text data file, string values can be edited and saved in multiple lines.</li>
+     <li>Descriptions can be set for data and columns. Descriptions are imported for examples.</li>
+     <li>Boolean values are counted as 0/1.</li>
+     <li>Except for JavaScript manager, calculation of JavaScript uses Nashorn as engine.</li>
+     <li>Languages can be edited and saved in multiple lines.</li>
+    </ul></li>
+   <li>Performance: Images Player only pre-read one frame.</li>
+   <li>Solved. Some delimiters are handled wrongly when save text data file. Tree is not updated when node is deleted.</li>
+  </ul>
+  <p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.6">Closed requirements/bugs in this version</a></p>
+  <p>2022-8-31 v6.5.9</p>
+  <ul>
+   <li>Data. Simple Linear Regression – Combination. Multiple Linear Regression. Group by Equal Values. Sort By multiple columns. Save example data in suitable types. Data name can be set when create data. New options for Set Values. Options for invalid numbers.</li>
+   <li>Codes. Seperate operations logic from data read/write.</li>
+   <li>Documentation. ReadMe does not include mentions of tools. Update user guides for tools.</li>
+   <li>Solved. Endless errors popped and user has to reboot computer when close window while “Play Images” is running(!! Sorry). Statistic for integer/long may fail. Some operations may fail when row filter includes statistic name. Offset one column when edit results of Simple Linear Regression. No results in Box-and-whisker chart when calculate by rows for all pages. File/Path should be null instead of saved value when input is empty. Auto-backup of files may be cancelled by itself.。</li>
+  </ul>
+  <p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.9">Closed requirements/bugs in this version</a></p>
+  <p>2022-8-4 v6.5.8</p>
+  <ul>
+   <li>Data. Statistic names can be placeholders in row filter or row expression. No “Column filter” any more.</li>
+   <li>Solved. Maps fail. “Paste data in MyBox clipboard” pops errors. Frame index of “Play images list” may be wrong when loop in range.</li>
+  </ul>
+  <p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.8">Closed requirements/bugs in this version</a></p>
+  <p>2022-7-28 v6.5.7</p>
+  <ul>
+   <li>Data. Maximum rows number to taken in row filter. Column filter for “Set Styles”. Set as median/mean/mode of column for “Set Values”. New calculation “Row Expression”. Option about whether skip or count as zero to non-numeric for Statistic/Percentage/Normalization. Maximum rows numbers of results for Sort.</li>
+   <li>Performance. No memory limitation for Statistic/Sort/Transpose. Avoid switching to Fx thread frequently in non-Fx thread when calculate expression.</li>
+   <li>Interface. Option about whether pop menu when mouse hovering some buttons. Improve some interfaces to avoid messed controls.</li>
+   <li>Solved. “Rename Files” deletes source files when not match(!! Sorry). Wrong when convert/calculate data in database tables. Temporary files are kept when read image in System Clipboard and disk spaces may be eaten up when monitor(!! Sorry). Image OCR fails. Add/Extract alpha channel in images fail.</li>
+  </ul>
+  <p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.7">Closed requirements/bugs in this version</a></p>
+  <p>2022-6-11 v6.5.6</p>
+  <ul>
+   <li>Data. All data operations can have row filter which is boolean expression in JavaScript. Splice two data vertically or horizontally. “Set Values” can be row expression. Delete data by row filter. Manage rules of “Set Styles”.</li>
+   <li>Calculation. Manage and edit JavaScript codes. Manage and edit JEXL(Java Expression Language) codes. In JShell, class paths can be added, code completion suggestions can be popped(CTRL+1), and examples are better.</li>
+   <li>Chart. Parameters can be set in popped window(F12).</li>
+   <li>Solved. Some fxml files include local paths. Data should be sorted as type when click table header. Error popped when click “Replace” in text menu. Wrong when statistic to all pages or database.</li>
+  </ul>
+  <p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.6">Closed requirements/bugs in this version</a></p>
+  <p>2022-5-10 v6.5.5</p>
+  <ul>
+   <li>Edit data. Set cells’ styles. Set first row as column names. Transpose can apply to all pages and the first column can be set as column names. No rows limitation for results of database query. Examples of data.</li>
+   <li>Calculate data. More values of descriptive statisitc. Statistic/percentage/normalization can be against to columns/rows/all.<br> Count frequency. Simple linear regression.</li>
+   <li>Data charts. Category axis can be either strings or numbers. Display data in chart. Comparison bars chart. Self-comparison bars chart. Box-whisker chart.</li>
+   <li>Information in tree. Option to show sequence numbers. Options to copy children or descendents. Options when left-click node.</li>
+   <li>Others. Create/paste base64 of image. Input/select color in palette pane.</li>
+   <li>Solved. Auto-backup of data file does not work. Columns are not applied when statistic all pages. BOM is not removed as required when save as text file. Fail to clear all colors.</li>
+  </ul>
+  <p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.5">Closed requirements/bugs in this version</a></p>
+  <p>2022-4-3 v6.5.4</p>
+  <ul>
+   <li>Information in tree. Manage nodes of tree. Edit nodes. Export/Import with tags. Output tree view. Examples. Extend as: Notes, Web favoraite addresses, JShell codes, Javascript codes, SQL codes.</li>
+   <li>Improve. Execute multiple statements in JShell. Manage and execute queries for data tables. “When left click link or image” of web page has more options. Pop histories for input controls.</li>
+   <li>Solved. Options of “Word” and “html” for Image OCR in batch do not work. Error popped when save new html in editor. Nothing returned when query time in tree. Wrong may happen when delimited identify is defined in data table. “Auto save” not work in File Editor.</li>
+  </ul>
+  <p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.4">Closed requirements/bugs in this version</a></p>
+  <p>2022-3-6 v6.5.3</p>
+  <ul>
+   <li>Data. Convert data to database table. Manage and edit database tables. Execute database SQL statements.</li>
+   <li>Calculation. GUI of JShell(Java interactive coding tool).</li>
+   <li>Dev. Edit data in MyBox internal tables. Start JConsole(Java Monitoring and Management Console).</li>
+   <li>Solved. “Extract images/links in html” fails. “File unarchive” makes wrong file-paths. “Synchronize Directory” will loop endlessly when target path is included in source path. Missed input field for “Power of matrix”.</li>
+  </ul>
+  <p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.3">Closed requirements/bugs in this version</a></p>
+  <p>2022-2-1 v6.5.2</p>
+  <ul>
+   <li>Image. Option to show grid lines. Option to share scopes with all images. Filter color. Wirte multiple-lines texts in image with background and borders. Rendering parameters when save or modify image.</li>
+   <li>Data. Select data and parameters to generate Bar/Line/Pie/Scatter/Bubble/Area Chart.</li>
+   <li>Interface. Handle all data if select none.</li>
+   <li>Codes. Pop menus are changed as child windows. Images are always handled as ARGB internally. Automatical testing: Open interfaces. Reduce duplicated codes of editing data.</li>
+   <li>Solved. Handle non-alpha images(like jpg) wrongly when add texts in batch. Image is not updated after restored from backup. Several functions do wrongly when handle data in multiple pages. Menu fails to pop when name includes special characters.<br> Shortcuts may be triggered when input texts with pop menu being opened.</li>
+  </ul>
+  <p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.2">Closed requirements/bugs in this version</a></p>
+  <p>Best wishes in Chinese Tiger Year!</p>
+  <p>2021-12-30 v6.5.1</p>
+  <ul>
+   <li>Edit Table. Start editing when single click. Submit changes when lose focus. Validate types. CheckBoxs of rows.</li>
+   <li>Edit Data. Table/Texts are major/assist edit modes, and sheet mode is expired. Consistent interface to manage types of data. Some logic are moved from controllers to objects.</li>
+   <li>Image. Improve methods of reading image files. Loading thumbnails in background. Import example palettes in color picking window.</li>
+   <li>Interface. Html/window style can be shared in all interfaces. Options of Find/Replace can be shared in all interfaces. Snapshot of current window/node.</li>
+   <li>Solved. Can not input new lines in Notes. “Crop” is always disabled in Image Manufacture. No extension filter is provided when save image as new file. Long file names can cause histories menu or file’s backing fail. Panes of Texts Editor and Bytes Editor can not be resized.</li>
+  </ul>
+  <p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.5.1">Closed requirements/bugs in this version</a></p>
+  <p>2021-10-13 v6.4.9</p>
+  <ul>
+   <li>Improve. Text editor implements pagination as lines number and counts each line break as one character. Timestamp is appended in target filename for batch operations.</li>
+   <li>Add. Extract table data from html. Tabs can be closed in html/notes editor. Convert word/ppt/text as PDF.</li>
+   <li>Platform. Upgrade to java17 and javafx17. MyBox can start from path with non-ascii name. Media can be played normally on Linux.</li>
+   <li>Solved. Text/Bytes Editors read/write wrongly. Image scope is not displayed and fail to save. Inputting text may trigger shortcuts. Many functions fail to work.</li>
+  </ul>
+  <p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.9">Closed requirements/bugs in this version</a></p>
+  <p>2021-9-21 v6.4.8</p>
+  <ul>
+   <li>Data file: Optimize operations of sheet. Data text can be edited. Support text data file. Data clipboard can be saved and managed.</li>
+   <li>Popped text/image/html can be synchronized with source. Query Color. Images list supports PDF and PPT.</li>
+   <li>Solved problems. OCR of PDF fails to update. Stack overflow when pop context menu for matrix. Fail to open file without suffix on Linux.</li>
+  </ul>
+  <p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.8">Closed requirements/bugs in this version</a></p>
+  <p>Happy Moon Festival!</p>
+  <p>2021-8-17 v6.4.7</p>
+  <ul>
+   <li>Improve interfaces. Consistent context menus of image/html/text. Better clipboards of image/text/data. Easier editor of Markdown/html/note/image. Integrated PDF viewer.</li>
+   <li>Optimize codes. Split big classes. Adjust shortcuts. Correct colors of icons.</li>
+   <li>Solved problems. Very slow reading of jpg file. Transparency does not work for pen and eraser in Image Manufacture.</li>
+  </ul>
+  <p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.7">Closed requirements/bugs in this version</a></p>
+  <p>2021-7-7 v6.4.6</p>
+  <ul>
+   <li>Add. Text in System Clipboard. Text in MyBox Clipboard. Context menu of all text input controls. Context menu of html.</li>
+   <li>Improve and fix. Text Editor. Clean of closed windows.</li>
+   <li>Solved problems. Can not open microsoft documents(word/excel/ppt). Page number is empty in data tables.</li>
+  </ul>
+  <p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.6">Closed requirements/bugs in this version</a></p>
+  <p>2021-6-24 v6.4.5</p>
+  <ul>
+   <li>Add. View and convert Word files. View/convert/split/merge/extract PPT files. Edit images list. Play images list/PDF/PPT. Images in MyBox Clipboard. Paste image in batch.</li>
+   <li>Improve and fix. Image in System Clipboard. Text Editor. Bytes Editor.</li>
+   <li>Solved problems. Error when merge html as PDF. Error When save splitted images. Chinese can not be inputted in Markdown Editor when update synchronously.</li>
+  </ul>
+  <p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.5">Closed requirements/bugs in this version</a></p>
+  <p>2021-5-15 v6.4.4</p>
+  <ul>
+   <li>Improve and fix Html Editor, Markdown Editor, and Web Browser.</li>
+   <li>Add: Manage Web Favorites, Query Web Histories, Extract Texts From Excel/Word/PowerPoint/Publisher/Visio, Functions List.</li>
+   <li>Upgrade to Java16 and javafx16.</li>
+   <li>Solved problems. Texts are stuck when input Chinese in Data Clipboard. Wrong results when convert CSV/Excel to PDF. Error interface for exporting data. Frameset is override when save html frame.</li>
+  </ul>
+  <p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.4">Closed requirements/bugs in this version</a></p>
+  <p>2021-4-16 v6.4.3</p>
+  <ul>
+   <li>Html Editor. Frame can be selected for frameset. Images list. Query elements by tag/id/name. Search string in page.</li>
+   <li>Merge colors/palettes management. Multiple palettes can be defined. Same color can have different names and orders in different palettes. Improve interface of picking colors.</li>
+   <li>Notes. Search by title/contents/time. Whether query sub-notebooks. Copy notebook. Copy/move notes.</li>
+   <li>Merge data text/sheet clipboard. Apply blend mode when mouse released in Image Manufacture-Pen.</li>
+   <li>Add. Query address by host/ip/url. Query DNS in batch. Run system command. Encode/Decode Base64.</li>
+   <li>Remove. Not install certificates for map and weibo. No bypass of SSL verification. No expired links in Epidemic reports. No invalid links in notes examples.</li>
+   <li>Solved problems. New cert entry fails into keystore. Abnormal of some interfaces/functions when run at first time. Should do backup before some operations.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.3">Closed requirements/bugs in this version</a></li>
+  </ul>
+  <p>2021-3-21 v6.4.2</p>
+  <ul>
+   <li>Notes. Set tags of note and query notes by tags. NoteBook can be moved. Edit note in Rich Text. Set note’s style.<br> Export notes in single page, html frameset, and xml and charset and style can be set for exported files.</li>
+   <li>Image Manufacture. “Text” and “Pen” support blend modes.</li>
+   <li>Add Data Sheet Clipboard. Delimiter can be set for data in Data Text/Sheet clipboard.</li>
+   <li>Solved problems. Html Editor fails to save. Links in frameset should be handled. Download First Level Links can not handle links with special characters. File name should avoid blanks.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.2">Closed requirements/bugs in this version</a></li>
+  </ul>
+  <p>2021-3-8 v6.4.1</p>
+  <ul>
+   <li>Notes are information pieces in html format. Notebook is collection of notes and notebooks. Notebooks are organized as a tree. Examples are provided.</li>
+   <li>Web page. Menu of handling links. Buttons to edit html codes.</li>
+   <li>Data files. Merge csv/excel files. Handle empty csv/excel file. Add/remove/rename excel sheets.</li>
+   <li>Improve. All editors support backing up automatically when save file. Image Manufacture supports square root of color distance and refresh clipboard automatically. Remove unnecessary files in self-contain packages.</li>
+   <li>Solved problems. Download First Level Links fails for some addresses. OCR in batch fails when file name includes non-English. Deleting history fails in Web Browser.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.1">Closed requirements/bugs in this version</a></li>
+  </ul>
+  <p>2021-2-11 v6.3.9</p>
+  <ul>
+   <li>Improve: Frame can be selected when view/manufacture image. Always use iterator when read CSV/Excel file. Clear security attributes of PDF file.</li>
+   <li>Solved problems. Always go back to page 1 after CSV/Excel file is saved. Fail to unarchive file. Non-english entries of zip file are messed.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.9">Closed requirements/bugs in this version</a><br> Happy Spring Festival! Best wishes in Year of the Ox!</li>
+  </ul>
+  <p>2021-1-27 v6.3.8</p>
+  <ul>
+   <li>Add: Edit and convert csv file and excel file. Data clipboard. Edit and save matrix. Set html style in batch.</li>
+   <li>Improve: Channels’ weights can be set for image quantization. Shortcuts can omit Ctrl/Alt when focus is not in “Text Input” controls. Stream reading when convert/export data.</li>
+   <li>Solved problems. Distance not work when replace images’ color in batch. User password and owner password are messed for PDF.<br> Pagination not work in text filter interface. Table labels need translation too. BC dates are parsed incorrectly in time tree.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.8">Closed requirements/bugs in this version</a></li>
+  </ul>
+  <p>2020-12-03 v6.3.7</p>
+  <ul>
+   <li>Add: Extract ttf from ttc. Embed an open source ttf file.</li>
+   <li>Improve: high dpi icons and common icons can be selected. Set html charset in batch. Consistent control to select PDF font file. Rendering parameters can be set when scale images. Set default video decoder on mac as VideoToolBox.</li>
+   <li>Solved problems. Source file is destoryed when decompress gzip file and it becomes larger and larger. Charset of html may be parsed incorrectly. Only one line is shown in right pane when edit bytes.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.7">Closed requirements/bugs in this version</a></li>
+  </ul>
+  <p>2020-11-29 v6.3.6</p>
+  <ul>
+   <li>Codes: Upgrade to java 15.0.1 and javafx 15.0.1(Except for mudole “javafx-web”). MyBox logs are managed by itself and does not depend on log4j2 now.</li>
+   <li>File: Improve robustness of files’ deleting, renaming, and moving. New function to delete files under system temporary path.</li>
+   <li>Color: Results of quantization can be imported to Color Palette. Maximum loop can be set for Kmeans cluster quantization.<br> User’s CSV file can be imported in Color Palette. “rgb” can be key to imprt colors.</li>
+   <li>Major issues solved: Errors pop when visit histories include deleted files. Wrong happens when set column number for combining images.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.6">Closed requirements/bugs in this version</a></li>
+  </ul>
+  <p>2020-11-18 v6.3.5</p>
+  <ul>
+   <li>Improve: Handle regular expression in pages for document find/replace; Opitimize algorithms of image reading; Deal big image more smoothly; Adjust interface of Html Editor.</li>
+   <li>Add: Each version has itself’s configuration file; Menu buttons; Document convertors; Encode/decode URL; Download first level links.</li>
+   <li>Remove: Can not change derby mode when start the tool; Delete function “Manage downloads”.</li>
+   <li>Major issues solved: Document find/replace handle pages incorrectly; Source files should not be loaded for images list;<br> Infinite empty directories can happen in batch functions; Wrong in interface of Image Manufacture.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.5">Closed requirements/bugs in this version</a><br> Thanks helps from <a href="https://github.com/Mararsh/MyBox/issues/781">beijingjazzpanda</a>.</li>
+  </ul>
+  <p>2020-10-11 v6.3.4</p>
+  <ul>
+   <li>Editors: Find/Replace by multiple lines, case-insensitive, from cursor, and with examples of regular expression; Pop doument; Close/Open right pane; Set whether update right pane synchronously.</li>
+   <li>OCR: Base on tesseract commandd line, support win/linux/mac, and compatible with verison 3/4/5; Set psm and all parameters, and provide parameters list.</li>
+   <li>Record screen: Support mac; Miaow when start and end; Set frame rate and bitrates by default.</li>
+   <li>Game “Mine”: Set size of grid and number of mines, and provide examlpes; Help to see all mines; Recover game when trigger mine.</li>
+   <li>Major issues solved: Locate regular expression incorrectly for Find/Replace in Editor; Incorrect logic in version migration.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.4">Closed requirements/bugs in this version</a></li>
+  </ul>
+  <p>2020-9-27 v6.3.3</p>
+  <ul>
+   <li>Image Manufacture: Show/Hide scope pane and image pane; Enlarge image size when pasted clip out of bound; Demo of blend modes; Parameter “invert” for convolution kernel.</li>
+   <li>Data Tools: Helps to input CSV; Time with milliseconds or zone; Display points one by one in map; Set of snap images for Epidemic Report.</li>
+   <li>Color: User can input colors list; Separated interfaces for setting color, picking color, and managing palette; Adjust colors order in palette.</li>
+   <li>Others: Context menu for table and image; Auto-save periodically in editors; Delay for Screen Recorder; Screen Recorder on Linux; Dev Mode.</li>
+   <li>Major issues solved: “Clear personal settings” is to delete user configuration data instead of all data; Wrong statements for some tabes; Shortcuts do not work on Linux; Location Data can not be created for new Data Set.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.3">Closed requirements/bugs in this version</a></li>
+  </ul>
+  <p>This version is for China. Happy Birthday!</p>
+  <p>2020-8-27 v6.3.2 Improve “Location Data”. Display data in map as “Location Distribution” or “Time Sequence”. 3 examples of datasets. Data files on movebank.org can be imported.<br> Improve how to display data in map. Support both TianDiTu and GaoDe map.<br> “Location Tool”: Convert coordinate value between decimal and DMS. Convert coordinate values as other coordinate systems.<br> FFmpeg application: Record desktop. Support Windows only now.<br> Import/Export color data in CSV format.<br> Full automatic script of building and packing. Development Guide v2.1.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.2">Closed requirements/bugs in this version</a></p>
+  <p>2020-6-11 v6.3.1 Migrate to java 14.0.1 + javaFx 14.0.1(Except for module “javafx-web”) + Netbeans 11.3.<br> Still support migration from lower versions instead of “Truncated Version”.<br> Improve table “Geography Codes” to get quicker queries. Unit of “Area” is changed from “square kilometers” to “square meters”.<br> Keys of map can be set.<br> Solved problems. Length of “Recently visited files” is not limited. Values in pie chart of “Epidemic Reports” should be percentage.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.1">Closed requirements/bugs in this version</a></p>
+  <p>2020-5-25 v6.3 Redesign “Geography Codes” and “Epidemic Reports”.<br> Provide selections of audio parameters in Audio/Vedio Convertor.<br> Provide Common Chinese Colors and Common Japanese Colors.<br> Solved problems. Cursor should stay orginial location after saving in Text Editor. Option “Count dir size” may cause some batch operations fail.<br> This version is for my mom. Wish all mothers loving and being loved.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3">Closed requirements/bugs in this version</a></p>
+  <p>2020-3-3 v6.2.1 Improve “Epidemic Reports”. Node “Except for China”: query and display data of countries other than China.<br> Filled Data are shown in different color. Change filled data as normal status by editing or click button “Sure”.<br> Support structure of “Country-cities” whi level and is used by countries other than China.<br> Solved problems. Editors of “Geography Codes” and “Epidemic Reports” work incorrectly. May cost too much memroy when make snapshot.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.2.1">Closed requirements/bugs in this version</a></p>
+  <p>2020-2-28 v6.2 Improve “Epidemic Reports”. “Fill in data holes”, to add missed data as previous days automatically.<br> Dynamical charts. Option to set whether display values in charts. Frames duration can be set for dynamical charts/map.<br> Export formats include xlsx(Excel2007) now. Auto-increased field is not exported and does not affect import.<br> Solved problems. Negative coordinates are shown as empty. Statistic of Epidemic Reports are updated incorrectly. “Level” is missed in editor of Epidemic Report. Width setting is handled wrongly in Editor of animated gif.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.2">Closed requirements/bugs in this version</a></p>
+  <p>2020-2-21 v6.1.5 Fetch Data About “New Coronavirus Pneumonia”. Extract latest in-time Chinese and global data in Baidu page. Query historical data of Chinese data since 2020-1-20 from TengXun api.<br> Location attributes are added. Data are trimmed in 3 formated: html、json、xml and can be imported in table “Epidemic Reports”.<br> Improve “Epidemic Reports”. Location data are in 4 levels: global, countries, provinces, cities/districts. Statistic attributes of increased values and their charts. Examples data between 2020-1-20 and 2020-2-21.<br> Improve “Grography Codes”. Errors and missed are fixed.<br> Solved problems: Filtering works incorrectly in editors.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.1.5">Closed requirements/bugs in this version</a></p>
+  <p>2020-2-11 v6.1 Location in Map: Query and diaplay location data by clicking map, inputting address, or inputting coordinate. Map options like marker, text, layers, and language.<br> General management base of data table: Add/Delete/Edit data; pagination; export/import; export as html.<br> Manage geography codes: Query and display location in map; example of countries and Chinese provinces.<br> Manage location data: Attribues of location and data set/label/value/size/time/image/comments. Support time of BC. Example of “China earlier cultures”(incomplete).<br> Location data in map: Display data distribution in map. Data values can be used as map markers/texts/pops.<br> Epidemic Reports: Attributes of location and epidemic data. Example of “New Coronavirus Pneumonia”(incomplete and may include wrong values). Data analysis based on dimensions of time and location. Time direction includes Global and China. Location direction includes countries and Chinese provinces. Charts: Number Bar Charts, Ratio Bar Charts, Pie Charts, and Numbers in Map based on location dimension; Number Line Charts, Ratio Line Charts, and Dynamic Numbers in Map based on time dimension.<br> Data and charts can be saved as html.<br> Ico file can be read/written/converted.<br> Dynamic gif: More meta data are explained; display each frame in actual intervals; intervals can be set separately for each frame when edit.<br> Manage colors: maintain colors library; add /remove colors in palette; display colors in simple/all columns; merged/separated columns.<br> Weibo Snap tool: Pages which the account liked can be snapped and saved.<br> File Tools: Delete all empty sub-directories under directory; delete “infinite-nested directory” which is created by bug of some softwares, like MyBox v6.0.<br> Improve game Elimination: Chesses can be any pictures or colors; sound can be any mp3/wav file; better algorithm; button “help me” to prompt valid step; can play game automatically.<br> Solved problems: “infinite-nested directory” may be generated; in “Merge images as video”, durations less than 1 second are handled wrongly, and multiple-frames image is handled wrongly; in “Edit html”, snapshots are incomplete for high dpi screen; Markdown file can not be opened when run MyBox first time.<br> This version is for China and her children, who are fighting against the evil disease. Looking forward to spring and flowers!<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.1">Closed requirements/bugs in this version</a></p>
+  <p>2020-1-2 v6.0 Pop large image in Images Browser.<br> Support translating MyBox online. Provide table with English as comparison. New language file can be shared with others. Put resource files under data path and MyBox will be aware of new languages.<br> Game-Elimination. Options about chesses images, number, size, effects. Sound choices. Counted chesses: Make scores only when eliminate selected types of chesses.<br> Customize rulers that how to give score when eliminate different type of connection.<br> Manage download tasks. Resume break points. Read header of address.<br> Solved several bugs of Image Manufacture.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.0">Closed requirements/bugs in this version</a></p>
+  <p>2019-12-26 v5.95 Improve interfaces of batch operations with multiple tabs instead of filling one page with all of controls.<br> Solved problems: Avoid 414 error for Weibo Snap Tool; Controls’ diable property is messed in interface of Image Manufacture; Format does not work for Image Manufacture in batch.<br> Today honor Chairman Mao and his comrades who made Chinese people standing up.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.95">Closed requirements/bugs in this version</a></p>
+  <p>2019-12-21 v5.9 Web browser which supports multiple tabs. Its histories can be manages and SSL certifcates of websites can be installed online.<br> Read certificates in any keystore/truststore and export as html file. Add certificates from CA files or by download directly from websites.<br> Play videos/audios with options like auto-play, displaying millionseconds, loop number, random order, volumn, speed, mute, full-screen, etc. Sounds from GuaiGuai and BenBen. Manage playlists.<br> Wrap functions of ffmpeg, like convert videos/audios in batch, merge images and audios as video, read media/ffmpeg information.<br> Message Digest has 12 algorithms now.<br> Solved problems: Updates should be submitted automatically when table cell loses focus; Concurrent exception popped when check files redanduncy; Interface is frozen when add folder which holds lots of files; Fail to unarchive 7z in batch; Unknown files’ size in zip.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.9">Closed requirements/bugs in this version</a></p>
+  <p>2019-11-18 v5.8 Upgrade to jdk13+javafx13+derby15.<br> Derby database can be switched between network mode and embedded mode. Notice: Starting/Stopping Derby network mode under some env is very slow.<br> Create message digest for files or inputted texts. Support MD5/SHA1/SHA256.<br> FIles archive/compress/unarchive/decompress. Support formats include zip, tar, 7z, ar, cpio, gzip, bzip2, xz, lzma, Pack200, DEFLATE, snappy-framed, lz4-block, lz4-framed, etc.<br> Check redundant files accoding to their MD5. Files tree is displayed to help user delete duplicated files. Deletion can be done as checking is running.<br> Conversion between html and Markdown in batch.<br> Solved problems: Some controls in interfaces do not work. Empty pages block WeiBo snap tool. Transparent pixels of background should be considerred too when blending. “Replace Color” of image does not work.<br> Developer Guide v2.0.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.8">Closed requirements/bugs in this version</a></p>
+  <p>2019-10-26 v5.7 Edit Markdown. Conversion between html and Markdown.<br> Improve algorithms of image quantization and apply to analysing image. K-Means Clustering is to calculate mostly different colors while Popularity Quantization is to calculate mostly occurred colors. Image data can be saved as html file.<br> Operations to manage files/directories like Find, Delete, Copy, Move. Rename is made better.<br> More selection mode for batch operations like by extension, by name, by size, or by modified time. Regular expression is supported.<br> Many interfaces are refined to balance layout of controls.<br> WeiBo Snap Tools is fixed. Snapshots of HiDPI screen are in right resolution now. Images are saved as temporary files to avoid out of memory.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.7">Closed requirements/bugs in this version</a></p>
+  <p>2019-10-01 v5.6 Configuration file is back to “User Home” and always there except for parameter in jar.<br> For OCR, options of image preprocessing include nine enhancement algorithms, scale ratio, binary threashold, rotation angle, whether deskew, whether invert colors. Options of recognization include data files list and their order, whether generate data of regions/words and the levels can be set. Options for OCR in batch include whether generate html or PDF, whether merge recognized texts. “Fast” data files of English and Chinese are included in MyBox and OCR can be done out of box on Windows.<br> 13 types of 1-d barcodes and 3 types of 2-d barcodes can be created. Options supported. Picture can be added in QR_Code.<br> 9 types of 1-d barcodes and 3 types of 2-d barcodes can be decoded.<br> One clicking to show examples of image manufacture.<br> Color Palette: Colors can be named; Display more data like cmyk values and cie values.<br> Happy Birthday, China!<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.6">Closed requirements/bugs in this version</a></p>
+  <p>2019-9-19 v5.5 Recognize texts in image and PDF(OCR) based on tess4j. Rectangle can be set for single image’s OCR. Color space and density can be set when do OCR for PDF files in batch. Currently only Windows is supported and users need download data files by themselves.<br> Make self-contain packages for each platform(Window/Linux/Mac).<br> Improve codes: Build with maven without Java 8; make self-contain packages with latest jpackage tool.<br> Fix bugs: WeiBo Snap tool failed to work in last version; and it never worked again on Mac after it ran first time; clicking links caused MyBox dead on Linux; normalization is unnecessary when calculate CIELuv and CIELab.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.5">Closed requirements/bugs in this version</a></p>
+  <p>2019-9-15 v5.4 Use “Execution Path” instead of “User Path” as default “Data Path”. Record base parameters in configuration file.<br> User can modify base parameters on line, including maximum JVM memory usage, whether close dpi-aware, data root path, which will cause MyBox reboot itself.<br> Based on pdf2dom, view PDF pages in html mode and convert PDF files as html files.<br> Refine interface of Image Manufacture as “Visible As Need”: Left-right areas like curtain, vertical accordion menus, tabs to switch targets, more details of hiding/showing/adjusting in function areas.<br> Image Clipboard: multiple sources to be pasted; drag pasted image to adjust its size and location; blend mode; rotation angle. Example clips are provided.<br> Color Palette: size of thousands; provide 139 named colors; export as html; pick colors on current image, image history, or reference image.<br> New scope type “Outline” for image manufacture: extract outline of image which has transparent background as scope of operation. Example outlines are provided.<br> Scopes can be saved and managed.<br> Uniform shortcuts whose help page is provided.<br> Improve codes: use public APIs instead of interval classes; make sure singleton task enters exclusively and quits cleanly; write temporary file to avoid destorying original file in case of exception.<br> Fix bugs: 3 tools fail to work in v5.3 due to modification; shadow and 3 blend modes miss special handling of transparent pixels.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.4">Closed requirements/bugs in this version</a></p>
+  <p>2019-8-8 v5.3 Migrated on Netbeans 11 + Java 12.<br> Improve batch interface: add directories, extend directories, filter file names, handle duplicated file names.<br> Improve image conversion: more color spaces, external ICC profile as color space, whether embed ICC, handle transparent channel.<br> Improve image matedata decoding: fetch embedded ICC in image.<br> Improve codes: reduce duplicated codes by anonymous classes and embedded fxml; adjust classes inheritance; build project for different platforms.<br> First version of “Development Guide”.<br> Fix issues: Algorithm for “Image Manufacture-Color-Opacity-premultiply” is incorrect; Fail to save image when file extension is missed on Linux;<br> Links do not work on Linux; Version of ICC profile is decoded/encodes incorrectly; Interface may be froozen when ICC holds too much data;<br> Not-decoded data in ICC prevents generation of XML.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.3">Closed requirements/bugs in this version</a></p>
+  <p>2019-6-30 v5.2 Improve image decoding. Adobe YCCK/CMYK jpg file can be viewed.<br> Attributes and meta data of all images in multi-frames image file are read and displayed.<br> PDF file can be viewed with bookmarks(Table of contents) and thumbnails.<br> PDF file’s attributes like author, version, user password, user permissions, and owner password etc can be modified.<br> Matrices Calculation. Edit matrix data: adapt formatted data; transform matrix data into row vector, column vector, or another matrix in defined column number;<br> generate identify matrix, random matrix, random square matrix automatically with defined column/row number.<br> Unary matrix calculation: Transpose, Row Echelon Form, Reduced Row Echelon Form, Determinant By Elimination, Determinant By Complement Minor, Inverse Matrix By Elimination, Inverse Matrix By Adjoint, Matrix Rank, Adjoint Matrix, Complement Minor, Normalize, Set Decimal Scale, Set As Integer, Multiply Number, Divide By Number, Power.<br> Binary matrices calculation: Plus, Minus, Hadamard Product, Kronecker Product, Horizontally Merge, Vertically Merge.<br> Tools of Color Space: draw Chromaticity Diagram, edit ICC profile, adapt primaries of RGB Color Space, transform matrices between Linear RGB and XYZ, transform matrices between Linear RGB and Linear RGB，chromatic adaptation, standard illuminants, chromatic adaptation matrices.<br> Fix bugs: “414 Request-URI Too Large” is returned in WeiBo snap tool constantly; tooltip blinks at edge of screen; some links do not work.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.2">Closed requirements/bugs in this version</a></p>
+  <p>2019-5-1 v5.1 Interface: Controls are displayed in pictures which can be selected in 5 colors and whether display texts.<br> Shorter tips to fit for 14 inches screen of laptop.<br> Image tools: Extract/Add Alpha channel.<br> Fix several problems, including error condition to filter transparent pixels in Image Manufacture.<br> Happay Labor Day!<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.1">Closed requirements/bugs in this version</a></p>
+  <p>2019-4-21 v5.0 Select scope or area by dragging anchors.<br> Doodle: Paste picture, draw shape(rectangle/circle/ellipse/polygon) line or fill color in shape, draw lines by<br> dragging mouse, in image. Stroke width and color, line dotted can be set.<br> View image: Set load size. Select whether show coordinate and rulers. Rotation can be saved.<br> Browse Images: Grid Mode/Thumnails List Mode/File List Mode. Set load size. Rotation can be saved.<br> Image Manufacture: Dithering can be applied to all scope types except for matting. Opacity can be made by<br> Premultiplied Aplha for formats not supporting alpha. Blur margins. Shadow implemented in low level.<br> Adjust size or margins by dragging anchors. Crop inside/outside in rectangle/circle/ellipse/polygon. Veritcal<br> texts.<br> Interface: Only display useful controls. Enough and not distracting tips. Shortcuts, major buttons, and default<br> buttons. Monitor memory/CPU in time. View JVM properties. Refresh/reset windows. Restore last size of<br> interfaces. Pop recent visited files/directories. Recent visited tools.<br> Codes refactoring: Implement selection logic by subclass instead of switch statement, to move judgement<br> outside loop. Avoid float calculation in loop. Rationalize inheritance and reduce duplication. Central<br> management of stages’ opening/closing to avoid threads residual.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.0">Closed requirements/bugs in this version</a></p>
+  <p>2019-2-20 v4.9 Change image’s contrast. Multiple algorithms are supported. Dithering can be selected when<br> handle color quantization.<br> Statistic data of image’s color channels, including mean, variance, skewness, mode, midean, etc. Histograms.<br> Recorder of images in system clipboard. Change font size any time.<br> View images: copy/crop/save the selected area.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.9">Closed requirements/bugs in this version</a></p>
+  <p>2019-1-29 v4.8 View PDF file in image mode. Density can be set. Pages can be cropped and saved as images.<br> Locate function in Text/Bytes Editer: Go to the position of specified character/byte/line.<br> Cut file, by files number, by bytes number, or by start-end list.<br> Merge multiple files’ bytes as a new file.<br> A file path can follow program as argument to be opened directly by MyBox.<br> On windows, the default Open Method of image/text/PDF files can be associated with MyBox.exe, to open a file by MyBox by double clicking the file name.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.8">Closed requirements/bugs in this version</a></p>
+  <p>2019-1-15 v4.7 Edit Bytes. Input boxes of general ASCII characters. Break lines by bytes number or by some defined bytes. Find and replace in current page or in whole file, and count. Filter lines by “Include One”, “Not Include All”, “Include All”, or “Not Include Any”. Cumulative filter. Filtered results can be saved. Select whether include lines number. Select charset to decode bytes which can be viewed, scrolled, and selected synchronously. Paginate. Fit for viewing or editing very large file, such as binary file in size of several GBs. Page Size can be set. Make sure correction of finding, replacing, and filtering of bytes that are across pages.<br> Convert line breaks of files in batching way.<br> Merge “Rename Files” and “Rename Files under Directories”.<br> Image Blurring uses “Average Algorithm” which is good enough and quicker.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.7">Closed requirements/bugs in this version</a></p>
+  <p>2018-12-31 v4.6 Edit Text: Detect line break automatically. Convert line break. Support LF(Unix/Linux), CR(iOS), CRLF(Windows).<br> Find and replace. In current page, or in whole file.<br> Filter lines. By “Include one of strings” or “Not include all of strings”. Cumulative filter. Filtered results can be saved.<br> Paginate. Fit for viewing or editing very large file, such as logs in size of several GBs. Page Size can be set. Make sure correction of finding, replacing, and filtering of strings that are across pages.<br> Load and display first page, and scan the file in background to count characters number and lines number. Part of functions are unavaliable while counting. Interface will be refreshed automatically after counting process is complete.<br> In progress interface, buttons “MyBox” and “Cancel” are added to have user use other functions or cancel current process.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.6">Closed requirements/bugs in this version</a></p>
+  <p>2018-12-15 v4.5 Text Encoding. File charset can be either detected automatically or set manually. Target file charset can be selected to implement encoding conversion. BOM setting is supported. Hexadecimal codes can be viewed and selected synchronously. Line numbers are shown.<br> Text Encoding conversion in batch way.<br> Split image by size.<br> Copy image or selected part of image in system clipboard(Ctrl-c).<br> Crop and save part of image in interface of Image Viewer.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.5">Closed requirements/bugs in this version</a></p>
+  <p>2018-12-03 v4.4 View/Extract/Create/Edit multiple frames image file. Support multiple frames Tiff file.<br> For all operations which use image as input, handle situation of multiple frames image file.<br> For all operations which use image as input, handle situation of big image which includes too many pixels to be loaded and displayed under limitation of available memory. Evaulate possiblility OutOfMemory and judge whether subsample image automatically. After that, show meaningful information and prompt for next<br> step.<br> Support splitting big image by only reading required part of data and writing while reading. Splitted results can be saved as multiple image files, multiple frames Tiff file, or PDF file.<br> Support subsampling big image with options of sample region and sample ratio.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.4">Closed requirements/bugs in this version</a></p>
+  <p>2018-11-22 v4.3 Support animated Gif. View: set interval, pause/continue, go special frame, next/previous frame. Extract: set from/to frames, target files’ type. Create/Edit: add/delete images, adjust orders, set interval, whether loop, keep images’ size or set images’ size, save as, what you see is what you get.<br> Easier and better Scope for Image Manufacture. Type:All, Matting, Rectangle, Circle, Color Matching, Color Matching in Rectangle, Color Matching in Circle. Color Matching can be against red/green/blue channel, saturation, brightness, hue, or whole RGB. Points set of matting and colors set of color matching can be<br> added/deleted easily. All type of scope can be set as Excluded.<br> Merge functions of “Color”, “Filter”, “Effect”, and “Replace Color”, to reduce interface elements and user inputs.<br> Multiple Images Viewer: Number of files in each screen can be set; pictures are shown in balanced sizes.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.3">Closed requirements/bugs in this version</a></p>
+  <p>2018-11-13 v4.2 Scope for Image Manufacture: All, Matting, Rectangle, Circle, Color Matching, Hue Matching, Rectrangle/Circle plus Color/Hue Matching. “Matting” is like Magic Wand of PhotoShop or “Bucket Fill” of Paint on Windows.<br> Scope can be applied for Color Increasing/Deceasing, Filtering, Effects, Replacing Color, and Convolution. The scope can be determined by clicking image.<br> Convolution Kernels Manager: Values of Gaussian Distribution can be filled in automatically; Option about how to handle pixels in edges is supported.<br> Directories Rename: Strings can be used to filter files to be handled.<br> Optimize and reorganize codes of Image Manufacture.<br> More shortcuts.</p>
+  <p>2018-11-08 v4.1 Image Manufacture type of “Cover”. Following can be set on an image: mosaic rectangle, mosaic circle, frosted rectangle, frosted circle, or picture. Area and size can be set for masaic or frosted cover. Internal pictures or user’s pictures can be selected as cover, with options of size and opacity.<br> Image Manufacture type of “Convolution”. Convolution kernels can be picked to apply upon images. Batch way is supported.<br> Convolution Kernels Manager. Kernels for image handling can be created/edited/deleted/copied. The matrix can be normalized automatically. The kernel can be tested. Example kernels are provided.<br> New Image filters: Yellow/Cyan/Magenta channels.</p>
+  <p>2018-11-04 v4.0 New channels of Image Color Adjustment: Yellow, Cyan, Magenta. Yellow channel can be used to generate warm-toned image.<br> New filter of image: Sepia, which is used to make picture old.<br> New image effect: Emboss. Options like direction, radius, and whether changed as grayscale, can be set.<br> Images blending. Options like defining intersected area and blending mode can be set.<br> Online helps are enriched with important information.</p>
+  <p>2018-10-26 v3.9 Embed Derby database to save program’s data. Make sure data are migrated from configuration file to db correctly.<br> Image manufacture: Record updating histories to return former status. Can set whether record histories or set the number of the updating histories.<br> English version of User Guides.</p>
+  <p>2018-10-15 v3.8 Optimize codes: Split the class ImageManufacture into classes of each function.<br> Optimize interface: Make the tools more friendly. Set shortcuts.<br> In Image Manufacture, more filters like Red/Green/Blue inverting, and “Outline” for text watermark.</p>
+  <p>2018-10-09 v3.7 In Weibo Snap Tool, load images sequentially by using javascript event. Make sure the minimum interval to avoid being judged as invalid access by server. Meanwhile monitor the maximum interval to avoid broken iteration due to missed picture or untriggered event by fast loading of small picture.<br> “Effects” of image manufacturing, including blurring, sharpening, edge detecting, posterizing, and thresholding.</p>
+  <p>2018-10-04 v3.6 Optimize algorithm of Weibo Snap Tool to make sure all pictures loaded. Check codes to avoid meomry leak.<br> Reduce brightness and saturation of background colors in interface styles.<br> Add introduction about dpi-aware in document.</p>
+  <p>2018-10-01 v3.5 Optimize algorithm of Weibo Snap Tool to make sure all pictures loaded.<br> Provide multiple interface styles.</p>
+  <p>2018-09-30 v3.4 Fix bugs: 1) In Weibo Snap Tool, adjust the judge conditions of loading pages to make sure all information in the pages can be saved. 2) When close/switch window and task is running, and user select “Cancel”, current window should not be closed.<br> New features: 1) Can set the maximum main memory for PDF operations. 2) Can clear peasonal settings.</p>
+  <p>2018-09-30 v3.3 Solve the problem of Weibo website certificate finally. Verified on Windows, CentOS, and Mac.</p>
+  <p>2018-09-29 v3.2 Weibo Snap Tools: 1) Import certificate automatically on Linux and Windows to have users need not login. But have no way on Max, so users of Apple computer will have to login Weibo to use Weibo Snap Tool. 2) Can expand all comments and all pictures in the pages before make snapshots. 3) Can save the original pictures of the pages.(Cooooooool)</p>
+  <p>2018-09-26 v3.1 All image operations can be done in batch way. Fix and optimize algorithms of Color manufacture. Set default font size to fit for different resoltuions in different environments. Seperate User Guides for each type of tools. Prompt user to login Weibo to install its SSL certificate before start to use Weibo Snap Tools. I am looking for the way to remove this limitation because MyBox has not any interest of touching any provate information of users.</p>
+  <p>2018-09-18 v3.0 Improve Snap Tool for Weibo: Only snap meaningful area in the page, by which half time is cost and half size of PDF files is saved. Can expand the comments of messages. I am so proud of this feature! Can set the maximum size of merged PDF.<br> Fix bugs of Html Editor and enhance its functions.<br> 2018-09-17 v2.14 Improve Snap Tool for Weibo: Retry times of failure; Do not mergin month’s PDF file when pages of the month is more than 10.<br> 2018-09-15 v2.13 Show Reference Image and Scope Image seperately. Make sure no thread runnig after program exits. Compress images in PDF in batching way. Snap Tool for Weibo, backup contents of any weibo account automatically. Duration can be set. Both PDF files and html files can be saved.<br> Weibo pages are loaded dynamically, so locally backed pages can not be loaded and shown correctly. They are backed just for texts in the pages.<br> This tool might fail to work when weibo would change the accessing channel of pages in future. Who know~</p>
+  <p>2018-09-11 v2.12 Combine images as PDF file, Compress images in PDF, combine PDF files, split PDF. Support Chinese written in PDF file, and system font file is locating automatically while user can input ttf file path. Prompt information is shown more smoothly and friendly. In web browser, font size can be zoom in and zoom out, and web page can be snapped into PDF file with settings of delay and PDF page size.</p>
+  <p>2018-09-06 v2.11 Image combining which supports array options, background color, interval, edges, and size options. Web browser supports synchronized contents with web editor and snapshots of the whole web page in one image. Image maunfacture like shadow, arced corners, adding edges. Implement manufacture of big image and make sure performance is acceptable.</p>
+  <p>2018-08-11 v2.10 Image Spliting which supports equipartition and custom. Scope of image manufacture is easier to use. No number limition is for multiple image files viewed in same screen now.</p>
+  <p>2018-08-07 v2.9 Image croping. Scope, including area scope like rectangle and circle and color matching, is supported for image manufacture.</p>
+  <p>2018-07-31 v2.8 Image edges’ cutting. Watermark in image. Undo and redo for image manufacture. Html editor. Text edior.</p>
+  <p>2018-07-30 v2.7 Image transform, including rotating, mirroring, and shearing.</p>
+  <p>2018-07-26 v2.6 Improve color replacement: Support original colors’ list and hue distance. Support opacity adjustment.</p>
+  <p>2018-07-25 v2.5 Color palette. And Replace colors in image, by accurate matching of color, or by colors’ distance. Color replacement can be used to change the background color of images or eliminate color noise of images.</p>
+  <p>2018-07-24 v2.4 Improve functions of Image Manufacture and Multiple Images Viewer: Smoothly switching, reference image, and pixels adjustment.</p>
+  <p>2018-07-18 v2.3 Alarm clocks, with options of time and ring. Support rings of “Meow”, wav, and mp3. Can run in background. Thanks my GuaiGuai for her contribution of “Meow”.</p>
+  <p>2018-07-11 v2.2 Fix bug about threads’ logic. Files rearragement that categories files under new directories according to their modify time or create time. This function can be used to handle photoes, games screenshots, or system logs which need archived based on time.</p>
+  <p>2018-07-09 v2.1 Improve interface of image manufacturing and support images borwsering. Directory synchronization, with options like copying subdirectoies, new files, modified files after some time, original file’s attributes, or deleting files and directories which are not in source path, etc.</p>
+  <p>2018-07-06 v2.0 Extract texts from PDF files in batching way. Convert image files to other formats in batching way. Rename files under directories, with options about files’ name and sorting. All of or part of renamed files can be recovered as originl names.</p>
+  <p>2018-07-03 v1.9 Fix issues. Customize page separator line when extract texts from PDF. Improve image manufacture: Adjust saturation, lightness, and hue with parameters and provide filters like gray, invert, or binary.</p>
+  <p>2018-07-01 v1.8 Extract texts from PDF files. Manufacture image: Adjust saturation, lightness, make it gray, or invert the color.</p>
+  <p>2018-06-30 v1.7 Improve Pixels Calculator. Support to view multiple images in same screen.</p>
+  <p>2018-06-27 v1.6 Convert image files to other formats, with options of color, size, compression, quality, etc. Pixels Calculator. Support more image formats: gif, wbmp, pnm, pcx.</p>
+  <p>2018-06-24 v1.5 Extract images from PDF and save as original format. Support extracting and converting in batching way. Thanks helps from “https://shuge.org/” who asked the requirement of extracting images from PDF.</p>
+  <p>2018-06-21 v1.4 Support reading/writing meta-data of images in format of png, jpg, bmp, tiff. Thanks helps from “https://shuge.org/” who asked the requirement of Meta-data of images.</p>
+  <p>2018-06-15 v1.3 Fix the gray calculation in OTSU; Optimize shared codes; Support PDF password; More friendly interface .</p>
+  <p>2018-06-14 v1.2 Add options of color conversion for binary image type. Save user’s choices. And optimize reading of hellp document. Thanks helps from “https://shuge.org/” who asked the requirement of binary conversion of color with threshold.</p>
+  <p>2018-06-13 v1.1 Add: image format TIFF and RAW, options of Compression Type and Quality, and Help information. Thanks helps from “https://shuge.org/” who asked the requirement of TIFF format</p>
+  <p>2018-06-12 v1.0 Convert each page of PDF file to an image with options of format, density, color, compression, and quality. And user can pause/continue the conversion.</p>
+  <p><a href="https://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+no%3Amilestone">Closed requirements/bugs not in any version</a></p>
+ </body>
+</html>
 </html>

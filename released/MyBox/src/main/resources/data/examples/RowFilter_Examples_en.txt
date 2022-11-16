@@ -1,0 +1,63 @@
+##MyBox#
+Examples
+Value is null or empty
+'#{Column1}' == ''
+
+##MyBox#
+Examples
+Value is not null nor empty
+'#{Column1}'.length > 0
+
+##MyBox#
+Examples
+10 rows in front
+MyBoxTreeNodeMore:true;;;10
+
+##MyBox#
+Examples > Number
+Is number
+Math.abs(#{Column1}) >= 0
+
+##MyBox#
+Examples > Number
+Compare
+#{Column1} != 0 || #{Column1} < #{Column2} 
+
+##MyBox#
+Examples > Number
+Compare with statistic
+#{Column1} < #{Column1-Mean} 
+
+##MyBox#
+Examples > Date
+Special time
+'#{Date}' == '2016-05-19 11:34:28' 
+
+##MyBox#
+Examples > Date
+Time range
+'#{Date}'.startsWith('2016-05-19 09')
+
+##MyBox#
+Examples > String
+Length
+'#{Column1}'.length > 3
+
+##MyBox#
+Examples > String
+Match
+'#{Column1}'.search(/Hello/ig) >= 0
+
+##MyBox#
+Examples > String
+Position of sub-string
+'#{Column1}'.indexOf('Hello') == 3
+
+##MyBox#
+Examples > String
+Special values
+var array = [ 'A', 'B', 'C', 'D' ];
+array.includes('#{Column1}')
+
+
+

@@ -3,8 +3,10 @@ package mara.mybox.tools;
 import java.io.File;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
+import mara.mybox.dev.MyBoxLog;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVFormat.Builder;
+import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 
 /**
@@ -17,12 +19,16 @@ public class CsvTools {
     public static final char CommentsMarker = '#';
 
     public static Builder builder(String delimiter) {
+        String d = TextTools.delimiterValue(delimiter);
+        if (d == null) {
+            return null;
+        }
         return CSVFormat.Builder.create()
-                .setDelimiter(TextTools.delimiterValue(delimiter))
+                .setDelimiter(d)
                 .setIgnoreEmptyLines(true)
                 .setTrim(true)
                 .setNullString("")
-                .setCommentMarker(CommentsMarker)
+                .setCommentMarker(d.equals(CommentsMarker + "") ? null : CommentsMarker)
                 .setAllowDuplicateHeaderNames(false);
     }
 
@@ -48,6 +54,24 @@ public class CsvTools {
         try {
             return new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), csvFormat());
         } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static CSVPrinter csvPrinter(File csvFile, String delimiter, boolean hasHeader) {
+        try {
+            return new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), csvFormat(delimiter, hasHeader));
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+            return null;
+        }
+    }
+
+    public static CSVParser csvParser(File csvFile, String delimiter, boolean hasHeader) {
+        try {
+            return CSVParser.parse(csvFile, Charset.forName("UTF-8"), csvFormat(delimiter, hasHeader));
+        } catch (Exception e) {
+            MyBoxLog.console(e);
             return null;
         }
     }

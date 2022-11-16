@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.util.ArrayList;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -9,6 +10,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.chart.PieChartMaker;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -20,6 +22,7 @@ import static mara.mybox.value.Languages.message;
 public class Data2DChartPieController extends BaseData2DChartController {
 
     protected PieChartMaker pieMaker;
+    protected int categoryIndex, valueIndex, percentageIndex;
 
     @FXML
     protected ControlData2DChartPie chartController;
@@ -54,8 +57,6 @@ public class Data2DChartPieController extends BaseData2DChartController {
                 return false;
             }
             dataColsIndices = new ArrayList<>();
-            outputColumns = new ArrayList<>();
-            outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
             int categoryCol = data2D.colOrder(selectedCategory);
             if (categoryCol < 0) {
                 outOptionsError(message("SelectToHandle") + ": " + message("CategoryColumn"));
@@ -63,30 +64,54 @@ public class Data2DChartPieController extends BaseData2DChartController {
                 return false;
             }
             dataColsIndices.add(categoryCol);
-            outputColumns.add(data2D.column(categoryCol));
+            categoryIndex = showRowNumber() ? 1 : 0;
+
             int valueCol = data2D.colOrder(selectedValue);
             if (valueCol < 0) {
                 outOptionsError(message("SelectToHandle") + ": " + message("ValueColumn"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
-            dataColsIndices.add(valueCol);
-            outputColumns.add(data2D.column(valueCol));
+            if (categoryCol != valueCol) {
+                valueIndex = categoryIndex + 1;
+                dataColsIndices.add(valueCol);
+            } else {
+                valueIndex = categoryIndex;
+            }
 
+            outputColumns = data2D.makeColumns(dataColsIndices, showRowNumber());
+
+            return initChart();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return false;
+        }
+    }
+
+    @Override
+    public String chartTitle() {
+        return selectedCategory + " - " + selectedValue;
+    }
+
+    public boolean initChart() {
+        try {
             pieMaker.init(message("PieChart"))
-                    .setDefaultChartTitle(selectedCategory + " - " + selectedValue)
-                    .setChartTitle(pieMaker.getDefaultChartTitle())
+                    .setDefaultChartTitle(chartTitle())
                     .setDefaultCategoryLabel(selectedCategory)
-                    .setCategoryLabel(selectedCategory)
                     .setDefaultValueLabel(selectedValue)
-                    .setValueLabel(selectedValue)
                     .setInvalidAs(invalidAs);
-
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return false;
         }
+    }
+
+    @Override
+    public void readData() {
+        super.readData();
+        percentageIndex = outputColumns.size();
+        outputColumns.add(new Data2DColumn(message("Percentage"), ColumnDefinition.ColumnType.Double));
     }
 
     @Override
@@ -96,12 +121,32 @@ public class Data2DChartPieController extends BaseData2DChartController {
 
     public void drawPieChart() {
         try {
-            if (outputData == null || outputData.isEmpty()) {
-                popError(message("NoData"));
+            chartData = chartMax();
+            if (chartData == null || chartData.isEmpty()) {
                 return;
             }
-            chartController.writeChart(outputColumns, outputData, true);
+            double sum = 0, value;
+            for (List<String> data : chartData) {
+                try {
+                    sum += Double.valueOf(data.get(valueIndex));
+                } catch (Exception e) {
+                }
+            }
+            List<List<String>> pdata = new ArrayList<>();
+            for (List<String> row : chartData) {
+                try {
+                    value = Double.valueOf(row.get(valueIndex));
+                    row.add(DoubleTools.percentage(value, sum, scale));
+                    pdata.add(row);
+                } catch (Exception e) {
+                }
+            }
+            chartData = pdata;
+            chartController.writeChart(outputColumns, chartData, categoryIndex, valueIndex, percentageIndex);
         } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
             MyBoxLog.error(e);
         }
     }

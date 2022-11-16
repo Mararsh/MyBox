@@ -169,7 +169,7 @@ public class ControlTimeTree extends ControlConditionTree {
             if (monthItem == null) {
                 String start = month + "-01 00:00:00" + (isBC ? " BC" : "");
                 Calendar calendar = Calendar.getInstance();
-                calendar.setTime(DateTools.stringToDatetime(start));
+                calendar.setTime(DateTools.encodeDate(start));
                 calendar.add(Calendar.MONTH, 1);
                 calendar.add(Calendar.DATE, -1);
                 String end = new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime()) + " 23:59:59" + (isBC ? " BC" : "");
@@ -434,8 +434,8 @@ public class ControlTimeTree extends ControlConditionTree {
         if (!isEra) {
             return " " + fieldName + " BETWEEN '" + start + "' AND '" + end + "'";
         } else {
-            long startTime = DateTools.encodeEra(start).getTime();
-            long endTime = DateTools.encodeEra(end).getTime();
+            long startTime = DateTools.encodeDate(start).getTime();
+            long endTime = DateTools.encodeDate(end).getTime();
             return " " + fieldName + " BETWEEN " + startTime + " AND " + endTime;
         }
     }

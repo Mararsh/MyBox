@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.NumberTools;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.math3.stat.Frequency;
 
@@ -55,7 +55,7 @@ public class Data2DFrequency extends Data2DOperator {
                     String value = o == null ? null : (String) o;
                     row.add(value);
                     row.add(frequency.getCount(value) + "");
-                    row.add(DoubleTools.format(frequency.getPct(value) * 100, scale));
+                    row.add(NumberTools.format(frequency.getPct(value) * 100, scale));
                     csvPrinter.printRecord(row);
                     count++;
                 }

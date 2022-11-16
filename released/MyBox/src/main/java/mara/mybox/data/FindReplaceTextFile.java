@@ -492,6 +492,7 @@ public class FindReplaceTextFile {
         findReplaceFile.setFileInfo(sourceInfo);
         File sourceFile = sourceInfo.getFile();
         File tmpFile = TmpFileTools.getTempFile();
+//        MyBoxLog.debug(sourceFile + " --> " + tmpFile);
         Charset charset = sourceInfo.getCharset();
         try ( BufferedReader reader = new BufferedReader(new FileReader(sourceFile, charset));
                  BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile));
@@ -504,6 +505,7 @@ public class FindReplaceTextFile {
             int maxLen = FileTools.bufSize(sourceFile, 16);
             int findLen = findReplaceFile.isIsRegex() ? maxLen : findString.length();
             int backFrom, textLen, backLen = 0, lastReplacedLength;
+//            MyBoxLog.debug(" maxLen: " + maxLen + " findLen: " + findLen);
             StringBuilder s = new StringBuilder();
             boolean moreLine = false;
             String line, replacedString, text, backString = "";
@@ -528,7 +530,7 @@ public class FindReplaceTextFile {
                     writer.write(replacedString.substring(0, lastReplacedLength));
                     backString = replacedString.substring(lastReplacedLength, replacedString.length());
                     total += findReplaceString.getCount();
-                    break;
+//                    MyBoxLog.debug(replacedString.length() + "   " + lastReplacedLength + "    " + backString.length() + "  " + findReplaceString.getCount());
                 } else {
                     if (!backString.isEmpty()) {
                         writer.write(backString);
@@ -540,7 +542,9 @@ public class FindReplaceTextFile {
                 backLen = backString.length();
                 s = new StringBuilder();
             }
+//            MyBoxLog.debug(backString.length() + "   " + s.toString().length());
             findReplaceString.setInputString(backString.concat(s.toString())).setAnchor(0).run();
+//            MyBoxLog.debug(findReplaceString.getOutputString().length());
             writer.write(findReplaceString.getOutputString());
             total += findReplaceString.getCount();
             findReplaceFile.setCount(total);

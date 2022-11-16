@@ -49,7 +49,7 @@ public class FindReplaceFile extends FindReplaceString {
             return false;
         }
         fileInfo.setFindReplace(this);
-//        MyBoxLog.debug("operation:" + operation + " isWhole:" + isWhole + " unit:" + unit
+//        MyBoxLog.debug("operation:" + operation + " unit:" + unit
 //                + " anchor:" + anchor + " position:" + position + " page:" + fileInfo.getCurrentPage());
         if (fileInfo.pagesNumber < 2) {
             return run();
@@ -124,7 +124,7 @@ public class FindReplaceFile extends FindReplaceString {
     }
 
     public void backup(File file) {
-        if (backupController != null && backupController.isBack()) {
+        if (backupController != null && backupController.needBackup()) {
             backupController.addBackup(null, file);
         }
     }

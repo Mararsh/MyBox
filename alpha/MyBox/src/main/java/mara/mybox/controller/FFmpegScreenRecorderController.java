@@ -129,6 +129,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
             popError(Languages.message("NothingHandled"));
             return false;
         }
+        targetFile = targetFileController.file;
         if (targetFile == null) {
             popError(Languages.message("InvalidParameters"));
             return false;

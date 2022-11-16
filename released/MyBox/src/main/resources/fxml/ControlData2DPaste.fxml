@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" maxWidth="1.7976931348623157E308" spacing="10.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DPaste">
+    <children>
+      <VBox maxWidth="1.7976931348623157E308" spacing="5.0">
+         <children>
+            <Label minWidth="-Infinity" text="%PasteLocation" wrapText="true" />
+            <HBox maxWidth="1.7976931348623157E308">
+               <children>
+                  <Label minWidth="-Infinity" text="%TableRow" wrapText="true" />
+                  <ComboBox fx:id="rowSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
+            <HBox maxWidth="1.7976931348623157E308">
+               <children>
+                  <Label minWidth="-Infinity" text="%Column" wrapText="true" />
+                  <ComboBox fx:id="colSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      <VBox spacing="5.0">
+         <children>
+            <RadioButton fx:id="replaceRadio" minWidth="-Infinity" mnemonicParsing="false" selected="true" text="%Replace" wrapText="true">
+               <toggleGroup>
+                  <ToggleGroup fx:id="opGroup" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="insertRadio" minWidth="-Infinity" mnemonicParsing="false" text="%InsertAbove" toggleGroup="$opGroup" wrapText="true" />
+            <RadioButton fx:id="appendRadio" minWidth="-Infinity" mnemonicParsing="false" text="%AppendBelow" toggleGroup="$opGroup" wrapText="true" />
+         </children>
+      </VBox>
+      <HBox alignment="CENTER_LEFT" spacing="2.0">
+         <children>
+            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconCancel.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconOK.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </HBox>
+    </children>
+</VBox>

@@ -240,7 +240,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
             TreeNode node = find(conn, parent, title);
             if (node == null) {
                 TreeNode parentNode = find(conn, parent);
-                node = new TreeNode(parentNode, title, null);
+                node = new TreeNode(parentNode, title);
                 node = insertData(conn, node);
                 conn.commit();
             }

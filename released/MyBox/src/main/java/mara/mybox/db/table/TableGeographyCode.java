@@ -8,7 +8,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import mara.mybox.data.CoordinateSystem;
+import mara.mybox.data.GeoCoordinateSystem;
 import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.BatchSize;
 import static mara.mybox.db.DerbyBase.stringValue;
@@ -385,7 +385,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
     }
 
     // this way is not accurate since multiple addresses can have same coordinate
-    public static GeographyCode readCode(CoordinateSystem coordinateSystem,
+    public static GeographyCode readCode(GeoCoordinateSystem coordinateSystem,
             double longitude, double latitude, boolean decodeAncestors) {
         if (coordinateSystem == null || !validCoordinate(longitude, latitude)) {
             return null;
@@ -400,7 +400,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
     }
 
     public static GeographyCode readCode(Connection conn,
-            CoordinateSystem coordinateSystem,
+            GeoCoordinateSystem coordinateSystem,
             double longitude, double latitude, boolean decodeAncestors) {
         if (coordinateSystem == null || !validCoordinate(longitude, latitude)) {
             return null;
@@ -434,14 +434,14 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
     }
 
     public static GeographyCode readCode(Connection conn, long gcid, boolean decodeAncestors) {
-        if (gcid < 0) {
+        if (conn == null || gcid < 0) {
             return null;
         }
         try {
             GeographyCode code;
-            try ( PreparedStatement statement = conn.prepareStatement(GCidQeury)) {
-                statement.setLong(1, gcid);
-                code = readCode(conn, statement, decodeAncestors);
+            try ( PreparedStatement query = conn.prepareStatement(GCidQeury)) {
+                query.setLong(1, gcid);
+                code = readCode(conn, query, decodeAncestors);
             }
             return code;
         } catch (Exception e) {
@@ -633,15 +633,15 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
     }
 
     // Generally, when location full name is need, "decodeAncestors" should be true
-    public static GeographyCode readCode(Connection conn, PreparedStatement statement, boolean decodeAncestors) {
-        if (conn == null || statement == null) {
+    public static GeographyCode readCode(Connection conn, PreparedStatement query, boolean decodeAncestors) {
+        if (conn == null || query == null) {
             return null;
         }
         try {
             GeographyCode code;
-            statement.setMaxRows(1);
+            query.setMaxRows(1);
             conn.setAutoCommit(true);
-            try ( ResultSet results = statement.executeQuery()) {
+            try ( ResultSet results = query.executeQuery()) {
                 if (results.next()) {
                     code = readResults(results);
                 } else {
@@ -649,7 +649,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
                 }
             }
             if (decodeAncestors && code != null) {
-                decodeAncestors(conn, code);
+                decodeAncestors(conn, query, code);
             }
             return code;
         } catch (Exception e) {
@@ -692,92 +692,101 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
         if (conn == null || code == null) {
             return;
         }
+        try ( PreparedStatement query = conn.prepareStatement(GCidQeury)) {
+            decodeAncestors(conn, query, code);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public static void decodeAncestors(Connection conn, PreparedStatement query, GeographyCode code) {
+        if (conn == null || code == null) {
+            return;
+        }
+        int level = code.getLevel();
+        if (level < 3 || level > 10) {
+            return;
+        }
         try {
-            int level = code.getLevel();
-            if (level < 3 || level > 10) {
+            conn.setAutoCommit(true);
+
+            if (code.getContinent() > 0) {
+                query.setLong(1, code.getContinent());
+
+                try ( ResultSet cresults = query.executeQuery()) {
+                    if (cresults.next()) {
+                        code.setContinentCode(readResults(cresults));
+                    }
+                }
+            }
+            if (level < 4) {
                 return;
             }
-            try ( PreparedStatement query = conn.prepareStatement(GCidQeury)) {
-                conn.setAutoCommit(true);
-
-                if (code.getContinent() > 0) {
-                    query.setLong(1, code.getContinent());
-
-                    try ( ResultSet cresults = query.executeQuery()) {
-                        if (cresults.next()) {
-                            code.setContinentCode(readResults(cresults));
-                        }
+            if (code.getCountry() > 0) {
+                query.setLong(1, code.getCountry());
+                try ( ResultSet cresults = query.executeQuery()) {
+                    if (cresults.next()) {
+                        code.setCountryCode(readResults(cresults));
                     }
                 }
-                if (level < 4) {
-                    return;
-                }
-                if (code.getCountry() > 0) {
-                    query.setLong(1, code.getCountry());
-                    try ( ResultSet cresults = query.executeQuery()) {
-                        if (cresults.next()) {
-                            code.setCountryCode(readResults(cresults));
-                        }
+            }
+
+            if (level < 5) {
+                return;
+            }
+            if (code.getProvince() > 0) {
+                query.setLong(1, code.getProvince());
+                try ( ResultSet presults = query.executeQuery()) {
+                    if (presults.next()) {
+                        code.setProvinceCode(readResults(presults));
                     }
                 }
+            }
 
-                if (level < 5) {
-                    return;
-                }
-                if (code.getProvince() > 0) {
-                    query.setLong(1, code.getProvince());
-                    try ( ResultSet presults = query.executeQuery()) {
-                        if (presults.next()) {
-                            code.setProvinceCode(readResults(presults));
-                        }
+            if (level < 6) {
+                return;
+            }
+            if (code.getCity() > 0) {
+                query.setLong(1, code.getCity());
+                try ( ResultSet iresults = query.executeQuery()) {
+                    if (iresults.next()) {
+                        code.setCityCode(readResults(iresults));
                     }
                 }
+            }
 
-                if (level < 6) {
-                    return;
-                }
-                if (code.getCity() > 0) {
-                    query.setLong(1, code.getCity());
-                    try ( ResultSet iresults = query.executeQuery()) {
-                        if (iresults.next()) {
-                            code.setCityCode(readResults(iresults));
-                        }
+            if (level < 7) {
+                return;
+            }
+            if (code.getCounty() > 0) {
+                query.setLong(1, code.getCounty());
+                try ( ResultSet iresults = query.executeQuery()) {
+                    if (iresults.next()) {
+                        code.setCountyCode(readResults(iresults));
                     }
                 }
+            }
 
-                if (level < 7) {
-                    return;
-                }
-                if (code.getCounty() > 0) {
-                    query.setLong(1, code.getCounty());
-                    try ( ResultSet iresults = query.executeQuery()) {
-                        if (iresults.next()) {
-                            code.setCountyCode(readResults(iresults));
-                        }
+            if (level < 8) {
+                return;
+            }
+            if (code.getTown() > 0) {
+                query.setLong(1, code.getTown());
+                try ( ResultSet iresults = query.executeQuery()) {
+                    if (iresults.next()) {
+                        code.setTownCode(readResults(iresults));
                     }
                 }
+            }
 
-                if (level < 8) {
-                    return;
-                }
-                if (code.getTown() > 0) {
-                    query.setLong(1, code.getTown());
-                    try ( ResultSet iresults = query.executeQuery()) {
-                        if (iresults.next()) {
-                            code.setTownCode(readResults(iresults));
-                        }
-                    }
-                }
-
-                if (level < 9) {
-                    return;
-                }
-                if (code.getVillage() > 0) {
-                    query.setLong(1, code.getVillage());
-                    try ( ResultSet iresults = query.executeQuery()) {
-                        if (iresults.next()) {
-                            code.setVillageCode(readResults(iresults));
-                        }
+            if (level < 9) {
+                return;
+            }
+            if (code.getVillage() > 0) {
+                query.setLong(1, code.getVillage());
+                try ( ResultSet iresults = query.executeQuery()) {
+                    if (iresults.next()) {
+                        code.setVillageCode(readResults(iresults));
                     }
                 }
             }
@@ -821,7 +830,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
             code.setLatitude(results.getDouble("latitude"));
             code.setAltitude(results.getDouble("altitude"));
             code.setPrecision(results.getDouble("precision"));
-            code.setCoordinateSystem(new CoordinateSystem(results.getShort("coordinate_system")));
+            code.setCoordinateSystem(new GeoCoordinateSystem(results.getShort("coordinate_system")));
             code.setChineseName(results.getString("chinese_name"));
             code.setEnglishName(results.getString("english_name"));
             code.setCode1(results.getString("code1"));

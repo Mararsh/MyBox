@@ -10,7 +10,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.NumberTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -20,7 +20,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-9-4
  * @License Apache License Version 2.0
  */
-public class Data2DSetValuesController extends BaseData2DHandleController {
+public class Data2DSetValuesController extends BaseData2DTargetsController {
 
     @FXML
     protected ControlData2DSetValue valueController;
@@ -37,6 +37,8 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             super.setParameters(tableController);
 
             idExclude(true);
+            noCheckedColumnsMeansAll = false;
+
             valueController.setParameter(this);
 
         } catch (Exception e) {
@@ -164,7 +166,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
             protected boolean handle() {
                 try {
                     if (!data2D.isTmpData() && tableController.dataController.backupController != null
-                            && tableController.dataController.backupController.isBack()) {
+                            && tableController.dataController.backupController.needBackup()) {
                         tableController.dataController.backupController.addBackup(task, data2D.getFile());
                     }
                     data2D.startTask(task, filterController.filter);
@@ -409,7 +411,7 @@ public class Data2DSetValuesController extends BaseData2DHandleController {
                 colIndex = 0;
                 for (int col : checkedColsIndices) {
                     try {
-                        tableRow.set(col + 1, DoubleTools.format(m[rowIndex][colIndex], scale));
+                        tableRow.set(col + 1, NumberTools.format(m[rowIndex][colIndex], scale));
                     } catch (Exception e) {
                     }
                     colIndex++;

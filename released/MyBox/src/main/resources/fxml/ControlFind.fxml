@@ -23,16 +23,16 @@ License:    Apache License Version 2.0
             <content>
                 <VBox fx:id="controlsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
-                  <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="35.0" spacing="5.0">
-                     <children>
+                        <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="35.0" spacing="5.0">
+                            <children>
                                 <Label text="%Find" />
                                 <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
                                         <Image url="@../buttons/Red/iconTips.png" />
                                     </image>
                                 </ImageView>
-                     </children>
-                  </HBox>
+                            </children>
+                        </HBox>
                         <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                             <children>
                                 <Button fx:id="historyFindButton" layoutX="91.0" layoutY="10.0" mnemonicParsing="false" onMouseEntered="#popFindHistories">
@@ -81,7 +81,7 @@ License:    Apache License Version 2.0
                                 <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                     <children>
                                         <CheckBox fx:id="regexCheck" mnemonicParsing="false" text="%RegularExpression" />
-                                        <Button fx:id="exampleFindButton" mnemonicParsing="false" onMouseEntered="#popFindExample">
+                                        <Button fx:id="exampleFindButton" mnemonicParsing="false" onAction="#popFindExample">
                                             <graphic>
                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                     <image>

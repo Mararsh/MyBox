@@ -11,7 +11,7 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.NumberTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.math3.stat.Frequency;
@@ -21,7 +21,7 @@ import org.apache.commons.math3.stat.Frequency;
  * @CreateDate 2022-4-15
  * @License Apache License Version 2.0
  */
-public class Data2DFrequencyController extends BaseData2DHandleController {
+public class Data2DFrequencyController extends BaseData2DTargetsController {
 
     protected List<String> handledNames;
     protected int freCol;
@@ -61,14 +61,14 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
             while (handledNames.contains(cName)) {
                 cName += random.nextInt(10);
             }
-            outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Long));
+            outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Long, 200));
             handledNames.add(cName);
 
             cName = freName + "_" + message("CountPercentage");
             while (handledNames.contains(cName)) {
                 cName += random.nextInt(10);
             }
-            outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double));
+            outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, 200));
             handledNames.add(cName);
 
             frequency = caseInsensitiveCheck.isSelected()
@@ -104,7 +104,7 @@ public class Data2DFrequencyController extends BaseData2DHandleController {
                     String value = (String) iterator.next();
                     row.add(value);
                     row.add(frequency.getCount(value) + "");
-                    row.add(DoubleTools.format(frequency.getPct(value) * 100, scale));
+                    row.add(NumberTools.format(frequency.getPct(value) * 100, scale));
                     outputData.add(row);
                 }
             }

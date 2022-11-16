@@ -33,8 +33,8 @@ public class ControlData2DSetValue extends BaseController {
     protected ToggleGroup valueGroup, nonnumericGroup;
     @FXML
     protected RadioButton zeroRadio, oneRadio, blankRadio, randomRadio, randomNnRadio,
-            valueRadio, scaleRadio, prefixRadio, suffixRadio, numberRadio, expressionRadio,
-            skipNonnumericRadio, zeroNonnumericRadio, blankNonnumericRadio,
+            valueRadio, scaleRadio, prefixRadio, suffixRadio, numberRadio,
+            expressionRadio, skipNonnumericRadio, zeroNonnumericRadio, blankNonnumericRadio,
             gaussianDistributionRadio, identifyRadio, upperTriangleRadio, lowerTriangleRadio;
     @FXML
     protected TextField valueInput, prefixInput, suffixInput, startInput, digitInput;

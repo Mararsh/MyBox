@@ -136,7 +136,7 @@ public class ControlData2DEditTable extends ControlData2DLoad {
         validateData();
         notifyStatus();
 
-        dataController.textController.loadData();
+        dataController.csvController.loadData();
         dataController.viewController.loadData();
     }
 

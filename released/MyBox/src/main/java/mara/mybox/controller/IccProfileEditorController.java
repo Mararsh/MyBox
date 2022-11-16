@@ -1983,7 +1983,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
 
                 @Override
                 protected boolean handle() {
-                    if (backupController.isBack()) {
+                    if (backupController.needBackup()) {
                         backupController.addBackup(task, file);
                     }
                     return profile.write(file, newHeaderData);

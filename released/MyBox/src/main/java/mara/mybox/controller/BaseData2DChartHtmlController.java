@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -28,6 +29,7 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
     protected int barWidth = 100, categorysCol;
     protected EventListener clickListener;
     protected boolean randomColor;
+    protected List<Integer> otherIndices;
 
     @FXML
     protected ToggleGroup compareGroup;
@@ -73,6 +75,9 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
                                 break;
                             case "CalculatedCheck":
                                 UserConfig.setBoolean(baseName + "ShowCalculatedValues", check);
+                                break;
+                            case "OthersCheck":
+                                UserConfig.setBoolean(baseName + "ShowOthers", check);
                                 break;
                         }
                     } catch (Exception e) {
@@ -139,9 +144,8 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
     }
 
     @Override
-    public void rowNumberCheckChanged() {
-        super.rowNumberCheckChanged();
-        okAction();
+    public boolean showRowNumber() {
+        return true;
     }
 
     @Override
@@ -158,36 +162,7 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
     }
 
     @Override
-    protected void startOperation() {
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonTask<Void>(this) {
-
-            @Override
-            protected boolean handle() {
-                try {
-                    data2D.startTask(task, filterController.filter);
-                    readData();
-                    data2D.stopFilter();
-                    return outputData != null;
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                writeHtml();
-            }
-
-        };
-        start(task);
-    }
-
-    protected void writeHtml() {
+    public void outputData() {
         if (task != null) {
             task.cancel();
         }
@@ -197,14 +172,8 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
 
             @Override
             protected boolean handle() {
-                try {
-                    html = makeHtml();
-                    return html != null;
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                    error = e.toString();
-                    return false;
-                }
+                html = makeHtml();
+                return html != null;
             }
 
             @Override
@@ -216,6 +185,11 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
         start(task);
     }
 
+    @Override
+    public void drawChart() {
+        outputData();
+    }
+
     protected String makeHtml() {
         return null;
     }
@@ -225,16 +199,22 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
     }
 
     protected String jsBody() {
+        boolean showRowNumber = UserConfig.getBoolean(baseName + "ShowRowNumber", false);
+        boolean ShowValue = UserConfig.getBoolean(baseName + "ShowValue", false);
+        boolean ShowPercentage = UserConfig.getBoolean(baseName + "ShowPercentage", true);
+        boolean ShowCategory = UserConfig.getBoolean(baseName + "ShowCategory", true);
+        boolean ShowOthers = UserConfig.getBoolean(baseName + "ShowOthers", true);
+        boolean ShowCalculatedValues = UserConfig.getBoolean(baseName + "ShowCalculatedValues", true);
         StringBuilder s = new StringBuilder();
         s.append("<BODY onload='initChecks();'>\n");
         s.append(" <script>\n"
                 + "    function initChecks() {\n"
-                + "      showClass('RowNumber', document.getElementById('RowNumberCheck').checked);  \n"
-                + "      showClass('DataValue', document.getElementById('DataValueCheck').checked);  \n"
-                + "      showClass('Percentage', document.getElementById('PercentageCheck').checked);  \n"
-                + "      showClass('Category', document.getElementById('CategoryCheck').checked);  \n"
-                + "      showClass('Others', document.getElementById('OthersCheck').checked);  \n"
-                + "      showClass('Calculated', document.getElementById('CalculatedCheck').checked);  \n"
+                + "      showClass('RowNumber', " + showRowNumber + ");  \n"
+                + "      showClass('DataValue', " + ShowValue + ");  \n"
+                + "      showClass('Percentage', " + ShowPercentage + ");  \n"
+                + "      showClass('Category', " + ShowCategory + ");  \n"
+                + "      showClass('Others', " + ShowOthers + ");  \n"
+                + "      showClass('Calculated', " + ShowCalculatedValues + ");  \n"
                 + "    }\n"
                 + "    function showClass(className, show) {\n"
                 + "      var nodes = document.getElementsByClassName(className);  　\n"
@@ -251,50 +231,50 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
                 + "  </script>\n\n");
         s.append("<DIV>\n");
         s.append("    <INPUT id=\"RowNumberCheck\" type=\"checkbox\" ")
-                .append(UserConfig.getBoolean(baseName + "ShowRowNumber", false) ? "checked" : "")
-                .append(" onclick=\"showClass('RowNumber', this.checked);\">")
-                .append(message("RowNumber")).append("</INPUT>\n");
+                .append(showRowNumber ? "checked" : "")
+                .append(" onclick=\"showClass('RowNumber', this.checked);\" />")
+                .append(message("RowNumber")).append("\n");
 
         s.append("    <INPUT id=\"DataValueCheck\"  type=\"checkbox\"")
-                .append(UserConfig.getBoolean(baseName + "ShowValue", false) ? "checked" : "")
-                .append(" onclick=\"showClass('DataValue', this.checked);\">")
-                .append(message("Value")).append("</INPUT>\n");
+                .append(ShowValue ? "checked" : "")
+                .append(" onclick=\"showClass('DataValue', this.checked);\" />")
+                .append(message("Value")).append("\n");
 
         s.append("    <INPUT id=\"PercentageCheck\"  type=\"checkbox\" ")
-                .append(UserConfig.getBoolean(baseName + "ShowPercentage", true) ? "checked" : "")
-                .append(" onclick=\"showClass('Percentage', this.checked);\">")
-                .append(message("Percentage")).append("</INPUT>\n");
+                .append(ShowPercentage ? "checked" : "")
+                .append(" onclick=\"showClass('Percentage', this.checked);\" />")
+                .append(message("Percentage")).append("\n");
 
         if (categoryColumnSelector != null) {
             s.append("    <INPUT id=\"CategoryCheck\"  type=\"checkbox\" ")
-                    .append(UserConfig.getBoolean(baseName + "ShowCategory", true) ? "checked" : "")
-                    .append(" onclick=\"showClass('Category', this.checked);\">")
-                    .append(message("Category")).append("</INPUT>\n");
+                    .append(ShowCategory ? "checked" : "")
+                    .append(" onclick=\"showClass('Category', this.checked);\" />")
+                    .append(message("Category")).append("\n");
         }
-
         if (otherColumnsPane != null) {
             s.append("    <INPUT id=\"OthersCheck\"  type=\"checkbox\" ")
-                    .append(UserConfig.getBoolean(baseName + "ShowOthers", true) ? "checked" : "")
-                    .append(" onclick=\"showClass('Others', this.checked);\">")
-                    .append(message("Others")).append("</INPUT>\n");
+                    .append(ShowOthers ? "checked" : "")
+                    .append(" onclick=\"showClass('Others', this.checked);\" />")
+                    .append(message("Others")).append("\n");
         }
 
         s.append("    <INPUT id=\"CalculatedCheck\"  type=\"checkbox\" ")
-                .append(UserConfig.getBoolean(baseName + "ShowCalculatedValues", true) ? "checked" : "")
-                .append(" onclick=\"showClass('Calculated', this.checked);\">")
-                .append(message("CalculatedValues")).append("</INPUT>\n");
+                .append(ShowCalculatedValues ? "checked" : "")
+                .append(" onclick=\"showClass('Calculated', this.checked);\" />")
+                .append(message("CalculatedValues")).append("\n");
         s.append("</DIV>\n").append("<HR/>\n");
         return s.toString();
     }
 
     protected String jsComments() {
-        return "\n<HR/>\n<P align=left style=\"font-size:0.8em;\">* " + message("HtmlEditableComments") + "</P>\n";
+        return "\n<HR/>\n<P align=left style=\"font-size:0.8em;\">* "
+                + message("HtmlEditableComments") + "</P>\n";
     }
 
     @FXML
     public void randomColors() {
         randomColor = true;
-        writeHtml();
+        outputData();
     }
 
     public void pageLoaded() {

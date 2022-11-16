@@ -26,7 +26,8 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.Data2DTools;
+import mara.mybox.data2d.Data2DExampleTools;
+import mara.mybox.data2d.Data2DMenuTools;
 import mara.mybox.data2d.DataClipboard;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.Data2DColumn;
@@ -55,7 +56,7 @@ public class ControlData2D extends BaseController {
     protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;
     protected ControlData2DEditTable tableController;
-    protected ControlData2DEditText textController;
+    protected ControlData2DEditCSV csvController;
     protected final SimpleBooleanProperty statusNotify, loadedNotify, savedNotify;
     protected ControlFileBackup backupController;
 
@@ -90,7 +91,7 @@ public class ControlData2D extends BaseController {
             super.initValues();
 
             tableController = editController.tableController;
-            textController = editController.textController;
+            csvController = editController.csvController;
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -285,10 +286,10 @@ public class ControlData2D extends BaseController {
         }
         editController.tableTab.setText(title);
 
-        title = message("Text");
-        if (textController.status == ControlData2DEditText.Status.Applied) {
+        title = "CSV";
+        if (csvController.status == ControlData2DEditCSV.Status.Applied) {
             title += "*";
-        } else if (textController.status == ControlData2DEditText.Status.Modified) {
+        } else if (csvController.status == ControlData2DEditCSV.Status.Modified) {
             title += "**";
         }
         editController.textTab.setText(title);
@@ -335,13 +336,13 @@ public class ControlData2D extends BaseController {
 
         tableController.resetStatus();
 
-        if (textController.task != null) {
-            textController.task.cancel();
+        if (csvController.task != null) {
+            csvController.task.cancel();
         }
-        if (textController.backgroundTask != null) {
-            textController.backgroundTask.cancel();
+        if (csvController.backgroundTask != null) {
+            csvController.backgroundTask.cancel();
         }
-        textController.status = null;
+        csvController.status = null;
 
         if (attributesController.task != null) {
             attributesController.task.cancel();
@@ -368,7 +369,7 @@ public class ControlData2D extends BaseController {
         }
         if (attributesController.status == ControlData2DAttributes.Status.Modified
                 || columnsController.status == ControlData2DColumns.Status.Modified
-                || textController.status == ControlData2DEditText.Status.Modified) {
+                || csvController.status == ControlData2DEditCSV.Status.Modified) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
             alert.setHeaderText(getMyStage().getTitle());
@@ -387,9 +388,9 @@ public class ControlData2D extends BaseController {
                 return -99;
             }
             if (result.get() == buttonApply) {
-                if (textController.status == ControlData2DEditText.Status.Modified) {
-                    textController.okAction();
-                    if (textController.status != ControlData2DEditText.Status.Applied) {
+                if (csvController.status == ControlData2DEditCSV.Status.Modified) {
+                    csvController.okAction();
+                    if (csvController.status != ControlData2DEditCSV.Status.Applied) {
                         return -2;
                     }
                 }
@@ -455,7 +456,7 @@ public class ControlData2D extends BaseController {
             @Override
             protected boolean handle() {
                 try {
-                    if (backupController != null && backupController.isBack() && !data2D.isTmpData()) {
+                    if (backupController != null && backupController.needBackup() && !data2D.isTmpData()) {
                         backupController.addBackup(task, data2D.getFile());
                     }
                     data2D.startTask(task, null);
@@ -662,17 +663,24 @@ public class ControlData2D extends BaseController {
             popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
 
-            popMenu.getItems().addAll(Data2DTools.editMenu(this));
+            popMenu.getItems().addAll(Data2DMenuTools.dataMenu(this));
 
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            popMenu.getItems().addAll(Data2DTools.operationsMenu(tableController));
+            popMenu.getItems().addAll(Data2DMenuTools.modifyMenu(this));
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            popMenu.getItems().addAll(Data2DMenuTools.trimMenu(tableController));
+            popMenu.getItems().addAll(Data2DMenuTools.calMenu(tableController));
+            popMenu.getItems().addAll(Data2DMenuTools.chartsMenu(tableController));
+            popMenu.getItems().addAll(Data2DMenuTools.groupChartsMenu(tableController));
 
             popMenu.getItems().add(new SeparatorMenuItem());
 
             if (data2D.isDataFile() || data2D.isUserTable() || data2D.isClipboard()) {
                 Menu examplesMenu = new Menu(message("Examples"), StyleTools.getIconImage("iconExamples.png"));
-                examplesMenu.getItems().addAll(Data2DTools.examplesMenu(this));
+                examplesMenu.getItems().addAll(Data2DExampleTools.examplesMenu(this));
                 popMenu.getItems().add(examplesMenu);
                 popMenu.getItems().add(new SeparatorMenuItem());
             }

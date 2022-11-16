@@ -164,7 +164,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
             return;
         }
         loadOutlineSource(bufferedImage, new DoubleRectangle(0, 0,
-                bufferedImage.getWidth(), bufferedImage.getHeight()));
+                bufferedImage.getWidth() - 1, bufferedImage.getHeight() - 1));
     }
 
     public void loadOutlineSource(BufferedImage bufferedImage, DoubleRectangle rect) {
@@ -224,8 +224,8 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
                         }
                         maskRectangleData = new DoubleRectangle(
                                 maskRectangleData.getSmallX(), maskRectangleData.getSmallY(),
-                                maskRectangleData.getSmallX() + outline[0].getWidth(),
-                                maskRectangleData.getSmallY() + outline[0].getHeight());
+                                maskRectangleData.getSmallX() + outline[0].getWidth() - 1,
+                                maskRectangleData.getSmallY() + outline[0].getHeight() - 1);
                         drawMaskRectangleLineAsData();
                         scope.setOutlineSource(outlineSource);
                         scope.setOutline(outline[1]);

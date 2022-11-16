@@ -4,6 +4,7 @@ import java.io.File;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -53,6 +54,8 @@ public class HelpTools {
             table.newLinkRow("", "https://github.com/tomsharp/SVR/tree/master/data");
             table.newLinkRow("", "https://github.com/krishnaik06/simple-Linear-Regression");
             table.newLinkRow("", "https://github.com/susanli2016/Machine-Learning-with-Python/tree/master/data");
+            table.newLinkRow("", "https://www.datarepository.movebank.org");
+            table.newLinkRow("", "https://github.com/CSSEGISandData/COVID-19");
             table.newLinkRow("Apache-Math", "https://commons.apache.org/proper/commons-math/");
             table.newLinkRow("", "https://commons.apache.org/proper/commons-math/apidocs/index.html");
             table.newLinkRow(message("Study"), "https://github.com/InfolabAI/DeepLearning");
@@ -70,6 +73,57 @@ public class HelpTools {
             table.newLinkRow(message("Example"), "https://www.xycoon.com/simple_linear_regression.htm");
             table.newLinkRow("", "https://www.scribbr.com/statistics/simple-linear-regression/");
             table.newLinkRow("", "http://www.datasetsanalysis.com/regressions/simple-linear-regression.html");
+
+            File htmFile = HtmlWriteTools.writeHtml(table.html());
+            return htmFile;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static File aboutCoordinateSystem() {
+        try {
+            StringTable table = new StringTable(null, Languages.message("AboutCoordinateSystem"));
+            table.newLinkRow("ChinaCommonGeospatialInformationServices", "https://www.tianditu.gov.cn/");
+            table.newLinkRow("", "https://www.tianditu.gov.cn/world_coronavirusmap/");
+            table.newLinkRow("ChineseCoordinateSystems", "https://politics.stackexchange.com/questions/40991/why-must-chinese-maps-be-obfuscated");
+            table.newLinkRow("", "https://zhuanlan.zhihu.com/p/62243160");
+            table.newLinkRow("", "https://blog.csdn.net/qq_36377037/article/details/86479796");
+            table.newLinkRow("", "https://www.zhihu.com/question/31204062?sort=created");
+            table.newLinkRow("", "https://blog.csdn.net/ssxueyi/article/details/102622156");
+            table.newLinkRow("EPSGCodes", "http://epsg.io/4490");
+            table.newLinkRow("", "http://epsg.io/4479");
+            table.newLinkRow("", "http://epsg.io/4326");
+            table.newLinkRow("", "http://epsg.io/3857");
+            table.newLinkRow("TrackingData", "https://www.microsoft.com/en-us/download/details.aspx?id=52367");
+            table.newLinkRow("", "https://www.datarepository.movebank.org/discover");
+            table.newLinkRow("", "https://sumo.dlr.de/docs/Data/Scenarios/TAPASCologne.html");
+            table.newLinkRow("", "https://blog.csdn.net/souvenir001/article/details/52180335");
+            table.newLinkRow("", "https://www.cnblogs.com/genghenggao/p/9625511.html");
+            table.newLinkRow("TianDiTuAPI", "http://lbs.tianditu.gov.cn/api/js4.0/guide.html");
+            table.newLinkRow("TianDiTuKey", "https://console.tianditu.gov.cn/api/key");
+            table.newLinkRow("GaoDeAPI", "https://lbs.amap.com/api/javascript-api/summary");
+            table.newLinkRow("GaoDeKey", "https://console.amap.com/dev/index");
+            File htmFile = HtmlWriteTools.writeHtml(table.html());
+            return htmFile;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static File aboutMedia() {
+        try {
+            StringTable table = new StringTable(null, Languages.message("AboutMedia"));
+            table.newLinkRow("FFmpegDocuments", "http://ffmpeg.org/documentation.html");
+            table.newLinkRow("FFmpeg wiki", "https://trac.ffmpeg.org");
+            table.newLinkRow("H264VideoEncodingGuide", "http://trac.ffmpeg.org/wiki/Encode/H.264");
+            table.newLinkRow("AACEncodingGuide", "https://trac.ffmpeg.org/wiki/Encode/AAC");
+            table.newLinkRow("UnderstandingRateControlModes", "https://slhck.info/video/2017/03/01/rate-control.html");
+            table.newLinkRow("CRFGuide", "https://slhck.info/video/2017/02/24/crf-guide.html");
+            table.newLinkRow("CapturingDesktopScreenRecording", "http://trac.ffmpeg.org/wiki/Capture/Desktop");
 
             File htmFile = HtmlWriteTools.writeHtml(table.html());
             return htmFile;

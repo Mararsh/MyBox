@@ -256,11 +256,11 @@ public class MyBoxLog extends BaseData {
                     .setMethodName(stack.getMethodName())
                     .setLine(stack.getLineNumber())
                     .setCallers(callers);
+            String logText = println(myboxLog, type == LogType.Error || (AppVariables.detailedDebugLogs && type == LogType.Debug));
+            System.out.print(logText);
             if (LastMyBoxLog != null && LastMyBoxLog.equalTo(myboxLog)) {
                 return myboxLog;
             }
-            String logText = println(myboxLog, type == LogType.Error || (AppVariables.detailedDebugLogs && type == LogType.Debug));
-            System.out.print(logText);
             if (AppVariables.popErrorLogs && type == LogType.Error) {
                 Platform.runLater(() -> {
                     MyBoxLogViewerController controller = MyBoxLogViewerController.oneOpen();

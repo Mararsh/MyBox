@@ -5,6 +5,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.calculation.DescriptiveStatistic;
+import mara.mybox.calculation.DescriptiveStatistic.StatisticType;
 import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.calculation.Normalization;
 import mara.mybox.calculation.SimpleLinearRegression;
@@ -27,6 +28,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.NumberTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVPrinter;
@@ -113,6 +115,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
                     column.setStatistic(colStatistic);
                 }
                 colStatistic.invalidAs = selections.invalidAs;
+                colStatistic.options = selections;
                 sData[c] = colStatistic;
             }
             Data2DOperator reader = Data2DStatistic.create(this)
@@ -123,8 +126,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             if (reader == null || reader.failed()) {
                 return null;
             }
-            if (selections.isPopulationStandardDeviation() || selections.isPopulationVariance()
-                    || selections.isSampleStandardDeviation() || selections.isSampleVariance()) {
+            if (selections.needVariance()) {
                 reader = Data2DStatistic.create(this)
                         .setStatisticData(sData)
                         .setStatisticCalculation(selections)
@@ -222,8 +224,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         if (reader == null || reader.failed()) {
             return null;
         }
-        if (selections.isPopulationStandardDeviation() || selections.isPopulationVariance()
-                || selections.isSampleStandardDeviation() || selections.isSampleVariance()) {
+        if (selections.needVariance()) {
             reader = Data2DStatistic.create(this)
                     .setStatisticAll(sData)
                     .setStatisticCalculation(selections)
@@ -244,7 +245,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         for (int c : cols) {
             Data2DColumn column = columns.get(c).cloneAll().setD2cid(-1).setD2id(-1);
             if (suffix != null) {
-                column.setColumnName(column.getColumnName() + "_" + suffix);
+                column.setColumnName(column.getColumnName() + "_" + suffix).setWidth(200);
             }
             targetColumns.add(column);
         }
@@ -257,7 +258,8 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         return fixColumnNames(targetColumns);
     }
 
-    public DataFileCSV copy(String dname, List<Integer> cols, boolean includeRowNumber, boolean includeColName) {
+    public DataFileCSV copy(String dname, List<Integer> cols,
+            boolean includeRowNumber, boolean includeColName, boolean formatValues) {
         if (cols == null || cols.isEmpty()) {
             return null;
         }
@@ -274,6 +276,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             }
             reader = Data2DCopy.create(this)
                     .setCsvPrinter(csvPrinter)
+                    .setFormatValues(formatValues)
                     .setIncludeRowNumber(includeRowNumber)
                     .setCols(cols).setTask(task).start();
         } catch (Exception e) {
@@ -326,8 +329,8 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             }
             List<DataFileCSV> files = new ArrayList<>();
             for (int i = 0; i < list.size();) {
-                long start = list.get(i++);
-                long end = list.get(i++);
+                long start = Math.round(list.get(i++));
+                long end = Math.round(list.get(i++));
                 if (start <= 0) {
                     start = 1;
                 }
@@ -428,7 +431,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             case Rows:
                 targetColumns = targetColumns(cols, otherCols, true, message("PercentageInRow"));
                 targetColumns.add(1, new Data2DColumn(message("Row") + "-" + message("Summation"),
-                        ColumnDefinition.ColumnType.Double));
+                        ColumnDefinition.ColumnType.Double, 200));
                 break;
             case All:
                 targetColumns = targetColumns(cols, otherCols, true, message("PercentageInAll"));
@@ -526,7 +529,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             List<String> row = new ArrayList<>();
             row.add(message("All") + "-" + message("Summation"));
             double sum = reader.gettValue();
-            row.add(DoubleTools.format(sum, scale));
+            row.add(NumberTools.format(sum, scale));
             for (int c : cols) {
                 row.add(null);
             }
@@ -648,7 +651,9 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             sData[c].invalidAs = invalidAs;
         }
         DescriptiveStatistic selections = DescriptiveStatistic.all(false)
-                .setSum(true).setMaximum(true).setMinimum(true);
+                .add(StatisticType.Sum)
+                .add(StatisticType.MaximumQ4)
+                .add(StatisticType.MinimumQ0);
         Data2DOperator operator = Data2DStatistic.create(this)
                 .setStatisticData(sData)
                 .setStatisticCalculation(selections)
@@ -780,7 +785,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             sData[c].invalidAs = invalidAs;
         }
         DescriptiveStatistic selections = DescriptiveStatistic.all(false)
-                .setPopulationStandardDeviation(true);
+                .add(StatisticType.PopulationStandardDeviation);
         Data2DOperator operator = Data2DStatistic.create(this)
                 .setStatisticData(sData)
                 .setStatisticCalculation(selections)
@@ -845,7 +850,9 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         DoubleStatistic sData = new DoubleStatistic();
         sData.invalidAs = invalidAs;
         DescriptiveStatistic selections = DescriptiveStatistic.all(false)
-                .setSum(true).setMaximum(true).setMinimum(true);
+                .add(StatisticType.Sum)
+                .add(StatisticType.MaximumQ4)
+                .add(StatisticType.MinimumQ0);
         Data2DOperator operator = Data2DStatistic.create(this)
                 .setStatisticAll(sData)
                 .setStatisticCalculation(selections)
@@ -971,7 +978,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         DoubleStatistic sData = new DoubleStatistic();
         sData.invalidAs = invalidAs;
         DescriptiveStatistic selections = DescriptiveStatistic.all(false)
-                .setPopulationStandardDeviation(true);
+                .add(StatisticType.PopulationStandardDeviation);
         Data2DOperator operator = Data2DStatistic.create(this)
                 .setStatisticAll(sData)
                 .setStatisticCalculation(selections)

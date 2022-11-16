@@ -455,9 +455,9 @@ public class PenTools {
                 g.setStroke(stroke);
                 if (arcWidth > 0) {
                     int a = Math.max(0, Math.min(height - 1, Math.round(arcWidth)));
-                    g.drawRoundRect(x1, y1, x2 - x1 + 1, y2 - y1 + 1, a, a);
+                    g.drawRoundRect(x1, y1, x2 - x1, y2 - y1, a, a);
                 } else {
-                    g.drawRect(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
+                    g.drawRect(x1, y1, x2 - x1, y2 - y1);
                 }
                 g.dispose();
                 if (strokeColor.getRGB() == 0) {
@@ -492,9 +492,9 @@ public class PenTools {
                 }
                 if (arcWidth > 0) {
                     int a = Math.max(0, Math.min(height - 1, Math.round(arcWidth)));
-                    g.fillRoundRect(x1, y1, x2 - x1 + 1, y2 - y1 + 1, a, a);
+                    g.fillRoundRect(x1, y1, x2 - x1, y2 - y1, a, a);
                 } else {
-                    g.fillRect(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
+                    g.fillRect(x1, y1, x2 - x1, y2 - y1);
                 }
                 g.dispose();
                 BufferedImage backImage = target;

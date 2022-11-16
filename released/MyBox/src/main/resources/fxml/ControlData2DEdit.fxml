@@ -27,11 +27,12 @@ License:    Apache License Version 2.0
                         </VBox>
                     </content>
                 </Tab>
-                <Tab fx:id="textTab" text="%Texts">
+                <Tab fx:id="textTab" text="CSV">
                     <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                             <children>
-                                <fx:include fx:id="text" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DEditText.fxml" VBox.vgrow="ALWAYS" />
+                                <fx:include fx:id="csv" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                                            source="ControlData2DEditCSV.fxml" VBox.vgrow="ALWAYS" />
                             </children>
                             <padding>
                                 <Insets left="2.0" />

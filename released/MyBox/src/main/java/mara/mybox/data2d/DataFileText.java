@@ -99,7 +99,7 @@ public class DataFileText extends DataFile {
         File validFile = FileTools.removeBOM(file);
         try ( BufferedReader reader = new BufferedReader(new FileReader(validFile, charset))) {
             String line1 = reader.readLine();
-            while (!validLine(line1)) {
+            while (line1 != null && !validLine(line1)) {
                 line1 = reader.readLine();
             }
             if (line1 == null) {
@@ -117,7 +117,7 @@ public class DataFileText extends DataFile {
             }
 //            MyBoxLog.console(maxCount1);
             String line2 = reader.readLine();
-            while (!validLine(line2)) {
+            while (line2 != null && !validLine(line2)) {
                 line2 = reader.readLine();
             }
             if (line2 == null) {
@@ -267,7 +267,7 @@ public class DataFileText extends DataFile {
                 if (task == null || task.isCancelled()) {
                     return false;
                 }
-                TextFileTools.writeLine(writer, tableRowWithoutNumber(r), delimiter);
+                TextFileTools.writeLine(writer, tableRow(r, false, false), delimiter);
             }
             return true;
         } catch (Exception e) {
@@ -279,7 +279,7 @@ public class DataFileText extends DataFile {
         }
     }
 
-    public File tmpFile(String dname, List<String> cols, List<List<String>> data) {
+    public File tmpTxtFile(String dname, List<String> cols, List<List<String>> data) {
         try {
             if (cols == null || cols.isEmpty()) {
                 if (data == null || data.isEmpty()) {

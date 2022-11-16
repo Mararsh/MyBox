@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import mara.mybox.data.Era;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.BatchSize;
@@ -22,6 +21,7 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.HtmlStyles;
+import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.HtmlWriteTools;
@@ -43,7 +43,6 @@ public abstract class BaseTable<D> {
 
     protected String tableName, idColumn, orderColumns;
     protected List<ColumnDefinition> columns, primaryColumns, foreignColumns, referredColumns;
-    protected Era.Format timeFormat;
     protected boolean supportBatchUpdate;
     protected long newID = -1;
 
@@ -120,10 +119,10 @@ public abstract class BaseTable<D> {
             boolean notNull = column.isNotNull();
             switch (column.getType()) {
                 case String:
-                case Text:
                 case Color:
                 case File:
                 case Image:
+                case Enumeration:
                     if (value == null) {
                         if (notNull) {
                             statement.setString(index, (String) column.defaultValue());
@@ -139,10 +138,15 @@ public abstract class BaseTable<D> {
                     }
                     break;
                 case Double:
+                case Longitude:
+                case Latitude:
                     double d;
                     if (value == null) {
                         d = Double.NaN;
                     } else {
+                        if (!(value instanceof Double)) {
+                            MyBoxLog.console(value + "  " + value.getClass());
+                        }
                         d = (double) value;
                     }
                     if (DoubleTools.invalidDouble(d)) {
@@ -173,7 +177,6 @@ public abstract class BaseTable<D> {
                     }
                     break;
                 case Long:
-                case Era:
                     long l;
                     if (value == null) {
                         if (column.isAuto()) {
@@ -192,6 +195,36 @@ public abstract class BaseTable<D> {
                         }
                     } else {
                         statement.setLong(index, l);
+                    }
+                    break;
+                case Era:
+                    long el;
+                    if (value == null) {
+                        el = AppValues.InvalidLong;
+                    } else {
+                        try {
+                            el = Long.parseLong(value + "");
+                            if (el < 10000 && el > -10000) {
+                                Date ed = DateTools.encodeDate((String) value);
+                                el = ed.getTime();
+                            }
+                        } catch (Exception ex) {
+                            try {
+                                Date ed = DateTools.encodeDate((String) value);
+                                el = ed.getTime();
+                            } catch (Exception e) {
+                                el = AppValues.InvalidLong;
+                            }
+                        }
+                    }
+                    if (LongTools.invalidLong(el)) {
+                        if (notNull) {
+                            statement.setDouble(index, AppValues.InvalidLong);
+                        } else {
+                            statement.setNull(index, Types.BIGINT);
+                        }
+                    } else {
+                        statement.setLong(index, el);
                     }
                     break;
                 case Integer:
@@ -228,7 +261,11 @@ public abstract class BaseTable<D> {
                     if (value == null) {
                         s = AppValues.InvalidShort;
                     } else {
-                        s = (short) value;
+                        if (value instanceof Integer) { // sometime value becomes Integer...
+                            s = (short) ((int) value);
+                        } else {
+                            s = (short) value;
+                        }
                     }
                     if (s == AppValues.InvalidShort) {
                         if (notNull) {
@@ -394,7 +431,6 @@ public abstract class BaseTable<D> {
         primaryColumns = new ArrayList<>();
         foreignColumns = new ArrayList<>();
         referredColumns = new ArrayList<>();
-        timeFormat = Era.Format.Datetime;
         supportBatchUpdate = false;
         newID = -1;
     }
@@ -468,22 +504,23 @@ public abstract class BaseTable<D> {
         ColumnType type = column.getType();
         switch (type) {
             case String:
-            case Text:
             case File:
             case Image:
+            case Enumeration:
                 def += "VARCHAR(" + column.getLength() + ")";
                 break;
             case Color:
                 def += "VARCHAR(16)";
                 break;
             case Double:
+            case Longitude:
+            case Latitude:
                 def += "DOUBLE";
                 break;
             case Float:
                 def += "FLOAT";
                 break;
             case Long:
-            case Era:
                 def += "BIGINT";
                 break;
             case Integer:
@@ -501,6 +538,9 @@ public abstract class BaseTable<D> {
             case Date:
                 def += "DATE";
                 break;
+            case Era:
+                def += "BIGINT";
+                break;
             case Blob:
                 def += "BLOB";
                 break;
@@ -515,9 +555,9 @@ public abstract class BaseTable<D> {
             def += " NOT NULL GENERATED BY DEFAULT AS IDENTITY (START WITH 1, INCREMENT BY 1)";
 
         } else if (column.isNotNull()) {
-            def += " NOT NULL WITH DEFAULT " + column.getDefValue();
+            def += " NOT NULL WITH DEFAULT " + column.makeDefaultValue();
         } else if (column.getDefaultValue() != null) {
-            def += " WITH DEFAULT " + column.getDefValue();
+            def += " WITH DEFAULT " + column.makeDefaultValue();
         }
         return def;
     }
@@ -1351,11 +1391,30 @@ public abstract class BaseTable<D> {
         String sql = updateStatement();
         int count = 0;
         try ( PreparedStatement statement = conn.prepareStatement(sql)) {
-            for (D data : dataList) {
-                if (setUpdateStatement(conn, statement, data)) {
-                    count += statement.executeUpdate();
+            for (int i = 0; i < dataList.size(); ++i) {
+                D data = dataList.get(i);
+                if (!setDeleteStatement(conn, statement, data)) {
+                    continue;
+                }
+                statement.addBatch();
+                if (i > 0 && (i % BatchSize == 0)) {
+                    int[] res = statement.executeBatch();
+                    for (int r : res) {
+                        if (r > 0) {
+                            count += r;
+                        }
+                    }
+                    conn.commit();
+                    statement.clearBatch();
                 }
             }
+            int[] res = statement.executeBatch();
+            for (int r : res) {
+                if (r > 0) {
+                    count += r;
+                }
+            }
+            conn.commit();
         } catch (Exception e) {
             MyBoxLog.error(e, sql);
         }
@@ -1622,16 +1681,21 @@ public abstract class BaseTable<D> {
         return true;
     }
 
-    public boolean exist(Connection conn, String referredName) {
+    public int exist(Connection conn, String referredName) {
         if (conn == null || referredName == null) {
-            return false;
+            return -1;
         }
-        try ( ResultSet resultSet = conn.getMetaData().getColumns(null, "MARA", DerbyBase.savedName(referredName), "%")) {
-            return resultSet.next();
+        try ( ResultSet resultSet = conn.getMetaData().getColumns(null, "MARA",
+                DerbyBase.savedName(referredName), "%")) {
+            if (resultSet.next()) {
+                return 1;
+            } else {
+                return 0;
+            }
         } catch (Exception e) {
-            MyBoxLog.error(e, referredName);
+            MyBoxLog.debug(e, referredName);
+            return -2;
         }
-        return false;
     }
 
     public String string(String value) {
@@ -1674,15 +1738,6 @@ public abstract class BaseTable<D> {
 
     public BaseTable setColumns(List<ColumnDefinition> columns) {
         this.columns = columns;
-        return this;
-    }
-
-    public Era.Format getTimeFormat() {
-        return timeFormat;
-    }
-
-    public BaseTable setTimeFormat(Era.Format timeFormat) {
-        this.timeFormat = timeFormat;
         return this;
     }
 

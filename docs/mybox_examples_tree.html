@@ -1,0 +1,1267 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    </head>
+<html>
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>树形信息</title>
+  <style type="text/css">
+            .center { text-align:center;  max-width:95%; }
+table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;}
+th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;}
+th { font-weight:bold;  text-align:center;}
+tr { height: 1.2em;  }
+.valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;}
+.boldText { font-weight:bold;  }
+.valueText { color:#2e598a;  }
+
+        </style>
+  <script>
+    function nodeClicked(id) {
+      var obj = document.getElementById(id);
+      var objv = obj.style.display;
+      if (objv == 'none') {
+        obj.style.display = 'block';
+      } else {
+        obj.style.display = 'none';
+      }
+    }
+    function showClass(className, show) {
+      var nodes = document.getElementsByClassName(className);  　
+      if ( show) {
+           for (var i = 0 ; i < nodes.length; i++) {
+              nodes[i].style.display = '';
+           }
+       } else {
+           for (var i = 0 ; i < nodes.length; i++) {
+              nodes[i].style.display = 'none';
+           }
+       }
+    }
+  </script>
+ </head>
+ <body contenteditable="false">
+  <div>
+   <div>
+    <input type="checkbox" checked onclick="showClass('TreeNode', this.checked);">展开 <input type="checkbox" onclick="showClass('SerialNumber', this.checked);">顺序号 <input type="checkbox" checked onclick="showClass('NodeTag', this.checked);">标签 <input type="checkbox" checked onclick="showClass('nodeValue', this.checked);">值
+   </div>
+   <hr>
+   <div style="padding: 2px;">
+    &nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item19')"><span class="SerialNumber">&nbsp;&nbsp;</span>树形信息</a>
+   </div>
+   <div class="TreeNode" id="item19">
+    <div style="padding: 2px;">
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item764')"><span class="SerialNumber">1&nbsp;&nbsp;</span>示例</a>
+    </div>
+    <div class="TreeNode" id="item764">
+     <div style="padding: 2px;">
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item765')"><span class="SerialNumber">1.1&nbsp;&nbsp;</span>中国古代史</a>
+     </div>
+     <div class="nodeValue">
+      <div style="padding: 0 0 0 96px;">
+       <div class="valueBox">
+        https://weibo.com/2328516855/LhFIHy26O
+       </div>
+      </div>
+     </div>
+     <div class="TreeNode" id="item765">
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item766')"><span class="SerialNumber">1.1.1&nbsp;&nbsp;</span>夏朝</a> <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #0D3928; color: #FFFFFF;">已掌握</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #FFF2DF; color: #000000;">扩展阅读</span> </span>
+      </div>
+      <div class="TreeNode" id="item766">
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.1.1&nbsp;&nbsp;</span>建立者：禹
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.1.2&nbsp;&nbsp;</span>世袭制代替禅让制：禹死启继
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.1.3&nbsp;&nbsp;</span>我国第一个奴隶制王朝
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item770')"><span class="SerialNumber">1.1.2&nbsp;&nbsp;</span>商朝</a>
+      </div>
+      <div class="TreeNode" id="item770">
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.2.1&nbsp;&nbsp;</span>建立者：汤 (鸣条之战)
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.2.2&nbsp;&nbsp;</span>都城：盘庚迁股 (河南安阳) <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #0D3928; color: #FFFFFF;">已掌握</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #FFF2DF; color: #000000;">扩展阅读</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item773')"><span class="SerialNumber">1.1.2.3&nbsp;&nbsp;</span>文化</a> <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #FFF2DF; color: #000000;">扩展阅读</span> </span>
+       </div>
+       <div class="TreeNode" id="item773">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.2.3.1&nbsp;&nbsp;</span>甲骨文 <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #EDD1D8; color: #000000;">容易错</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #003472; color: #FFFFFF;">糊涂着</span> </span>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.2.3.2&nbsp;&nbsp;</span>青铜器
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item776')"><span class="SerialNumber">1.1.3&nbsp;&nbsp;</span>西周</a>
+      </div>
+      <div class="TreeNode" id="item776">
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.3.1&nbsp;&nbsp;</span>建立者：周武王(牧野之战) <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #FFF2DF; color: #000000;">扩展阅读</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.3.2&nbsp;&nbsp;</span>都城：镐京（陕西西安)
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item779')"><span class="SerialNumber">1.1.3.3&nbsp;&nbsp;</span>制度</a>
+       </div>
+       <div class="TreeNode" id="item779">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.3.3.1&nbsp;&nbsp;</span>分封制 <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #EDD1D8; color: #000000;">容易错</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #FFF2DF; color: #000000;">扩展阅读</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.3.3.2&nbsp;&nbsp;</span>井田制
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.3.4&nbsp;&nbsp;</span>西周灭亡 周幽王烽火戏诸修
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item783')"><span class="SerialNumber">1.1.4&nbsp;&nbsp;</span>春秋与战国</a>
+      </div>
+      <div class="TreeNode" id="item783">
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item784')"><span class="SerialNumber">1.1.4.1&nbsp;&nbsp;</span>东周</a>
+       </div>
+       <div class="TreeNode" id="item784">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.1.1&nbsp;&nbsp;</span>平王东迁
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item786')"><span class="SerialNumber">1.1.4.2&nbsp;&nbsp;</span>春秋五霸</a>
+       </div>
+       <div class="TreeNode" id="item786">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item787')"><span class="SerialNumber">1.1.4.2.1&nbsp;&nbsp;</span>齐桓公</a>
+        </div>
+        <div class="TreeNode" id="item787">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.2.1.1&nbsp;&nbsp;</span>春秋首霸
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.2.1.2&nbsp;&nbsp;</span>管仲改革
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.2.1.3&nbsp;&nbsp;</span>葵丘会盟
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item791')"><span class="SerialNumber">1.1.4.2.2&nbsp;&nbsp;</span>晋文公</a>
+        </div>
+        <div class="TreeNode" id="item791">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.2.2.1&nbsp;&nbsp;</span>退避三舍（城濮之战） <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #EDD1D8; color: #000000;">容易错</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #003472; color: #FFFFFF;">糊涂着</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.2.2.2&nbsp;&nbsp;</span>寒食节（介子推）
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item794')"><span class="SerialNumber">1.1.4.2.3&nbsp;&nbsp;</span>楚庄王</a>
+        </div>
+        <div class="TreeNode" id="item794">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.2.3.1&nbsp;&nbsp;</span>一鸣惊人
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.2.3.2&nbsp;&nbsp;</span>问鼎中原
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item797')"><span class="SerialNumber">1.1.4.2.4&nbsp;&nbsp;</span>吴王阖闾</a>
+        </div>
+        <div class="TreeNode" id="item797">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.2.4.1&nbsp;&nbsp;</span>三令五申（孙武）
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item799')"><span class="SerialNumber">1.1.4.2.5&nbsp;&nbsp;</span>越王勾践</a>
+        </div>
+        <div class="TreeNode" id="item799">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.2.5.1&nbsp;&nbsp;</span>卧薪尝胆 <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #0D3928; color: #FFFFFF;">已掌握</span> </span>
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item801')"><span class="SerialNumber">1.1.4.3&nbsp;&nbsp;</span>战国七雄</a>
+       </div>
+       <div class="TreeNode" id="item801">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.3.1&nbsp;&nbsp;</span>齐、楚、秦、燕、赵、魏、韩
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item803')"><span class="SerialNumber">1.1.4.3.2&nbsp;&nbsp;</span>著名战役</a>
+        </div>
+        <div class="TreeNode" id="item803">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.3.2.1&nbsp;&nbsp;</span>桂陵之成：围魏救赵（孙膑） <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #003472; color: #FFFFFF;">糊涂着</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.3.2.2&nbsp;&nbsp;</span>马陵之成：减灶诱敌 (孙膑)
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.3.2.3&nbsp;&nbsp;</span>长平之战：纸上谈兵〈赵括) <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item807')"><span class="SerialNumber">1.1.4.4&nbsp;&nbsp;</span>诸子百家</a>
+       </div>
+       <div class="TreeNode" id="item807">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item808')"><span class="SerialNumber">1.1.4.4.1&nbsp;&nbsp;</span>儒家</a>
+        </div>
+        <div class="TreeNode" id="item808">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item809')"><span class="SerialNumber">1.1.4.4.1.1&nbsp;&nbsp;</span>孔子</a>
+         </div>
+         <div class="TreeNode" id="item809">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.4.1.1.1&nbsp;&nbsp;</span>著作：《论语》(弟子)
+          </div>
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.4.1.1.2&nbsp;&nbsp;</span>思想：仁、礼
+          </div>
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.4.1.1.3&nbsp;&nbsp;</span>教育：兴办私学、有教无类
+          </div>
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item813')"><span class="SerialNumber">1.1.4.4.1.2&nbsp;&nbsp;</span>孟子</a>
+         </div>
+         <div class="TreeNode" id="item813">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.4.1.2.1&nbsp;&nbsp;</span>著作：《孟子》
+          </div>
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.4.1.2.2&nbsp;&nbsp;</span>思想：仁政、民贵君轻、义、性善论
+          </div>
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item816')"><span class="SerialNumber">1.1.4.4.1.3&nbsp;&nbsp;</span>荀子</a>
+         </div>
+         <div class="TreeNode" id="item816">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.4.1.3.1&nbsp;&nbsp;</span>著作：《荀子》-《劝学》
+          </div>
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.4.1.3.2&nbsp;&nbsp;</span>思想：天行有常、制天命而用之、性恶论
+          </div>
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item819')"><span class="SerialNumber">1.1.4.4.2&nbsp;&nbsp;</span>道家</a>
+        </div>
+        <div class="TreeNode" id="item819">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item820')"><span class="SerialNumber">1.1.4.4.2.1&nbsp;&nbsp;</span>老子</a>
+         </div>
+         <div class="TreeNode" id="item820">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.4.2.1.1&nbsp;&nbsp;</span>著作：《道德经》（《老子》）
+          </div>
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.4.2.1.2&nbsp;&nbsp;</span>思想：道、无为而治、辩证法
+          </div>
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item823')"><span class="SerialNumber">1.1.4.4.2.2&nbsp;&nbsp;</span>庄子</a>
+         </div>
+         <div class="TreeNode" id="item823">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.4.2.2.1&nbsp;&nbsp;</span>著作：《庄子》-《逍遥游》
+          </div>
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.4.2.2.2&nbsp;&nbsp;</span>思想：齐物论、精神自由、寓言
+          </div>
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item826')"><span class="SerialNumber">1.1.4.4.3&nbsp;&nbsp;</span>墨家</a>
+        </div>
+        <div class="TreeNode" id="item826">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item827')"><span class="SerialNumber">1.1.4.4.3.1&nbsp;&nbsp;</span>墨子</a>
+         </div>
+         <div class="TreeNode" id="item827">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.4.3.1.1&nbsp;&nbsp;</span>著作：《墨子》-《墨经》
+          </div>
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.4.3.1.2&nbsp;&nbsp;</span>思想：兼爱、非攻、尚贤
+          </div>
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item830')"><span class="SerialNumber">1.1.4.4.4&nbsp;&nbsp;</span>法家</a>
+        </div>
+        <div class="TreeNode" id="item830">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item831')"><span class="SerialNumber">1.1.4.4.4.1&nbsp;&nbsp;</span>韩非子</a>
+         </div>
+         <div class="TreeNode" id="item831">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.4.4.1.1&nbsp;&nbsp;</span>著作：《韩非子》
+          </div>
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.4.4.1.2&nbsp;&nbsp;</span>思想：法治、中央集权、改革
+          </div>
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item834')"><span class="SerialNumber">1.1.4.4.5&nbsp;&nbsp;</span>兵家</a>
+        </div>
+        <div class="TreeNode" id="item834">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item835')"><span class="SerialNumber">1.1.4.4.5.1&nbsp;&nbsp;</span>孙子</a>
+         </div>
+         <div class="TreeNode" id="item835">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.4.5.1.1&nbsp;&nbsp;</span>著作：《孙子兵法》
+          </div>
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item837')"><span class="SerialNumber">1.1.4.5&nbsp;&nbsp;</span>医学和天文成就</a>
+       </div>
+       <div class="TreeNode" id="item837">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.5.1&nbsp;&nbsp;</span>战国名医扁鹊：“望闻问切”四诊法 <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4.5.2&nbsp;&nbsp;</span>《墨经》：杠杆原理、光学八条（小孔成像）
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item840')"><span class="SerialNumber">1.1.5&nbsp;&nbsp;</span>秦朝</a>
+      </div>
+      <div class="TreeNode" id="item840">
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item841')"><span class="SerialNumber">1.1.5.1&nbsp;&nbsp;</span>建立</a>
+       </div>
+       <div class="TreeNode" id="item841">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.5.1.1&nbsp;&nbsp;</span>秦灭六国顺序：韩赵魏楚燕齐
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.5.1.2&nbsp;&nbsp;</span>都城：咸阳
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.5.1.3&nbsp;&nbsp;</span>疆域：东临大海、西到陇西、南濒南海、北抵长城一带
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item845')"><span class="SerialNumber">1.1.5.2&nbsp;&nbsp;</span>中央集权制</a>
+       </div>
+       <div class="TreeNode" id="item845">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item846')"><span class="SerialNumber">1.1.5.2.1&nbsp;&nbsp;</span>政治</a>
+        </div>
+        <div class="TreeNode" id="item846">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.5.2.1.1&nbsp;&nbsp;</span>中央：设置丞相、太尉、御史大夫
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.5.2.1.2&nbsp;&nbsp;</span>地方：实行郡县制 <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #0D3928; color: #FFFFFF;">已掌握</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #EDD1D8; color: #000000;">容易错</span> </span>
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item849')"><span class="SerialNumber">1.1.5.2.2&nbsp;&nbsp;</span>经济</a>
+        </div>
+        <div class="TreeNode" id="item849">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.5.2.2.1&nbsp;&nbsp;</span>统一货币
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.5.2.2.2&nbsp;&nbsp;</span>统一度量衡
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item852')"><span class="SerialNumber">1.1.5.2.3&nbsp;&nbsp;</span>文化</a>
+        </div>
+        <div class="TreeNode" id="item852">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.5.2.3.1&nbsp;&nbsp;</span>统一文字（小篆） <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.5.2.3.2&nbsp;&nbsp;</span>焚书坑儒
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item855')"><span class="SerialNumber">1.1.5.3&nbsp;&nbsp;</span>灭亡</a>
+       </div>
+       <div class="TreeNode" id="item855">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.5.3.1&nbsp;&nbsp;</span>大泽乡揭重起义（陈胜和吴广)
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.5.3.2&nbsp;&nbsp;</span>巨鹿之战 (项羽破釜沉舟) <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #0D3928; color: #FFFFFF;">已掌握</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.5.3.3&nbsp;&nbsp;</span>楚汉相争（项羽和刘邦）
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item859')"><span class="SerialNumber">1.1.6&nbsp;&nbsp;</span>两汉</a>
+      </div>
+      <div class="TreeNode" id="item859">
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item860')"><span class="SerialNumber">1.1.6.1&nbsp;&nbsp;</span>政治</a>
+       </div>
+       <div class="TreeNode" id="item860">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item861')"><span class="SerialNumber">1.1.6.1.1&nbsp;&nbsp;</span>西汉</a>
+        </div>
+        <div class="TreeNode" id="item861">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item862')"><span class="SerialNumber">1.1.6.1.1.1&nbsp;&nbsp;</span>建立</a>
+         </div>
+         <div class="TreeNode" id="item862">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.6.1.1.1.1&nbsp;&nbsp;</span>刘邦
+          </div>
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.6.1.1.1.2&nbsp;&nbsp;</span>定都长安
+          </div>
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item865')"><span class="SerialNumber">1.1.6.1.1.2&nbsp;&nbsp;</span>治世</a>
+         </div>
+         <div class="TreeNode" id="item865">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.6.1.1.2.1&nbsp;&nbsp;</span>文景之治 <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+          </div>
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item867')"><span class="SerialNumber">1.1.6.1.1.3&nbsp;&nbsp;</span>汉武帝大一统</a>
+         </div>
+         <div class="TreeNode" id="item867">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.6.1.1.3.1&nbsp;&nbsp;</span>政治：颁布推恩令
+          </div>
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.6.1.1.3.2&nbsp;&nbsp;</span>思想：采纳董仲舒的“罢黜百家、独尊儒术” <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+          </div>
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item870')"><span class="SerialNumber">1.1.6.1.2&nbsp;&nbsp;</span>新莽</a>
+        </div>
+        <div class="TreeNode" id="item870">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.6.1.2.1&nbsp;&nbsp;</span>公元9年，外戚王莽自立为帝，改国号为新，西汉灭亡
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item872')"><span class="SerialNumber">1.1.6.1.3&nbsp;&nbsp;</span>东汉</a>
+        </div>
+        <div class="TreeNode" id="item872">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.6.1.3.1&nbsp;&nbsp;</span>治世：光武中兴 <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.6.1.3.2&nbsp;&nbsp;</span>农民起义：巨鹿人张角发动黄巾起义
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item875')"><span class="SerialNumber">1.1.6.2&nbsp;&nbsp;</span>文化</a>
+       </div>
+       <div class="TreeNode" id="item875">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item876')"><span class="SerialNumber">1.1.6.2.1&nbsp;&nbsp;</span>史学：前四史</a>
+        </div>
+        <div class="TreeNode" id="item876">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item877')"><span class="SerialNumber">1.1.6.2.1.1&nbsp;&nbsp;</span>《史记》</a> <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+         </div>
+         <div class="TreeNode" id="item877">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.6.2.1.1.1&nbsp;&nbsp;</span>西汉 司马迁
+          </div>
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.6.2.1.1.2&nbsp;&nbsp;</span>第一部纪传体通史
+          </div>
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item880')"><span class="SerialNumber">1.1.6.2.1.2&nbsp;&nbsp;</span>《汉书》</a> <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+         </div>
+         <div class="TreeNode" id="item880">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.6.2.1.2.1&nbsp;&nbsp;</span>东汉 班固
+          </div>
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.6.2.1.2.2&nbsp;&nbsp;</span>第一部纪传断代史
+          </div>
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item883')"><span class="SerialNumber">1.1.6.2.1.3&nbsp;&nbsp;</span>《后汉书》</a>
+         </div>
+         <div class="TreeNode" id="item883">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.6.2.1.3.1&nbsp;&nbsp;</span>南朝 范晔
+          </div>
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item885')"><span class="SerialNumber">1.1.6.2.1.4&nbsp;&nbsp;</span>《三国志》</a>
+         </div>
+         <div class="TreeNode" id="item885">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.6.2.1.4.1&nbsp;&nbsp;</span>西晋 陈寿
+          </div>
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item887')"><span class="SerialNumber">1.1.6.2.2&nbsp;&nbsp;</span>科技</a>
+        </div>
+        <div class="TreeNode" id="item887">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.6.2.2.1&nbsp;&nbsp;</span>东汉 蔡伦 改进造纸术 <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.6.2.2.2&nbsp;&nbsp;</span>东汉 张衡 发明地动仪
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item890')"><span class="SerialNumber">1.1.6.2.3&nbsp;&nbsp;</span>医学</a> <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+        </div>
+        <div class="TreeNode" id="item890">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item891')"><span class="SerialNumber">1.1.6.2.3.1&nbsp;&nbsp;</span>东汉 张仲景</a>
+         </div>
+         <div class="TreeNode" id="item891">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.6.2.3.1.1&nbsp;&nbsp;</span>《伤寒杂病论》
+          </div>
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.6.2.3.1.2&nbsp;&nbsp;</span>“医圣”
+          </div>
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item894')"><span class="SerialNumber">1.1.6.2.3.2&nbsp;&nbsp;</span>东汉 华佗</a>
+         </div>
+         <div class="TreeNode" id="item894">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.6.2.3.2.1&nbsp;&nbsp;</span>麻沸散
+          </div>
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.6.2.3.2.2&nbsp;&nbsp;</span>五禽戏
+          </div>
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item897')"><span class="SerialNumber">1.1.6.2.4&nbsp;&nbsp;</span>宗教</a>
+        </div>
+        <div class="TreeNode" id="item897">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.6.2.4.1&nbsp;&nbsp;</span>佛教：西汉末年，经中亚转入中国
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.6.2.4.2&nbsp;&nbsp;</span>道教：东汉时期，创立于中国
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item900')"><span class="SerialNumber">1.1.6.2.5&nbsp;&nbsp;</span>民族关系</a>
+        </div>
+        <div class="TreeNode" id="item900">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.6.2.5.1&nbsp;&nbsp;</span>汉武帝时期张骞通西域
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.6.2.5.2&nbsp;&nbsp;</span>丝绸之路
+         </div>
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item903')"><span class="SerialNumber">1.1.7&nbsp;&nbsp;</span>三国两晋南北朝</a>
+      </div>
+      <div class="TreeNode" id="item903">
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item904')"><span class="SerialNumber">1.1.7.1&nbsp;&nbsp;</span>三场以少胜多的战役</a>
+       </div>
+       <div class="TreeNode" id="item904">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.7.1.1&nbsp;&nbsp;</span>官渡之战：曹操大败袁绍
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item906')"><span class="SerialNumber">1.1.7.1.2&nbsp;&nbsp;</span>赤壁之战</a>
+        </div>
+        <div class="TreeNode" id="item906">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.7.1.2.1&nbsp;&nbsp;</span>孙刘联军大败曹操
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.7.1.2.2&nbsp;&nbsp;</span>三国鼎立格局初步形成
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item909')"><span class="SerialNumber">1.1.7.1.3&nbsp;&nbsp;</span>淝水之战</a> <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+        </div>
+        <div class="TreeNode" id="item909">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.7.1.3.1&nbsp;&nbsp;</span>东晋大败前秦
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.7.1.3.2&nbsp;&nbsp;</span>投鞭断流、风声鹤唳、草木皆兵
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item912')"><span class="SerialNumber">1.1.7.2&nbsp;&nbsp;</span>北魏孝文帝改革</a>
+       </div>
+       <div class="TreeNode" id="item912">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.7.2.1&nbsp;&nbsp;</span>促进民族大融合
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item914')"><span class="SerialNumber">1.1.7.3&nbsp;&nbsp;</span>文化</a> <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+       </div>
+       <div class="TreeNode" id="item914">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item915')"><span class="SerialNumber">1.1.7.3.1&nbsp;&nbsp;</span>农学</a>
+        </div>
+        <div class="TreeNode" id="item915">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.7.3.1.1&nbsp;&nbsp;</span>北魏 贾思勰《齐民要术》 中国现存最早最完整的农书
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item917')"><span class="SerialNumber">1.1.7.3.2&nbsp;&nbsp;</span>地理</a>
+        </div>
+        <div class="TreeNode" id="item917">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.7.3.2.1&nbsp;&nbsp;</span>北魏 郦道元《水经注》综合性地理著作
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item919')"><span class="SerialNumber">1.1.7.3.3&nbsp;&nbsp;</span>书法</a> <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+        </div>
+        <div class="TreeNode" id="item919">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.7.3.3.1&nbsp;&nbsp;</span>东晋 王羲之 “书圣” 《兰亭序》（天下第一行书）
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item921')"><span class="SerialNumber">1.1.7.3.4&nbsp;&nbsp;</span>文学</a>
+        </div>
+        <div class="TreeNode" id="item921">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.7.3.4.1&nbsp;&nbsp;</span>东晋 陶渊明 五柳先生 田园诗派创始人 《饮酒》《桃花源记》《归园田居》
+         </div>
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item923')"><span class="SerialNumber">1.1.8&nbsp;&nbsp;</span>隋唐</a>
+      </div>
+      <div class="TreeNode" id="item923">
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item924')"><span class="SerialNumber">1.1.8.1&nbsp;&nbsp;</span>政权更迭</a>
+       </div>
+       <div class="TreeNode" id="item924">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item925')"><span class="SerialNumber">1.1.8.1.1&nbsp;&nbsp;</span>隋朝</a>
+        </div>
+        <div class="TreeNode" id="item925">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.8.1.1.1&nbsp;&nbsp;</span>建立：杨坚 开皇之治
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.8.1.1.2&nbsp;&nbsp;</span>制度：创立科举制
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.8.1.1.3&nbsp;&nbsp;</span>建设：开凿大运河
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item929')"><span class="SerialNumber">1.1.8.1.2&nbsp;&nbsp;</span>唐朝</a>
+        </div>
+        <div class="TreeNode" id="item929">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.8.1.2.1&nbsp;&nbsp;</span>建立：李渊
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item931')"><span class="SerialNumber">1.1.8.1.2.2&nbsp;&nbsp;</span>治世</a> <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+         </div>
+         <div class="TreeNode" id="item931">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item932')"><span class="SerialNumber">1.1.8.1.2.2.1&nbsp;&nbsp;</span>贞观之治</a>
+          </div>
+          <div class="TreeNode" id="item932">
+           <div style="padding: 2px;">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.8.1.2.2.1.1&nbsp;&nbsp;</span>唐太宗 玄武门之变
+           </div>
+           <div style="padding: 2px;">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.8.1.2.2.1.2&nbsp;&nbsp;</span>房谋杜断
+           </div>
+           <div style="padding: 2px;">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.8.1.2.2.1.3&nbsp;&nbsp;</span>谏议大臣魏征
+           </div>
+          </div>
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item936')"><span class="SerialNumber">1.1.8.1.2.2.2&nbsp;&nbsp;</span>开元盛世</a>
+          </div>
+          <div class="TreeNode" id="item936">
+           <div style="padding: 2px;">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.8.1.2.2.2.1&nbsp;&nbsp;</span>唐玄宗
+           </div>
+          </div>
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item938')"><span class="SerialNumber">1.1.8.1.2.3&nbsp;&nbsp;</span>安史之乱</a> <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+         </div>
+         <div class="TreeNode" id="item938">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.8.1.2.3.1&nbsp;&nbsp;</span>由盛转衰
+          </div>
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item940')"><span class="SerialNumber">1.1.8.1.2.4&nbsp;&nbsp;</span>农名起义</a>
+         </div>
+         <div class="TreeNode" id="item940">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.8.1.2.4.1&nbsp;&nbsp;</span>唐朝灭亡
+          </div>
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item942')"><span class="SerialNumber">1.1.8.2&nbsp;&nbsp;</span>中外交流</a>
+       </div>
+       <div class="TreeNode" id="item942">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.8.2.1&nbsp;&nbsp;</span>玄奘西行、天竺取经
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.8.2.2&nbsp;&nbsp;</span>高僧鉴真、东渡日本
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item945')"><span class="SerialNumber">1.1.8.3&nbsp;&nbsp;</span>经济</a>
+       </div>
+       <div class="TreeNode" id="item945">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.8.3.1&nbsp;&nbsp;</span>租庸调制（前期）
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.8.3.2&nbsp;&nbsp;</span>两税法（后期）
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item948')"><span class="SerialNumber">1.1.8.4&nbsp;&nbsp;</span>科技</a>
+       </div>
+       <div class="TreeNode" id="item948">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item949')"><span class="SerialNumber">1.1.8.4.1&nbsp;&nbsp;</span>建筑</a>
+        </div>
+        <div class="TreeNode" id="item949">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item950')"><span class="SerialNumber">1.1.8.4.1.1&nbsp;&nbsp;</span>赵州桥</a>
+         </div>
+         <div class="TreeNode" id="item950">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.8.4.1.1.1&nbsp;&nbsp;</span>隋 李春设计
+          </div>
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.8.4.1.1.2&nbsp;&nbsp;</span>现存世上最古老的石拱桥
+          </div>
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item953')"><span class="SerialNumber">1.1.8.4.2&nbsp;&nbsp;</span>雕版印刷术</a>
+        </div>
+        <div class="TreeNode" id="item953">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.8.4.2.1&nbsp;&nbsp;</span>《金刚经》现存最早标有确切日期的雕版印刷品
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item955')"><span class="SerialNumber">1.1.8.4.3&nbsp;&nbsp;</span>火药</a>
+        </div>
+        <div class="TreeNode" id="item955">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.8.4.3.1&nbsp;&nbsp;</span>唐末，开始运用于军事
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item957')"><span class="SerialNumber">1.1.8.4.4&nbsp;&nbsp;</span>医学</a> <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+        </div>
+        <div class="TreeNode" id="item957">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.8.4.4.1&nbsp;&nbsp;</span>孙思邈 “药王”《千金方》
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item959')"><span class="SerialNumber">1.1.8.5&nbsp;&nbsp;</span>唐诗</a>
+       </div>
+       <div class="TreeNode" id="item959">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item960')"><span class="SerialNumber">1.1.8.5.1&nbsp;&nbsp;</span>初唐</a>
+        </div>
+        <div class="TreeNode" id="item960">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.8.5.1.1&nbsp;&nbsp;</span>初唐四杰：王勃、杨炯、卢照邻、骆宾王
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item962')"><span class="SerialNumber">1.1.8.5.2&nbsp;&nbsp;</span>盛唐</a>
+        </div>
+        <div class="TreeNode" id="item962">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item963')"><span class="SerialNumber">1.1.8.5.2.1&nbsp;&nbsp;</span>边塞诗人</a>
+         </div>
+         <div class="TreeNode" id="item963">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.8.5.2.1.1&nbsp;&nbsp;</span>高适、岑参
+          </div>
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item965')"><span class="SerialNumber">1.1.8.5.2.2&nbsp;&nbsp;</span>山水田园诗人</a>
+         </div>
+         <div class="TreeNode" id="item965">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.8.5.2.2.1&nbsp;&nbsp;</span>王维、孟浩然
+          </div>
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item967')"><span class="SerialNumber">1.1.8.5.2.3&nbsp;&nbsp;</span>诗仙李白</a> <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+         </div>
+         <div class="TreeNode" id="item967">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.8.5.2.3.1&nbsp;&nbsp;</span>字太白、号青莲居士，浪漫主义诗人
+          </div>
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.8.5.2.3.2&nbsp;&nbsp;</span>《蜀道难》《望庐山瀑布》《将进酒》
+          </div>
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item970')"><span class="SerialNumber">1.1.8.5.2.4&nbsp;&nbsp;</span>诗圣杜甫</a> <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+         </div>
+         <div class="TreeNode" id="item970">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.8.5.2.4.1&nbsp;&nbsp;</span>字子美、自号少陵野老，现实主义诗人
+          </div>
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.8.5.2.4.2&nbsp;&nbsp;</span>《蜀相》《三吏》《三别》
+          </div>
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item973')"><span class="SerialNumber">1.1.8.5.3&nbsp;&nbsp;</span>中唐</a>
+        </div>
+        <div class="TreeNode" id="item973">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item974')"><span class="SerialNumber">1.1.8.5.3.1&nbsp;&nbsp;</span>白居易</a> <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+         </div>
+         <div class="TreeNode" id="item974">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.8.5.3.1.1&nbsp;&nbsp;</span>字乐天、号香山居士
+          </div>
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.8.5.3.1.2&nbsp;&nbsp;</span>《长恨歌》《琵琶行》《卖炭翁》
+          </div>
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item977')"><span class="SerialNumber">1.1.8.5.4&nbsp;&nbsp;</span>晚唐</a>
+        </div>
+        <div class="TreeNode" id="item977">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.8.5.4.1&nbsp;&nbsp;</span>杜牧和李商隐（小李杜）
+         </div>
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item979')"><span class="SerialNumber">1.1.9&nbsp;&nbsp;</span>两宋</a>
+      </div>
+      <div class="TreeNode" id="item979">
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item980')"><span class="SerialNumber">1.1.9.1&nbsp;&nbsp;</span>北宋的建立</a>
+       </div>
+       <div class="TreeNode" id="item980">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.9.1.1&nbsp;&nbsp;</span>赵匡胤 陈桥兵变
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.9.1.2&nbsp;&nbsp;</span>定都东京（开封）
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.9.1.3&nbsp;&nbsp;</span>杯酒释兵权
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item984')"><span class="SerialNumber">1.1.9.2&nbsp;&nbsp;</span>王安石变法</a> <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+       </div>
+       <div class="TreeNode" id="item984">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.9.2.1&nbsp;&nbsp;</span>富国强兵
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.9.2.2&nbsp;&nbsp;</span>市易法、青苗法、募役法、方田均税法、农田水利法
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item987')"><span class="SerialNumber">1.1.9.3&nbsp;&nbsp;</span>北宋的灭亡</a>
+       </div>
+       <div class="TreeNode" id="item987">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.9.3.1&nbsp;&nbsp;</span>1127 靖康之耻
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item989')"><span class="SerialNumber">1.1.9.4&nbsp;&nbsp;</span>南宋的建立</a>
+       </div>
+       <div class="TreeNode" id="item989">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.9.4.1&nbsp;&nbsp;</span>1127 赵构定都临安（杭州）
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item991')"><span class="SerialNumber">1.1.9.5&nbsp;&nbsp;</span>抗金斗争</a>
+       </div>
+       <div class="TreeNode" id="item991">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.9.5.1&nbsp;&nbsp;</span>抗金名将岳飞
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item993')"><span class="SerialNumber">1.1.9.6&nbsp;&nbsp;</span>科技</a>
+       </div>
+       <div class="TreeNode" id="item993">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.9.6.1&nbsp;&nbsp;</span>北宋 毕昇发明活字印刷术
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.9.6.2&nbsp;&nbsp;</span>指南针普遍运用于航海
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.9.6.3&nbsp;&nbsp;</span>火药普遍运用于军事
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.9.6.4&nbsp;&nbsp;</span>北宋沈括《梦溪笔谈》中国科学史的里程碑 <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item998')"><span class="SerialNumber">1.1.9.7&nbsp;&nbsp;</span>宋词</a> <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+       </div>
+       <div class="TreeNode" id="item998">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item999')"><span class="SerialNumber">1.1.9.7.1&nbsp;&nbsp;</span>豪放派</a>
+        </div>
+        <div class="TreeNode" id="item999">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.9.7.1.1&nbsp;&nbsp;</span>苏轼、辛弃疾
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1001')"><span class="SerialNumber">1.1.9.7.2&nbsp;&nbsp;</span>婉约派</a>
+        </div>
+        <div class="TreeNode" id="item1001">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.9.7.2.1&nbsp;&nbsp;</span>柳永、李清照
+         </div>
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1003')"><span class="SerialNumber">1.1.10&nbsp;&nbsp;</span>元朝</a>
+      </div>
+      <div class="TreeNode" id="item1003">
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1004')"><span class="SerialNumber">1.1.10.1&nbsp;&nbsp;</span>蒙古的兴起</a>
+       </div>
+       <div class="TreeNode" id="item1004">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.10.1.1&nbsp;&nbsp;</span>12世纪中后期，铁木真（成吉思汗）建立蒙古汗国
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1006')"><span class="SerialNumber">1.1.10.2&nbsp;&nbsp;</span>元朝的建立</a>
+       </div>
+       <div class="TreeNode" id="item1006">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.10.2.1&nbsp;&nbsp;</span>1271 忽必烈改国号为元，次年定都燕京，称为大都（今北京）
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1008')"><span class="SerialNumber">1.1.10.3&nbsp;&nbsp;</span>制度与机构</a>
+       </div>
+       <div class="TreeNode" id="item1008">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.10.3.1&nbsp;&nbsp;</span>行省制度：地方政治制度进入划省而治的阶段 <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.10.3.2&nbsp;&nbsp;</span>宣政院：统领宗教事务和管辖西藏地区
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.10.3.3&nbsp;&nbsp;</span>澎湖巡检司：管辖澎湖、台湾地区
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1012')"><span class="SerialNumber">1.1.10.4&nbsp;&nbsp;</span>科技</a>
+       </div>
+       <div class="TreeNode" id="item1012">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.10.4.1&nbsp;&nbsp;</span>郭守敬《授时历》
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1014')"><span class="SerialNumber">1.1.10.5&nbsp;&nbsp;</span>元曲四大家</a> <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+       </div>
+       <div class="TreeNode" id="item1014">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.10.5.1&nbsp;&nbsp;</span>关汉卿《窦娥冤》
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.10.5.2&nbsp;&nbsp;</span>马致远《汉宫秋》
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.10.5.3&nbsp;&nbsp;</span>郑光祖《倩女离魂》
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.10.5.4&nbsp;&nbsp;</span>白朴《梧桐雨》
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1019')"><span class="SerialNumber">1.1.11&nbsp;&nbsp;</span>明清</a>
+      </div>
+      <div class="TreeNode" id="item1019">
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1020')"><span class="SerialNumber">1.1.11.1&nbsp;&nbsp;</span>政权的更迭</a>
+       </div>
+       <div class="TreeNode" id="item1020">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1021')"><span class="SerialNumber">1.1.11.1.1&nbsp;&nbsp;</span>明朝</a>
+        </div>
+        <div class="TreeNode" id="item1021">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1022')"><span class="SerialNumber">1.1.11.1.1.1&nbsp;&nbsp;</span>建立</a>
+         </div>
+         <div class="TreeNode" id="item1022">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.11.1.1.1.1&nbsp;&nbsp;</span>朱元璋 定都南京
+          </div>
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1024')"><span class="SerialNumber">1.1.11.1.1.2&nbsp;&nbsp;</span>封建君主制的加强</a> <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+         </div>
+         <div class="TreeNode" id="item1024">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.11.1.1.2.1&nbsp;&nbsp;</span>中央：废丞相设内阁
+          </div>
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.11.1.1.2.2&nbsp;&nbsp;</span>科举：八股取士
+          </div>
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1027')"><span class="SerialNumber">1.1.11.1.1.3&nbsp;&nbsp;</span>明末农民起义</a>
+         </div>
+         <div class="TreeNode" id="item1027">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.11.1.1.3.1&nbsp;&nbsp;</span>1644年李自成攻陷北京，明朝灭亡
+          </div>
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1029')"><span class="SerialNumber">1.1.11.1.2&nbsp;&nbsp;</span>清朝</a>
+        </div>
+        <div class="TreeNode" id="item1029">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1030')"><span class="SerialNumber">1.1.11.1.2.1&nbsp;&nbsp;</span>建立</a>
+         </div>
+         <div class="TreeNode" id="item1030">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.11.1.2.1.1&nbsp;&nbsp;</span>1616年努尔哈赤建后金，1636年皇太极改国号为清，1644年清朝定都北京
+          </div>
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1032')"><span class="SerialNumber">1.1.11.1.2.2&nbsp;&nbsp;</span>加强皇权</a>
+         </div>
+         <div class="TreeNode" id="item1032">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.11.1.2.2.1&nbsp;&nbsp;</span>政治：雍正时期设立军机处 <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+          </div>
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.11.1.2.2.2&nbsp;&nbsp;</span>外交：闭关锁国
+          </div>
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1035')"><span class="SerialNumber">1.1.11.2&nbsp;&nbsp;</span>对外关系</a>
+       </div>
+       <div class="TreeNode" id="item1035">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.11.2.1&nbsp;&nbsp;</span>郑和下西洋：明成祖时期，七次下西洋，最远到达红海沿岸和非洲东海岸
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.11.2.2&nbsp;&nbsp;</span>郑成功收复台湾：荷兰殖民者
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.11.2.3&nbsp;&nbsp;</span>雅克萨战争：清军大败俄军，签订《尼布楚条约》 <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1039')"><span class="SerialNumber">1.1.11.3&nbsp;&nbsp;</span>科技</a> <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+       </div>
+       <div class="TreeNode" id="item1039">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.11.3.1&nbsp;&nbsp;</span>明 李时珍 《本草纲目》东方医药巨典
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.11.3.2&nbsp;&nbsp;</span>明 徐光启 《农政全书》
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.11.3.3&nbsp;&nbsp;</span>明 宋应星 《天工开物》中国17世纪的工艺百科全书
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1043')"><span class="SerialNumber">1.1.11.4&nbsp;&nbsp;</span>小说</a> <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">考点</span> </span>
+       </div>
+       <div class="TreeNode" id="item1043">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.11.4.1&nbsp;&nbsp;</span>四大名著：《三国演义》《水浒传》《西游记》《红楼梦》
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.11.4.2&nbsp;&nbsp;</span>清 吴敬梓《儒林外史》
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.11.4.3&nbsp;&nbsp;</span>清 蒲松龄《聊斋志异》
+        </div>
+       </div>
+      </div>
+     </div>
+     <div style="padding: 2px;">
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1047')"><span class="SerialNumber">1.2&nbsp;&nbsp;</span>生物分类</a>
+     </div>
+     <div class="nodeValue">
+      <div style="padding: 0 0 0 96px;">
+       <div class="valueBox">
+        https://www.zhihu.com/question/41580677/answer/1300242801
+       </div>
+      </div>
+     </div>
+     <div class="TreeNode" id="item1047">
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1048')"><span class="SerialNumber">1.2.1&nbsp;&nbsp;</span>非细胞生物</a>
+      </div>
+      <div class="TreeNode" id="item1048">
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1049')"><span class="SerialNumber">1.2.1.1&nbsp;&nbsp;</span>病毒</a>
+       </div>
+       <div class="TreeNode" id="item1049">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.1.1&nbsp;&nbsp;</span>DNA病毒
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.1.2&nbsp;&nbsp;</span>RNA病毒 <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #0D3928; color: #FFFFFF;">已掌握</span> </span>
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1052')"><span class="SerialNumber">1.2.2&nbsp;&nbsp;</span>细胞生物</a>
+      </div>
+      <div class="TreeNode" id="item1052">
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1053')"><span class="SerialNumber">1.2.2.1&nbsp;&nbsp;</span>原核生物域</a> <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #EDD1D8; color: #000000;">容易错</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #003472; color: #FFFFFF;">糊涂着</span> </span>
+       </div>
+       <div class="TreeNode" id="item1053">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.1.1&nbsp;&nbsp;</span>古菌域
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1055')"><span class="SerialNumber">1.2.2.2&nbsp;&nbsp;</span>真核生物域</a>
+       </div>
+       <div class="TreeNode" id="item1055">
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.2.1&nbsp;&nbsp;</span>原生生物界 <span class="NodeTag"> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #EDD1D8; color: #000000;">容易错</span> </span>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1057')"><span class="SerialNumber">1.2.2.2.2&nbsp;&nbsp;</span>植物界</a>
+        </div>
+        <div class="TreeNode" id="item1057">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.2.2.1&nbsp;&nbsp;</span>孢子植物
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1059')"><span class="SerialNumber">1.2.2.2.2.2&nbsp;&nbsp;</span>种子植物</a>
+         </div>
+         <div class="TreeNode" id="item1059">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.2.2.2.1&nbsp;&nbsp;</span>裸子植物
+          </div>
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.2.2.2.2&nbsp;&nbsp;</span>被子植物
+          </div>
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1062')"><span class="SerialNumber">1.2.2.2.3&nbsp;&nbsp;</span>动物界</a>
+        </div>
+        <div class="TreeNode" id="item1062">
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1063')"><span class="SerialNumber">1.2.2.2.3.1&nbsp;&nbsp;</span>原生动物亚界</a>
+         </div>
+         <div class="TreeNode" id="item1063">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.2.3.1.1&nbsp;&nbsp;</span>原生动物门
+          </div>
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1065')"><span class="SerialNumber">1.2.2.2.3.2&nbsp;&nbsp;</span>中生动物亚界</a>
+         </div>
+         <div class="TreeNode" id="item1065">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.2.3.2.1&nbsp;&nbsp;</span>中生动物门
+          </div>
+         </div>
+         <div style="padding: 2px;">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1067')"><span class="SerialNumber">1.2.2.2.3.3&nbsp;&nbsp;</span>后生动物亚界</a>
+         </div>
+         <div class="TreeNode" id="item1067">
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.2.3.3.1&nbsp;&nbsp;</span>原口动物总门
+          </div>
+          <div style="padding: 2px;">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.2.3.3.2&nbsp;&nbsp;</span>后口动物总门
+          </div>
+         </div>
+        </div>
+        <div style="padding: 2px;">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.2.4&nbsp;&nbsp;</span>真菌界
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+   <hr>
+   <p style="font-size:0.8em">* 网页可编辑时，链接和控件可能不响应。</p>
+  </div>
+ </body>
+</html>
+</html>

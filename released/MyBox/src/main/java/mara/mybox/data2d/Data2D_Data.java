@@ -4,11 +4,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.NumberTools;
 import static mara.mybox.tools.TmpFileTools.getPathTempFile;
 import mara.mybox.value.AppPaths;
 import static mara.mybox.value.Languages.message;
@@ -86,6 +88,10 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         }
     }
 
+    public boolean supportMultipleLine() {
+        return type != Type.Texts && type != Type.Matrix;
+    }
+
     /*
         matrix
      */
@@ -97,7 +103,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         values
      */
     public String randomDouble(Random random, boolean nonNegative) {
-        return DoubleTools.format(DoubleTools.random(random, maxRandom, nonNegative), scale);
+        return NumberTools.format(DoubleTools.random(random, maxRandom, nonNegative), scale);
     }
 
     public String randomString(Random random) {
@@ -168,13 +174,21 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         return -1;
     }
 
-    public List<String> tableRowWithoutNumber(int rowIndex) {
+    public List<String> tableRow(int rowIndex, boolean withRowNumber, boolean formatValues) {
         try {
-            List<String> rowStrings = tableData().get(rowIndex);
+            List<String> trow = tableData().get(rowIndex);
             List<String> row = new ArrayList<>();
+            if (withRowNumber) {
+                row.add(trow.get(0));
+            }
             for (int i = 0; i < columns.size(); i++) {
-                String v = rowStrings.get(i + 1);
-                row.add(columns.get(i).savedValue(v));
+                String v = trow.get(i + 1);
+                if (formatValues) {
+                    v = columns.get(i).format(v);
+                } else {
+                    v = columns.get(i).savedValue(v);
+                }
+                row.add(v);
             }
             return row;
         } catch (Exception e) {
@@ -182,23 +196,21 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         }
     }
 
-    public List<List<String>> tableRowsWithoutNumber() {
+    public List<List<String>> tableRows(boolean withRowNumber, boolean formatValues) {
         try {
             List<List<String>> rows = new ArrayList<>();
-            List<List<String>> data = tableData();
-            for (int i = 0; i < data.size(); i++) {
-                List<String> trow = data.get(i);
-                List<String> row = new ArrayList<>();
-                for (int j = 0; j < columns.size(); j++) {
-                    String v = trow.get(j + 1);
-                    row.add(columns.get(j).savedValue(v));
-                }
+            for (int i = 0; i < tableData().size(); i++) {
+                List<String> row = tableRow(i, withRowNumber, formatValues);
                 rows.add(row);
             }
             return rows;
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public List<List<String>> tableRows(boolean withRowNumber) {
+        return tableRows(withRowNumber, false);
     }
 
     public List<String> newRow() {
@@ -389,6 +401,33 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         }
     }
 
+    public List<Data2DColumn> makeColumns(List<Integer> indices, boolean rowNumber) {
+        return makeColumns(columns, indices, rowNumber);
+    }
+
+    public static List<Data2DColumn> makeColumns(List<Data2DColumn> sourceColumns,
+            List<Integer> indices, boolean rowNumber) {
+        try {
+            if (indices == null || sourceColumns == null || sourceColumns.isEmpty()) {
+                return null;
+            }
+            List<Data2DColumn> targetCcolumns = new ArrayList<>();
+            if (rowNumber) {
+                targetCcolumns.add(new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.String));
+            }
+            for (Integer i : indices) {
+                Data2DColumn column = sourceColumns.get(i).cloneAll();
+                String name = column.getColumnName();
+                column.setD2cid(-1).setD2id(-1).setColumnName(name);
+                targetCcolumns.add(column);
+            }
+            return targetCcolumns;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public List<Integer> columnIndices() {
         try {
             if (!isColumnsValid()) {
@@ -516,6 +555,21 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         for (Data2DColumn column : columns) {
             column.setStatistic(null);
         }
+    }
+
+    public boolean includeCoordinate() {
+        if (columns == null) {
+            return false;
+        }
+        boolean hasLongitude = false, haslatitude = false;
+        for (Data2DColumn column : columns) {
+            if (column.getType() == ColumnType.Longitude) {
+                hasLongitude = true;
+            } else if (column.getType() == ColumnType.Latitude) {
+                haslatitude = true;
+            }
+        }
+        return hasLongitude && haslatitude;
     }
 
 }

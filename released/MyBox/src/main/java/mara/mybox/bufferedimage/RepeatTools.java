@@ -24,8 +24,11 @@ public class RepeatTools {
             int width = scaled.getWidth();
             int height = scaled.getHeight();
             int imageType = BufferedImage.TYPE_INT_ARGB;
-            int totalWidth = width * repeatH + interval * (repeatH - 1) + margin * 2;
-            int totalHeight = height * repeatV + interval * (repeatV - 1) + margin * 2;
+            // Borders between repeats are overriden
+            int stepx = width + interval - 1;
+            int stepy = height + interval - 1;
+            int totalWidth = width + stepx * (repeatH - 1) + margin * 2;
+            int totalHeight = height + stepy * (repeatV - 1) + margin * 2;
             BufferedImage target = new BufferedImage(totalWidth, totalHeight, imageType);
             Graphics2D g = target.createGraphics();
             if (AppVariables.imageRenderHints != null) {
@@ -40,9 +43,9 @@ public class RepeatTools {
                 x = margin;
                 for (int h = 0; h < repeatH; ++h) {
                     g.drawImage(scaled, x, y, width, height, null);
-                    x += width + interval;
+                    x += stepx;
                 }
-                y += height + interval;
+                y += stepy;
             }
             return target;
         } catch (Exception e) {
@@ -71,24 +74,26 @@ public class RepeatTools {
             g.fillRect(0, 0, canvasWidth, canvasHeight);
 
             int x = margin, y = margin;
-            for (int v = margin; v < canvasHeight - height - margin; v += height + interval) {
-                for (int h = margin; h < canvasWidth - width - margin; h += width + interval) {
+            int stepx = width + interval - 1;
+            int stepy = height + interval - 1;
+            for (int v = margin; v < canvasHeight - height - margin; v += stepy) {
+                for (int h = margin; h < canvasWidth - width - margin; h += stepx) {
                     g.drawImage(scaled, h, v, width, height, null);
-                    x = h + width + interval;
-                    y = v + height + interval;
+                    x = h + stepx;
+                    y = v + stepy;
                 }
             }
             int leftWidth = canvasWidth - margin - x;
             if (leftWidth > 0) {
                 BufferedImage cropped = CropTools.cropOutside(scaled, 0, 0, leftWidth - 1, height - 1);
-                for (int v = margin; v < canvasHeight - height - margin; v += height + interval) {
+                for (int v = margin; v < canvasHeight - height - margin; v += stepy) {
                     g.drawImage(cropped, x, v, leftWidth, height, null);
                 }
             }
             int leftHeight = canvasHeight - margin - y;
             if (leftHeight > 0) {
                 BufferedImage cropped = CropTools.cropOutside(scaled, 0, 0, width - 1, leftHeight - 1);
-                for (int h = margin; h < canvasWidth - width - margin; h += width + interval) {
+                for (int h = margin; h < canvasWidth - width - margin; h += stepx) {
                     g.drawImage(cropped, h, y, width, leftHeight, null);
                 }
             }

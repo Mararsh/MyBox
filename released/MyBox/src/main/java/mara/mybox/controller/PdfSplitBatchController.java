@@ -140,7 +140,7 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
     }
 
     private int splitByPagesSize(PDDocument source) {
-        return split(source, currentParameters.fromPage, currentParameters.toPage, splitController.size);
+        return split(source, currentParameters.fromPage, currentParameters.toPage, splitController.pSize());
     }
 
     private int splitByFilesNumber(PDDocument source) {
@@ -157,9 +157,10 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
     private int splitByList(PDDocument source) {
         try {
             List<PDDocument> docs = new ArrayList<>();
-            for (int i = 0; i < splitController.list.size();) {
-                int start = splitController.list.get(i++);
-                int end = splitController.list.get(i++);
+            List<Integer> list = splitController.pList();
+            for (int i = 0; i < list.size();) {
+                int start = list.get(i++);
+                int end = list.get(i++);
                 if (start < currentParameters.fromPage) {
                     start = currentParameters.fromPage;
                 }

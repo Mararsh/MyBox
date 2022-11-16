@@ -255,7 +255,7 @@ public class JexlEditor extends JShellEditor {
             });
             buttons.add(scaleButton);
 
-            Button formatButton = new Button("DoubleTools.format(52362.18903, 2)");
+            Button formatButton = new Button("NumberTools.format(52362.18903, 2)");
             formatButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {

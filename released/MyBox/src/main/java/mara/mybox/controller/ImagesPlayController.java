@@ -59,6 +59,7 @@ public class ImagesPlayController extends BaseImagesListController {
     protected SlideShow ppt;
     protected ImageInputStream imageInputStream;
     protected ImageReader imageReader;
+    protected Thread frameThread;
 
     @FXML
     protected ToggleGroup typeGroup;
@@ -134,7 +135,20 @@ public class ImagesPlayController extends BaseImagesListController {
 
             fileVBox.getChildren().remove(pdfBox);
 
-            playController.setParameters(this);
+            frameThread = new Thread() {
+                @Override
+                public void run() {
+                    displayFrame(playController.currentIndex);
+                }
+            };
+            playController.setParameters(this, frameThread, null);
+
+            playController.stopped.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    closeFile();
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -257,7 +271,7 @@ public class ImagesPlayController extends BaseImagesListController {
             framesNumber = imageInfos.size();
             if (!fileFormat.equalsIgnoreCase("gif")) {
                 for (int i = 0; i < framesNumber; i++) {
-                    imageInfos.get(i).setDuration(playController.interval);
+                    imageInfos.get(i).setDuration(playController.timeValue);
                 }
             }
         } catch (Exception e) {
@@ -329,7 +343,7 @@ public class ImagesPlayController extends BaseImagesListController {
                 imageInfo.setIndex(i);
                 imageInfo.setWidth(width);
                 imageInfo.setHeight(height);
-                imageInfo.setDuration(playController.interval);
+                imageInfo.setDuration(playController.timeValue);
                 imageInfos.add(imageInfo);
             }
         } catch (Exception e) {
@@ -372,7 +386,7 @@ public class ImagesPlayController extends BaseImagesListController {
             for (int i = 0; i < framesNumber; i++) {
                 ImageInformation imageInfo = new ImageInformation(sourceFile);
                 imageInfo.setIndex(i);
-                imageInfo.setDuration(playController.interval);
+                imageInfo.setDuration(playController.timeValue);
                 imageInfo.setDpi(dpi);
                 imageInfos.add(imageInfo);
             }
@@ -420,7 +434,7 @@ public class ImagesPlayController extends BaseImagesListController {
                             }
                             ImageInformation info = imageInfos.get(i);
                             if (info.getDuration() < 0) {
-                                info.setDuration(playController.interval);
+                                info.setDuration(playController.timeValue);
                             }
                         }
                         return true;
@@ -541,7 +555,9 @@ public class ImagesPlayController extends BaseImagesListController {
                 return thumb;
             }
             info.setThumbnail(null);
-            if (fileFormat.equalsIgnoreCase("pdf")) {
+            if (fileFormat == null) {
+                info.loadThumbnail(loadWidth);
+            } else if (fileFormat.equalsIgnoreCase("pdf")) {
                 if (pdfRenderer == null) {
                     openPDF();
                 }
@@ -615,31 +631,32 @@ public class ImagesPlayController extends BaseImagesListController {
                 return;
             }
             imageInformation = imageInfos.get(index);
-            long interval;
-            if (imageInformation != null) {
-                interval = imageInformation.getDuration();
-            } else {
-                interval = playController.interval;
-            }
-            playController.currentDelay = (long) (interval / playController.speed);
             frameIndex = index;
             image = thumb(imageInformation);
-            imageView.setImage(image);
             if (image == null) {
-                playController.pause();
+//                playController.pause();
                 return;
             }
-            refinePane();
-            updateLabelsTitle();
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    imageView.setImage(image);
+                    refinePane();
+                    updateLabelsTitle();
+                }
+            });
 
             imageInformation.setThumbnail(null);
+            if (playController.stopped.get()) {
+                return;
+            }
             int next = playController.nextIndex();
             if (next >= 0 && index < imageInfos.size()) {
                 thumb(imageInfos.get(next));
             }
 
         } catch (Exception e) {
-            playController.clear();
+            playController.pauseAction();
             MyBoxLog.error(e.toString());
         }
     }

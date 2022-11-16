@@ -28,7 +28,7 @@ License:    Apache License Version 2.0
     <children>
         <HBox alignment="CENTER" VBox.vgrow="NEVER">
             <children>
-                <Label contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%CopyFilterQuery" textAlignment="CENTER" VBox.vgrow="NEVER" />
+                <Label contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%CopyFilterQueryConvert" textAlignment="CENTER" VBox.vgrow="NEVER" />
             </children>
         </HBox>
         <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
@@ -195,6 +195,7 @@ License:    Apache License Version 2.0
                                             <children>
                                                 <CheckBox fx:id="rowNumberCheck" mnemonicParsing="false" text="%RowNumber" />
                                                 <CheckBox fx:id="colNameCheck" mnemonicParsing="false" text="%ColumnName" />
+                                    <CheckBox fx:id="formatValuesCheck" layoutX="108.0" layoutY="10.0" mnemonicParsing="false" text="%SaveValuesAsFormat" />
                                             </children>
                                         </HBox>
                                         <VBox fx:id="targetBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">

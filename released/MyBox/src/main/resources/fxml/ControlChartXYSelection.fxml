@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+
+<FlowPane fx:id="thisPane" alignment="CENTER_LEFT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="200.0" vgap="2.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlChartXYSelection">
+              <children>
+                  <RadioButton fx:id="barChartRadio" mnemonicParsing="false" selected="true">
+                      <graphic>
+                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                  <Image url="@../buttons/iconBarChart.png" />
+                              </image>
+                          </ImageView>
+                      </graphic>
+                      <toggleGroup>
+                          <ToggleGroup fx:id="chartGroup" />
+                      </toggleGroup>
+                  </RadioButton>
+                  <RadioButton fx:id="stackedBarChartRadio" layoutX="255.0" layoutY="10.0" mnemonicParsing="false" toggleGroup="$chartGroup">
+                      <graphic>
+                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                  <Image url="@../buttons/iconStackedBarChart.png" />
+                              </image>
+                          </ImageView>
+                      </graphic>
+                  </RadioButton>
+                  <RadioButton fx:id="lineChartRadio" mnemonicParsing="false" toggleGroup="$chartGroup">
+                      <graphic>
+                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                  <Image url="@../buttons/iconLineChart.png" />
+                              </image>
+                          </ImageView>
+                      </graphic>
+                  </RadioButton>
+                  <RadioButton fx:id="scatterChartRadio" layoutX="51.0" layoutY="10.0" mnemonicParsing="false" toggleGroup="$chartGroup">
+                      <graphic>
+                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                  <Image url="@../buttons/iconScatterChart.png" />
+                              </image>
+                          </ImageView>
+                      </graphic>
+                  </RadioButton>
+                  <RadioButton fx:id="bubbleChartRadio" layoutX="133.0" layoutY="10.0" mnemonicParsing="false" toggleGroup="$chartGroup">
+                      <graphic>
+                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                  <Image url="@../buttons/iconBubbleChart.png" />
+                              </image>
+                          </ImageView>
+                      </graphic>
+                  </RadioButton>
+                  <RadioButton fx:id="areaChartRadio" layoutX="174.0" layoutY="10.0" mnemonicParsing="false" toggleGroup="$chartGroup">
+                      <graphic>
+                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                  <Image url="@../buttons/iconAreaChart.png" />
+                              </image>
+                          </ImageView>
+                      </graphic>
+                  </RadioButton>
+                  <RadioButton fx:id="stackedAreaChartRadio" layoutX="214.0" layoutY="10.0" mnemonicParsing="false" toggleGroup="$chartGroup">
+                      <graphic>
+                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                  <Image url="@../buttons/iconStackedAreaChart.png" />
+                              </image>
+                          </ImageView>
+                      </graphic>
+                  </RadioButton>
+              </children>
+          </FlowPane>

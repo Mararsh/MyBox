@@ -127,10 +127,11 @@ public class Data2DSpliceController extends BaseData2DController {
                         return false;
                     }
                     if (dataAController.isAllPages()) {
-                        csvA = dataAController.data2D.copy(null, dataAController.checkedColsIndices, false, true);
+                        csvA = dataAController.data2D.copy(null, dataAController.checkedColsIndices,
+                                false, true, false);
                     } else {
-                        csvA = DataFileCSV.save(null, task, dataAController.checkedColumns,
-                                dataAController.filtered(false));
+                        csvA = DataFileCSV.save(null, task, ",", dataAController.checkedColumns,
+                                dataAController.tableFiltered(false));
                     }
                     dataAController.data2D.stopTask();
                     if (csvA == null) {
@@ -143,10 +144,11 @@ public class Data2DSpliceController extends BaseData2DController {
                         return false;
                     }
                     if (dataBController.isAllPages()) {
-                        csvB = dataBController.data2D.copy(null, dataBController.checkedColsIndices, false, true);
+                        csvB = dataBController.data2D.copy(null, dataBController.checkedColsIndices,
+                                false, true, false);
                     } else {
-                        csvB = DataFileCSV.save(null, task, dataBController.checkedColumns,
-                                dataBController.filtered(false));
+                        csvB = DataFileCSV.save(null, task, ",", dataBController.checkedColumns,
+                                dataBController.tableFiltered(false));
                     }
                     dataBController.data2D.stopTask();
                     if (csvB == null) {

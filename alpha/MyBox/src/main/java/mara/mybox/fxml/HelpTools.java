@@ -114,4 +114,24 @@ public class HelpTools {
         }
     }
 
+    public static File aboutMedia() {
+        try {
+            StringTable table = new StringTable(null, Languages.message("AboutMedia"));
+            table.newLinkRow("FFmpegDocuments", "http://ffmpeg.org/documentation.html");
+            table.newLinkRow("FFmpeg wiki", "https://trac.ffmpeg.org");
+            table.newLinkRow("H264VideoEncodingGuide", "http://trac.ffmpeg.org/wiki/Encode/H.264");
+            table.newLinkRow("AACEncodingGuide", "https://trac.ffmpeg.org/wiki/Encode/AAC");
+            table.newLinkRow("UnderstandingRateControlModes", "https://slhck.info/video/2017/03/01/rate-control.html");
+            table.newLinkRow("CRFGuide", "https://slhck.info/video/2017/02/24/crf-guide.html");
+            table.newLinkRow("CapturingDesktopScreenRecording", "http://trac.ffmpeg.org/wiki/Capture/Desktop");
+
+            File htmFile = HtmlWriteTools.writeHtml(table.html());
+            return htmFile;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
 }

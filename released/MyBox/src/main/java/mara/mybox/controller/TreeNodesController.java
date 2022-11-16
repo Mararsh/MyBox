@@ -88,7 +88,7 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
     @Override
     protected void nodeAdded(TreeNode parent, TreeNode newNode) {
         if (caller != null) {
-            caller.addNewNode(caller.find(parent), newNode);
+            caller.addNewNode(caller.find(parent), newNode, true);
         }
         if (manageController != null) {
             manageController.nodeAdded(parent, newNode);
@@ -197,7 +197,7 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
         if (targetNode == null) {
             return null;
         }
-        TreeNode newNode = new TreeNode(targetNode, name, null);
+        TreeNode newNode = new TreeNode(targetNode, name);
         newNode = tableTreeNode.insertData(newNode);
         return newNode;
     }
@@ -322,6 +322,7 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
             }
             s.append(indentNode).append("</DIV>\n");
             String nodeValue = node.getValue();
+            String moreValue = node.getMore();
             if (nodeValue != null && !nodeValue.isBlank()) {
                 s.append(indentNode).append("<DIV class=\"nodeValue\">")
                         .append("<DIV style=\"padding: 0 0 0 ").append((indent + 4) * 6).append("px;\">")
@@ -329,7 +330,7 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
                 String nodeDisplay;
                 if (category.equals(TreeNode.WebFavorite)) {
                     nodeDisplay = "<A href=\"" + nodeValue + "\">";
-                    if (node.getMore() != null && !node.getMore().isBlank()) {
+                    if (moreValue != null && !moreValue.isBlank()) {
                         try {
                             nodeDisplay += "<IMG src=\"" + new File(node.getMore()).toURI().toString() + "\" width=40/>";
                         } catch (Exception e) {
@@ -342,6 +343,13 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
                     nodeDisplay = HtmlWriteTools.stringToHtml(nodeValue);
                 }
                 s.append(indentNode).append(nodeDisplay).append("\n");
+                s.append(indentNode).append("</DIV></DIV></DIV>\n");
+            }
+            if (moreValue != null && !moreValue.isBlank() && !category.equals(TreeNode.WebFavorite)) {
+                s.append(indentNode).append("<DIV class=\"nodeValue\">")
+                        .append("<DIV style=\"padding: 0 0 0 ").append((indent + 4) * 6).append("px;\">")
+                        .append("<DIV class=\"valueBox\">\n");
+                s.append(indentNode).append(HtmlWriteTools.stringToHtml(moreValue)).append("\n");
                 s.append(indentNode).append("</DIV></DIV></DIV>\n");
             }
             if (children != null && !children.isEmpty()) {
@@ -401,7 +409,7 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
             return null;
         }
         try {
-            TreeNode newNode = new TreeNode(targetNode, sourceNode.getTitle(), sourceNode.getValue());
+            TreeNode newNode = sourceNode.copyTo(targetNode);
             newNode = tableTreeNode.insertData(conn, newNode);
             if (newNode == null) {
                 return null;
@@ -469,7 +477,13 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
                 return TreeManageController.oneOpen();
             case TreeNode.JEXLCode:
                 return JexlController.open("", "", "");
+            case TreeNode.RowFilter:
+                return RowFilterController.open();
+            case TreeNode.MathFunction:
+                return MathFunctionController.open();
+
         }
         return null;
     }
+
 }

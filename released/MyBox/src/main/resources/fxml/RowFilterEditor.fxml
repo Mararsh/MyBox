@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.RowFilterEditor">
+    <children>
+        <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+            <tabs>
+                <Tab fx:id="valueTab" text="%RowFilter">
+                    <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
+                            <padding>
+                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                            </padding>
+                            <children>
+                                <HBox alignment="CENTER_LEFT" layoutX="12.0" layoutY="12.0" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                    <children>
+                                        <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/Red/iconTips.png" />
+                                            </image>
+                                        </ImageView>
+                                        <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
+                                            <children>
+                                                <Label minHeight="-Infinity" text="%MaxFilteredDataTake" wrapText="true" />
+                                                <TextField fx:id="maxInput" prefWidth="100.0" />
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </HBox>
+                                <FlowPane alignment="CENTER_RIGHT" hgap="2.0" vgap="2.0">
+                                    <children>
+                                        <Label minHeight="-Infinity" text="%TakeSourceDataWhenExpressionEmptyOr" wrapText="true" />
+                                        <RadioButton fx:id="trueRadio" mnemonicParsing="false" selected="true" text="true">
+                                            <toggleGroup>
+                                                <ToggleGroup fx:id="takeGroup" />
+                                            </toggleGroup>
+                                        </RadioButton>
+                                        <RadioButton fx:id="othersRadio" mnemonicParsing="false" text="%Others" toggleGroup="$takeGroup" />
+                                    </children>
+                                </FlowPane>
+                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                    <children>
+                                        <FlowPane alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" prefWrapLength="200.0" HBox.hgrow="ALWAYS">
+                                            <children>
+                                                <Button fx:id="clearScriptButton" mnemonicParsing="false" onAction="#clearValue">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconClear.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="historyScriptButton" mnemonicParsing="false" onAction="#showScriptHistories" onMouseEntered="#popScriptHistories">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconHistory.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="exampleScriptButton" mnemonicParsing="false" onAction="#showScriptExamples" onMouseEntered="#popScriptExamples">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconExamples.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                            </children>
+                                        </FlowPane>
+                                    </children>
+                                </HBox>
+                                <TextArea fx:id="valueInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+                <Tab fx:id="attributesTab" text="%Attributes">
+                    <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
+                            <children>
+                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                    <children>
+                                        <Label fx:id="chainLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
+                                        <Button fx:id="selectButton" mnemonicParsing="false" onAction="#selectParent">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconSelect.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                    <children>
+                                        <Label fx:id="idLabel" minHeight="-Infinity" text="%ID" wrapText="true" />
+                                        <TextField fx:id="idInput" disable="true" editable="false" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                    <children>
+                                        <Label fx:id="nameLabel" minHeight="-Infinity" text="%Name" wrapText="true" />
+                                        <TextField fx:id="nameInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                    <children>
+                                        <Label fx:id="timeLabel" minHeight="-Infinity" text="%UpdateTime" wrapText="true" />
+                                        <TextField fx:id="timeInput" editable="false" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                    <children>
+                                        <Label maxWidth="1.7976931348623157E308" wrapText="true" HBox.hgrow="ALWAYS" />
+                                        <Button fx:id="refreshTagsButton" mnemonicParsing="false" onAction="#refreshAction">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconRefresh.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="addTagButton" mnemonicParsing="false" onAction="#addTag">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconAdd.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                                <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                                    <columns>
+                                        <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308" prefWidth="-1.0">
+                                            <graphic>
+                                                <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
+                                            </graphic>
+                                        </TableColumn>
+                                        <TableColumn fx:id="colorColumn" prefWidth="75.0" text="%Color" />
+                                        <TableColumn fx:id="tagColumn" prefWidth="200.0" text="%Tag" />
+                                    </columns>
+                                </TableView>
+                            </children>
+                            <padding>
+                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                            </padding>
+                        </VBox>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </children>
+</VBox>

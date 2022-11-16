@@ -3,6 +3,7 @@ package mara.mybox.data2d.reader;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.calculation.DescriptiveStatistic;
+import mara.mybox.calculation.DescriptiveStatistic.StatisticType;
 import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.dev.MyBoxLog;
@@ -46,7 +47,7 @@ public class Data2DStatistic extends Data2DOperator {
                     return false;
                 }
                 colValues = new double[colsLen];
-                if (statisticCalculation.isSkewness()) {
+                if (statisticCalculation.include(StatisticType.Skewness)) {
                     skewnessList = new ArrayList<>();
                     for (int i = 0; i < cols.size(); i++) {
                         skewnessList.add(new Skewness());
@@ -65,7 +66,7 @@ public class Data2DStatistic extends Data2DOperator {
                 if (statisticAll == null) {
                     return false;
                 }
-                if (statisticCalculation.isSkewness()) {
+                if (statisticCalculation.include(StatisticType.Skewness)) {
                     skewnessAll = new Skewness();
                 }
                 break;
@@ -133,19 +134,19 @@ public class Data2DStatistic extends Data2DOperator {
                 } else {
                     statisticData[c].sum += v;
                 }
-                if (statisticCalculation.isMaximum() && v > statisticData[c].maximum) {
+                if (statisticCalculation.include(StatisticType.MaximumQ4) && v > statisticData[c].maximum) {
                     statisticData[c].maximum = v;
                 }
-                if (statisticCalculation.isMinimum() && v < statisticData[c].minimum) {
+                if (statisticCalculation.include(StatisticType.MinimumQ0) && v < statisticData[c].minimum) {
                     statisticData[c].minimum = v;
                 }
-                if (statisticCalculation.isGeometricMean()) {
+                if (statisticCalculation.include(StatisticType.GeometricMean)) {
                     statisticData[c].geometricMean = statisticData[c].geometricMean * v;
                 }
-                if (statisticCalculation.isSumSquares()) {
+                if (statisticCalculation.include(StatisticType.SumOfSquares)) {
                     statisticData[c].sumSquares += v * v;
                 }
-                if (statisticCalculation.isSkewness()) {
+                if (statisticCalculation.include(StatisticType.Skewness)) {
                     skewnessList.get(c).increment(v);
                 }
             }
@@ -205,19 +206,19 @@ public class Data2DStatistic extends Data2DOperator {
                 }
                 statisticAll.count++;
                 statisticAll.sum += v;
-                if (statisticCalculation.isMaximum() && v > statisticAll.maximum) {
+                if (statisticCalculation.include(StatisticType.MaximumQ4) && v > statisticAll.maximum) {
                     statisticAll.maximum = v;
                 }
-                if (statisticCalculation.isMinimum() && v < statisticAll.minimum) {
+                if (statisticCalculation.include(StatisticType.MinimumQ0) && v < statisticAll.minimum) {
                     statisticAll.minimum = v;
                 }
-                if (statisticCalculation.isGeometricMean()) {
+                if (statisticCalculation.include(StatisticType.GeometricMean)) {
                     statisticAll.geometricMean = statisticAll.geometricMean * v;
                 }
-                if (statisticCalculation.isSumSquares()) {
+                if (statisticCalculation.include(StatisticType.SumOfSquares)) {
                     statisticAll.sumSquares += v * v;
                 }
-                if (statisticCalculation.isSkewness()) {
+                if (statisticCalculation.include(StatisticType.Skewness)) {
                     skewnessAll.increment(v);
                 }
             }
@@ -293,7 +294,7 @@ public class Data2DStatistic extends Data2DOperator {
                             } else {
                                 statisticData[c].mean = Double.NaN;
                             }
-                            if (statisticCalculation.isGeometricMean()) {
+                            if (statisticCalculation.include(StatisticType.GeometricMean)) {
                                 if (!DoubleTools.invalidDouble(statisticData[c].geometricMean)) {
                                     statisticData[c].geometricMean = Math.pow(statisticData[c].geometricMean, 1d / statisticData[c].count);
                                 } else {
@@ -304,7 +305,7 @@ public class Data2DStatistic extends Data2DOperator {
                             statisticData[c].mean = Double.NaN;
                             statisticData[c].geometricMean = Double.NaN;
                         }
-                        if (statisticCalculation.isSkewness()) {
+                        if (statisticCalculation.include(StatisticType.Skewness)) {
                             statisticData[c].skewness = skewnessList.get(c).getResult();
                         }
                         if (statisticData[c].maximum == -Double.MAX_VALUE) {
@@ -320,10 +321,10 @@ public class Data2DStatistic extends Data2DOperator {
                         if (statisticData[c].count > 0 && !DoubleTools.invalidDouble(statisticData[c].dTmp)) {
                             statisticData[c].populationVariance = statisticData[c].dTmp / statisticData[c].count;
                             statisticData[c].sampleVariance = statisticData[c].dTmp / (statisticData[c].count - 1);
-                            if (statisticCalculation.isPopulationStandardDeviation()) {
+                            if (statisticCalculation.include(StatisticType.PopulationStandardDeviation)) {
                                 statisticData[c].populationStandardDeviation = Math.sqrt(statisticData[c].populationVariance);
                             }
-                            if (statisticCalculation.isSampleStandardDeviation()) {
+                            if (statisticCalculation.include(StatisticType.SampleStandardDeviation)) {
                                 statisticData[c].sampleStandardDeviation = Math.sqrt(statisticData[c].sampleVariance);
                             }
                         } else {
@@ -341,7 +342,7 @@ public class Data2DStatistic extends Data2DOperator {
                         } else {
                             statisticAll.mean = Double.NaN;
                         }
-                        if (statisticCalculation.isGeometricMean()) {
+                        if (statisticCalculation.include(StatisticType.GeometricMean)) {
                             if (!DoubleTools.invalidDouble(statisticAll.geometricMean)) {
                                 statisticAll.geometricMean = Math.pow(statisticAll.geometricMean, 1d / statisticAll.count);
                             } else {
@@ -352,7 +353,7 @@ public class Data2DStatistic extends Data2DOperator {
                         statisticAll.mean = Double.NaN;
                         statisticAll.geometricMean = Double.NaN;
                     }
-                    if (statisticCalculation.isSkewness()) {
+                    if (statisticCalculation.include(StatisticType.Skewness)) {
                         statisticAll.skewness = skewnessAll.getResult();
                     }
                     if (statisticAll.maximum == -Double.MAX_VALUE) {
@@ -366,10 +367,10 @@ public class Data2DStatistic extends Data2DOperator {
                     if (statisticAll.count > 0 && !DoubleTools.invalidDouble(statisticAll.dTmp)) {
                         statisticAll.populationVariance = statisticAll.dTmp / statisticAll.count;
                         statisticAll.sampleVariance = statisticAll.dTmp / (statisticAll.count - 1);
-                        if (statisticCalculation.isPopulationStandardDeviation()) {
+                        if (statisticCalculation.include(StatisticType.PopulationStandardDeviation)) {
                             statisticAll.populationStandardDeviation = Math.sqrt(statisticAll.populationVariance);
                         }
-                        if (statisticCalculation.isSampleStandardDeviation()) {
+                        if (statisticCalculation.include(StatisticType.SampleStandardDeviation)) {
                             statisticAll.sampleStandardDeviation = Math.sqrt(statisticAll.sampleVariance);
                         }
                     } else {

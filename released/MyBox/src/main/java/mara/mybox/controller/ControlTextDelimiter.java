@@ -139,7 +139,7 @@ public class ControlTextDelimiter extends BaseController {
                 }
             });
 
-            if (!isRead) {
+            if (!isRead || !canRegx) {
                 if (blanksRadio.isSelected()) {
                     blankRadio.setSelected(true);
                 }
@@ -273,7 +273,7 @@ public class ControlTextDelimiter extends BaseController {
 
     @FXML
     public void popRegexExample(MouseEvent mouseEvent) {
-        PopTools.popRegexExample(this, delimiterInput, mouseEvent);
+        PopTools.popRegexExamples(this, delimiterInput, mouseEvent);
     }
 
     @Override

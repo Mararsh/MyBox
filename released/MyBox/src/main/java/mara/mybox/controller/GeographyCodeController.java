@@ -16,7 +16,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
-import mara.mybox.data.CoordinateSystem;
+import mara.mybox.data.GeoCoordinateSystem;
 import mara.mybox.db.data.BaseDataAdaptor;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeTools;
@@ -56,7 +56,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
     @FXML
     protected TableColumn<GeographyCode, String> sourceColumn;
     @FXML
-    protected TableColumn<GeographyCode, CoordinateSystem> coordinateSystemColumn;
+    protected TableColumn<GeographyCode, GeoCoordinateSystem> coordinateSystemColumn;
     @FXML
     protected ColorSet predefinedColorSetController, inputtedColorSetController;
 
@@ -150,7 +150,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
     }
 
     public boolean mapCurrentPage() {
-        return mapController.mapOptionsController.currentPageRadio.isSelected();
+        return true;
     }
 
     @FXML
@@ -220,8 +220,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
 
                 @Override
                 protected boolean handle() {
-                    mapData = TableGeographyCode.queryCodes(dataQuerySQL,
-                            mapController.mapOptionsController.dataMax, true);
+                    mapData = TableGeographyCode.queryCodes(dataQuerySQL, -1, true);
                     return true;
                 }
 
@@ -297,8 +296,8 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             if (code == null) {
                 return;
             }
-            LocationInMapController controller = (LocationInMapController) openStage(Fxmls.LocationInMapFxml);
-            controller.loadCoordinate(null, code.getLongitude(), code.getLatitude());
+            LocationInMapController.load(code.getLongitude(), code.getLatitude());
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

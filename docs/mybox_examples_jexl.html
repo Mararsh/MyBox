@@ -1,0 +1,657 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    </head>
+<html>
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>JEXL代码</title>
+  <style type="text/css">
+            .center { text-align:center;  max-width:95%; }
+table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;}
+th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;}
+th { font-weight:bold;  text-align:center;}
+tr { height: 1.2em;  }
+.valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;}
+.boldText { font-weight:bold;  }
+.valueText { color:#2e598a;  }
+
+        </style>
+  <script>
+    function nodeClicked(id) {
+      var obj = document.getElementById(id);
+      var objv = obj.style.display;
+      if (objv == 'none') {
+        obj.style.display = 'block';
+      } else {
+        obj.style.display = 'none';
+      }
+    }
+    function showClass(className, show) {
+      var nodes = document.getElementsByClassName(className);  　
+      if ( show) {
+           for (var i = 0 ; i < nodes.length; i++) {
+              nodes[i].style.display = '';
+           }
+       } else {
+           for (var i = 0 ; i < nodes.length; i++) {
+              nodes[i].style.display = 'none';
+           }
+       }
+    }
+  </script>
+ </head>
+ <body contenteditable="false">
+  <div>
+   <div><input type="checkbox" checked onclick="showClass('TreeNode', this.checked);">展开 <input type="checkbox" onclick="showClass('SerialNumber', this.checked);">顺序号 <input type="checkbox" checked onclick="showClass('NodeTag', this.checked);">标签 <input type="checkbox" checked onclick="showClass('nodeValue', this.checked);">值
+   </div>
+   <hr>
+   <div style="padding: 2px;">
+    &nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item473')"><span class="SerialNumber">&nbsp;&nbsp;</span>JEXL代码</a>
+   </div>
+   <div class="TreeNode" id="item473">
+    <div style="padding: 2px;">
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item474')"><span class="SerialNumber">1&nbsp;&nbsp;</span>示例</a>
+    </div>
+    <div class="TreeNode" id="item474">
+     <div style="padding: 2px;">
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item475')"><span class="SerialNumber">1.1&nbsp;&nbsp;</span>对象</a>
+     </div>
+     <div class="TreeNode" id="item475">
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.1&nbsp;&nbsp;</span>双精度
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         var&nbsp;d&nbsp;=&nbsp;new('java.lang.Double',&nbsp;0d);<br> return&nbsp;'最小正值='&nbsp;+&nbsp;d.MIN_VALUE&nbsp;+&nbsp;'&nbsp;最大值='&nbsp;+&nbsp;d.MAX_VALUE;
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.2&nbsp;&nbsp;</span>字串
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         var&nbsp;s&nbsp;=&nbsp;new('java.lang.String',&nbsp;'Hello');<br> return&nbsp;'包含e：'+&nbsp;s.contains('e')&nbsp;+&nbsp;'&nbsp;&nbsp;长度：'&nbsp;+&nbsp;s.length();
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.3&nbsp;&nbsp;</span>时间
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         var&nbsp;date&nbsp;=&nbsp;new('java.util.Date');<br> return&nbsp;'当前时间：'&nbsp;+&nbsp;date.toString()&nbsp;+&nbsp;'&nbsp;&nbsp;值：'&nbsp;+&nbsp;date.getTime();
+        </div>
+       </div>
+      </div>
+     </div>
+     <div style="padding: 2px;">
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item479')"><span class="SerialNumber">1.2&nbsp;&nbsp;</span>Math</a>
+     </div>
+     <div class="TreeNode" id="item479">
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1&nbsp;&nbsp;</span>欧拉数
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         Math.E
+        </div>
+       </div>
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         jexlContext.set("Math",&nbsp;Math.class);
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2&nbsp;&nbsp;</span>圆周率
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         Math.PI
+        </div>
+       </div>
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         jexlContext.set("Math",&nbsp;Math.class);
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.3&nbsp;&nbsp;</span>绝对值
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         Math.abs(-5.611)
+        </div>
+       </div>
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         jexlContext.set("Math",&nbsp;Math.class);
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.4&nbsp;&nbsp;</span>平方根
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         Math.sqrt(9)
+        </div>
+       </div>
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         jexlContext.set("Math",&nbsp;Math.class);
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.5&nbsp;&nbsp;</span>三次方根
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         Math.cbrt(27)
+        </div>
+       </div>
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         jexlContext.set("Math",&nbsp;Math.class);
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.6&nbsp;&nbsp;</span>幂
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         Math.pow(2,5)
+        </div>
+       </div>
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         jexlContext.set("Math",&nbsp;Math.class);
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.7&nbsp;&nbsp;</span>欧拉冥
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         Math.exp(2)
+        </div>
+       </div>
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         jexlContext.set("Math",&nbsp;Math.class);
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.8&nbsp;&nbsp;</span>自然对数（底为e）
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         Math.log(6)
+        </div>
+       </div>
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         jexlContext.set("Math",&nbsp;Math.class);
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.9&nbsp;&nbsp;</span>常用对数（底为10）
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         Math.log10(6)
+        </div>
+       </div>
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         jexlContext.set("Math",&nbsp;Math.class);
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.10&nbsp;&nbsp;</span>余弦
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         Math.cos(0)
+        </div>
+       </div>
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         jexlContext.set("Math",&nbsp;Math.class);
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.11&nbsp;&nbsp;</span>正弦
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         Math.sin(9)
+        </div>
+       </div>
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         jexlContext.set("Math",&nbsp;Math.class);
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.12&nbsp;&nbsp;</span>正切
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         Math.tan(5)
+        </div>
+       </div>
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         jexlContext.set("Math",&nbsp;Math.class);
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.13&nbsp;&nbsp;</span>反正切
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         Math.atan(-7.3)
+        </div>
+       </div>
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         jexlContext.set("Math",&nbsp;Math.class);
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.14&nbsp;&nbsp;</span>反余弦
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         Math.acos(0.5)
+        </div>
+       </div>
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         jexlContext.set("Math",&nbsp;Math.class);
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.15&nbsp;&nbsp;</span>反正弦
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         Math.asin(0.3)
+        </div>
+       </div>
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         jexlContext.set("Math",&nbsp;Math.class);
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.16&nbsp;&nbsp;</span>上舍入
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         Math.ceil(4.13)
+        </div>
+       </div>
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         jexlContext.set("Math",&nbsp;Math.class);
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.17&nbsp;&nbsp;</span>下舍入
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         Math.floor(4.67)
+        </div>
+       </div>
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         jexlContext.set("Math",&nbsp;Math.class);
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.18&nbsp;&nbsp;</span>四舍五入
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         Math.round(4.83)
+        </div>
+       </div>
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         jexlContext.set("Math",&nbsp;Math.class);
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.19&nbsp;&nbsp;</span>随机数
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         Math.random(&nbsp;)
+        </div>
+       </div>
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         jexlContext.set("Math",&nbsp;Math.class);
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.20&nbsp;&nbsp;</span>大值
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         Math.max(1,-3)
+        </div>
+       </div>
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         jexlContext.set("Math",&nbsp;Math.class);
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.21&nbsp;&nbsp;</span>小值
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         Math.min(1,-3)
+        </div>
+       </div>
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         jexlContext.set("Math",&nbsp;Math.class);
+        </div>
+       </div>
+      </div>
+     </div>
+     <div style="padding: 2px;">
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item501')"><span class="SerialNumber">1.3&nbsp;&nbsp;</span>布尔表达式</a>
+     </div>
+     <div class="TreeNode" id="item501">
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.1&nbsp;&nbsp;</span>数组包含
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         var&nbsp;value&nbsp;=&nbsp;3;<br> var&nbsp;array&nbsp;=&nbsp;[1,'2',3,&nbsp;'hello'];<br> value&nbsp;=~&nbsp;array;
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.2&nbsp;&nbsp;</span>集合不包含
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         var&nbsp;value&nbsp;=&nbsp;2;<br> var&nbsp;set&nbsp;=&nbsp;{1,'2',3,&nbsp;'hello'};<br> value&nbsp;!~&nbsp;set;
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.3&nbsp;&nbsp;</span>字符串匹配
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         var&nbsp;s&nbsp;=&nbsp;'abc1233hello';<br> var&nbsp;regex&nbsp;=&nbsp;'\\S*3{2,}\\S*';<br> var&nbsp;caseInsensitive&nbsp;=&nbsp;true;<br> StringTools.match(s,regex,caseInsensitive);
+        </div>
+       </div>
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         jexlContext.set("StringTools",&nbsp;mara.mybox.tools.StringTools.class);
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.4&nbsp;&nbsp;</span>字符串包含
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         var&nbsp;s&nbsp;=&nbsp;'abc1233hello';<br> var&nbsp;regex&nbsp;=&nbsp;'3{2}';<br> var&nbsp;caseInsensitive&nbsp;=&nbsp;true;<br> StringTools.include(s,regex,caseInsensitive);
+        </div>
+       </div>
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         jexlContext.set("StringTools",&nbsp;mara.mybox.tools.StringTools.class);
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.5&nbsp;&nbsp;</span>与/或/否
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         var&nbsp;a&nbsp;=&nbsp;5;<br> var&nbsp;b&nbsp;=&nbsp;2;<br> 'hello'.startsWith('hell')&nbsp;and&nbsp;(&nbsp;a&nbsp;&lt;&nbsp;9&nbsp;or&nbsp;b&nbsp;&gt;=&nbsp;6&nbsp;&nbsp;)&nbsp;and&nbsp;not&nbsp;(&nbsp;a&nbsp;==&nbsp;b&nbsp;);
+        </div>
+       </div>
+      </div>
+     </div>
+     <div style="padding: 2px;">
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item507')"><span class="SerialNumber">1.4&nbsp;&nbsp;</span>数值处理</a>
+     </div>
+     <div class="TreeNode" id="item507">
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.1&nbsp;&nbsp;</span>小数位数
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         var&nbsp;d&nbsp;=&nbsp;52362.18903;<br> var&nbsp;scale&nbsp;=&nbsp;2;<br> DoubleTools.scale(d,&nbsp;scale);
+        </div>
+       </div>
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         jexlContext.set("DoubleTools",&nbsp;mara.mybox.tools.DoubleTools.class);
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.2&nbsp;&nbsp;</span>格式
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         var&nbsp;d&nbsp;=&nbsp;52362.18903;<br> var&nbsp;scale&nbsp;=&nbsp;2;<br> DoubleTools.format(d,&nbsp;scale);
+        </div>
+       </div>
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         jexlContext.set("DoubleTools",&nbsp;mara.mybox.tools.DoubleTools.class);
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.3&nbsp;&nbsp;</span>百分数
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         var&nbsp;number&nbsp;=&nbsp;37;<br> var&nbsp;total&nbsp;=&nbsp;518;<br> var&nbsp;scale&nbsp;=&nbsp;2;<br> DoubleTools.percentage(number,&nbsp;total,&nbsp;scale);
+        </div>
+       </div>
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         jexlContext.set("DoubleTools",&nbsp;mara.mybox.tools.DoubleTools.class);
+        </div>
+       </div>
+      </div>
+     </div>
+     <div style="padding: 2px;">
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item511')"><span class="SerialNumber">1.5&nbsp;&nbsp;</span>时间</a>
+     </div>
+     <div class="TreeNode" id="item511">
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.5.1&nbsp;&nbsp;</span>现在
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         DateTools.nowString();
+        </div>
+       </div>
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         jexlContext.set("DateTools",&nbsp;mara.mybox.tools.DateTools.class);
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.5.2&nbsp;&nbsp;</span>格式
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         var&nbsp;date&nbsp;=&nbsp;new('java.util.Date');<br> var&nbsp;format&nbsp;=&nbsp;'yyyy-MM-dd&nbsp;HH:mm:ss.SSS';<br> DateTools.datetimeToString(date,&nbsp;format);
+        </div>
+       </div>
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         jexlContext.set("DateTools",&nbsp;mara.mybox.tools.DateTools.class);
+        </div>
+       </div>
+      </div>
+     </div>
+     <div style="padding: 2px;">
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item514')"><span class="SerialNumber">1.6&nbsp;&nbsp;</span>语句</a>
+     </div>
+     <div class="TreeNode" id="item514">
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.6.1&nbsp;&nbsp;</span>循环
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         var&nbsp;array&nbsp;=&nbsp;[&nbsp;'A',&nbsp;'B',&nbsp;'C',&nbsp;'D'&nbsp;];<br> var&nbsp;arrayString&nbsp;=&nbsp;'';<br> for&nbsp;(var&nbsp;i&nbsp;:&nbsp;1&nbsp;..&nbsp;size&nbsp;(array))&nbsp;{<br> &nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(empty&nbsp;(arrayString))&nbsp;{<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;arrayString&nbsp;=&nbsp;array[i-1];<br> &nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;else&nbsp;{<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;arrayString&nbsp;+=&nbsp;'&nbsp;,&nbsp;'&nbsp;+&nbsp;array[i-1];<br> &nbsp;&nbsp;&nbsp;&nbsp;}<br> }<br> return&nbsp;arrayString;
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.6.2&nbsp;&nbsp;</span>函数
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         var&nbsp;circleArea&nbsp;=&nbsp;function(r)&nbsp;{<br> &nbsp;&nbsp;&nbsp;&nbsp;Math.PI&nbsp;*&nbsp;r&nbsp;*&nbsp;r&nbsp;<br> }<br> var&nbsp;r&nbsp;=&nbsp;9.42;<br> return&nbsp;circleArea(r);
+        </div>
+       </div>
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         jexlContext.set("Math",&nbsp;Math.class);
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+   <hr>
+   <p style="font-size:0.8em">* 网页可编辑时，链接和控件可能不响应。</p>
+  </div>
+ </body>
+</html>
+</html>

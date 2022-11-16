@@ -6,22 +6,26 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.web.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.effect.*?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.collections.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.chart.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.paint.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.GeographyCodeController">
+<BorderPane fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.GeographyCodeController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -246,9 +250,9 @@ License:    Apache License Version 2.0
                                                                 </Button>
                                                             </children>
                                                         </HBox>
-                                                        <TableView fx:id="tableView"  editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                                                        <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                                                             <columns>
-                                                                <TableColumn fx:id="rowsSelectionColumn"  prefWidth="-1.0" maxWidth="1.7976931348623157E308">
+                                                                <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308" prefWidth="-1.0">
                                                                     <graphic>
                                                                         <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
                                                                     </graphic>
@@ -333,9 +337,13 @@ License:    Apache License Version 2.0
                                             </content>
                                         </Tab>
                                         <Tab fx:id="mapTab" text="%Map">
-                                            <content>
-                                                <fx:include fx:id="map" source="GeographyCodeMap.fxml" />
-                                            </content>
+                                 <content>
+                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                       <children>
+                                                      <fx:include fx:id="map" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="GeographyCodeMap.fxml" VBox.vgrow="ALWAYS" />
+                                       </children>
+                                    </VBox>
+                                 </content>
                                         </Tab>
                                         <Tab fx:id="settingsTab" text="%Settings">
                                             <content>

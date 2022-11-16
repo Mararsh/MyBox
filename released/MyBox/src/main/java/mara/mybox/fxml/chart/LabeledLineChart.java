@@ -31,6 +31,7 @@ public class LabeledLineChart<X, Y> extends LineChart<X, Y> {
         this.setMaxHeight(Double.MAX_VALUE);
         VBox.setVgrow(this, Priority.ALWAYS);
         HBox.setHgrow(this, Priority.ALWAYS);
+        chartMaker = new XYChartMaker<Axis, Axis>();
     }
 
     public LabeledLineChart setMaker(XYChartMaker<X, Y> chartMaker) {

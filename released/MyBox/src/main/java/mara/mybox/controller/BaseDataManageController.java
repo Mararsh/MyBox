@@ -77,7 +77,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
 
     public void setTableValues() {
         queryPrefix = "SELECT * FROM " + tableName;
-        sizePrefix = "SELECT count(" + idColumn + ") FROM " + tableName;
+        sizePrefix = "SELECT count(*) FROM " + tableName;
         clearPrefix = "DELETE FROM " + tableName;
         if (tableDefinition != null) {
             tableDefinitionString = tableDefinition.html();
@@ -438,6 +438,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
             return;
         }
         super.checkButtons();
+        clearButton.setDisable(false);
 
         boolean isEmpty = tableData == null || tableData.isEmpty();
         boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;

@@ -26,7 +26,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImagesPlayController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImagesPlayController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -137,6 +137,15 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </TitledPane>
+                              <TitledPane fx:id="viewPane1" layoutX="10.0" layoutY="260.0" minHeight="-Infinity" text="%Play">
+                                 <content>
+                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
+                                       <children>
+                                                    <fx:include fx:id="play" maxWidth="1.7976931348623157E308" source="ControlPlay.fxml" HBox.hgrow="ALWAYS" />
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </TitledPane>
                                         <TitledPane fx:id="viewPane" layoutX="10.0" layoutY="10.0" minHeight="-Infinity" text="%View" VBox.vgrow="ALWAYS">
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
@@ -231,7 +240,7 @@ License:    Apache License Version 2.0
                                                 <Image url="@../buttons/Red/iconDoubleLeft.png" />
                                             </image>
                                         </ImageView>
-                                        <fx:include fx:id="play" maxWidth="1.7976931348623157E308" source="ControlPlay.fxml" HBox.hgrow="ALWAYS" />
+                              <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                         <Button fx:id="functionsButton" mnemonicParsing="false" onMouseEntered="#popFunctionsMenu">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

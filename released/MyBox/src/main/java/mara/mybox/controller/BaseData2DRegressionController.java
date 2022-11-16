@@ -32,7 +32,7 @@ public class BaseData2DRegressionController extends BaseData2DChartController {
     @FXML
     protected Button dataButton;
     @FXML
-    protected ControlData2DLoad resultsController;
+    protected ControlData2DResults resultsController;
 
     @Override
     public void initControls() {
@@ -87,10 +87,6 @@ public class BaseData2DRegressionController extends BaseData2DChartController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-    }
-
-    @Override
-    public void afterRefreshControls() {
     }
 
     @FXML

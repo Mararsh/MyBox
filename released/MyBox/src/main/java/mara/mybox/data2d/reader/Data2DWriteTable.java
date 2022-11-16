@@ -1,6 +1,7 @@
 package mara.mybox.data2d.reader;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.data2d.DataTable;
@@ -21,6 +22,7 @@ public class Data2DWriteTable extends Data2DOperator {
     protected Connection conn;
     protected DataTable writerTable;
     protected TableData2D writerTableData2D;
+    protected PreparedStatement insert;
     protected long count;
 
     public static Data2DWriteTable create(Data2D_Edit data) {
@@ -30,15 +32,41 @@ public class Data2DWriteTable extends Data2DOperator {
 
     @Override
     public boolean checkParameters() {
-        if (cols == null || cols.isEmpty() || conn == null || writerTable == null || invalidAs == null) {
+        try {
+            if (cols == null || cols.isEmpty() || conn == null
+                    || writerTable == null || invalidAs == null) {
+                return false;
+            }
+            if (invalidAs == InvalidAs.Skip) {
+                invalidAs = InvalidAs.Blank;
+            }
+            writerTableData2D = writerTable.getTableData2D();
+            count = 0;
+            String sql = writerTableData2D.insertStatement();
+            if (task != null) {
+                task.setInfo(sql);
+            }
+            insert = conn.prepareStatement(sql);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
             return false;
         }
-        if (invalidAs == InvalidAs.Skip) {
-            invalidAs = InvalidAs.Blank;
+    }
+
+    @Override
+    public void handleData() {
+        try {
+            reader.readRows();
+            insert.executeBatch();
+            conn.commit();
+            insert.close();
+            if (task != null) {
+                task.setInfo(message("Inserted") + ": " + count);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
-        writerTableData2D = writerTable.getTableData2D();
-        count = 0;
-        return true;
     }
 
     @Override
@@ -46,28 +74,36 @@ public class Data2DWriteTable extends Data2DOperator {
         try {
             Data2DRow data2DRow = writerTableData2D.newRow();
             int len = sourceRow.size();
-            for (int col : cols) {
+            int offset = includeRowNumber ? 2 : 1;
+            for (int i = 0; i < cols.size(); i++) {
+                int col = cols.get(i);
                 if (col >= 0 && col < len) {
-                    Data2DColumn sourceColumn = data2D.getColumns().get(col);
-                    String colName = writerTable.mappedColumnName(sourceColumn.getColumnName());
-                    Data2DColumn targetColumn = writerTable.columnByName(colName);
-                    data2DRow.setColumnValue(colName, targetColumn.fromString(sourceRow.get(col), invalidAs));
+                    Data2DColumn targetColumn = writerTable.column(i + offset);
+                    data2DRow.setColumnValue(targetColumn.getColumnName(),
+                            targetColumn.fromString(sourceRow.get(col), invalidAs));
                 }
             }
             if (data2DRow.isEmpty()) {
                 return;
             }
             if (includeRowNumber) {
-                data2DRow.setColumnValue(writerTable.mappedColumnName(message("SourceRowNumber")), rowIndex);
+                data2DRow.setColumnValue(writerTable.column(1).getColumnName(), rowIndex);
             }
-            writerTableData2D.insertData(conn, data2DRow);
-            if (++count % DerbyBase.BatchSize == 0) {
-                conn.commit();
+            if (writerTableData2D.setInsertStatement(conn, insert, data2DRow)) {
+                insert.addBatch();
+                if (++count % DerbyBase.BatchSize == 0) {
+                    insert.executeBatch();
+                    conn.commit();
+                    if (task != null) {
+                        task.setInfo(message("Inserted") + ": " + count);
+                    }
+                }
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
+
 
     /*
         set
@@ -79,11 +115,6 @@ public class Data2DWriteTable extends Data2DOperator {
 
     public Data2DWriteTable setWriterTable(DataTable writerTable) {
         this.writerTable = writerTable;
-        return this;
-    }
-
-    public Data2DWriteTable setIncludeRowNumber(boolean includeRowNumber) {
-        this.includeRowNumber = includeRowNumber;
         return this;
     }
 

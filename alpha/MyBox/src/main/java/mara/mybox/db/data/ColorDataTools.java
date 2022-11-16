@@ -146,14 +146,14 @@ public class ColorDataTools {
             for (CSVRecord record : parser) {
                 try {
                     ColorData item = new ColorData();
-                    if (names.contains("name")) {
-                        item.setColorName(record.get("name"));
-                    }
                     if (names.contains("rgba")) {
                         item.setWeb(record.get("rgba"));
                     }
                     if (names.contains("rgb")) {
                         item.setRgb(record.get("rgb"));
+                    }
+                    if (names.contains("name")) {
+                        item.setColorName(record.get("name"));
                     }
                     try {
                         item.setColorValue(Integer.parseInt(record.get("value")));

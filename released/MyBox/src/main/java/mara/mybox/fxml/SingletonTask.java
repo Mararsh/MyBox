@@ -12,11 +12,26 @@ import static mara.mybox.value.Languages.message;
  */
 public class SingletonTask<Void> extends BaseTask<Void> {
 
-    BaseController controller;
-    LoadingController loading;
+    protected BaseController controller;
+    protected LoadingController loading;
 
     public SingletonTask(BaseController controller) {
         this.controller = controller;
+    }
+
+    public void setInfo(String info) {
+        if (info == null || info.isBlank()) {
+            return;
+        }
+        if (loading != null) {
+            loading.setInfo(info);
+        }
+    }
+
+    @Override
+    public void setError(String error) {
+        this.error = error;
+        setInfo(error);
     }
 
     @Override
@@ -27,8 +42,14 @@ public class SingletonTask<Void> extends BaseTask<Void> {
     }
 
     @Override
+    protected void whenCanceled() {
+        setInfo(message("Cancelled"));
+    }
+
+    @Override
     protected void whenFailed() {
         if (isCancelled()) {
+            setInfo(message("Cancelled"));
             return;
         }
         if (controller != null) {
@@ -47,7 +68,6 @@ public class SingletonTask<Void> extends BaseTask<Void> {
             }
         }
     }
-
 
     /*
         get/set

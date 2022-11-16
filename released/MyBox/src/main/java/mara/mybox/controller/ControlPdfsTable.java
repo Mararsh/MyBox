@@ -14,15 +14,15 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
-import javafx.util.converter.IntegerStringConverter;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.converter.IntegerStringFromatConverter;
+import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
-import mara.mybox.fxml.cell.TableAutoCommitCell;
 
 /**
  * @Author Mara
@@ -88,7 +88,7 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
             fromColumn.setCellValueFactory(new PropertyValueFactory<>("fromPage"));
             fromColumn.setCellFactory((TableColumn<PdfInformation, Integer> param) -> {
                 TableAutoCommitCell<PdfInformation, Integer> cell
-                        = new TableAutoCommitCell<PdfInformation, Integer>(new IntegerStringConverter()) {
+                        = new TableAutoCommitCell<PdfInformation, Integer>(new IntegerStringFromatConverter()) {
 
                     @Override
                     public void commitEdit(Integer value) {
@@ -114,7 +114,7 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
             toColumn.setCellValueFactory(new PropertyValueFactory<>("toPage"));
             toColumn.setCellFactory((TableColumn<PdfInformation, Integer> param) -> {
                 TableAutoCommitCell<PdfInformation, Integer> cell
-                        = new TableAutoCommitCell<PdfInformation, Integer>(new IntegerStringConverter()) {
+                        = new TableAutoCommitCell<PdfInformation, Integer>(new IntegerStringFromatConverter()) {
 
                     @Override
                     public void commitEdit(Integer value) {

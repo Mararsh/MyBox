@@ -50,6 +50,7 @@ public class Data2DColumnCreateController extends BaseChildController {
             }
             columnsController.addRow(column);
             popSuccessful();
+            close();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

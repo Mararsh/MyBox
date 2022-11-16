@@ -483,7 +483,7 @@ public class WeiboSnapRunController extends BaseController {
                                             if (posfirst2 > 0) {
                                                 try {
                                                     s = s.substring(0, posfirst2);
-                                                    lastMonth = DateTools.parseMonth(s.substring(0, 4) + "-" + s.substring(4, 6));
+                                                    lastMonth = DateTools.encodeDate(s.substring(0, 4) + "-" + s.substring(4, 6));
 //                                                    MyBoxLog.debug(DateTools.datetimeToString(lastMonth));
                                                     int posLast1 = contents.lastIndexOf("&stat_date=");
                                                     if (posLast1 > 0) {
@@ -495,7 +495,7 @@ public class WeiboSnapRunController extends BaseController {
                                                         if (posLast2 > 0) {
                                                             try {
                                                                 s = s.substring(0, posLast2);
-                                                                firstMonth = DateTools.parseMonth(s.substring(0, 4) + "-" + s.substring(4, 6));
+                                                                firstMonth = DateTools.encodeDate(s.substring(0, 4) + "-" + s.substring(4, 6));
 //                                                                MyBoxLog.debug(DateTools.datetimeToString(firstMonth));
                                                                 loadCompleted = true;
                                                             } catch (Exception e) {
@@ -593,8 +593,8 @@ public class WeiboSnapRunController extends BaseController {
                 } else if (result.get() == buttonExample) {
                     WeiboSnapPostsController pageController = (WeiboSnapPostsController) openStage(Fxmls.WeiboSnapPostsFxml);
                     parameters.setWebAddress(WeiboSnapController.exmapleAddress);
-                    parameters.setStartMonth(DateTools.parseMonth("2014-09"));
-                    parameters.setEndMonth(DateTools.parseMonth("2014-10"));
+                    parameters.setStartMonth(DateTools.encodeDate("2014-09"));
+                    parameters.setEndMonth(DateTools.encodeDate("2014-10"));
                     pageController.start(parameters);
                     closeStage();
                 } else {

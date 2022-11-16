@@ -62,7 +62,7 @@ public class ControlData2DNormalize extends BaseController {
                         if (d < to) {
                             from = d;
                             toInput.setStyle(null);
-                            rangeLabel.setText("(" + from + "," + to + ")");
+                            rangeLabel.setText("[" + from + "," + to + "])");
                             UserConfig.setString(baseName + "From", from + "");
                         } else {
                             toInput.setStyle(badStyle());
@@ -81,7 +81,7 @@ public class ControlData2DNormalize extends BaseController {
                         if (d > from) {
                             to = d;
                             toInput.setStyle(null);
-                            rangeLabel.setText("(" + from + "," + to + ")");
+                            rangeLabel.setText("[" + from + "," + to + "]");
                             UserConfig.setString(baseName + "To", to + "");
                         } else {
                             toInput.setStyle(badStyle());
@@ -91,7 +91,7 @@ public class ControlData2DNormalize extends BaseController {
                     }
                 }
             });
-            rangeLabel.setText("(" + from + "," + to + ")");
+            rangeLabel.setText("[" + from + "," + to + "]");
 
             rangePane.visibleProperty().bind(minmaxRadio.selectedProperty());
 

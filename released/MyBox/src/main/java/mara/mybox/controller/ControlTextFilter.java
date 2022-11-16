@@ -209,6 +209,6 @@ public class ControlTextFilter extends BaseController {
 
     @FXML
     public void popFilterExample(MouseEvent mouseEvent) {
-        PopTools.popRegexExample(this, filterInput, mouseEvent);
+        PopTools.popRegexExamples(this, filterInput, mouseEvent);
     }
 }

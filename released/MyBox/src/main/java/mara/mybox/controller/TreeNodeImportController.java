@@ -179,10 +179,10 @@ public class TreeNodeImportController extends BaseBatchFileController {
                 tagsString = null;
                 if (line != null && !line.isBlank()) {
                     if (line.startsWith(TreeNode.TimePrefix)) {
-                        time = DateTools.stringToDatetime(line.substring(TreeNode.TimePrefix.length()));
+                        time = DateTools.encodeDate(line.substring(TreeNode.TimePrefix.length()));
                         line = reader.readLine();
                     } else {
-                        time = DateTools.stringToDatetime(line);
+                        time = DateTools.encodeDate(line);
                         if (time != null) {
                             line = reader.readLine();
                         }
@@ -267,10 +267,10 @@ public class TreeNodeImportController extends BaseBatchFileController {
                 }
                 if (line != null && !line.startsWith(AppValues.MyBoxSeparator)) {
                     if (line.startsWith(TreeNode.TimePrefix)) {
-                        time = DateTools.stringToDatetime(line.substring(TreeNode.TimePrefix.length()));
+                        time = DateTools.encodeDate(line.substring(TreeNode.TimePrefix.length()));
                         line = reader.readLine();
                     } else {
-                        time = DateTools.stringToDatetime(line);
+                        time = DateTools.encodeDate(line);
                         if (time != null) {
                             line = reader.readLine();
                         }
@@ -289,7 +289,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
                     if (value != null && !value.isBlank()) {
                         int pos = value.indexOf(TreeNode.MorePrefix);
                         if (pos >= 0) {
-                            more = value.substring(pos + morePrefixLen);
+                            more = value.substring(pos + morePrefixLen).strip();
                             value = value.substring(0, pos);
                         } else if (isWebFavorite) {
                             String[] lines = value.split("\n");
@@ -362,6 +362,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
                 }
             } else {
                 if (!createRadio.isSelected()) {
+                    conn.commit();
                     currentNode = tableTreeNode.find(conn, parentid, name);
                 }
                 if (currentNode != null) {

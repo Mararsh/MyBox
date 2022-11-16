@@ -1,0 +1,634 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    </head>
+<html>
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>JShell codes</title>
+  <style type="text/css">
+            .center { text-align:center;  max-width:95%; }
+table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;}
+th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;}
+th { font-weight:bold;  text-align:center;}
+tr { height: 1.2em;  }
+.valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;}
+.boldText { font-weight:bold;  }
+.valueText { color:#2e598a;  }
+
+        </style>
+  <script>
+    function nodeClicked(id) {
+      var obj = document.getElementById(id);
+      var objv = obj.style.display;
+      if (objv == 'none') {
+        obj.style.display = 'block';
+      } else {
+        obj.style.display = 'none';
+      }
+    }
+    function showClass(className, show) {
+      var nodes = document.getElementsByClassName(className);  　
+      if ( show) {
+           for (var i = 0 ; i < nodes.length; i++) {
+              nodes[i].style.display = '';
+           }
+       } else {
+           for (var i = 0 ; i < nodes.length; i++) {
+              nodes[i].style.display = 'none';
+           }
+       }
+    }
+  </script>
+ </head>
+ <body contenteditable="false">
+  <div>
+   <div><input type="checkbox" checked onclick="showClass('TreeNode', this.checked);">Unfold <input type="checkbox" onclick="showClass('SerialNumber', this.checked);">Sequence Number <input type="checkbox" checked onclick="showClass('NodeTag', this.checked);">Tags <input type="checkbox" checked onclick="showClass('nodeValue', this.checked);">Values
+   </div>
+   <hr>
+   <div style="padding: 2px;">
+    &nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item386')"><span class="SerialNumber">&nbsp;&nbsp;</span>JShell codes</a>
+   </div>
+   <div class="TreeNode" id="item386">
+    <div style="padding: 2px;">
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1779')"><span class="SerialNumber">1&nbsp;&nbsp;</span>Examples</a>
+    </div>
+    <div class="TreeNode" id="item1779">
+     <div style="padding: 2px;">
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1780')"><span class="SerialNumber">1.1&nbsp;&nbsp;</span>Object</a>
+     </div>
+     <div class="TreeNode" id="item1780">
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.1&nbsp;&nbsp;</span>string
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         String&nbsp;exampleString&nbsp;=&nbsp;"hello";<br> exampleString&nbsp;+=&nbsp;"&nbsp;world";<br> "Contains&nbsp;e:"+&nbsp;exampleString.contains("e")&nbsp;+&nbsp;"&nbsp;&nbsp;&nbsp;length:"&nbsp;+&nbsp;exampleString.length();
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.2&nbsp;&nbsp;</span>time
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         import&nbsp;java.util.Date;<br> Date&nbsp;exampleDate&nbsp;=&nbsp;new&nbsp;Date();<br> "current&nbsp;time:"&nbsp;+&nbsp;exampleDate.toString()&nbsp;+&nbsp;"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value:"&nbsp;+&nbsp;exampleDate.getTime();
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.3&nbsp;&nbsp;</span>array
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         import&nbsp;java.util.Arrays;<br> double[]&nbsp;exampleArray&nbsp;=&nbsp;&nbsp;new&nbsp;double[5];<br> for&nbsp;(int&nbsp;i=0;&nbsp;i&lt;exampleArray.length;&nbsp;i++&nbsp;)&nbsp;{<br> &nbsp;&nbsp;&nbsp;&nbsp;exampleArray[i]&nbsp;=&nbsp;i&nbsp;*&nbsp;2;<br> }<br> exampleArray[2];
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4&nbsp;&nbsp;</span>list
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         import&nbsp;java.util.ArrayList;<br> import&nbsp;java.util.Arrays;<br> import&nbsp;java.util.List;<br> List&lt;String&gt;&nbsp;exampleList&nbsp;=&nbsp;new&nbsp;ArrayList&lt;&gt;();<br> exampleList.addAll(Arrays.asList("a",&nbsp;"b",&nbsp;"c",&nbsp;"d",&nbsp;"e"));<br> exampleList.toString();
+        </div>
+       </div>
+      </div>
+     </div>
+     <div style="padding: 2px;">
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1785')"><span class="SerialNumber">1.2&nbsp;&nbsp;</span>Expressions</a>
+     </div>
+     <div class="TreeNode" id="item1785">
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1786')"><span class="SerialNumber">1.2.1&nbsp;&nbsp;</span>Numeric operations</a>
+      </div>
+      <div class="TreeNode" id="item1786">
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.1&nbsp;&nbsp;</span>e
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          Math.E
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.2&nbsp;&nbsp;</span>pi
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          Math.PI
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.3&nbsp;&nbsp;</span>absoluate
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          Math.abs(-5.611)
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.4&nbsp;&nbsp;</span>square root
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          Math.sqrt(9)
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.5&nbsp;&nbsp;</span>cubic root
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          Math.cbrt(27)
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.6&nbsp;&nbsp;</span>power
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          Math.pow(2,5)
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.7&nbsp;&nbsp;</span>power of e
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          Math.exp(2)
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.8&nbsp;&nbsp;</span>natural logarithm(base e)
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          Math.log(6)
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.9&nbsp;&nbsp;</span>common logarithm(base 10)
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          Math.log10(6)
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.10&nbsp;&nbsp;</span>cosine
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          Math.cos(0)
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.11&nbsp;&nbsp;</span>sine
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          Math.sin(9)
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.12&nbsp;&nbsp;</span>tangent
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          Math.tan(5)
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.13&nbsp;&nbsp;</span>arc tangent
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          Math.atan(-7.3)
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.14&nbsp;&nbsp;</span>arc cosine
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          Math.acos(0.5)
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.15&nbsp;&nbsp;</span>arc sine
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          Math.asin(0.3)
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.16&nbsp;&nbsp;</span>round up
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          Math.ceil(4.13)
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.17&nbsp;&nbsp;</span>round down
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          Math.floor(4.67)
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.18&nbsp;&nbsp;</span>round
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          Math.round(4.83)
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.19&nbsp;&nbsp;</span>random
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          Math.random()
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.20&nbsp;&nbsp;</span>maximum
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          Math.max(1,-3)
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.21&nbsp;&nbsp;</span>minimum
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          Math.min(1,-3)
+         </div>
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1808')"><span class="SerialNumber">1.2.2&nbsp;&nbsp;</span>Strings operations</a>
+      </div>
+      <div class="TreeNode" id="item1808">
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.1&nbsp;&nbsp;</span>equals while ignore case
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          "Hello".equalsIgnoreCase("hello")
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.2&nbsp;&nbsp;</span>equals
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          "Hello".equals("hello")
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.3&nbsp;&nbsp;</span>replace first
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          "Hello&nbsp;World!&nbsp;World&nbsp;is&nbsp;yourself.".replace("World",&nbsp;"Feeling");
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.4&nbsp;&nbsp;</span>replace all
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          "Hello&nbsp;World!&nbsp;World&nbsp;is&nbsp;yourself.".replace(/World/g,&nbsp;"Feeling");
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.5&nbsp;&nbsp;</span>starts with
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          "Hello".startsWith("h")
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.6&nbsp;&nbsp;</span>end with
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          "Hello".endsWith("o")
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.7&nbsp;&nbsp;</span>subString
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          "Hello".substring(2,&nbsp;5)
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.8&nbsp;&nbsp;</span>char at
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          "hello".charAt(2)
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.9&nbsp;&nbsp;</span>concat
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          "hello".concat("&nbsp;world")
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.10&nbsp;&nbsp;</span>split
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          "1,2,3,4".split(",")
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.11&nbsp;&nbsp;</span>indexOf
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          "hello".indexOf("e")
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.12&nbsp;&nbsp;</span>lastIndexOf
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          "hello".lastIndexOf("l")
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.13&nbsp;&nbsp;</span>length
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          "hello".length()
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.14&nbsp;&nbsp;</span>toLowerCase
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          "Hello".toLowerCase()
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.15&nbsp;&nbsp;</span>toUpperCase
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          "Hello".toUpperCase()
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.16&nbsp;&nbsp;</span>contains
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          "Hello".contains("el")
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.17&nbsp;&nbsp;</span>trim
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          "&nbsp;Hello&nbsp;&nbsp;".trim()
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.18&nbsp;&nbsp;</span>isBlank
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          "&nbsp;&nbsp;".isBlank()
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.19&nbsp;&nbsp;</span>isEmpty
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          "".isEmpty()
+         </div>
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1828')"><span class="SerialNumber">1.2.3&nbsp;&nbsp;</span>Boolean operations</a>
+      </div>
+      <div class="TreeNode" id="item1828">
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.3.1&nbsp;&nbsp;</span>list include
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          import&nbsp;java.util.ArrayList;<br> import&nbsp;java.util.Arrays;<br> import&nbsp;java.util.List;<br> List&lt;String&gt;&nbsp;exampleListC&nbsp;=&nbsp;new&nbsp;ArrayList&lt;&gt;();<br> exampleListC.addAll(Arrays.asList("a",&nbsp;"b",&nbsp;"c",&nbsp;"d",&nbsp;"e"));<br> String&nbsp;exampleStringC&nbsp;=&nbsp;"c";<br> exampleListC.contains(exampleStringC);
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.3.2&nbsp;&nbsp;</span>string match
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          //&nbsp;MyBox&nbsp;library&nbsp;paths&nbsp;should&nbsp;have&nbsp;been&nbsp;added&nbsp;in&nbsp;JShell&nbsp;environment<br> import&nbsp;mara.mybox.tools.StringTools;<br> String&nbsp;exampleStringM&nbsp;=&nbsp;"abc1233hello";<br> String&nbsp;exampleRegexM&nbsp;=&nbsp;"\\S*3{2,}\\S*";&nbsp;&nbsp;<br> boolean&nbsp;exampleCaseInsensitiveM&nbsp;=&nbsp;true;<br> StringTools.match(exampleStringM,exampleRegexM,exampleCaseInsensitiveM);
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.3.3&nbsp;&nbsp;</span>string include
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          //&nbsp;MyBox&nbsp;library&nbsp;paths&nbsp;should&nbsp;have&nbsp;been&nbsp;added&nbsp;in&nbsp;JShell&nbsp;environment<br> import&nbsp;mara.mybox.tools.StringTools;<br> String&nbsp;exampleStringI&nbsp;=&nbsp;"abc1233hello";<br> String&nbsp;exampleRegexI&nbsp;=&nbsp;"3{2}";<br> boolean&nbsp;exampleCaseInsensitiveI&nbsp;=&nbsp;true;<br> StringTools.include(exampleStringI,exampleRegexI,exampleCaseInsensitiveI);
+         </div>
+        </div>
+       </div>
+       <div style="padding: 2px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.3.4&nbsp;&nbsp;</span>and/or/not
+       </div>
+       <div class="nodeValue">
+        <div style="padding: 0 0 0 144px;">
+         <div class="valueBox">
+          import&nbsp;java.util.ArrayList;<br> import&nbsp;java.util.Arrays;<br> import&nbsp;java.util.List;<br> List&lt;String&gt;&nbsp;exampleListB&nbsp;=&nbsp;new&nbsp;ArrayList&lt;&gt;();<br> exampleListB.addAll(Arrays.asList("a",&nbsp;"b",&nbsp;"c",&nbsp;"d",&nbsp;"e"));<br> String&nbsp;exampleStringB&nbsp;=&nbsp;"c";<br> exampleListB.contains(exampleStringB)&nbsp;&amp;&amp;&nbsp;<br> (exampleListB.size()&nbsp;&gt;=&nbsp;8&nbsp;||&nbsp;exampleStringB.length()&nbsp;!=&nbsp;1&nbsp;||&nbsp;!exampleStringB.startsWith("h"));
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div style="padding: 2px;">
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1833')"><span class="SerialNumber">1.3&nbsp;&nbsp;</span>Methods</a>
+     </div>
+     <div class="TreeNode" id="item1833">
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.1&nbsp;&nbsp;</span>Area of circle
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         double&nbsp;circleAreaByDiameter(double&nbsp;diameter)&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;radius&nbsp;=&nbsp;diameter&nbsp;/&nbsp;2;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;&nbsp;&nbsp;Math.PI&nbsp;*&nbsp;&nbsp;radius&nbsp;*&nbsp;radius&nbsp;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> }<br> circleAreaByDiameter(120)&nbsp;+&nbsp;circleAreaByDiameter(30)
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.2&nbsp;&nbsp;</span>Round value
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         import&nbsp;java.math.BigDecimal;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> import&nbsp;java.math.RoundingMode;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> double&nbsp;scale(double&nbsp;v,&nbsp;int&nbsp;scale)&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;BigDecimal&nbsp;b&nbsp;=&nbsp;new&nbsp;BigDecimal(v);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;b.setScale(scale,&nbsp;RoundingMode.HALF_UP).doubleValue();&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> }&nbsp;&nbsp;&nbsp;&nbsp;<br> scale(Math.PI,&nbsp;3)
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.3&nbsp;&nbsp;</span>Format number
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         import&nbsp;java.math.BigDecimal;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> import&nbsp;java.math.RoundingMode;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> double&nbsp;scale(double&nbsp;v,&nbsp;int&nbsp;scale)&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;BigDecimal&nbsp;b&nbsp;=&nbsp;new&nbsp;BigDecimal(v);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;b.setScale(scale,&nbsp;RoundingMode.HALF_UP).doubleValue();&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> }&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> import&nbsp;java.text.DecimalFormat;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> String&nbsp;formatDouble(double&nbsp;data,&nbsp;int&nbsp;scale)&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;try&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;String&nbsp;format&nbsp;=&nbsp;"#,###";&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(scale&nbsp;&gt;&nbsp;0)&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;format&nbsp;+=&nbsp;"."&nbsp;+&nbsp;"#".repeat(scale);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DecimalFormat&nbsp;df&nbsp;=&nbsp;new&nbsp;DecimalFormat(format);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;df.format(scale(data,&nbsp;scale));&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;catch&nbsp;(Exception&nbsp;e)&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;e.toString();&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> }&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> double&nbsp;circleAreaByRadius(double&nbsp;radius)&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;&nbsp;&nbsp;Math.PI&nbsp;*&nbsp;&nbsp;radius&nbsp;*&nbsp;radius&nbsp;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> }&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br> formatDouble(circleAreaByRadius(273.4),&nbsp;4)
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.4&nbsp;&nbsp;</span>Format date
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         import&nbsp;java.util.Date;<br> import&nbsp;java.util.TimeZone;<br> import&nbsp;java.text.SimpleDateFormat;<br> <br> String&nbsp;DatetimeFormat&nbsp;=&nbsp;"yyyy-MM-dd&nbsp;HH:mm:ss.SSS";<br> <br> String&nbsp;datetimeToString(Date&nbsp;theDate,&nbsp;String&nbsp;format,&nbsp;TimeZone&nbsp;theZone)&nbsp;{<br> &nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(theDate&nbsp;==&nbsp;null&nbsp;||&nbsp;theZone&nbsp;==&nbsp;null)&nbsp;{<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;null;<br> &nbsp;&nbsp;&nbsp;&nbsp;}<br> &nbsp;&nbsp;&nbsp;&nbsp;SimpleDateFormat&nbsp;formatter&nbsp;=&nbsp;new&nbsp;SimpleDateFormat(format);<br> &nbsp;&nbsp;&nbsp;&nbsp;formatter.setTimeZone(theZone);<br> &nbsp;&nbsp;&nbsp;&nbsp;String&nbsp;dateString&nbsp;=&nbsp;formatter.format(theDate);<br> &nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;dateString;<br> }<br> <br> datetimeToString(new&nbsp;Date(),&nbsp;DatetimeFormat,&nbsp;TimeZone.getDefault());
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.5&nbsp;&nbsp;</span>string match
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         import&nbsp;java.util.regex.Matcher;<br> import&nbsp;java.util.regex.Pattern;<br> <br> boolean&nbsp;match(String&nbsp;string,&nbsp;String&nbsp;find,&nbsp;boolean&nbsp;isRegex,<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;boolean&nbsp;dotAll,&nbsp;boolean&nbsp;multiline,&nbsp;boolean&nbsp;caseInsensitive)&nbsp;{<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(string&nbsp;==&nbsp;null&nbsp;||&nbsp;find&nbsp;==&nbsp;null&nbsp;||&nbsp;find.isEmpty())&nbsp;{<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;false;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;try&nbsp;{<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;mode&nbsp;=&nbsp;(isRegex&nbsp;?&nbsp;0x00&nbsp;:&nbsp;Pattern.LITERAL)<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;(caseInsensitive&nbsp;?&nbsp;Pattern.CASE_INSENSITIVE&nbsp;:&nbsp;0x00)<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;(dotAll&nbsp;?&nbsp;Pattern.DOTALL&nbsp;:&nbsp;0x00)<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;(multiline&nbsp;?&nbsp;Pattern.MULTILINE&nbsp;:&nbsp;0x00);<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pattern&nbsp;pattern&nbsp;=&nbsp;Pattern.compile(find,&nbsp;mode);<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matcher&nbsp;matcher&nbsp;=&nbsp;pattern.matcher(string);<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;matcher.matches();<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;catch&nbsp;(Exception&nbsp;e)&nbsp;{<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;false;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br> }<br> <br> match("Hello1233World",&nbsp;"\\S*3{2,}\\S*",&nbsp;true,&nbsp;true,&nbsp;true,&nbsp;true);
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.6&nbsp;&nbsp;</span>string include
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         import&nbsp;java.util.regex.Matcher;<br> import&nbsp;java.util.regex.Pattern;<br> <br> boolean&nbsp;include(String&nbsp;string,&nbsp;String&nbsp;find,&nbsp;boolean&nbsp;caseInsensitive)&nbsp;{<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(string&nbsp;==&nbsp;null&nbsp;||&nbsp;find&nbsp;==&nbsp;null&nbsp;||&nbsp;find.isEmpty())&nbsp;{<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;false;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;try&nbsp;{<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;mode&nbsp;=&nbsp;(caseInsensitive&nbsp;?&nbsp;Pattern.CASE_INSENSITIVE&nbsp;:&nbsp;0x00)&nbsp;|&nbsp;Pattern.MULTILINE;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pattern&nbsp;pattern&nbsp;=&nbsp;Pattern.compile(find,&nbsp;mode);<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matcher&nbsp;matcher&nbsp;=&nbsp;pattern.matcher(string);<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;matcher.find();<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;catch&nbsp;(Exception&nbsp;e)&nbsp;{<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;false;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br> &nbsp;&nbsp;&nbsp;&nbsp;}<br> <br> include("Hello1233World",&nbsp;"3{2}",&nbsp;true);
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+   <hr>
+   <p style="font-size:0.8em">* Links and controls may be unresponsive when html page is editable.</p>
+  </div>
+ </body>
+</html>
+</html>

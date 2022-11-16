@@ -17,7 +17,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.HtmlWriteTools;
-import mara.mybox.tools.TextTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -26,7 +25,6 @@ import mara.mybox.value.UserConfig;
  * @Author Mara
  * @CreateDate 2021-10-18
  * @License Apache License Version 2.0
- *
  */
 public class ControlData2DView extends BaseController {
 
@@ -169,7 +167,7 @@ public class ControlData2DView extends BaseController {
 
     @FXML
     public void delimiterActon() {
-        TextDelimiterController controller = TextDelimiterController.open(this, displayDelimiterName, false);
+        TextDelimiterController controller = TextDelimiterController.open(this, displayDelimiterName, true, false);
         controller.okNotify.addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -229,7 +227,10 @@ public class ControlData2DView extends BaseController {
                     String value = dataRow.get(col + 1);
                     if (value == null) {
                         value = "";
+                    } else {
+                        value = data2D.column(col).format(value);
                     }
+                    value = value.replaceAll("\n", "<BR>");
                     String style = data2D.cellStyle(styleFilter, i, data2D.columnName(col));
                     if (style != null && !style.isBlank()) {
                         style = style.replace("-fx-font-size:", "font-size:")
@@ -279,7 +280,10 @@ public class ControlData2DView extends BaseController {
                     String value = dataRow.get(col + 1);
                     if (value == null) {
                         value = "";
+                    } else {
+                        value = data2D.column(col).format(value);
                     }
+                    value = value.replaceAll("\n", "<BR>");
                     String style = data2D.cellStyle(styleFilter, r, data2D.columnName(col));
                     if (style != null && !style.isBlank()) {
                         style = style.replace("-fx-font-size:", "font-size:")
@@ -322,8 +326,8 @@ public class ControlData2DView extends BaseController {
         if (titleCheck.isSelected()) {
             title = data2D.titleName();
         }
-        String text = TextTools.dataPage(data2D, displayDelimiterName,
-                rowCheck.isSelected(), columnCheck.isSelected());
+        String text = data2D.encodeCSV(task, displayDelimiterName,
+                rowCheck.isSelected(), columnCheck.isSelected(), true);
         if (title != null && !title.isBlank()) {
             textArea.setText(title + "\n\n" + text);
         } else {
@@ -340,7 +344,7 @@ public class ControlData2DView extends BaseController {
             if (rowCheck.isSelected()) {
                 s.append(data2D.rowName(r)).append("\n");
             }
-            List<String> drow = data2D.tableRowWithoutNumber(r);
+            List<String> drow = data2D.tableRow(r, false, true);
             if (drow == null) {
                 continue;
             }

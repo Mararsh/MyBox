@@ -1,10 +1,10 @@
 package mara.mybox.tools;
 
-import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Random;
 import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 
@@ -15,8 +15,9 @@ import static mara.mybox.value.Languages.message;
  */
 public class DoubleTools {
 
-    public static boolean invalidDouble(double value) {
+    public static NumberFormat numberFormat;
 
+    public static boolean invalidDouble(double value) {
         return Double.isNaN(value) || Double.isInfinite(value)
                 || value == AppValues.InvalidDouble;
     }
@@ -26,6 +27,18 @@ public class DoubleTools {
             return 0;
         } else {
             return Double.NaN;
+        }
+    }
+
+    public static String scaleString(String string, InvalidAs invalidAs, int scale) {
+        try {
+            if (scale < 0) {
+                return string;
+            }
+            double d = toDouble(string, invalidAs);
+            return scaleString(d, scale);
+        } catch (Exception e) {
+            return string;
         }
     }
 
@@ -42,9 +55,9 @@ public class DoubleTools {
         try {
             double d = Double.valueOf(string.replaceAll(",", ""));
             if (invalidDouble(d)) {
-                if ("true".equalsIgnoreCase(string) || "yes".equalsIgnoreCase(string)) {
+                if (StringTools.isTrue(string)) {
                     return 1;
-                } else if ("false".equalsIgnoreCase(string) || "no".equalsIgnoreCase(string)) {
+                } else if (StringTools.isFalse(string)) {
                     return 0;
                 }
                 return value(invalidAs);
@@ -100,34 +113,6 @@ public class DoubleTools {
                 return message("Invalid");
             }
             return scale(data * 100 / total, scale) + "";
-        } catch (Exception e) {
-            return data + "";
-        }
-    }
-
-    public static String format(double data) {
-        try {
-            String format = "#,###";
-            String s = data + "";
-            int pos = s.indexOf(".");
-            if (pos >= 0) {
-                format += "." + "#".repeat(s.substring(pos + 1).length());
-            }
-            DecimalFormat df = new DecimalFormat(format);
-            return df.format(data);
-        } catch (Exception e) {
-            return data + "";
-        }
-    }
-
-    public static String format(double data, int scale) {
-        try {
-            String format = "#,###";
-            if (scale > 0) {
-                format += "." + "#".repeat(scale);
-            }
-            DecimalFormat df = new DecimalFormat(format);
-            return df.format(scale(data, scale));
         } catch (Exception e) {
             return data + "";
         }
@@ -189,18 +174,34 @@ public class DoubleTools {
 
     public static double scale(double v, int scale) {
         try {
-            BigDecimal b = new BigDecimal(v);
-            return scale(b, scale);
+            return Double.valueOf(scaleString(v, scale));
         } catch (Exception e) {
             return v;
         }
     }
 
-    public static double scale(BigDecimal b, int scale) {
-        if (b == null) {
-            return Double.NaN;
+    public static NumberFormat numberFormat() {
+        numberFormat = NumberFormat.getInstance();
+        numberFormat.setMinimumFractionDigits(0);
+        numberFormat.setGroupingUsed(false);
+        numberFormat.setRoundingMode(RoundingMode.HALF_UP);
+        return numberFormat;
+    }
+
+    public static String scaleString(double v, int scale) {
+        try {
+            if (scale < 0) {
+                return v + "";
+            }
+            if (numberFormat == null) {
+                numberFormat();
+            }
+            numberFormat.setMaximumFractionDigits(scale);
+            return numberFormat.format(v);
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+            return v + "";
         }
-        return b.setScale(scale, RoundingMode.HALF_UP).doubleValue();
     }
 
     public static double random(Random r, int max, boolean nonNegative) {

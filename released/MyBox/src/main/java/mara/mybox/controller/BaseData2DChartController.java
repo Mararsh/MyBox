@@ -1,18 +1,25 @@
 package mara.mybox.controller;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import mara.mybox.data.StringTable;
-import mara.mybox.db.data.ColumnDefinition;
+import javafx.scene.control.TextField;
+import mara.mybox.data2d.reader.DataTableGroup;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -22,12 +29,24 @@ import static mara.mybox.value.Languages.message;
 public abstract class BaseData2DChartController extends BaseData2DHandleController {
 
     protected String selectedCategory, selectedValue;
-    protected List<Integer> dataColsIndices;
+    protected DataTableGroup group;
+    protected int chartMaxData, framesNumber, groupid;
+    protected Thread frameThread;
+    protected Connection conn;
+    protected List<List<String>> chartData;
 
     @FXML
     protected ComboBox<String> categoryColumnSelector, valueColumnSelector;
     @FXML
     protected Label noticeLabel;
+    @FXML
+    protected CheckBox displayAllCheck;
+    @FXML
+    protected TextField chartMaxInput;
+    @FXML
+    protected ControlData2DResults groupDataController;
+    @FXML
+    protected ControlPlay playController;
 
     @Override
     public void initControls() {
@@ -35,6 +54,51 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             super.initControls();
 
             initDataTab();
+
+            if (displayAllCheck != null) {
+                displayAllCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayAll", true));
+                displayAllCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    UserConfig.setBoolean(baseName + "DisplayAll", displayAllCheck.isSelected());
+                    noticeMemory();
+                });
+
+                displayAllCheck.visibleProperty().bind(allPagesRadio.selectedProperty());
+            }
+
+            chartMaxData = UserConfig.getInt(baseName + "ChartMaxData", 100);
+            if (chartMaxData <= 0) {
+                chartMaxData = 100;
+            }
+            if (chartMaxInput != null) {
+                chartMaxInput.setText(chartMaxData + "");
+            }
+
+            if (playController != null) {
+                frameThread = new Thread() {
+                    @Override
+                    public void run() {
+                        loadFrame(playController.currentIndex);
+                    }
+                };
+                playController.setParameters(this, frameThread, snapNode());
+
+                playController.stopped.addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        try {
+                            if (conn != null) {
+                                conn.close();
+                                conn = null;
+                            }
+                        } catch (Exception ex) {
+                        }
+                    }
+                });
+
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -71,7 +135,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         try {
             super.refreshControls();
             makeOptions();
-            afterRefreshControls();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -108,10 +171,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         }
     }
 
-    public void afterRefreshControls() {
-        okAction();
-    }
-
     @Override
     public boolean checkOptions() {
         if (isSettingValues) {
@@ -126,7 +185,8 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         if (noticeLabel == null) {
             return;
         }
-        noticeLabel.setVisible(isAllPages());
+        noticeLabel.setVisible(isAllPages()
+                && (displayAllCheck == null || displayAllCheck.isSelected()));
     }
 
     @Override
@@ -141,15 +201,10 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             if (valueColumnSelector != null) {
                 selectedValue = valueColumnSelector.getSelectionModel().getSelectedItem();
             }
-            dataColsIndices = new ArrayList<>();
-            if (!notSelectColumnsInTable && (checkedColsIndices == null || checkedColsIndices.isEmpty())) {
-                outOptionsError(message("SelectToHandle") + ": " + message("Columns"));
-                return false;
-            }
-            dataColsIndices.addAll(checkedColsIndices);
-            outputColumns = new ArrayList<>();
-            outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
-            outputColumns.addAll(checkedColumns);
+
+            group = null;
+            framesNumber = -1;
+            groupid = -1;
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -158,18 +213,26 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     }
 
     public String chartTitle() {
-        return null;
+        return baseTitle;
     }
 
     public String categoryName() {
-        if (categoryColumnSelector == null) {
-            return null;
-        }
-        return categoryColumnSelector.getSelectionModel().getSelectedItem();
+        return selectedCategory;
     }
 
     @Override
     protected void startOperation() {
+        if (groupController != null) {
+            startGroup();
+        } else {
+            startNoGroup();
+        }
+    }
+
+    /*
+        no group
+     */
+    protected void startNoGroup() {
         if (task != null) {
             task.cancel();
         }
@@ -181,7 +244,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                     data2D.startTask(task, filterController.filter);
                     readData();
                     data2D.stopFilter();
-                    return true;
+                    return outputData != null && !outputData.isEmpty();
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                     error = e.toString();
@@ -191,11 +254,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
             @Override
             protected void whenSucceeded() {
-                if (outputData == null || outputData.isEmpty()) {
-                    popError(message("NoData"));
-                    return;
-                }
-                outputData();
             }
 
             @Override
@@ -203,6 +261,9 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                 super.finalAction();
                 data2D.stopTask();
                 task = null;
+                if (ok) {
+                    outputData();
+                }
             }
 
         };
@@ -210,10 +271,42 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     }
 
     public void readData() {
-        if (isAllPages()) {
-            outputData = data2D.allRows(dataColsIndices, true);
-        } else {
-            outputData = filtered(dataColsIndices, true);
+        try {
+            boolean showRowNumber = showRowNumber();
+            outputData = sortedData(dataColsIndices, showRowNumber);
+            if (outputData == null || scaleSelector == null) {
+                return;
+            }
+            outputColumns = data2D.makeColumns(dataColsIndices, showRowNumber);
+            boolean needScale = false;
+            for (Data2DColumn c : outputColumns) {
+                if (c.needScale()) {
+                    needScale = true;
+                    break;
+                }
+            }
+            if (!needScale) {
+                return;
+            }
+            List<List<String>> scaled = new ArrayList<>();
+            for (List<String> row : outputData) {
+                List<String> srow = new ArrayList<>();
+                for (int i = 0; i < outputColumns.size(); i++) {
+                    String s = row.get(i);
+                    if (s == null || !outputColumns.get(i).needScale()) {
+                        srow.add(s);
+                    } else {
+                        srow.add(DoubleTools.scaleString(s, invalidAs, scale));
+                    }
+                }
+                scaled.add(srow);
+            }
+            outputData = scaled;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
         }
     }
 
@@ -227,7 +320,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                 popError(message("NoData"));
                 return;
             }
-
+            chartMax();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -240,34 +333,213 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     @FXML
     @Override
     public void refreshAction() {
+        if (chartMaxInput != null) {
+            boolean ok;
+            try {
+                int v = Integer.valueOf(chartMaxInput.getText());
+                if (v > 0) {
+                    chartMaxData = v;
+                    UserConfig.setInt(baseName + "ChartMaxData", chartMaxData);
+                    ok = true;
+                } else {
+                    ok = false;
+                }
+            } catch (Exception ex) {
+                ok = false;
+            }
+            if (ok) {
+                chartMaxInput.setStyle(null);
+            } else {
+                chartMaxInput.setStyle(UserConfig.badStyle());
+                popError(message("Invalid") + ": " + message("Maximum"));
+                return;
+            }
+        }
+
         okAction();
     }
 
-    public StringTable dataHtmlTable() {
+    public List<List<String>> chartMax() {
         try {
-            List<String> names = new ArrayList<>();
-            if (outputColumns != null) {
-                for (Data2DColumn c : outputColumns) {
-                    names.add(c.getColumnName());
-                }
+            if (outputData == null || outputData.isEmpty()) {
+                popError(message("NoData"));
+                return null;
             }
-            StringTable table = new StringTable(names);
-            for (List<String> row : outputData) {
-                table.add(row);
+            if (chartMaxData > 0 && chartMaxData < outputData.size()) {
+                chartData = outputData.subList(0, chartMaxData);
+            } else {
+                chartData = outputData;
             }
-            return table;
+            return chartData;
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+            MyBoxLog.error(e);
             return null;
         }
     }
 
+    @FXML
+    public void goMaxAction() {
+        if (chartMaxInput != null) {
+            boolean ok;
+            String s = chartMaxInput.getText();
+            if (s == null || s.isBlank()) {
+                chartMaxData = -1;
+                ok = true;
+            } else {
+                try {
+                    int v = Integer.valueOf(s);
+                    if (v > 0) {
+                        chartMaxData = v;
+
+                        ok = true;
+                    } else {
+                        ok = false;
+                    }
+                } catch (Exception ex) {
+                    ok = false;
+                }
+            }
+            if (ok) {
+                UserConfig.setInt(baseName + "ChartMaxData", chartMaxData);
+                chartMaxInput.setStyle(null);
+            } else {
+                chartMaxInput.setStyle(UserConfig.badStyle());
+                popError(message("Invalid") + ": " + message("Maximum"));
+                return;
+            }
+        }
+
+        drawChart();
+    }
 
     /*
-        get/set
+        group
      */
-    public int getScale() {
-        return scale;
+    protected void startGroup() {
+        if (task != null) {
+            task.cancel();
+        }
+        playController.clear();
+        groupDataController.loadNull();
+        group = null;
+        framesNumber = -1;
+        task = new SingletonTask<Void>(this) {
+
+            List<String> groupLabels;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    outputColumns = data2D.makeColumns(dataColsIndices, showRowNumber());
+                    List<String> dataNames = new ArrayList<>();
+                    for (Data2DColumn c : outputColumns) {
+                        dataNames.add(c.getColumnName());
+                    }
+                    List<String> sortNames = sortNames();
+                    if (sortNames != null) {
+                        for (String name : sortNames) {
+                            if (!dataNames.contains(name)) {
+                                dataNames.add(name);
+                            }
+                        }
+                    }
+                    group = groupData(DataTableGroup.TargetType.Table,
+                            dataNames, orders, maxData, scale);
+                    if (!group.run()) {
+                        return false;
+                    }
+                    groupLabels = group.getParameterValues();
+                    framesNumber = groupLabels.size();
+                    return initGroups();
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                task = null;
+                if (ok) {
+                    loadChartData();
+                    playController.play(groupLabels);
+                }
+            }
+
+        };
+        start(task);
+    }
+
+    protected boolean initGroups() {
+        return framesNumber > 0;
+    }
+
+    protected void loadChartData() {
+        if (group.getTargetData() != null) {
+            groupDataController.loadData(group.getTargetData().cloneAll());
+        }
+    }
+
+    public boolean initFrame() {
+        return outputData != null && !outputData.isEmpty();
+    }
+
+    public void loadFrame(int index) {
+        if (group == null || framesNumber <= 0 || index < 0 || index > framesNumber) {
+            playController.clear();
+            return;
+        }
+        groupid = index + 1;  // groupid is 1-based
+        if (makeFrameData()) {
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    drawFrame();
+                }
+            });
+        }
+    }
+
+    protected boolean makeFrameData() {
+        try {
+            if (conn == null || conn.isClosed()) {
+                conn = DerbyBase.getConnection();
+            }
+            outputData = group.groupData(conn, groupid, outputColumns);
+            return initFrame();
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
+            return false;
+        }
+    }
+
+    public void drawFrame() {
+    }
+
+    public Node snapNode() {
+        return null;
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            if (conn != null) {
+                conn.close();
+            }
+            if (playController != null) {
+                playController.clear();
+            }
+            if (groupDataController != null) {
+                groupDataController.loadData(null);
+            }
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
 }

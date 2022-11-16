@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
+import static mara.mybox.tools.DoubleTools.numberFormat;
 import mara.mybox.value.AppValues;
 
 /**
@@ -24,34 +25,6 @@ public class FloatTools {
             String format = "#,###.##";
             DecimalFormat df = new DecimalFormat(format);
             return df.format(scale(data * 100 / total, 2));
-        } catch (Exception e) {
-            return data + "";
-        }
-    }
-
-    public static String format(float data) {
-        try {
-            String format = "#,###";
-            String s = data + "";
-            int pos = s.indexOf(".");
-            if (pos >= 0) {
-                format += "." + "#".repeat(s.substring(pos + 1).length());
-            }
-            DecimalFormat df = new DecimalFormat(format);
-            return df.format(data);
-        } catch (Exception e) {
-            return data + "";
-        }
-    }
-
-    public static String format(float data, int scale) {
-        try {
-            String format = "#,###";
-            if (scale > 0) {
-                format += "." + "#".repeat(scale);
-            }
-            DecimalFormat df = new DecimalFormat(format);
-            return df.format(scale(data, scale));
         } catch (Exception e) {
             return data + "";
         }
@@ -96,8 +69,16 @@ public class FloatTools {
         }
     }
 
-    public static float scale(float fvalue, int scale) {
-        return (float) DoubleTools.scale(fvalue, scale);
+    public static float scale(float v, int scale) {
+        try {
+            if (numberFormat == null) {
+                numberFormat();
+            }
+            numberFormat.setMaximumFractionDigits(scale);
+            return Float.valueOf(numberFormat.format(v));
+        } catch (Exception e) {
+            return v;
+        }
     }
 
     public static float roundFloat2(float fvalue) {

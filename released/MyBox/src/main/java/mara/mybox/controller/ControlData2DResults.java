@@ -52,7 +52,7 @@ public class ControlData2DResults extends ControlData2DLoad {
             @Override
             protected boolean handle() {
                 try {
-                    targetCSV = DataFileCSV.save(null, task, cols, data);
+                    targetCSV = DataFileCSV.save(null, task, ",", cols, data);
                     return targetCSV != null;
                 } catch (Exception e) {
                     error = e.toString();
@@ -79,13 +79,17 @@ public class ControlData2DResults extends ControlData2DLoad {
     @FXML
     @Override
     public void editAction() {
-        if (data2D == null) {
+        if (data2D == null || !data2D.isValid()) {
             return;
         }
-        if (data2D.getFile() != null) {
-            DataFileCSVController.open(data2D);
+        if (data2D.isCSV()) {
+            if (data2D.getFile() != null) {
+                DataFileCSVController.open(data2D);
+            } else {
+                DataFileCSVController.open(data2D.dataName(), data2D.getColumns(), data2D.tableRows(false, false));
+            }
         } else {
-            DataFileCSVController.open(data2D.dataName(), data2D.getColumns(), data2D.tableRowsWithoutNumber());
+            Data2D.open(data2D);
         }
     }
 

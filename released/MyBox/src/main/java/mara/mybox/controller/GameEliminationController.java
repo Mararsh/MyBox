@@ -60,13 +60,13 @@ import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
-import javafx.util.converter.IntegerStringConverter;
 import javax.imageio.ImageIO;
 import mara.mybox.data.ImageItem;
 import mara.mybox.data.IntPoint;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.converter.IntegerStringFromatConverter;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.RecentVisitMenu;
@@ -359,11 +359,11 @@ public class GameEliminationController extends BaseController {
                 @Override
                 public TableCell<ScoreRuler, Integer> call(TableColumn<ScoreRuler, Integer> param) {
                     TableAutoCommitCell<ScoreRuler, Integer> cell
-                            = new TableAutoCommitCell<ScoreRuler, Integer>(new IntegerStringConverter()) {
+                            = new TableAutoCommitCell<ScoreRuler, Integer>(new IntegerStringFromatConverter()) {
 
                         @Override
                         public boolean valid(Integer value) {
-                            return value >= 0;
+                            return value != null && value >= 0;
                         }
 
                         @Override

@@ -8,9 +8,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.TimeZone;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -393,7 +393,7 @@ public class PopTools {
                     getListener = new ChangeListener<Boolean>() {
                         @Override
                         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                            String value = inputController.getText();
+                            String value = inputController.getInputString();
                             if (value == null || value.isBlank()) {
                                 value = null;
                             }
@@ -658,32 +658,164 @@ public class PopTools {
     /*
         examples
      */
-    public static ContextMenu popEraExample(ContextMenu inPopMenu, TextField input, MouseEvent mouseEvent) {
+    public static ContextMenu popDatetimeExamples(ContextMenu inPopMenu, TextField input, MouseEvent mouseEvent) {
+        try {
+            List<String> values = new ArrayList<>();
+            Date d = new Date();
+            values.add(DateTools.datetimeToString(d, TimeFormats.Datetime));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMs));
+            values.add(DateTools.datetimeToString(d, TimeFormats.Date));
+            values.add(DateTools.datetimeToString(d, TimeFormats.Month));
+            values.add(DateTools.datetimeToString(d, TimeFormats.Year));
+            values.add(DateTools.datetimeToString(d, TimeFormats.TimeMs));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeZone));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeE));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMsE));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DateE));
+            values.add(DateTools.datetimeToString(d, TimeFormats.MonthE));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeZoneE));
+            values.addAll(Arrays.asList(
+                    "2020-07-15T36:55:09", "2020-07-10T10:10:10.532 +0800"
+            ));
+            return popMenu(inPopMenu, input, mouseEvent, values);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static ContextMenu popDateExamples(ContextMenu inPopMenu, TextField input, MouseEvent mouseEvent) {
+        try {
+            List<String> values = new ArrayList<>();
+            Date d = new Date();
+            values.add(DateTools.datetimeToString(d, TimeFormats.Date));
+            values.add(DateTools.datetimeToString(d, TimeFormats.Month));
+            values.add(DateTools.datetimeToString(d, TimeFormats.Year));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DateE));
+            values.add(DateTools.datetimeToString(d, TimeFormats.MonthE));
+            return popMenu(inPopMenu, input, mouseEvent, values);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static void popEraExamples(BaseController parent, TextField input, MouseEvent mouseEvent) {
+        try {
+            List<String> values = new ArrayList<>();
+            Date d = new Date();
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeA + " G", Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMsA + " G", Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DateA + " G", Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.MonthA + " G", Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.YearA + " G", Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, "G" + TimeFormats.DatetimeA, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, "G" + TimeFormats.DatetimeMsA, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, "G" + TimeFormats.DateA, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, "G" + TimeFormats.MonthA, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, "G" + TimeFormats.YearA, Locale.ENGLISH, null));
+
+            Date bc = DateTools.encodeDate("770-3-9 12:56:33.498 BC");
+            values.add(DateTools.datetimeToString(bc, TimeFormats.DatetimeA + " G", Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(bc, TimeFormats.DatetimeMsA + " G", Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(bc, TimeFormats.DateA + " G", Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(bc, TimeFormats.MonthA + " G", Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(bc, TimeFormats.YearA + " G", Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(bc, "G" + TimeFormats.DatetimeA, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(bc, "G" + TimeFormats.DatetimeMsA, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(bc, "G" + TimeFormats.DateA, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(bc, "G" + TimeFormats.MonthA, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(bc, "G" + TimeFormats.YearA, Locale.ENGLISH, null));
+
+            if (Languages.isChinese()) {
+                values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeA + " G", Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMsA + " G", Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(d, TimeFormats.DateA + " G", Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(d, TimeFormats.MonthA + " G", Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(d, TimeFormats.YearA + " G", Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(d, "G" + TimeFormats.DatetimeA, Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(d, "G" + TimeFormats.DatetimeMsA, Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(d, "G" + TimeFormats.DateA, Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(d, "G" + TimeFormats.MonthA, Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(d, "G" + TimeFormats.YearA, Locale.CHINESE, null));
+
+                values.add(DateTools.datetimeToString(bc, TimeFormats.DatetimeA + " G", Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(bc, TimeFormats.DatetimeMsA + " G", Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(bc, TimeFormats.DateA + " G", Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(bc, TimeFormats.MonthA + " G", Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(bc, TimeFormats.YearA + " G", Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(bc, "G" + TimeFormats.DatetimeA, Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(bc, "G" + TimeFormats.DatetimeMsA, Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(bc, "G" + TimeFormats.DateA, Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(bc, "G" + TimeFormats.MonthA, Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(bc, "G" + TimeFormats.YearA, Locale.CHINESE, null));
+            }
+
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeB + " G", Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMsB + " G", Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DateB + " G", Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.MonthB + " G", Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, "G" + TimeFormats.DatetimeB, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, "G" + TimeFormats.DatetimeMsB, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, "G" + TimeFormats.DateB, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, "G" + TimeFormats.MonthB, Locale.ENGLISH, null));
+
+            values.add(DateTools.datetimeToString(d, TimeFormats.Datetime));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMs));
+            values.add(DateTools.datetimeToString(d, TimeFormats.Date));
+            values.add(DateTools.datetimeToString(d, TimeFormats.Month));
+            values.add(DateTools.datetimeToString(d, TimeFormats.Year));
+            values.add(DateTools.datetimeToString(d, TimeFormats.TimeMs));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeZone));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeE));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMsE));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DateE));
+            values.add(DateTools.datetimeToString(d, TimeFormats.MonthE));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeZoneE));
+            values.addAll(Arrays.asList(
+                    "2020-07-15T36:55:09", "2020-07-10T10:10:10.532 +0800"
+            ));
+
+            MenuController controller = MenuController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+
+            List<Node> nodes = new ArrayList<>();
+            for (String value : values) {
+                Button button = new Button(value);
+                button.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        input.setText(value);
+                        controller.close();
+                    }
+                });
+                nodes.add(button);
+            }
+            controller.addFlowPane(nodes);
+
+            Hyperlink link = new Hyperlink("DateFormat");
+            link.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    parent.openLink("https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/SimpleDateFormat.html");
+                }
+            });
+            controller.addNode(link);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public static ContextMenu popMenu(ContextMenu inPopMenu, TextField input, MouseEvent mouseEvent, List<String> values) {
         try {
             if (inPopMenu != null && inPopMenu.isShowing()) {
                 inPopMenu.hide();
             }
+            if (values == null || values.isEmpty()) {
+                return inPopMenu;
+            }
             final ContextMenu popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
-            List<String> values = new ArrayList<>();
-            values.add(DateTools.nowString());
-            values.add(DateTools.datetimeToString(new Date(), TimeFormats.DatetimeMs, TimeZone.getDefault()));
-            values.add(DateTools.datetimeToString(new Date(), TimeFormats.TimeMs, TimeZone.getDefault()));
-            values.add(DateTools.datetimeToString(new Date(), TimeFormats.DatetimeMs + " Z", TimeZone.getDefault()));
-            values.addAll(Arrays.asList(
-                    "2020-07-15T36:55:09", "960-01-23", "581",
-                    "-2020-07-10 10:10:10.532 +0800", "-960-01-23", "-581"
-            ));
-            if (Languages.isChinese()) {
-                values.addAll(Arrays.asList(
-                        "公元960", "公元960-01-23", "公元2020-07-10 10:10:10",
-                        "公元前202", "公元前770-12-11", "公元前1046-03-10 10:10:10"
-                ));
-            }
-            values.addAll(Arrays.asList(
-                    "202 BC", "770-12-11 BC", "1046-03-10 10:10:10 BC",
-                    "581 AD", "960-01-23 AD", "2020-07-10 10:10:10 AD"
-            ));
+
             MenuItem menu;
             for (String value : values) {
                 menu = new MenuItem(value);
@@ -695,6 +827,7 @@ public class PopTools {
                 popMenu.getItems().add(menu);
             }
             popMenu.getItems().add(new SeparatorMenuItem());
+
             menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
@@ -712,9 +845,9 @@ public class PopTools {
         }
     }
 
-    public static void popRegexExample(BaseController parent, TextInputControl input, MouseEvent mouseEvent) {
+    public static void popRegexExamples(BaseController parent, TextInputControl input, Event event) {
         try {
-            MenuController controller = MenuController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+            MenuController controller = MenuController.open(parent, input, event);
             Button clearButton = new Button(message("Clear"));
             clearButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -908,7 +1041,7 @@ public class PopTools {
                     " DATE('1998-02-26') ", " TIMESTAMP('1962-09-23 03:23:34.234') "
             ));
             addButtonsPane(controller, input, Arrays.asList(
-                    " COUNT() ", " AVG() ", " MAX() ", " MIN() ", " SUM() ", " GROUP BY ", " HAVING "
+                    " COUNT(*) ", " AVG() ", " MAX() ", " MIN() ", " SUM() ", " GROUP BY ", " HAVING "
             ));
             addButtonsPane(controller, input, Arrays.asList(
                     " JOIN ", " INNER JOIN ", " LEFT OUTER JOIN ", " RIGHT OUTER JOIN ", " CROSS JOIN "
@@ -1081,6 +1214,46 @@ public class PopTools {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
+        }
+    }
+
+    public static void rowExpressionButtons(MenuController controller,
+            TextInputControl scriptInput, String colName) {
+        try {
+            if (controller == null) {
+                return;
+            }
+            PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
+                    "#{" + message("DataRowNumber") + "} % 2 == 0",
+                    "#{" + message("DataRowNumber") + "} % 2 == 1",
+                    "#{" + message("DataRowNumber") + "} >= 9",
+                    "#{" + message("TableRowNumber") + "} % 2 == 0",
+                    "#{" + message("TableRowNumber") + "} % 2 == 1",
+                    "#{" + message("TableRowNumber") + "} == 1"
+            ), true, 2);
+
+            PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
+                    "#{" + colName + "} == 0",
+                    "Math.abs(#{" + colName + "}) >= 3",
+                    "#{" + colName + "} < 0 || #{" + colName + "} != -6 "
+            ), true, 3);
+
+            PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
+                    "'#{" + message("Time") + "}' == '2016-05-19 11:34:28'",
+                    "'#{" + message("Time") + "}'.startsWith('2016-05-19 11')"
+            ), true, 4);
+
+            PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
+                    "'#{" + colName + "}' == ''",
+                    "'#{" + colName + "}'.length > 0",
+                    "'#{" + colName + "}'.indexOf('Hello') == 3",
+                    "'#{" + colName + "}'.endsWith('Hello')",
+                    "'#{" + colName + "}'.search(/Hello/ig) >= 0",
+                    "var array = [ 'A', 'B', 'C', 'D' ];\n"
+                    + "array.includes('#{" + colName + "})')"
+            ), true, 5);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
     }
 

@@ -43,7 +43,7 @@ public class DataClipboard extends DataFileCSV {
         if (cols == null || data == null || data.isEmpty()) {
             return null;
         }
-        DataFileCSV csvData = DataFileCSV.save(dname, task, cols, data);
+        DataFileCSV csvData = DataFileCSV.save(dname, task, ",", cols, data);
         if (csvData == null) {
             return null;
         }

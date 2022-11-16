@@ -170,12 +170,6 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
                 Bounds regionBounds1 = data1.get(i).getNode().getBoundsInParent();
                 Bounds regionBounds0 = data0.get(i).getNode().getBoundsInParent();
 
-                boxs[i] = new Rectangle();
-                getPlotChildren().add(boxs[i]);
-                boxs[i].setWidth(boxWidth);
-                boxs[i].setFill(Color.TRANSPARENT);
-                boxs[i].setStyle("-fx-stroke-width:1px; -fx-stroke:black;");
-
                 vLines[i] = new Line();
                 getPlotChildren().add(vLines[i]);
                 vLines[i].setStyle("-fx-stroke-dash-array: 4;-fx-stroke-width:1px; -fx-stroke:black;");
@@ -191,6 +185,12 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
                 minLines[i] = new Line();
                 getPlotChildren().add(minLines[i]);
                 minLines[i].setStyle("-fx-stroke-width:2px;-fx-stroke:" + color0);
+
+                boxs[i] = new Rectangle();
+                boxs[i].setWidth(boxWidth);
+                boxs[i].setFill(Color.TRANSPARENT);
+                boxs[i].setStyle("-fx-stroke-width:1px; -fx-stroke:black;");
+                getPlotChildren().add(boxs[i]);
 
                 if (chartMaker.isXY) {
                     double y4 = regionBounds4.getMinY() + regionBounds4.getHeight() / 2;
@@ -360,19 +360,19 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
 
                 uExOutlierLines[i] = new Line();
                 getPlotChildren().add(uExOutlierLines[i]);
-                uExOutlierLines[i].setStyle(stylePrefix + color5);
+                uExOutlierLines[i].setStyle(stylePrefix + color8);
 
                 uMidOutlierLines[i] = new Line();
                 getPlotChildren().add(uMidOutlierLines[i]);
-                uMidOutlierLines[i].setStyle(stylePrefix + color6);
+                uMidOutlierLines[i].setStyle(stylePrefix + color7);
 
                 lMidOutlierLines[i] = new Line();
                 getPlotChildren().add(lMidOutlierLines[i]);
-                lMidOutlierLines[i].setStyle(stylePrefix + color7);
+                lMidOutlierLines[i].setStyle(stylePrefix + color6);
 
                 lExOutlierLines[i] = new Line();
                 getPlotChildren().add(lExOutlierLines[i]);
-                lExOutlierLines[i].setStyle(stylePrefix + color8);
+                lExOutlierLines[i].setStyle(stylePrefix + color5);
 
                 vLines[i] = new Line();
                 getPlotChildren().add(vLines[i]);
@@ -390,29 +390,29 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
                     double rightX = x + boxWidth / 2;
 
                     uExOutlierLines[i].setStartX(leftX);
-                    uExOutlierLines[i].setStartY(y5);
+                    uExOutlierLines[i].setStartY(y8);
                     uExOutlierLines[i].setEndX(rightX);
-                    uExOutlierLines[i].setEndY(y5);
+                    uExOutlierLines[i].setEndY(y8);
 
                     uMidOutlierLines[i].setStartX(leftX);
-                    uMidOutlierLines[i].setStartY(y6);
+                    uMidOutlierLines[i].setStartY(y7);
                     uMidOutlierLines[i].setEndX(rightX);
-                    uMidOutlierLines[i].setEndY(y6);
+                    uMidOutlierLines[i].setEndY(y7);
 
                     lMidOutlierLines[i].setStartX(leftX);
-                    lMidOutlierLines[i].setStartY(y7);
+                    lMidOutlierLines[i].setStartY(y6);
                     lMidOutlierLines[i].setEndX(rightX);
-                    lMidOutlierLines[i].setEndY(y7);
+                    lMidOutlierLines[i].setEndY(y6);
 
                     lExOutlierLines[i].setStartX(leftX);
-                    lExOutlierLines[i].setStartY(y8);
+                    lExOutlierLines[i].setStartY(y5);
                     lExOutlierLines[i].setEndX(rightX);
-                    lExOutlierLines[i].setEndY(y8);
+                    lExOutlierLines[i].setEndY(y5);
 
-                    lExOutlierLines[i].setStartX(x);
-                    lExOutlierLines[i].setStartY(Math.min(y5, y4));
-                    lExOutlierLines[i].setEndX(x);
-                    lExOutlierLines[i].setEndY(Math.max(y8, y0));
+                    vLines[i].setStartX(x);
+                    vLines[i].setStartY(Math.min(y8, y4));
+                    vLines[i].setEndX(x);
+                    vLines[i].setEndY(Math.max(y5, y0));
 
                 } else {
                     double x0 = regionBounds0.getMinX() + regionBounds0.getWidth() / 2;
@@ -425,30 +425,30 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
                     double topY = y - boxWidth / 2;
                     double bottomY = y + boxWidth / 2;
 
-                    lExOutlierLines[i].setStartX(Math.min(x5, x4));
-                    lExOutlierLines[i].setStartY(y);
-                    lExOutlierLines[i].setEndX(Math.max(x8, x0));
-                    lExOutlierLines[i].setEndY(y);
-
-                    uExOutlierLines[i].setStartX(x5);
+                    uExOutlierLines[i].setStartX(x8);
                     uExOutlierLines[i].setStartY(topY);
-                    uExOutlierLines[i].setEndX(x5);
+                    uExOutlierLines[i].setEndX(x8);
                     uExOutlierLines[i].setEndY(bottomY);
 
-                    uMidOutlierLines[i].setStartX(x6);
+                    uMidOutlierLines[i].setStartX(x7);
                     uMidOutlierLines[i].setStartY(topY);
-                    uMidOutlierLines[i].setEndX(x6);
+                    uMidOutlierLines[i].setEndX(x7);
                     uMidOutlierLines[i].setEndY(bottomY);
 
-                    lMidOutlierLines[i].setStartX(x7);
+                    lMidOutlierLines[i].setStartX(x6);
                     lMidOutlierLines[i].setStartY(topY);
-                    lMidOutlierLines[i].setEndX(x7);
+                    lMidOutlierLines[i].setEndX(x6);
                     lMidOutlierLines[i].setEndY(bottomY);
 
-                    lExOutlierLines[i].setStartX(x8);
+                    lExOutlierLines[i].setStartX(x5);
                     lExOutlierLines[i].setStartY(topY);
-                    lExOutlierLines[i].setEndX(x8);
+                    lExOutlierLines[i].setEndX(x5);
                     lExOutlierLines[i].setEndY(bottomY);
+
+                    vLines[i].setStartX(Math.min(x8, x4));
+                    vLines[i].setStartY(y);
+                    vLines[i].setEndX(Math.max(x5, x0));
+                    vLines[i].setEndY(y);
 
                 }
 

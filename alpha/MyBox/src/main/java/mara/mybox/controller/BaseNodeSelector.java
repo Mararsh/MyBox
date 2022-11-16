@@ -1055,13 +1055,13 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                             + "  </script>\n\n");
                     s.append("<DIV>\n")
                             .append("<DIV>\n")
-                            .append("    <INPUT type=\"checkbox\" checked=true onclick=\"showClass('TreeNode', this.checked);\">")
+                            .append("    <INPUT type=\"checkbox\" checked onclick=\"showClass('TreeNode', this.checked);\">")
                             .append(message("Unfold")).append("</INPUT>\n")
-                            .append("    <INPUT type=\"checkbox\" checked=true onclick=\"showClass('SerialNumber', this.checked);\">")
+                            .append("    <INPUT type=\"checkbox\" onclick=\"showClass('SerialNumber', this.checked);\">")
                             .append(message("SequenceNumber")).append("</INPUT>\n")
-                            .append("    <INPUT type=\"checkbox\" checked=true onclick=\"showClass('NodeTag', this.checked);\">")
+                            .append("    <INPUT type=\"checkbox\" checked onclick=\"showClass('NodeTag', this.checked);\">")
                             .append(message("Tags")).append("</INPUT>\n")
-                            .append("    <INPUT type=\"checkbox\" checked=true onclick=\"showClass('nodeValue', this.checked);\">")
+                            .append("    <INPUT type=\"checkbox\" checked onclick=\"showClass('nodeValue', this.checked);\">")
                             .append(message("Values")).append("</INPUT>\n")
                             .append("</DIV>\n")
                             .append("<HR>\n");

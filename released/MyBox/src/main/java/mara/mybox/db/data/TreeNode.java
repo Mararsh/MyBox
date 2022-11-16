@@ -28,6 +28,7 @@ public class TreeNode extends BaseData {
     public static final String JEXLCode = "JEXLCode";
     public static final String JavaScript = "JavaScript";
     public static final String MathFunction = "MathFunction";
+    public static final String RowFilter = "RowFilter";
 
     protected long nodeid, parentid;
     protected String category, title, value, more, serialNumber;
@@ -48,12 +49,29 @@ public class TreeNode extends BaseData {
         init();
     }
 
-    public TreeNode(TreeNode parent, String title, String value) {
+//    public TreeNode(TreeNode parent, String title, String value, String more) {
+//        init();
+//        this.parentid = parent.getNodeid();
+//        this.category = parent.getCategory();
+//        this.title = title;
+//        this.value = value;
+//        this.more = more;
+//    }
+    public TreeNode(TreeNode parent, String title) {
         init();
         this.parentid = parent.getNodeid();
         this.category = parent.getCategory();
         this.title = title;
-        this.value = value;
+    }
+
+    public TreeNode copyTo(TreeNode parent) {
+        TreeNode node = new TreeNode();
+        node.setParentid(parent.getNodeid());
+        node.setCategory(parent.getCategory());
+        node.setTitle(title);
+        node.setValue(value);
+        node.setMore(more);
+        return node;
     }
 
     public boolean isRoot() {
@@ -134,7 +152,7 @@ public class TreeNode extends BaseData {
         if (null == category) {
             return null;
         } else {
-            String lang = Languages.isChinese() ? "zh" : "en";
+            String lang = Languages.getLangName();
             return getInternalFile("/data/examples/" + category + "_Examples_" + lang + ".txt",
                     "data", category + "_Examples_" + lang + ".txt", true);
         }

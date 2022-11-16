@@ -17,14 +17,11 @@ import mara.mybox.db.table.TableData2DCell;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.db.table.TableData2DStyle;
-import mara.mybox.db.table.TableDataset;
-import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableImageScope;
-import mara.mybox.db.table.TableLocationData;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.db.table.TableNamedValues;
 import mara.mybox.db.table.TableStringValues;
@@ -62,15 +59,6 @@ public class BaseDataAdaptor {
 
         } else if (data instanceof GeographyCode) {
             return new TableGeographyCode();
-
-        } else if (data instanceof Dataset) {
-            return new TableDataset();
-
-        } else if (data instanceof EpidemicReport) {
-            return new TableEpidemicReport();
-
-        } else if (data instanceof Location) {
-            return new TableLocationData();
 
         } else if (data instanceof ImageEditHistory) {
             return new TableImageEditHistory();
@@ -151,15 +139,6 @@ public class BaseDataAdaptor {
 
         } else if (data instanceof GeographyCode) {
             return GeographyCode.valid((GeographyCode) data);
-
-        } else if (data instanceof Dataset) {
-            return Dataset.valid((Dataset) data);
-
-        } else if (data instanceof EpidemicReport) {
-            return EpidemicReport.valid((EpidemicReport) data);
-
-        } else if (data instanceof Location) {
-            return Location.valid((Location) data);
 
         } else if (data instanceof ColumnDefinition) {
             return ColumnDefinition.valid((ColumnDefinition) data);
@@ -246,15 +225,6 @@ public class BaseDataAdaptor {
         } else if (data instanceof GeographyCode) {
             return GeographyCode.getValue((GeographyCode) data, name);
 
-        } else if (data instanceof Dataset) {
-            return Dataset.getValue((Dataset) data, name);
-
-        } else if (data instanceof EpidemicReport) {
-            return EpidemicReport.getValue((EpidemicReport) data, name);
-
-        } else if (data instanceof Location) {
-            return Location.getValue((Location) data, name);
-
         } else if (data instanceof ImageEditHistory) {
             return ImageEditHistory.getValue((ImageEditHistory) data, name);
 
@@ -327,15 +297,6 @@ public class BaseDataAdaptor {
         }
         if (data instanceof GeographyCode) {
             return GeographyCode.setValue((GeographyCode) data, name, value);
-
-        } else if (data instanceof Dataset) {
-            return Dataset.setValue((Dataset) data, name, value);
-
-        } else if (data instanceof EpidemicReport) {
-            return EpidemicReport.setValue((EpidemicReport) data, name, value);
-
-        } else if (data instanceof Location) {
-            return Location.setValue((Location) data, name, value);
 
         } else if (data instanceof MyBoxLog) {
             return MyBoxLog.setValue((MyBoxLog) data, name, value);
@@ -454,12 +415,6 @@ public class BaseDataAdaptor {
         if (data instanceof GeographyCode) {
             return GeographyCode.displayColumn((GeographyCode) data, column, value);
 
-        } else if (data instanceof EpidemicReport) {
-            return EpidemicReport.displayColumn((EpidemicReport) data, column, value);
-
-        } else if (data instanceof Location) {
-            return Location.displayColumn((Location) data, column, value);
-
         } else if (data instanceof MyBoxLog) {
             return MyBoxLog.displayColumn((MyBoxLog) data, column, value);
 
@@ -474,13 +429,16 @@ public class BaseDataAdaptor {
         try {
             switch (column.getType()) {
                 case String:
-                case Text:
+                case Enumeration:
                 case Color:
                 case File:
                 case Image:
+                case Era:
                     String rvalue = (String) value;
                     return rvalue;
                 case Double:
+                case Longitude:
+                case Latitude:
                     double dvalue = (double) value;
                     if (column.getMaxValue() != null && dvalue > (double) column.getMaxValue()) {
                         return null;
@@ -499,7 +457,6 @@ public class BaseDataAdaptor {
                     }
                     return DoubleTools.invalidDouble(fvalue) ? null : (fvalue + "");
                 case Long:
-                case Era:
                     long lvalue = (long) value;
                     if (column.getMaxValue() != null && lvalue > (long) column.getMaxValue()) {
                         return null;
@@ -530,8 +487,9 @@ public class BaseDataAdaptor {
                     }
                     return svalue != AppValues.InvalidShort ? svalue + "" : null;
                 case Datetime:
-                case Date:
                     return DateTools.datetimeToString((Date) value);
+                case Date:
+                    return DateTools.dateToString((Date) value);
             }
         } catch (Exception e) {
             MyBoxLog.error(e, column.getColumnName());

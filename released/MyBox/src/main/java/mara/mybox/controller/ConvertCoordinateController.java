@@ -16,24 +16,18 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.web.WebView;
-import mara.mybox.data.CoordinateSystem;
+import mara.mybox.data.GeoCoordinateSystem;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.GeographyCode;
 import static mara.mybox.db.data.GeographyCodeTools.toGCJ02ByWebService;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.value.UserConfig;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.LocationTools;
 import static mara.mybox.tools.LocationTools.latitudeToDmsString;
 import static mara.mybox.tools.LocationTools.longitudeToDmsString;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
-import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import mara.mybox.value.UserConfig;
 import thridparty.CoordinateConverter;
 
 /**
@@ -371,7 +365,7 @@ public class ConvertCoordinateController extends BaseMapController {
                 wgs84 = CoordinateConverter.GCJ02ToWGS84(gcj02[0], gcj02[1]);
             } else if (mapbarRadio.isSelected()) {
                 mapbar = inputted;
-                gcj02 = toGCJ02ByWebService(CoordinateSystem.Mapbar(), mapbar[0], mapbar[1]);
+                gcj02 = toGCJ02ByWebService(GeoCoordinateSystem.Mapbar(), mapbar[0], mapbar[1]);
                 wgs84 = CoordinateConverter.GCJ02ToWGS84(gcj02[0], gcj02[1]);
                 db09 = CoordinateConverter.GCJ02ToBD09(gcj02[0], gcj02[1]);
             } else if (wgs84Radio.isSelected()) {
@@ -577,14 +571,20 @@ public class ConvertCoordinateController extends BaseMapController {
     @FXML
     public void locationAction(ActionEvent event) {
         try {
-            LocationInMapController controller = (LocationInMapController) openStage(Fxmls.LocationInMapFxml);
-            controller.loadCoordinate(this, longitude, latitude);
+            CoordinatePickerController controller = CoordinatePickerController.open(this, longitude, latitude);
+            controller.notify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    setGeographyCode(controller.geographyCode);
+                    controller.closeStage();
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    @Override
     public void setGeographyCode(GeographyCode code) {
         try {
             if (code == null) {

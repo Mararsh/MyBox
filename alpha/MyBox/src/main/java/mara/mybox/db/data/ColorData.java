@@ -96,7 +96,9 @@ public class ColorData extends BaseData {
             rgb = FxColorTools.color2rgb(color);
             colorValue = FxColorTools.color2Value(color);
 
-            if (!value.startsWith("#") && !value.startsWith("0x")
+            if (colorName == null
+                    && !value.startsWith("#")
+                    && !value.startsWith("0x") && !value.startsWith("0X")
                     && !value.startsWith("rgb") && !value.startsWith("hsl")) {
                 colorName = value;
             }

@@ -22,8 +22,8 @@ import javafx.scene.control.Tooltip;
 import mara.mybox.data.WeiboSnapParameters;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
 import mara.mybox.value.AppPaths;
@@ -268,7 +268,7 @@ public class WeiboSnapController extends BaseController {
             endMonthInput.setStyle(null);
             return;
         }
-        Date weiboStart = DateTools.parseMonth("2009-08");
+        Date weiboStart = DateTools.encodeDate("2009-08");
         Date thisMonth = DateTools.thisMonth();
         try {
             String start = startMonthInput.getText();
@@ -276,11 +276,11 @@ public class WeiboSnapController extends BaseController {
                 startMonth = weiboStart;
                 startMonthInput.setStyle(null);
             } else {
-                startMonth = DateTools.parseMonth(start);
+                startMonth = DateTools.encodeDate(start);
                 if (startMonth.getTime() > thisMonth.getTime()) {
                     startMonthInput.setStyle(UserConfig.badStyle());
                     return;
-                } else if (startMonth.getTime() < DateTools.parseMonth("2009-08").getTime()) {
+                } else if (startMonth.getTime() < DateTools.encodeDate("2009-08").getTime()) {
 //                    startInput.setText("2009-08");
                     startMonthInput.setStyle(UserConfig.badStyle());
                     return;
@@ -300,7 +300,7 @@ public class WeiboSnapController extends BaseController {
                 endMonth = thisMonth;
                 endMonthInput.setStyle(null);
             } else {
-                endMonth = DateTools.parseMonth(end);
+                endMonth = DateTools.encodeDate(end);
                 if (endMonth.getTime() > thisMonth.getTime()) {
                     endMonth = thisMonth;
                 }
@@ -1009,8 +1009,8 @@ public class WeiboSnapController extends BaseController {
             return;
         }
         parameters.setWebAddress(exmapleAddress);
-        parameters.setStartMonth(DateTools.parseMonth("2014-09"));
-        parameters.setEndMonth(DateTools.parseMonth("2014-10"));
+        parameters.setStartMonth(DateTools.encodeDate("2014-09"));
+        parameters.setEndMonth(DateTools.encodeDate("2014-10"));
         targetPath = targetPathInputController.file;
         parameters.setTargetPath(targetPath == null ? new File(AppPaths.getGeneratedPath()) : targetPath);
         startSnap();
@@ -1037,7 +1037,7 @@ public class WeiboSnapController extends BaseController {
             parameters = new WeiboSnapParameters();
             parameters.setWebAddress(address);
             if (startMonth == null) {
-                startMonth = DateTools.parseMonth("2009-08");
+                startMonth = DateTools.encodeDate("2009-08");
             }
             parameters.setStartMonth(startMonth);
             if (endMonth == null) {

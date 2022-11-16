@@ -348,6 +348,10 @@ public abstract class BaseController_Attributes {
         return isPop;
     }
 
+    public boolean isIsSettingValues() {
+        return isSettingValues;
+    }
+
     public String getInterfaceName() {
         return interfaceName;
     }

@@ -6,6 +6,7 @@ import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -393,8 +394,8 @@ public class HtmlFindController extends WebAddressController {
     }
 
     @FXML
-    public void popFindExample(MouseEvent mouseEvent) {
-        PopTools.popRegexExample(this, findInput, mouseEvent);
+    public void popFindExample(ActionEvent event) {
+        PopTools.popRegexExamples(this, findInput, event);
     }
 
     @FXML

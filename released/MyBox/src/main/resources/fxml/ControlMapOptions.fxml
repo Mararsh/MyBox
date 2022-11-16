@@ -61,39 +61,18 @@ License:    Apache License Version 2.0
                   <FlowPane hgap="5.0" layoutX="15.0" layoutY="56.0" vgap="5.0">
                       <children>
                           <Label text="%Projection" />
-                          <RadioButton fx:id="mercatorRadio" mnemonicParsing="false" selected="true" text="%EPSG900913">
+                          <RadioButton fx:id="mercatorRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%EPSG900913" wrapText="true">
                               <toggleGroup>
                                   <ToggleGroup fx:id="projectionGroup" />
                               </toggleGroup>
                           </RadioButton>
-                          <RadioButton fx:id="geodeticRadio" mnemonicParsing="false" text="%EPSG4326" toggleGroup="$projectionGroup" />
+                          <RadioButton fx:id="geodeticRadio" minHeight="-Infinity" mnemonicParsing="false" text="%EPSG4326" toggleGroup="$projectionGroup" wrapText="true" />
                       </children>
                   </FlowPane>
               </children>
           </VBox>
         <VBox fx:id="optionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
             <children>
-                <VBox fx:id="dataBox" layoutX="10.0" layoutY="224.0" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                    <children>
-                        <FlowPane fx:id="dataPane" hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
-                            <children>
-                                <Label text="%Data" />
-                                <RadioButton fx:id="currentQueryRadio" layoutX="69.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%CurrentQuery">
-                                    <toggleGroup>
-                                        <ToggleGroup fx:id="dataGroup" />
-                                    </toggleGroup>
-                                </RadioButton>
-                                <RadioButton fx:id="currentPageRadio" mnemonicParsing="false" text="%CurrentPage" toggleGroup="$dataGroup" />
-                            </children>
-                        </FlowPane>
-                        <FlowPane fx:id="dataNumberPane" hgap="5.0" layoutX="15.0" layoutY="15.0" vgap="5.0" VBox.vgrow="NEVER">
-                            <children>
-                                <Label text="%MaximumNumber" />
-                                <ComboBox fx:id="dataMaximumSelector" editable="true" prefWidth="150.0" />
-                            </children>
-                        </FlowPane>
-                    </children>
-                </VBox>
                 <VBox fx:id="sizeBox" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
                     <children>
                         <CheckBox fx:id="fitViewCheck" mnemonicParsing="false" text="%FitView" />
@@ -120,8 +99,6 @@ License:    Apache License Version 2.0
                                     </toggleGroup>
                                 </RadioButton>
                                 <RadioButton fx:id="markerCircleRadio" mnemonicParsing="false" text="%Circle" toggleGroup="$markerImageGroup" />
-                                <RadioButton fx:id="markerDatasetRadio" layoutX="197.0" layoutY="10.0" mnemonicParsing="false" text="%DatasetImage" toggleGroup="$markerImageGroup" />
-                                <RadioButton fx:id="markerDataRadio" mnemonicParsing="false" text="%DataImage" toggleGroup="$markerImageGroup" />
                             </children>
                         </FlowPane>
                         <FlowPane hgap="5.0" vgap="5.0">
@@ -158,20 +135,7 @@ License:    Apache License Version 2.0
                         <FlowPane fx:id="baseTextPane" hgap="5.0" vgap="5.0">
                             <children>
                                 <CheckBox fx:id="markerLabelCheck" mnemonicParsing="false" selected="true" text="%Label" />
-                                <CheckBox fx:id="markerAddressCheck" layoutX="10.0" layoutY="52.0" mnemonicParsing="false" text="%Address" />
                                 <CheckBox fx:id="markerCoordinateCheck" layoutX="118.0" layoutY="52.0" mnemonicParsing="false" text="%Coordinate" />
-                            </children>
-                        </FlowPane>
-                        <FlowPane fx:id="locationTextPane" hgap="5.0" layoutX="15.0" layoutY="60.0" vgap="5.0">
-                            <children>
-                                <CheckBox fx:id="markerStartCheck" layoutX="118.0" layoutY="52.0" mnemonicParsing="false" text="%StartTime" />
-                                <CheckBox fx:id="markerEndCheck" layoutX="307.0" layoutY="10.0" mnemonicParsing="false" text="%EndTime" />
-                                <CheckBox fx:id="markerDurationCheck" layoutX="213.0" layoutY="10.0" mnemonicParsing="false" text="%Duration" />
-                                <CheckBox fx:id="markerDatasetCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Dataset" />
-                                <CheckBox fx:id="markerValueCheck" mnemonicParsing="false" text="%DataValue" />
-                                <CheckBox fx:id="markerSizeCheck" layoutX="10.0" layoutY="52.0" mnemonicParsing="false" text="%DataSize" />
-                                <CheckBox fx:id="markerSpeedCheck" layoutX="10.0" layoutY="94.0" mnemonicParsing="false" text="%Speed" />
-                                <CheckBox fx:id="markerDirectionCheck" layoutX="10.0" layoutY="94.0" mnemonicParsing="false" text="%Direction" />
                             </children>
                         </FlowPane>
                         <FlowPane hgap="5.0" vgap="5.0">
@@ -185,13 +149,7 @@ License:    Apache License Version 2.0
                         <FlowPane fx:id="textColorPane" hgap="5.0" layoutX="15.0" layoutY="186.0" vgap="5.0">
                             <children>
                                 <Label text="%TextColor" />
-                                <RadioButton fx:id="setColorRadio" mnemonicParsing="false" selected="true">
-                                    <toggleGroup>
-                                        <ToggleGroup fx:id="textColorGroup" />
-                                    </toggleGroup>
-                                </RadioButton>
                                 <fx:include fx:id="colorSet" source="ColorSet.fxml" />
-                                <RadioButton fx:id="dataColorRadio" mnemonicParsing="false" text="%DataColor" toggleGroup="$textColorGroup" />
                             </children>
                         </FlowPane>
                     </children>

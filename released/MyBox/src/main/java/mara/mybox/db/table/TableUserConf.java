@@ -142,29 +142,22 @@ public class TableUserConf extends BaseTable<StringValue> {
 
     public static int readInt(String keyName, int defaultValue) {
         try ( Connection conn = DerbyBase.getConnection()) {
-            int exist = readInt(conn, keyName);
-            if (exist != AppValues.InvalidInteger) {
-                return exist;
-            } else {
-                try ( PreparedStatement statement = conn.prepareStatement(InsertInt)) {
-                    statement.setString(1, keyName);
-                    statement.setInt(2, defaultValue);
-                    statement.executeUpdate();
-                } catch (Exception e) {
-                    MyBoxLog.debug(e);
-                }
-            }
+            return readInt(conn, keyName, defaultValue);
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+//            MyBoxLog.debug(e);
+            return defaultValue;
         }
-        return defaultValue;
     }
 
     public static int readInt(Connection conn, String keyName) {
-        int value = AppValues.InvalidInteger;
+        return readInt(conn, keyName, AppValues.InvalidInteger);
+    }
+
+    public static int readInt(Connection conn, String keyName, int defaultValue) {
         if (conn == null || keyName == null) {
-            return value;
+            return defaultValue;
         }
+        int value = defaultValue;
         try ( PreparedStatement queryStatement = conn.prepareStatement(QueryInt)) {
             queryStatement.setString(1, keyName);
             conn.setAutoCommit(true);
@@ -178,7 +171,25 @@ public class TableUserConf extends BaseTable<StringValue> {
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
+        if (value == AppValues.InvalidInteger) {
+            delete(conn, keyName);
+            if (defaultValue != AppValues.InvalidInteger) {
+                try ( PreparedStatement insert = conn.prepareStatement(InsertString)) {
+                    insert.setString(1, keyName);
+                    insert.setInt(2, defaultValue);
+                    insert.executeUpdate();
+                } catch (Exception e) {
+                    MyBoxLog.debug(e);
+                }
+                value = defaultValue;
+            }
+        }
         return value;
+    }
+
+    public static boolean readBoolean(Connection conn, String keyName, boolean defaultValue) {
+        int v = readInt(conn, keyName, defaultValue ? 1 : 0);
+        return v > 0;
     }
 
     public static boolean readBoolean(String keyName, boolean defaultValue) {
@@ -229,6 +240,15 @@ public class TableUserConf extends BaseTable<StringValue> {
 
     public static int writeInt(String keyName, int intValue) {
         try ( Connection conn = DerbyBase.getConnection()) {
+            return writeInt(conn, keyName, intValue);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return -1;
+        }
+    }
+
+    public static int writeInt(Connection conn, String keyName, int intValue) {
+        try {
             int exist = readInt(conn, keyName);
             if (exist != AppValues.InvalidInteger) {
                 if (intValue != exist) {
@@ -255,6 +275,10 @@ public class TableUserConf extends BaseTable<StringValue> {
 
     public static int writeBoolean(String keyName, boolean booleanValue) {
         return writeInt(keyName, booleanValue ? 1 : 0);
+    }
+
+    public static int writeBoolean(Connection conn, String keyName, boolean booleanValue) {
+        return writeInt(conn, keyName, booleanValue ? 1 : 0);
     }
 
     public static boolean delete(String keyName) {

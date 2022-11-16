@@ -94,8 +94,8 @@ public class MenuTextEditController extends MenuTextBaseController {
                 int selection = range != null ? range.getLength() : 0;
                 String info = message("CharactersNumber") + ": " + StringTools.format(textInput.getLength()) + "  ";
                 if (selection > 0) {
-                    info += message("Selection") + ": " + StringTools.format(range.getStart() + 1)
-                            + "-" + StringTools.format(range.getEnd()) + "(" + StringTools.format(selection) + ")";
+                    info += message("Selection") + ": [" + StringTools.format(range.getStart() + 1)
+                            + "-" + StringTools.format(range.getEnd()) + "]" + StringTools.format(selection);
                 } else {
                     info += message("Cursor") + ": " + StringTools.format(textInput.getAnchor() + 1) + " " + message("Selection") + ": 0";
                 }

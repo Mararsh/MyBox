@@ -4,6 +4,7 @@ import java.util.List;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.value.AppValues;
 
 /**
  * @Author Mara
@@ -130,9 +131,20 @@ public class DataFilter {
         if (task != null) {
             task.setError(error);
         }
-        if (error != null) {
+        if (error != null && AppValues.Alpha) {
             MyBoxLog.debug(error + "\n" + sourceScript);
         }
+    }
+
+    public void clear() {
+        sourceScript = null;
+        filledScript = null;
+        maxPassed = -1;
+        reversed = false;
+        passedNumber = 0;
+        passed = false;
+        task = null;
+        calculator.reset();
     }
 
     /*

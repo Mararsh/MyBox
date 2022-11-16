@@ -96,8 +96,8 @@ License:    Apache License Version 2.0
                                         <TextArea fx:id="logsTextArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
                                         <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
                                             <children>
-                                                <Label text="%MaxLines" />
-                                                <TextField fx:id="maxLinesinput" prefWidth="80.0" text="5000" />
+                                                <Label text="%MaxCharacters" />
+                                                <TextField fx:id="maxCharsinput" prefWidth="80.0" text="5000" />
                                                 <CheckBox fx:id="verboseCheck" mnemonicParsing="false" text="%VerboseLogs" />
                                                 <Button fx:id="clearButton1" mnemonicParsing="false" onAction="#clearLogs">
                                                     <graphic>

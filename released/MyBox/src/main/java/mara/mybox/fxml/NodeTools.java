@@ -155,6 +155,17 @@ public class NodeTools {
         return false;
     }
 
+    public static String getSelectedText(ToggleGroup group) {
+        if (group == null) {
+            return null;
+        }
+        Toggle button = group.getSelectedToggle();
+        if (button == null || !(button instanceof RadioButton)) {
+            return null;
+        }
+        return ((RadioButton) button).getText();
+    }
+
     public static boolean setItemSelected(ComboBox<String> box, String text) {
         if (box == null || text == null) {
             return false;
@@ -261,8 +272,7 @@ public class NodeTools {
 
     public static double dpiScale(double dpi) {
         try {
-            double scale = dpi / screenDpi();
-            return scale > 1 ? scale : 1;
+            return dpi / screenDpi();
         } catch (Exception e) {
             return 1;
         }

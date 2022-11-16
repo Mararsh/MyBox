@@ -2,9 +2,12 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Window;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -17,22 +20,36 @@ import static mara.mybox.value.Languages.message;
 public class DataInSystemClipboardController extends BaseController {
 
     @FXML
-    protected ControlData2DInput inputController;
+    protected ControlData2DSystemClipboard boardController;
+    @FXML
+    protected ControlData2DResults resultsController;
 
     public DataInSystemClipboardController() {
         baseTitle = message("DataInSystemClipboard");
     }
 
     @Override
-    public void afterSceneLoaded() {
-        super.afterSceneLoaded();
-        inputController.loadContentInSystemClipboard();
+    public void initControls() {
+        try {
+            super.initControls();
+
+            boardController.loadNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    resultsController.loadData(boardController.textData);
+                }
+            });
+            boardController.loadContentInSystemClipboard();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
         if (!super.keyEventsFilter(event)) {
-            return inputController.keyEventsFilter(event);
+            return boardController.keyEventsFilter(event);
         }
         return true;
     }

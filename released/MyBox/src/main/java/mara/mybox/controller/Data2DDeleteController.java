@@ -16,7 +16,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-11-28
  * @License Apache License Version 2.0
  */
-public class Data2DDeleteController extends BaseData2DHandleController {
+public class Data2DDeleteController extends BaseData2DTargetsController {
 
     @FXML
     protected CheckBox errorContinueCheck;
@@ -112,7 +112,7 @@ public class Data2DDeleteController extends BaseData2DHandleController {
             protected boolean handle() {
                 try {
                     if (!data2D.isTmpData() && tableController.dataController.backupController != null
-                            && tableController.dataController.backupController.isBack()) {
+                            && tableController.dataController.backupController.needBackup()) {
                         tableController.dataController.backupController.addBackup(task, data2D.getFile());
                     }
                     data2D.startTask(task, filterController.filter);

@@ -26,10 +26,10 @@ import static mara.mybox.value.Languages.message;
 public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlController {
 
     protected String selectedValue2;
-    protected int col1, col2, rowsNumber;
+    protected int col1Index, col2Index, categoryIndex;
+
     protected double[] bars;
     protected Normalization normalization;
-    protected List<List<String>> otherData;
     protected Color color1, color2;
 
     @FXML
@@ -51,8 +51,6 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
                     checkOptions();
                 }
             });
-
-            webViewController.initStyle = "";
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -96,14 +94,30 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
-            col1 = data2D.colOrder(selectedValue);
-            col2 = data2D.colOrder(selectedValue2);
+            int col1 = data2D.colOrder(selectedValue);
+            int col2 = data2D.colOrder(selectedValue2);
             dataColsIndices = new ArrayList<>();
             dataColsIndices.add(col1);
-            dataColsIndices.add(col2);
+            if (!dataColsIndices.contains(col2)) {
+                dataColsIndices.add(col2);
+            }
             if (!dataColsIndices.contains(categorysCol)) {
                 dataColsIndices.add(categorysCol);
             }
+            for (int col : otherColsIndices) {
+                if (!dataColsIndices.contains(col)) {
+                    dataColsIndices.add(col);
+                }
+            }
+
+            col1Index = dataColsIndices.indexOf(col1) + 1;
+            col2Index = dataColsIndices.indexOf(col2) + 1;
+            categoryIndex = dataColsIndices.indexOf(categorysCol) + 1;
+            otherIndices = new ArrayList<>();
+            for (int col : otherColsIndices) {
+                otherIndices.add(dataColsIndices.indexOf(col) + 1);
+            }
+
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -112,23 +126,30 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
     }
 
     @Override
-    public void readData() {
+    protected String makeHtml() {
+        chartData = chartMax();
+        if (chartData == null || chartData.isEmpty()) {
+            return null;
+        }
+        if (!makeBars()) {
+            return null;
+        }
+        return writeHtml();
+    }
+
+    protected boolean makeBars() {
         try {
-            if (isAllPages()) {
-                outputData = data2D.allRows(dataColsIndices, true);
-            } else {
-                outputData = filtered(dataColsIndices, true);
+            if (chartData == null) {
+                return false;
             }
-            if (outputData == null) {
-                return;
-            }
+            outputColumns = data2D.makeColumns(dataColsIndices, showRowNumber());
             normalization = null;
-            rowsNumber = outputData.size();
+            int rowsNumber = chartData.size();
             String[] data = new String[2 * rowsNumber];
             for (int r = 0; r < rowsNumber; r++) {
-                List<String> tableRow = outputData.get(r);
-                data[r] = tableRow.get(1);
-                data[r + rowsNumber] = tableRow.get(1);
+                List<String> tableRow = chartData.get(r);
+                data[r] = tableRow.get(col1Index);
+                data[r + rowsNumber] = tableRow.get(col2Index);
             }
             normalization = Normalization.create().setSourceVector(data).setInvalidAs(invalidAs);
             if (absoluateRadio.isSelected()) {
@@ -137,53 +158,42 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
                 normalization.setFrom(0).setTo(barWidth).setA(Normalization.Algorithm.MinMax);
             }
             bars = DoubleTools.toDouble(normalization.calculate(), InvalidAs.Zero);
-            otherData = null;
-            if (otherColsIndices != null) {
-                if (isAllPages()) {
-                    otherData = data2D.allRows(otherColsIndices, false);
-                } else {
-                    otherData = filtered(otherColsIndices, false);
-                }
-            }
+            return true;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
             }
+            MyBoxLog.console(e);
+            return false;
         }
     }
 
     @Override
-    protected String makeHtml() {
+    public String chartTitle() {
+        return data2D.displayName() + " - " + message("ComparisonBarsChart");
+    }
+
+    protected String writeHtml() {
         try {
-            if (bars == null || outputData == null || normalization == null) {
+            if (bars == null || data2D == null || normalization == null || chartData == null) {
                 return null;
             }
             StringBuilder s = new StringBuilder();
             s.append(jsBody());
-            String title = data2D.displayName() + " - " + message("ComparisonBarsChart");
+            String title = chartTitle();
             s.append("<DIV align=\"center\">\n");
             s.append("<H2>").append(title).append("</H2>\n");
             if (absoluateRadio.isSelected()) {
                 s.append("<P class=\"Calculated\" align=center>").append(message("MaxAbsolute")).append(": ")
-                        .append(normalization.getMaxAbs()).append("</P>\n");
+                        .append(DoubleTools.scale(normalization.getMaxAbs(), scale))
+                        .append("</P>\n");
             } else {
                 s.append("<P class=\"Calculated\" align=center>").append(message("Maximum")).append(": ")
-                        .append(normalization.getMax()).append("&nbsp;".repeat(8))
-                        .append(message("Minimum")).append(": ").append(normalization.getMin()).append("</P>\n");
-            }
-            Random random = new Random();
-            if (randomColor) {
-                color1 = null;
-                color2 = null;
-            } else {
-                color1 = data2D.column(col1).getColor();
-                color2 = data2D.column(col2).getColor();
-            }
-            if (color1 == null) {
-                color1 = FxColorTools.randomColor(random);
-            }
-            if (color2 == null) {
-                color2 = FxColorTools.randomColor(random);
+                        .append(DoubleTools.scale(normalization.getMax(), scale))
+                        .append("&nbsp;".repeat(8))
+                        .append(message("Minimum")).append(": ")
+                        .append(DoubleTools.scale(normalization.getMin(), scale))
+                        .append("</P>\n");
             }
             s.append("<TABLE>\n");
             s.append("<TR  style=\"font-weight:bold; \">\n");
@@ -191,44 +201,47 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
             s.append("<TH>").append(selectedValue).append("</TH>\n");
             s.append("<TH align=center class=\"Category\">").append(selectedCategory).append("</TH>\n");
             s.append("<TH>").append(selectedValue2).append("</TH>\n");
-            int otherColsNumber = otherColsIndices != null ? otherColsIndices.size() : 0;
-            if (otherColsNumber > 0) {
-                for (int col : otherColsIndices) {
-                    s.append("<TH class=\"Others\">").append(data2D.columnName(col)).append("</TH>\n");
+            if (otherColsNames != null) {
+                for (String name : otherColsNames) {
+                    s.append("<TH class=\"Others\">").append(name).append("</TH>\n");
                 }
             }
             s.append("</TR>\n");
+
+            Random random = new Random();
+            if (randomColor) {
+                color1 = null;
+                color2 = null;
+            } else {
+                color1 = outputColumns.get(col1Index).getColor();
+                color2 = outputColumns.get(col2Index).getColor();
+            }
+            if (color1 == null) {
+                color1 = FxColorTools.randomColor(random);
+            }
+            if (color2 == null) {
+                color2 = FxColorTools.randomColor(random);
+            }
+            int rowsNumber = chartData.size();
             for (int r = 0; r < rowsNumber; r++) {
-                List<String> tableRow = outputData.get(r);
+                List<String> row = chartData.get(r);
                 s.append("<TR>\n");
 
                 s.append("<TD align=center class=\"RowNumber\">")
-                        .append(message("Row")).append(tableRow.get(0)).append("</TD>\n");
+                        .append(message("Row")).append(row.get(0)).append("</TD>\n");
 
                 s.append("<TD align=right>")
-                        .append("<SPAN class=\"DataValue\">").append(tableRow.get(1)).append("</SPAN>")
+                        .append("<SPAN class=\"DataValue\">").append(row.get(col1Index)).append("</SPAN>")
                         .append(bar(bars[r], color1)).append("</TD>\n");
 
-                int pos = dataColsIndices.indexOf(categorysCol);
-                String v;
-                if (pos >= 0) {
-                    v = tableRow.get(pos + 1);
-                } else if (tableRow.size() > 3) {
-                    v = tableRow.get(3);
-                } else {
-                    v = "";
-                }
-                s.append("<TD align=center class=\"Category\">").append(v).append("</TD>\n");
+                s.append("<TD align=center class=\"Category\">").append(row.get(categoryIndex)).append("</TD>\n");
 
                 s.append("<TD align=left>")
                         .append(bar(bars[r + rowsNumber], color2))
-                        .append("<SPAN class=\"DataValue\">").append(tableRow.get(2)).append("</SPAN>")
+                        .append("<SPAN class=\"DataValue\">").append(row.get(col2Index)).append("</SPAN>")
                         .append("</TD>\n");
-                if (otherData != null) {
-                    List<String> otherRow = otherData.get(r);
-                    for (int i = 0; i < otherColsNumber; i++) {
-                        s.append("<TD class=\"Others\">").append(otherRow.get(i)).append("</TD>\n");
-                    }
+                for (int index : otherIndices) {
+                    s.append("<TD class=\"Others\">").append(row.get(index)).append("</TD>\n");
                 }
                 s.append("</TR>\n");
             }
@@ -240,8 +253,9 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
             if (task != null) {
                 task.setError(e.toString());
             }
+            MyBoxLog.console(e);
+            return null;
         }
-        return null;
     }
 
     protected String bar(double width, Color color) {

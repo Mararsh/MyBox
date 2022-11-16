@@ -19,12 +19,11 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
-import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -954,22 +953,7 @@ public class ControlFFmpegOptions extends BaseController {
 
     @FXML
     public void aboutMedia() {
-        try {
-            StringTable table = new StringTable(null, Languages.message("AboutMedia"));
-            table.newLinkRow("FFmpegDocuments", "http://ffmpeg.org/documentation.html");
-            table.newLinkRow("FFmpeg wiki", "https://trac.ffmpeg.org");
-            table.newLinkRow("H264VideoEncodingGuide", "http://trac.ffmpeg.org/wiki/Encode/H.264");
-            table.newLinkRow("AACEncodingGuide", "https://trac.ffmpeg.org/wiki/Encode/AAC");
-            table.newLinkRow("UnderstandingRateControlModes", "https://slhck.info/video/2017/03/01/rate-control.html");
-            table.newLinkRow("CRFGuide", "https://slhck.info/video/2017/02/24/crf-guide.html");
-            table.newLinkRow("CapturingDesktopScreenRecording", "http://trac.ffmpeg.org/wiki/Capture/Desktop");
-
-            File htmFile = HtmlWriteTools.writeHtml(table.html());
-            openLink(htmFile);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+        openLink(HelpTools.aboutMedia());
     }
 
     @FXML

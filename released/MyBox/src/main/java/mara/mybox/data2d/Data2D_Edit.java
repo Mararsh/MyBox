@@ -1,5 +1,7 @@
 package mara.mybox.data2d;
 
+import java.io.File;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,8 +23,16 @@ import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.db.table.TableData2DStyle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.SingletonTask;
+import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.FileDeleteTools;
+import mara.mybox.tools.TextFileTools;
+import static mara.mybox.tools.TextTools.delimiterValue;
+import static mara.mybox.tools.TmpFileTools.getTempFile;
 import static mara.mybox.value.Languages.message;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 
 /**
  * @Author Mara
@@ -288,6 +298,61 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         return dataSize;
     }
 
+    public String encodeCSV(SingletonTask task, String delimiterName,
+            boolean displayRowNames, boolean displayColNames, boolean formatValues) {
+        if (!isColumnsValid() || delimiterName == null) {
+            return "";
+        }
+        try {
+            File tmpFile = getTempFile(".csv");
+            tmpFile = DataFileCSV.csvFile(task, tmpFile, delimiterValue(delimiterName),
+                    displayColNames ? columnNames() : null, tableRows(displayRowNames, formatValues));
+            if (tmpFile == null || !tmpFile.exists()) {
+                return "";
+            }
+            String page = TextFileTools.readTexts(tmpFile, Charset.forName("UTF-8"));
+            FileDeleteTools.delete(tmpFile);
+            return page;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return "";
+        }
+    }
+
+    public List<List<String>> decodeCSV(SingletonTask task, String text, String delimiterName, boolean hasHeader) {
+        if (text == null || delimiterName == null) {
+            return null;
+        }
+        try {
+            List<List<String>> data = new ArrayList<>();
+            File tmpFile = getTempFile(".csv");
+            TextFileTools.writeFile(tmpFile, text, Charset.forName("UTF-8"));
+            if (tmpFile == null || !tmpFile.exists()) {
+                return null;
+            }
+            try ( CSVParser parser = CsvTools.csvParser(tmpFile, delimiterValue(delimiterName), hasHeader)) {
+                if (hasHeader) {
+                    data.add(parser.getHeaderNames());
+                }
+                for (CSVRecord record : parser) {
+                    if (task != null && task.isCancelled()) {
+                        return null;
+                    }
+                    data.add(record.toList());
+                }
+            } catch (Exception e) {
+                if (task != null) {
+                    task.setError(e.toString());
+                }
+                MyBoxLog.error(e);
+            }
+            FileDeleteTools.delete(tmpFile);
+            return data;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
 
     /*
         save

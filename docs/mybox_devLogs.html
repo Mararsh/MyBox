@@ -6,11 +6,12 @@
  <head>
   <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
   <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
  </head>
  <body contenteditable="false" style="width: 900px; margin:0 auto;">
   <h1>开发日志</h1>
-<p>2022-11-8 版本6.6.1</p>
+<p>2022-11-16 版本6.6.1</p>
   <ul>
    <li>新增： 
     <ul>
@@ -23,7 +24,7 @@
        <li>此属性主要用于显示，在编辑输入数值时不会自动应用格式、而是保持原始的输入。</li>
        <li>在一些界面上，如“复制”或“导出”，可选“按照列的格式保存日期/时间/纪元和数字”。</li>
       </ul></li>
-     <li>数据列对于非法值的处理策略：计为空（null）、计为空值（empty）、计为零。 此属性只用于显示或者计算，在编辑输入数值时不会自动处理非法值。</li>
+     <li>数据列对于非法值的处理：略过、计为空值、计为零。 此属性只用于显示或者计算，在编辑输入数值时不会自动处理非法值。</li>
      <li>编辑数据时，根据列类型，提供相应的控件，例如： 
       <ul>
        <li>对于布尔类型，显示选择框。</li>
@@ -74,6 +75,7 @@
    <li>解决： 
     <ul>
      <li>对很长的文本或字节执行“替换全部”后可能造成数据毁坏（抱歉）。</li>
+     <li>录屏失效了。</li>
      <li>行表达式无法描述“值为null”。</li>
      <li>类别值为空时数据图会出错。</li>
      <li>比较条图取错了一列的值。</li>
@@ -83,7 +85,7 @@
     </ul></li>
   </ul>
   <p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.6.1">此版本关闭的需求/问题列表</a></p>
-  <p>2022-9-28 版本6.6</p>
+   <p>2022-9-28 版本6.6</p>
   <ul>
    <li>新增： 
     <ul>

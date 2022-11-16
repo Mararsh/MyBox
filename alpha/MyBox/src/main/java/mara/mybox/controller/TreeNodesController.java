@@ -322,6 +322,7 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
             }
             s.append(indentNode).append("</DIV>\n");
             String nodeValue = node.getValue();
+            String moreValue = node.getMore();
             if (nodeValue != null && !nodeValue.isBlank()) {
                 s.append(indentNode).append("<DIV class=\"nodeValue\">")
                         .append("<DIV style=\"padding: 0 0 0 ").append((indent + 4) * 6).append("px;\">")
@@ -329,7 +330,7 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
                 String nodeDisplay;
                 if (category.equals(TreeNode.WebFavorite)) {
                     nodeDisplay = "<A href=\"" + nodeValue + "\">";
-                    if (node.getMore() != null && !node.getMore().isBlank()) {
+                    if (moreValue != null && !moreValue.isBlank()) {
                         try {
                             nodeDisplay += "<IMG src=\"" + new File(node.getMore()).toURI().toString() + "\" width=40/>";
                         } catch (Exception e) {
@@ -342,6 +343,13 @@ public class TreeNodesController extends BaseNodeSelector<TreeNode> {
                     nodeDisplay = HtmlWriteTools.stringToHtml(nodeValue);
                 }
                 s.append(indentNode).append(nodeDisplay).append("\n");
+                s.append(indentNode).append("</DIV></DIV></DIV>\n");
+            }
+            if (moreValue != null && !moreValue.isBlank() && !category.equals(TreeNode.WebFavorite)) {
+                s.append(indentNode).append("<DIV class=\"nodeValue\">")
+                        .append("<DIV style=\"padding: 0 0 0 ").append((indent + 4) * 6).append("px;\">")
+                        .append("<DIV class=\"valueBox\">\n");
+                s.append(indentNode).append(HtmlWriteTools.stringToHtml(moreValue)).append("\n");
                 s.append(indentNode).append("</DIV></DIV></DIV>\n");
             }
             if (children != null && !children.isEmpty()) {

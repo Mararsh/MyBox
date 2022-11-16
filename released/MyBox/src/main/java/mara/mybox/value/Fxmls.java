@@ -215,8 +215,16 @@ public class Fxmls {
     public static final String Data2DChartXYOptionsFxml = "/fxml/Data2DChartXYOptions.fxml";
     public static final String Data2DChartPieOptionsFxml = "/fxml/Data2DChartPieOptions.fxml";
     public static final String Data2DSetStylesFxml = "/fxml/Data2DSetStyles.fxml";
-    public static final String Data2DGroupEqualValuesFxml = "/fxml/Data2DGroupEqualValues.fxml";
-    public static final String Data2DSplitFxml = "/fxml/Data2DSplit.fxml";
+    public static final String Data2DGroupStatisticFxml = "/fxml/Data2DGroupStatistic.fxml";
+    public static final String Data2DGroupFxml = "/fxml/Data2DGroup.fxml";
+    public static final String Data2DLocationDistributionFxml = "/fxml/Data2DLocationDistribution.fxml";
+    public static final String Data2DRowFilterEditFxml = "/fxml/Data2DRowFilterEdit.fxml";
+    public static final String RowFilterFxml = "/fxml/RowFilter.fxml";
+    public static final String Data2DChartGroupXYFxml = "/fxml/Data2DChartGroupXY.fxml";
+    public static final String Data2DChartGroupPieFxml = "/fxml/Data2DChartGroupPie.fxml";
+    public static final String Data2DChartGroupComparisonBarsFxml = "/fxml/Data2DChartGroupComparisonBars.fxml";
+    public static final String Data2DChartGroupSelfComparisonBarsFxml = "/fxml/Data2DChartGroupSelfComparisonBars.fxml";
+    public static final String Data2DChartGroupBoxWhiskerFxml = "/fxml/Data2DChartGroupBoxWhisker.fxml";
 
     public static final String JShellFxml = "/fxml/JShell.fxml";
     public static final String JexlFxml = "/fxml/Jexl.fxml";
@@ -260,26 +268,10 @@ public class Fxmls {
     public static final String GeographyCodeImportGeonamesFileFxml = "/fxml/GeographyCodeImportGeonamesFile.fxml";
     public static final String GeographyCodeSelectortFxml = "/fxml/GeographyCodeSelector.fxml";
 
-    public static final String DatasetFxml = "/fxml/Dataset.fxml";
-    public static final String DatasetEditFxml = "/fxml/DatasetEdit.fxml";
-
-    public static final String LocationDataFxml = "/fxml/LocationData.fxml";
-    public static final String LocationDataEditFxml = "/fxml/LocationDataEdit.fxml";
     public static final String LocationInMapFxml = "/fxml/LocationInMap.fxml";
-    public static final String LocationDataImportCSVFxml = "/fxml/LocationDataImportCSV.fxml";
-    public static final String LocationDataImportMovebankFxml = "/fxml/LocationDataImportMovebank.fxml";
-
+    public static final String CoordinatePickerFxml = "/fxml/CoordinatePicker.fxml";
     public static final String ConvertCoordinateFxml = "/fxml/ConvertCoordinate.fxml";
-
-    public static final String EpidemicReportsFxml = "/fxml/EpidemicReports.fxml";
-    public static final String EpidemicReportEditFxml = "/fxml/EpidemicReportEdit.fxml";
-    public static final String EpidemicReportsEditFxml = "/fxml/EpidemicReportsEdit.fxml";
-    public static final String EpidemicReportsImportInternalCSVFxml = "/fxml/EpidemicReportsImportInternalCSV.fxml";
-    public static final String EpidemicReportsImportExternalCSVFxml = "/fxml/EpidemicReportsImportExternalCSV.fxml";
-    public static final String EpidemicReportsImport621ExternalFxml = "/fxml/EpidemicReportsImport621External.fxml";
-    public static final String EpidemicReportsImportJHUTimeSeriesFxml = "/fxml/EpidemicReportsImportJHUTimeSeries.fxml";
-    public static final String EpidemicReportsImportJHUDailyFxml = "/fxml/EpidemicReportsImportJHUDaily.fxml";
-    public static final String EpidemicReportsStatisticFxml = "/fxml/EpidemicReportsStatistic.fxml";
+    public static final String Data2DCoordinatePickerFxml = "/fxml/Data2DCoordinatePicker.fxml";
 
     public static final String DataQueryFxml = "/fxml/DataQuery.fxml";
     public static final String DataExportFxml = "/fxml/DataExport.fxml";
@@ -387,6 +379,7 @@ public class Fxmls {
     public static final String TextDelimiterFxml = "/fxml/TextDelimiter.fxml";
     public static final String AddressInputFxml = "/fxml/AddressInput.fxml";
     public static final String TableAddRowsFxml = "/fxml/TableAddRows.fxml";
+    public static final String DateInputFxml = "/fxml/DateInput.fxml";
 
     public static final String MenuFxml = "/fxml/Menu.fxml";
     public static final String MenuTextEditFxml = "/fxml/MenuTextEdit.fxml";

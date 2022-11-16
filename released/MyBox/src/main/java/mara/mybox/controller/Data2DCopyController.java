@@ -11,16 +11,32 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-11-28
  * @License Apache License Version 2.0
  */
-public class Data2DCopyController extends BaseData2DHandleController {
+public class Data2DCopyController extends BaseData2DTargetsController {
 
     public Data2DCopyController() {
-        baseTitle = message("CopyFilterQuery");
+        baseTitle = message("CopyFilterQueryConvert");
+    }
+
+    @Override
+    public boolean initData() {
+        try {
+            if (!super.initData()) {
+                return false;
+            }
+
+            outputColumns = data2D.targetColumns(checkedColsIndices, otherColsIndices, showRowNumber(), null);
+
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
     }
 
     @Override
     public DataFileCSV generatedFile() {
-        return data2D.copy(targetController.name(),
-                checkedColsIndices, rowNumberCheck.isSelected(), colNameCheck.isSelected());
+        return data2D.copy(targetController.name(), checkedColsIndices,
+                rowNumberCheck.isSelected(), colNameCheck.isSelected(), formatValuesCheck.isSelected());
     }
 
     /*

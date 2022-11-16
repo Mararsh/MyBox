@@ -3,79 +3,27 @@ package mara.mybox.controller;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.Date;
-import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
  * @CreateDate 2020-5-7
  * @License Apache License Version 2.0
  */
-public class BaseTaskController extends BaseController {
+public class BaseTaskController extends BaseLogs {
 
-    protected int logsMaxLines, logsTotalLines, logsCacheLines = 200;
     protected boolean cancelled, successed;
     protected Date startTime, endTime;
 
     @FXML
     protected Tab logsTab;
-    @FXML
-    protected CheckBox verboseCheck;
-    @FXML
-    protected TextArea logsTextArea;
-    @FXML
-    protected TextField maxLinesinput;
 
     public BaseTaskController() {
-    }
-
-    @Override
-    public void initControls() {
-        try {
-            super.initControls();
-
-            logsMaxLines = UserConfig.getInt("TaskMaxLinesNumber", 5000);
-            if (logsMaxLines <= 0) {
-                logsMaxLines = 5000;
-            }
-            if (maxLinesinput != null) {
-                maxLinesinput.setText(logsMaxLines + "");
-                maxLinesinput.textProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue<? extends String> v, String ov, String nv) {
-                        try {
-                            int iv = Integer.parseInt(maxLinesinput.getText());
-                            if (iv > 0) {
-                                logsMaxLines = iv;
-                                maxLinesinput.setStyle(null);
-                                UserConfig.setInt("TaskMaxLinesNumber", logsMaxLines);
-                            } else {
-                                maxLinesinput.setStyle(UserConfig.badStyle());
-                            }
-                        } catch (Exception e) {
-                            maxLinesinput.setStyle(UserConfig.badStyle());
-                        }
-                    }
-                });
-
-            }
-
-            initLogs();
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
     }
 
     public boolean checkOptions() {
@@ -145,7 +93,7 @@ public class BaseTaskController extends BaseController {
                 startButton.applyCss();
                 startButton.setUserData(null);
                 updateLogs(message("Completed") + " " + message("Cost")
-                        + " " + DateTools.datetimeMsDuration(endTime, startTime));
+                        + " " + DateTools.datetimeMsDuration(endTime, startTime), true);
                 afterTask();
             }
         };
@@ -179,38 +127,6 @@ public class BaseTaskController extends BaseController {
 
     public void afterTask() {
 
-    }
-
-    @FXML
-    public void initLogs() {
-        if (logsTextArea == null) {
-            return;
-        }
-        logsTextArea.setText("");
-        logsTotalLines = 0;
-    }
-
-    public void updateLogs(final String line) {
-        try {
-            if (logsTextArea == null) {
-                return;
-            }
-            Platform.runLater(() -> {
-                String s = DateTools.datetimeToString(new Date()) + "  " + line + "\n";
-                logsTextArea.appendText(s);
-                logsTotalLines++;
-                if (logsTotalLines > logsMaxLines + logsCacheLines) {
-                    logsTextArea.deleteText(0, 1);
-                }
-            });
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-    }
-
-    @FXML
-    public void clearLogs() {
-        initLogs();
     }
 
     @FXML

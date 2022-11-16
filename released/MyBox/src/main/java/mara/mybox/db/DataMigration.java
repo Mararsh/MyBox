@@ -7,31 +7,31 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import javafx.application.Platform;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageConvertTools;
-import mara.mybox.data.CoordinateSystem;
+import mara.mybox.data.GeoCoordinateSystem;
+import static mara.mybox.data2d.Data2D_Convert.createTable;
+import mara.mybox.data2d.DataTable;
 import static mara.mybox.db.DerbyBase.BatchSize;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorPaletteName;
 import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.db.data.Data2DCell;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.data.Data2DStyle;
-import mara.mybox.db.data.Dataset;
-import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeLevel;
 import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.db.data.ImageEditHistory;
-import mara.mybox.db.data.Location;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.data.WebHistory;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
@@ -40,15 +40,14 @@ import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.db.table.TableConvolutionKernel;
+import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableData2DCell;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.db.table.TableData2DStyle;
-import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
-import mara.mybox.db.table.TableLocationData;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableWebHistory;
@@ -56,6 +55,7 @@ import mara.mybox.dev.DevTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppPaths;
@@ -64,6 +64,7 @@ import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.SystemConfig;
+import mara.mybox.value.TimeFormats;
 
 /**
  * @Author Mara
@@ -75,6 +76,9 @@ public class DataMigration {
     public static boolean checkUpdates() {
         SystemConfig.setString("CurrentVersion", AppValues.AppVersion);
         try ( Connection conn = DerbyBase.getConnection()) {
+            reloadInternalDoc();
+            reloadInternalData();
+
             int lastVersion = DevTools.lastVersion(conn);
             int currentVersion = DevTools.myboxVersion(AppValues.AppVersion);
             if (lastVersion == currentVersion) {
@@ -82,8 +86,6 @@ public class DataMigration {
             }
             MyBoxLog.info("Last version: " + lastVersion + " " + "Current version: " + currentVersion);
             if (lastVersion > 0) {
-                reloadInternalDoc();
-                reloadInternalData();
 
                 if (lastVersion < 6002001) {
                     migrateBefore621(conn);
@@ -156,6 +158,9 @@ public class DataMigration {
                 if (lastVersion < 6006000) {
                     updateIn660(conn);
                 }
+                if (lastVersion < 6006001) {
+                    updateIn661(conn);
+                }
             }
             TableStringValues.add(conn, "InstalledVersions", AppValues.AppVersion);
             conn.setAutoCommit(true);
@@ -163,6 +168,229 @@ public class DataMigration {
             MyBoxLog.debug(e.toString());
         }
         return true;
+    }
+
+    private static void updateIn661(Connection conn) {
+        try ( Statement statement = conn.createStatement()) {
+            MyBoxLog.info("Updating tables in 6.6.1...");
+
+            conn.setAutoCommit(true);
+            statement.executeUpdate("ALTER TABLE Data2D_Column ADD COLUMN scale INT");
+            statement.executeUpdate("ALTER TABLE Data2D_Column ADD COLUMN format VARCHAR(" + StringMaxLength + ")");
+            statement.executeUpdate("ALTER TABLE Data2D_Column ADD COLUMN fix_year BOOLEAN");
+            statement.executeUpdate("ALTER TABLE Data2D_Column ADD COLUMN century INT");
+            statement.executeUpdate("ALTER TABLE Data2D_Column ADD COLUMN invalid_as SMALLINT");
+            statement.executeUpdate("UPDATE Data2D_Column SET column_type=0  WHERE column_type=2");
+            statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.Datetime + "' WHERE time_format < 2 AND column_type < 6");
+            statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.Date + "' WHERE time_format=2 AND column_type < 6");
+            statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.Year + "' WHERE time_format=3 AND column_type < 6");
+            statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.Month + "' WHERE time_format=4 AND column_type < 6");
+            statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.Time + "' WHERE time_format=5 AND column_type < 6");
+            statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.TimeMs + "' WHERE time_format=6 AND column_type < 6");
+            statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.DatetimeMs + "' WHERE time_format=7 AND column_type < 6");
+            statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.Datetime + " Z' WHERE time_format=8 AND column_type < 6");
+            statement.executeUpdate("UPDATE Data2D_Column SET format='" + TimeFormats.DatetimeMs + " Z' WHERE time_format=9 AND column_type < 6");
+            statement.executeUpdate("UPDATE Data2D_Column SET format='#,###' WHERE need_format=true AND column_type >= 6 AND column_type <= 10");
+            statement.executeUpdate("UPDATE Data2D_Column SET format=null WHERE column_type = 1");
+            statement.executeUpdate("ALTER TABLE Data2D_Column DROP COLUMN need_format");
+            statement.executeUpdate("ALTER TABLE Data2D_Column DROP COLUMN time_format");
+            statement.executeUpdate("ALTER TABLE Data2D_Column DROP COLUMN values_list");
+
+            updateIn661MoveLocations(conn);
+            updateIn661MoveEpidemicReports(conn);
+
+            statement.executeUpdate("DELETE FROM VISIT_HISTORY WHERE resource_type=4 AND resource_value='Location Data'");
+            statement.executeUpdate("DELETE FROM VISIT_HISTORY WHERE resource_type=4 AND resource_value='位置数据'");
+            statement.executeUpdate("DELETE FROM VISIT_HISTORY WHERE resource_type=4 AND resource_value='Epidemic Report'");
+            statement.executeUpdate("DELETE FROM VISIT_HISTORY WHERE resource_type=4 AND resource_value='疫情报告'");
+
+            Platform.runLater(() -> {
+                if ("zh".equals(Locale.getDefault().getLanguage().toLowerCase())) {
+                    PopTools.alertInformation(null, "功能'位置数据'和'疫情报告'已被移除。\n"
+                            + "它们已存在的数据可在菜单'数据 - 数据库 - 数据库表'下访问。");
+                } else {
+                    PopTools.alertInformation(null, "Functions 'Location Data' and 'Epidemic Report' have been removed.\n"
+                            + "Their existed data can be accessed under menu 'Data - Database - Database Table'.");
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    private static void updateIn661MoveLocations(Connection conn) {
+        try ( Statement statement = conn.createStatement()) {
+            DataTable locations = new DataTable();
+            TableData2D tableLocations = locations.getTableData2D();
+            String tableName = message("LocationData");
+            if (tableLocations.exist(conn, tableName) == 1) {
+                tableName = message("LocationData") + "_" + DateTools.nowString3();
+            }
+            List<Data2DColumn> columns = new ArrayList<>();
+            columns.add(new Data2DColumn(message("DataSet"), ColumnType.String));
+            columns.add(new Data2DColumn(message("Label"), ColumnType.String));
+            columns.add(new Data2DColumn(message("Address"), ColumnType.String));
+            columns.add(new Data2DColumn(message("Longitude"), ColumnType.Longitude));
+            columns.add(new Data2DColumn(message("Latitude"), ColumnType.Latitude));
+            columns.add(new Data2DColumn(message("Altitude"), ColumnType.Double));
+            columns.add(new Data2DColumn(message("Precision"), ColumnType.Double));
+            columns.add(new Data2DColumn(message("Speed"), ColumnType.Double));
+            columns.add(new Data2DColumn(message("Direction"), ColumnType.Short));
+            columns.add(new Data2DColumn(message("CoordinateSystem"), ColumnType.String));
+            columns.add(new Data2DColumn(message("DataValue"), ColumnType.Double));
+            columns.add(new Data2DColumn(message("DataSize"), ColumnType.Double));
+            columns.add(new Data2DColumn(message("StartTime"), ColumnType.Era));
+            columns.add(new Data2DColumn(message("EndTime"), ColumnType.Era));
+            columns.add(new Data2DColumn(message("Image"), ColumnType.String));
+            columns.add(new Data2DColumn(message("Comments"), ColumnType.String));
+            locations = createTable(null, conn, tableName, columns, null, null, null, false);
+            tableLocations = locations.getTableData2D();
+            long count = 0;
+            try ( ResultSet query = statement.executeQuery("SELECT * FROM Location_Data_View");
+                     PreparedStatement insert = conn.prepareStatement(tableLocations.insertStatement())) {
+                conn.setAutoCommit(false);
+                while (query.next()) {
+                    try {
+                        Data2DRow data2DRow = tableLocations.newRow();
+                        data2DRow.setColumnValue(message("DataSet"), query.getString("data_set"));
+                        data2DRow.setColumnValue(message("Label"), query.getString("label"));
+                        data2DRow.setColumnValue(message("Address"), query.getString("address"));
+                        data2DRow.setColumnValue(message("Longitude"), query.getDouble("longitude"));
+                        data2DRow.setColumnValue(message("Latitude"), query.getDouble("latitude"));
+                        data2DRow.setColumnValue(message("Altitude"), query.getDouble("altitude"));
+                        data2DRow.setColumnValue(message("Precision"), query.getDouble("precision"));
+                        data2DRow.setColumnValue(message("Speed"), query.getDouble("speed"));
+                        data2DRow.setColumnValue(message("Direction"), query.getShort("direction"));
+                        data2DRow.setColumnValue(message("CoordinateSystem"), GeoCoordinateSystem.name(query.getShort("coordinate_system")));
+                        data2DRow.setColumnValue(message("DataValue"), query.getDouble("data_value"));
+                        data2DRow.setColumnValue(message("DataSize"), query.getDouble("data_size"));
+                        data2DRow.setColumnValue(message("StartTime"), DateTools.datetimeToString(query.getLong("start_time")));
+                        data2DRow.setColumnValue(message("EndTime"), DateTools.datetimeToString(query.getLong("end_time")));
+                        data2DRow.setColumnValue(message("Image"), query.getString("dataset_image"));
+                        data2DRow.setColumnValue(message("Comments"), query.getString("location_comments"));
+                        tableLocations.insertData(conn, insert, data2DRow);
+                        if (++count % DerbyBase.BatchSize == 0) {
+                            conn.commit();
+                        }
+                    } catch (Exception e) {
+                        MyBoxLog.console(e);
+                    }
+                }
+                conn.commit();
+            }
+            conn.setAutoCommit(true);
+
+            statement.executeUpdate("DROP INDEX Dataset_unique_index");
+            statement.executeUpdate("DROP VIEW Location_Data_View");
+            statement.executeUpdate("ALTER TABLE  Location_Data DROP CONSTRAINT  Location_Data_datasetid_fk");
+            statement.executeUpdate("DROP TABLE Dataset");
+            statement.executeUpdate("DROP TABLE Location_Data");
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    private static void updateIn661MoveEpidemicReports(Connection conn) {
+        try ( Statement statement = conn.createStatement()) {
+            DataTable reports = new DataTable();
+            TableData2D tableReports = reports.getTableData2D();
+            String tableName = message("EpidemicReport");
+            if (tableReports.exist(conn, tableName) == 1) {
+                tableName = message("EpidemicReport") + "_" + DateTools.nowString3();
+            }
+            List<Data2DColumn> columns = new ArrayList<>();
+            columns.add(new Data2DColumn(message("DataSet"), ColumnType.String));
+            columns.add(new Data2DColumn(message("Time"), ColumnType.Datetime));
+            columns.add(new Data2DColumn(message("Address"), ColumnType.String));
+            columns.add(new Data2DColumn(message("Longitude"), ColumnType.Longitude));
+            columns.add(new Data2DColumn(message("Latitude"), ColumnType.Latitude));
+            columns.add(new Data2DColumn(message("Level"), ColumnType.String));
+            columns.add(new Data2DColumn(message("Continent"), ColumnType.String));
+            columns.add(new Data2DColumn(message("Country"), ColumnType.String));
+            columns.add(new Data2DColumn(message("Province"), ColumnType.String));
+            columns.add(new Data2DColumn(message("CoordinateSystem"), ColumnType.String));
+            columns.add(new Data2DColumn(message("Confirmed"), ColumnType.Long));
+            columns.add(new Data2DColumn(message("Healed"), ColumnType.Long));
+            columns.add(new Data2DColumn(message("Dead"), ColumnType.Long));
+            columns.add(new Data2DColumn(message("IncreasedConfirmed"), ColumnType.Long));
+            columns.add(new Data2DColumn(message("IncreasedHealed"), ColumnType.Long));
+            columns.add(new Data2DColumn(message("IncreasedDead"), ColumnType.Long));
+            columns.add(new Data2DColumn(message("Source"), ColumnType.String)); // 1:predefined 2:added 3:filled 4:statistic others:unknown
+            columns.add(new Data2DColumn(message("Comments"), ColumnType.String));
+            reports = createTable(null, conn, tableName, columns, null, null, null, false);
+            tableReports = reports.getTableData2D();
+            long count = 0;
+            try ( ResultSet query = statement.executeQuery("SELECT * FROM Epidemic_Report");
+                     PreparedStatement insert = conn.prepareStatement(tableReports.insertStatement())) {
+                conn.setAutoCommit(false);
+                while (query.next()) {
+                    try {
+                        Data2DRow data2DRow = tableReports.newRow();
+                        data2DRow.setColumnValue(message("DataSet"), query.getString("data_set"));
+                        data2DRow.setColumnValue(message("Time"), query.getTimestamp("time"));
+                        long locationid = query.getLong("locationid");
+                        GeographyCode code = TableGeographyCode.readCode(conn, locationid, true);
+                        if (code != null) {
+                            try {
+                                data2DRow.setColumnValue(message("Address"), code.getName());
+                                data2DRow.setColumnValue(message("Longitude"), code.getLongitude());
+                                data2DRow.setColumnValue(message("Latitude"), code.getLatitude());
+                                data2DRow.setColumnValue(message("Level"), code.getLevelName());
+                                data2DRow.setColumnValue(message("Continent"), code.getContinentName());
+                                data2DRow.setColumnValue(message("Country"), code.getCountryName());
+                                data2DRow.setColumnValue(message("Province"), code.getProvinceName());
+                                data2DRow.setColumnValue(message("CoordinateSystem"), code.getCoordinateSystem().name());
+                                data2DRow.setColumnValue(message("Comments"), code.getFullName());
+                            } catch (Exception e) {
+                                MyBoxLog.console(e);
+                            }
+                        }
+                        data2DRow.setColumnValue(message("Confirmed"), query.getLong("confirmed"));
+                        data2DRow.setColumnValue(message("Healed"), query.getLong("healed"));
+                        data2DRow.setColumnValue(message("Dead"), query.getLong("dead"));
+                        data2DRow.setColumnValue(message("IncreasedConfirmed"), query.getLong("increased_confirmed"));
+                        data2DRow.setColumnValue(message("IncreasedHealed"), query.getLong("increased_healed"));
+                        data2DRow.setColumnValue(message("IncreasedDead"), query.getLong("increased_dead"));
+                        short sd = query.getShort("source");
+                        String source;
+                        source = switch (sd) {
+                            case 1 ->
+                                message("PredefinedData");
+                            case 2 ->
+                                message("InputtedData");
+                            case 3 ->
+                                message("FilledData");
+                            case 4 ->
+                                message("StatisticData");
+                            default ->
+                                message("Unknown");
+                        };
+                        data2DRow.setColumnValue(message("Source"), source);
+
+                        tableReports.insertData(conn, insert, data2DRow);
+                        if (++count % DerbyBase.BatchSize == 0) {
+                            conn.commit();
+                        }
+                    } catch (Exception e) {
+                        MyBoxLog.console(e);
+                    }
+                }
+                conn.commit();
+            }
+            conn.setAutoCommit(true);
+
+            statement.executeUpdate("DROP INDEX Epidemic_Report_DatasetTimeDesc_index");
+            statement.executeUpdate("DROP INDEX Epidemic_Report_DatasetTimeAsc_index");
+            statement.executeUpdate("DROP INDEX Epidemic_Report_timeAsc_index");
+            statement.executeUpdate("DROP VIEW Epidemic_Report_Statistic_View");
+            statement.executeUpdate("ALTER TABLE  Epidemic_Report DROP CONSTRAINT  Epidemic_Report_locationid_fk");
+            statement.executeUpdate("DROP TABLE Epidemic_Report");
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     private static void updateIn660(Connection conn) {
@@ -502,8 +730,6 @@ public class DataMigration {
             alterColumnLength(conn, "MyBox_Log", "method_name", StringMaxLength);
             alterColumnLength(conn, "MyBox_Log", "callers", StringMaxLength);
             alterColumnLength(conn, "MyBox_Log", "comments", StringMaxLength);
-            alterColumnLength(conn, "Location_Data", "label", StringMaxLength);
-            alterColumnLength(conn, "Location_Data", "address", StringMaxLength);
             alterColumnLength(conn, "image_scope", "outline", StringMaxLength);
             alterColumnLength(conn, "Image_Edit_History", "scope_name", StringMaxLength);
             alterColumnLength(conn, "Geography_Code", "chinese_name", StringMaxLength);
@@ -519,9 +745,6 @@ public class DataMigration {
             alterColumnLength(conn, "Geography_Code", "alias4", StringMaxLength);
             alterColumnLength(conn, "Geography_Code", "alias5", StringMaxLength);
             alterColumnLength(conn, "Float_Matrix", "name", StringMaxLength);
-            alterColumnLength(conn, "Epidemic_Report", "data_set", StringMaxLength);
-            alterColumnLength(conn, "Dataset", "data_category", StringMaxLength);
-            alterColumnLength(conn, "Dataset", "data_set", StringMaxLength);
             alterColumnLength(conn, "Convolution_Kernel", "name", StringMaxLength);
             alterColumnLength(conn, "Convolution_Kernel", "description", StringMaxLength);
             alterColumnLength(conn, "Color_Palette_Name", "palette_name", StringMaxLength);
@@ -959,7 +1182,6 @@ public class DataMigration {
             MyBoxLog.info("Updating tables in 6.3.2...");
             updateForeignKeysIn632(conn);
             updateGeographyCodeIn632(conn);
-            updateLocationIn632(conn);
             TableStringValues.add(conn, "InstalledVersions", "6.3.2");
             conn.setAutoCommit(true);
         } catch (Exception e) {
@@ -982,9 +1204,6 @@ public class DataMigration {
                 }
             }
             sql = "ALTER TABLE Geography_Code ADD CONSTRAINT Geography_Code_owner_fk FOREIGN KEY (owner)"
-                    + " REFERENCES GEOGRAPHY_CODE (gcid) ON DELETE RESTRICT ON UPDATE RESTRICT";
-            update.executeUpdate(sql);
-            sql = "ALTER TABLE Epidemic_Report ADD CONSTRAINT Epidemic_Report_locationid_fk FOREIGN KEY (locationid)"
                     + " REFERENCES GEOGRAPHY_CODE (gcid) ON DELETE RESTRICT ON UPDATE RESTRICT";
             update.executeUpdate(sql);
         } catch (Exception e) {
@@ -1013,61 +1232,6 @@ public class DataMigration {
         }
     }
 
-    private static void updateLocationIn632(Connection conn) {
-        TableLocationData tableLocationData = new TableLocationData();
-        try ( Statement statement = conn.createStatement();
-                 PreparedStatement locationIinsert = conn.prepareStatement(tableLocationData.insertStatement())) {
-            int insertCount = 0;
-            conn.setAutoCommit(false);
-            try ( ResultSet results = statement.executeQuery("SELECT * FROM Location")) {
-                Map<String, Dataset> datasets = new HashMap<>();
-                while (results.next()) {
-                    Location data = new Location();
-                    String datasetName = results.getString("data_set");
-                    Dataset dataset = datasets.get(datasetName);
-                    if (dataset == null) {
-                        dataset = tableLocationData.queryAndCreateDataset(conn, datasetName);
-                        datasets.put(datasetName, dataset);
-                    }
-                    data.setDataset(dataset);
-                    data.setLabel(results.getString("data_label"));
-                    data.setAddress(results.getString("address"));
-                    data.setLongitude(results.getDouble("longitude"));
-                    data.setLatitude(results.getDouble("latitude"));
-                    data.setAltitude(results.getDouble("altitude"));
-                    data.setPrecision(results.getDouble("precision"));
-                    data.setSpeed(results.getDouble("speed"));
-                    data.setDirection(results.getShort("direction"));
-                    data.setCoordinateSystem(new CoordinateSystem(results.getShort("coordinate_system")));
-                    data.setDataValue(results.getDouble("data_value"));
-                    data.setDataSize(results.getDouble("data_size"));
-                    Date d = results.getTimestamp("data_time");
-                    if (d != null) {
-                        data.setStartTime(d.getTime() * (results.getShort("data_time_bc") >= 0 ? 1 : -1));
-                    }
-                    data.setImageName(results.getString("image_location"));
-                    data.setComments(results.getString("comments"));
-                    tableLocationData.setInsertStatement(conn, locationIinsert, data);
-                    locationIinsert.addBatch();
-                    if (++insertCount % BatchSize == 0) {
-                        locationIinsert.executeBatch();
-                        conn.commit();
-                    }
-                }
-            }
-            locationIinsert.executeBatch();
-            conn.commit();
-            conn.setAutoCommit(true);
-            try {
-                statement.executeUpdate("DROP TABLE Location");
-            } catch (Exception e) {
-//                MyBoxLog.debug(e.toString());
-            }
-        } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
-        }
-    }
-
     private static void migrateFrom63(Connection conn) {
         MyBoxLog.info("Migrate from 6.3...");
         try ( Statement statement = conn.createStatement()) {
@@ -1088,11 +1252,6 @@ public class DataMigration {
             conn.setAutoCommit(true);
             String sql = "UPDATE Geography_Code  SET area=area*1000000";
             statement.executeUpdate(sql);
-            sql = "UPDATE Epidemic_Report  SET data_set='COVID-19_Tecent' WHERE data_set='COVID-19_Tencent'";
-            statement.executeUpdate(sql);
-            sql = "DROP VIEW Epidemic_Report_Statistic_View";
-            statement.executeUpdate(sql);
-            statement.executeUpdate(TableEpidemicReport.CreateStatisticView);
         } catch (Exception e) {
 //            MyBoxLog.debug(e.toString());
             return;
@@ -1124,7 +1283,6 @@ public class DataMigration {
     private static void migrateFrom621(Connection conn) {
         try {
             migrateGeographyCodeIn621(conn);
-            migrateEpidemicReportFrom621(conn);
             conn.setAutoCommit(true);
             TableStringValues.add(conn, "InstalledVersions", "6.3");
         } catch (Exception e) {
@@ -1209,78 +1367,6 @@ public class DataMigration {
         }
     }
 
-    private static void migrateEpidemicReportFrom621(Connection conn) {
-        MyBoxLog.info("Migrate EpidemicReport from 6.2.1...");
-        String sql = "SELECT * FROM Epidemic_Report ORDER BY level, country, province, city";
-        List<EpidemicReport> reports = new ArrayList<>();
-        try ( Statement statement = conn.createStatement();
-                 PreparedStatement geoInsert = conn.prepareStatement(TableGeographyCode.Insert);
-                 ResultSet results = statement.executeQuery(sql)) {
-            while (results.next()) {
-                try {
-                    GeographyCode code = new GeographyCode();
-                    code.setCountryName(results.getString("country"));
-                    code.setProvinceName(results.getString("province"));
-                    code.setCityName(results.getString("city"));
-                    code.setCountyName(results.getString("district"));
-                    code.setTownName(results.getString("township"));
-                    code.setVillageName(results.getString("neighborhood"));
-                    String levelValue = results.getString("level");
-                    if (levelValue != null) {
-                        GeographyCodeLevel levelCode = new GeographyCodeLevel(levelValue);
-                        code.setLevelCode(levelCode);
-                    }
-                    code.setLongitude(results.getDouble("longitude"));
-                    code.setLatitude(results.getDouble("latitude"));
-                    GeographyCode exist = GeographyCodeTools.encode(conn, geoInsert, code, false);
-                    if (exist == null) {
-                        MyBoxLog.debug(code.getLevelName() + " " + code.getCountryName()
-                                + " " + code.getProvinceName() + " " + code.getCityName()
-                                + " " + code.getGcid() + " " + code.getOwner());
-                        continue;
-                    }
-                    EpidemicReport report = new EpidemicReport();
-                    report.setDataSet(results.getString("data_set"));
-                    report.setConfirmed(results.getInt("confirmed"));
-                    report.setHealed(results.getInt("healed"));
-                    report.setDead(results.getInt("dead"));
-                    report.setIncreasedConfirmed(results.getInt("increased_confirmed"));
-                    report.setIncreasedHealed(results.getInt("increased_healed"));
-                    report.setIncreasedDead(results.getInt("increased_dead"));
-                    Date d = results.getTimestamp("time");
-                    if (d != null) {
-                        report.setTime(d.getTime());
-                    }
-                    report.setSource("Filled".equals(results.getString("comments")) ? (short) 3 : (short) 2);
-                    report.setLocation(exist);
-                    report.setLocationid(exist.getGcid());
-                    reports.add(report);
-                } catch (Exception e) {
-                    MyBoxLog.debug(e.toString());
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-        try ( Statement statement = conn.createStatement()) {
-            conn.setAutoCommit(true);
-            statement.executeUpdate("DROP TABLE Epidemic_Report");
-
-            TableEpidemicReport tableEpidemicReport = new TableEpidemicReport();
-            tableEpidemicReport.createTable(conn);
-            statement.executeUpdate(TableEpidemicReport.Create_Index_DatasetTimeDesc);
-            statement.executeUpdate(TableEpidemicReport.Create_Index_DatasetTimeAsc);
-            statement.executeUpdate(TableEpidemicReport.Create_Index_TimeAsc);
-            statement.executeUpdate(TableEpidemicReport.CreateStatisticView);
-
-            long count = TableEpidemicReport.write(conn, reports, true);
-            MyBoxLog.debug("Migrated EpidemicReport: " + count);
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-    }
-
     private static boolean migrateBefore621(Connection conn) {
         MyBoxLog.info("Migrate before 6.2.1...");
         try {
@@ -1351,14 +1437,12 @@ public class DataMigration {
             if (!SystemConfig.getBoolean("UpdatedTables6.1.5", false)) {
                 MyBoxLog.info("Updating tables in 6.1.5...");
                 migrateGeographyCode615();
-                migrateEpidemicReport615();
                 SystemConfig.setBoolean("UpdatedTables6.1.5", true);
             }
 
             if (!SystemConfig.getBoolean("UpdatedTables6.2.1", false)) {
                 MyBoxLog.info("Updating tables in 6.2.1...");
                 migrateGeographyCode621();
-                migrateEpidemicReport621();
                 SystemConfig.setBoolean("UpdatedTables6.2.1", true);
             }
 
@@ -1374,7 +1458,7 @@ public class DataMigration {
         MyBoxLog.info("migrate GeographyCode 6.1.5...");
         try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
-            int size = DerbyBase.size("select count(level) from Geography_Code");
+            int size = DerbyBase.size("select count(*) from Geography_Code");
             if (size <= 0) {
                 return true;
             }
@@ -1403,81 +1487,6 @@ public class DataMigration {
         }
     }
 
-    private static boolean migrateEpidemicReport615() {
-        MyBoxLog.info("migrate Epidemic_Report 6.1.5...");
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement statement = conn.createStatement()) {
-            String sql = "ALTER TABLE Epidemic_Report  add  column  level VARCHAR(1024)";
-            statement.executeUpdate(sql);
-            sql = "ALTER TABLE Epidemic_Report  add  column  district VARCHAR(2048)";
-            statement.executeUpdate(sql);
-            sql = "ALTER TABLE Epidemic_Report  add  column  township VARCHAR(2048)";
-            statement.executeUpdate(sql);
-            sql = "ALTER TABLE Epidemic_Report  add  column  neighborhood VARCHAR(2048)";
-            statement.executeUpdate(sql);
-            sql = "ALTER TABLE Epidemic_Report  add  column  increased_confirmed INTEGER";
-            statement.executeUpdate(sql);
-            sql = "ALTER TABLE Epidemic_Report  add  column  increased_suspected INTEGER";
-            statement.executeUpdate(sql);
-            sql = "ALTER TABLE Epidemic_Report  add  column  increased_healed INTEGER";
-            statement.executeUpdate(sql);
-            sql = "ALTER TABLE Epidemic_Report  add  column  increased_dead INTEGER";
-            statement.executeUpdate(sql);
-
-            sql = "ALTER TABLE Epidemic_Report  alter column time NOT NULL";
-            statement.executeUpdate(sql);
-
-            sql = "UPDATE Epidemic_Report SET level='" + Languages.message("Global")
-                    + "' WHERE country IS NULL AND province IS NULL ";
-            statement.executeUpdate(sql);
-
-            sql = "UPDATE Epidemic_Report SET level='" + Languages.message("Country")
-                    + "' WHERE country IS NOT NULL AND province IS NULL";
-            statement.executeUpdate(sql);
-
-            sql = "UPDATE Epidemic_Report SET level='" + Languages.message("Province")
-                    + "' WHERE province IS NOT NULL";
-            statement.executeUpdate(sql);
-
-            sql = "UPDATE Epidemic_Report SET level='" + Languages.message("City")
-                    + "' WHERE level IS NULL";
-            statement.executeUpdate(sql);
-
-            sql = "ALTER TABLE Epidemic_Report  alter column level NOT NULL";
-            statement.executeUpdate(sql);
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-            return false;
-        }
-    }
-
-    private static boolean migrateEpidemicReport621() {
-        MyBoxLog.info("migrate Epidemic_Report 6.2.1...");
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement statement = conn.createStatement()) {
-            int size = DerbyBase.size("select count(confirmed) from Epidemic_Report");
-            if (size <= 0) {
-                return true;
-            }
-            String sql = "UPDATE Epidemic_Report SET level='" + Languages.message("Country")
-                    + "', country='" + Languages.message("Monaco") + "', province=null, city=null, "
-                    + " longitude=7.42, latitude=43.74 "
-                    + " WHERE province='摩纳哥'";
-            statement.executeUpdate(sql);
-
-            sql = "DELETE FROM Epidemic_Report "
-                    + " WHERE country='" + Languages.message("Macao")
-                    + "' OR country='" + Languages.message("Macau") + "'";
-            statement.executeUpdate(sql);
-
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-            return false;
-        }
-    }
-
     /*
         common
      */
@@ -1495,6 +1504,7 @@ public class DataMigration {
                     FxFileTools.getInternalFile("/doc/en/MyBox-Overview-en.pdf", "doc", "MyBox-Overview-en.pdf", true);
                     MyBoxLog.info("Internal doc loaded.");
                 } catch (Exception e) {
+                    MyBoxLog.console(e.toString());
                 }
             }
         }.start();
@@ -1514,6 +1524,7 @@ public class DataMigration {
                             "JShellCode_Examples_en.txt", "JShellCode_Examples_zh.txt",
                             "JEXLCode_Examples_en.txt", "JEXLCode_Examples_zh.txt",
                             "MathFunction_Examples_en.txt", "MathFunction_Examples_zh.txt",
+                            "RowFilter_Examples_zh.txt", "RowFilter_Examples_en.txt",
                             "WebFavorite_Examples_en.txt", "WebFavorite_Examples_zh.txt"
                     );
                     for (String name : names) {

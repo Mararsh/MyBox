@@ -440,7 +440,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
         browseURI(path.toURI());
     }
 
-    public boolean isBack() {
+    public boolean needBackup() {
         return backupCheck != null && backupCheck.isSelected();
     }
 

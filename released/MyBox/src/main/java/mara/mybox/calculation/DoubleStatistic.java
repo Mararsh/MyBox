@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import mara.mybox.calculation.DescriptiveStatistic.StatisticType;
 import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleArrayTools;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.NumberTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppValues;
 import org.apache.commons.math3.stat.descriptive.moment.Skewness;
@@ -93,7 +95,7 @@ public class DoubleStatistic {
 
     public final void calculate(String[] values, DescriptiveStatistic inOptions) {
         initOptions(inOptions);
-        if (options.isMode()) {
+        if (options.include(StatisticType.Mode)) {
             modeValue = modeObject(values);
             try {
                 mode = Double.valueOf(modeValue + "");
@@ -151,16 +153,16 @@ public class DoubleStatistic {
                 count++;
                 validList.add(v);
                 sum += v;
-                if (options.isMaximum() && v > maximum) {
+                if (options.include(StatisticType.MaximumQ4) && v > maximum) {
                     maximum = v;
                 }
-                if (options.isMinimum() && v < minimum) {
+                if (options.include(StatisticType.MinimumQ0) && v < minimum) {
                     minimum = v;
                 }
-                if (options.isGeometricMean()) {
+                if (options.include(StatisticType.GeometricMean)) {
                     geometricMean = geometricMean * v;
                 }
-                if (options.isSumSquares()) {
+                if (options.include(StatisticType.SumOfSquares)) {
                     sumSquares += v * v;
                 }
             }
@@ -172,7 +174,7 @@ public class DoubleStatistic {
                 valids = null;
             } else {
                 mean = sum / count;
-                if (options.isGeometricMean()) {
+                if (options.include(StatisticType.GeometricMean)) {
                     geometricMean = Math.pow(geometricMean, 1d / count);
                 }
                 valids = new double[validList.size()];
@@ -209,10 +211,10 @@ public class DoubleStatistic {
             }
             populationVariance = dTmp / count;
             sampleVariance = count < 2 ? Double.NaN : dTmp / (count - 1);
-            if (options.populationStandardDeviation) {
+            if (options.include(StatisticType.PopulationStandardDeviation)) {
                 populationStandardDeviation = Math.sqrt(populationVariance);
             }
-            if (options.isSampleStandardDeviation()) {
+            if (options.include(StatisticType.SampleStandardDeviation)) {
                 sampleStandardDeviation = Math.sqrt(sampleVariance);
             }
         } catch (Exception e) {
@@ -231,31 +233,31 @@ public class DoubleStatistic {
             Percentile percentile = new Percentile();
 
             percentile.setData(valids);
-            if (options.isMedian()) {
+            if (options.include(StatisticType.Median)) {
                 median = percentile.evaluate(50);
                 medianValue = median;
             }
             boolean needOutlier = options.needOutlier();
-            if (options.isUpperQuartile() || needOutlier) {
+            if (options.include(StatisticType.UpperQuartile) || needOutlier) {
                 upperQuartile = percentile.evaluate(75);
                 upperQuartileValue = upperQuartile;
             }
-            if (options.isLowerQuartile() || needOutlier) {
+            if (options.include(StatisticType.LowerQuartile) || needOutlier) {
                 lowerQuartile = percentile.evaluate(25);
                 lowerQuartileValue = lowerQuartile;
             }
             if (needOutlier) {
                 double qi = upperQuartile - lowerQuartile;
-                if (options.isUpperExtremeOutlierLine()) {
+                if (options.include(StatisticType.UpperExtremeOutlierLine)) {
                     upperExtremeOutlierLine = upperQuartile + 3 * qi;
                 }
-                if (options.isUpperMildOutlierLine()) {
+                if (options.include(StatisticType.UpperMildOutlierLine)) {
                     upperMildOutlierLine = upperQuartile + 1.5 * qi;
                 }
-                if (options.isLowerExtremeOutlierLine()) {
+                if (options.include(StatisticType.LowerExtremeOutlierLine)) {
                     lowerExtremeOutlierLine = lowerQuartile - 3 * qi;
                 }
-                if (options.isLowerMildOutlierLine()) {
+                if (options.include(StatisticType.LowerMildOutlierLine)) {
                     lowerMildOutlierLine = lowerQuartile - 1.5 * qi;
                 }
             }
@@ -269,7 +271,7 @@ public class DoubleStatistic {
             if (valids == null || count <= 0 || options == null || count <= 0) {
                 return;
             }
-            if (!options.isSkewness()) {
+            if (!options.include(StatisticType.Skewness)) {
                 return;
             }
             skewness = new Skewness().evaluate(valids);
@@ -280,10 +282,10 @@ public class DoubleStatistic {
 
     private void calculateMode() {
         try {
-            if (valids == null || count <= 0) {
+            if (options == null || valids == null || count <= 0) {
                 return;
             }
-            if (!options.isMode()) {
+            if (!options.include(StatisticType.Mode)) {
                 return;
             }
             mode = mode(valids);
@@ -294,70 +296,81 @@ public class DoubleStatistic {
     }
 
     public List<String> toStringList() {
+        if (options == null) {
+            return null;
+        }
         int scale = options.getScale();
         List<String> list = new ArrayList<>();
-        if (options.isCount()) {
-            list.add(StringTools.format(count));
-        }
-        if (options.isSum()) {
-            list.add(DoubleTools.format(sum, scale));
-        }
-        if (options.isMean()) {
-            list.add(DoubleTools.format(mean, scale));
-        }
-        if (options.isMaximum()) {
-            list.add(DoubleTools.format(maximum, scale));
-        }
-        if (options.isMinimum()) {
-            list.add(DoubleTools.format(minimum, scale));
-        }
-        if (options.isGeometricMean()) {
-            list.add(DoubleTools.format(geometricMean, scale));
-        }
-        if (options.isSumSquares()) {
-            list.add(DoubleTools.format(sumSquares, scale));
-        }
-        if (options.isPopulationStandardDeviation()) {
-            list.add(DoubleTools.format(populationVariance, scale));
-        }
-        if (options.isSampleVariance()) {
-            list.add(DoubleTools.format(sampleVariance, scale));
-        }
-        if (options.isPopulationStandardDeviation()) {
-            list.add(DoubleTools.format(populationStandardDeviation, scale));
-        }
-        if (options.isSampleStandardDeviation()) {
-            list.add(DoubleTools.format(sampleStandardDeviation, scale));
-        }
-        if (options.isSkewness()) {
-            list.add(DoubleTools.format(skewness, scale));
-        }
-        if (options.isMedian()) {
-            list.add(DoubleTools.format(median, scale));
-        }
-        if (options.isUpperQuartile()) {
-            list.add(DoubleTools.format(upperQuartile, scale));
-        }
-        if (options.isLowerQuartile()) {
-            list.add(DoubleTools.format(lowerQuartile, scale));
-        }
-        if (options.isUpperExtremeOutlierLine()) {
-            list.add(DoubleTools.format(upperExtremeOutlierLine, scale));
-        }
-        if (options.isUpperMildOutlierLine()) {
-            list.add(DoubleTools.format(upperMildOutlierLine, scale));
-        }
-        if (options.isLowerExtremeOutlierLine()) {
-            list.add(DoubleTools.format(lowerMildOutlierLine, scale));
-        }
-        if (options.isLowerMildOutlierLine()) {
-            list.add(DoubleTools.format(lowerExtremeOutlierLine, scale));
-        }
-        if (options.isMode()) {
-            try {
-                list.add(DoubleTools.format((double) modeValue, scale));
-            } catch (Exception e) {
-                list.add(modeValue.toString());
+        for (StatisticType type : options.types) {
+            switch (type) {
+                case Count:
+                    list.add(StringTools.format(count));
+                    break;
+                case Sum:
+                    list.add(NumberTools.format(sum, scale));
+                    break;
+                case Mean:
+                    list.add(NumberTools.format(mean, scale));
+                    break;
+                case MaximumQ4:
+                    list.add(NumberTools.format(maximum, scale));
+                    break;
+                case MinimumQ0:
+                    list.add(NumberTools.format(minimum, scale));
+                    break;
+                case GeometricMean:
+                    list.add(NumberTools.format(geometricMean, scale));
+                    break;
+                case SumOfSquares:
+                    list.add(NumberTools.format(sumSquares, scale));
+                    break;
+                case PopulationVariance:
+                    list.add(NumberTools.format(populationVariance, scale));
+                    break;
+                case SampleVariance:
+                    list.add(NumberTools.format(sampleVariance, scale));
+                    break;
+                case PopulationStandardDeviation:
+                    list.add(NumberTools.format(populationStandardDeviation, scale));
+                    break;
+                case SampleStandardDeviation:
+                    list.add(NumberTools.format(sampleStandardDeviation, scale));
+                    break;
+                case Skewness:
+                    list.add(NumberTools.format(skewness, scale));
+                    break;
+                case Median:
+                    list.add(NumberTools.format(median, scale));
+                    break;
+                case UpperQuartile:
+                    list.add(NumberTools.format(upperQuartile, scale));
+                    break;
+                case LowerQuartile:
+                    list.add(NumberTools.format(lowerQuartile, scale));
+                    break;
+                case UpperExtremeOutlierLine:
+                    list.add(NumberTools.format(upperExtremeOutlierLine, scale));
+                    break;
+                case UpperMildOutlierLine:
+                    list.add(NumberTools.format(upperMildOutlierLine, scale));
+                    break;
+                case LowerMildOutlierLine:
+                    list.add(NumberTools.format(lowerMildOutlierLine, scale));
+                    break;
+                case LowerExtremeOutlierLine:
+                    list.add(NumberTools.format(lowerExtremeOutlierLine, scale));
+                    break;
+                case Mode:
+                    if (modeValue == null) {
+                        list.add(null);
+                    } else {
+                        try {
+                            list.add(NumberTools.format((double) modeValue, scale));
+                        } catch (Exception e) {
+                            list.add(modeValue.toString());
+                        }
+                    }
+                    break;
             }
         }
         return list;
@@ -372,6 +385,75 @@ public class DoubleStatistic {
             doubles[i] = DoubleTools.toDouble(strings[i], invalidAs);
         }
         return doubles;
+    }
+
+    public double value(StatisticType type) {
+        if (type == null) {
+            return Double.NaN;
+        }
+        switch (type) {
+            case Count:
+                return count;
+
+            case Sum:
+                return sum;
+
+            case Mean:
+                return mean;
+
+            case MaximumQ4:
+                return maximum;
+
+            case MinimumQ0:
+                return minimum;
+
+            case GeometricMean:
+                return geometricMean;
+
+            case SumOfSquares:
+                return sumSquares;
+
+            case PopulationVariance:
+                return populationVariance;
+
+            case SampleVariance:
+                return sampleVariance;
+
+            case PopulationStandardDeviation:
+                return populationStandardDeviation;
+
+            case SampleStandardDeviation:
+                return sampleStandardDeviation;
+
+            case Skewness:
+                return skewness;
+
+            case Median:
+                return median;
+
+            case UpperQuartile:
+                return upperQuartile;
+
+            case LowerQuartile:
+                return lowerQuartile;
+
+            case UpperExtremeOutlierLine:
+                return upperExtremeOutlierLine;
+
+            case UpperMildOutlierLine:
+                return upperMildOutlierLine;
+
+            case LowerMildOutlierLine:
+                return lowerMildOutlierLine;
+
+            case LowerExtremeOutlierLine:
+                return lowerExtremeOutlierLine;
+
+            case Mode:
+                return mode;
+
+        }
+        return Double.NaN;
     }
 
     /*

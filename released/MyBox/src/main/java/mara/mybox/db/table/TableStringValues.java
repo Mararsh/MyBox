@@ -316,7 +316,7 @@ public class TableStringValues extends BaseTable<StringValues> {
         if (conn == null || name == null || name.trim().isEmpty()) {
             return -1;
         }
-        String sql = " SELECT count(string_value) FROM String_Values WHERE key_name='" + stringValue(name) + "'";
+        String sql = " SELECT count(*) FROM String_Values WHERE key_name='" + stringValue(name) + "'";
         return DerbyBase.size(conn, sql);
     }
 

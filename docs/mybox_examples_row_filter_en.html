@@ -1,0 +1,199 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    </head>
+<html>
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Row filter</title>
+  <style type="text/css">
+            .center { text-align:center;  max-width:95%; }
+table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;}
+th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;}
+th { font-weight:bold;  text-align:center;}
+tr { height: 1.2em;  }
+.valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;}
+.boldText { font-weight:bold;  }
+.valueText { color:#2e598a;  }
+
+        </style>
+  <script>
+    function nodeClicked(id) {
+      var obj = document.getElementById(id);
+      var objv = obj.style.display;
+      if (objv == 'none') {
+        obj.style.display = 'block';
+      } else {
+        obj.style.display = 'none';
+      }
+    }
+    function showClass(className, show) {
+      var nodes = document.getElementsByClassName(className);  　
+      if ( show) {
+           for (var i = 0 ; i < nodes.length; i++) {
+              nodes[i].style.display = '';
+           }
+       } else {
+           for (var i = 0 ; i < nodes.length; i++) {
+              nodes[i].style.display = 'none';
+           }
+       }
+    }
+  </script>
+ </head>
+ <body contenteditable="false">
+  <div>
+   <div><input type="checkbox" checked onclick="showClass('TreeNode', this.checked);">Unfold <input type="checkbox" onclick="showClass('SerialNumber', this.checked);">Sequence Number <input type="checkbox" checked onclick="showClass('NodeTag', this.checked);">Tags <input type="checkbox" checked onclick="showClass('nodeValue', this.checked);">Values
+   </div>
+   <hr>
+   <div style="padding: 2px;">
+    &nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item2')"><span class="SerialNumber">&nbsp;&nbsp;</span>Row filter</a>
+   </div>
+   <div class="TreeNode" id="item2">
+    <div style="padding: 2px;">
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item2000')"><span class="SerialNumber">1&nbsp;&nbsp;</span>Examples</a>
+    </div>
+    <div class="TreeNode" id="item2000">
+     <div style="padding: 2px;">
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1&nbsp;&nbsp;</span>Value is null or empty
+     </div>
+     <div class="nodeValue">
+      <div style="padding: 0 0 0 96px;">
+       <div class="valueBox">
+        '#{Column1}'&nbsp;==&nbsp;''
+       </div>
+      </div>
+     </div>
+     <div style="padding: 2px;">
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2&nbsp;&nbsp;</span>Value is not null nor empty
+     </div>
+     <div class="nodeValue">
+      <div style="padding: 0 0 0 96px;">
+       <div class="valueBox">
+        '#{Column1}'.length&nbsp;&gt;&nbsp;0
+       </div>
+      </div>
+     </div>
+     <div style="padding: 2px;">
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3&nbsp;&nbsp;</span>10 rows in front
+     </div>
+     <div class="nodeValue">
+      <div style="padding: 0 0 0 96px;">
+       <div class="valueBox">
+        true;;;10
+       </div>
+      </div>
+     </div>
+     <div style="padding: 2px;">
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item2004')"><span class="SerialNumber">1.4&nbsp;&nbsp;</span>Number</a>
+     </div>
+     <div class="TreeNode" id="item2004">
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.1&nbsp;&nbsp;</span>Is number
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         Math.abs(#{Column1})&nbsp;&gt;=&nbsp;0
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.2&nbsp;&nbsp;</span>Compare
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         #{Column1}&nbsp;!=&nbsp;0&nbsp;||&nbsp;#{Column1}&nbsp;&lt;&nbsp;#{Column2}
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.3&nbsp;&nbsp;</span>Compare with statistic
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         #{Column1}&nbsp;&lt;&nbsp;#{Column1-Mean}
+        </div>
+       </div>
+      </div>
+     </div>
+     <div style="padding: 2px;">
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item2008')"><span class="SerialNumber">1.5&nbsp;&nbsp;</span>Date</a>
+     </div>
+     <div class="TreeNode" id="item2008">
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.5.1&nbsp;&nbsp;</span>Special time
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         '#{Date}'&nbsp;==&nbsp;'2016-05-19&nbsp;11:34:28'
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.5.2&nbsp;&nbsp;</span>Time range
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         '#{Date}'.startsWith('2016-05-19&nbsp;09')
+        </div>
+       </div>
+      </div>
+     </div>
+     <div style="padding: 2px;">
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item2011')"><span class="SerialNumber">1.6&nbsp;&nbsp;</span>String</a>
+     </div>
+     <div class="TreeNode" id="item2011">
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.6.1&nbsp;&nbsp;</span>Length
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         '#{Column1}'.length&nbsp;&gt;&nbsp;3
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.6.2&nbsp;&nbsp;</span>Match
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         '#{Column1}'.search(/Hello/ig)&nbsp;&gt;=&nbsp;0
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.6.3&nbsp;&nbsp;</span>Position of sub-string
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         '#{Column1}'.indexOf('Hello')&nbsp;==&nbsp;3
+        </div>
+       </div>
+      </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.6.4&nbsp;&nbsp;</span>Special values
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         var&nbsp;array&nbsp;=&nbsp;[&nbsp;'A',&nbsp;'B',&nbsp;'C',&nbsp;'D'&nbsp;];<br> array.includes('#{Column1}')
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+   <hr>
+   <p style="font-size:0.8em">* Links and controls may be unresponsive when html page is editable.</p>
+  </div>
+ </body>
+</html>
+</html>

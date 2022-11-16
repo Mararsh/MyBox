@@ -18,9 +18,9 @@ import javafx.stage.Stage;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileTools;
@@ -101,7 +101,7 @@ public class PdfAttributesController extends BaseController {
                     return;
                 }
                 try {
-                    Date d = DateTools.stringToDatetime(newValue);
+                    Date d = DateTools.encodeDate(newValue, -1);
                     if (d != null) {
                         createTimeInput.setStyle(null);
                         createTime = d;
@@ -123,7 +123,7 @@ public class PdfAttributesController extends BaseController {
                     return;
                 }
                 try {
-                    Date d = DateTools.stringToDatetime(newValue);
+                    Date d = DateTools.encodeDate(newValue, -1);
                     if (d != null) {
                         modifyTimeInput.setStyle(null);
                         modifyTime = d;
@@ -401,11 +401,11 @@ public class PdfAttributesController extends BaseController {
         ownerPassword = ownerPassword == null || ownerPassword.isBlank() ? null : ownerPassword;
         if (changeProtectionRadio.isSelected()) {
             if (userPassword != null || ownerPassword != null) {
-                if (!PopTools.askSure(this,myStage.getTitle(), Languages.message("SureSetPasswords"))) {
+                if (!PopTools.askSure(this, myStage.getTitle(), Languages.message("SureSetPasswords"))) {
                     return;
                 }
             } else {
-                if (!PopTools.askSure(this,myStage.getTitle(), Languages.message("SureUnsetPasswords"))) {
+                if (!PopTools.askSure(this, myStage.getTitle(), Languages.message("SureUnsetPasswords"))) {
                     return;
                 }
             }

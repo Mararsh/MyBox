@@ -121,11 +121,11 @@ License:    Apache License Version 2.0
                 <TableColumn fx:id="indexColumn" editable="false" prefWidth="60.0" text="%Index" />
                 <TableColumn fx:id="nameColumn" prefWidth="160.0" text="%ColumnName" />
                 <TableColumn fx:id="typeColumn" prefWidth="120.0" text="%Type" />
+                <TableColumn fx:id="notNullColumn" text="%NotNull" />
+                <TableColumn fx:id="editableColumn" text="%Editable" />
+            <TableColumn fx:id="formatColumn" prefWidth="120.0" text="%Format" />
                 <TableColumn fx:id="colorColumn" prefWidth="75.0" text="%Color" />
                 <TableColumn fx:id="widthColumn" prefWidth="75.0" text="%Width" />
-                <TableColumn fx:id="editableColumn" text="%Editable" />
-                <TableColumn fx:id="notNullColumn" text="%NotNull" />
-            <TableColumn fx:id="formatColumn" text="%SeparateByComma" />
                 <TableColumn fx:id="lengthColumn" prefWidth="75.0" text="%Length" />
                 <TableColumn fx:id="defaultColumn" prefWidth="75.0" text="%DefaultValue" />
                 <TableColumn fx:id="primaryColumn" text="%PrimaryKey" />

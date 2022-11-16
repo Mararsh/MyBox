@@ -149,9 +149,6 @@ public class MarginTools {
             } else {
                 right = width - 1;
             }
-            //            int w = right + 1 - left;
-            //            int h = bottom + 1 - top;
-            //            BufferedImage target = source.getSubimage(left, top, w, h); // This way works on Java8 but messes on Java 12
             BufferedImage target = CropTools.cropOutside(source, left, top, right, bottom);
             return target;
         } catch (Exception e) {
@@ -173,7 +170,7 @@ public class MarginTools {
             int x1 = 0;
             int y1 = 0;
             int x2 = width - 1;
-            int y2 = height - 2;
+            int y2 = height - 1;
             if (cutLeft) {
                 x1 = MarginWidth;
             }

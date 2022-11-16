@@ -14,6 +14,7 @@ import mara.mybox.tools.DoubleTools;
 public class Data2DSimpleLinearRegression extends Data2DOperator {
 
     protected SimpleLinearRegression simpleRegression;
+    protected double x, y;
 
     public static Data2DSimpleLinearRegression create(Data2D_Edit data) {
         Data2DSimpleLinearRegression op = new Data2DSimpleLinearRegression();
@@ -22,14 +23,14 @@ public class Data2DSimpleLinearRegression extends Data2DOperator {
 
     @Override
     public boolean checkParameters() {
-        return cols != null && cols.size() >= 2 && simpleRegression != null;
+        return cols != null && !cols.isEmpty() && simpleRegression != null;
     }
 
     @Override
     public void handleRow() {
         try {
-            double x = DoubleTools.toDouble(sourceRow.get(cols.get(0)), invalidAs);
-            double y = DoubleTools.toDouble(sourceRow.get(cols.get(1)), invalidAs);
+            x = DoubleTools.toDouble(sourceRow.get(cols.get(0)), invalidAs);
+            y = DoubleTools.toDouble(sourceRow.get(cols.get(1)), invalidAs);
             List<String> row = simpleRegression.addData(rowIndex, x, y);
             if (csvPrinter != null) {
                 csvPrinter.printRecord(row);

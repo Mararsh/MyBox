@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javafx.scene.paint.Color;
-import mara.mybox.data.Era;
 import mara.mybox.data.StringTable;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import static mara.mybox.db.data.ColumnDefinition.columnType;
 import static mara.mybox.db.data.ColumnDefinition.number2String;
 import mara.mybox.dev.MyBoxLog;
@@ -36,13 +36,6 @@ public class Data2DColumn extends ColumnDefinition {
         initData2DColumn();
         this.columnName = name;
         this.type = type;
-    }
-
-    public Data2DColumn(String name, String label, ColumnType type) {
-        initData2DColumn();
-        this.columnName = name;
-        this.type = type;
-        this.label = label;
     }
 
     public Data2DColumn(String name, ColumnType type, int width) {
@@ -139,6 +132,8 @@ public class Data2DColumn extends ColumnDefinition {
                 return data.getLength();
             case "width":
                 return data.getWidth();
+            case "scale":
+                return data.getScale();
             case "color":
                 return data.getColor() == null ? null : data.getColor().toString();
             case "is_primary":
@@ -147,10 +142,16 @@ public class Data2DColumn extends ColumnDefinition {
                 return data.isNotNull();
             case "is_auto":
                 return data.isAuto();
+            case "invalid_as":
+                return data.getInvalidAs().ordinal();
             case "editable":
                 return data.isEditable();
-            case "need_format":
-                return data.isNeedFormat();
+            case "fix_year":
+                return data.isFixTwoDigitYear();
+            case "format":
+                return data.getFormat();
+            case "century":
+                return data.getCentury();
             case "on_delete":
                 return onDelete(data.getOnDelete());
             case "on_update":
@@ -161,8 +162,6 @@ public class Data2DColumn extends ColumnDefinition {
                 return number2String(data.getMaxValue());
             case "min_value":
                 return number2String(data.getMinValue());
-            case "time_format":
-                return Era.format(data.getTimeFormat());
             case "label":
                 return data.getLabel();
             case "foreign_name":
@@ -171,8 +170,6 @@ public class Data2DColumn extends ColumnDefinition {
                 return data.getReferTable();
             case "foreign_column":
                 return data.getReferColumn();
-            case "values_list":
-                return null;
             case "description":
                 return data.getDescription();
         }
@@ -206,6 +203,9 @@ public class Data2DColumn extends ColumnDefinition {
                 case "width":
                     data.setWidth(value == null ? null : (int) value);
                     return true;
+                case "scale":
+                    data.setScale(value == null ? null : (int) value);
+                    return true;
                 case "color":
                     data.setColor(value == null ? null : Color.web((String) value));
                     return true;
@@ -215,14 +215,23 @@ public class Data2DColumn extends ColumnDefinition {
                 case "is_auto":
                     data.setAuto(value == null ? false : (boolean) value);
                     return true;
+                case "invalid_as":
+                    data.setInvalidAs(value == null ? InvalidAs.Skip : InvalidAs.values()[(short) value]);
+                    return true;
                 case "not_null":
                     data.setNotNull(value == null ? false : (boolean) value);
                     return true;
                 case "editable":
                     data.setEditable(value == null ? false : (boolean) value);
                     return true;
-                case "need_format":
-                    data.setNeedFormat(value == null ? false : (boolean) value);
+                case "format":
+                    data.setFormat(value == null ? null : (String) value);
+                    return true;
+                case "fix_year":
+                    data.setFixTwoDigitYear(value == null ? false : (boolean) value);
+                    return true;
+                case "century":
+                    data.setCentury(value == null ? null : (int) value);
                     return true;
                 case "on_delete":
                     data.setOnDelete(onDelete((short) value));
@@ -239,9 +248,6 @@ public class Data2DColumn extends ColumnDefinition {
                 case "min_value":
                     data.setMinValue(string2Number(data.getType(), (String) value));
                     return true;
-                case "time_format":
-                    data.setTimeFormat(Era.format((short) value));
-                    return true;
                 case "label":
                     data.setLabel(value == null ? null : (String) value);
                     return true;
@@ -253,8 +259,6 @@ public class Data2DColumn extends ColumnDefinition {
                     return true;
                 case "foreign_column":
                     data.setReferColumn(value == null ? null : (String) value);
-                    return true;
-                case "values_list":
                     return true;
                 case "description":
                     data.setDescription(value == null ? null : (String) value);
@@ -386,4 +390,27 @@ public class Data2DColumn extends ColumnDefinition {
         return this;
     }
 
+    @Override
+    public Data2DColumn setFormat(String format) {
+        this.format = format;
+        return this;
+    }
+
+    @Override
+    public Data2DColumn setWidth(int width) {
+        this.width = width;
+        return this;
+    }
+
+    @Override
+    public Data2DColumn setFixTwoDigitYear(boolean fixTwoDigitYear) {
+        this.fixTwoDigitYear = fixTwoDigitYear;
+        return this;
+    }
+
+    @Override
+    public Data2DColumn setInvalidAs(InvalidAs invalidAs) {
+        this.invalidAs = invalidAs;
+        return this;
+    }
 }

@@ -93,7 +93,7 @@ public class SecurityCertificatesAddController extends BaseController {
                     @Override
                     protected boolean handle() {
                         error = null;
-                        if (certController.backupController.isBack()) {
+                        if (certController.backupController.needBackup()) {
                             certController.backupController.addBackup(task, certController.sourceFile);
                         }
                         if (addressRadio.isSelected()) {

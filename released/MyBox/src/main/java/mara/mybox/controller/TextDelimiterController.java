@@ -25,13 +25,13 @@ public class TextDelimiterController extends BaseController {
         okNotify = new SimpleBooleanProperty();
     }
 
-    public void setParameters(BaseController parent, String initName, boolean isRead) {
+    public void setParameters(BaseController parent, String initName, boolean isRead, boolean canRegx) {
         try {
             parentController = parent;
             baseName = parent.baseName;
             delimiterName = initName;
 
-            delimiterController.setControls(baseName, isRead, true);
+            delimiterController.setControls(baseName, isRead, canRegx);
             delimiterController.setDelimiterName(initName);
             delimiterController.changedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -69,11 +69,11 @@ public class TextDelimiterController extends BaseController {
     /*
         static
      */
-    public static TextDelimiterController open(BaseController parent, String initName, boolean isRead) {
+    public static TextDelimiterController open(BaseController parent, String initName, boolean isRead, boolean canRegx) {
         try {
             TextDelimiterController controller = (TextDelimiterController) WindowTools.openChildStage(
                     parent.getMyWindow(), Fxmls.TextDelimiterFxml, false);
-            controller.setParameters(parent, initName, isRead);
+            controller.setParameters(parent, initName, isRead, canRegx);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

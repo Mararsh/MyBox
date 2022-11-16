@@ -18,17 +18,19 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
+import mara.mybox.db.data.BaseDataAdaptor;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeTools;
-import mara.mybox.db.data.BaseDataAdaptor;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.LocationTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -39,7 +41,6 @@ import mara.mybox.value.UserConfig;
 public class LocationInMapController extends GeographyCodeMapController {
 
     protected GeographyCode geographyCode;
-    protected boolean loading = false;
 
     @FXML
     protected TextField locateInput;
@@ -52,19 +53,16 @@ public class LocationInMapController extends GeographyCodeMapController {
     @FXML
     protected CheckBox multipleCheck;
     @FXML
-    protected Button clearCodeButton;
+    protected Button queryButton, clearCodeButton;
 
     public LocationInMapController() {
-        baseTitle = Languages.message("LocationInMap");
-
+        baseTitle = message("LocationInMap");
     }
 
     @Override
     public void initControls() {
         try {
             super.initControls();
-
-            mapOptionsController.optionsBox.getChildren().removeAll(mapOptionsController.dataBox);
 
             setButtons();
 
@@ -74,11 +72,12 @@ public class LocationInMapController extends GeographyCodeMapController {
                     });
             checkLocateMethod();
 
-            multipleCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldv, Boolean newv) -> {
-                UserConfig.setBoolean(baseName + "MultiplePoints", newv);
-            });
-            multipleCheck.setSelected(UserConfig.getBoolean(baseName + "MultiplePoints", true));
-
+            if (multipleCheck != null) {
+                multipleCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldv, Boolean newv) -> {
+                    UserConfig.setBoolean(baseName + "MultiplePoints", newv);
+                });
+                multipleCheck.setSelected(UserConfig.getBoolean(baseName + "MultiplePoints", true));
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -88,23 +87,24 @@ public class LocationInMapController extends GeographyCodeMapController {
         if (isSettingValues) {
             return;
         }
+
         if (coordinateRadio.isSelected()) {
             NodeStyleTools.setTooltip(locateInput, Languages.message("InputCoordinateComments"));
             locateInput.setText("117.0983,36.25551");
             locateInput.setEditable(true);
-            startButton.setDisable(false);
+            queryButton.setDisable(false);
         } else if (addressRadio.isSelected()) {
             NodeStyleTools.setTooltip(locateInput, Languages.message("MapAddressComments"));
             locateInput.setText(Languages.isChinese() ? "拙政园"
-                    : (mapOptionsController.mapName == ControlMapOptions.MapName.TianDiTu ? "Paris" : "巴黎"));
+                    : (mapOptions.isGaoDeMap() ? "巴黎" : "Paris"));
             locateInput.setEditable(true);
-            startButton.setDisable(false);
+            queryButton.setDisable(false);
         } else {
             NodeStyleTools.setTooltip(locateInput, Languages.message("PickCoordinateComments"));
             locateInput.setStyle(null);
             locateInput.setText("");
             locateInput.setEditable(false);
-            startButton.setDisable(true);
+            queryButton.setDisable(true);
         }
     }
 
@@ -114,11 +114,8 @@ public class LocationInMapController extends GeographyCodeMapController {
         clearCodeButton.setDisable(none);
     }
 
-    public void loadCoordinate(BaseController parent, double longitude, double latitude) {
-        parentController = parent;
+    public void loadCoordinate(double longitude, double latitude) {
         clickMapRadio.setSelected(true);
-        loading = true;
-        getMyStage().setAlwaysOnTop(true);
         setCoordinate(longitude, latitude);
     }
 
@@ -129,14 +126,12 @@ public class LocationInMapController extends GeographyCodeMapController {
         }
     }
 
-    @Override
     public void setCoordinate(double longitude, double latitude) {
         if (timer != null) {
             timer.cancel();
             timer = null;
         }
         if (!LocationTools.validCoordinate(longitude, latitude)) {
-            loading = false;
             return;
         }
         timer = new Timer();
@@ -144,7 +139,7 @@ public class LocationInMapController extends GeographyCodeMapController {
             @Override
             public void run() {
                 Platform.runLater(() -> {
-                    if (timer == null || !mapOptionsController.mapLoaded) {
+                    if (timer == null || !mapLoaded) {
                         return;
                     }
                     if (timer != null) {
@@ -152,15 +147,14 @@ public class LocationInMapController extends GeographyCodeMapController {
                         timer = null;
                     }
                     locateInput.setText(longitude + "," + latitude);
-                    startAction();
+                    queryAction();
                 });
             }
         }, 0, 100);
     }
 
     @FXML
-    @Override
-    public void startAction() {
+    public void queryAction() {
         clearCodeAction();
         String value = locateInput.getText().trim();
         if (value.isBlank()) {
@@ -180,14 +174,14 @@ public class LocationInMapController extends GeographyCodeMapController {
                             String[] values = value.split(",");
                             double longitude = DoubleTools.scale6(Double.valueOf(values[0].trim()));
                             double latitude = DoubleTools.scale6(Double.valueOf(values[1].trim()));
-                            code = GeographyCodeTools.geoCode(mapOptionsController.coordinateSystem,
+                            code = GeographyCodeTools.geoCode(mapOptions.getCoordinateSystem(),
                                     longitude, latitude, true);
                         } catch (Exception e) {
                             MyBoxLog.error(e.toString());
                             return false;
                         }
                     } else {
-                        code = GeographyCodeTools.geoCode(mapOptionsController.coordinateSystem, value);
+                        code = GeographyCodeTools.geoCode(mapOptions.getCoordinateSystem(), value);
                     }
                     if (code == null) {
                         return false;
@@ -198,32 +192,19 @@ public class LocationInMapController extends GeographyCodeMapController {
 
                 @Override
                 protected void whenSucceeded() {
-                    if (parentController != null && !loading) {
-                        parentController.setGeographyCode(geographyCode);
-                        parentController.getMyStage().requestFocus();
-                        closeStage();
-                        return;
+                    if (geographyCodes == null
+                            || multipleCheck == null || !multipleCheck.isSelected()) {
+                        geographyCodes = new ArrayList<>();
                     }
-                    loading = false;
+                    geographyCodes.add(geographyCode);
+                    drawPoints();
                     dataArea.setText(BaseDataAdaptor.displayData(geoTable, geographyCode, null, false));
                     setButtons();
-                    try {
-                        if (geographyCodes == null) {
-                            geographyCodes = new ArrayList<>();
-                        } else if (!multipleCheck.isSelected()) {
-                            geographyCodes.clear();
-                        }
-                        geographyCodes.add((GeographyCode) geographyCode.clone());
-                        drawPoints();
-                    } catch (Exception e) {
-                    }
-
                 }
 
             };
             start(task);
         }
-
     }
 
     @FXML
@@ -236,9 +217,7 @@ public class LocationInMapController extends GeographyCodeMapController {
     @FXML
     @Override
     public void clearAction() {
-        if (mapOptionsController.mapLoaded) {
-            webEngine.executeScript("clearMap();");
-        }
+        clearMap();
         geographyCodes.clear();
         clearCodeAction();
     }
@@ -277,6 +256,35 @@ public class LocationInMapController extends GeographyCodeMapController {
         controller.setGeographyCode(geographyCode);
         controller.getMyStage().requestFocus();
 
+    }
+
+    @FXML
+    @Override
+    public void cancelAction() {
+        close();
+    }
+
+    @Override
+    public boolean keyESC() {
+        close();
+        return false;
+    }
+
+    @Override
+    public boolean keyF6() {
+        close();
+        return false;
+    }
+
+    public static LocationInMapController load(double longitude, double latitude) {
+        try {
+            LocationInMapController controller = (LocationInMapController) WindowTools.openStage(Fxmls.LocationInMapFxml);
+            controller.loadCoordinate(longitude, latitude);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
     }
 
 }

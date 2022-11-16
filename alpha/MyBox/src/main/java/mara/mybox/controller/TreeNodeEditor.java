@@ -51,8 +51,6 @@ public class TreeNodeEditor extends TreeTagsController {
     protected CheckBox wrapCheck;
 
     public TreeNodeEditor() {
-//        changeNotify = new SimpleBooleanProperty(false);
-//        savedNotify = new SimpleBooleanProperty(false);
         defaultExt = "txt";
     }
 

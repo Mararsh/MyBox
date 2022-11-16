@@ -1,5 +1,10 @@
 package mara.mybox.controller;
 
+import java.io.File;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -14,18 +19,26 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.Data2DTools;
+import mara.mybox.data2d.Data2DExampleTools;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
+import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.CsvTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 
 /**
  * @Author Mara
@@ -37,6 +50,7 @@ public abstract class BaseData2DController extends BaseController {
     protected Data2D.Type type;
     protected TableData2DDefinition tableData2DDefinition;
     protected Data2D data2D;
+    protected SingletonTask parseTask;
 
     @FXML
     protected ControlData2DList listController;
@@ -235,7 +249,7 @@ public abstract class BaseData2DController extends BaseController {
 
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            popMenu.getItems().addAll(Data2DTools.examplesMenu(dataController));
+            popMenu.getItems().addAll(Data2DExampleTools.examplesMenu(dataController));
 
             popMenu.getItems().add(new SeparatorMenuItem());
 
@@ -294,6 +308,228 @@ public abstract class BaseData2DController extends BaseController {
             loadController.myBoxClipBoard();
         }
 
+    }
+
+    @FXML
+    public void importAction() {
+        if (parseTask != null) {
+            parseTask.cancel();
+        }
+        parseTask = new SingletonTask<Void>(this) {
+
+            DataTable dataTable;
+
+            @Override
+            protected boolean handle() {
+                try ( Connection conn = DerbyBase.getConnection()) {
+                    List<Data2DColumn> columns = new ArrayList<>();
+                    columns.add(new Data2DColumn("skey", ColumnDefinition.ColumnType.String, true, true));
+                    columns.add(new Data2DColumn("Date", ColumnDefinition.ColumnType.String));
+                    columns.add(new Data2DColumn("Country", ColumnDefinition.ColumnType.String));
+                    columns.add(new Data2DColumn("Province", ColumnDefinition.ColumnType.String));
+                    columns.add(new Data2DColumn("Confirmed", ColumnDefinition.ColumnType.String));
+                    columns.add(new Data2DColumn("Recovered", ColumnDefinition.ColumnType.String));
+                    columns.add(new Data2DColumn("Dead", ColumnDefinition.ColumnType.String));
+                    columns.add(new Data2DColumn("Longitude", ColumnDefinition.ColumnType.String));
+                    columns.add(new Data2DColumn("Latitude", ColumnDefinition.ColumnType.String));
+
+                    dataTable = DataTable.createTable(parseTask, conn, "CSSEGISandData", columns, null, null, null, true);
+                    TableData2D tableCountry = dataTable.getTableData2D();
+
+                    conn.setAutoCommit(false);
+
+                    long recoveryCount = 0;
+                    parseTask.setInfo("D:/下载/time_series_covid19_recovered_global.csv");
+                    File srcFile = new File("D:/下载/time_series_covid19_recovered_global.csv");
+                    try ( PreparedStatement countryInsert = conn.prepareStatement(tableCountry.insertStatement());
+                             CSVParser parser = CsvTools.csvParser(srcFile, ",", true)) {
+                        List<String> header = parser.getHeaderNames();
+                        for (CSVRecord record : parser) {
+                            String country = record.get("Country/Region");
+                            String provice = record.get("Province/State");
+                            String latitude = record.get("Lat");
+                            String longitude = record.get("Long");
+                            parseTask.setInfo(country + "  " + provice + "  " + recoveryCount);
+                            for (int i = 4; i < record.size(); i++) {
+                                Data2DRow countryRow = tableCountry.newRow();
+                                String value = record.get(i);
+                                if (value == null || value.isBlank() || "0".equals(value)) {
+                                    continue;
+                                }
+                                String date = header.get(i);
+                                countryRow.setColumnValue("skey", date + country + provice);
+                                countryRow.setColumnValue("Date", date);
+                                countryRow.setColumnValue("Country", country);
+                                countryRow.setColumnValue("Province", provice);
+                                countryRow.setColumnValue("Longitude", longitude);
+                                countryRow.setColumnValue("Latitude", latitude);
+                                countryRow.setColumnValue("Recovered", value);
+                                if (tableCountry.setInsertStatement(conn, countryInsert, countryRow)) {
+                                    countryInsert.addBatch();
+                                    if (++recoveryCount % DerbyBase.BatchSize == 0) {
+                                        countryInsert.executeBatch();
+                                        conn.commit();
+                                        parseTask.setInfo(message("Inserted") + ": " + "recoveryCount " + recoveryCount);
+                                    }
+                                }
+                            }
+                        }
+                        countryInsert.executeBatch();
+                        conn.commit();
+                        parseTask.setInfo(message("Inserted") + ": " + "recoveryCount " + recoveryCount);
+                    } catch (Exception e) {
+                        parseTask.setInfo(e.toString());
+                    }
+
+                    long deadCount = 0;
+                    parseTask.setInfo("D:/下载/time_series_covid19_deaths_global.csv");
+                    srcFile = new File("D:/下载/time_series_covid19_deaths_global.csv");
+                    try ( PreparedStatement countryQuery = conn.prepareStatement("SELECT * FROM CSSEGISandData WHERE skey=?");
+                             PreparedStatement countryInsert = conn.prepareStatement(tableCountry.insertStatement());
+                             PreparedStatement countryUpdate = conn.prepareStatement(tableCountry.updateStatement());
+                             CSVParser parser = CsvTools.csvParser(srcFile, ",", true)) {
+                        List<String> header = parser.getHeaderNames();
+                        for (CSVRecord record : parser) {
+                            String country = record.get("Country/Region");
+                            String provice = record.get("Province/State");
+                            String latitude = record.get("Lat");
+                            String longitude = record.get("Long");
+                            parseTask.setInfo(country + "  " + provice + "  " + deadCount + "    " + (int) (deadCount * 100 / recoveryCount) + "%");
+                            for (int i = 4; i < record.size(); i++) {
+                                String value = record.get(i);
+                                if (value == null || value.isBlank() || "0".equals(value)) {
+                                    continue;
+                                }
+                                String date = header.get(i);
+                                String key = date + country + provice;
+                                countryQuery.setString(1, key);
+                                Data2DRow countryRow = tableCountry.query(conn, countryQuery);
+                                if (countryRow == null) {
+                                    countryRow = tableCountry.newRow();
+                                    countryRow.setColumnValue("skey", key);
+                                    countryRow.setColumnValue("Date", date);
+                                    countryRow.setColumnValue("Country", country);
+                                    countryRow.setColumnValue("Province", provice);
+                                    countryRow.setColumnValue("Longitude", longitude);
+                                    countryRow.setColumnValue("Latitude", latitude);
+                                    countryRow.setColumnValue("Dead", value);
+                                    if (tableCountry.setInsertStatement(conn, countryInsert, countryRow)) {
+                                        countryInsert.addBatch();
+                                        if (++deadCount % DerbyBase.BatchSize == 0) {
+                                            countryInsert.executeBatch();
+                                            conn.commit();
+                                            parseTask.setInfo(message("Inserted") + ": " + "deadCount " + deadCount
+                                                    + "    " + (int) (deadCount * 100 / recoveryCount) + "%");
+                                        }
+                                    }
+                                } else {
+                                    countryRow.setColumnValue("Dead", value);
+                                    if (tableCountry.setUpdateStatement(conn, countryUpdate, countryRow)) {
+                                        countryUpdate.addBatch();
+                                        if (++deadCount % DerbyBase.BatchSize == 0) {
+                                            countryUpdate.executeBatch();
+                                            conn.commit();
+                                            parseTask.setInfo(message("Updated") + ": " + "deadCount " + deadCount
+                                                    + "    " + (int) (deadCount * 100 / recoveryCount) + "%");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        countryInsert.executeBatch();
+                        countryUpdate.executeBatch();
+                        conn.commit();
+                        parseTask.setInfo(message("Updated") + ": " + "deadCount " + deadCount);
+                    } catch (Exception e) {
+                        parseTask.setInfo(e.toString());
+                    }
+
+                    long confirmedCount = 0;
+                    parseTask.setInfo("D:/下载/time_series_covid19_confirmed_global.csv");
+                    srcFile = new File("D:/下载/time_series_covid19_confirmed_global.csv");
+                    try ( PreparedStatement countryQuery = conn.prepareStatement("SELECT * FROM CSSEGISandData WHERE skey=?");
+                             PreparedStatement countryInsert = conn.prepareStatement(tableCountry.insertStatement());
+                             PreparedStatement countryUpdate = conn.prepareStatement(tableCountry.updateStatement());
+                             CSVParser parser = CsvTools.csvParser(srcFile, ",", true)) {
+                        List<String> header = parser.getHeaderNames();
+                        for (CSVRecord record : parser) {
+                            String country = record.get("Country/Region");
+                            String provice = record.get("Province/State");
+                            String latitude = record.get("Lat");
+                            String longitude = record.get("Long");
+                            parseTask.setInfo(country + "  " + provice + "  " + confirmedCount + "    " + (int) (confirmedCount * 100 / deadCount) + "%");
+                            for (int i = 4; i < record.size(); i++) {
+                                String value = record.get(i);
+                                if (value == null || value.isBlank() || "0".equals(value)) {
+                                    continue;
+                                }
+                                String date = header.get(i);
+                                String key = date + country + provice;
+                                countryQuery.setString(1, key);
+                                Data2DRow countryRow = tableCountry.query(conn, countryQuery);
+                                if (countryRow == null) {
+                                    countryRow = tableCountry.newRow();
+                                    countryRow.setColumnValue("skey", key);
+                                    countryRow.setColumnValue("Date", date);
+                                    countryRow.setColumnValue("Country", country);
+                                    countryRow.setColumnValue("Province", provice);
+                                    countryRow.setColumnValue("Longitude", longitude);
+                                    countryRow.setColumnValue("Latitude", latitude);
+                                    countryRow.setColumnValue("Confirmed", value);
+                                    if (tableCountry.setInsertStatement(conn, countryInsert, countryRow)) {
+                                        countryInsert.addBatch();
+                                        if (++confirmedCount % DerbyBase.BatchSize == 0) {
+                                            countryInsert.executeBatch();
+                                            conn.commit();
+                                            parseTask.setInfo(message("Inserted") + ": " + "confirmedCount " + confirmedCount
+                                                    + "    " + (int) (confirmedCount * 100 / deadCount) + "%");
+                                        }
+                                    }
+                                } else {
+                                    countryRow.setColumnValue("Confirmed", value);
+                                    if (tableCountry.setUpdateStatement(conn, countryUpdate, countryRow)) {
+                                        countryUpdate.addBatch();
+                                        if (++confirmedCount % DerbyBase.BatchSize == 0) {
+                                            countryUpdate.executeBatch();
+                                            conn.commit();
+                                            parseTask.setInfo(message("Updated") + ": " + "confirmedCount " + confirmedCount
+                                                    + "    " + (int) (confirmedCount * 100 / deadCount) + "%");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        countryInsert.executeBatch();
+                        countryUpdate.executeBatch();
+                        conn.commit();
+                        parseTask.setInfo(message("Updated") + ": " + "confirmedCount " + confirmedCount);
+                    } catch (Exception e) {
+                        parseTask.setInfo(e.toString());
+                    }
+
+                    try ( Statement delete = conn.createStatement()) {
+                        String sql = "DELETE FROM CSSEGISandData WHERE Confirmed='0' AND  Recovered='0' AND  Dead='0' ";
+                        parseTask.setInfo(sql);
+                        int count = delete.executeUpdate(sql);
+                        parseTask.setInfo("Deleted: " + count);
+                    } catch (Exception e) {
+                        parseTask.setInfo(e.toString());
+                    }
+
+                    return true;
+
+                } catch (Exception e) {
+                    parseTask.setInfo(e.toString());
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                Data2D.open(dataTable);
+            }
+        };
+        start(parseTask);
     }
 
     @Override

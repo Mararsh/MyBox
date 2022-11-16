@@ -40,7 +40,6 @@ public class ControlMathFunctionEditor extends TreeNodeEditor {
             variablesInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue v, Boolean ov, Boolean nv) {
-                    MyBoxLog.console(isSettingValues + " " + nv);
                     if (isSettingValues || nv) {
                         return;
                     }

@@ -267,12 +267,14 @@ public class AlphaTools {
         }
     }
 
-    public static BufferedImage[] outline(BufferedImage srcImage, DoubleRectangle rect, int targetWidth, int targetHeight, boolean keepRatio, Color bgColor, boolean exclude) {
+    public static BufferedImage[] outline(BufferedImage srcImage, DoubleRectangle rect,
+            int targetWidth, int targetHeight, boolean keepRatio, Color bgColor, boolean exclude) {
         try {
             if (srcImage == null) {
                 return null;
             }
-            BufferedImage scaledImage = ScaleTools.scaleImage(srcImage, (int) rect.getWidth(), (int) rect.getHeight(), keepRatio, BufferedImageTools.KeepRatioType.BaseOnWidth);
+            BufferedImage scaledImage = ScaleTools.scaleImage(srcImage,
+                    (int) rect.getWidth(), (int) rect.getHeight(), keepRatio, BufferedImageTools.KeepRatioType.BaseOnWidth);
             int offsetX = (int) rect.getSmallX();
             int offsetY = (int) rect.getSmallY();
             int scaledWidth = scaledImage.getWidth();

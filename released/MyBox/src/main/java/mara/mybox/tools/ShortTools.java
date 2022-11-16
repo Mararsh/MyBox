@@ -1,6 +1,5 @@
 package mara.mybox.tools;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -13,16 +12,6 @@ import java.util.Random;
  * @License Apache License Version 2.0
  */
 public class ShortTools {
-
-    public static String format(short data) {
-        try {
-            String format = "#,###";
-            DecimalFormat df = new DecimalFormat(format);
-            return df.format(data);
-        } catch (Exception e) {
-            return data + "";
-        }
-    }
 
     // invalid values are always in the end
     public static int compare(String s1, String s2, boolean desc) {

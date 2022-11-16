@@ -1,5 +1,6 @@
 package mara.mybox.fxml.chart;
 
+import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.geometry.Side;
@@ -10,8 +11,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleTools;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -59,19 +62,18 @@ public class ChartOptions<X, Y> {
     }
 
     public final void initChartOptions() {
-        try {
-            clearChart();
-            if (chartName == null) {
-                return;
-            }
+        clearChart();
+        if (chartName == null) {
+            return;
+        }
+        try ( Connection conn = DerbyBase.getConnection()) {
+            popLabel = UserConfig.getBoolean(conn, chartName + "PopLabel", true);
+            displayLabelName = UserConfig.getBoolean(conn, chartName + "DisplayLabelName", false);
 
-            popLabel = UserConfig.getBoolean(chartName + "PopLabel", true);
-            displayLabelName = UserConfig.getBoolean(chartName + "DisplayLabelName", false);
-
-            scale = UserConfig.getInt(chartName + "Scale", 2);
-            labelFontSize = UserConfig.getInt(chartName + "LabelFontSize", 10);
-            titleFontSize = UserConfig.getInt(chartName + "TitleFontSize", 12);
-            tickFontSize = UserConfig.getInt(chartName + "TickFontSize", 10);
+            scale = UserConfig.getInt(conn, chartName + "Scale", 2);
+            labelFontSize = UserConfig.getInt(conn, chartName + "LabelFontSize", 10);
+            titleFontSize = UserConfig.getInt(conn, chartName + "TitleFontSize", 12);
+            tickFontSize = UserConfig.getInt(conn, chartName + "TickFontSize", 10);
 
             if (chartType == ChartType.BoxWhiskerChart
                     || chartType == ChartType.Scatter
@@ -80,7 +82,7 @@ public class ChartOptions<X, Y> {
                 labelType = LabelType.Point;
             } else {
                 labelType = LabelType.NotDisplay;
-                String saved = UserConfig.getString(chartName + "LabelType", "NotDisplay");
+                String saved = UserConfig.getString(conn, chartName + "LabelType", "NotDisplay");
                 if (saved != null) {
                     for (LabelType type : LabelType.values()) {
                         if (type.name().equals(saved)) {
@@ -92,7 +94,7 @@ public class ChartOptions<X, Y> {
             }
 
             titleSide = Side.TOP;
-            String saved = UserConfig.getString(chartName + "TitleSide", "TOP");
+            String saved = UserConfig.getString(conn, chartName + "TitleSide", "TOP");
             if (saved != null) {
                 for (Side value : Side.values()) {
                     if (value.name().equals(saved)) {
@@ -103,7 +105,7 @@ public class ChartOptions<X, Y> {
             }
 
             legendSide = Side.TOP;
-            saved = UserConfig.getString(chartName + "LegendSide", "TOP");
+            saved = UserConfig.getString(conn, chartName + "LegendSide", "TOP");
             if (saved != null) {
                 if ("NotDisplay".equals(saved)) {
                     legendSide = null;
@@ -355,22 +357,12 @@ public class ChartOptions<X, Y> {
     }
 
     public String getCategoryLabel() {
-        categoryLabel = categoryLabel == null ? defaultCategoryLabel : categoryLabel;
+        categoryLabel = categoryLabel == null ? getDefaultCategoryLabel() : categoryLabel;
         return categoryLabel;
     }
 
     public ChartOptions setCategoryLabel(String categoryLabel) {
         this.categoryLabel = categoryLabel;
-        return this;
-    }
-
-    public String getValueLabel() {
-        valueLabel = valueLabel == null ? defaultValueLabel : valueLabel;
-        return valueLabel;
-    }
-
-    public ChartOptions setValueLabel(String valueLabel) {
-        this.valueLabel = valueLabel;
         return this;
     }
 
@@ -385,22 +377,34 @@ public class ChartOptions<X, Y> {
     }
 
     public String getDefaultCategoryLabel() {
+        defaultCategoryLabel = defaultCategoryLabel == null ? message("Category") : defaultCategoryLabel;
         return defaultCategoryLabel;
     }
 
     public ChartOptions setDefaultCategoryLabel(String defaultCategoryLabel) {
         this.defaultCategoryLabel = defaultCategoryLabel;
-        this.categoryLabel = defaultCategoryLabel;
+        setCategoryLabel(defaultCategoryLabel);
+        return this;
+    }
+
+    public String getValueLabel() {
+        valueLabel = valueLabel == null ? getDefaultValueLabel() : valueLabel;
+        return valueLabel;
+    }
+
+    public ChartOptions setValueLabel(String valueLabel) {
+        this.valueLabel = valueLabel;
         return this;
     }
 
     public String getDefaultValueLabel() {
+        defaultValueLabel = defaultValueLabel == null ? message("Value") : defaultValueLabel;
         return defaultValueLabel;
     }
 
     public ChartOptions setDefaultValueLabel(String defaultValueLabel) {
         this.defaultValueLabel = defaultValueLabel;
-        this.valueLabel = defaultValueLabel;
+        setValueLabel(defaultValueLabel);
         return this;
     }
 

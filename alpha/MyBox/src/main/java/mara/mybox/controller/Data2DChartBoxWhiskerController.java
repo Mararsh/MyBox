@@ -515,7 +515,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
                 transposed.add(row);
             }
             outputColumns = new ArrayList<>();
-            outputColumns.add(new Data2DColumn(categoryName(), ColumnDefinition.ColumnType.String));
+            outputColumns.add(new Data2DColumn(message("ColumnName"), ColumnDefinition.ColumnType.String));
             String prefix = (allRadio.isSelected() ? message("All") : message("Column")) + "-";
             for (StatisticType type : calculation.types) {
                 outputColumns.add(new Data2DColumn(prefix + message(type.name()), ColumnDefinition.ColumnType.Double));

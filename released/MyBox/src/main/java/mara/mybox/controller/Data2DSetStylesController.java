@@ -45,7 +45,7 @@ public class Data2DSetStylesController extends BaseController {
     @FXML
     protected FlowPane columnsPane;
     @FXML
-    protected ControlData2DFilter filterController;
+    protected ControlData2DRowFilter filterController;
     @FXML
     protected ControlData2DStyle editController;
 
@@ -205,7 +205,7 @@ public class Data2DSetStylesController extends BaseController {
         fromInput.clear();
         toInput.clear();
         selectNoneColumn();
-        filterController.load(null, false);
+        filterController.load(null, true);
         editController.loadNull(currentStyle);
         sequenceInput.setText((listController.dataSize + 1) + "");
         abnormalCheck.setSelected(false);
@@ -245,7 +245,7 @@ public class Data2DSetStylesController extends BaseController {
                 }
             }
         }
-        filterController.load(updatedStyle.getFilter(), updatedStyle.isFilterReversed());
+        filterController.load(updatedStyle.getFilter(), !updatedStyle.isFilterReversed());
 
         sequenceInput.setText(updatedStyle.getSequence() + "");
         abnormalCheck.setSelected(updatedStyle.isAbnoramlValues());

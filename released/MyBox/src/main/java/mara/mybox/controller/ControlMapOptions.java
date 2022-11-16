@@ -2,9 +2,6 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.Timer;
-import java.util.TimerTask;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -19,14 +16,12 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.web.WebEngine;
-import mara.mybox.data.CoordinateSystem;
+import mara.mybox.data.MapOptions;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.ValidationTools;
-import mara.mybox.tools.LocationTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
@@ -39,49 +34,33 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlMapOptions extends BaseController {
 
-    protected BaseMapController mapController;
-    protected String markerImage;
-    protected int markerSize, textSize, mapSize, dataMax;
-    protected File markerImageFile;
-    protected WebEngine webEngine;
-    protected boolean mapLoaded;
-    protected MapName mapName;
-    protected CoordinateSystem coordinateSystem;
-
-    public enum MapName {
-        TianDiTu, GaoDe
-    }
+    protected ControlMap mapController;
+    protected MapOptions mapOptions;
 
     @FXML
     protected CheckBox fitViewCheck, popInfoCheck,
             standardLayerCheck, satelliteLayerCheck, roadLayerCheck, trafficLayerCheck,
             zoomCheck, scaleCheck, typeCheck, symbolsCheck, boldCheck,
-            markerLabelCheck, markerAddressCheck, markerCoordinateCheck,
-            markerDatasetCheck, markerValueCheck, markerSizeCheck,
-            markerStartCheck, markerEndCheck, markerDurationCheck,
-            markerSpeedCheck, markerDirectionCheck;
+            markerLabelCheck, markerCoordinateCheck;
     @FXML
     protected ComboBox<String> standardOpacitySelector, satelliteOpacitySelector,
-            roadOpacitySelector, trafficOpacitySelector, dataMaximumSelector,
+            roadOpacitySelector, trafficOpacitySelector,
             markerSizeSelector, mapSizeSelector, textSizeSelector;
     @FXML
-    protected ToggleGroup dataGroup, mapGroup, coordinateGroup, projectionGroup,
-            langGroup, markerImageGroup, mapStyleGroup, textColorGroup;
+    protected ToggleGroup mapGroup, coordinateGroup, projectionGroup,
+            langGroup, markerImageGroup, mapStyleGroup;
     @FXML
     protected RadioButton tiandituRadio, gaodeRadio, cgcs2000Radio, gcj02Radio,
-            mercatorRadio, geodeticRadio, currentPageRadio, currentQueryRadio,
-            chineseEnglishRadio, chineseRadio, englishRadio,
+            mercatorRadio, geodeticRadio, chineseEnglishRadio, chineseRadio, englishRadio,
             styleDefaultRadio, styleIndigoRadio, styleBlackRadio,
-            markerPointRadio, markerCircleRadio, markerImageRadio, markerDatasetRadio, markerDataRadio,
-            dataColorRadio, setColorRadio;
+            markerPointRadio, markerCircleRadio, markerImageRadio;
     @FXML
     protected TextField markerImageInput;
     @FXML
-    protected VBox optionsBox, mapBox, dataBox, languageBox, controlsBox, layersBox, sizeBox,
+    protected VBox optionsBox, mapBox, languageBox, controlsBox, layersBox, sizeBox,
             markerTextBox, markerImageBox;
     @FXML
-    protected FlowPane locationTextPane, baseTextPane, textColorPane,
-            markerImagePane, dataNumberPane;
+    protected FlowPane baseTextPane, textColorPane, markerImagePane;
     @FXML
     protected ColorSet colorSetController;
 
@@ -90,39 +69,35 @@ public class ControlMapOptions extends BaseController {
         TipsLabelKey = "MapComments";
     }
 
-    public void initOptions(BaseMapController mapController) {
-        this.mapController = mapController;
-        this.webEngine = mapController.webEngine;
-        this.baseName = mapController.baseName;
-        this.baseTitle = mapController.baseTitle + " " + baseTitle;
-        initOptions();
-        setMap();
+    public void setParameters(ControlMap mapController) {
+        try {
+            this.mapController = mapController;
+            this.mapOptions = mapController.mapOptions;
+            this.baseName = mapController.baseName;
+            this.baseTitle = mapController.baseTitle + " " + baseTitle;
+
+            setControlListeners();
+
+            setControlValues();
+
+            mapTypeChanged();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+
     }
 
-    public void initOptions() {
+    public void setControlListeners() {
         try {
-            mapLoaded = false;
-            markerSize = 24;
-            textSize = 12;
-            mapSize = UserConfig.getInt(baseName + "MapSize", 3);
-            dataMax = UserConfig.getInt(baseName + "DataMax", 300);
-
-            if (mapGroup == null) {
-                return;
-            }
-
-            if (dataGroup != null) {
-                dataGroup.selectedToggleProperty().addListener(
-                        (ObservableValue<? extends Toggle> ov, Toggle oldv, Toggle newv) -> {
-                            setData();
-                        }
-                );
-            }
-
             if (mapGroup != null) {
                 mapGroup.selectedToggleProperty().addListener(
                         (ObservableValue<? extends Toggle> ov, Toggle oldv, Toggle newv) -> {
-                            setMap();
+                            if (isSettingValues) {
+                                return;
+                            }
+                            mapTypeChanged();
+                            mapOptions.setMapType(gaodeRadio.isSelected() ? "GaoDe" : "TianDiTu");
                         }
                 );
             }
@@ -130,7 +105,10 @@ public class ControlMapOptions extends BaseController {
             if (projectionGroup != null) {
                 projectionGroup.selectedToggleProperty().addListener(
                         (ObservableValue<? extends Toggle> ov, Toggle oldv, Toggle newv) -> {
-                            checkProjection();
+                            if (isSettingValues) {
+                                return;
+                            }
+                            mapOptions.setIsGeodetic(geodeticRadio.isSelected());
                         }
                 );
             }
@@ -138,7 +116,18 @@ public class ControlMapOptions extends BaseController {
             if (langGroup != null) {
                 langGroup.selectedToggleProperty().addListener(
                         (ObservableValue<? extends Toggle> ov, Toggle oldv, Toggle newv) -> {
-                            checkLanguage();
+                            if (isSettingValues) {
+                                return;
+                            }
+                            String lang;
+                            if (chineseEnglishRadio.isSelected()) {
+                                lang = "zh_en";
+                            } else if (englishRadio.isSelected()) {
+                                lang = "en";
+                            } else {
+                                lang = "zh_cn";
+                            }
+                            mapOptions.setLanguage(lang);
                         }
                 );
             }
@@ -146,77 +135,51 @@ public class ControlMapOptions extends BaseController {
             if (mapStyleGroup != null) {
                 mapStyleGroup.selectedToggleProperty().addListener(
                         (ObservableValue<? extends Toggle> ov, Toggle oldv, Toggle newv) -> {
-                            checkMapStyle();
+                            if (isSettingValues) {
+                                return;
+                            }
+                            String style;
+                            if (styleIndigoRadio.isSelected()) {
+                                style = "indigo";
+                            } else if (styleBlackRadio.isSelected()) {
+                                style = "black";
+                            } else {
+                                style = "default";
+                            }
+                            mapOptions.setMapStyle(style);
                         }
                 );
             }
             if (markerImageGroup != null) {
-                markerImageGroup.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> ov, Toggle oldv, Toggle newv) -> {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    String type;
-                    if (markerCircleRadio.isSelected()) {
-                        type = "Circle";
-                    } else if (markerImageRadio.isSelected()) {
-                        type = "Image";
-                    } else if (markerDatasetRadio.isSelected()) {
-                        type = "Dataset";
-                    } else if (markerDataRadio.isSelected()) {
-                        type = "Data";
-                    } else {
-                        type = "Point";
-                    }
-                    UserConfig.setString(baseName + "MarkerImageType", type);
-                    drawPoints();
-                }
-                );
+                markerImageGroup.selectedToggleProperty().addListener(
+                        (ObservableValue<? extends Toggle> ov, Toggle oldv, Toggle newv) -> {
+                            if (isSettingValues) {
+                                return;
+                            }
+                            File file;
+                            if (markerCircleRadio.isSelected()) {
+                                file = mapOptions.circleImage();
+                            } else if (markerImageRadio.isSelected()) {
+                                file = mapOptions.getMarkerImageFile();
+                            } else {
+                                file = mapOptions.pointImage();
+                            }
+                            mapOptions.setMarkerImageFile(file);
+                        });
             }
 
             if (markerImageInput != null) {
-                markerImageInput.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-                    String v = markerImageInput.getText();
-                    if (v == null || v.isEmpty()) {
-                        return;
-                    }
-                    final File file = new File(v);
-                    if (!file.exists() || !file.isFile()) {
-                        return;
-                    }
-                    if (markerImageFile == null || !markerImageFile.getAbsolutePath().equals(file.getAbsolutePath())) {
-                        markerImageFile = file;
-                        recordFileOpened(file, VisitHistory.FileType.Image);
-                        UserConfig.setString(baseName + "MarkerImageFile", markerImageFile.getAbsolutePath());
-                        if (!isSettingValues) {
-                            drawPoints();
-                        }
-                    }
-                });
-            }
-
-            if (dataMaximumSelector != null) {
-                dataMaximumSelector.getItems().addAll(Arrays.asList(
-                        "300", "500", "200", "100", "1000", "2000", "5000", "10000", "50"
-                ));
-                dataMaximumSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                    try {
-                        int v = Integer.parseInt(newValue);
-                        if (v > 0) {
-                            dataMaximumSelector.getEditor().setStyle(null);
-                            if (dataMax != v) {
-                                dataMax = v;
-                                UserConfig.setInt(baseName + "DataMax", dataMax);
-                                if (!isSettingValues && currentQueryRadio.isSelected()) {
-                                    mapController.reloadData();
-                                }
+                markerImageInput.textProperty().addListener(
+                        (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+                            if (isSettingValues) {
+                                return;
                             }
-                        } else {
-                            dataMaximumSelector.getEditor().setStyle(UserConfig.badStyle());
-                        }
-                    } catch (Exception e) {
-                        dataMaximumSelector.getEditor().setStyle(UserConfig.badStyle());
-                    }
-                });
+                            String v = markerImageInput.getText();
+                            if (v == null || v.isEmpty()) {
+                                return;
+                            }
+                            mapOptions.setMarkerImageFile(new File(v));
+                        });
             }
 
             if (standardLayerCheck != null) {
@@ -279,14 +242,13 @@ public class ControlMapOptions extends BaseController {
                 ));
                 markerSizeSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
                     try {
+                        if (isSettingValues) {
+                            return;
+                        }
                         int v = Integer.parseInt(newValue);
                         if (v > 0) {
-                            markerSize = v;
                             markerSizeSelector.getEditor().setStyle(null);
-                            UserConfig.setInt(baseName + "MarkerSize", markerSize);
-                            if (!isSettingValues) {
-                                drawPoints();
-                            }
+                            mapOptions.setMarkerSize(v);
                         } else {
                             markerSizeSelector.getEditor().setStyle(UserConfig.badStyle());
                         }
@@ -302,13 +264,19 @@ public class ControlMapOptions extends BaseController {
                 ));
                 mapSizeSelector.getSelectionModel().selectedItemProperty().addListener(
                         (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                            if (newValue == null || isSettingValues) {
-                                return;
-                            }
                             try {
-                                int v = Integer.valueOf(newValue);
-                                setMapSize(v, true, false);
+                                if (isSettingValues) {
+                                    return;
+                                }
+                                int v = Integer.parseInt(newValue);
+                                if (v > 0) {
+                                    mapOptions.setMapSize(v);
+                                    mapSizeSelector.getEditor().setStyle(null);
+                                } else {
+                                    mapSizeSelector.getEditor().setStyle(UserConfig.badStyle());
+                                }
                             } catch (Exception e) {
+                                mapSizeSelector.getEditor().setStyle(UserConfig.badStyle());
                             }
                         });
             }
@@ -317,277 +285,188 @@ public class ControlMapOptions extends BaseController {
                 textSizeSelector.getItems().addAll(Arrays.asList(
                         "14", "12", "10", "15", "16", "18", "9", "8", "18", "20", "24"
                 ));
-                textSizeSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                    try {
-                        int v = Integer.parseInt(newValue);
-                        if (v > 0) {
-                            textSize = v;
-                            textSizeSelector.getEditor().setStyle(null);
-                            UserConfig.setInt(baseName + "TextSize", textSize);
-                            if (!isSettingValues) {
-                                drawPoints();
+                textSizeSelector.getSelectionModel().selectedItemProperty().addListener(
+                        (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                            try {
+                                if (isSettingValues) {
+                                    return;
+                                }
+                                int v = Integer.parseInt(newValue);
+                                if (v > 0) {
+                                    mapOptions.setTextSize(v);
+                                    textSizeSelector.getEditor().setStyle(null);
+                                } else {
+                                    textSizeSelector.getEditor().setStyle(UserConfig.badStyle());
+                                }
+                            } catch (Exception e) {
+                                textSizeSelector.getEditor().setStyle(UserConfig.badStyle());
                             }
-                        } else {
-                            textSizeSelector.getEditor().setStyle(UserConfig.badStyle());
-                        }
-                    } catch (Exception e) {
-                        textSizeSelector.getEditor().setStyle(UserConfig.badStyle());
-                    }
-                });
+                        });
             }
 
             colorSetController.init(this, baseName + "Color", Color.BLACK);
             colorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
-                public void changed(ObservableValue<? extends Paint> observable,
-                        Paint oldValue, Paint newValue) {
-                    if (setColorRadio.isSelected()) {
-                        drawPoints();
-                    }
-                }
-            });
-
-            if (textColorGroup != null) {
-                textColorGroup.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> ov, Toggle oldv, Toggle newv) -> {
+                public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
                     if (isSettingValues) {
                         return;
                     }
-                    UserConfig.setBoolean(baseName + "TextDataColor", dataColorRadio.isSelected());
-                    if (!isSettingValues) {
-                        drawPoints();
-                    }
+                    mapOptions.setTextColor((Color) nv);
                 }
-                );
-            }
+            });
 
             if (markerLabelCheck != null) {
                 markerLabelCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setBoolean(baseName + "MarkerLabel", markerLabelCheck.isSelected());
-                    if (!isSettingValues) {
-                        drawPoints();
+                    if (isSettingValues) {
+                        return;
                     }
-                });
-            }
-            if (markerAddressCheck != null) {
-                markerAddressCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setBoolean(baseName + "MarkerAddress", markerAddressCheck.isSelected());
-                    if (!isSettingValues) {
-                        drawPoints();
-                    }
+                    mapOptions.setMarkerLabel(markerLabelCheck.isSelected());
                 });
             }
             if (markerCoordinateCheck != null) {
                 markerCoordinateCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setBoolean(baseName + "MarkerCoordinate", markerCoordinateCheck.isSelected());
-                    if (!isSettingValues) {
-                        drawPoints();
+                    if (isSettingValues) {
+                        return;
                     }
-                });
-            }
-            if (markerDatasetCheck != null) {
-                markerDatasetCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setBoolean(baseName + "MarkerDataset", markerDatasetCheck.isSelected());
-                    drawPoints();
-                });
-            }
-            if (markerValueCheck != null) {
-                markerValueCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setBoolean(baseName + "MarkerValue", markerValueCheck.isSelected());
-                    if (!isSettingValues) {
-                        drawPoints();
-                    }
-                });
-            }
-            if (markerSizeCheck != null) {
-                markerSizeCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setBoolean(baseName + "MarkerSize", markerSizeCheck.isSelected());
-                    drawPoints();
-                });
-            }
-            if (markerStartCheck != null) {
-                markerStartCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setBoolean(baseName + "MarkerStart", markerStartCheck.isSelected());
-                    if (!isSettingValues) {
-                        drawPoints();
-                    }
-                });
-            }
-            if (markerEndCheck != null) {
-                markerEndCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setBoolean(baseName + "MarkerEnd", markerEndCheck.isSelected());
-                    if (!isSettingValues) {
-                        drawPoints();
-                    }
-                });
-            }
-            if (markerDurationCheck != null) {
-                markerDurationCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setBoolean(baseName + "\"MarkerDuration", markerDurationCheck.isSelected());
-                    drawPoints();
-                });
-            }
-            if (markerSpeedCheck != null) {
-                markerSpeedCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setBoolean(baseName + "MarkerSpeed", markerSpeedCheck.isSelected());
-                    drawPoints();
-                });
-            }
-            if (markerDirectionCheck != null) {
-                markerDirectionCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setBoolean(baseName + "MarkerDirection", markerDirectionCheck.isSelected());
-                    drawPoints();
+                    mapOptions.setMarkerCoordinate(markerCoordinateCheck.isSelected());
                 });
             }
 
             if (boldCheck != null) {
                 boldCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setBoolean(baseName + "MarkerBold", boldCheck.isSelected());
-                    drawPoints();
+                    if (isSettingValues) {
+                        return;
+                    }
+                    mapOptions.setBold(boldCheck.isSelected());
                 });
             }
 
             if (popInfoCheck != null) {
                 popInfoCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setBoolean(baseName + "PopInfo", popInfoCheck.isSelected());
-                    drawPoints();
+                    if (isSettingValues) {
+                        return;
+                    }
+                    mapOptions.setPopInfo(popInfoCheck.isSelected());
                 });
             }
 
             if (fitViewCheck != null) {
                 fitViewCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setBoolean(baseName + "FitView", fitViewCheck.isSelected());
-                    drawPoints();
+                    if (isSettingValues) {
+                        return;
+                    }
+                    mapOptions.setFitView(fitViewCheck.isSelected());
                 });
             }
             if (zoomCheck != null) {
                 zoomCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setBoolean(baseName + "ControlZoom", zoomCheck.isSelected());
-                    if (!isSettingValues) {
-                        webEngine.executeScript("setControl('zoom'," + zoomCheck.isSelected() + ");");
+                    if (isSettingValues) {
+                        return;
                     }
+                    mapOptions.setZoom(zoomCheck.isSelected());
                 });
             }
             if (scaleCheck != null) {
                 scaleCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setBoolean(baseName + "ControlScale", scaleCheck.isSelected());
-                    if (!isSettingValues) {
-                        webEngine.executeScript("setControl('scale'," + scaleCheck.isSelected() + ");");
+                    if (isSettingValues) {
+                        return;
                     }
+                    mapOptions.setScale(scaleCheck.isSelected());
                 });
             }
             if (typeCheck != null) {
                 typeCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setBoolean(baseName + "ControlType", typeCheck.isSelected());
-                    if (!isSettingValues) {
-                        webEngine.executeScript("setControl('mapType'," + typeCheck.isSelected() + ");");
+                    if (isSettingValues) {
+                        return;
                     }
+                    mapOptions.setType(typeCheck.isSelected());
                 });
             }
             if (symbolsCheck != null) {
                 symbolsCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setBoolean(baseName + "ControlSymbols", symbolsCheck.isSelected());
-                    if (!isSettingValues) {
-                        webEngine.executeScript("setControl('symbols'," + symbolsCheck.isSelected() + ");");
+                    if (isSettingValues) {
+                        return;
                     }
+                    mapOptions.setSymbols(symbolsCheck.isSelected());
                 });
             }
 
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+
+    }
+
+    public void setControlValues() {
+        try {
             isSettingValues = true;
+            if (mapOptions.isGaoDeMap()) {
+                gaodeRadio.setSelected(true);
+            } else {
+                tiandituRadio.setSelected(true);
+            }
+            mapSizeSelector.setValue(mapOptions.getMapSize() + "");
             if (standardOpacitySelector != null) {
-                standardOpacitySelector.getSelectionModel().select("1");
-                roadOpacitySelector.getSelectionModel().select("1");
-                satelliteOpacitySelector.getSelectionModel().select("1");
-                trafficOpacitySelector.getSelectionModel().select("1");
+                standardOpacitySelector.setValue(mapOptions.getStandardOpacity() + "");
+                roadOpacitySelector.setValue(mapOptions.getRoadOpacity() + "");
+                satelliteOpacitySelector.setValue(mapOptions.getSatelliteOpacity() + "");
+                trafficOpacitySelector.setValue(mapOptions.getTrafficOpacity() + "");
             }
-            if (englishRadio != null && AppVariables.currentBundle != Languages.BundleZhCN) {
+            if ("zh_en".equals(mapOptions.getLanguage())) {
+                chineseEnglishRadio.setSelected(true);
+            } else if ("en".equals(mapOptions.getLanguage())) {
                 englishRadio.setSelected(true);
-            }
-            if (dataMaximumSelector != null) {
-                dataMaximumSelector.getSelectionModel().select(UserConfig.getString(baseName + "DataMax", "300"));
+            } else {
+                chineseRadio.setSelected(true);
             }
             if (markerSizeSelector != null) {
-                markerSizeSelector.getSelectionModel().select(UserConfig.getString(baseName + "MarkerSize", "24"));
+                markerSizeSelector.setValue(mapOptions.getMarkerSize() + "");
             }
             if (markerImageInput != null) {
-                markerImageInput.setText(UserConfig.getString(baseName + "MarkerImageFile", ""));
+                markerImageInput.setText(mapOptions.getMarkerImageFile() + "");
             }
-
             if (textSizeSelector != null) {
-                textSizeSelector.getSelectionModel().select(UserConfig.getString(baseName + "TextSize", "12"));
+                textSizeSelector.setValue(mapOptions.getTextSize() + "");
             }
             if (markerLabelCheck != null) {
-                markerLabelCheck.setSelected(UserConfig.getBoolean(baseName + "MarkerLabel", true));
-            }
-            if (markerAddressCheck != null) {
-                markerAddressCheck.setSelected(UserConfig.getBoolean(baseName + "MarkerAddress", false));
+                markerLabelCheck.setSelected(mapOptions.isMarkerLabel());
             }
             if (markerCoordinateCheck != null) {
-                markerCoordinateCheck.setSelected(UserConfig.getBoolean(baseName + "MarkerCoordinate", false));
-            }
-            if (markerDatasetCheck != null) {
-                markerDatasetCheck.setSelected(UserConfig.getBoolean(baseName + "MarkerDataset", false));
-            }
-            if (markerValueCheck != null) {
-                markerValueCheck.setSelected(UserConfig.getBoolean(baseName + "MarkerValue", false));
-            }
-            if (markerSizeCheck != null) {
-                markerSizeCheck.setSelected(UserConfig.getBoolean(baseName + "MarkerSize", false));
-            }
-            if (markerStartCheck != null) {
-                markerStartCheck.setSelected(UserConfig.getBoolean(baseName + "MarkerStart", true));
-            }
-            if (markerEndCheck != null) {
-                markerEndCheck.setSelected(UserConfig.getBoolean(baseName + "MarkerEnd", true));
-            }
-            if (markerDurationCheck != null) {
-                markerDurationCheck.setSelected(UserConfig.getBoolean(baseName + "MarkerDuration", false));
-            }
-            if (markerSpeedCheck != null) {
-                markerSpeedCheck.setSelected(UserConfig.getBoolean(baseName + "MarkerSpeed", false));
-            }
-            if (markerDirectionCheck != null) {
-                markerDirectionCheck.setSelected(UserConfig.getBoolean(baseName + "MarkerDirection", false));
+                markerCoordinateCheck.setSelected(mapOptions.isMarkerCoordinate());
             }
             if (boldCheck != null) {
-                boldCheck.setSelected(UserConfig.getBoolean(baseName + "MarkerBold", false));
+                boldCheck.setSelected(mapOptions.isBold());
             }
             if (popInfoCheck != null) {
-                popInfoCheck.setSelected(UserConfig.getBoolean(baseName + "PopInfo", true));
+                popInfoCheck.setSelected(mapOptions.isPopInfo());
             }
             if (fitViewCheck != null) {
-                fitViewCheck.setSelected(UserConfig.getBoolean(baseName + "FitView", true));
+                fitViewCheck.setSelected(mapOptions.isFitView());
             }
             if (zoomCheck != null) {
-                zoomCheck.setSelected(UserConfig.getBoolean(baseName + "ControlZoom", true));
+                zoomCheck.setSelected(mapOptions.isZoom());
             }
             if (scaleCheck != null) {
-                scaleCheck.setSelected(UserConfig.getBoolean(baseName + "ControlScale", true));
+                scaleCheck.setSelected(mapOptions.isScale());
             }
             if (typeCheck != null) {
-                typeCheck.setSelected(UserConfig.getBoolean(baseName + "ControlType", true));
+                typeCheck.setSelected(mapOptions.isType());
             }
             if (symbolsCheck != null) {
-                symbolsCheck.setSelected(UserConfig.getBoolean(baseName + "ControlSymbols", false));
+                symbolsCheck.setSelected(mapOptions.isSymbols());
             }
-            if (geodeticRadio != null
-                    && "EPSG:4326".equals(UserConfig.getString(baseName + "Projection", "EPSG:900913"))) {
-                geodeticRadio.setSelected(true);
+            if (geodeticRadio != null) {
+                geodeticRadio.setSelected(mapOptions.isIsGeodetic());
             }
-            String type = UserConfig.getString(baseName + "MarkerImageType",
-                    mapController instanceof LocationDataMapController ? "Dataset" : "Point");
-            if ("Circle".equals(type)) {
-                markerCircleRadio.setSelected(true);
-            } else if ("Image".equals(type)) {
-                markerImageRadio.setSelected(true);
-            } else if ("Dataset".equals(type)) {
-                markerDatasetRadio.setSelected(true);
-            } else if ("Data".equals(type)) {
-                markerDataRadio.setSelected(true);
-            } else {
+            File file = mapOptions.getMarkerImageFile();
+            if (file == null || !file.exists() || !file.isFile()) {
                 markerPointRadio.setSelected(true);
-            }
-            if (UserConfig.getBoolean(baseName + "TextDataColor", false)) {
-                dataColorRadio.setSelected(true);
+            } else if (mapOptions.circleImage().equals(file)) {
+                markerCircleRadio.setSelected(true);
+            } else if (mapOptions.pointImage().equals(file)) {
+                markerPointRadio.setSelected(true);
+            } else {
+                markerImageRadio.setSelected(true);
             }
             isSettingValues = false;
 
@@ -597,24 +476,20 @@ public class ControlMapOptions extends BaseController {
 
     }
 
-    public void setMap() {
-        if (webEngine == null || isSettingValues) {
+    public void mapTypeChanged() {
+        if (isSettingValues) {
             return;
         }
         isSettingValues = true;
-        mapLoaded = false;
         optionsBox.setDisable(true);
         try {
-            if (gaodeRadio != null && gaodeRadio.isSelected()) {
-                mapName = MapName.GaoDe;
-                webEngine.loadContent(LocationTools.gaodeMap());
+            if (gaodeRadio.isSelected()) {
 
                 gcj02Radio.setSelected(true);
                 gcj02Radio.setDisable(false);
                 cgcs2000Radio.setDisable(true);
                 mercatorRadio.setSelected(true);
                 geodeticRadio.setDisable(true);
-                coordinateSystem = CoordinateSystem.GCJ02();
 
                 if (optionsBox.getChildren().contains(controlsBox)) {
                     optionsBox.getChildren().removeAll(controlsBox);
@@ -632,15 +507,13 @@ public class ControlMapOptions extends BaseController {
                 ));
 
             } else {
-                mapName = MapName.TianDiTu;
-                webEngine.load(LocationTools.tiandituFile(geodeticRadio.isSelected()).toURI().toString());
+
+                tiandituRadio.setSelected(true);
 
                 cgcs2000Radio.setSelected(true);
                 cgcs2000Radio.setDisable(false);
                 gcj02Radio.setDisable(true);
                 geodeticRadio.setDisable(false);
-
-                coordinateSystem = CoordinateSystem.CGCS2000();
 
                 if (optionsBox.getChildren().contains(languageBox)) {
                     optionsBox.getChildren().removeAll(languageBox, layersBox);
@@ -661,66 +534,13 @@ public class ControlMapOptions extends BaseController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+        optionsBox.setDisable(false);
         isSettingValues = false;
-        initMap();
-
-    }
-
-    protected void initMap() {
-        if (webEngine == null || isSettingValues) {
-            return;
-        }
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
-        timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Platform.runLater(() -> {
-                    if (!mapLoaded) {
-                        return;
-                    }
-                    if (timer != null) {
-                        timer.cancel();
-                        timer = null;
-                    }
-                    mapSizeSelector.getSelectionModel().select(mapSize + "");
-                    if (gaodeRadio != null && gaodeRadio.isSelected()) {
-                        checkLanguage();
-                    } else {
-                        webEngine.executeScript("setControl('zoom'," + zoomCheck.isSelected() + ");");
-                        webEngine.executeScript("setControl('scale'," + scaleCheck.isSelected() + ");");
-                        webEngine.executeScript("setControl('mapType'," + typeCheck.isSelected() + ");");
-                        webEngine.executeScript("setControl('symbols'," + symbolsCheck.isSelected() + ");");
-                    }
-                    drawPoints();
-                });
-            }
-
-        }, 0, 500);
     }
 
     protected void mapLoaded() {
         optionsBox.setDisable(false);
-        mapLoaded = true;
-    }
-
-    public void setData() {
-        if (currentPageRadio.isSelected()) {
-            if (dataBox.getChildren().contains(dataNumberPane)) {
-                dataBox.getChildren().remove(dataNumberPane);
-            }
-        } else {
-            if (!dataBox.getChildren().contains(dataNumberPane)) {
-                dataBox.getChildren().add(dataNumberPane);
-            }
-        }
-        if (webEngine == null || isSettingValues || mapController == null) {
-            return;
-        }
-        mapController.reloadData();
+        isSettingValues = false;
     }
 
     public void drawPoints() {
@@ -730,69 +550,13 @@ public class ControlMapOptions extends BaseController {
         mapController.drawPoints();
     }
 
-    public void checkProjection() {
-        if (webEngine == null || isSettingValues) {
+    public void setMapSize(int size) {
+        if (!mapController.mapLoaded || isSettingValues) {
             return;
         }
-        if (mercatorRadio.isSelected()) {
-            UserConfig.setString(baseName + "Projection", "EPSG:900913");
-        } else {
-            UserConfig.setString(baseName + "Projection", "EPSG:4326");
-        }
-        setMap();
-    }
-
-    public void checkLanguage() {
-        try {
-            if (isSettingValues || englishRadio == null) {
-                return;
-            }
-            if (englishRadio.isSelected()) {
-                webEngine.executeScript("setLanguage(\"en\");");
-            } else if (chineseEnglishRadio.isSelected()) {
-                webEngine.executeScript("setLanguage(\"zh_en\");");
-            } else {
-                webEngine.executeScript("setLanguage(\"zh_cn\");");
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    public void checkMapStyle() {
-        try {
-            if (isSettingValues || styleDefaultRadio == null) {
-                return;
-            }
-            Platform.runLater(() -> {
-                if (styleDefaultRadio.isSelected()) {
-                    webEngine.executeScript("setStyle(\"default\");");
-                } else if (styleBlackRadio.isSelected()) {
-                    webEngine.executeScript("setStyle(\"black\");");
-                } else if (styleIndigoRadio.isSelected()) {
-                    webEngine.executeScript("setStyle(\"indigo\");");
-                }
-            });
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    public void setMapSize(int size, boolean setMap, boolean setSelector) {
-        if (!mapLoaded || isSettingValues) {
-            return;
-        }
-        mapSize = size;
-        UserConfig.setInt(baseName + "MapSize", mapSize);
-        if (setMap) {
-            webEngine.executeScript("setZoom(" + size + ");");
-        }
-        if (setSelector) {
-            isSettingValues = true;
-            mapSizeSelector.getSelectionModel().select(size + "");
-            isSettingValues = false;
-        }
+        isSettingValues = true;
+        mapSizeSelector.getSelectionModel().select(size + "");
+        isSettingValues = false;
     }
 
     public void setStandardLayer() {
@@ -800,16 +564,16 @@ public class ControlMapOptions extends BaseController {
             if (isSettingValues) {
                 return;
             }
-            if (!standardLayerCheck.isSelected()) {
-                webEngine.executeScript("hideStandardLayer();");
-            } else {
+            if (standardLayerCheck.isSelected()) {
                 float opacity = Float.valueOf(standardOpacitySelector.getValue());
                 if (opacity >= 0 && opacity <= 1) {
-                    webEngine.executeScript("setStandardLayerOpacity(" + opacity + ");");
                     ValidationTools.setEditorNormal(standardOpacitySelector);
                 } else {
                     ValidationTools.setEditorBadStyle(standardOpacitySelector);
                 }
+                mapOptions.setStandardOpacity(opacity);
+            } else {
+                mapOptions.setStandardLayer(false);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -822,16 +586,16 @@ public class ControlMapOptions extends BaseController {
             if (isSettingValues) {
                 return;
             }
-            if (!satelliteLayerCheck.isSelected()) {
-                webEngine.executeScript("hideSatelliteLayer();");
-            } else {
+            if (satelliteLayerCheck.isSelected()) {
                 float opacity = Float.valueOf(satelliteOpacitySelector.getValue());
                 if (opacity >= 0 && opacity <= 1) {
-                    webEngine.executeScript("setSatelliteLayerOpacity(" + opacity + ");");
                     ValidationTools.setEditorNormal(satelliteOpacitySelector);
                 } else {
                     ValidationTools.setEditorBadStyle(satelliteOpacitySelector);
                 }
+                mapOptions.setSatelliteOpacity(opacity);
+            } else {
+                mapOptions.setSatelliteLayer(false);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -844,16 +608,16 @@ public class ControlMapOptions extends BaseController {
             if (isSettingValues) {
                 return;
             }
-            if (!roadLayerCheck.isSelected()) {
-                webEngine.executeScript("hideRoadLayer();");
-            } else {
+            if (roadLayerCheck.isSelected()) {
                 float opacity = Float.valueOf(roadOpacitySelector.getValue());
                 if (opacity >= 0 && opacity <= 1) {
-                    webEngine.executeScript("setRoadLayerOpacity(" + opacity + ");");
                     ValidationTools.setEditorNormal(roadOpacitySelector);
                 } else {
                     ValidationTools.setEditorBadStyle(roadOpacitySelector);
                 }
+                mapOptions.setRoadOpacity(opacity);
+            } else {
+                mapOptions.setRoadLayer(false);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -866,16 +630,16 @@ public class ControlMapOptions extends BaseController {
             if (isSettingValues) {
                 return;
             }
-            if (!trafficLayerCheck.isSelected()) {
-                webEngine.executeScript("hideTrafficLayer();");
-            } else {
+            if (trafficLayerCheck.isSelected()) {
                 float opacity = Float.valueOf(trafficOpacitySelector.getValue());
                 if (opacity >= 0 && opacity <= 1) {
-                    webEngine.executeScript("setTrafficLayerOpacity(" + opacity + ");");
                     ValidationTools.setEditorNormal(trafficOpacitySelector);
                 } else {
                     ValidationTools.setEditorBadStyle(trafficOpacitySelector);
                 }
+                mapOptions.setTrafficOpacity(opacity);
+            } else {
+                mapOptions.setTrafficLayer(false);
             }
 
         } catch (Exception e) {
@@ -884,9 +648,27 @@ public class ControlMapOptions extends BaseController {
 
     }
 
+    public void initImageFile(File file) {
+        try {
+            if (isSettingValues || file == null || !file.exists()) {
+                return;
+            }
+            isSettingValues = true;
+            markerImageRadio.setSelected(true);
+            markerImageInput.setText(file.getAbsolutePath());
+            isSettingValues = false;
+            mapOptions.setMarkerImageFile(file);
+        } catch (Exception e) {
+//            MyBoxLog.error(e.toString());
+        }
+    }
+
     @FXML
     public void selectMarkerImage() {
         try {
+            if (isSettingValues) {
+                return;
+            }
             File file = FxFileTools.selectFile(this, VisitHistory.FileType.Image);
             if (file == null) {
                 return;

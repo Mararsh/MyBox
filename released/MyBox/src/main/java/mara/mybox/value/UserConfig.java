@@ -53,9 +53,37 @@ public class UserConfig {
         }
     }
 
+    public static String getString(Connection conn, String key, String defaultValue) {
+        try {
+            String value;
+            if (userConfigValues.containsKey(key)) {
+                value = userConfigValues.get(key);
+            } else {
+                value = TableUserConf.readString(conn, key, defaultValue);
+                if (value == null) {
+                    return defaultValue;
+                }
+                userConfigValues.put(key, value);
+            }
+            return value;
+        } catch (Exception e) {
+            //            MyBoxLog.error(e.toString());
+            return defaultValue;
+        }
+    }
+
     public static boolean setInt(String key, int value) {
         userConfigValues.put(key, value + "");
         if (TableUserConf.writeInt(key, value) > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean setInt(Connection conn, String key, int value) {
+        userConfigValues.put(key, value + "");
+        if (TableUserConf.writeInt(conn, key, value) > 0) {
             return true;
         } else {
             return false;
@@ -73,6 +101,28 @@ public class UserConfig {
         }
         try {
             int v = TableUserConf.readInt(key, defaultValue);
+            if (v == AppValues.InvalidInteger) {
+                return defaultValue;
+            }
+            userConfigValues.put(key, v + "");
+            return v;
+        } catch (Exception e) {
+            //            MyBoxLog.error(e.toString());
+            return defaultValue;
+        }
+    }
+
+    public static int getInt(Connection conn, String key, int defaultValue) {
+        if (userConfigValues.containsKey(key)) {
+            try {
+                int v = Integer.valueOf(userConfigValues.get(key));
+                return v;
+            } catch (Exception e) {
+                //                MyBoxLog.console(e.toString());
+            }
+        }
+        try {
+            int v = TableUserConf.readInt(conn, key, defaultValue);
             if (v == AppValues.InvalidInteger) {
                 return defaultValue;
             }
@@ -106,6 +156,24 @@ public class UserConfig {
         }
     }
 
+    public static boolean getBoolean(Connection conn, String key, boolean defaultValue) {
+        if (userConfigValues.containsKey(key)) {
+            try {
+                boolean v = userConfigValues.get(key).equals("true");
+                return v;
+            } catch (Exception e) {
+            }
+        }
+        try {
+            boolean v = TableUserConf.readBoolean(conn, key, defaultValue);
+            userConfigValues.put(key, v ? "true" : "false");
+            return v;
+        } catch (Exception e) {
+            //            MyBoxLog.error(e.toString());
+            return defaultValue;
+        }
+    }
+
     public static boolean setBoolean(String key, boolean value) {
         userConfigValues.put(key, value ? "true" : "false");
         if (TableUserConf.writeBoolean(key, value) > 0) {
@@ -115,9 +183,27 @@ public class UserConfig {
         }
     }
 
+    public static boolean setBoolean(Connection conn, String key, boolean value) {
+        userConfigValues.put(key, value ? "true" : "false");
+        if (TableUserConf.writeBoolean(conn, key, value) > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public static boolean setDouble(String key, double value) {
         userConfigValues.put(key, value + "");
         if (TableUserConf.writeString(key, value + "") > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean setDouble(Connection conn, String key, double value) {
+        userConfigValues.put(key, value + "");
+        if (TableUserConf.writeString(conn, key, value + "") > 0) {
             return true;
         } else {
             return false;
@@ -147,9 +233,41 @@ public class UserConfig {
         }
     }
 
+    public static double getDouble(Connection conn, String key, double defaultValue) {
+        if (userConfigValues.containsKey(key)) {
+            try {
+                double v = Double.valueOf(userConfigValues.get(key));
+                return v;
+            } catch (Exception e) {
+                //                MyBoxLog.console(e.toString());
+            }
+        }
+        try {
+            String v = TableUserConf.readString(conn, key, defaultValue + "");
+            if (v == null) {
+                return defaultValue;
+            }
+            double d = Double.valueOf(v);
+            userConfigValues.put(key, v);
+            return d;
+        } catch (Exception e) {
+            //            MyBoxLog.error(e.toString());
+            return defaultValue;
+        }
+    }
+
     public static boolean setLong(String key, long value) {
         userConfigValues.put(key, value + "");
         if (TableUserConf.writeString(key, value + "") > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean setLong(Connection conn, String key, long value) {
+        userConfigValues.put(key, value + "");
+        if (TableUserConf.writeString(conn, key, value + "") > 0) {
             return true;
         } else {
             return false;
@@ -167,6 +285,29 @@ public class UserConfig {
         }
         try {
             String v = TableUserConf.readString(key, defaultValue + "");
+            if (v == null) {
+                return defaultValue;
+            }
+            long d = Long.valueOf(v);
+            userConfigValues.put(key, v);
+            return d;
+        } catch (Exception e) {
+            //            MyBoxLog.error(e.toString());
+            return defaultValue;
+        }
+    }
+
+    public static long getLong(Connection conn, String key, long defaultValue) {
+        if (userConfigValues.containsKey(key)) {
+            try {
+                long v = Long.valueOf(userConfigValues.get(key));
+                return v;
+            } catch (Exception e) {
+                //                MyBoxLog.console(e.toString());
+            }
+        }
+        try {
+            String v = TableUserConf.readString(conn, key, defaultValue + "");
             if (v == null) {
                 return defaultValue;
             }

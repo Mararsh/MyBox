@@ -251,7 +251,7 @@ public class WindowTools {
     }
 
     public static BaseController handling(Window parent, String newFxml) {
-        return openStage(parent, newFxml, AppVariables.currentBundle, true, Modality.WINDOW_MODAL, StageStyle.TRANSPARENT);
+        return openStage(parent, newFxml, AppVariables.currentBundle, true, Modality.WINDOW_MODAL, StageStyle.DECORATED);
     }
 
     public static BaseController openScene(Window parent, String newFxml, StageStyle stageStyle) {

@@ -24,7 +24,7 @@ public class TableTextTruncCell<T> extends TableCell<T, String>
                     setGraphic(null);
                     return;
                 }
-                setText(item.length() > 40 ? item.substring(0, 40) : item);
+                setText(item.length() > 80 ? item.substring(0, 80) : item);
             }
         };
         return cell;

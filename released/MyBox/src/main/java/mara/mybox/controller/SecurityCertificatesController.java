@@ -348,7 +348,7 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
                 protected boolean handle() {
                     error = null;
                     try {
-                        if (backupController.isBack()) {
+                        if (backupController.needBackup()) {
                             backupController.addBackup(task, sourceFile);
                         }
                         List<String> aliases = new ArrayList();

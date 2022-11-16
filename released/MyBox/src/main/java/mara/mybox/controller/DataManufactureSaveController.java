@@ -56,11 +56,11 @@ public class DataManufactureSaveController extends BaseChildController {
                             tableController.data2D.stopTask();
                         } else {
                             csvFile = tableController.data2D.copy(name,
-                                    tableController.data2D.columnIndices(), false, true);
+                                    tableController.data2D.columnIndices(), false, true, false);
                         }
                     } else {
-                        csvFile = DataFileCSV.save(name, task, tableController.data2D.getColumns(),
-                                tableController.data2D.tableRowsWithoutNumber());
+                        csvFile = DataFileCSV.save(name, task, ",", tableController.data2D.getColumns(),
+                                tableController.data2D.tableRows(false));
                     }
                     csvFile.setDataName(name);
                     return csvFile != null;
