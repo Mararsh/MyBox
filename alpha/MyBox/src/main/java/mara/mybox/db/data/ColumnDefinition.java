@@ -25,7 +25,6 @@ import mara.mybox.tools.NumberTools;
 import mara.mybox.tools.ShortTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppValues;
-import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -35,7 +34,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class ColumnDefinition extends BaseData {
 
-    protected String tableName, columnName, label, referName, referTable, referColumn,
+    protected String tableName, columnName, referName, referTable, referColumn,
             defaultValue, description, format;
     protected ColumnType type;
     protected int index, length, width, scale, century;
@@ -91,7 +90,6 @@ public class ColumnDefinition extends BaseData {
         referName = null;
         referTable = null;
         referColumn = null;
-        label = null;
         statistic = null;
         displayMap = null;
         description = null;
@@ -142,7 +140,6 @@ public class ColumnDefinition extends BaseData {
             }
             tableName = c.tableName;
             columnName = c.columnName;
-            label = c.label;
             referName = c.referName;
             referTable = c.referTable;
             referColumn = c.referColumn;
@@ -903,13 +900,6 @@ public class ColumnDefinition extends BaseData {
     /*
         customized get/set
      */
-    public String getLabel() {
-        if (label == null && columnName != null) {
-            label = Languages.tableMessage(columnName.toLowerCase());
-        }
-        return label;
-    }
-
     public boolean isId() {
         return isPrimaryKey && auto;
     }
@@ -1085,11 +1075,6 @@ public class ColumnDefinition extends BaseData {
 
     public ColumnDefinition setCentury(int century) {
         this.century = century;
-        return this;
-    }
-
-    public ColumnDefinition setLabel(String label) {
-        this.label = label;
         return this;
     }
 

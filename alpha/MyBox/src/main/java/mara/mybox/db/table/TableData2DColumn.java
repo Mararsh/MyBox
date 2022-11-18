@@ -59,7 +59,6 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
         addColumn(new Data2DColumn("default_value", ColumnType.String).setLength(StringMaxLength));
         addColumn(new Data2DColumn("max_value", ColumnType.String).setLength(StringMaxLength));
         addColumn(new Data2DColumn("min_value", ColumnType.String).setLength(StringMaxLength));
-        addColumn(new Data2DColumn("label", ColumnType.String).setLength(StringMaxLength));
         addColumn(new Data2DColumn("foreign_name", ColumnType.String).setLength(StringMaxLength));
         addColumn(new Data2DColumn("foreign_table", ColumnType.String).setLength(StringMaxLength));
         addColumn(new Data2DColumn("foreign_column", ColumnType.String).setLength(StringMaxLength));

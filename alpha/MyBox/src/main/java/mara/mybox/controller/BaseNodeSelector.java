@@ -1057,7 +1057,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                             .append("<DIV>\n")
                             .append("    <INPUT type=\"checkbox\" checked onclick=\"showClass('TreeNode', this.checked);\">")
                             .append(message("Unfold")).append("</INPUT>\n")
-                            .append("    <INPUT type=\"checkbox\" onclick=\"showClass('SerialNumber', this.checked);\">")
+                            .append("    <INPUT type=\"checkbox\" checked onclick=\"showClass('SerialNumber', this.checked);\">")
                             .append(message("SequenceNumber")).append("</INPUT>\n")
                             .append("    <INPUT type=\"checkbox\" checked onclick=\"showClass('NodeTag', this.checked);\">")
                             .append(message("Tags")).append("</INPUT>\n")

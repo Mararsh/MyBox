@@ -5,6 +5,7 @@ This is desktop application based on JavaFx to provide simple and easy functions
 
 ## What's New                       
 2022-11-16 v6.6.1           
+
 * Add:                  
      - New types of data columns: Era, Color, Longitude, Latitude, Enumeration.          
      - Formats of data columns. Example:           

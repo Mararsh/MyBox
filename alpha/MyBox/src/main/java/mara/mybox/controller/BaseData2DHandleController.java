@@ -200,7 +200,11 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
 
             checkOptions();
 
-            showLeftPane();
+            if (leftPaneCheck != null) {
+                leftPaneCheck.setSelected(true);
+            } else {
+                showLeftPane();
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

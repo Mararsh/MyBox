@@ -8,7 +8,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -363,7 +362,7 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
         );
 
         popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem closeMenu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
+        MenuItem closeMenu = new MenuItem(message("PopupClose"));
         closeMenu.setStyle("-fx-text-fill: #2e598a;");
         closeMenu.setOnAction((ActionEvent cevent) -> {
             popMenu.hide();

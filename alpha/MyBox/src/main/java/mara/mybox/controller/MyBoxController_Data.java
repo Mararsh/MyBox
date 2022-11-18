@@ -8,7 +8,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -41,7 +40,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
 
         MenuItem DataInSystemClipboard = new MenuItem(message("DataInSystemClipboard"));
         DataInSystemClipboard.setOnAction((ActionEvent event1) -> {
-            DataInMyBoxClipboardController.oneOpen();
+            DataInSystemClipboardController.oneOpen();
         });
 
         MenuItem DataInMyBoxClipboard = new MenuItem(message("DataInMyBoxClipboard"));
@@ -231,7 +230,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
         );
 
         popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem closeMenu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
+        MenuItem closeMenu = new MenuItem(message("PopupClose"));
         closeMenu.setStyle("-fx-text-fill: #2e598a;");
         closeMenu.setOnAction((ActionEvent cevent) -> {
             popMenu.hide();

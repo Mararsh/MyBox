@@ -6,9 +6,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import mara.mybox.data.UserLanguage;
-import mara.mybox.data.UserTableLanguage;
 import static mara.mybox.value.AppVariables.currentBundle;
-import static mara.mybox.value.AppVariables.currentTableBundle;
 
 /**
  * @Author Mara
@@ -25,9 +23,6 @@ public class Languages {
 
     public static final ResourceBundle BundleZhCN = ResourceBundle.getBundle("bundles/Messages", LocaleZhCN);
     public static final ResourceBundle BundleEn = ResourceBundle.getBundle("bundles/Messages", LocaleEn);
-
-    public static final ResourceBundle TableBundleZhCN = ResourceBundle.getBundle("bundles/TableMessages", LocaleZhCN);
-    public static final ResourceBundle TableBundleEn = ResourceBundle.getBundle("bundles/TableMessages", LocaleEn);
     //    public static final ResourceBundle BundleFrFR = ResourceBundle.getBundle("bundles/Messages", LocaleFrFR);
     //    public static final ResourceBundle BundleEsES = ResourceBundle.getBundle("bundles/Messages", LocaleEsES);
     //    public static final ResourceBundle BundleRuRU = ResourceBundle.getBundle("bundles/Messages", LocaleRuRU);
@@ -37,8 +32,7 @@ public class Languages {
             lang = Locale.getDefault().getLanguage().toLowerCase();
         }
         UserConfig.setString("language", lang);
-        currentBundle = getBundle(lang);
-        currentTableBundle = getTableBundle(lang);
+        AppVariables.currentBundle = getBundle(lang);
         AppVariables.isChinese = lang.startsWith("zh");
     }
 
@@ -69,21 +63,33 @@ public class Languages {
         if (lang == null) {
             lang = Locale.getDefault().getLanguage().toLowerCase();
         }
-        ResourceBundle bundle = null;
+        ResourceBundle bundle;
         if (lang.startsWith("zh")) {
             bundle = BundleZhCN;
         } else if (lang.startsWith("en")) {
             bundle = BundleEn;
         } else {
-            try {
-                bundle = new UserLanguage(lang);
-            } catch (Exception e) {
+            File file = interfaceLanguageFile(lang);
+            if (file.exists()) {
+                try {
+                    bundle = new UserLanguage(lang);
+                } catch (Exception e) {
+                    bundle = null;
+                }
+            } else {
+                bundle = null;
             }
             if (bundle == null) {
-                bundle = BundleEn;
+                setLanguage(Locale.getDefault().getLanguage().toLowerCase());
+                bundle = currentBundle;
             }
         }
         return bundle;
+    }
+
+    public static ResourceBundle refreshBundle() {
+        currentBundle = getBundle(getLanguage());
+        return currentBundle;
     }
 
     public static String message(String language, String msg) {
@@ -106,53 +112,6 @@ public class Languages {
         }
     }
 
-    public static ResourceBundle getTableBundle() {
-        if (currentTableBundle == null) {
-            currentTableBundle = getTableBundle(getLanguage());
-        }
-        return currentTableBundle;
-    }
-
-    public static ResourceBundle getTableBundle(String language) {
-        String lang = language;
-        if (lang == null) {
-            lang = Locale.getDefault().getLanguage().toLowerCase();
-        }
-        ResourceBundle bundle = null;
-        if (lang.startsWith("zh")) {
-            bundle = TableBundleZhCN;
-        } else if (lang.startsWith("en")) {
-            bundle = TableBundleEn;
-        } else {
-            try {
-                bundle = new UserTableLanguage(lang);
-            } catch (Exception e) {
-            }
-            if (bundle == null) {
-                bundle = TableBundleEn;
-            }
-        }
-        return bundle;
-    }
-
-    public static String tableMessage(String language, String msg) {
-        try {
-            String s = msg.toLowerCase();
-            ResourceBundle bundle = getTableBundle(language);
-            return bundle.getString(s);
-        } catch (Exception e) {
-            return msg;
-        }
-    }
-
-    public static String tableMessage(String msg) {
-        try {
-            return getTableBundle().getString(msg);
-        } catch (Exception e) {
-            return msg;
-        }
-    }
-
     public static List<String> userLanguages() {
         List<String> languages = new ArrayList<>();
         try {
@@ -168,8 +127,6 @@ public class Languages {
                     }
                     if (name.startsWith("Messages_")) {
                         name = name.substring("Messages_".length());
-                    } else if (name.startsWith("TableMessages_")) {
-                        name = name.substring("TableMessages_".length());
                     }
                     if (!languages.contains(name)) {
                         languages.add(name);
@@ -179,10 +136,6 @@ public class Languages {
         } catch (Exception e) {
         }
         return languages;
-    }
-
-    public static File tableLanguageFile(String langName) {
-        return new File(AppVariables.MyBoxLanguagesPath + File.separator + "TableMessages_" + langName + ".properties");
     }
 
     public static File interfaceLanguageFile(String langName) {
