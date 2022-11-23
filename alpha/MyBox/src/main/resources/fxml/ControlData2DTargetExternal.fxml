@@ -89,6 +89,42 @@ License:    Apache License Version 2.0
                         </ImageView>
                      </graphic>
                   </RadioButton>
+                  <RadioButton fx:id="jsonRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
+                     <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconJSON.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </RadioButton>
+                  <RadioButton mnemonicParsing="false" toggleGroup="$targetGroup" fx:id="xmlRadio">
+                     <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconXML.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </RadioButton>
+                  <RadioButton fx:id="htmlRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
+                     <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconHtml.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </RadioButton>
+                  <RadioButton fx:id="pdfRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
+                     <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconPDF.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </RadioButton>
                </children>
             </FlowPane>
             <HBox fx:id="prefixBox" alignment="CENTER_LEFT" spacing="2.0">

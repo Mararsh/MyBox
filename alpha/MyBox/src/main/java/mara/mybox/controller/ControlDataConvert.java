@@ -104,11 +104,35 @@ public class ControlDataConvert extends BaseController {
         initOthers();
     }
 
+    public void setControls(BaseTaskController parent, String format) {
+        this.parent = parent;
+        baseName = parent.baseName + baseName;
+        isSettingValues = true;
+        selectNoneAction();
+        if ("json".equals(format)) {
+            jsonCheck.setSelected(true);
+        } else if ("xml".equals(format)) {
+            xmlCheck.setSelected(true);
+        } else if ("html".equals(format)) {
+            htmlCheck.setSelected(true);
+            cssArea.setText(HtmlStyles.BaseStyle);
+        } else if ("pdf".equals(format)) {
+            pdfCheck.setSelected(true);
+            initPDF();
+        }
+        maxLines = -1;
+        rowNumberCheck.setSelected(false);
+        isSettingValues = false;
+    }
+
     private void initChecks() {
         csvCheck.setSelected(UserConfig.getBoolean(baseName + "CSV", true));
         csvCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                if (isSettingValues) {
+                    return;
+                }
                 UserConfig.setBoolean(baseName + "CSV", csvCheck.isSelected());
             }
         });
@@ -117,6 +141,9 @@ public class ControlDataConvert extends BaseController {
         textsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                if (isSettingValues) {
+                    return;
+                }
                 UserConfig.setBoolean(baseName + "Text", textsCheck.isSelected());
             }
         });
@@ -125,6 +152,9 @@ public class ControlDataConvert extends BaseController {
         jsonCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                if (isSettingValues) {
+                    return;
+                }
                 UserConfig.setBoolean(baseName + "Json", jsonCheck.isSelected());
             }
         });
@@ -133,6 +163,9 @@ public class ControlDataConvert extends BaseController {
         xmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                if (isSettingValues) {
+                    return;
+                }
                 UserConfig.setBoolean(baseName + "Xml", xmlCheck.isSelected());
             }
         });
@@ -141,6 +174,9 @@ public class ControlDataConvert extends BaseController {
         excelCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                if (isSettingValues) {
+                    return;
+                }
                 UserConfig.setBoolean(baseName + "Xlsx", excelCheck.isSelected());
             }
         });
@@ -149,6 +185,9 @@ public class ControlDataConvert extends BaseController {
         htmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                if (isSettingValues) {
+                    return;
+                }
                 UserConfig.setBoolean(baseName + "Html", htmlCheck.isSelected());
             }
         });
@@ -157,6 +196,9 @@ public class ControlDataConvert extends BaseController {
         pdfCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                if (isSettingValues) {
+                    return;
+                }
                 UserConfig.setBoolean(baseName + "PDF", pdfCheck.isSelected());
             }
         });
@@ -165,6 +207,9 @@ public class ControlDataConvert extends BaseController {
         myBoxClipboardCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                if (isSettingValues) {
+                    return;
+                }
                 UserConfig.setBoolean(baseName + "DataClipboard", myBoxClipboardCheck.isSelected());
             }
         });
@@ -205,6 +250,9 @@ public class ControlDataConvert extends BaseController {
             rowNumberCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    if (isSettingValues) {
+                        return;
+                    }
                     UserConfig.setBoolean(baseName + "TargetWithRowNumber", rowNumberCheck.isSelected());
                 }
             });
@@ -215,7 +263,7 @@ public class ControlDataConvert extends BaseController {
             ));
             maxLinesSelector.getSelectionModel().selectedItemProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        if (newValue == null || newValue.isEmpty()) {
+                        if (isSettingValues || newValue == null || newValue.isEmpty()) {
                             return;
                         }
                         UserConfig.setString(baseName + "ExportMaxLines", newValue);

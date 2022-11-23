@@ -12,6 +12,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import mara.mybox.controller.BaseController;
+import mara.mybox.controller.Data2DTargetExportController;
+import mara.mybox.controller.DataFileCSVController;
+import mara.mybox.controller.DataFileExcelController;
+import mara.mybox.controller.DataFileTextController;
+import mara.mybox.controller.DataInMyBoxClipboardController;
+import mara.mybox.controller.DataTablesController;
+import mara.mybox.controller.MatricesManageController;
 import mara.mybox.data2d.reader.Data2DOperator;
 import mara.mybox.data2d.reader.Data2DSingleColumn;
 import mara.mybox.data2d.reader.Data2DWriteTable;
@@ -22,6 +30,7 @@ import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
@@ -712,6 +721,27 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         }
     }
 
+    public static void openDataTable(BaseController controller, DataTable dataTable, String target) {
+        if (dataTable == null || target == null) {
+            return;
+        }
+        if ("csv".equals(target)) {
+            DataFileCSVController.loadTable(dataTable);
+        } else if ("excel".equals(target)) {
+            DataFileExcelController.loadTable(dataTable);
+        } else if ("texts".equals(target)) {
+            DataFileTextController.loadTable(dataTable);
+        } else if ("matrix".equals(target)) {
+            MatricesManageController.loadTable(dataTable);
+        } else if ("systemClipboard".equals(target)) {
+            TextClipboardTools.copyToSystemClipboard(controller, DataTable.toString(null, dataTable));
+        } else if ("myBoxClipboard".equals(target)) {
+            DataInMyBoxClipboardController.loadTable(dataTable);
+        } else if ("table".equals(target)) {
+            DataTablesController.loadTable(dataTable);
+        }
+    }
+
     /*  
         to/from CSV
      */
@@ -877,6 +907,29 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             return DataClipboard.create(task, csvData, dFile);
         } else {
             return null;
+        }
+    }
+
+    public static void openCSV(BaseController controller, DataFileCSV csvFile, String target) {
+        if (csvFile == null || target == null) {
+            return;
+        }
+        if ("csv".equals(target)) {
+            DataFileCSVController.loadCSV(csvFile);
+        } else if ("excel".equals(target)) {
+            DataFileExcelController.loadCSV(csvFile);
+        } else if ("texts".equals(target)) {
+            DataFileTextController.loadCSV(csvFile);
+        } else if ("matrix".equals(target)) {
+            MatricesManageController.loadCSV(csvFile);
+        } else if ("systemClipboard".equals(target)) {
+            TextClipboardTools.copyToSystemClipboard(controller, TextFileTools.readTexts(csvFile.getFile()));
+        } else if ("myBoxClipboard".equals(target)) {
+            DataInMyBoxClipboardController.loadCSV(csvFile);
+        } else if ("table".equals(target)) {
+            DataTablesController.loadCSV(csvFile);
+        } else {
+            Data2DTargetExportController.open(csvFile, target);
         }
     }
 

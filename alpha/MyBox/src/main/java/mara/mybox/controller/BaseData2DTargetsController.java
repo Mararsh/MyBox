@@ -326,6 +326,8 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
             case "table":
                 DataTablesController.open(name, outputColumns, outputData);
                 break;
+            default:
+                Data2DTargetExportController.open(outputColumns, outputData, targetController.target, name);
         }
         popDone();
         return true;

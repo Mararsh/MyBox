@@ -226,6 +226,7 @@ public class Fxmls {
     public static final String Data2DChartGroupSelfComparisonBarsFxml = "/fxml/Data2DChartGroupSelfComparisonBars.fxml";
     public static final String Data2DChartGroupBoxWhiskerFxml = "/fxml/Data2DChartGroupBoxWhisker.fxml";
     public static final String ValueRangeInputFxml = "/fxml/ValueRangeInput.fxml";
+    public static final String Data2DTargetExportFxml = "/fxml/Data2DTargetExport.fxml";
 
     public static final String JShellFxml = "/fxml/JShell.fxml";
     public static final String JexlFxml = "/fxml/Jexl.fxml";
