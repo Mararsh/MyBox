@@ -303,8 +303,7 @@ public class ColumnDefinition extends BaseData {
     }
 
     public boolean isNumberType() {
-        return type == ColumnType.Double || type == ColumnType.Float
-                || type == ColumnType.Integer || type == ColumnType.Long || type == ColumnType.Short;
+        return isNumberType(type);
     }
 
     public boolean needScale() {
@@ -316,9 +315,7 @@ public class ColumnDefinition extends BaseData {
     }
 
     public boolean isDBStringType() {
-        return type == ColumnType.String || type == ColumnType.File
-                || type == ColumnType.Image || type == ColumnType.Enumeration
-                || type == ColumnType.Era || type == ColumnType.Color;
+        return isDBStringType(type);
     }
 
     public boolean isDoubleType() {
@@ -331,7 +328,7 @@ public class ColumnDefinition extends BaseData {
     }
 
     public boolean isDateType() {
-        return type == ColumnType.Datetime || type == ColumnType.Date || type == ColumnType.Era;
+        return isDateType(type);
     }
 
     public boolean isEnumType() {
@@ -500,78 +497,11 @@ public class ColumnDefinition extends BaseData {
     }
 
     public Object fromString(String string, InvalidAs invalidAs) {
-        try {
-            switch (type) {
-                case Double:
-                case Longitude:
-                case Latitude:
-                    return Double.parseDouble(string.replaceAll(",", ""));
-                case Float:
-                    return Float.parseFloat(string.replaceAll(",", ""));
-                case Long:
-                    return Math.round(Double.parseDouble(string.replaceAll(",", "")));
-                case Integer:
-                    return (int) Math.round(Double.parseDouble(string.replaceAll(",", "")));
-                case Boolean:
-                    return StringTools.string2Boolean(string);
-                case Short:
-                    return (short) Math.round(Double.parseDouble(string.replaceAll(",", "")));
-                case Datetime:
-                case Date:
-                    return toDate(string);
-                case Era:
-                    return DateTools.textEra(toDate(string));
-                default:
-                    return string;
-            }
-        } catch (Exception e) {
-        }
-        if (invalidAs == InvalidAs.Zero) {
-            if (isNumberType()) {
-                switch (type) {
-                    case Double:
-                        return 0d;
-                    case Float:
-                        return 0f;
-                    default:
-                        return 0;
-                }
-            } else {
-                return "0";
-            }
-        } else if (invalidAs == InvalidAs.Blank) {
-            if (isDBStringType()) {
-                return "";
-            }
-        }
-        return null;
+        return fromString(type, string, invalidAs, fixTwoDigitYear, century);
     }
 
     public String toString(Object value) {
-        try {
-            if (value == null) {
-                return null;
-            }
-            switch (type) {
-                case Datetime:
-                case Date:
-                    return DateTools.datetimeToString((Date) value, format);
-                case Era: {
-                    try {
-                        long lv = Long.parseLong(value.toString());
-                        if (lv >= 10000 || lv <= -10000) {
-                            return DateTools.datetimeToString(new Date(lv), format);
-                        }
-                    } catch (Exception exx) {
-                        return value + "";
-                    }
-                }
-                default:
-                    return value + "";
-            }
-        } catch (Exception e) {
-            return null;
-        }
+        return toString(type, value, format);
     }
 
     public String format(String string) {
@@ -894,6 +824,110 @@ public class ColumnDefinition extends BaseData {
                 return OnDelete.SetNull;
             default:
                 return OnDelete.NoAction;
+        }
+    }
+
+    public static boolean isNumberType(ColumnType type) {
+        return type == ColumnType.Double || type == ColumnType.Float
+                || type == ColumnType.Integer || type == ColumnType.Long || type == ColumnType.Short;
+    }
+
+    public static boolean isDBStringType(ColumnType type) {
+        return type == ColumnType.String || type == ColumnType.File
+                || type == ColumnType.Image || type == ColumnType.Enumeration
+                || type == ColumnType.Era || type == ColumnType.Color;
+    }
+
+    public static boolean isDateType(ColumnType type) {
+        return type == ColumnType.Datetime || type == ColumnType.Date || type == ColumnType.Era;
+    }
+
+    public static Date stringToDate(String string) {
+        return DateTools.encodeDate(string, 0);
+    }
+
+    public static Date stringToDate(String string, boolean fixTwoDigitYear, int century) {
+        return DateTools.encodeDate(string, fixTwoDigitYear ? century : 0);
+    }
+
+    public static Object fromString(ColumnType targetType, String string) {
+        return fromString(targetType, string, InvalidAs.Blank, false, 0);
+    }
+
+    public static Object fromString(ColumnType targetType, String string,
+            InvalidAs invalidAs, boolean fixTwoDigitYear, int century) {
+        try {
+            switch (targetType) {
+                case Double:
+                    return Double.parseDouble(string.replaceAll(",", ""));
+                case Longitude:
+                case Latitude:
+                    return Double.parseDouble(string.replaceAll(",", ""));
+                case Float:
+                    return Float.parseFloat(string.replaceAll(",", ""));
+                case Long:
+                    return Math.round(Double.parseDouble(string.replaceAll(",", "")));
+                case Integer:
+                    return (int) Math.round(Double.parseDouble(string.replaceAll(",", "")));
+                case Boolean:
+                    return StringTools.string2Boolean(string);
+                case Short:
+                    return (short) Math.round(Double.parseDouble(string.replaceAll(",", "")));
+                case Datetime:
+                case Date:
+                    return stringToDate(string, fixTwoDigitYear, century);
+                case Era:
+                    return DateTools.textEra(stringToDate(string, fixTwoDigitYear, century));
+                default:
+                    return string;
+            }
+        } catch (Exception e) {
+        }
+        if (invalidAs == InvalidAs.Zero) {
+            if (isNumberType(targetType)) {
+                switch (targetType) {
+                    case Double:
+                        return 0d;
+                    case Float:
+                        return 0f;
+                    default:
+                        return 0;
+                }
+            } else {
+                return "0";
+            }
+        } else if (invalidAs == InvalidAs.Blank) {
+            if (isDBStringType(targetType)) {
+                return "";
+            }
+        }
+        return null;
+    }
+
+    public static String toString(ColumnType type, Object value, String format) {
+        try {
+            if (value == null) {
+                return null;
+            }
+            switch (type) {
+                case Datetime:
+                case Date:
+                    return DateTools.datetimeToString((Date) value, format);
+                case Era: {
+                    try {
+                        long lv = Long.parseLong(value.toString());
+                        if (lv >= 10000 || lv <= -10000) {
+                            return DateTools.datetimeToString(new Date(lv), format);
+                        }
+                    } catch (Exception exx) {
+                        return value + "";
+                    }
+                }
+                default:
+                    return value + "";
+            }
+        } catch (Exception e) {
+            return null;
         }
     }
 

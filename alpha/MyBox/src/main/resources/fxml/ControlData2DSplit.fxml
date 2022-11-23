@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DSplit">
+    <children>
+      <FlowPane hgap="5.0" layoutX="10.0" layoutY="10.0" vgap="5.0">
+         <children>
+                <RadioButton fx:id="sizeRadio" minWidth="-Infinity" mnemonicParsing="false" selected="true" text="%ValueInterval" wrapText="true">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="splitGroup" />
+                    </toggleGroup>
+                </RadioButton>
+                <RadioButton fx:id="numberRadio" minWidth="-Infinity" mnemonicParsing="false" text="%NumberOfSplit" toggleGroup="$splitGroup" wrapText="true" />
+                <RadioButton fx:id="listRadio" minWidth="-Infinity" mnemonicParsing="false" text="%StartEndList" toggleGroup="$splitGroup" wrapText="true" />
+         </children>
+      </FlowPane>
+      <VBox fx:id="inputsBox" spacing="2.0">
+         <children>
+                <TextField fx:id="sizeInput" prefWidth="100.0" />
+            <TextField fx:id="numberInput" />
+            <FlowPane fx:id="unitPane" hgap="2.0" vgap="2.0">
+               <children>
+                  <RadioButton fx:id="yearsRadio" mnemonicParsing="false" selected="true" text="%Years">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="unitGroup" />
+                     </toggleGroup>
+                     <FlowPane.margin>
+                        <Insets />
+                     </FlowPane.margin>
+                  </RadioButton>
+                  <RadioButton fx:id="daysRadio" mnemonicParsing="false" text="%Days" toggleGroup="$unitGroup" />
+                  <RadioButton fx:id="hoursRadio" mnemonicParsing="false" text="%Hours" toggleGroup="$unitGroup" />
+                  <RadioButton fx:id="minutesRadio" mnemonicParsing="false" text="%Minutes" toggleGroup="$unitGroup" />
+                  <RadioButton fx:id="secondsRadio" mnemonicParsing="false" text="%Seconds" toggleGroup="$unitGroup" />
+                  <RadioButton fx:id="msRadio" mnemonicParsing="false" text="%Milliseconds" toggleGroup="$unitGroup" />
+               </children>
+            </FlowPane>
+            <HBox fx:id="scaleBox" alignment="CENTER_LEFT" spacing="2.0">
+               <children>
+                  <Label minHeight="-Infinity" text="%RangeDecimalScale" wrapText="true" />
+                  <ComboBox fx:id="scaleSelector" editable="true" prefWidth="120.0" />
+               </children>
+            </HBox>
+            <VBox fx:id="listBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+               <children>
+                  <HBox alignment="CENTER_LEFT" spacing="5.0">
+                     <children>
+                        <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#deleteAction">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconDelete.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button fx:id="editButton" disable="true" layoutX="51.0" layoutY="10.0" mnemonicParsing="false" onAction="#editAction">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconEdit.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconAdd.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                     <columns>
+                        <TableColumn fx:id="startColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="150.0" text="%Start" />
+                        <TableColumn fx:id="endColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="150.0" text="%End" />
+                        <TableColumn fx:id="includeStartColumn" editable="false" maxWidth="1.7976931348623157E308" text="%IncludeStart" />
+                        <TableColumn fx:id="includeEndColumn" editable="false" maxWidth="1.7976931348623157E308" text="%IncludeEnd" />
+                     </columns>
+                  </TableView>
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+    </children>
+</VBox>

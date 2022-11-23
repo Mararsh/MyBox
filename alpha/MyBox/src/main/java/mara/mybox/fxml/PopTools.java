@@ -658,7 +658,8 @@ public class PopTools {
     /*
         examples
      */
-    public static ContextMenu popDatetimeExamples(ContextMenu inPopMenu, TextField input, MouseEvent mouseEvent) {
+    public static ContextMenu popDatetimeExamples(BaseController parent, ContextMenu inPopMenu,
+            TextField input, MouseEvent mouseEvent) {
         try {
             List<String> values = new ArrayList<>();
             Date d = new Date();
@@ -677,14 +678,15 @@ public class PopTools {
             values.addAll(Arrays.asList(
                     "2020-07-15T36:55:09", "2020-07-10T10:10:10.532 +0800"
             ));
-            return popMenu(inPopMenu, input, mouseEvent, values);
+            return popDateMenu(parent, inPopMenu, input, mouseEvent, values);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
         }
     }
 
-    public static ContextMenu popDateExamples(ContextMenu inPopMenu, TextField input, MouseEvent mouseEvent) {
+    public static ContextMenu popDateExamples(BaseController parent, ContextMenu inPopMenu,
+            TextField input, MouseEvent mouseEvent) {
         try {
             List<String> values = new ArrayList<>();
             Date d = new Date();
@@ -693,7 +695,7 @@ public class PopTools {
             values.add(DateTools.datetimeToString(d, TimeFormats.Year));
             values.add(DateTools.datetimeToString(d, TimeFormats.DateE));
             values.add(DateTools.datetimeToString(d, TimeFormats.MonthE));
-            return popMenu(inPopMenu, input, mouseEvent, values);
+            return popDateMenu(parent, inPopMenu, input, mouseEvent, values);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
@@ -805,7 +807,8 @@ public class PopTools {
         }
     }
 
-    public static ContextMenu popMenu(ContextMenu inPopMenu, TextField input, MouseEvent mouseEvent, List<String> values) {
+    public static ContextMenu popDateMenu(BaseController parent, ContextMenu inPopMenu,
+            TextField input, MouseEvent mouseEvent, List<String> values) {
         try {
             if (inPopMenu != null && inPopMenu.isShowing()) {
                 inPopMenu.hide();
@@ -826,6 +829,17 @@ public class PopTools {
                 });
                 popMenu.getItems().add(menu);
             }
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("DateFormat"));
+            menu.setStyle("-fx-text-fill: blue;");
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    parent.openLink("https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/SimpleDateFormat.html");
+                }
+            });
+            popMenu.getItems().add(menu);
             popMenu.getItems().add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));

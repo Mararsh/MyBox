@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.util.Arrays;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -14,11 +13,11 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import mara.mybox.data.ValueRange;
 import mara.mybox.data2d.DataFilter;
 import mara.mybox.data2d.reader.DataTableGroup.GroupType;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -33,7 +32,6 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
     protected List<String> groupNames, conditionVariables;
     protected List<DataFilter> groupConditions;
     protected GroupType groupType;
-    protected int scale;
 
     @FXML
     protected ControlSelection columnsController;
@@ -42,13 +40,15 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
     @FXML
     protected RadioButton valuesRadio, valueRangeRadio, conditionsRadio, rowsRangeRadio;
     @FXML
-    protected VBox groupBox, columnsBox, conditionsBox, splitBox, labelBox;
+    protected VBox groupBox, columnsBox, valueSplitBox, rowsSplitBox, conditionsBox, labelBox;
     @FXML
-    protected HBox columnBox, scaleBox;
+    protected HBox columnBox;
     @FXML
-    protected ComboBox<String> columnSelector, scaleSelector;
+    protected ComboBox<String> columnSelector;
     @FXML
-    protected ControlSplit splitController;
+    protected ControlData2DSplit valueSplitController;
+    @FXML
+    protected ControlSplit rowsSplitController;
     @FXML
     protected TableColumn<DataFilter, String> conditionColumn;
     @FXML
@@ -64,40 +64,16 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
             super.initControls();
 
             columnsController.setParameters(this, message("Column"), message("GroupBy"));
-            splitController.setParameters(this);
+            valueSplitController.setParameters(this);
 
-            splitController.splitGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue<? extends Toggle> v, Toggle ov, Toggle nv) {
-                    setScaleSelector();
-                }
-            });
-
-            scale = UserConfig.getInt(baseName + "Scale", 2);
-            if (scale < 0) {
-                scale = 2;
-            }
-            scaleSelector.getItems().addAll(
-                    Arrays.asList("2", "1", "0", "3", "4", "5", "6", "7", "8", "10", "12", "15")
-            );
-            scaleSelector.getSelectionModel().select(scale + "");
-            scaleSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            columnSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        int v = Integer.parseInt(newValue);
-                        if (v >= 0) {
-                            scale = v;
-                            scaleSelector.getEditor().setStyle(null);
-                            UserConfig.setInt(baseName + "Scale", scale);
-                        } else {
-                            scaleSelector.getEditor().setStyle(UserConfig.badStyle());
-                        }
-                    } catch (Exception e) {
-                        scaleSelector.getEditor().setStyle(UserConfig.badStyle());
-                    }
+                    checkGroupType();
                 }
             });
+
+            rowsSplitController.setParameters(this);
 
             typeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -128,15 +104,19 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
     public void refreshControls() {
         try {
             columnsController.loadNames(null);
+            isSettingValues = true;
             columnSelector.getItems().clear();
             tableData.clear();
+            isSettingValues = false;
             if (!handleController.data2D.isValid()) {
                 return;
             }
             List<String> names = handleController.data2D.columnNames();
             columnsController.loadNames(names);
+            isSettingValues = true;
             columnSelector.getItems().setAll(names);
             columnSelector.getSelectionModel().select(0);
+            isSettingValues = false;
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -153,16 +133,14 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
                 commentsLabel.setText(message("GroupValuesComments"));
 
             } else if (valueRangeRadio.isSelected()) {
-                groupBox.getChildren().addAll(columnBox, splitBox, labelBox);
+                groupBox.getChildren().addAll(columnBox, valueSplitBox, labelBox);
                 commentsLabel.setText(message("GroupRangeComments"));
-                splitController.isPositiveInteger = false;
-                splitController.checkSplitType();
+                valueSplitController.setColumn(handleController.data2D.columnByName(columnSelector.getValue()));
 
             } else if (rowsRangeRadio.isSelected()) {
-                groupBox.getChildren().addAll(splitBox, labelBox);
+                groupBox.getChildren().addAll(rowsSplitBox, labelBox);
                 commentsLabel.setText(message("GroupRowsComments"));
-                splitController.isPositiveInteger = true;
-                splitController.checkSplitType();
+                rowsSplitController.checkSplitType();
 
             } else if (conditionsRadio.isSelected()) {
                 groupBox.getChildren().addAll(conditionsBox, labelBox);
@@ -170,15 +148,9 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
 
             }
 
-            setScaleSelector();
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-    }
-
-    public void setScaleSelector() {
-        scaleBox.setVisible(valueRangeRadio.isSelected() && !splitController.listRadio.isSelected());
     }
 
     public boolean pickValues() {
@@ -187,8 +159,6 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
             groupNames = null;
             groupConditions = null;
             groupType = groupType();
-
-            splitController.checkSplitType();
 
             boolean valid = true;
             if (valuesRadio.isSelected()) {
@@ -205,18 +175,19 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
 
             } else if (valueRangeRadio.isSelected()) {
                 groupName = columnSelector.getValue();
-                if (groupName == null || groupName.isBlank() || !splitController.valid.get()) {
+                if (groupName == null || groupName.isBlank() || !valueSplitController.isValid()) {
                     valid = false;
                 }
 
             } else if (rowsRangeRadio.isSelected()) {
-                if (!splitController.valid.get()) {
+                rowsSplitController.checkSplitType();
+                if (!rowsSplitController.valid.get()) {
                     valid = false;
                 }
             }
 
             if (!valid) {
-                handleController.popError(message("InvalidParameter") + ": " + message("GroupID"));
+                handleController.popError(message("InvalidParameter") + ": " + message("Group"));
                 handleController.tabPane.getSelectionModel().select(handleController.groupTab);
                 return false;
             }
@@ -232,15 +203,15 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
     }
 
     public boolean byValueSize() {
-        return valueRangeRadio.isSelected() && splitController.sizeRadio.isSelected();
+        return valueRangeRadio.isSelected() && valueSplitController.sizeRadio.isSelected();
     }
 
     public boolean byValueNumber() {
-        return valueRangeRadio.isSelected() && splitController.numberRadio.isSelected();
+        return valueRangeRadio.isSelected() && valueSplitController.numberRadio.isSelected();
     }
 
     public boolean byValueList() {
-        return valueRangeRadio.isSelected() && splitController.listRadio.isSelected();
+        return valueRangeRadio.isSelected() && valueSplitController.listRadio.isSelected();
     }
 
     public boolean byRowsRange() {
@@ -248,15 +219,15 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
     }
 
     public boolean byRowsSize() {
-        return rowsRangeRadio.isSelected() && splitController.sizeRadio.isSelected();
+        return rowsRangeRadio.isSelected() && rowsSplitController.sizeRadio.isSelected();
     }
 
     public boolean byRowsNumber() {
-        return rowsRangeRadio.isSelected() && splitController.numberRadio.isSelected();
+        return rowsRangeRadio.isSelected() && rowsSplitController.numberRadio.isSelected();
     }
 
     public boolean byRowsList() {
-        return rowsRangeRadio.isSelected() && splitController.listRadio.isSelected();
+        return rowsRangeRadio.isSelected() && rowsSplitController.listRadio.isSelected();
     }
 
     public boolean byConditions() {
@@ -293,26 +264,67 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
         }
     }
 
-    public double splitInterval() {
-        if (byValueSize() || byRowsSize()) {
-            return splitController.size;
+    public String groupName() {
+        return groupName;
+    }
+
+    public List<String> groupNames() {
+        return groupNames;
+    }
+
+    public List<DataFilter> groupConditions() {
+        return groupConditions;
+    }
+
+    public int splitScale() {
+        return valueSplitController.scale;
+    }
+
+    public double valueSplitInterval() {
+        if (byValueSize()) {
+            return valueSplitController.size;
 
         } else {
             return Double.NaN;
         }
     }
 
-    public int splitNumber() {
-        if (byValueNumber() || byRowsNumber()) {
-            return splitController.number;
+    public double rowsSplitInterval() {
+        if (byRowsSize()) {
+            return rowsSplitController.size;
+
+        } else {
+            return Double.NaN;
+        }
+    }
+
+    public int valueSplitNumber() {
+        if (byValueNumber()) {
+            return valueSplitController.number;
         } else {
             return -1;
         }
     }
 
-    public List<Double> splitList() {
-        if (byValueList() || byRowsList()) {
-            return splitController.list;
+    public int rowsSplitNumber() {
+        if (byRowsNumber()) {
+            return rowsSplitController.number;
+        } else {
+            return -1;
+        }
+    }
+
+    public List<ValueRange> valueSplitList() {
+        if (byValueList()) {
+            return valueSplitController.tableData;
+        } else {
+            return null;
+        }
+    }
+
+    public List<Integer> rowsSplitList() {
+        if (byRowsList()) {
+            return rowsSplitController.list;
         } else {
             return null;
         }
@@ -372,6 +384,15 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            listener = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
 }

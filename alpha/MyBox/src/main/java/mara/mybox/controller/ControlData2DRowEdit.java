@@ -191,10 +191,10 @@ public class ControlData2DRowEdit extends BaseController {
                     public void handle(MouseEvent event) {
                         switch (column.getType()) {
                             case Datetime:
-                                popMenu = PopTools.popDatetimeExamples(popMenu, input, event);
+                                popMenu = PopTools.popDatetimeExamples(myController, popMenu, input, event);
                                 break;
                             case Date:
-                                popMenu = PopTools.popDateExamples(popMenu, input, event);
+                                popMenu = PopTools.popDateExamples(myController, popMenu, input, event);
                                 break;
                             case Era:
                                 PopTools.popEraExamples(myController, input, event);

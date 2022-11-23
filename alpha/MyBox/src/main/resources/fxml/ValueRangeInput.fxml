@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" prefWidth="400.0" spacing="10.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ValueRangeInputController">
+    <children>
+        <Label fx:id="titleLabel" alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%ValueRange" textAlignment="CENTER" wrapText="true" VBox.vgrow="NEVER" />
+      <Label fx:id="commentsLabel" />
+      <HBox alignment="CENTER_LEFT" spacing="2.0">
+         <children>
+            <Label minWidth="-Infinity" text="%Start" />
+            <TextField fx:id="startInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+            <Button fx:id="examplesStartButton" mnemonicParsing="false" onMouseEntered="#popStartExamples">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconExamples.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <CheckBox fx:id="includeStartCheck" mnemonicParsing="false" text="%IncludeStart" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" layoutX="30.0" layoutY="81.0" spacing="2.0">
+         <children>
+            <Label minWidth="-Infinity" text="%End" />
+            <TextField fx:id="endInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+            <Button fx:id="examplesEndButton" mnemonicParsing="false" onMouseEntered="#popEndExamples">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconExamples.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <CheckBox fx:id="includeEndCheck" mnemonicParsing="false" text="%IncludeEnd" />
+         </children>
+      </HBox>
+        <HBox alignment="CENTER_RIGHT" spacing="5.0">
+            <children>
+                <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconCancel.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconOK.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </children>
+        </HBox>
+    </children>
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+</VBox>

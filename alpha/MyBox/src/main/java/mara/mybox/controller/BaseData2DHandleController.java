@@ -21,7 +21,6 @@ import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFilter;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.reader.DataTableGroup;
-import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -412,18 +411,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                 return null;
             }
             Data2D tmp2D = data2D.cloneAll();
-            if (groupController != null) {
-                List<Data2DColumn> tmpColumns = new ArrayList<>();
-                for (Data2DColumn column : data2D.columns) {
-                    Data2DColumn tmpColumn = column.cloneAll();
-                    String name = tmpColumn.getColumnName();
-                    if (groupController.groupName != null && groupController.groupName.equals(name)) {
-                        tmpColumn.setType(ColumnDefinition.ColumnType.Double);
-                    }
-                    tmpColumns.add(tmpColumn);
-                }
-                tmp2D.setColumns(tmpColumns);
-            }
             tmp2D.startTask(task, filterController.filter);
             if (task != null) {
                 task.setInfo(message("Filter") + "...");
@@ -590,15 +577,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             if (task != null) {
                 task.setInfo(message("GroupBy") + "...");
             }
-            DataTableGroup group = new DataTableGroup(data2D, tmpTable)
-                    .setType(groupController.groupType())
-                    .setGroupNames(groupController.groupNames)
-                    .setGroupName(groupController.groupName)
-                    .setSplitInterval(groupController.splitInterval())
-                    .setSplitNumber(groupController.splitNumber())
-                    .setSplitList(groupController.splitList())
-                    .setSplitScale(groupController.scale)
-                    .setConditions(groupController.groupConditions)
+            DataTableGroup group = new DataTableGroup(data2D, groupController, tmpTable)
                     .setOrders(orders).setMax(max)
                     .setScale((short) dscale).setInvalidAs(invalidAs).setTask(task)
                     .setTargetType(targetType)

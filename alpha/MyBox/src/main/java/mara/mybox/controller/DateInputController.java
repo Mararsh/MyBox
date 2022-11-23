@@ -71,10 +71,10 @@ public class DateInputController extends BaseInputController {
         }
         switch (timeType) {
             case Datetime:
-                popMenu = PopTools.popDatetimeExamples(popMenu, timeInput, mouseEvent);
+                popMenu = PopTools.popDatetimeExamples(this, popMenu, timeInput, mouseEvent);
                 break;
             case Date:
-                popMenu = PopTools.popDateExamples(popMenu, timeInput, mouseEvent);
+                popMenu = PopTools.popDateExamples(this, popMenu, timeInput, mouseEvent);
                 break;
             case Era:
                 PopTools.popEraExamples(this, timeInput, mouseEvent);

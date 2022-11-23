@@ -5,12 +5,16 @@ import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import mara.mybox.calculation.DescriptiveStatistic.StatisticType;
+import mara.mybox.controller.ControlData2DGroup;
 import mara.mybox.data.FindReplaceString;
+import mara.mybox.data.ValueRange;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.DataFileCSV;
@@ -18,6 +22,7 @@ import mara.mybox.data2d.DataFilter;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
@@ -38,18 +43,15 @@ import org.apache.commons.csv.CSVPrinter;
  */
 public class DataTableGroup {
 
-    protected GroupType type;
+    protected ControlData2DGroup groupController;
+    protected GroupType groupType;
     protected Data2D originalData;
     protected DataTable sourceData;
     protected String groupName, orderByString;
     protected List<String> groupNames, orders, targetNames, parameterValues;
     protected InvalidAs invalidAs;
-    protected int splitNumber, splitScale;
     protected short scale;
     protected long max;
-    protected double splitInterval;
-    protected List<DataFilter> conditions;
-    protected List<Double> splitList;
     protected TargetType targetType;
     protected SingletonTask task;
     protected boolean ok;
@@ -82,17 +84,23 @@ public class DataTableGroup {
     }
 
     // This class is based on results of "Data2D_Convert.toTmpTable(...)"
-    public DataTableGroup(Data2D originalData, DataTable sourceData) {
+    public DataTableGroup(Data2D originalData, ControlData2DGroup groupController, DataTable sourceData) {
         this.originalData = originalData;
+        this.groupController = groupController;
         this.sourceData = sourceData;
     }
 
     public boolean run() {
-        if (originalData == null || sourceData == null
-                || type == null || targetType == null
-                || targetNames == null || targetNames.isEmpty()) {
+        if (originalData == null || groupController == null || sourceData == null
+                || targetType == null || targetNames == null || targetNames.isEmpty()) {
             return false;
         }
+        groupType = groupController.groupType();
+        if (null == groupType) {
+            return false;
+        }
+        groupName = groupController.groupName();
+        groupNames = groupController.groupNames();
         sourceSheet = sourceData.getSheet();
         sourceColumns = sourceData.getColumns();
         if (sourceSheet == null || sourceColumns == null) {
@@ -132,21 +140,38 @@ public class DataTableGroup {
 
     private boolean scan() {
         try {
-            if (type == GroupType.RowsSplitInterval
-                    || type == GroupType.RowsSplitNumber
-                    || type == GroupType.RowsSplitList) {
-                parameterName = message("DataRowNumber");
-            } else if (conditions != null) {
-                parameterName = message("Condition");
-            } else if (groupName != null) {
-                parameterName = message("Range") + "_" + groupName;
-            } else if (groupNames != null && !groupNames.isEmpty()) {
-                parameterName = message("EqualValues");
-                for (String name : groupNames) {
-                    parameterName += "_" + name;
-                }
-            } else {
-                return false;
+            switch (groupType) {
+                case RowsSplitInterval:
+                case RowsSplitNumber:
+                case RowsSplitList:
+                    parameterName = message("DataRowNumber");
+                    break;
+                case Conditions:
+                    if (groupController.groupConditions() == null
+                            || groupController.groupConditions().isEmpty()) {
+                        return false;
+                    }
+                    parameterName = message("Condition");
+                    break;
+                case ValueSplitInterval:
+                case ValueSplitNumber:
+                case ValueSplitList:
+                    if (groupName == null || groupName.isBlank()) {
+                        return false;
+                    }
+                    parameterName = message("Range") + "_" + groupName;
+                    break;
+                case EqualValues:
+                    if (groupNames == null || groupNames.isEmpty()) {
+                        return false;
+                    }
+                    parameterName = message("EqualValues");
+                    for (String name : groupNames) {
+                        parameterName += "_" + name;
+                    }
+                    break;
+                default:
+                    return false;
             }
             groupid = 0;
             groupCurrentSize = 0;
@@ -172,7 +197,7 @@ public class DataTableGroup {
                 targetColNames.add(name);
             }
 
-            switch (type) {
+            switch (groupType) {
                 case EqualValues:
                     return byEqualValues();
                 case ValueSplitInterval:
@@ -200,7 +225,7 @@ public class DataTableGroup {
 
     private boolean byEqualValues() {
         try {
-            if (type != GroupType.EqualValues || groupNames == null || groupNames.isEmpty()) {
+            if (groupType != GroupType.EqualValues || groupNames == null || groupNames.isEmpty()) {
                 return false;
             }
             String orderBy = null;
@@ -323,11 +348,10 @@ public class DataTableGroup {
             if (groupName == null || groupName.isBlank()) {
                 return false;
             }
-            String mappedGroupName = sourceData.tmpColumnName(groupName);
-
+            String finalGroupName = makeGroupValues();
             double maxValue = Double.NaN, minValue = Double.NaN;
-            String sql = "SELECT MAX(" + mappedGroupName + ") AS dmax, MIN("
-                    + mappedGroupName + ") AS dmin FROM " + sourceSheet;
+            String sql = "SELECT MAX(" + finalGroupName + ") AS dmax, MIN("
+                    + finalGroupName + ") AS dmin FROM " + sourceSheet;
             if (task != null) {
                 task.setInfo(sql);
             }
@@ -353,41 +377,49 @@ public class DataTableGroup {
                 task.setInfo("max: " + maxValue + "   min: " + minValue);
             }
             long maxGroup = Long.MAX_VALUE;
-            double interval = splitInterval;
-            if (type == GroupType.ValueSplitNumber) {
+            double interval = groupController.valueSplitInterval();
+            if (groupType == GroupType.ValueSplitNumber) {
+                int splitNumber = groupController.valueSplitNumber();
                 if (splitNumber == 0) {
                     return false;
                 }
                 interval = (maxValue - minValue) / splitNumber;
                 maxGroup = splitNumber;
             }
-            double from = minValue, to;
-            int rscale = sourceData.columnByName(mappedGroupName).needScale() ? splitScale : 0;
+            double start = minValue, end;
+            Data2DColumn groupColumn = originalData.columnByName(groupName);
+            int rscale = groupColumn.needScale() ? groupController.splitScale() : 0;
+            boolean isDate = groupColumn.isDateType();
             String condition;
             conn.setAutoCommit(false);
-            while (from <= maxValue) {
+            while (start <= maxValue) {
                 if (task == null || task.isCancelled()) {
                     return false;
                 }
-                to = from + interval;
+                end = start + interval;
                 if (groupid < maxGroup) {
                     groupChanged();
                 }
-                if (to >= maxValue || groupid >= maxGroup) {
-                    String bs = DoubleTools.scaleString(from, rscale);
-                    String es = DoubleTools.scaleString(maxValue, rscale);
-                    parameterValue = "[" + bs + "," + es + "]";
-                    parameterValueForFilename = bs + "-" + es;
-                    condition = mappedGroupName + " >= " + from;
-                    from = maxValue + 1;
+                MyBoxLog.console(start + "   " + end);
+                if (end >= maxValue || groupid >= maxGroup) {
+                    String startName = isDate ? DateTools.textEra(Math.round(start))
+                            : DoubleTools.scaleString(start, rscale);
+                    String endName = isDate ? DateTools.textEra(Math.round(maxValue))
+                            : DoubleTools.scaleString(maxValue, rscale);
+                    parameterValue = "[" + startName + "," + endName + "]";
+                    parameterValueForFilename = startName + "-" + endName;
+                    condition = finalGroupName + " >= " + start;
+                    start = maxValue + 1;
                 } else {
-                    String bs = DoubleTools.scaleString(from, rscale);
-                    String es = DoubleTools.scaleString(to, rscale);
-                    parameterValue = "[" + bs + "," + es + ")";
-                    parameterValueForFilename = bs + "-" + es;
-                    to = Double.valueOf(es);
-                    condition = mappedGroupName + " >= " + from + " AND " + mappedGroupName + " < " + to;
-                    from = to;
+                    String startName = isDate ? DateTools.textEra(Math.round(start))
+                            : DoubleTools.scaleString(start, rscale);
+                    String endName = isDate ? DateTools.textEra(Math.round(end))
+                            : DoubleTools.scaleString(end, rscale);
+                    parameterValue = "[" + startName + "," + endName + ")";
+                    parameterValueForFilename = startName + "-" + endName;
+                    end = DoubleTools.scale(end, rscale);
+                    condition = finalGroupName + " >= " + start + " AND " + finalGroupName + " < " + end;
+                    start = end;
                 }
                 parameterValues.add(parameterValue);
                 sql = "SELECT * FROM " + sourceSheet + " WHERE " + condition + orderByString;
@@ -404,30 +436,142 @@ public class DataTableGroup {
         }
     }
 
-    private boolean byValueList() {
+    private String makeGroupValues() {
         try {
-            if (groupName == null || groupName.isBlank()
-                    || splitList == null || splitList.isEmpty()) {
-                return false;
+            if (groupName == null || groupName.isBlank()) {
+                return null;
             }
             String mappedGroupName = sourceData.tmpColumnName(groupName);
-            String condition;
+            Data2DColumn groupColumn = originalData.columnByName(groupName);
 
+            if (groupColumn.isNumberType()) {
+                return mappedGroupName;
+            }
+            String finalGroupName = groupName + "_IntenalGroupValue";
+            String sql;
+            sql = "ALTER TABLE " + sourceSheet + " ADD COLUMN " + finalGroupName + " DOUBLE";
+            if (task != null) {
+                task.setInfo(sql);
+            }
+            try ( Statement statement = conn.createStatement()) {
+                statement.executeUpdate(sql);
+            }
+            Data2DColumn groupInternalColumn = groupColumn.cloneAll();
+            groupInternalColumn.setColumnName(finalGroupName).setType(ColumnType.Double);
+            sourceData.getColumns().add(groupInternalColumn);
+            TableData2D tableSource = sourceData.getTableData2D();
+            tableSource.getColumns().add(groupInternalColumn);
+            ColumnType columnType = groupColumn.getType();
+            int ucount = 0;
+            sql = "SELECT * FROM " + sourceSheet;
+            if (task != null) {
+                task.setInfo(sql);
+            }
+            try ( ResultSet results = conn.prepareStatement(sql).executeQuery();
+                     PreparedStatement update = conn.prepareStatement(tableSource.updateStatement())) {
+                boolean isDate = columnType == ColumnType.Datetime || columnType == ColumnType.Date;
+                boolean isEra = columnType == ColumnType.Era;
+                while (results.next()) {
+                    Data2DRow row = tableSource.readData(results);
+                    Object v = row.getColumnValue(mappedGroupName);
+                    double gv;
+                    try {
+                        if (isDate) {
+                            gv = ((Date) v).getTime();
+                        } else if (isEra) {
+                            gv = (long) v;
+                        } else {
+                            gv = Double.parseDouble((v + "").replaceAll(",", ""));
+                        }
+                    } catch (Exception e) {
+                        gv = Double.NaN;
+                    }
+                    row.setColumnValue(finalGroupName, gv);
+                    if (tableSource.setUpdateStatement(conn, update, row)) {
+                        update.addBatch();
+                        if (++ucount % DerbyBase.BatchSize == 0) {
+                            update.executeBatch();
+                            conn.commit();
+                            if (task != null) {
+                                task.setInfo(message("Updated") + ": " + ucount);
+                            }
+                        }
+                    }
+                }
+                update.executeBatch();
+                conn.commit();
+                if (task != null) {
+                    task.setInfo(message("Updated") + ": " + ucount);
+                }
+            } catch (Exception e) {
+                if (task != null) {
+                    task.setError(e.toString());
+                }
+                MyBoxLog.error(e.toString());
+            }
+            return finalGroupName;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
+            }
+            return null;
+        }
+    }
+
+    private boolean byValueList() {
+        try {
+            if (groupName == null || groupName.isBlank() || groupController == null) {
+                return false;
+            }
+            String finalGroupName = makeGroupValues();
+            List<ValueRange> splitList = groupController.valueSplitList();
+            if (splitList == null || splitList.isEmpty()) {
+                return false;
+            }
+            String condition;
             conn.setAutoCommit(false);
-            double from, to;
-            for (int i = 0; i < splitList.size();) {
+            double start, end;
+            Data2DColumn groupColumn = originalData.columnByName(groupName);
+            int rscale = groupColumn.needScale() ? groupController.splitScale() : 0;
+            boolean isDate = groupColumn.isDateType();
+            for (ValueRange range : splitList) {
                 if (task == null || task.isCancelled()) {
                     return false;
                 }
-                groupChanged();
-                from = splitList.get(i++);
-                to = splitList.get(i++);
-                if (from > to) {
+                try {
+                    if (isDate) {
+                        start = DateTools.encodeDate((String) range.getStart()).getTime();
+                    } else {
+                        start = (double) range.getStart();
+                    }
+                } catch (Exception e) {
                     continue;
                 }
-                condition = mappedGroupName + " >= " + from + " AND " + mappedGroupName + " <= " + to;
-                parameterValue = "[" + from + "," + to + "]";
-                parameterValueForFilename = from + "-" + to;
+                try {
+                    if (isDate) {
+                        end = DateTools.encodeDate((String) range.getEnd()).getTime();
+                    } else {
+                        end = (double) range.getEnd();
+                    }
+                } catch (Exception e) {
+                    continue;
+                }
+                if (start > end) {
+                    continue;
+                }
+                groupChanged();
+                condition = finalGroupName
+                        + (range.isIncludeStart() ? " >= " : " > ") + start
+                        + " AND " + finalGroupName
+                        + (range.isIncludeEnd() ? " <= " : " < ") + end;
+                String startName = isDate ? DateTools.textEra(Math.round(start))
+                        : DoubleTools.scaleString(start, rscale);
+                String endName = isDate ? DateTools.textEra(Math.round(end))
+                        : DoubleTools.scaleString(end, rscale);
+                parameterValue = "[" + startName + "," + endName + ")";
+                parameterValueForFilename = startName + "-" + endName;
                 parameterValues.add(parameterValue);
                 String sql = "SELECT * FROM " + sourceSheet + " WHERE " + condition + orderByString;
                 valueQeury(sql);
@@ -502,7 +646,9 @@ public class DataTableGroup {
                 return false;
             }
             long maxGroup = total;
-            if (type == GroupType.RowsSplitNumber) {
+            long splitInterval = groupController.rowsSplitNumber();
+            if (groupType == GroupType.RowsSplitNumber) {
+                int splitNumber = groupController.rowsSplitNumber();
                 if (splitNumber == 0) {
                     return false;
                 }
@@ -572,6 +718,10 @@ public class DataTableGroup {
 
     private boolean byRowsList() {
         try {
+            if (groupController == null) {
+                return false;
+            }
+            List<Integer> splitList = groupController.rowsSplitList();
             if (splitList == null || splitList.isEmpty()) {
                 return false;
             }
@@ -648,6 +798,10 @@ public class DataTableGroup {
 
     private boolean byConditions() {
         try {
+            if (groupController == null) {
+                return false;
+            }
+            List<DataFilter> conditions = groupController.groupConditions();
             if (conditions == null || conditions.isEmpty()) {
                 return false;
             }
@@ -749,7 +903,7 @@ public class DataTableGroup {
                         String tableName = null;
                         if (targetType == TargetType.Table) {
                             tableName = DerbyBase.fixedIdentifier(originalData.dataName()
-                                    + "_" + type + "_" + DateTools.nowString3());
+                                    + "_" + groupType + "_" + DateTools.nowString3());
                         }
                         targetData = DataTable.createTable(task, conn,
                                 tableName, targetColumns, null, null, null, true);
@@ -1033,28 +1187,18 @@ public class DataTableGroup {
     /*
         set
      */
+    public DataTableGroup setGroupController(ControlData2DGroup groupController) {
+        this.groupController = groupController;
+        return this;
+    }
+
     public DataTableGroup setOriginalData(Data2D originalData) {
         this.originalData = originalData;
         return this;
     }
 
-    public DataTableGroup setType(GroupType type) {
-        this.type = type;
-        return this;
-    }
-
     public DataTableGroup setSourceTable(DataTable sourceTable) {
         this.sourceData = sourceTable;
-        return this;
-    }
-
-    public DataTableGroup setGroupNames(List<String> groupNames) {
-        this.groupNames = groupNames;
-        return this;
-    }
-
-    public DataTableGroup setGroupName(String groupName) {
-        this.groupName = groupName;
         return this;
     }
 
@@ -1075,31 +1219,6 @@ public class DataTableGroup {
 
     public DataTableGroup setScale(short scale) {
         this.scale = scale;
-        return this;
-    }
-
-    public DataTableGroup setSplitScale(int splitScale) {
-        this.splitScale = splitScale;
-        return this;
-    }
-
-    public DataTableGroup setSplitNumber(int splitNumber) {
-        this.splitNumber = splitNumber;
-        return this;
-    }
-
-    public DataTableGroup setSplitInterval(double splitInterval) {
-        this.splitInterval = splitInterval;
-        return this;
-    }
-
-    public DataTableGroup setSplitList(List<Double> splitList) {
-        this.splitList = splitList;
-        return this;
-    }
-
-    public DataTableGroup setConditions(List<DataFilter> conditions) {
-        this.conditions = conditions;
         return this;
     }
 
