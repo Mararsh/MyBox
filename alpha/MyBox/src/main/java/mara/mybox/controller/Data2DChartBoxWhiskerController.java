@@ -472,7 +472,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
                 calculation.setTask(task);
                 return calculation.statisticData(outputData);
             }
-            DataTable tmpTable = data2D.toTmpTable(task, dataColsIndices, false, true, invalidAs);
+            DataTable tmpTable = data2D.toStatisticTable(task, dataColsIndices, invalidAs);
             if (tmpTable == null) {
                 outputData = null;
                 return false;

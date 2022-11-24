@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Random;
 import mara.mybox.controller.BaseController;
@@ -25,6 +26,7 @@ import mara.mybox.data2d.reader.Data2DSingleColumn;
 import mara.mybox.data2d.reader.Data2DWriteTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
@@ -92,6 +94,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             }
             dataTable.cloneDefinitionAttributes(this);
             dataTable.setDataName(targetName);
+            dataTable.setSourceData((Data2D) this);
             return dataTable;
         } catch (Exception e) {
             if (task != null) {
@@ -103,13 +106,28 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         }
     }
 
-    public DataTable toTmpTable(SingletonTask task, List<Integer> cols,
-            boolean includeRowNumber, boolean toNumbers, InvalidAs invalidAs) {
+    public DataTable toStatisticTable(SingletonTask task, List<Integer> cols, InvalidAs invalidAs) {
+        if (cols == null || cols.isEmpty()) {
+            return null;
+        }
+        LinkedHashMap<Integer, ColumnType> colTypes = new LinkedHashMap<>();
+        for (int c : cols) {
+            colTypes.put(c, ColumnType.Double);
+        }
+        return toTmpTable(task, colTypes, false, invalidAs);
+    }
+
+    public DataTable toTmpTable(SingletonTask task, LinkedHashMap<Integer, ColumnType> colTypes,
+            boolean includeRowNumber, InvalidAs invalidAs) {
         try ( Connection conn = DerbyBase.getConnection()) {
-            DataTable dataTable = createTmpTable(task, conn, tmpTableName(dataName()), cols, includeRowNumber, toNumbers);
+            DataTable dataTable = createTmpTable(task, conn, tmpTableName(dataName()), colTypes, includeRowNumber);
             if (dataTable != null) {
                 dataTable.setDataName(dataName());
-                writeTableData(task, conn, dataTable, cols, includeRowNumber, invalidAs);
+                List<Integer> colIndice = new ArrayList<>();
+                for (int c : colTypes.keySet()) {
+                    colIndice.add(c);
+                }
+                writeTableData(task, conn, dataTable, colIndice, includeRowNumber, invalidAs);
             }
             return dataTable;
         } catch (Exception e) {
@@ -121,10 +139,10 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         }
     }
 
-    public DataTable toTmpTable(SingletonTask task, List<Integer> cols, List<List<String>> rows,
-            boolean includeRowNumber, boolean toNumbers, InvalidAs invalidAs) {
+    public DataTable toTmpTable(SingletonTask task, LinkedHashMap<Integer, ColumnType> colTypes, List<List<String>> rows,
+            boolean includeRowNumber, InvalidAs invalidAs) {
         try ( Connection conn = DerbyBase.getConnection()) {
-            DataTable dataTable = createTmpTable(task, conn, tmpTableName(dataName()), cols, includeRowNumber, toNumbers);
+            DataTable dataTable = createTmpTable(task, conn, tmpTableName(dataName()), colTypes, includeRowNumber);
             writeTmpData(task, conn, dataTable, rows, includeRowNumber, invalidAs);
             return dataTable;
         } catch (Exception e) {
@@ -139,9 +157,9 @@ public abstract class Data2D_Convert extends Data2D_Edit {
 
     // "cols" may contain duplicated values
     public DataTable createTmpTable(SingletonTask task, Connection conn,
-            String targetName, List<Integer> cols, boolean includeRowNumber, boolean toNumbers) {
+            String targetName, LinkedHashMap<Integer, ColumnType> colTypes, boolean includeRowNumber) {
         try {
-            if (conn == null || cols == null || cols.isEmpty()) {
+            if (conn == null || colTypes == null || colTypes.isEmpty()) {
                 return null;
             }
             if (columns == null || columns.isEmpty()) {
@@ -154,15 +172,19 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             if (includeRowNumber) {
                 sourceColumns.add(new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
             }
-            for (int col : cols) {
+            for (int col : colTypes.keySet()) {
                 Data2DColumn column = columns.get(col).cloneAll();
-                column.setD2cid(-1).setD2id(-1);
-                if (toNumbers) {
-                    column.setType(ColumnDefinition.ColumnType.Double);
-                }
+                column.setD2cid(-1).setD2id(-1).setType(colTypes.get(col));
                 sourceColumns.add(column);
             }
-            return createTable(task, conn, targetName, sourceColumns, null, comments, null, true);
+            DataTable dataTable = createTable(task, conn, targetName, sourceColumns, null, comments, null, true);
+            if (dataTable == null) {
+                return null;
+            }
+            dataTable.cloneDefinitionAttributes(this);
+            dataTable.setDataName(targetName);
+            dataTable.setSourceData((Data2D) this);
+            return dataTable;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());

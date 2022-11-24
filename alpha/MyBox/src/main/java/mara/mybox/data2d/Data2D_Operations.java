@@ -152,7 +152,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             if (cols == null || cols.isEmpty() || selections == null) {
                 return null;
             }
-            DataTable tmpTable = ((Data2D) this).toTmpTable(task, cols, false, true, selections.invalidAs);
+            DataTable tmpTable = ((Data2D) this).toStatisticTable(task, cols, selections.invalidAs);
             if (tmpTable == null) {
                 return null;
             }
@@ -163,7 +163,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
                 return null;
             }
             for (int i = 0; i < cols.size(); i++) {
-                Data2DColumn column = this.column(cols.get(i));
+                Data2DColumn column = column(cols.get(i));
                 column.setStatistic(statisticData[i]);
             }
             tmpTable.drop();

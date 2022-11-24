@@ -15,6 +15,7 @@ import mara.mybox.calculation.DescriptiveStatistic.StatisticType;
 import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.Data2DRow;
@@ -37,6 +38,7 @@ public class DataTable extends Data2D {
 
     protected TableData2D tableData2D;
     protected List<Data2DColumn> sourceColumns;
+    protected Data2D sourceData;
 
     public DataTable() {
         type = Type.DatabaseTable;
@@ -516,7 +518,7 @@ public class DataTable extends Data2D {
             Random random = new Random();
             List<String> names = new ArrayList<>();
             for (int i = 0; i < colsLen; i++) {
-                Data2DColumn column = sourceColumns.get(i).cloneAll();
+                Data2DColumn column = sourceData.column(i).cloneAll();
                 String name = column.getColumnName();
                 while (names.contains(name)) {
                     name += random.nextInt(10);
@@ -634,7 +636,7 @@ public class DataTable extends Data2D {
                         names.add(0, name);
                     }
                     for (int c = 0; c < names.size(); c++) {
-                        targetColumns.add(new Data2DColumn(names.get(c), ColumnDefinition.ColumnType.String));
+                        targetColumns.add(new Data2DColumn(names.get(c), ColumnType.String));
                     }
                     if (!firstColumnAsNames) {
                         csvPrinter.printRecord(names);
@@ -1006,6 +1008,15 @@ public class DataTable extends Data2D {
 
     public DataTable setSourceColumns(List<Data2DColumn> sourceColumns) {
         this.sourceColumns = sourceColumns;
+        return this;
+    }
+
+    public Data2D getSourceData() {
+        return sourceData;
+    }
+
+    public DataTable setSourceData(Data2D sourceData) {
+        this.sourceData = sourceData;
         return this;
     }
 

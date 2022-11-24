@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Random;
 import javafx.beans.value.ObservableValue;
@@ -10,6 +11,7 @@ import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
@@ -124,7 +126,11 @@ public class Data2DTransposeController extends BaseData2DTargetsController {
     @Override
     public DataFileCSV generatedFile() {
         try {
-            DataTable tmpTable = data2D.toTmpTable(task, checkedColsIndices, showRowNumber(), false, InvalidAs.Blank);
+            LinkedHashMap<Integer, ColumnType> colTypes = new LinkedHashMap<>();
+            for (int c : checkedColsIndices) {
+                colTypes.put(c, ColumnType.String);
+            }
+            DataTable tmpTable = data2D.toTmpTable(task, colTypes, showRowNumber(), InvalidAs.Blank);
             if (tmpTable == null) {
                 return null;
             }
