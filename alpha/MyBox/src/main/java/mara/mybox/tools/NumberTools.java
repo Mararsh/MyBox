@@ -2,6 +2,7 @@ package mara.mybox.tools;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -24,11 +25,11 @@ public class NumberTools {
             if (format == null || format.isBlank()
                     || message("en", "None").equals(format)
                     || message("zh", "None").equals(format)) {
-                return noFormat(data);
+                return noFormat(data, scale);
 
             } else if (message("en", "ScientificNotation").equals(format)
                     || message("zh", "ScientificNotation").equals(format)) {
-                return scientificNotation(data);
+                return scientificNotation(data, scale);
 
             } else if (message("en", "GroupInThousands").equals(format)
                     || message("zh", "GroupInThousands").equals(format)) {
@@ -50,12 +51,20 @@ public class NumberTools {
         }
     }
 
-    public static String noFormat(Number data) {
-        return format(data, -1, -1);
+    public static String noFormat(Number data, int scale) {
+        return format(data, -1, scale);
     }
 
-    public static String scientificNotation(Number data) {
-        return data == null ? null : data.toString();
+    public static String scientificNotation(Number data, int scale) {
+        try {
+            if (data == null) {
+                return null;
+            }
+            double d = DoubleTools.scale(data.toString(), InvalidAs.Blank, scale);
+            return d + "";
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static String format(Number data) {

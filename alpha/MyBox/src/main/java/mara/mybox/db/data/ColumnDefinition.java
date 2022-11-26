@@ -501,7 +501,7 @@ public class ColumnDefinition extends BaseData {
     }
 
     public String toString(Object value) {
-        return toString(type, value, format);
+        return toString(type, value, null);
     }
 
     public String format(String string) {

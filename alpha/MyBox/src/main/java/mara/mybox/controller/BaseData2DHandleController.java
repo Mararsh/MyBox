@@ -532,8 +532,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                 return null;
             }
             DataFileCSV csvData = tmpTable.sort(dname, task,
-                    colIndices.size() + (needRowNumber ? 1 : 0),
-                    orders, maxData, showColNames());
+                    orders, maxData, colIndices, needRowNumber, showColNames());
             tmpTable.drop();
             return csvData;
         } catch (Exception e) {

@@ -37,7 +37,7 @@ import org.apache.commons.math3.stat.Frequency;
 public class DataTable extends Data2D {
 
     protected TableData2D tableData2D;
-    protected List<Data2DColumn> sourceColumns;
+    protected List<Data2DColumn> referColumns;
     protected Data2D sourceData;
 
     public DataTable() {
@@ -274,7 +274,7 @@ public class DataTable extends Data2D {
 
     public String tmpColumnName(String sourceName) {
         try {
-            if (sourceColumns == null) {
+            if (referColumns == null) {
                 return sourceName;
             }
             int index = tmpIndex(sourceName);
@@ -289,11 +289,11 @@ public class DataTable extends Data2D {
     }
 
     public int tmpIndex(String sourceName) {
-        if (sourceName == null || sourceColumns == null) {
+        if (sourceName == null || referColumns == null) {
             return -1;
         }
-        for (int i = 0; i < sourceColumns.size(); i++) {
-            Data2DColumn column = sourceColumns.get(i);
+        for (int i = 0; i < referColumns.size(); i++) {
+            Data2DColumn column = referColumns.get(i);
             if (sourceName.equalsIgnoreCase(column.getColumnName())) {
                 return i + 1;
             }
@@ -301,37 +301,11 @@ public class DataTable extends Data2D {
         return -1;
     }
 
-    public String sourceColumnName(String tmpName) {
-        if (tmpName == null || sourceColumns == null) {
-            return tmpName;
-        }
-        try {
-            int index = colOrder(tmpName);
-            if (index < 0) {
-                return null;
-            }
-            return sourceColumns.get(index - 1).getColumnName();
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public List<Data2DColumn> sourceColumns() {
-        if (sourceColumns == null) {
+    public List<Data2DColumn> referColumns() {
+        if (referColumns == null) {
             return columns;
         }
-        return sourceColumns;
-    }
-
-    public List<String> sourceColumnNames() {
-        if (sourceColumns == null) {
-            return columnNames();
-        }
-        List<String> names = new ArrayList<>();
-        for (Data2DColumn column : sourceColumns) {
-            names.add(column.getColumnName());
-        }
-        return names;
+        return referColumns;
     }
 
     public boolean updateTable(Connection conn) {
@@ -467,9 +441,10 @@ public class DataTable extends Data2D {
 
     // Based on results of "Data2D_Convert.toTmpTable(...)"
     // columns may be duplicated
-    public DataFileCSV sort(String dname, SingletonTask task, int colsLen,
-            List<String> orders, int maxData, boolean includeColName) {
-        if (sourceColumns == null) {
+    public DataFileCSV sort(String dname, SingletonTask task,
+            List<String> orders, int maxData,
+            List<Integer> colIndices, boolean needRowNumber, boolean includeColName) {
+        if (referColumns == null || sourceData == null) {
             return null;
         }
         File csvFile = tmpFile(dname, "sort", ".csv");
@@ -517,7 +492,10 @@ public class DataTable extends Data2D {
             List<Data2DColumn> targetColumns = new ArrayList<>();
             Random random = new Random();
             List<String> names = new ArrayList<>();
-            for (int i = 0; i < colsLen; i++) {
+            if (needRowNumber) {
+                targetColumns.add(new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
+            }
+            for (int i : colIndices) {
                 Data2DColumn column = sourceData.column(i).cloneAll();
                 String name = column.getColumnName();
                 while (names.contains(name)) {
@@ -534,10 +512,16 @@ public class DataTable extends Data2D {
             while (query.next() && task != null && !task.isCancelled()) {
                 Data2DRow dataRow = tableData2D.readData(query);
                 List<String> rowValues = new ArrayList<>();
-                for (int i = 1; i <= colsLen; i++) {  // skip id column
-                    Data2DColumn column = columns.get(i);
-                    Object v = dataRow.getColumnValue(column.getColumnName());
-                    rowValues.add(column.toString(v));
+                if (needRowNumber) {
+                    Object v = dataRow.getColumnValue(message("SourceRowNumber"));
+                    rowValues.add(v + "");
+                }
+                for (int i : colIndices) {
+                    Data2DColumn sourceColumn = sourceData.column(i);
+                    String tmpColumnName = tmpColumnName(sourceColumn.getColumnName());
+                    Data2DColumn dataColumn = columnByName(tmpColumnName);
+                    Object v = dataRow.getColumnValue(dataColumn.getColumnName());
+                    rowValues.add(dataColumn.toString(v));
                 }
                 csvPrinter.printRecord(rowValues);
                 count++;
@@ -562,7 +546,7 @@ public class DataTable extends Data2D {
     // Based on results of "Data2D_Convert.toTmpTable(...)"
     public DataFileCSV transpose(String dname, SingletonTask task,
             boolean showColNames, boolean firstColumnAsNames) {
-        if (sourceColumns == null) {
+        if (referColumns == null) {
             return null;
         }
         File csvFile = tmpFile(dname, "transpose", ".csv");
@@ -1002,12 +986,12 @@ public class DataTable extends Data2D {
         this.tableData2D = tableData2D;
     }
 
-    public List<Data2DColumn> getSourceColumns() {
-        return sourceColumns;
+    public List<Data2DColumn> getReferColumns() {
+        return referColumns;
     }
 
-    public DataTable setSourceColumns(List<Data2DColumn> sourceColumns) {
-        this.sourceColumns = sourceColumns;
+    public DataTable setReferColumns(List<Data2DColumn> referColumns) {
+        this.referColumns = referColumns;
         return this;
     }
 

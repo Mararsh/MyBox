@@ -56,9 +56,9 @@ public class DataTableGroup {
     protected SingletonTask task;
     protected boolean ok;
 
-    protected String sourceSheet, idColName, parameterName, parameterValue, parameterValueForFilename;
+    protected String tmpSheet, idColName, parameterName, parameterValue, parameterValueForFilename;
     protected String mappedIdColName, mappedParameterName;
-    protected List<Data2DColumn> sourceColumns;
+    protected List<Data2DColumn> tmpColumns;
     protected long count, groupid, groupCurrentSize;
 
     protected Connection conn;
@@ -73,6 +73,8 @@ public class DataTableGroup {
     protected CSVPrinter csvPrinter;
     protected DataFileCSV targetFile;
     protected List<File> csvFiles;
+
+    protected static final String MyBoxGroupNameSuffix = "_MyBoxGroupValue";
 
     public enum GroupType {
         EqualValues, ValueSplitInterval, ValueSplitNumber, ValueSplitList,
@@ -101,9 +103,9 @@ public class DataTableGroup {
         }
         groupName = groupController.groupName();
         groupNames = groupController.groupNames();
-        sourceSheet = tmpData.getSheet();
-        sourceColumns = tmpData.getColumns();
-        if (sourceSheet == null || sourceColumns == null) {
+        tmpSheet = tmpData.getSheet();
+        tmpColumns = tmpData.getColumns();
+        if (tmpSheet == null || tmpColumns == null) {
             return false;
         }
         ok = false;
@@ -260,12 +262,12 @@ public class DataTableGroup {
                     orderBy += ", " + name + stype;
                 }
             }
-            String sql = "SELECT * FROM " + sourceSheet + " ORDER BY " + orderBy;
+            String sql = "SELECT * FROM " + tmpSheet + " ORDER BY " + orderBy;
             if (task != null) {
                 task.setInfo(sql);
             }
             try ( ResultSet query = conn.prepareStatement(sql).executeQuery()) {
-                Map<String, String> sourceRow, lastRow = null;
+                Map<String, String> tmpRow, lastRow = null;
                 Map<String, Object> groupMap = new HashMap<>();
                 boolean groupChanged;
                 conn.setAutoCommit(false);
@@ -275,26 +277,26 @@ public class DataTableGroup {
                         return false;
                     }
                     try {
-                        sourceRow = new HashMap<>();
-                        for (Data2DColumn column : sourceColumns) {
-                            String sourceColName = column.getColumnName();
-                            Object v = query.getObject(sourceColName);
-                            sourceRow.put(sourceColName, column.toString(v));
+                        tmpRow = new HashMap<>();
+                        for (Data2DColumn column : tmpColumns) {
+                            String tmpColName = column.getColumnName();
+                            Object v = query.getObject(tmpColName);
+                            tmpRow.put(tmpColName, column.toString(v));
                         }
                         if (lastRow == null) {
                             groupChanged = true;
                         } else {
                             groupChanged = false;
                             for (String group : mappedGroupNames) {
-                                Object sv = sourceRow.get(group);
+                                Object tv = tmpRow.get(group);
                                 Object lv = lastRow.get(group);
-                                if (sv == null) {
+                                if (tv == null) {
                                     if (lv != null) {
                                         groupChanged = true;
                                         break;
                                     }
                                 } else {
-                                    if (!sv.equals(lv)) {
+                                    if (!tv.equals(lv)) {
                                         groupChanged = true;
                                         break;
                                     }
@@ -307,16 +309,16 @@ public class DataTableGroup {
                             parameterValue = null;
                             groupMap.clear();
                             for (String name : groupNames) {
-                                Object v = sourceRow.get(tmpData.tmpColumnName(name));
+                                Object v = tmpRow.get(tmpData.tmpColumnName(name));
                                 groupMap.put(name, v);
                             }
                             parameterValue = groupMap.toString();
                             parameterValues.add(parameterValue);
                         }
                         if (++groupCurrentSize <= max || max <= 0) {
-                            writeRow(sourceRow);
+                            writeRow(tmpRow);
                         }
-                        lastRow = sourceRow;
+                        lastRow = tmpRow;
                     } catch (Exception e) {
                         if (task != null) {
                             task.setError(e.toString());
@@ -351,7 +353,7 @@ public class DataTableGroup {
             String finalGroupName = makeGroupValues();
             double maxValue = Double.NaN, minValue = Double.NaN;
             String sql = "SELECT MAX(" + finalGroupName + ") AS dmax, MIN("
-                    + finalGroupName + ") AS dmin FROM " + sourceSheet;
+                    + finalGroupName + ") AS dmin FROM " + tmpSheet;
             if (task != null) {
                 task.setInfo(sql);
             }
@@ -421,7 +423,7 @@ public class DataTableGroup {
                     start = end;
                 }
                 parameterValues.add(parameterValue);
-                sql = "SELECT * FROM " + sourceSheet + " WHERE " + condition + orderByString;
+                sql = "SELECT * FROM " + tmpSheet + " WHERE " + condition + orderByString;
                 valueQeury(sql);
             }
             return true;
@@ -442,9 +444,9 @@ public class DataTableGroup {
             }
             String mappedGroupName = tmpData.tmpColumnName(groupName);
             Data2DColumn groupColumn = originalData.columnByName(groupName);
-            String finalGroupName = groupName + "_IntenalGroupValue";
+            String finalGroupName = groupName + MyBoxGroupNameSuffix;
             String sql;
-            sql = "ALTER TABLE " + sourceSheet + " ADD COLUMN " + finalGroupName + " DOUBLE";
+            sql = "ALTER TABLE " + tmpSheet + " ADD COLUMN " + finalGroupName + " DOUBLE";
             if (task != null) {
                 task.setInfo(sql);
             }
@@ -458,7 +460,7 @@ public class DataTableGroup {
             tableSource.getColumns().add(groupInternalColumn);
             ColumnType columnType = groupColumn.getType();
             int ucount = 0;
-            sql = "SELECT * FROM " + sourceSheet;
+            sql = "SELECT * FROM " + tmpSheet;
             if (task != null) {
                 task.setInfo(sql);
             }
@@ -568,7 +570,7 @@ public class DataTableGroup {
                 parameterValue = "[" + startName + "," + endName + ")";
                 parameterValueForFilename = startName + "-" + endName;
                 parameterValues.add(parameterValue);
-                String sql = "SELECT * FROM " + sourceSheet + " WHERE " + condition + orderByString;
+                String sql = "SELECT * FROM " + tmpSheet + " WHERE " + condition + orderByString;
                 valueQeury(sql);
             }
             return true;
@@ -595,7 +597,7 @@ public class DataTableGroup {
                 }
                 try {
                     sourceRow = new HashMap<>();
-                    for (Data2DColumn column : sourceColumns) {
+                    for (Data2DColumn column : tmpColumns) {
                         String sourceColName = column.getColumnName();
                         Object v = query.getObject(sourceColName);
                         sourceRow.put(sourceColName, column.toString(v));
@@ -628,7 +630,7 @@ public class DataTableGroup {
     private boolean byRowsInteval() {
         try {
             long total = 0;
-            String sql = "SELECT COUNT(*) FROM " + sourceSheet;
+            String sql = "SELECT COUNT(*) FROM " + tmpSheet;
             if (task != null) {
                 task.setInfo(sql);
             }
@@ -651,7 +653,7 @@ public class DataTableGroup {
                 maxGroup = splitNumber;
             }
             conn.setAutoCommit(false);
-            sql = "SELECT * FROM " + sourceSheet + orderByString;
+            sql = "SELECT * FROM " + tmpSheet + orderByString;
             if (task != null) {
                 task.setInfo(sql);
             }
@@ -666,7 +668,7 @@ public class DataTableGroup {
                     }
                     try {
                         sourceRow = new HashMap<>();
-                        for (Data2DColumn column : sourceColumns) {
+                        for (Data2DColumn column : tmpColumns) {
                             String sourceColName = column.getColumnName();
                             Object v = query.getObject(sourceColName);
                             sourceRow.put(sourceColName, column.toString(v));
@@ -738,7 +740,7 @@ public class DataTableGroup {
                 parameterValue = "[" + from + "," + to + "]";
                 parameterValueForFilename = from + "-" + to;
                 parameterValues.add(parameterValue);
-                sql = "SELECT * FROM " + sourceSheet + orderByString
+                sql = "SELECT * FROM " + tmpSheet + orderByString
                         + " OFFSET " + from + " ROWS FETCH NEXT " + (to - from + 1) + " ROWS ONLY";
                 if (task != null) {
                     task.setInfo(sql);
@@ -753,7 +755,7 @@ public class DataTableGroup {
                         }
                         try {
                             sourceRow = new HashMap<>();
-                            for (Data2DColumn column : sourceColumns) {
+                            for (Data2DColumn column : tmpColumns) {
                                 String sourceColName = column.getColumnName();
                                 Object v = query.getObject(sourceColName);
                                 sourceRow.put(sourceColName, column.toString(v));
@@ -809,7 +811,7 @@ public class DataTableGroup {
                 if (task == null || task.isCancelled()) {
                     return false;
                 }
-                sql = "SELECT * FROM " + sourceSheet + orderByString;
+                sql = "SELECT * FROM " + tmpSheet + orderByString;
                 rowIndex = 0;
                 groupChanged();
                 long fmax = filter.getMaxPassed();
@@ -822,7 +824,7 @@ public class DataTableGroup {
                         fmax <= 0 ? Long.MAX_VALUE : fmax);
                 String script = filter.getFilledScript();
                 if (script != null && !script.isBlank()) {
-                    for (Data2DColumn column : tmpData.sourceColumns()) {
+                    for (Data2DColumn column : tmpData.referColumns()) {
                         String sourceName = column.getColumnName();
                         String tmpName = tmpData.tmpColumnName(sourceName);
                         script = findReplace.replace(script, "#{" + sourceName + "}", "#{" + tmpName + "}");
@@ -847,7 +849,7 @@ public class DataTableGroup {
                         try {
                             sourceRow = new HashMap<>();
                             List<String> rowStrings = new ArrayList<>();
-                            for (Data2DColumn column : sourceColumns) {
+                            for (Data2DColumn column : tmpColumns) {
                                 String sourceColName = column.getColumnName();
                                 String v = column.toString(query.getObject(sourceColName));
                                 sourceRow.put(sourceColName, v);
@@ -889,7 +891,7 @@ public class DataTableGroup {
         }
     }
 
-    private void writeRow(Map<String, String> sourceRow) {
+    private void writeRow(Map<String, String> tmpRow) {
         try {
             switch (targetType) {
                 case Table:
@@ -916,7 +918,7 @@ public class DataTableGroup {
                     data2DRow.setColumnValue(mappedParameterName, parameterValue);
                     for (int i = 2; i < targetColumns.size(); i++) {
                         String name = targetColumns.get(i).getColumnName();
-                        String value = sourceRow.get(tmpData.tmpColumnName(name));
+                        String value = tmpRow.get(tmpData.tmpColumnName(name));
                         Data2DColumn finalColumn = finalColumns.get(i + 1);
                         data2DRow.setColumnValue(finalColumn.getColumnName(), finalColumn.fromString(value));
                     }
@@ -955,7 +957,7 @@ public class DataTableGroup {
                     for (int i = 2; i < targetColumns.size(); i++) {
                         Data2DColumn column = targetColumns.get(i);
                         String name = column.getColumnName();
-                        String value = sourceRow.get(tmpData.tmpColumnName(name));
+                        String value = tmpRow.get(tmpData.tmpColumnName(name));
                         if (column.needScale() && scale >= 0) {
                             value = DoubleTools.scaleString(value, invalidAs, scale);
                         }

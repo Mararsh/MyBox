@@ -398,6 +398,12 @@ public class Data2DColumn extends ColumnDefinition {
     }
 
     @Override
+    public Data2DColumn setScale(int scale) {
+        this.scale = scale;
+        return this;
+    }
+
+    @Override
     public Data2DColumn setFixTwoDigitYear(boolean fixTwoDigitYear) {
         this.fixTwoDigitYear = fixTwoDigitYear;
         return this;
