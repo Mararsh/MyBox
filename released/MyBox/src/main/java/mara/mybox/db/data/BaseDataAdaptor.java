@@ -399,7 +399,7 @@ public class BaseDataAdaptor {
                 } else {
                     info = "";
                 }
-                info += column.getLabel() + ": " + display;
+                info += column.getColumnName() + ": " + display;
             }
             return info + displayDataMore(data, lineBreak);
         } catch (Exception e) {
@@ -525,7 +525,7 @@ public class BaseDataAdaptor {
                 String html = htmlColumn(data, column, value);
                 if (html != null) {
                     List<String> row = new ArrayList<>();
-                    row.addAll(Arrays.asList(column.getLabel(), html));
+                    row.addAll(Arrays.asList(column.getColumnName(), html));
                     htmlTable.add(row);
                 }
             }
@@ -561,7 +561,7 @@ public class BaseDataAdaptor {
                 if (columns != null && !columns.contains(column.getColumnName())) {
                     continue;
                 }
-                names.add(column.getLabel());
+                names.add(column.getColumnName());
             }
             StringTable stringTable = new StringTable(names);
             for (BaseData data : dataList) {

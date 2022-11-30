@@ -190,7 +190,7 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
                     data2D.startTask(task, filterController.filter);
                     calculation.setTask(task);
                     if (calculation.needStored()) {
-                        DataTable tmpTable = data2D.toTmpTable(task, checkedColsIndices, false, true, invalidAs);
+                        DataTable tmpTable = data2D.toStatisticTable(task, checkedColsIndices, invalidAs);
                         if (tmpTable == null) {
                             return false;
                         }
@@ -247,7 +247,7 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
                     data2D.startTask(task, filterController.filter);
                     calculation.setTask(task);
                     if (calculation.needStored()) {
-                        DataTable dataTable = data2D.singleColumn(task, checkedColsIndices, true);
+                        DataTable dataTable = data2D.singleColumn(task, checkedColsIndices);
                         if (dataTable == null) {
                             return false;
                         }

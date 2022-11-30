@@ -8,7 +8,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -39,9 +38,14 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
             loadScene(Fxmls.Data2DSpliceFxml);
         });
 
+        MenuItem RowFilter = new MenuItem(message("RowFilter"));
+        RowFilter.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.RowFilterFxml);
+        });
+
         MenuItem DataInSystemClipboard = new MenuItem(message("DataInSystemClipboard"));
         DataInSystemClipboard.setOnAction((ActionEvent event1) -> {
-            DataInMyBoxClipboardController.oneOpen();
+            DataInSystemClipboardController.oneOpen();
         });
 
         MenuItem DataInMyBoxClipboard = new MenuItem(message("DataInMyBoxClipboard"));
@@ -223,7 +227,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
-                DataManufacture, ManageData, SpliceData, new SeparatorMenuItem(),
+                DataManufacture, ManageData, SpliceData, RowFilter, new SeparatorMenuItem(),
                 DataFile, matrix, database, DataInSystemClipboard, DataInMyBoxClipboard, new SeparatorMenuItem(),
                 calculation, MathFunction, new SeparatorMenuItem(),
                 Location, new SeparatorMenuItem(),
@@ -231,7 +235,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
         );
 
         popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem closeMenu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
+        MenuItem closeMenu = new MenuItem(message("PopupClose"));
         closeMenu.setStyle("-fx-text-fill: #2e598a;");
         closeMenu.setOnAction((ActionEvent cevent) -> {
             popMenu.hide();

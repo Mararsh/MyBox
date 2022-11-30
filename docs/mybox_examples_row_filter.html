@@ -43,17 +43,17 @@ tr { height: 1.2em;  }
  </head>
  <body contenteditable="false">
   <div>
-   <div><input type="checkbox" checked onclick="showClass('TreeNode', this.checked);">展开 <input type="checkbox"  checked onclick="showClass('SerialNumber', this.checked);">顺序号 <input type="checkbox" checked onclick="showClass('NodeTag', this.checked);">标签 <input type="checkbox" checked onclick="showClass('nodeValue', this.checked);">值
+   <div><input type="checkbox" checked onclick="showClass('TreeNode', this.checked);">展开 <input type="checkbox" checked onclick="showClass('SerialNumber', this.checked);">顺序号 <input type="checkbox" checked onclick="showClass('NodeTag', this.checked);">标签 <input type="checkbox" checked onclick="showClass('nodeValue', this.checked);">值
    </div>
    <hr>
    <div style="padding: 2px;">
-    &nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item2')"><span class="SerialNumber">&nbsp;&nbsp;</span>行过滤</a>
+    &nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item80')"><span class="SerialNumber">&nbsp;&nbsp;</span>行过滤</a>
    </div>
-   <div class="TreeNode" id="item2">
+   <div class="TreeNode" id="item80">
     <div style="padding: 2px;">
-     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1452')"><span class="SerialNumber">1&nbsp;&nbsp;</span>示例</a>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item210')"><span class="SerialNumber">1&nbsp;&nbsp;</span>示例</a>
     </div>
-    <div class="TreeNode" id="item1452">
+    <div class="TreeNode" id="item210">
      <div style="padding: 2px;">
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1&nbsp;&nbsp;</span>数值为空（null或empty）
      </div>
@@ -85,9 +85,9 @@ tr { height: 1.2em;  }
       </div>
      </div>
      <div style="padding: 2px;">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1456')"><span class="SerialNumber">1.4&nbsp;&nbsp;</span>数字</a>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item214')"><span class="SerialNumber">1.4&nbsp;&nbsp;</span>数字</a>
      </div>
-     <div class="TreeNode" id="item1456">
+     <div class="TreeNode" id="item214">
       <div style="padding: 2px;">
        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.1&nbsp;&nbsp;</span>数值是数字
       </div>
@@ -120,9 +120,9 @@ tr { height: 1.2em;  }
       </div>
      </div>
      <div style="padding: 2px;">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1460')"><span class="SerialNumber">1.5&nbsp;&nbsp;</span>时间</a>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item218')"><span class="SerialNumber">1.5&nbsp;&nbsp;</span>时间</a>
      </div>
-     <div class="TreeNode" id="item1460">
+     <div class="TreeNode" id="item218">
       <div style="padding: 2px;">
        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.5.1&nbsp;&nbsp;</span>时间点
       </div>
@@ -134,7 +134,7 @@ tr { height: 1.2em;  }
        </div>
       </div>
       <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.5.2&nbsp;&nbsp;</span>时间段
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.5.2&nbsp;&nbsp;</span>匹配时间
       </div>
       <div class="nodeValue">
        <div style="padding: 0 0 0 120px;">
@@ -143,11 +143,21 @@ tr { height: 1.2em;  }
         </div>
        </div>
       </div>
+      <div style="padding: 2px;">
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.5.3&nbsp;&nbsp;</span>比较时间
+      </div>
+      <div class="nodeValue">
+       <div style="padding: 0 0 0 120px;">
+        <div class="valueBox">
+         new&nbsp;Date('#{时间}'.replace(/-/g,'/')).getTime()&nbsp;&nbsp;&gt;&nbsp;new&nbsp;Date('2016/05/19&nbsp;09:23:12').getTime()
+        </div>
+       </div>
+      </div>
      </div>
      <div style="padding: 2px;">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1463')"><span class="SerialNumber">1.6&nbsp;&nbsp;</span>字符串</a>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item222')"><span class="SerialNumber">1.6&nbsp;&nbsp;</span>字符串</a>
      </div>
-     <div class="TreeNode" id="item1463">
+     <div class="TreeNode" id="item222">
       <div style="padding: 2px;">
        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.6.1&nbsp;&nbsp;</span>字串长度
       </div>

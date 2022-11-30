@@ -47,7 +47,7 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
     @Override
     public void setParameters(ControlData2DLoad tableController) {
         try {
-            setParameters(this, tableController);
+            super.setParameters(tableController);
 
             if (targetController != null) {
                 targetController.setParameters(this, tableController);

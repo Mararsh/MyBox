@@ -32,7 +32,6 @@ import mara.mybox.db.table.TableUserConf;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -273,15 +272,6 @@ public class WindowTools {
 
     public static BaseController openScene(Window parent, String fxml) {
         return openScene(parent, fxml, null);
-    }
-
-    public static BaseController openTableStage(Window parent, String newFxml, boolean isOwned,
-            Modality modality, StageStyle stageStyle) {
-        return openStage(parent, newFxml, Languages.getTableBundle(), isOwned, modality, stageStyle);
-    }
-
-    public static BaseController openTableStage(String fxml) {
-        return openTableStage(null, fxml, false, Modality.NONE, null);
     }
 
     public static void reloadAll() {

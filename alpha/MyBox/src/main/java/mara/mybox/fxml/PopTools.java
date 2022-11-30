@@ -1253,6 +1253,7 @@ public class PopTools {
             ), true, 3);
 
             PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
+                    "new Date('#{" + message("Time") + "}'.replace(/-/g,'/')).getTime()  > new Date('2016/05/19 09:23:12').getTime()",
                     "'#{" + message("Time") + "}' == '2016-05-19 11:34:28'",
                     "'#{" + message("Time") + "}'.startsWith('2016-05-19 11')"
             ), true, 4);

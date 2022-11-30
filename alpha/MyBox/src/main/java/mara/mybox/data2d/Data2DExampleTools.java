@@ -176,8 +176,8 @@ public class Data2DExampleTools {
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = new DataFileCSV();
                 List<Data2DColumn> columns = new ArrayList<>();
-                columns.add(new Data2DColumn(message("Start"), ColumnType.Datetime, true).setWidth(180));
-                columns.add(new Data2DColumn(message("End"), ColumnType.Datetime, true).setWidth(180));
+                columns.add(new Data2DColumn(message("StartTime"), ColumnType.Datetime, true).setWidth(180));
+                columns.add(new Data2DColumn(message("EndTime"), ColumnType.Datetime, true).setWidth(180));
                 columns.add(new Data2DColumn(isChinese ? "疼痛" : "Pain", ColumnType.Short));
                 columns.add(new Data2DColumn(isChinese ? "卫生巾" : "Pads", ColumnType.Short));
                 columns.add(new Data2DColumn(message("Comments"), ColumnType.String, 300));

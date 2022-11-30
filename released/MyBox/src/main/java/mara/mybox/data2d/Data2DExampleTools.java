@@ -36,6 +36,8 @@ public class Data2DExampleTools {
             List<MenuItem> items = new ArrayList<>();
             String lang = Languages.getLangName();
 
+            items.add(myData(lang, controller));
+
             items.add(statisticDataOfChina(lang, controller));
 
             items.add(regression(lang, controller));
@@ -43,6 +45,150 @@ public class Data2DExampleTools {
             items.add(location(lang, controller));
 
             return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static Menu myData(String lang, ControlData2D controller) {
+        try {
+            boolean isChinese = "zh".equals(lang);
+
+            Menu myMenu = new Menu(message("MyData"), StyleTools.getIconImage("iconClaw.png"));
+
+            MenuItem menu = new MenuItem(message("Notes"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn(message("Time"), ColumnType.Datetime, 180));
+                columns.add(new Data2DColumn(message("Title"), ColumnType.String, 180));
+                columns.add(new Data2DColumn(message("InvolvedObjects"), ColumnType.String));
+                columns.add(new Data2DColumn(message("Location"), ColumnType.String));
+                columns.add(new Data2DColumn(message("Comments"), ColumnType.String, 300));
+                data.setColumns(columns).setDataName(message("Notes"));
+                if (makeExampleFile(lang, "MyData_notes_" + lang, data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            myMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Contacts"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn(message("Name"), ColumnType.String));
+                columns.add(new Data2DColumn(message("Relationship"), ColumnType.String));
+                columns.add(new Data2DColumn(message("PhoneNumber") + "1", ColumnType.String));
+                columns.add(new Data2DColumn(message("PhoneNumber") + "2", ColumnType.String));
+                columns.add(new Data2DColumn(message("Email"), ColumnType.String));
+                columns.add(new Data2DColumn(message("Address"), ColumnType.String));
+                columns.add(new Data2DColumn(message("Birthday"), ColumnType.Datetime));
+                columns.add(new Data2DColumn(message("Hobbies"), ColumnType.String));
+                columns.add(new Data2DColumn(message("Comments"), ColumnType.String, 300));
+                data.setColumns(columns).setDataName(message("Contacts"));
+                if (makeExampleFile(lang, "MyData_contacts_" + lang, data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            myMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("CashFlow"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn(message("Time"), ColumnType.Datetime, 180));
+                columns.add(new Data2DColumn(message("Amount"), ColumnType.Float));
+                columns.add(new Data2DColumn(message("Type"), ColumnType.String));
+                columns.add(new Data2DColumn(message("Account"), ColumnType.String));
+                columns.add(new Data2DColumn(message("InvolvedObjects"), ColumnType.String));
+                columns.add(new Data2DColumn(message("Comments"), ColumnType.String, 300));
+                data.setColumns(columns).setDataName(message("CashFlow"));
+                if (makeExampleFile(lang, "MyData_cashflow_" + lang, data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            myMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("PrivateProperty"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn(message("Time"), ColumnType.Datetime, 180));
+                columns.add(new Data2DColumn(message("Amount"), ColumnType.Float));
+                columns.add(new Data2DColumn(message("Type"), ColumnType.String));
+                columns.add(new Data2DColumn(message("Account"), ColumnType.String));
+                columns.add(new Data2DColumn(message("Comments"), ColumnType.String, 300));
+                data.setColumns(columns).setDataName(message("PrivateProperty"));
+                if (makeExampleFile(lang, "MyData_property_" + lang, data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            myMenu.getItems().add(menu);
+
+            myMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("Eyesight"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn(message("Time"), ColumnType.Datetime, true, true).setWidth(180));
+                columns.add(new Data2DColumn(message("Left"), ColumnType.Short));
+                columns.add(new Data2DColumn(message("Right"), ColumnType.Short));
+                columns.add(new Data2DColumn(isChinese ? "基弧" : "Radian", ColumnType.Short));
+                columns.add(new Data2DColumn(message("Comments"), ColumnType.String, 300));
+                data.setColumns(columns).setDataName(message("Eyesight"));
+                if (makeExampleFile(lang, "MyData_eyesight", data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            myMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Weight"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn(message("Time"), ColumnType.Datetime, true, true).setWidth(180));
+                columns.add(new Data2DColumn(message("Weight") + "(kg)", ColumnType.Float).setScale(2));
+                columns.add(new Data2DColumn(message("Comments"), ColumnType.String, 300));
+                data.setColumns(columns).setDataName(message("Weight"));
+                if (makeExampleFile(lang, "MyData_weight", data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            myMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Height"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn(message("Time"), ColumnType.Datetime, true, true).setWidth(180));
+                columns.add(new Data2DColumn(message("Height") + "(cm)", ColumnType.Float).setScale(2));
+                columns.add(new Data2DColumn(message("Comments"), ColumnType.String, 300));
+                data.setColumns(columns).setDataName(message("Height"));
+                if (makeExampleFile(lang, "MyData_height", data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            myMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Menstruation"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn(message("StartTime"), ColumnType.Datetime, true).setWidth(180));
+                columns.add(new Data2DColumn(message("EndTime"), ColumnType.Datetime, true).setWidth(180));
+                columns.add(new Data2DColumn(isChinese ? "疼痛" : "Pain", ColumnType.Short));
+                columns.add(new Data2DColumn(isChinese ? "卫生巾" : "Pads", ColumnType.Short));
+                columns.add(new Data2DColumn(message("Comments"), ColumnType.String, 300));
+                data.setColumns(columns).setDataName(message("Menstruation"));
+                if (makeExampleFile(lang, "MyData_menstruation", data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            myMenu.getItems().add(menu);
+
+            return myMenu;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;

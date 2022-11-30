@@ -143,8 +143,8 @@ License:    Apache License Version 2.0
                 <FlowPane hgap="2.0" prefWrapLength="300.0" vgap="2.0">
                     <children>
                         <Label text="%InTable" />
-                        <RadioButton fx:id="insertRadio" mnemonicParsing="false" text="%InsertAbove" toggleGroup="$targetGroup" />
-                        <RadioButton fx:id="appendRadio" mnemonicParsing="false" text="%AppendBelow" toggleGroup="$targetGroup" />
+                        <RadioButton fx:id="insertRadio" minHeight="-Infinity" mnemonicParsing="false" text="%InsertAbove" toggleGroup="$targetGroup" wrapText="true" />
+                        <RadioButton fx:id="appendRadio" minHeight="-Infinity" mnemonicParsing="false" text="%AppendBelow" toggleGroup="$targetGroup" wrapText="true" />
                         <RadioButton fx:id="replaceRadio" mnemonicParsing="false" text="%Replace" toggleGroup="$targetGroup" />
                     </children>
                 </FlowPane>
@@ -155,7 +155,7 @@ License:    Apache License Version 2.0
                      <children>
                         <HBox fx:id="prefixBox2" alignment="CENTER_LEFT" spacing="2.0">
                            <children>
-                                    <Label text="%TableRow" />
+                                    <Label minWidth="-Infinity" text="%TableRow" wrapText="true" />
                                     <ComboBox fx:id="rowSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                            </children>
                         </HBox>

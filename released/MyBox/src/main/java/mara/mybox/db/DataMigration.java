@@ -120,11 +120,6 @@ public class DataMigration {
                 if (lastVersion < 6004005) {
                     updateIn645(conn);
                 }
-                if (lastVersion < 6004007) {
-                    Platform.runLater(() -> {
-                        PopTools.alertWarning(null, message("MigrationNotice"));
-                    });
-                }
                 if (lastVersion < 6004008) {
                     updateIn648(conn);
                 }
@@ -161,6 +156,9 @@ public class DataMigration {
                 if (lastVersion < 6006001) {
                     updateIn661(conn);
                 }
+                if (lastVersion < 6006002) {
+                    updateIn662(conn);
+                }
             }
             TableStringValues.add(conn, "InstalledVersions", AppValues.AppVersion);
             conn.setAutoCommit(true);
@@ -168,6 +166,18 @@ public class DataMigration {
             MyBoxLog.debug(e.toString());
         }
         return true;
+    }
+
+    private static void updateIn662(Connection conn) {
+        try ( Statement statement = conn.createStatement()) {
+            MyBoxLog.info("Updating tables in 6.6.2...");
+
+            conn.setAutoCommit(true);
+            statement.executeUpdate("ALTER TABLE Data2D_Column DROP COLUMN label");
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     private static void updateIn661(Connection conn) {

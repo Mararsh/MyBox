@@ -33,6 +33,7 @@ public class ControlData2DTarget extends BaseController {
     protected ToggleGroup targetGroup;
     @FXML
     protected RadioButton csvRadio, excelRadio, textsRadio, matrixRadio, databaseRadio,
+            jsonRadio, xmlRadio, htmlRadio, pdfRadio,
             systemClipboardRadio, myBoxClipboardRadio, replaceRadio, insertRadio, appendRadio;
     @FXML
     protected ComboBox<String> rowSelector, colSelector;
@@ -121,6 +122,14 @@ public class ControlData2DTarget extends BaseController {
                 target = "myBoxClipboard";
             } else if (databaseRadio.isSelected()) {
                 target = "table";
+            } else if (jsonRadio.isSelected()) {
+                target = "json";
+            } else if (xmlRadio.isSelected()) {
+                target = "xml";
+            } else if (htmlRadio.isSelected()) {
+                target = "html";
+            } else if (pdfRadio.isSelected()) {
+                target = "pdf";
             } else if (inTableBox != null) {
                 if (replaceRadio.isSelected()) {
                     if (!notInTable) {
@@ -196,6 +205,18 @@ public class ControlData2DTarget extends BaseController {
                     break;
                 case "table":
                     databaseRadio.setSelected(true);
+                    break;
+                case "json":
+                    jsonRadio.setSelected(true);
+                    break;
+                case "xml":
+                    xmlRadio.setSelected(true);
+                    break;
+                case "html":
+                    htmlRadio.setSelected(true);
+                    break;
+                case "pdf":
+                    pdfRadio.setSelected(true);
                     break;
                 case "append":
                     if (notInTable && inTableBox != null) {

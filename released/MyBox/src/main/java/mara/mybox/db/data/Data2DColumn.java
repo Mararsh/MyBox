@@ -162,8 +162,6 @@ public class Data2DColumn extends ColumnDefinition {
                 return number2String(data.getMaxValue());
             case "min_value":
                 return number2String(data.getMinValue());
-            case "label":
-                return data.getLabel();
             case "foreign_name":
                 return data.getReferName();
             case "foreign_table":
@@ -247,9 +245,6 @@ public class Data2DColumn extends ColumnDefinition {
                     return true;
                 case "min_value":
                     data.setMinValue(string2Number(data.getType(), (String) value));
-                    return true;
-                case "label":
-                    data.setLabel(value == null ? null : (String) value);
                     return true;
                 case "foreign_name":
                     data.setReferName(value == null ? null : (String) value);
@@ -399,6 +394,12 @@ public class Data2DColumn extends ColumnDefinition {
     @Override
     public Data2DColumn setWidth(int width) {
         this.width = width;
+        return this;
+    }
+
+    @Override
+    public Data2DColumn setScale(int scale) {
+        this.scale = scale;
         return this;
     }
 

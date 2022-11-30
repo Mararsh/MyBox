@@ -290,7 +290,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
             orderByList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
             for (Object o : viewDefinition.getColumns()) {
                 ColumnDefinition column = (ColumnDefinition) o;
-                String label = column.getLabel();
+                String label = column.getColumnName();
                 orderByList.getItems().add(label + " " + message("Ascending"));
                 orderByList.getItems().add(label + " " + message("Descending"));
             }

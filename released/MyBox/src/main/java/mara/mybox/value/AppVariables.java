@@ -20,7 +20,6 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleData;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.getBundle;
-import static mara.mybox.value.Languages.getTableBundle;
 import static mara.mybox.value.UserConfig.getPdfMem;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 
@@ -36,7 +35,7 @@ public class AppVariables {
     public static String MyboxDataPath, AlarmClocksFile;
     public static File MyBoxTempPath, MyBoxDerbyPath, MyBoxLanguagesPath;
     public static List<File> MyBoxReservePaths;
-    public static ResourceBundle currentBundle, currentTableBundle;
+    public static ResourceBundle currentBundle;
     public static Map<String, String> userConfigValues = new HashMap<>();
     public static Map<String, String> systemConfigValues = new HashMap<>();
     public static ScheduledExecutorService executorService;
@@ -59,7 +58,6 @@ public class AppVariables {
             userConfigValues.clear();
             systemConfigValues.clear();
             getBundle();
-            getTableBundle();
             getPdfMem();
             closeCurrentWhenOpenTool = UserConfig.getBoolean("CloseCurrentWhenOpenTool", false);
             recordWindowsSizeLocation = UserConfig.getBoolean("RecordWindowsSizeLocation", true);

@@ -7,7 +7,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -444,7 +443,7 @@ public class DataTableGroup {
             }
             String mappedGroupName = tmpData.tmpColumnName(groupName);
             Data2DColumn groupColumn = originalData.columnByName(groupName);
-            String finalGroupName = groupName + MyBoxGroupNameSuffix;
+            String finalGroupName = mappedGroupName + MyBoxGroupNameSuffix;
             String sql;
             sql = "ALTER TABLE " + tmpSheet + " ADD COLUMN " + finalGroupName + " DOUBLE";
             if (task != null) {
@@ -458,7 +457,6 @@ public class DataTableGroup {
             tmpData.getColumns().add(groupInternalColumn);
             TableData2D tableSource = tmpData.getTableData2D();
             tableSource.getColumns().add(groupInternalColumn);
-            ColumnType columnType = groupColumn.getType();
             int ucount = 0;
             sql = "SELECT * FROM " + tmpSheet;
             if (task != null) {
@@ -466,17 +464,14 @@ public class DataTableGroup {
             }
             try ( ResultSet results = conn.prepareStatement(sql).executeQuery();
                      PreparedStatement update = conn.prepareStatement(tableSource.updateStatement())) {
-                boolean isDate = columnType == ColumnType.Datetime || columnType == ColumnType.Date;
-                boolean isEra = columnType == ColumnType.Era;
+                boolean isDate = groupColumn.isDateType();
                 while (results.next()) {
                     Data2DRow row = tableSource.readData(results);
                     Object v = row.getColumnValue(mappedGroupName);
                     double gv;
                     try {
                         if (isDate) {
-                            gv = ((Date) v).getTime();
-                        } else if (isEra) {
-                            gv = (long) v;
+                            gv = DateTools.encodeDate((String) v).getTime();
                         } else {
                             gv = Double.parseDouble((v + "").replaceAll(",", ""));
                         }
@@ -567,7 +562,9 @@ public class DataTableGroup {
                         : DoubleTools.scaleString(start, rscale);
                 String endName = isDate ? DateTools.textEra(Math.round(end))
                         : DoubleTools.scaleString(end, rscale);
-                parameterValue = "[" + startName + "," + endName + ")";
+                parameterValue = (range.isIncludeStart() ? "[" : "(")
+                        + startName + "," + endName
+                        + (range.isIncludeEnd() ? "]" : ")");
                 parameterValueForFilename = startName + "-" + endName;
                 parameterValues.add(parameterValue);
                 String sql = "SELECT * FROM " + tmpSheet + " WHERE " + condition + orderByString;

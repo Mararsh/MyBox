@@ -72,7 +72,7 @@ public class PptSplitController extends BaseBatchFileController {
             String suffix = FileNameTools.suffix(srcFile.getName());
             switch (splitController.splitType) {
                 case Size:
-                    splitByPagesSize(srcFile, targetPath, total, suffix, splitController.pSize());
+                    splitByPagesSize(srcFile, targetPath, total, suffix, splitController.size);
                     break;
                 case Number:
                     splitByPagesSize(srcFile, targetPath, total, suffix,
@@ -124,7 +124,7 @@ public class PptSplitController extends BaseBatchFileController {
         try {
             int start = 0, end, index = 0;
             boolean pptx = "pptx".equalsIgnoreCase(suffix);
-            List<Integer> list = splitController.pList();
+            List<Integer> list = splitController.list;
             for (int i = 0; i < list.size();) {
                 if (task == null || task.isCancelled()) {
                     return;

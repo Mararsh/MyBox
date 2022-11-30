@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
+import mara.mybox.data.ValueRange.SplitType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Languages;
@@ -23,12 +24,10 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlSplit extends BaseController {
 
-    protected double size;
-    protected int number;
-    protected List<Double> list;
+    protected int size, number;
+    protected List<Integer> list;
     protected SplitType splitType;
     protected SimpleBooleanProperty valid;
-    protected boolean isPositiveInteger;
 
     @FXML
     protected ToggleGroup splitGroup;
@@ -36,10 +35,6 @@ public class ControlSplit extends BaseController {
     protected RadioButton sizeRadio, numberRadio, listRadio;
     @FXML
     protected TextField sizeInput, numberInput, listInput;
-
-    public enum SplitType {
-        Size, Number, List
-    }
 
     public ControlSplit() {
         splitType = SplitType.Size;
@@ -57,14 +52,9 @@ public class ControlSplit extends BaseController {
     }
 
     public void setParameters(BaseController parent) {
-        setParameters(parent, true);
-    }
-
-    public void setParameters(BaseController parent, boolean isInteger) {
         try {
             parentController = parent;
             baseName = baseName + "_" + parent.baseName;
-            this.isPositiveInteger = isInteger;
 
             valid.bind(sizeInput.styleProperty().isNotEqualTo(UserConfig.badStyle())
                     .and(numberInput.styleProperty().isNotEqualTo(UserConfig.badStyle()))
@@ -135,23 +125,18 @@ public class ControlSplit extends BaseController {
         }
     }
 
-    private void checkSize() {
+    protected void checkSize() {
         if (isSettingValues) {
             return;
         }
         try {
-            double v = Double.valueOf(sizeInput.getText());
+            int v = Integer.valueOf(sizeInput.getText());
             if (v > 0) {
                 size = v;
-                if (isPositiveInteger) {
-                    long psize = Math.round(size);
-                    UserConfig.setString(baseName + "Size", psize + "");
-                    isSettingValues = true;
-                    sizeInput.setText(psize + "");
-                    isSettingValues = false;
-                } else {
-                    UserConfig.setString(baseName + "Size", size + "");
-                }
+                UserConfig.setString(baseName + "Size", size + "");
+                isSettingValues = true;
+                sizeInput.setText(size + "");
+                isSettingValues = false;
                 sizeInput.setStyle(null);
             } else {
                 sizeInput.setStyle(UserConfig.badStyle());
@@ -161,7 +146,7 @@ public class ControlSplit extends BaseController {
         }
     }
 
-    private void checkNumber() {
+    protected void checkNumber() {
         try {
             int v = Integer.valueOf(numberInput.getText());
             if (v > 0) {
@@ -176,79 +161,34 @@ public class ControlSplit extends BaseController {
         }
     }
 
-    private void checkList() {
-        if (isPositiveInteger) {
-            list = new ArrayList<>();
-            try {
-                String[] ss = listInput.getText().split(",");
-                for (String item : ss) {
-                    String[] values = item.split("-");
-                    if (values.length != 2) {
-                        continue;
-                    }
-                    try {
-                        int start = Integer.valueOf(values[0].trim());
-                        int end = Integer.valueOf(values[1].trim());
-                        if (start > 0 && end >= start) {  // 1-based, include start and end
-                            list.add(start + 0d);
-                            list.add(end + 0d);
-                        }
-                    } catch (Exception e) {
-                    }
+    protected void checkList() {
+        list = new ArrayList<>();
+        try {
+            String[] ss = listInput.getText().split(",");
+            for (String item : ss) {
+                String[] values = item.split("-");
+                if (values.length != 2) {
+                    continue;
                 }
-                if (list.isEmpty()) {
-                    listInput.setStyle(UserConfig.badStyle());
-                } else {
-                    listInput.setStyle(null);
-                    UserConfig.setString(baseName + "List", listInput.getText());
+                try {
+                    int start = Integer.valueOf(values[0].trim());
+                    int end = Integer.valueOf(values[1].trim());
+                    if (start > 0 && end >= start) {  // 1-based, include start and end
+                        list.add(start);
+                        list.add(end);
+                    }
+                } catch (Exception e) {
                 }
-            } catch (Exception e) {
-                listInput.setStyle(UserConfig.badStyle());
             }
-        } else {
-            list = new ArrayList<>();
-            try {
-                String[] ss = listInput.getText().split(",");
-                for (String item : ss) {
-                    String[] values = item.split("-");
-                    if (values.length != 2) {
-                        continue;
-                    }
-                    try {
-                        double start = Double.valueOf(values[0].trim());
-                        double end = Double.valueOf(values[1].trim());
-                        if (end >= start) {
-                            list.add(start);
-                            list.add(end);
-                        }
-                    } catch (Exception e) {
-                    }
-                }
-                if (list.isEmpty()) {
-                    listInput.setStyle(UserConfig.badStyle());
-                } else {
-                    listInput.setStyle(null);
-                    UserConfig.setString(baseName + "List", listInput.getText());
-                }
-            } catch (Exception e) {
+            if (list.isEmpty()) {
                 listInput.setStyle(UserConfig.badStyle());
+            } else {
+                listInput.setStyle(null);
+                UserConfig.setString(baseName + "List", listInput.getText());
             }
+        } catch (Exception e) {
+            listInput.setStyle(UserConfig.badStyle());
         }
-    }
-
-    public int pSize() {
-        return (int) Math.round(size);
-    }
-
-    public List<Integer> pList() {
-        if (list == null) {
-            return null;
-        }
-        List<Integer> plist = new ArrayList<>();
-        for (double d : list) {
-            plist.add((int) Math.round(d));
-        }
-        return plist;
     }
 
     public int size(long total, int number) {

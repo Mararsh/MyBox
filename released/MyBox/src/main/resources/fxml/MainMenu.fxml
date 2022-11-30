@@ -207,6 +207,7 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#DataManufacture" text="%DataManufacture" />
                                 <MenuItem mnemonicParsing="false" onAction="#manageData" text="%ManageData" />
                                 <MenuItem mnemonicParsing="false" onAction="#SpliceData" text="%SpliceData" />
+                                <MenuItem mnemonicParsing="false" onAction="#RowFilter" text="%RowFilter" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <Menu mnemonicParsing="false" text="%DataFile">
                                     <items>

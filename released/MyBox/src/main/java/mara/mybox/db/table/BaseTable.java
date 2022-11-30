@@ -27,7 +27,6 @@ import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.LongTools;
 import mara.mybox.value.AppValues;
-import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -397,7 +396,7 @@ public abstract class BaseTable<D> {
     public List<String> allFields() {
         List<String> names = new ArrayList<>();
         for (ColumnDefinition column : columns) {
-            names.add(column.getLabel());
+            names.add(column.getColumnName());
         }
         return names;
     }
@@ -406,7 +405,7 @@ public abstract class BaseTable<D> {
         List<String> names = new ArrayList<>();
         for (ColumnDefinition column : columns) {
             if (column.isNotNull() && !column.isAuto()) {
-                names.add(column.getLabel());
+                names.add(column.getColumnName());
             }
         }
         return names;
@@ -671,16 +670,7 @@ public abstract class BaseTable<D> {
     }
 
     public String name() {
-        return Languages.tableMessage(tableName.toLowerCase());
-    }
-
-    public List<String> columnLabels() {
-        List<String> labels = new ArrayList<>();
-        for (int i = 0; i < columns.size(); ++i) {
-            ColumnDefinition column = columns.get(i);
-            labels.add(column.getLabel());
-        }
-        return labels;
+        return tableName;
     }
 
     public List<String> columnNames() {
@@ -910,7 +900,7 @@ public abstract class BaseTable<D> {
             return null;
         }
         for (ColumnDefinition column : columns) {
-            if (column.getLabel().equals(message)) {
+            if (column.getColumnName().equals(message)) {
                 return column;
             }
         }

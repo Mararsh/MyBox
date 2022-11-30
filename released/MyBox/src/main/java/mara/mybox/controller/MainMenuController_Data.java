@@ -28,6 +28,11 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
     }
 
     @FXML
+    protected void RowFilter(ActionEvent event) {
+        loadScene(Fxmls.RowFilterFxml);
+    }
+
+    @FXML
     protected void openMatricesManage(ActionEvent event) {
         MatricesManageController c = (MatricesManageController) loadScene(Fxmls.MatricesManageFxml);
         c.createAction();

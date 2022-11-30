@@ -518,13 +518,17 @@ public abstract class BaseTableViewController<P> extends BaseController {
                         if (isSettingValues) {
                             return;
                         }
+                        isSettingValues = true;
                         if (newValue) {
-                            for (int i = 0; i < tableData.size(); i++) {  // Fail to listen to selectAll() 
+                            for (int i = 0; i < tableData.size(); i++) {
                                 tableView.getSelectionModel().select(i);
                             }
                         } else {
-                            tableView.getSelectionModel().clearSelection();
+                            for (int i = 0; i < tableData.size(); i++) {
+                                tableView.getSelectionModel().clearSelection(i);
+                            }
                         }
+                        isSettingValues = false;
                     }
                 });
             }
@@ -540,6 +544,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
                         UserConfig.setInt("RowsSelectionColumnWidth", nv.intValue());
                     }
                 });
+
             }
 
         } catch (Exception e) {

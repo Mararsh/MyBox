@@ -7,11 +7,34 @@
   <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
   <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
   <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
  </head>
  <body contenteditable="false" style="width: 900px; margin:0 auto;">
   <h1>开发日志</h1>
-<p>2022-11-16 版本6.6.1</p>
+  <p>2022-11-30 版本6.6.2</p>
+  <ul>
+   <li>增强： 
+    <ul>
+     <li>值区间分组： 
+      <ul>
+       <li>对于时间/世纪类型，将值解析为毫秒数。</li>
+       <li>按分割尺寸时，对于时间/世纪类型，可设置时间单位。</li>
+       <li>在表格中增删改“开始-结束”列表项。</li>
+       <li>对于“开始-结束”区间，可设置区间是否包含“开始”/“结束”。</li>
+      </ul></li>
+     <li>整理/计算数据的结果可以直接输出为json/xml/html/pdf。</li>
+     <li>数据示例：我的数据。可以用数据表记录个人数据，如日记、通讯录、资金流、个人财产、体重等。</li>
+    </ul></li>
+   <li>改进： 
+    <ul>
+     <li>写入临时数据库表时统一用字符型，以免类型转换造成数据丢失。</li>
+     <li>每个语言只对应一个资源文件。</li>
+    </ul></li>
+   <li>解决：语言的修改未能保存。</li>
+  </ul>
+  <p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.6.2">此版本关闭的需求/问题列表</a></p>
+  <p>2022-11-16 版本6.6.1</p>
   <ul>
    <li>新增： 
     <ul>
@@ -85,7 +108,7 @@
     </ul></li>
   </ul>
   <p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.6.1">此版本关闭的需求/问题列表</a></p>
-   <p>2022-9-28 版本6.6</p>
+  <p>2022-9-28 版本6.6</p>
   <ul>
    <li>新增： 
     <ul>

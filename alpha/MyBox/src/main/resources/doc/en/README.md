@@ -4,62 +4,22 @@
 This is desktop application based on JavaFx to provide simple and easy functions. It's free and open sources.
 
 ## What's New                       
-2022-11-16 v6.6.1           
-
-* Add:                  
-     - New types of data columns: Era, Color, Longitude, Latitude, Enumeration.          
-     - Formats of data columns. Example:           
-        - To numbers, format can be: group in thousands, group in ten thousands, scientific notation, and no format.                       
-        - To Date/Time/Era, following are supported in formats: MM/dd/yy, yy/MM/dd, milliseconds, time zone, T separator, patch century, etc..                                  
-        - To Enumeration, list of values can be defined.                                 
-        - This attribute is mainly for display. When data are inputted/edited, formats are not applied automatically and original inputs are kept.                                 
-        - In some interfaces, like "Copy" or "Export", options "Save date/time/era and numbers as columns' formats" can be checked.                                 
-     - How columns handle invalid values, including: skip, count as empty, and count as zero.               
-       This attribute is only used for display or calculation. When data are inputted/edited, invalid values are not handled automatically.                 
-     - When edit data, specific controls are shown according to types and formats of columns:          
-        - To Boolean, checkbox is provided.          
-        - To Enumeration, list view is provided with selections.          
-        - To Color, palette is provided.          
-        - To Longitude and Latitude, map can be popped to locate coordinate.                        
-     - When data contain columns of longitude and latitude, chart "Location Distribution" can be generated.                         
-     - Charts of groups. With grouped data, dynamic charts of XY, Pie, Comparison Bars, Self Comparison Bars, Box Whisker can be generated in sequence of groups.                           
+2022-11-30 v6.6.2           
+                        
 * Enhance:                      
-     - Group data as following 4 ways:          
-        - Equal values. Select several columns and put rows into same group when they have same values of these columns.                         
-        - Value range:            
-            - Select one column and divide data by value ranges of this column. Following 3 selections can be for the split:                 
-                - Size of split(interval of values)      
-                - Number of split         
-                - List of "StartValue-EndValue"           
-            - Type of the selected column is ignored, and its values are parsed as double.                             
-        - Conditions. Define some row filters and data rows are divided in groups by these row filters.                     
-        - Row number. Divide data rows by their row numbers. Following 3 selections can be for the split:                    
-            - Size of split(interval of row numbers)          
-            - Number of split          
-            - List of "StartNumber-EndNumber"          
-     - Assist mode of data editing is changed as CSV, to support values which contain delimeter or line break.                                                
-     - When read data in System Clipboard, both CSV parser and Text parser can be used.                                                
-     - Row filters can be saved in tree.                                                
-     - Sort conditions and maximum number of picked data can be set for all types of charts.                                                
-     - Parse data format with more detailed algorithm.                         
-     - Parse numbers with NumberFormat.                                               
-     - Player:           
-        - Implemented with ScheduledExecutorService. Support both "deplay" mode and "interval" mode.                                                
-        - Snapshots                                               
-     - More status information are displayed for background tasks.           
-* Remove functions "Location Data" and "Edpidemic Reports".          
-  Their existed data can be found under menu "Data - Database - Database Table" and can be changed and used as common data.                               
-* Solved:           
-     - Data may be damaged when do "replace all" for long texts/bytes(Sorry).                        
-     - Screen Recorder does not work.                        
-     - Row expressions have no way to describe "value is null".                        
-     - When value of category is null, charts may pop errors.                        
-     - Comparison bars chart picks wrong values for one column.                        
-     - Sort for current page may cause error.                        
-     - When save new data which have applied styles, errors will pop.                       
-     - When copy nodes in tree, errors may pop.                                         
-
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.6.1)                    
+     - Group by "Value range":                          
+        - To date/era, values are converted as milliseconds.                                        
+        - When split by size，time unit can be set for date/era type.                                             
+        - Add/Edit/Delete "start-end" list in table.                                     
+        - To "start-end", set whether include "start"/"end".                          
+     - Results of data trim/calculation can be written into json/xml/html/pdf directly.                                                                
+     - Data examples: My data. Personal data, like notes/contacts/properties/weight, can be record in tables.                                                             
+* Improve:                          
+     - Write strings into temporary tables to avoid data loss due to types conversion.                          
+     - Only one resource file for each language.                          
+* Solved: Modification of languages are not saved.                
+                                    
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.6.2)                    
 
 ## Download and Execution
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. 
@@ -67,7 +27,7 @@ You can find them by clicking `releases` tab in main page of this project.
 
 
 ### Source Codes
-[MyBox-6.6.1-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.6.1/MyBox-6.6.1-src.zip)   55MB-        
+[MyBox-6.6.2-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.6.2/MyBox-6.6.2-src.zip)   55MB-        
 
 About structure, editing, and building of source codes, please refer to [Developement Guide](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-DevGuide-2.1-en.pdf) and
 [Packing Steps](https://mararsh.github.io/MyBox/pack_steps_en.html)        
@@ -78,9 +38,9 @@ Self-contain packages include all files and need not java env nor installation.
 
 | Platform | Link | Size  | Launcher |        
 | --- | --- | ---  | ---  |
-| win10 x64 | [MyBox-6.6.1-win-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.6.1/MyBox-6.6.1-win10-x64.zip)  | 260MB- | MyBox.exe |
-| CentOS 7 x64 | [MyBox-6.6.1-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.6.1/MyBox-6.6.1-CentOS7-x64.tar.gz)  | 280MB-  | bin/MyBox  |
-| mac | [MyBox-6.6.1-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.6.1/MyBox-6.6.1-mac.dmg)  | 280MB-  |  MyBox-6.6.1.app   |        
+| win10 x64 | [MyBox-6.6.2-win-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.6.2/MyBox-6.6.2-win10-x64.zip)  | 260MB- | MyBox.exe |
+| CentOS 7 x64 | [MyBox-6.6.2-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.6.2/MyBox-6.6.2-CentOS7-x64.tar.gz)  | 280MB-  | bin/MyBox  |
+| mac | [MyBox-6.6.2-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.6.2/MyBox-6.6.2-mac.dmg)  | 280MB-  |  MyBox-6.6.2.app   |        
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.        
 
@@ -89,24 +49,24 @@ When JRE or JDK([Oracle jdk](https://www.oracle.com/technetwork/java/javase/down
    
 | Platform | Link | Size  | Requirements |        
 | --- | --- | ---  | ---  |
-| win | [MyBox-6.6.1-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.6.1/MyBox-6.6.1-win-jar.zip)  | 190MB- | Java 18 or higher |
-| linux | [MyBox-6.6.1-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.6.1/MyBox-6.6.1-linux-jar.zip)  | 200MB-  | Java 18 or higher |
-| mac | [MyBox-6.6.1-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.6.1/MyBox-6.6.1-mac-jar.zip)  |  200MB-  | Java 18 or higher |        
+| win | [MyBox-6.6.2-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.6.2/MyBox-6.6.2-win-jar.zip)  | 190MB- | Java 18 or higher |
+| linux | [MyBox-6.6.2-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.6.2/MyBox-6.6.2-linux-jar.zip)  | 200MB-  | Java 18 or higher |
+| mac | [MyBox-6.6.2-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.6.2/MyBox-6.6.2-mac-jar.zip)  |  200MB-  | Java 18 or higher |        
 
 
 Run following command to launch this program with Jar package:        
-<PRE><CODE>     java   -jar   MyBox-6.6.1.jar</CODE></PRE>        
+<PRE><CODE>     java   -jar   MyBox-6.6.2.jar</CODE></PRE>        
 
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:        
-<PRE><CODE>     java   -jar   MyBox-6.6.1.jar   /tmp/a1.jpg</CODE></PRE>        
+<PRE><CODE>     java   -jar   MyBox-6.6.2.jar   /tmp/a1.jpg</CODE></PRE>        
 
 ### Other addresses to download
 Download from cloud storage: [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)               
 Download from sourceforge: [https://sourceforge.net/projects/mara-mybox/files/](https://sourceforge.net/projects/mara-mybox/files/)             
 
 ## Limitation        
-* Not enough testings are done and MyBox has low reliability. Data damage even happened in some versions.       
-* New functions are added and codes are improved continually, and MyBox has bad stability. Unexpected function failures happened sometimes.       
+* Without enough testings, MyBox has low reliability. Data damage even happened in some versions.       
+* New functions being added and codes being improved continually, MyBox has bad stability. Unexpected function failures happened sometimes.       
 * MyBox windows may often be blocked when some Input Method is running. Workaround is to disable/uninstall this Input Method.        
 
 ## Migration
@@ -121,9 +81,9 @@ Configuration file is under "User Home":
 
 | Platform | Path of MyBox Configuration File |        
 | --- | --- |
-| win | `C:\users\UserName\mybox\MyBox_v6.6.1.ini`  |
-| linux | `/home/UserName/mybox/MyBox_v6.6.1.ini` |
-| mac | `/Users/UserName/mybox/MyBox_v6.6.1.ini` |        
+| win | `C:\users\UserName\mybox\MyBox_v6.6.2.ini`  |
+| linux | `/home/UserName/mybox/MyBox_v6.6.2.ini` |
+| mac | `/Users/UserName/mybox/MyBox_v6.6.2.ini` |        
 
 Add parameter "config=\"FilePath\"" when run jar to change configuration file temporarily.        
 Function "Settings" can be used to change configuration values.        
@@ -142,18 +102,19 @@ Function "Settings" can be used to change configuration values.
 # Documents        
 |              Name              | Version |   Time     |                                                                                                                                            English                                                                                                                                            |                                                                                                                                            Chinese                                                                                                                                            |
 |--------------------------------|---------|------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Development Logs               | 6.6.1   | 2022-11-16 | [html](https://mararsh.github.io/MyBox/mybox_devLogs_en.html)                                                                                                                                                                                                                                 | [html](https://mararsh.github.io/MyBox/mybox_devLogs.html)                                                                                                                                                                                                                                    |
+| Development Logs               | 6.6.2   | 2022-11-30 | [html](https://mararsh.github.io/MyBox/mybox_devLogs_en.html)                                                                                                                                                                                                                                 | [html](https://mararsh.github.io/MyBox/mybox_devLogs.html)                                                                                                                                                                                                                                    |
 | Shortcuts                      | 6.5.6   | 2022-6-11  | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html)                                                                                                                                                                                                                               | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html)                                                                                                                                                                                                                                  |
+| Functions list                 | 6.6.2   | 2022-11-30 | [html](https://mararsh.github.io/MyBox/mybox_functions_en.html)                                                                                                                                                                                                                               | [html](https://mararsh.github.io/MyBox/mybox_functions.html)                                                                                                                                                                                                                                  |
 | Packing Steps                  | 6.3.3   | 2020-9-27  | [html](https://mararsh.github.io/MyBox/pack_steps_en.html)                                                                                                                                                                                                                                    | [html](https://mararsh.github.io/MyBox/pack_steps.html)                                                                                                                                                                                                                                       |
-| Development Guide              | 2.1     | 2020-8-27  | [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-DevGuide-2.1-en.pdf)                                                                                                                                                                                 | [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-DevGuide-2.1-zh.pdf)                                                                                                                                                                                                                 |
-| User Guide - Overview          | 6.6.1   | 2022-11-16 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6.1-Overview-en/MyBox-6.6.1-Overview-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-Overview-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-Overview-en.odt)                     | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6.1-Overview-en/MyBox-6.6.1-Overview-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-Overview-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-Overview-en.odt)                     |
-| User Guide - Data Tools        | 6.6.1   | 2022-11-16 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6.1-DataTools-en/MyBox-6.6.1-DataTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-DataTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-DataTools-en.odt)                 | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6.1-DataTools-en/MyBox-6.6.1-DataTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-DataTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.1/MyBox-6.6.1-DataTools-en.odt)                 |
+| Development Guide              | 2.1     | 2020-8-27  | [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.2/MyBox-DevGuide-2.1-en.pdf)                                                                                                                                                                                 | [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.2/MyBox-DevGuide-2.1-zh.pdf)                                                                                                                                                                                                                 |
+| User Guide - Overview          | 6.6.2   | 2022-11-30 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6.2-Overview-en/MyBox-6.6.2-Overview-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.2/MyBox-6.6.2-Overview-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.2/MyBox-6.6.2-Overview-en.odt)                     | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6.2-Overview-en/MyBox-6.6.2-Overview-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.2/MyBox-6.6.2-Overview-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.2/MyBox-6.6.2-Overview-en.odt)                     |
+| User Guide - Data Tools        | 6.6.2   | 2022-11-30 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6.2-DataTools-en/MyBox-6.6.2-DataTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.2/MyBox-6.6.2-DataTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.2/MyBox-6.6.2-DataTools-en.odt)                 | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6.2-DataTools-en/MyBox-6.6.2-DataTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.2/MyBox-6.6.2-DataTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.2/MyBox-6.6.2-DataTools-en.odt)                 |
 | User Guide - Document Tools    | 6.6     | 2022-9-28  | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6-DocumentTools-en/MyBox-6.6-DocumentTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6/MyBox-6.6-DocumentTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6/MyBox-6.6-DocumentTools-en.odt) | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6-DocumentTools-en/MyBox-6.6-DocumentTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6/MyBox-6.6-DocumentTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6/MyBox-6.6-DocumentTools-en.odt) |
 | User Guide - Image Tools       | 6.6     | 2022-9-28  | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6-ImageTools-en/MyBox-6.6-ImageTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6/MyBox-6.6-ImageTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6/MyBox-6.6-ImageTools-en.odt)             | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6-ImageTools-en/MyBox-6.6-ImageTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6/MyBox-6.6-ImageTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6/MyBox-6.6-ImageTools-en.odt)             |
 | User Guide - File Tools        | 6.6     | 2022-9-28  | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6-FileTools-en/MyBox-6.6-FileTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6/MyBox-6.6-FileTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6/MyBox-6.6-FileTools-en.odt)                 | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6-FileTools-en/MyBox-6.6-FileTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6/MyBox-6.6-FileTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6/MyBox-6.6-FileTools-en.odt)                 |
 | User Guide - Network Tools     | 6.6     | 2022-9-28  | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6-NetworkTools-en/MyBox-6.6-NetworkTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6/MyBox-6.6-NetworkTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6/MyBox-6.6-NetworkTools-en.odt)     | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6-NetworkTools-en/MyBox-6.6-NetworkTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6/MyBox-6.6-NetworkTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6/MyBox-6.6-NetworkTools-en.odt)     |
 | User Guide - Media Tools       | 6.6     | 2022-9-28  | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6-MediaTools-en/MyBox-6.6-MediaTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6/MyBox-6.6-MediaTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6/MyBox-6.6-MediaTools-en.odt)             | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6-MediaTools-en/MyBox-6.6-MediaTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6/MyBox-6.6-MediaTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6/MyBox-6.6-MediaTools-en.odt)             |
-| User Guide - Development Tools | 6.6     | 2022-9-28  | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6-DevTools-en/MyBox-6.6-DevTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6/MyBox-6.6-DevTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6/MyBox-6.6-DevTools-en.odt)                     | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6-DevTools-en/MyBox-6.6-DevTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6/MyBox-6.6-DevTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6/MyBox-6.6-DevTools-en.odt)                     |
+| User Guide - Development Tools | 6.6.2     | 2022-11-30  | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.6.2-DevTools-en/MyBox-6.6.2-DevTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.2/MyBox-6.6.2-DevTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.2/MyBox-6.6.2-DevTools-en.odt)                     | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.6.2-DevTools-en/MyBox-6.6.2-DevTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.2/MyBox-6.6.2-DevTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.2/MyBox-6.6.2-DevTools-en.odt)                     |
 | Examples - Notes               | 6.6.1   | 2022-11-16 | [html](https://mararsh.github.io/MyBox/mybox_examples_notes_en.html)                                                                                                                                                                                                                          | [html](https://mararsh.github.io/MyBox/mybox_examples_notes.html)                                                                                                                                                                                                                                    |
 | Examples - Information in Tree | 6.6.1   | 2022-11-16 | [html](https://mararsh.github.io/MyBox/mybox_examples_tree_en.html)                                                                                                                                                                                                                           | [html](https://mararsh.github.io/MyBox/mybox_examples_tree.html)                                                                                                                                                                                                                                    |
 | Examples - Favorite Address    | 6.6.1   | 2022-11-16 | [html](https://mararsh.github.io/MyBox/mybox_examples_web_favorite_en.html)                                                                                                                                                                                                                   | [html](https://mararsh.github.io/MyBox/mybox_examples_web_favorite.html)                                                                                                                                                                                                                                    |
@@ -249,16 +210,16 @@ Versions before v5.3 are based on Java 8.
 
 ## Internationalized <a id="Internationalized"></a>        
 1. All codes of MyBox are internationalized. Language can be switched in time.
-2. Each langauge is defined in two resource files, like: "Messages_NAME.properties" and "TableMessages_NAME.properties"。
+2. Each langauge is defined in one resource file, like: "Messages_NAME.properties".
 3. Support adding new languages online. Table is provided with English as comparison. New langauges take effects at once.        
-Example,  the new language is named as “aa”, and its resource files are Messages_aa.properties and TableMessages_aa.properties.        
+Example,  the new language is named as “aa”, and its resource files are Messages_aa.properties.        
 4. Translated languages can be shared with others: Put the files under "mybox_languages" of data path and MyBox is aware of them immediately.        
 5. Embed Chinese and English, whose files are under path `MyBox/src/main/resources/bundles/`.        
 
-| Language | Resource file of interface | Resource file of data tables |
-| --- | --- |  --- |
-| Chinese | Messages_zh_CN.properties | TableMessages_zh_CN.properties |
-| English | Messages_en.properties | TableMessages_en.properties |        
+| Language | Resource file of interface |
+| --- | --- | 
+| Chinese | Messages_zh_CN.properties | 
+| English | Messages_en.properties |   
 
 
 ## Personal<a id="personal" />

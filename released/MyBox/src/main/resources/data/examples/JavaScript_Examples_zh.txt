@@ -8,8 +8,10 @@ var 字串a = "hello";
 ##MyBox#
 示例 > 变量
 时间
-var 时间a = new Date();
-"当前时间：" + 时间a + "     值：" + 时间a.getTime();
+"当前时间：" + new Date() + "\n" + 
+"格式yyyy/mm/dd：" + new Date('2022/11/30 10:35:32') + "\n" + 
+"格式mm/dd/yyyy：" + new Date('11/30/2022 10:35:32') + "\n" + 
+"格式yyyy-mm-dd：" + new Date('2022-11-30 10:35:32'.replace(/-/g,'/'));
 
 ##MyBox#
 示例 > 变量
@@ -266,6 +268,45 @@ Math.abs(2a) >= 0
 var 数组a =  ['A', 'B', 'C', 'D'];
 var 字符串a = "abc1233hello";
 数组a.includes('C') && (数组a.length >= 8 || 字符串a.length < 5 || !字符串a.endsWith("h"));
+
+##MyBox#
+示例 > 表达式 > 时间运算
+时间的格式
+"当前时间：" + "\n" + 
+"new Date() = " + new Date()+ "\n" + 
+"new Date().getTime() = " + new Date().getTime() + "\n" + 
+"new Date().toLocaleString() = " + new Date().toLocaleString()+ "\n" + 
+"new Date().toGMTString() = " + new Date().toGMTString()+ "\n" + 
+"new Date().toISOString() = " + new Date().toISOString()+ "\n" + 
+"new Date().toUTCString() = " + new Date().toUTCString()+ "\n" + 
+"new Date().toString() = " + new Date().toString()+ "\n" + 
+"new Date().toJSON() = " + new Date().toJSON()+ "\n" + 
+"new Date().toDateString() = " + new Date().toDateString()+ "\n" + 
+"new Date().toTimeString() = " + new Date().toTimeString()+ "\n" + 
+"new Date().toLocaleDateString() = " + new Date().toLocaleDateString()+ "\n" + 
+"new Date().toLocaleTimeString() = " + new Date().toLocaleTimeString()
+
+##MyBox#
+示例 > 表达式 > 时间运算
+时间的解析
+new Date('2022/11/30 10:35:32').toLocaleString() + "\n" + 
+new Date('11/30/2022 10:35:32').toLocaleString() + "\n" + 
+new Date('2022-11-30 10:35:32'.replace(/-/g,'/')).toLocaleString() + "\n" + 
+new Date('2022/11/30') + "\n" + 
+new Date('2022-11-30'.replace(/-/g,'/'))
+
+##MyBox#
+示例 > 表达式 > 时间运算
+时间的分量
+var 时间b = new Date('11/30/2022 10:35:32');
+"年：" + 时间b.getFullYear() + "\n月：" + (时间b.getMonth() + 1) + "\n日：" + 时间b.getDate()
+ + "\n星期：" + 时间b.getDay() + "\n小时：" + 时间b.getHours()+ "\n分钟：" + 时间b.getMinutes()
++ "\n秒：" + 时间b.getSeconds();
+
+##MyBox#
+示例 > 表达式 > 时间运算
+比较时间
+new Date('2012/05/19').getTime()  > new Date('2016/05/19 09:23:12').getTime()
 
 ##MyBox#
 示例 > 方法

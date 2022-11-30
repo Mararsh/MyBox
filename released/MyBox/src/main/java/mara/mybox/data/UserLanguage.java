@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import mara.mybox.tools.ConfigTools;
-
 import mara.mybox.value.Languages;
 
 /**
@@ -22,12 +21,18 @@ public class UserLanguage extends ResourceBundle {
         File file = Languages.interfaceLanguageFile(name);
         if (!file.exists()) {
             items = null;
+            throw new Exception();
+        } else {
+            items = ConfigTools.readValues(file);
         }
-        items = ConfigTools.readValues(file);
     }
 
     public UserLanguage(Map<String, String> items) {
         this.items = items;
+    }
+
+    public boolean isValid() {
+        return items != null;
     }
 
     @Override

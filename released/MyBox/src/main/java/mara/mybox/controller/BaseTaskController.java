@@ -33,7 +33,7 @@ public class BaseTaskController extends BaseLogs {
     @FXML
     @Override
     public void startAction() {
-        if (startButton.getUserData() != null) {
+        if (startButton != null && startButton.getUserData() != null) {
             StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
             startButton.applyCss();
             startButton.setUserData(null);
@@ -47,9 +47,11 @@ public class BaseTaskController extends BaseLogs {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            StyleTools.setNameIcon(startButton, message("Stop"), "iconStop.png");
-            startButton.applyCss();
-            startButton.setUserData("started");
+            if (startButton != null) {
+                StyleTools.setNameIcon(startButton, message("Stop"), "iconStop.png");
+                startButton.applyCss();
+                startButton.setUserData("started");
+            }
             if (tabPane != null && logsTab != null) {
                 tabPane.getSelectionModel().select(logsTab);
             }
@@ -89,9 +91,11 @@ public class BaseTaskController extends BaseLogs {
             protected void finalAction() {
                 endTime = new Date();
                 task = null;
-                StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
-                startButton.applyCss();
-                startButton.setUserData(null);
+                if (startButton != null) {
+                    StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
+                    startButton.applyCss();
+                    startButton.setUserData(null);
+                }
                 updateLogs(message("Completed") + " " + message("Cost")
                         + " " + DateTools.datetimeMsDuration(endTime, startTime), true);
                 afterTask();

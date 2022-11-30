@@ -26,6 +26,7 @@ public class SingletonTask<Void> extends BaseTask<Void> {
         if (loading != null) {
             loading.setInfo(info);
         }
+//        MyBoxLog.console(info);
     }
 
     @Override
