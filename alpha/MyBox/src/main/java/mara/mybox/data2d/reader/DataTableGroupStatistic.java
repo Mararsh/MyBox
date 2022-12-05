@@ -71,9 +71,9 @@ public class DataTableGroupStatistic {
             init();
             String currentParameterValue;
             long currentGroupid, count = 0;
-            String mappedIdColName = groupResults.tmpColumnName(idColName);
+            String mappedIdColName = groupResults.columnName(1);
             String sql = "SELECT * FROM " + groupResults.getSheet() + " ORDER BY " + mappedIdColName;
-            String mappedParameterName = groupResults.tmpColumnName(parameterName);
+            String mappedParameterName = groupResults.columnName(2);
             if (task != null) {
                 task.setInfo(sql);
             }
@@ -90,8 +90,8 @@ public class DataTableGroupStatistic {
                     currentParameterValue = query.getString(mappedParameterName);
                     Data2DRow data2DRow = tableGroup.newRow();
                     for (String name : calNames) {
-                        Object v = query.getObject(groupResults.tmpColumnName(name));
-                        data2DRow.setColumnValue(groupData.tmpColumnName(name), v);
+                        Object v = query.getObject(groups.groupColumnName(name));
+                        data2DRow.setColumnValue(groupColumnName(name), v);
                     }
                     if (groupid > 0 && groupid != currentGroupid) {
                         insert.executeBatch();
@@ -177,7 +177,7 @@ public class DataTableGroupStatistic {
 
             groupColumns = new ArrayList<>();
             for (String name : calNames) {
-                Data2DColumn c = groupResults.columnByName(groupResults.tmpColumnName(name)).cloneAll();
+                Data2DColumn c = groupResults.columnByName(groups.groupColumnName(name)).cloneAll();
                 c.setD2cid(-1).setD2id(-1).setColumnName(name);
                 groupColumns.add(c);
             }
@@ -196,6 +196,19 @@ public class DataTableGroupStatistic {
             }
             return false;
         }
+    }
+
+    public String groupColumnName(String sourceName) {
+        if (sourceName == null) {
+            return null;
+        }
+        for (int i = 0; i < calNames.size(); i++) {
+            String tmpName = groups.groupColumnName(calNames.get(i));
+            if (sourceName.equals(tmpName)) {
+                return groupData.columnName(i + 1);
+            }
+        }
+        return null;
     }
 
     private void statistic() {
@@ -224,12 +237,13 @@ public class DataTableGroupStatistic {
             }
             for (int i = 0; i < colSize; i++) {
                 Data2DRow data2DRow = tableStatistic.newRow();
-                data2DRow.setColumnValue(statisticData.tmpColumnName(idColName), groupid);
-                data2DRow.setColumnValue(statisticData.tmpColumnName(parameterName), parameterValue);
-                data2DRow.setColumnValue(statisticData.tmpColumnName(message("ColumnName")), calNames.get(i));
+                data2DRow.setColumnValue(statisticData.columnName(1), groupid);
+                data2DRow.setColumnValue(statisticData.columnName(2), parameterValue);
+                data2DRow.setColumnValue(statisticData.columnName(3), calNames.get(i));
                 DoubleStatistic s = sData[i];
-                for (StatisticType type : calculation.types) {
-                    data2DRow.setColumnValue(statisticData.tmpColumnName(message("Group") + "_" + message(type.name())),
+                for (int k = 0; k < calculation.types.size(); k++) {
+                    StatisticType type = calculation.types.get(k);
+                    data2DRow.setColumnValue(statisticData.columnName(k + 4),
                             DoubleTools.scale(s.value(type), scale));
                 }
                 if (tableStatistic.setInsertStatement(conn, statisticInsert, data2DRow)) {
@@ -308,7 +322,7 @@ public class DataTableGroupStatistic {
         }
         List<List<String>> data = new ArrayList<>();
         String sql = "SELECT * FROM " + statisticData.getSheet()
-                + " WHERE " + statisticData.tmpColumnName(idColName) + "=" + groupid;
+                + " WHERE " + statisticData.columnName(1) + "=" + groupid;
         try ( ResultSet query = qconn.prepareStatement(sql).executeQuery()) {
             while (query.next() && qconn != null && !qconn.isClosed()) {
                 List<String> vrow = new ArrayList<>();

@@ -185,7 +185,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             protected boolean handle() {
                 try {
                     group = groupData(DataTableGroup.TargetType.Table,
-                            checkedColsNames, null, -1, scale);
+                            checkedColsIndices, false, -1, scale);
                     if (!group.run()) {
                         return false;
                     }

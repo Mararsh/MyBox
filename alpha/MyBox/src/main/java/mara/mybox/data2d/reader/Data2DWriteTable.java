@@ -73,16 +73,7 @@ public class Data2DWriteTable extends Data2DOperator {
     public void handleRow() {
         try {
             Data2DRow data2DRow = writerTableData2D.newRow();
-            int len = sourceRow.size();
-            int offset = includeRowNumber ? 2 : 1;
-            for (int i = 0; i < cols.size(); i++) {
-                int col = cols.get(i);
-                if (col >= 0 && col < len) {
-                    Data2DColumn targetColumn = writerTable.column(i + offset);
-                    data2DRow.setColumnValue(targetColumn.getColumnName(),
-                            targetColumn.fromString(sourceRow.get(col), invalidAs));
-                }
-            }
+            makeTableRow(data2DRow);
             if (data2DRow.isEmpty()) {
                 return;
             }
@@ -104,6 +95,23 @@ public class Data2DWriteTable extends Data2DOperator {
         }
     }
 
+    public void makeTableRow(Data2DRow data2DRow) {
+        try {
+            int len = sourceRow.size();
+            int offset = includeRowNumber ? 2 : 1;
+            for (int i = 0; i < cols.size(); i++) {
+                int col = cols.get(i);
+                if (col < 0 || col >= len) {
+                    continue;
+                }
+                Data2DColumn targetColumn = writerTable.column(i + offset);
+                data2DRow.setColumnValue(targetColumn.getColumnName(),
+                        targetColumn.fromString(sourceRow.get(col), invalidAs));
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
 
     /*
         set

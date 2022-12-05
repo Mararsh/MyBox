@@ -42,8 +42,8 @@ public abstract class Data2D_Data extends Data2D_Attributes {
             return getPathTempFile(path, name, suffix);
         }
         String pname = shortName();
-        if (pname.startsWith(Data2D.TmpTablePrefix)) {
-            pname = pname.substring(Data2D.TmpTablePrefix.length());
+        if (pname.startsWith(TmpTable.TmpTablePrefix)) {
+            pname = pname.substring(TmpTable.TmpTablePrefix.length());
         }
         pname = pname + ((operation == null || operation.isBlank()) ? "" : "_" + operation);
         return getPathTempFile(path, pname, suffix);

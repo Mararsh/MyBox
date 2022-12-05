@@ -152,11 +152,10 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             if (cols == null || cols.isEmpty() || selections == null) {
                 return null;
             }
-            DataTable tmpTable = ((Data2D) this).toStatisticTable(task, cols, selections.invalidAs);
+            TmpTable tmpTable = TmpTable.toStatisticTable((Data2D) this, task, cols, selections.invalidAs);
             if (tmpTable == null) {
                 return null;
             }
-            tmpTable.setTask(task);
             List<Integer> tmpColIndices = tmpTable.columnIndices().subList(1, tmpTable.columnsNumber());
             DoubleStatistic[] statisticData = tmpTable.statisticByColumnsForStored(tmpColIndices, selections);
             if (statisticData == null) {

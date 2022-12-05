@@ -21,7 +21,6 @@ import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.value.AppValues;
 import mara.mybox.value.Languages;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -78,7 +77,7 @@ public abstract class BaseImportCsvController<D> extends BaseBatchFileController
     }
 
     public void setLink() {
-        link.setText(AppValues.MyBoxInternetDataPath
+        link.setText("https://github.com/Mararsh/MyBox_data"
                 + (Languages.isChinese() ? "" : "/tree/master/md/en"));
     }
 

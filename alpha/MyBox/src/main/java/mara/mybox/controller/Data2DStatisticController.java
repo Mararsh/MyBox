@@ -12,6 +12,7 @@ import mara.mybox.calculation.DescriptiveStatistic.StatisticObject;
 import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
+import mara.mybox.data2d.TmpTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
@@ -190,7 +191,7 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
                     data2D.startTask(task, filterController.filter);
                     calculation.setTask(task);
                     if (calculation.needStored()) {
-                        DataTable tmpTable = data2D.toStatisticTable(task, checkedColsIndices, invalidAs);
+                        TmpTable tmpTable = TmpTable.toStatisticTable(data2D, task, checkedColsIndices, invalidAs);
                         if (tmpTable == null) {
                             return false;
                         }

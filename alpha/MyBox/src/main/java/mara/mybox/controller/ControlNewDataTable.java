@@ -239,7 +239,7 @@ public class ControlNewDataTable extends BaseController {
 
     public boolean importAllData(Connection conn, InvalidAs invalidAs) {
         try {
-            count = data2D.writeTableData(task, conn, dataTable, columnIndices, false, invalidAs);
+            count = data2D.importTable(task, conn, dataTable, columnIndices, false, invalidAs);
             taskController.updateLogs(message("Imported") + ": " + count);
             setRowsNumber(conn);
             return count >= 0;

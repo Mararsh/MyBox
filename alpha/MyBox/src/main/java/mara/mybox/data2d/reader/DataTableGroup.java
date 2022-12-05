@@ -5,7 +5,6 @@ import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,9 +18,9 @@ import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFilter;
 import mara.mybox.data2d.DataTable;
+import mara.mybox.data2d.TmpTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
@@ -45,9 +44,9 @@ public class DataTableGroup {
     protected ControlData2DGroup groupController;
     protected GroupType groupType;
     protected Data2D originalData;
-    protected DataTable tmpData;
-    protected String groupName, orderByString;
-    protected List<String> groupNames, orders, targetNames, parameterValues;
+    protected TmpTable tmpData;
+    protected String groupName, orderItems;
+    protected List<String> groupNames, orders, parameterValues;
     protected InvalidAs invalidAs;
     protected short scale;
     protected long max;
@@ -74,6 +73,7 @@ public class DataTableGroup {
     protected List<File> csvFiles;
 
     protected static final String MyBoxGroupNameSuffix = "_MyBoxGroupValue";
+    protected static final String MyBoxSortNameSuffix = "_MyBoxSortValue";
 
     public enum GroupType {
         EqualValues, ValueSplitInterval, ValueSplitNumber, ValueSplitList,
@@ -85,15 +85,15 @@ public class DataTableGroup {
     }
 
     // This class is based on results of "Data2D_Convert.toTmpTable(...)"
-    public DataTableGroup(Data2D originalData, ControlData2DGroup groupController, DataTable sourceData) {
+    public DataTableGroup(Data2D originalData, ControlData2DGroup groupController, TmpTable tmpData) {
         this.originalData = originalData;
         this.groupController = groupController;
-        this.tmpData = sourceData;
+        this.tmpData = tmpData;
     }
 
     public boolean run() {
         if (originalData == null || groupController == null || tmpData == null
-                || targetType == null || targetNames == null || targetNames.isEmpty()) {
+                || targetType == null) {
             return false;
         }
         groupType = groupController.groupType();
@@ -179,7 +179,6 @@ public class DataTableGroup {
             count = 0;
             idColName = message("GroupID");
             parameterValues = new ArrayList<>();
-            orderByString = orderByString();
             targetData = null;
             insert = null;
             csvPrinter = null;
@@ -191,11 +190,11 @@ public class DataTableGroup {
             targetColumns = new ArrayList<>();
             targetColumns.add(new Data2DColumn(idColName, ColumnDefinition.ColumnType.Long));
             targetColumns.add(new Data2DColumn(parameterName, ColumnDefinition.ColumnType.String, 200));
-            for (String name : targetNames) {
-                Data2DColumn c = originalData.columnByName(name).cloneAll();
-                c.setD2cid(-1).setD2id(-1);
-                targetColumns.add(c);
-                targetColNames.add(name);
+            for (int c : tmpData.getSourcePickIndice()) {
+                Data2DColumn column = originalData.column(c).cloneAll();
+                column.setD2cid(-1).setD2id(-1);
+                targetColumns.add(column);
+                targetColNames.add(column.getColumnName());
             }
 
             switch (groupType) {
@@ -231,8 +230,9 @@ public class DataTableGroup {
             }
             String orderBy = null;
             List<String> mappedGroupNames = new ArrayList<>();
-            for (String group : groupNames) {
-                String name = tmpData.tmpColumnName(group);
+            int offset = tmpData.getEqualColumnIndex() + tmpData.getValueColumnIndex();
+            for (int i = 0; i < groupNames.size(); i++) {
+                String name = tmpData.columnName(i + offset);
                 if (orderBy == null) {
                     orderBy = name;
                 } else {
@@ -240,26 +240,8 @@ public class DataTableGroup {
                 }
                 mappedGroupNames.add(name);
             }
-            if (orders != null && !orders.isEmpty()) {
-                int desclen = ("-" + message("Descending")).length();
-                int asclen = ("-" + message("Ascending")).length();
-                String name, stype;
-                for (String order : orders) {
-                    if (groupNames.contains(order)) {
-                        continue;
-                    }
-                    if (order.endsWith("-" + message("Descending"))) {
-                        name = order.substring(0, order.length() - desclen);
-                        stype = " DESC";
-                    } else if (order.endsWith("-" + message("Ascending"))) {
-                        name = order.substring(0, order.length() - asclen);
-                        stype = " ASC";
-                    } else {
-                        continue;
-                    }
-                    name = tmpData.tmpColumnName(name);
-                    orderBy += ", " + name + stype;
-                }
+            if (orderItems != null) {
+                orderBy += ", " + orderItems;
             }
             String sql = "SELECT * FROM " + tmpSheet + " ORDER BY " + orderBy;
             if (task != null) {
@@ -307,9 +289,8 @@ public class DataTableGroup {
                             parameterValueForFilename = idColName + groupid;
                             parameterValue = null;
                             groupMap.clear();
-                            for (String name : groupNames) {
-                                Object v = tmpRow.get(tmpData.tmpColumnName(name));
-                                groupMap.put(name, v);
+                            for (int i = 0; i < groupNames.size(); i++) {
+                                groupMap.put(groupNames.get(i), tmpRow.get(mappedGroupNames.get(i)));
                             }
                             parameterValue = groupMap.toString();
                             parameterValues.add(parameterValue);
@@ -349,10 +330,10 @@ public class DataTableGroup {
             if (groupName == null || groupName.isBlank()) {
                 return false;
             }
-            String finalGroupName = makeGroupValues();
+            String rangeColumnName = rangeColumnName();
             double maxValue = Double.NaN, minValue = Double.NaN;
-            String sql = "SELECT MAX(" + finalGroupName + ") AS dmax, MIN("
-                    + finalGroupName + ") AS dmin FROM " + tmpSheet;
+            String sql = "SELECT MAX(" + rangeColumnName + ") AS dmax, MIN("
+                    + rangeColumnName + ") AS dmin FROM " + tmpSheet;
             if (task != null) {
                 task.setInfo(sql);
             }
@@ -408,7 +389,7 @@ public class DataTableGroup {
                             : DoubleTools.scaleString(maxValue, rscale);
                     parameterValue = "[" + startName + "," + endName + "]";
                     parameterValueForFilename = startName + "-" + endName;
-                    condition = finalGroupName + " >= " + start;
+                    condition = rangeColumnName + " >= " + start;
                     start = maxValue + 1;
                 } else {
                     String startName = isDate ? DateTools.textEra(Math.round(start))
@@ -418,11 +399,11 @@ public class DataTableGroup {
                     parameterValue = "[" + startName + "," + endName + ")";
                     parameterValueForFilename = startName + "-" + endName;
                     end = DoubleTools.scale(end, rscale);
-                    condition = finalGroupName + " >= " + start + " AND " + finalGroupName + " < " + end;
+                    condition = rangeColumnName + " >= " + start + " AND " + rangeColumnName + " < " + end;
                     start = end;
                 }
                 parameterValues.add(parameterValue);
-                sql = "SELECT * FROM " + tmpSheet + " WHERE " + condition + orderByString;
+                sql = "SELECT * FROM " + tmpSheet + " WHERE " + condition + orderItems;
                 valueQeury(sql);
             }
             return true;
@@ -436,80 +417,8 @@ public class DataTableGroup {
         }
     }
 
-    private String makeGroupValues() {
-        try {
-            if (groupName == null || groupName.isBlank()) {
-                return null;
-            }
-            String mappedGroupName = tmpData.tmpColumnName(groupName);
-            Data2DColumn groupColumn = originalData.columnByName(groupName);
-            String finalGroupName = mappedGroupName + MyBoxGroupNameSuffix;
-            String sql;
-            sql = "ALTER TABLE " + tmpSheet + " ADD COLUMN " + finalGroupName + " DOUBLE";
-            if (task != null) {
-                task.setInfo(sql);
-            }
-            try ( Statement statement = conn.createStatement()) {
-                statement.executeUpdate(sql);
-            }
-            Data2DColumn groupInternalColumn = groupColumn.cloneAll();
-            groupInternalColumn.setColumnName(finalGroupName).setType(ColumnType.Double);
-            tmpData.getColumns().add(groupInternalColumn);
-            TableData2D tableSource = tmpData.getTableData2D();
-            tableSource.getColumns().add(groupInternalColumn);
-            int ucount = 0;
-            sql = "SELECT * FROM " + tmpSheet;
-            if (task != null) {
-                task.setInfo(sql);
-            }
-            try ( ResultSet results = conn.prepareStatement(sql).executeQuery();
-                     PreparedStatement update = conn.prepareStatement(tableSource.updateStatement())) {
-                boolean isDate = groupColumn.isDateType();
-                while (results.next()) {
-                    Data2DRow row = tableSource.readData(results);
-                    Object v = row.getColumnValue(mappedGroupName);
-                    double gv;
-                    try {
-                        if (isDate) {
-                            gv = DateTools.encodeDate((String) v).getTime();
-                        } else {
-                            gv = Double.parseDouble((v + "").replaceAll(",", ""));
-                        }
-                    } catch (Exception e) {
-                        gv = Double.NaN;
-                    }
-                    row.setColumnValue(finalGroupName, gv);
-                    if (tableSource.setUpdateStatement(conn, update, row)) {
-                        update.addBatch();
-                        if (++ucount % DerbyBase.BatchSize == 0) {
-                            update.executeBatch();
-                            conn.commit();
-                            if (task != null) {
-                                task.setInfo(message("Updated") + ": " + ucount);
-                            }
-                        }
-                    }
-                }
-                update.executeBatch();
-                conn.commit();
-                if (task != null) {
-                    task.setInfo(message("Updated") + ": " + ucount);
-                }
-            } catch (Exception e) {
-                if (task != null) {
-                    task.setError(e.toString());
-                }
-                MyBoxLog.error(e.toString());
-            }
-            return finalGroupName;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            } else {
-                MyBoxLog.error(e.toString());
-            }
-            return null;
-        }
+    private String rangeColumnName() {
+        return tmpData.column(tmpData.getRangeColumnIndex() + tmpData.getValueColumnIndex()).getColumnName();
     }
 
     private boolean byValueList() {
@@ -517,7 +426,7 @@ public class DataTableGroup {
             if (groupName == null || groupName.isBlank() || groupController == null) {
                 return false;
             }
-            String finalGroupName = makeGroupValues();
+            String rangeColumnName = rangeColumnName();
             List<ValueRange> splitList = groupController.valueSplitList();
             if (splitList == null || splitList.isEmpty()) {
                 return false;
@@ -554,9 +463,9 @@ public class DataTableGroup {
                     continue;
                 }
                 groupChanged();
-                condition = finalGroupName
+                condition = rangeColumnName
                         + (range.isIncludeStart() ? " >= " : " > ") + start
-                        + " AND " + finalGroupName
+                        + " AND " + rangeColumnName
                         + (range.isIncludeEnd() ? " <= " : " < ") + end;
                 String startName = isDate ? DateTools.textEra(Math.round(start))
                         : DoubleTools.scaleString(start, rscale);
@@ -567,7 +476,7 @@ public class DataTableGroup {
                         + (range.isIncludeEnd() ? "]" : ")");
                 parameterValueForFilename = startName + "-" + endName;
                 parameterValues.add(parameterValue);
-                String sql = "SELECT * FROM " + tmpSheet + " WHERE " + condition + orderByString;
+                String sql = "SELECT * FROM " + tmpSheet + " WHERE " + condition + orderItems;
                 valueQeury(sql);
             }
             return true;
@@ -650,7 +559,7 @@ public class DataTableGroup {
                 maxGroup = splitNumber;
             }
             conn.setAutoCommit(false);
-            sql = "SELECT * FROM " + tmpSheet + orderByString;
+            sql = "SELECT * FROM " + tmpSheet + orderItems;
             if (task != null) {
                 task.setInfo(sql);
             }
@@ -737,7 +646,7 @@ public class DataTableGroup {
                 parameterValue = "[" + from + "," + to + "]";
                 parameterValueForFilename = from + "-" + to;
                 parameterValues.add(parameterValue);
-                sql = "SELECT * FROM " + tmpSheet + orderByString
+                sql = "SELECT * FROM " + tmpSheet + orderItems
                         + " OFFSET " + from + " ROWS FETCH NEXT " + (to - from + 1) + " ROWS ONLY";
                 if (task != null) {
                     task.setInfo(sql);
@@ -808,7 +717,7 @@ public class DataTableGroup {
                 if (task == null || task.isCancelled()) {
                     return false;
                 }
-                sql = "SELECT * FROM " + tmpSheet + orderByString;
+                sql = "SELECT * FROM " + tmpSheet + orderItems;
                 rowIndex = 0;
                 groupChanged();
                 long fmax = filter.getMaxPassed();
@@ -821,9 +730,10 @@ public class DataTableGroup {
                         fmax <= 0 ? Long.MAX_VALUE : fmax);
                 String script = filter.getFilledScript();
                 if (script != null && !script.isBlank()) {
-                    for (Data2DColumn column : tmpData.referColumns()) {
-                        String sourceName = column.getColumnName();
-                        String tmpName = tmpData.tmpColumnName(sourceName);
+                    for (int i = 0; i < tmpData.getSourceReferIndice().size(); i++) {
+                        int col = tmpData.getSourceReferIndice().get(i);
+                        String sourceName = originalData.columnName(col);
+                        String tmpName = tmpData.columnName(i + tmpData.getValueColumnIndex());
                         script = findReplace.replace(script, "#{" + sourceName + "}", "#{" + tmpName + "}");
                         for (StatisticType stype : StatisticType.values()) {
                             script = findReplace.replace(script, "#{" + sourceName + "-" + message(stype.name()) + "}",
@@ -904,8 +814,8 @@ public class DataTableGroup {
                         tableTarget = targetData.getTableData2D();
                         finalColumns = targetData.getColumns();
                         insert = conn.prepareStatement(tableTarget.insertStatement());
-                        mappedIdColName = targetData.tmpColumnName(idColName);
-                        mappedParameterName = targetData.tmpColumnName(parameterName);
+                        mappedIdColName = targetData.columnName(1);
+                        mappedParameterName = targetData.columnName(2);
                         if (task != null) {
                             task.setInfo(message("Table") + ": " + targetData.getSheet());
                         }
@@ -913,10 +823,9 @@ public class DataTableGroup {
                     Data2DRow data2DRow = tableTarget.newRow();
                     data2DRow.setColumnValue(mappedIdColName, groupid);
                     data2DRow.setColumnValue(mappedParameterName, parameterValue);
-                    for (int i = 2; i < targetColumns.size(); i++) {
-                        String name = targetColumns.get(i).getColumnName();
-                        String value = tmpRow.get(tmpData.tmpColumnName(name));
-                        Data2DColumn finalColumn = finalColumns.get(i + 1);
+                    for (int i = 0; i < tmpData.getSourcePickIndice().size(); i++) {
+                        String value = tmpRow.get(tmpData.columnName(tmpData.getSourcePickIndice().get(i) + tmpData.getValueColumnIndex()));
+                        Data2DColumn finalColumn = finalColumns.get(i + 3);
                         data2DRow.setColumnValue(finalColumn.getColumnName(), finalColumn.fromString(value));
                     }
                     if (tableTarget.setInsertStatement(conn, insert, data2DRow)) {
@@ -951,11 +860,9 @@ public class DataTableGroup {
                     List<String> fileRow = new ArrayList<>();
                     fileRow.add(groupid + "");
                     fileRow.add(parameterValue);
-                    for (int i = 2; i < targetColumns.size(); i++) {
-                        Data2DColumn column = targetColumns.get(i);
-                        String name = column.getColumnName();
-                        String value = tmpRow.get(tmpData.tmpColumnName(name));
-                        if (column.needScale() && scale >= 0) {
+                    for (int i = 0; i < tmpData.getSourcePickIndice().size(); i++) {
+                        String value = tmpRow.get(tmpData.columnName(tmpData.getSourcePickIndice().get(i) + tmpData.getValueColumnIndex()));
+                        if (targetColumns.get(i + 3).needScale() && scale >= 0) {
                             value = DoubleTools.scaleString(value, invalidAs, scale);
                         }
                         fileRow.add(value);
@@ -1073,39 +980,25 @@ public class DataTableGroup {
         return false;
     }
 
-    public String orderByString() {
-        String orderBy = null;
-        if (orders != null && !orders.isEmpty()) {
-            int desclen = ("-" + message("Descending")).length();
-            int asclen = ("-" + message("Ascending")).length();
-            String name, stype;
-            for (String order : orders) {
-                if (order.endsWith("-" + message("Descending"))) {
-                    name = order.substring(0, order.length() - desclen);
-                    stype = " DESC";
-                } else if (order.endsWith("-" + message("Ascending"))) {
-                    name = order.substring(0, order.length() - asclen);
-                    stype = " ASC";
-                } else {
-                    continue;
-                }
-                name = tmpData.tmpColumnName(name);
-                if (orderBy == null) {
-                    orderBy = name + stype;
-                } else {
-                    orderBy += ", " + name + stype;
-                }
-            }
-        }
-        return orderBy == null ? "" : " ORDER BY " + orderBy;
-    }
-
     public String parameterValue(int index) {
         try {
             return parameterValues.get(index);
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public String groupColumnName(String sourceName) {
+        if (sourceName == null) {
+            return null;
+        }
+        for (int i = 0; i < tmpData.getSourcePickIndice().size(); i++) {
+            int col = tmpData.getSourcePickIndice().get(i);
+            if (sourceName.equals(originalData.columnName(col))) {
+                return targetData.columnName(i + 3);
+            }
+        }
+        return null;
     }
 
     // groupid is 1-based
@@ -1115,7 +1008,16 @@ public class DataTableGroup {
         }
         List<List<String>> data = new ArrayList<>();
         String sql = "SELECT * FROM " + targetData.getSheet()
-                + " WHERE " + targetData.tmpColumnName(idColName) + "=" + groupid + orderByString;
+                + " WHERE " + targetData.columnName(1) + "=" + groupid + orderItems;
+        Map<String, String> namesMap = new HashMap<>();
+        for (Data2DColumn column : columns) {
+            String sourceName = column.getColumnName();
+            String groupName = groupColumnName(sourceName);
+            if (groupName == null) {
+                return null;
+            }
+            namesMap.put(sourceName, groupName);
+        }
         try ( ResultSet query = qconn.prepareStatement(sql).executeQuery()) {
             while (query.next()) {
                 if (parameterValue == null) {
@@ -1126,9 +1028,8 @@ public class DataTableGroup {
                     if (qconn == null || qconn.isClosed()) {
                         return null;
                     }
-                    String name = column.getColumnName();
-                    String gname = targetData.tmpColumnName(name);
-                    String s = column.toString(query.getObject(gname));
+                    String gName = namesMap.get(column.getColumnName());
+                    String s = column.toString(query.getObject(gName));
                     if (s != null && column.needScale() && scale >= 0) {
                         s = DoubleTools.scaleString(s, invalidAs, scale);
                     }
@@ -1191,11 +1092,6 @@ public class DataTableGroup {
         return this;
     }
 
-    public DataTableGroup setSourceTable(DataTable sourceTable) {
-        this.tmpData = sourceTable;
-        return this;
-    }
-
     public DataTableGroup setOrders(List<String> sorts) {
         this.orders = sorts;
         return this;
@@ -1218,11 +1114,6 @@ public class DataTableGroup {
 
     public DataTableGroup setTargetType(TargetType targetType) {
         this.targetType = targetType;
-        return this;
-    }
-
-    public DataTableGroup setTargetNames(List<String> targetNames) {
-        this.targetNames = targetNames;
         return this;
     }
 

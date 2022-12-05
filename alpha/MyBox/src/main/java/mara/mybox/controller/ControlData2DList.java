@@ -22,6 +22,7 @@ import javafx.scene.layout.Region;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataInternalTable;
 import mara.mybox.data2d.DataTable;
+import mara.mybox.data2d.TmpTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.table.TableData2DDefinition;
@@ -120,7 +121,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
             } else if (manageController instanceof DataTablesController) {
                 buttonsPane.getChildren().removeAll(openButton, queryButton);
                 queryConditions = " data_type = " + Data2D.type(Data2DDefinition.Type.DatabaseTable)
-                        + " AND NOT( sheet like '" + Data2D.TmpTablePrefix + "%' ) ";
+                        + " AND NOT( sheet like '" + TmpTable.TmpTablePrefix + "%' ) ";
 
             } else {
                 queryConditions = null;

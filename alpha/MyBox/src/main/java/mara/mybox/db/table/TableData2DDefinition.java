@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.TmpTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
@@ -324,7 +325,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
                 invalid.clear();
                 sql = "SELECT * FROM Data2D_Definition WHERE data_type="
                         + Data2D.type(Data2DDefinition.Type.DatabaseTable)
-                        + " AND sheet like '" + Data2D.TmpTablePrefix + "%'";
+                        + " AND sheet like '" + TmpTable.TmpTablePrefix + "%'";
                 try ( ResultSet results = conn.prepareStatement(sql).executeQuery()) {
                     while (results.next()) {
                         Data2DDefinition data = readData(results);

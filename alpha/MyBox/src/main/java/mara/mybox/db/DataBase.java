@@ -55,10 +55,10 @@ import org.apache.derby.drda.NetworkServerControl;
 
 /**
  * @Author Mara
- * @CreateDate 2018-10-15 9:31:28
+ * @CreateDate 2022-12-1
  * @License Apache License Version 2.0
  */
-public class DerbyBase {
+public class DataBase {
 
     public static String mode = "embedded";
     public static String host = "localhost";
@@ -72,7 +72,6 @@ public class DerbyBase {
             + AppValues.AppDerbyPassword + ";create=false";
     public static DerbyStatus status;
     public static long lastRetry = 0;
-    public static long BatchSize = 500;
 
     public enum DerbyStatus {
         Embedded, Nerwork, Starting, NotConnected, EmbeddedFailed, NerworkFailed
@@ -86,6 +85,10 @@ public class DerbyBase {
             return null;
         }
 
+    }
+
+    public static String dbURL() {
+        return protocol + dbHome() + login;
     }
 
     public static String dbHome() {
@@ -200,7 +203,7 @@ public class DerbyBase {
             boolean portUsed = NetworkTools.isPortUsed(port);
             int uPort = port;
             if (portUsed) {
-                if (DerbyBase.isServerStarted(port)) {
+                if (DataBase.isServerStarted(port)) {
                     MyBoxLog.console("Derby server is already started in port " + port + ".");
                     return true;
                 } else {
@@ -684,7 +687,7 @@ public class DerbyBase {
     }
 
     public static int size(String sql) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try ( Connection conn = DataBase.getConnection()) {
             conn.setReadOnly(true);
             return size(conn, sql);
         } catch (Exception e) {
@@ -715,7 +718,7 @@ public class DerbyBase {
     }
 
     public static boolean isTableEmpty(String tableName) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try ( Connection conn = DataBase.getConnection()) {
             String sql = "SELECT * FROM " + tableName + " FETCH FIRST ROW ONLY";
             conn.setReadOnly(true);
             return isEmpty(conn, sql);
@@ -742,7 +745,7 @@ public class DerbyBase {
     }
 
     public static ResultSet query(String sql) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try ( Connection conn = DataBase.getConnection()) {
             conn.setReadOnly(true);
             return query(conn, sql);
         } catch (Exception e) {
@@ -762,7 +765,7 @@ public class DerbyBase {
     }
 
     public static int update(String sql) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try ( Connection conn = DataBase.getConnection()) {
             return update(conn, sql);
         } catch (Exception e) {
             MyBoxLog.error(e, sql);
@@ -793,7 +796,7 @@ public class DerbyBase {
         }
         File f = new File(file);
         FileDeleteTools.delete(f);
-        try ( Connection conn = DerbyBase.getConnection();) {
+        try ( Connection conn = DataBase.getConnection();) {
             PreparedStatement ps = conn.prepareStatement("CALL SYSCS_UTIL.SYSCS_EXPORT_TABLE (?,?,?,?,?,?)");
             ps.setString(1, null);
             ps.setString(2, table.toUpperCase());
@@ -817,7 +820,7 @@ public class DerbyBase {
         if (!f.exists()) {
             return;
         }
-        try ( Connection conn = DerbyBase.getConnection();) {
+        try ( Connection conn = DataBase.getConnection();) {
             PreparedStatement ps = conn.prepareStatement("CALL SYSCS_UTIL.SYSCS_IMPORT_TABLE (?,?,?,?,?,?,?)");
             ps.setString(1, null);
             ps.setString(2, table.toUpperCase());
@@ -839,23 +842,27 @@ public class DerbyBase {
         if (name == null) {
             return null;
         }
-        String sname = name.replaceAll("（", "(").replaceAll("）", ")");
-        if (sname.startsWith("\"") && name.endsWith("\"")) {
-            return sname;
+        if (name.startsWith("\"") && name.endsWith("\"")) {
+            return name;
         }
-        boolean needQuote = false;
+        String s = "";
+        String sname = name.replaceAll("（|）", "_");
         for (int i = 0; i < sname.length(); i++) {
             char c = sname.charAt(i);
-            if (!Character.isLetterOrDigit(c)) {
-                needQuote = true;
-                break;
+            if ((c > 64 && c < 91) || (c > 96 && c < 123) || c < 0 || c > 127) {
+                s += c;
+                continue;
             }
-            if (i == 0 && Character.isDigit(c)) {
-                needQuote = true;
-                break;
+            if (i == 0) {
+                s += "a";
+            }
+            if (c == '_' || (c > 47 && c < 58)) {
+                s += c;
+            } else {
+                s += "_";
             }
         }
-        return needQuote ? "\"" + sname + "\"" : sname;
+        return s;
     }
 
     public static String referIdentifier(String name) {

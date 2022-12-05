@@ -20,7 +20,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.calculation.DescriptiveStatistic;
 import mara.mybox.calculation.DescriptiveStatistic.StatisticType;
-import mara.mybox.data2d.DataTable;
+import mara.mybox.data2d.TmpTable;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -472,7 +472,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
                 calculation.setTask(task);
                 return calculation.statisticData(outputData);
             }
-            DataTable tmpTable = data2D.toStatisticTable(task, dataColsIndices, invalidAs);
+            TmpTable tmpTable = TmpTable.toStatisticTable(data2D, task, dataColsIndices, invalidAs);
             if (tmpTable == null) {
                 outputData = null;
                 return false;
