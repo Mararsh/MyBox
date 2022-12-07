@@ -219,10 +219,10 @@ public class DataFileExcelController extends BaseData2DFileController {
         }
         String currentSheetName = dataFileExcel.getSheet();
         List<String> sheets = dataFileExcel.getSheetNames();
-        Random random = new Random();
-        String tryName = currentSheetName + random.nextInt(10);
+        int count = 2;
+        String tryName = currentSheetName + "2";
         while (dataFileExcel.getSheetNames() != null && sheets.contains(tryName)) {
-            tryName += random.nextInt(10);
+            tryName = currentSheetName + ++count;
         }
         String newName = PopTools.askValue(null, message("CurrentName") + ": " + currentSheetName, message("NewName"), tryName);
         if (newName == null || newName.isBlank() || newName.equals(currentSheetName)

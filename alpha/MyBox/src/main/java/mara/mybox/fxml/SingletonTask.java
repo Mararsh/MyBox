@@ -32,7 +32,13 @@ public class SingletonTask<Void> extends BaseTask<Void> {
     @Override
     public void setError(String error) {
         this.error = error;
-        setInfo(error);
+        if (error == null || error.isBlank()) {
+            return;
+        }
+        if (loading != null) {
+            loading.setInfo(error);
+        }
+        MyBoxLog.error(error);
     }
 
     @Override

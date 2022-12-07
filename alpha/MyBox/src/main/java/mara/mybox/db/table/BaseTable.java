@@ -464,7 +464,7 @@ public abstract class BaseTable<D> {
         if (tableName == null || columns.isEmpty()) {
             return null;
         }
-        String sql = "CREATE TABLE " + tableName + " ( \n";
+        String sql = "CREATE TABLE " + DerbyBase.fixedIdentifier(tableName) + " ( \n";
         for (int i = 0; i < columns.size(); ++i) {
             if (i > 0) {
                 sql += ", \n";
@@ -499,7 +499,8 @@ public abstract class BaseTable<D> {
         if (tableName == null || columns.isEmpty()) {
             return null;
         }
-        String def = column.getColumnName() + " ";
+        String colName = DerbyBase.fixedIdentifier(column.getColumnName());
+        String def = colName + " ";
         ColumnType type = column.getType();
         switch (type) {
             case String:
@@ -547,7 +548,7 @@ public abstract class BaseTable<D> {
                 def += "CLOB";
                 break;
             default:
-                MyBoxLog.debug(column.getColumnName() + " " + type);
+                MyBoxLog.debug(colName + " " + type);
                 return null;
         }
         if (column.isAuto()) {
@@ -582,7 +583,7 @@ public abstract class BaseTable<D> {
         }
         String sql = null;
         try {
-            sql = "DROP TABLE " + tableName;
+            sql = "DROP TABLE " + DerbyBase.fixedIdentifier(tableName);
             conn.createStatement().executeUpdate(sql);
             return true;
         } catch (Exception e) {
@@ -591,13 +592,15 @@ public abstract class BaseTable<D> {
         }
     }
 
-    public boolean dropColumn(Connection conn, String name) {
-        if (conn == null || name == null || name.isBlank()) {
+    public boolean dropColumn(Connection conn, String colName) {
+        if (conn == null || colName == null || colName.isBlank()) {
             return false;
         }
         String sql = null;
         try {
-            sql = "ALTER TABLE " + tableName + " DROP COLUMN " + name;
+            sql = "ALTER TABLE " + DerbyBase.fixedIdentifier(tableName)
+                    + " DROP COLUMN " + DerbyBase.fixedIdentifier(colName);
+            MyBoxLog.console(sql);
             return conn.createStatement().executeUpdate(sql) >= 0;
         } catch (Exception e) {
             MyBoxLog.error(e, sql);
@@ -611,7 +614,8 @@ public abstract class BaseTable<D> {
         }
         String sql = null;
         try {
-            sql = "ALTER TABLE " + tableName + " ADD COLUMN  " + createColumnDefiniton(column);
+            sql = "ALTER TABLE " + DerbyBase.fixedIdentifier(tableName)
+                    + " ADD COLUMN  " + createColumnDefiniton(column);
             return conn.createStatement().executeUpdate(sql) >= 0;
         } catch (Exception e) {
             MyBoxLog.error(e, sql);
@@ -686,7 +690,7 @@ public abstract class BaseTable<D> {
         if (tableName == null) {
             return null;
         }
-        return "SELECT COUNT(*) FROM " + tableName;
+        return "SELECT COUNT(*) FROM " + DerbyBase.fixedIdentifier(tableName);
     }
 
     public int size() {
@@ -736,7 +740,7 @@ public abstract class BaseTable<D> {
     }
 
     public boolean isEmpty() {
-        String sql = "SELECT * FROM " + tableName + " FETCH FIRST ROW ONLY";
+        String sql = "SELECT * FROM " + DerbyBase.fixedIdentifier(tableName) + " FETCH FIRST ROW ONLY";
         return isEmpty(sql);
     }
 
@@ -774,7 +778,7 @@ public abstract class BaseTable<D> {
         String sql = null;
         for (ColumnDefinition column : primaryColumns) {
             if (sql == null) {
-                sql = "SELECT * FROM " + tableName + " WHERE ";
+                sql = "SELECT * FROM " + DerbyBase.fixedIdentifier(tableName) + " WHERE ";
             } else {
                 sql += " AND ";
             }
@@ -808,13 +812,13 @@ public abstract class BaseTable<D> {
                 continue;
             }
             if (sql == null) {
-                sql = "INSERT INTO " + tableName + " ( ";
+                sql = "INSERT INTO " + DerbyBase.fixedIdentifier(tableName) + " ( ";
                 v = "?";
             } else {
                 sql += ", ";
                 v += ", ?";
             }
-            sql += column.getColumnName();
+            sql += DerbyBase.fixedIdentifier(column.getColumnName());
         }
         sql += " ) VALUES ( " + v + ") ";
         return sql;
@@ -844,7 +848,7 @@ public abstract class BaseTable<D> {
                 continue;
             }
             if (update == null) {
-                update = "UPDATE " + tableName + " SET ";
+                update = "UPDATE " + DerbyBase.fixedIdentifier(tableName) + " SET ";
             } else {
                 update += ", ";
             }
@@ -860,7 +864,7 @@ public abstract class BaseTable<D> {
             } else {
                 where += " AND ";
             }
-            where += column.getColumnName() + "=?";
+            where += DerbyBase.fixedIdentifier(column.getColumnName()) + "=?";
         }
         return update + (where != null ? where : "");
     }
@@ -869,7 +873,7 @@ public abstract class BaseTable<D> {
         if (tableName == null || columns.isEmpty() || primaryColumns.isEmpty()) {
             return null;
         }
-        String delete = "DELETE FROM " + tableName;
+        String delete = "DELETE FROM " + DerbyBase.fixedIdentifier(tableName);
         String where = null;
         for (ColumnDefinition column : primaryColumns) {
             if (where == null) {
@@ -877,7 +881,7 @@ public abstract class BaseTable<D> {
             } else {
                 where += " AND ";
             }
-            where += column.getColumnName() + "=?";
+            where += DerbyBase.fixedIdentifier(column.getColumnName()) + "=?";
         }
         return delete + (where != null ? where : "");
     }
@@ -1126,7 +1130,7 @@ public abstract class BaseTable<D> {
     }
 
     public String queryAllStatement() {
-        return "SELECT * FROM " + tableName
+        return "SELECT * FROM " + DerbyBase.fixedIdentifier(tableName)
                 + (orderColumns != null ? " ORDER BY " + orderColumns : "");
     }
 
@@ -1170,7 +1174,7 @@ public abstract class BaseTable<D> {
         if (orderColumns != null && (c.isBlank() || !c.contains("ORDER BY"))) {
             c += " ORDER BY " + orderColumns;
         }
-        String sql = "SELECT * FROM " + tableName + c
+        String sql = "SELECT * FROM " + DerbyBase.fixedIdentifier(tableName) + c
                 + " OFFSET " + start + " ROWS FETCH NEXT " + size + " ROWS ONLY";
         return query(conn, sql);
     }
@@ -1518,7 +1522,7 @@ public abstract class BaseTable<D> {
     }
 
     public int deleteCondition(String condition) {
-        String sql = "DELETE FROM " + tableName
+        String sql = "DELETE FROM " + DerbyBase.fixedIdentifier(tableName)
                 + (condition == null || condition.isBlank() ? "" : " WHERE " + condition);
         return DerbyBase.update(sql);
     }
@@ -1534,11 +1538,12 @@ public abstract class BaseTable<D> {
 
     public long clearData(Connection conn) {
         int count = -1;
-        String clearSQL = "DELETE FROM " + tableName;
+        String clearSQL = "DELETE FROM " + DerbyBase.fixedIdentifier(tableName);
         try ( PreparedStatement clear = conn.prepareStatement(clearSQL)) {
             count = clear.executeUpdate();
             if (count >= 0 && idColumn != null) {
-                String resetSQL = "ALTER TABLE " + tableName + " ALTER COLUMN " + idColumn + " RESTART WITH 1";
+                String resetSQL = "ALTER TABLE " + DerbyBase.fixedIdentifier(tableName)
+                        + " ALTER COLUMN " + idColumn + " RESTART WITH 1";
                 try ( PreparedStatement reset = conn.prepareStatement(resetSQL)) {
                     reset.executeUpdate();
                 } catch (Exception e) {
@@ -1560,26 +1565,26 @@ public abstract class BaseTable<D> {
         }
     }
 
-    public BaseTable readDefinitionFromDB(Connection conn, String referredTableName) {
-        if (referredTableName == null || referredTableName.isBlank()) {
+    public BaseTable readDefinitionFromDB(Connection conn, String tname) {
+        if (tname == null || tname.isBlank()) {
             return null;
         }
         try {
             init();
-            tableName = referredTableName;
-            String savedTableName = DerbyBase.savedName(referredTableName);
+            tableName = tname;
+            String savedTableName = DerbyBase.savedName(tname);
             DatabaseMetaData dbMeta = conn.getMetaData();
             try ( ResultSet resultSet = dbMeta.getColumns(null, "MARA", savedTableName, "%")) {
                 while (resultSet.next()) {
                     String savedColumnName = resultSet.getString("COLUMN_NAME");
-                    String referredColumnName = DerbyBase.referredName(savedColumnName);
+                    String referredName = DerbyBase.fixedIdentifier(savedColumnName);
                     String defaultValue = resultSet.getString("COLUMN_DEF");
                     if (defaultValue != null && defaultValue.startsWith("'") && defaultValue.endsWith("'")) {
                         defaultValue = defaultValue.substring(1, defaultValue.length() - 1);
                     }
                     ColumnDefinition column = ColumnDefinition.create()
                             .setTableName(tableName)
-                            .setColumnName(referredColumnName)
+                            .setColumnName(referredName)
                             .setType(ColumnDefinition.sqlColumnType(resultSet.getInt("DATA_TYPE")))
                             .setLength(resultSet.getInt("COLUMN_SIZE"))
                             .setNotNull("NO".equalsIgnoreCase(resultSet.getString("IS_NULLABLE")))
@@ -1594,7 +1599,7 @@ public abstract class BaseTable<D> {
             try ( ResultSet resultSet = dbMeta.getPrimaryKeys(null, "MARA", savedTableName)) {
                 while (resultSet.next()) {
                     String savedColumnName = resultSet.getString("COLUMN_NAME");
-                    String referredName = DerbyBase.referredName(savedColumnName);
+                    String referredName = DerbyBase.fixedIdentifier(savedColumnName);
                     for (ColumnDefinition column : columns) {
                         if (referredName.equals(column.getColumnName())) {
                             column.setIsPrimaryKey(true);
@@ -1614,12 +1619,12 @@ public abstract class BaseTable<D> {
             try ( ResultSet resultSet = dbMeta.getImportedKeys(null, "MARA", savedTableName)) {
                 while (resultSet.next()) {
                     String savedColumnName = resultSet.getString("FKCOLUMN_NAME");
-                    String referredName = DerbyBase.referredName(savedColumnName);
+                    String referredName = DerbyBase.fixedIdentifier(savedColumnName);
                     for (ColumnDefinition column : columns) {
                         if (referredName.equals(column.getColumnName())) {
-                            column.setReferName(resultSet.getString("FK_NAME"))
-                                    .setReferTable(resultSet.getString("PKTABLE_NAME"))
-                                    .setReferColumn(resultSet.getString("PKCOLUMN_NAME"))
+                            column.setReferName(DerbyBase.fixedIdentifier(resultSet.getString("FK_NAME")))
+                                    .setReferTable(DerbyBase.fixedIdentifier(resultSet.getString("PKTABLE_NAME")))
+                                    .setReferColumn(DerbyBase.fixedIdentifier(resultSet.getString("PKCOLUMN_NAME")))
                                     .setOnDelete(ColumnDefinition.deleteRule(resultSet.getShort("DELETE_RULE")))
                                     .setOnUpdate(ColumnDefinition.updateRule(resultSet.getShort("UPDATE_RULE")));
                             foreignColumns.add(column);
@@ -1633,13 +1638,13 @@ public abstract class BaseTable<D> {
             try ( ResultSet resultSet = dbMeta.getExportedKeys(null, "MARA", savedTableName)) {
                 while (resultSet.next()) {
                     String savedColumnName = resultSet.getString("PKCOLUMN_NAME");
-                    String referredName = DerbyBase.referredName(savedColumnName);
+                    String referredName = DerbyBase.fixedIdentifier(savedColumnName);
                     for (ColumnDefinition column : columns) {
                         if (referredName.equals(column.getColumnName())) {
                             ColumnDefinition rcolumn = column.cloneAll();
-                            rcolumn.setReferName(resultSet.getString("FK_NAME"))
-                                    .setReferTable(resultSet.getString("FKTABLE_NAME"))
-                                    .setReferColumn(resultSet.getString("FKCOLUMN_NAME"))
+                            rcolumn.setReferName(DerbyBase.fixedIdentifier(resultSet.getString("FK_NAME")))
+                                    .setReferTable(DerbyBase.fixedIdentifier(resultSet.getString("FKTABLE_NAME")))
+                                    .setReferColumn(DerbyBase.fixedIdentifier(resultSet.getString("FKCOLUMN_NAME")))
                                     .setOnDelete(ColumnDefinition.deleteRule(resultSet.getShort("DELETE_RULE")))
                                     .setOnUpdate(ColumnDefinition.updateRule(resultSet.getShort("UPDATE_RULE")));
                             referredColumns.add(rcolumn);

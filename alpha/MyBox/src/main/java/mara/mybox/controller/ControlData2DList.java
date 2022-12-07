@@ -298,11 +298,12 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
                      Statement statement = conn.createStatement()) {
                 for (Data2DDefinition item : data) {
                     if (item.isUserTable() && item.getSheet() != null) {
+                        String referName = DerbyBase.fixedIdentifier(item.getSheet());
                         try {
-                            statement.executeUpdate("DROP TABLE " + item.getSheet());
+                            statement.executeUpdate("DROP TABLE " + referName);
                             changed = true;
                         } catch (Exception e) {
-                            MyBoxLog.debug(e, item.getSheet());
+                            MyBoxLog.debug(e, referName);
                         }
                         if (manageController.data2D != null
                                 && item.getD2did() == manageController.data2D.getD2did()) {
@@ -352,10 +353,11 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
                             && results.getLong("d2did") == manageController.data2D.getD2did();
                 }
                 for (String name : names) {
+                    String tname = DerbyBase.fixedIdentifier(name);
                     try {
-                        delete.executeUpdate("DROP TABLE " + name);
+                        delete.executeUpdate("DROP TABLE " + tname);
                     } catch (Exception e) {
-                        MyBoxLog.debug(e, name);
+                        MyBoxLog.debug(e, tname);
                     }
                 }
             } catch (Exception e) {

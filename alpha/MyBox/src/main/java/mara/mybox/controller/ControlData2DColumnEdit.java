@@ -22,6 +22,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.BaseTable;
@@ -64,7 +65,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
     @FXML
     protected HBox formatBox;
     @FXML
-    protected FlowPane fixPane, centuryPane, invalidPane;
+    protected FlowPane typesPane, fixPane, centuryPane, invalidPane;
 
     @Override
     public void setControlsStyle() {
@@ -260,6 +261,12 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 invalidAsSkipRadio.setSelected(true);
             }
 
+            boolean canChange = columnsController.data2D.isTable() && columnIndex >= 0;
+            nameInput.setDisable(canChange);
+            for (int i = 1; i < typesPane.getChildren().size(); i++) {
+                typesPane.getChildren().get(i).setDisable(canChange);
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -268,6 +275,9 @@ public class ControlData2DColumnEdit extends BaseChildController {
     public Data2DColumn pickValues() {
         try {
             String name = nameInput.getText();
+            if (columnsController.data2D.isTable()) {
+                name = DerbyBase.fixedIdentifier(name);
+            }
             if (name == null || name.isBlank()) {
                 popError(message("InvalidParameter") + ": " + message("Name"));
                 return null;

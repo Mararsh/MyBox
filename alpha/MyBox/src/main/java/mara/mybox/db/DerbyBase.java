@@ -288,7 +288,7 @@ public class DerbyBase {
                      ResultSet resultSet = statement.executeQuery(sql)) {
                 while (resultSet.next()) {
                     String savedName = resultSet.getString("TABLENAME");
-                    String referredName = referredName(savedName);
+                    String referredName = fixedIdentifier(savedName);
                     tables.add(referredName);
                 }
             } catch (Exception e) {
@@ -312,7 +312,7 @@ public class DerbyBase {
                      ResultSet resultSet = statement.executeQuery(sql)) {
                 while (resultSet.next()) {
                     String savedName = resultSet.getString("columnname");
-                    String referredName = referredName(savedName);
+                    String referredName = fixedIdentifier(savedName);
                     columns.add(referredName + ", " + resultSet.getString("columndatatype"));
                 }
             } catch (Exception e) {
@@ -337,7 +337,7 @@ public class DerbyBase {
                      ResultSet resultSet = statement.executeQuery(sql)) {
                 while (resultSet.next()) {
                     String savedName = resultSet.getString("columnname");
-                    String referredName = referredName(savedName);
+                    String referredName = fixedIdentifier(savedName);
                     columns.add(referredName);
                 }
             } catch (Exception e) {
@@ -359,7 +359,7 @@ public class DerbyBase {
                      ResultSet resultSet = statement.executeQuery(sql)) {
                 while (resultSet.next()) {
                     String savedName = resultSet.getString("CONGLOMERATENAME");
-                    String referredName = referredName(savedName);
+                    String referredName = fixedIdentifier(savedName);
                     indexes.add(referredName);
                 }
             } catch (Exception e) {
@@ -381,7 +381,7 @@ public class DerbyBase {
                      ResultSet resultSet = statement.executeQuery(sql)) {
                 while (resultSet.next()) {
                     String savedName = resultSet.getString("TABLENAME");
-                    String referredName = referredName(savedName);
+                    String referredName = fixedIdentifier(savedName);
                     tables.add(referredName);
                 }
             } catch (Exception e) {
@@ -839,14 +839,14 @@ public class DerbyBase {
         if (name == null) {
             return null;
         }
-        String sname = name.replaceAll("（", "(").replaceAll("）", ")");
-        if (sname.startsWith("\"") && name.endsWith("\"")) {
-            return sname;
+        if (name.startsWith("\"") && name.endsWith("\"")) {
+            return name;
         }
+        String sname = name.toLowerCase().replaceAll("（", "(").replaceAll("）", ")");
         boolean needQuote = false;
         for (int i = 0; i < sname.length(); i++) {
             char c = sname.charAt(i);
-            if (!Character.isLetterOrDigit(c)) {
+            if (c != '_' && !Character.isLetterOrDigit(c)) {
                 needQuote = true;
                 break;
             }
@@ -858,11 +858,33 @@ public class DerbyBase {
         return needQuote ? "\"" + sname + "\"" : sname;
     }
 
-    public static String referIdentifier(String name) {
+    public static String appendIdentifier(String name, String suffix) {
         if (name == null) {
             return null;
         }
-        return name.equals(name.toUpperCase()) ? name : "\"" + name + "\"";
+        if (name.startsWith("\"") && name.endsWith("\"")) {
+            return name.substring(0, name.length() - 1) + suffix + "\"";
+        } else {
+            return name + suffix;
+        }
+    }
+
+    public static String checkIdentifier(List<String> names, String name, boolean add) {
+        if (name == null) {
+            return null;
+        }
+        if (names == null) {
+            names = new ArrayList<>();
+        }
+        String tname = name;
+        int index = 1;
+        while (names.contains(tname) || names.contains(tname.toUpperCase())) {
+            tname = DerbyBase.appendIdentifier(name, ++index + "");
+        }
+        if (add) {
+            names.add(tname);
+        }
+        return tname;
     }
 
     public static String savedName(String referedName) {
@@ -871,14 +893,6 @@ public class DerbyBase {
         }
         return referedName.startsWith("\"") && referedName.endsWith("\"")
                 ? referedName.substring(1, referedName.length() - 1) : referedName.toUpperCase();
-    }
-
-    public static String referredName(String nameFromDB) {
-        if (nameFromDB == null) {
-            return null;
-        }
-        return nameFromDB.equals(nameFromDB.toUpperCase())
-                ? nameFromDB.toLowerCase() : "\"" + nameFromDB + "\"";
     }
 
 }

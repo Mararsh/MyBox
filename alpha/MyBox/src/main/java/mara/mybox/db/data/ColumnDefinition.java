@@ -424,9 +424,13 @@ public class ColumnDefinition extends BaseData {
                 case Double:
                 case Longitude:
                 case Latitude:
+                    Object od = results.getObject(savedName);
+                    if (od == null) {
+                        return null;
+                    }
                     double d;
                     try {
-                        d = Double.valueOf(results.getObject(savedName).toString());
+                        d = Double.valueOf(od.toString());
                         if (DoubleTools.invalidDouble(d)) {
                             d = Double.NaN;
                         }
@@ -435,9 +439,13 @@ public class ColumnDefinition extends BaseData {
                     }
                     return d;
                 case Float:
+                    Object of = results.getObject(savedName);
+                    if (of == null) {
+                        return null;
+                    }
                     float f;
                     try {
-                        f = Float.valueOf(results.getObject(savedName).toString());
+                        f = Float.valueOf(of.toString());
                         if (FloatTools.invalidFloat(f)) {
                             f = Float.NaN;
                         }
@@ -446,25 +454,37 @@ public class ColumnDefinition extends BaseData {
                     }
                     return f;
                 case Long:
+                    Object ol = results.getObject(savedName);
+                    if (ol == null) {
+                        return null;
+                    }
                     long l;
                     try {
-                        l = Long.valueOf(results.getObject(savedName).toString());
+                        l = Long.valueOf(ol.toString());
                     } catch (Exception e) {
                         l = AppValues.InvalidLong;
                     }
                     return l;
                 case Integer:
+                    Object oi = results.getObject(savedName);
+                    if (oi == null) {
+                        return null;
+                    }
                     int i;
                     try {
-                        i = Integer.valueOf(results.getObject(savedName).toString());
+                        i = Integer.valueOf(oi.toString());
                     } catch (Exception e) {
                         i = AppValues.InvalidInteger;
                     }
                     return i;
                 case Short:
+                    Object os = results.getObject(savedName);
+                    if (os == null) {
+                        return null;
+                    }
                     short s;
                     try {
-                        s = Short.valueOf(results.getObject(savedName).toString());
+                        s = Short.valueOf(os.toString());
                     } catch (Exception e) {
                         s = AppValues.InvalidShort;
                     }
@@ -502,6 +522,10 @@ public class ColumnDefinition extends BaseData {
 
     public String toString(Object value) {
         return toString(type, value, null);
+    }
+
+    public double toDouble(String value) {
+        return toDouble(type, value);
     }
 
     public String format(String string) {
@@ -749,32 +773,6 @@ public class ColumnDefinition extends BaseData {
         return types;
     }
 
-    public static String number2String(Number n) {
-        return n != null ? n + "" : null;
-    }
-
-    public static Number string2Number(ColumnType type, String s) {
-        try {
-            if (null == type || s == null) {
-                return null;
-            }
-            switch (type) {
-                case Double:
-                    return Double.parseDouble(s.replaceAll(",", ""));
-                case Float:
-                    return Float.parseFloat(s.replaceAll(",", ""));
-                case Long:
-                    return Math.round(Double.parseDouble(s.replaceAll(",", "")));
-                case Integer:
-                    return (int) Math.round(Double.parseDouble(s.replaceAll(",", "")));
-                case Short:
-                    return (short) Math.round(Double.parseDouble(s.replaceAll(",", "")));
-            }
-        } catch (Exception e) {
-        }
-        return null;
-    }
-
     public static short onUpdate(OnUpdate type) {
         if (type == null) {
             return 0;
@@ -842,6 +840,32 @@ public class ColumnDefinition extends BaseData {
         return type == ColumnType.Datetime || type == ColumnType.Date || type == ColumnType.Era;
     }
 
+    public static String number2String(Number n) {
+        return n != null ? n + "" : null;
+    }
+
+    public static Number string2Number(ColumnType sourceType, String string) {
+        try {
+            if (null == sourceType || string == null) {
+                return null;
+            }
+            switch (sourceType) {
+                case Double:
+                    return Double.parseDouble(string.replaceAll(",", ""));
+                case Float:
+                    return Float.parseFloat(string.replaceAll(",", ""));
+                case Long:
+                    return Math.round(Double.parseDouble(string.replaceAll(",", "")));
+                case Integer:
+                    return (int) Math.round(Double.parseDouble(string.replaceAll(",", "")));
+                case Short:
+                    return (short) Math.round(Double.parseDouble(string.replaceAll(",", "")));
+            }
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
     public static Date stringToDate(String string) {
         return DateTools.encodeDate(string, 0);
     }
@@ -904,12 +928,12 @@ public class ColumnDefinition extends BaseData {
         return null;
     }
 
-    public static String toString(ColumnType type, Object value, String format) {
+    public static String toString(ColumnType sourceType, Object value, String format) {
         try {
-            if (value == null) {
+            if (sourceType == null || value == null) {
                 return null;
             }
-            switch (type) {
+            switch (sourceType) {
                 case Datetime:
                 case Date:
                     return DateTools.datetimeToString((Date) value, format);
@@ -928,6 +952,34 @@ public class ColumnDefinition extends BaseData {
             }
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    public static double toDouble(ColumnType sourceType, String string) {
+        try {
+            if (null == sourceType || string == null) {
+                return Double.NaN;
+            }
+            switch (sourceType) {
+                case Double:
+                case Float:
+                case Long:
+                case Integer:
+                case Short:
+                case Latitude:
+                case Longitude:
+                    return Double.parseDouble(string.replaceAll(",", ""));
+                case Datetime:
+                case Date:
+                case Era:
+                    return DateTools.encodeDate(string).getTime() + 0d;
+                case Boolean:
+                    return StringTools.isTrue(string) ? 1 : 0;
+                default:
+                    return Double.NaN;
+            }
+        } catch (Exception e) {
+            return Double.NaN;
         }
     }
 

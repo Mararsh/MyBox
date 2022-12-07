@@ -5,11 +5,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import mara.mybox.controller.BaseData2DHandleController;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.DataTable;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -150,17 +150,14 @@ public class DescriptiveStatistic {
                 handleController.popError(message("SelectToHandle") + " " + prefix);
                 return false;
             }
-            String cName = prefix + message("Calculation");
-            Random random = new Random();
-            while (names.contains(cName)) {
-                cName += random.nextInt(10);
-            }
             outputNames = new ArrayList<>();
+            outputColumns = new ArrayList<>();
+
+            String cName = DerbyBase.checkIdentifier(names, prefix + message("Calculation"), false);
             outputNames.add(cName);
             outputNames.addAll(names);
-
-            outputColumns = new ArrayList<>();
             outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.String, 300));
+
             for (String name : names) {
                 outputColumns.add(new Data2DColumn(name, ColumnDefinition.ColumnType.Double));
             }

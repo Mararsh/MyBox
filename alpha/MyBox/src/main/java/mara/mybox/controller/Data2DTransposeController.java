@@ -2,13 +2,13 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.TmpTable;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -62,17 +62,13 @@ public class Data2DTransposeController extends BaseData2DTargetsController {
             outputColumns = new ArrayList<>();
             int nameIndex = showRowNumber ? 1 : 0;
             List<String> names = new ArrayList<>();
-            Random random = new Random();
             if (firstCheck.isSelected()) {
                 for (int c = 0; c < rowsNumber; ++c) {
                     String name = outputData.get(c).get(nameIndex);
                     if (name == null || name.isBlank()) {
                         name = message("Columns") + (c + 1);
                     }
-                    while (names.contains(name)) {
-                        name += random.nextInt(10);
-                    }
-                    names.add(name);
+                    DerbyBase.checkIdentifier(names, name, true);
                 }
             } else {
                 for (int c = 1; c <= rowsNumber; c++) {
@@ -80,11 +76,7 @@ public class Data2DTransposeController extends BaseData2DTargetsController {
                 }
             }
             if (showColNames) {
-                String name = message("ColumnName");
-                while (names.contains(name)) {
-                    name += random.nextInt(10);
-                }
-                names.add(0, name);
+                DerbyBase.checkIdentifier(names, message("ColumnName"), true);
             }
             for (int c = 0; c < names.size(); c++) {
                 outputColumns.add(new Data2DColumn(names.get(c), ColumnDefinition.ColumnType.String));

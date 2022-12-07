@@ -261,7 +261,7 @@ public class DataTableGroup {
                         tmpRow = new HashMap<>();
                         for (Data2DColumn column : tmpColumns) {
                             String tmpColName = column.getColumnName();
-                            Object v = query.getObject(tmpColName);
+                            Object v = column.value(query);
                             tmpRow.put(tmpColName, column.toString(v));
                         }
                         if (lastRow == null) {
@@ -505,7 +505,7 @@ public class DataTableGroup {
                     sourceRow = new HashMap<>();
                     for (Data2DColumn column : tmpColumns) {
                         String sourceColName = column.getColumnName();
-                        Object v = query.getObject(sourceColName);
+                        Object v = column.value(query);
                         sourceRow.put(sourceColName, column.toString(v));
                     }
                     if (++groupCurrentSize <= max || max <= 0) {
@@ -576,7 +576,7 @@ public class DataTableGroup {
                         sourceRow = new HashMap<>();
                         for (Data2DColumn column : tmpColumns) {
                             String sourceColName = column.getColumnName();
-                            Object v = query.getObject(sourceColName);
+                            Object v = column.value(query);
                             sourceRow.put(sourceColName, column.toString(v));
                         }
                         if (rowIndex++ % interval == 0 && groupid < maxGroup) {
@@ -663,7 +663,7 @@ public class DataTableGroup {
                             sourceRow = new HashMap<>();
                             for (Data2DColumn column : tmpColumns) {
                                 String sourceColName = column.getColumnName();
-                                Object v = query.getObject(sourceColName);
+                                Object v = column.value(query);
                                 sourceRow.put(sourceColName, column.toString(v));
                             }
                             if (++groupCurrentSize <= max || max <= 0) {
@@ -758,7 +758,7 @@ public class DataTableGroup {
                             List<String> rowStrings = new ArrayList<>();
                             for (Data2DColumn column : tmpColumns) {
                                 String sourceColName = column.getColumnName();
-                                String v = column.toString(query.getObject(sourceColName));
+                                String v = column.toString(column.value(query));
                                 sourceRow.put(sourceColName, v);
                                 rowStrings.add(v);
                             }
@@ -856,13 +856,14 @@ public class DataTableGroup {
                                 .setColsNumber(finalColumns.size());
                         csvPrinter = CsvTools.csvPrinter(csvFile);
                         csvPrinter.printRecord(targetFile.columnNames());
+                        MyBoxLog.console(targetFile.columnNames());
                     }
                     List<String> fileRow = new ArrayList<>();
                     fileRow.add(groupid + "");
                     fileRow.add(parameterValue);
                     for (int i = 0; i < tmpData.getSourcePickIndice().size(); i++) {
                         String value = tmpRow.get(tmpData.columnName(tmpData.getSourcePickIndice().get(i) + tmpData.getValueColumnIndex()));
-                        if (targetColumns.get(i + 3).needScale() && scale >= 0) {
+                        if (targetColumns.get(i).needScale() && scale >= 0) {
                             value = DoubleTools.scaleString(value, invalidAs, scale);
                         }
                         fileRow.add(value);
@@ -1009,15 +1010,6 @@ public class DataTableGroup {
         List<List<String>> data = new ArrayList<>();
         String sql = "SELECT * FROM " + targetData.getSheet()
                 + " WHERE " + targetData.columnName(1) + "=" + groupid + orderItems;
-        Map<String, String> namesMap = new HashMap<>();
-        for (Data2DColumn column : columns) {
-            String sourceName = column.getColumnName();
-            String groupName = groupColumnName(sourceName);
-            if (groupName == null) {
-                return null;
-            }
-            namesMap.put(sourceName, groupName);
-        }
         try ( ResultSet query = qconn.prepareStatement(sql).executeQuery()) {
             while (query.next()) {
                 if (parameterValue == null) {
@@ -1028,8 +1020,7 @@ public class DataTableGroup {
                     if (qconn == null || qconn.isClosed()) {
                         return null;
                     }
-                    String gName = namesMap.get(column.getColumnName());
-                    String s = column.toString(query.getObject(gName));
+                    String s = column.toString(column.value(query));
                     if (s != null && column.needScale() && scale >= 0) {
                         s = DoubleTools.scaleString(s, invalidAs, scale);
                     }

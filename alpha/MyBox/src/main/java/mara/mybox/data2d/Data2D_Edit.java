@@ -93,7 +93,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         try {
             columns = null;
             List<String> colNames = readColumnNames();
-            Random random = new Random();
+
             if (colNames == null || colNames.isEmpty()) {
                 hasHeader = false;
                 columns = savedColumns;
@@ -112,15 +112,13 @@ public abstract class Data2D_Edit extends Data2D_Filter {
                         column = new Data2DColumn(name, defaultColumnType());
                     }
                     String vname = (name == null || name.isBlank()) ? message("Column") + (i + 1) : name;
-                    while (validNames.contains(vname)) {
-                        vname += random.nextInt(10);
-                    }
+                    vname = DerbyBase.checkIdentifier(validNames, vname, true);
                     column.setColumnName(vname);
-                    validNames.add(vname);
                     columns.add(column);
                 }
             }
             if (columns != null && !columns.isEmpty()) {
+                Random random = new Random();
                 for (int i = 0; i < columns.size(); i++) {
                     Data2DColumn column = columns.get(i);
                     column.setD2id(d2did);

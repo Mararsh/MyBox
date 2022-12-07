@@ -7,7 +7,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import mara.mybox.data.DataSort;
 import static mara.mybox.data2d.Data2D_Convert.createTable;
 import mara.mybox.data2d.reader.Data2DWriteTmpTable;
@@ -38,7 +37,8 @@ public class TmpTable extends DataTable {
     protected List<String> orders, groupEqualColumnNames;
     protected int valueColumnIndex, equalColumnIndex, rangeColumnIndex, sortStartIndex;
     protected String targetName, groupRangleColumnName, orderby;
-    protected boolean importData, forStatistic, includeRowNumber, includeColName, isRangeColumnDate;
+    protected boolean importData, forStatistic, includeRowNumber, includeColName;
+    protected ColumnType groupRangeColumnType;
     protected InvalidAs invalidAs;
     protected List<DataSort> sorts;
     protected List<List<String>> importRows;
@@ -57,6 +57,7 @@ public class TmpTable extends DataTable {
         importData = forStatistic = includeRowNumber = includeColName = false;
         valueColumnIndex = equalColumnIndex = rangeColumnIndex = sortStartIndex = -1;
         invalidAs = InvalidAs.Skip;
+        groupRangeColumnType = null;
         targetName = null;
         importRows = null;
         sorts = null;
@@ -79,9 +80,9 @@ public class TmpTable extends DataTable {
                 return false;
             }
             valueColumnIndex = 1;
-            List<Data2DColumn> tableColumns = new ArrayList<>();
+            List<Data2DColumn> tmpColumns = new ArrayList<>();
             if (includeRowNumber) {
-                tableColumns.add(new Data2DColumn(message("SourceRowNumber"), ColumnType.Long));
+                tmpColumns.add(new Data2DColumn(message("SourceRowNumber"), ColumnType.Long));
                 valueColumnIndex++;
             }
             sourceReferIndice = new ArrayList<>();
@@ -94,9 +95,10 @@ public class TmpTable extends DataTable {
                 Data2DColumn tableColumn = sourceColumn.cloneAll();
                 tableColumn.setD2cid(-1).setD2id(-1);
                 tableColumn.setType(forStatistic ? ColumnType.Double : ColumnType.String);
-                tableColumns.add(tableColumn);
+                tmpColumns.add(tableColumn);
             }
             equalColumnIndex = rangeColumnIndex = -1;
+            groupRangeColumnType = null;
             if (groupEqualColumnNames != null && !groupEqualColumnNames.isEmpty()) {
                 equalColumnIndex = sourceReferIndice.size();
                 for (String name : groupEqualColumnNames) {
@@ -104,18 +106,18 @@ public class TmpTable extends DataTable {
                     sourceReferColumns.add(sourceColumn);
                     Data2DColumn tableColumn = sourceColumn.cloneAll();
                     tableColumn.setD2cid(-1).setD2id(-1);
-                    tableColumns.add(tableColumn);
+                    tmpColumns.add(tableColumn);
                     sourceReferIndice.add(sourceData.colOrder(name));
                 }
             } else if (groupRangleColumnName != null && !groupRangleColumnName.isBlank()) {
                 rangeColumnIndex = sourceReferIndice.size();
                 Data2DColumn sourceColumn = sourceData.columnByName(groupRangleColumnName);
+                groupRangeColumnType = sourceColumn.getType();
                 sourceReferColumns.add(sourceColumn);
                 Data2DColumn tableColumn = sourceColumn.cloneAll();
                 tableColumn.setD2cid(-1).setD2id(-1).setType(ColumnType.Double);
-                tableColumns.add(tableColumn);
+                tmpColumns.add(tableColumn);
                 sourceReferIndice.add(sourceData.colOrder(groupRangleColumnName));
-                isRangeColumnDate = sourceColumn.isDateType();
             }
             sortStartIndex = -1;
             sorts = null;
@@ -127,11 +129,11 @@ public class TmpTable extends DataTable {
                     sourceReferColumns.add(sourceColumn);
                     Data2DColumn tableColumn = sourceColumn.cloneAll();
                     tableColumn.setD2cid(-1).setD2id(-1);
-                    tableColumns.add(tableColumn);
+                    tmpColumns.add(tableColumn);
                     sourceReferIndice.add(sourceData.colOrder(name));
                 }
             }
-            DataTable dataTable = createTable(task, conn, null, tableColumns, null, null, null, true);
+            DataTable dataTable = createTable(task, conn, null, tmpColumns, null, null, null, true);
             if (dataTable == null) {
                 return false;
             }
@@ -207,24 +209,21 @@ public class TmpTable extends DataTable {
                 if (col < 0 || col >= len) {
                     continue;
                 }
+                Data2DColumn sourceColumn = sourceData.column(col);
                 Data2DColumn targetColumn = column(i + offset);
-                String value = sourceRow.get(col);
-                if (rangeColumnIndex == i) {
-                    Double gv;
-                    try {
-                        if (isRangeColumnDate) {
-                            gv = DateTools.encodeDate(value).getTime() + 0d;
-                        } else {
-                            gv = Double.parseDouble(value.replaceAll(",", ""));
-                        }
-                    } catch (Exception e) {
-                        gv = Double.NaN;
-                    }
-                    data2DRow.setColumnValue(targetColumn.getColumnName(), gv);
-                } else {
-                    data2DRow.setColumnValue(targetColumn.getColumnName(),
-                            targetColumn.fromString(value, invalidAs));
+                String sourceValue = sourceRow.get(col);
+                Object tmpValue;
+                switch (targetColumn.getType()) {
+                    case Double:
+                        tmpValue = ColumnDefinition.toDouble(sourceColumn.getType(), sourceValue);
+                        break;
+                    case String:
+                        tmpValue = sourceValue;
+                        break;
+                    default:
+                        tmpValue = targetColumn.fromString(sourceValue, invalidAs);
                 }
+                data2DRow.setColumnValue(targetColumn.getColumnName(), tmpValue);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -277,11 +276,10 @@ public class TmpTable extends DataTable {
     }
 
     public DataFileCSV sort(int maxSortResults) {
-        if (sourceData == null) {
+        if (sourceData == null || orderby == null) {
             return null;
         }
         List<Data2DColumn> targetColumns = new ArrayList<>();
-        Random random = new Random();
         List<String> names = new ArrayList<>();
         if (includeRowNumber) {
             targetColumns.add(new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
@@ -289,11 +287,7 @@ public class TmpTable extends DataTable {
         }
         for (int i : sourcePickIndice) {
             Data2DColumn column = sourceData.column(i).cloneAll();
-            String name = column.getColumnName();
-            while (names.contains(name)) {
-                name += random.nextInt(10);
-            }
-            names.add(name);
+            String name = DerbyBase.checkIdentifier(names, column.getColumnName(), true);
             column.setD2cid(-1).setD2id(-1).setColumnName(name);
             targetColumns.add(column);
         }
@@ -312,10 +306,8 @@ public class TmpTable extends DataTable {
             }
             long count = 0;
             int offset = includeRowNumber ? 2 : 1;
-            MyBoxLog.console(columnNames());
             while (query.next() && task != null && !task.isCancelled()) {
                 Data2DRow dataRow = tableData2D.readData(query);
-                MyBoxLog.console(dataRow.values());
                 List<String> rowValues = new ArrayList<>();
                 if (includeRowNumber) {
                     Object v = dataRow.getColumnValue(message("SourceRowNumber"));
@@ -324,7 +316,7 @@ public class TmpTable extends DataTable {
                 for (int i = 0; i < sourcePickIndice.size(); i++) {
                     Data2DColumn tmpColumn = columns.get(i + offset);
                     Object v = dataRow.getColumnValue(tmpColumn.getColumnName());
-                    rowValues.add(v + "");
+                    rowValues.add(v == null ? null : v + "");
                 }
                 csvPrinter.printRecord(rowValues);
                 count++;
@@ -367,7 +359,6 @@ public class TmpTable extends DataTable {
                     dataColumns.add(columns.get(i));
                 }
             }
-            Random random = new Random();
             // skip id column
             for (int i = 0; i < dataColumns.size(); i++) {
                 if (task == null || task.isCancelled()) {
@@ -402,10 +393,7 @@ public class TmpTable extends DataTable {
                             if (name == null || name.isBlank()) {
                                 name = message("Columns") + (c + 1);
                             }
-                            while (names.contains(name)) {
-                                name += random.nextInt(10);
-                            }
-                            names.add(name);
+                            DerbyBase.checkIdentifier(names, name, true);
                         }
                     } else {
                         for (int c = 1; c <= cNumber; c++) {
@@ -413,11 +401,7 @@ public class TmpTable extends DataTable {
                         }
                     }
                     if (includeColName) {
-                        String name = message("ColumnName");
-                        while (names.contains(name)) {
-                            name += random.nextInt(10);
-                        }
-                        names.add(0, name);
+                        DerbyBase.checkIdentifier(names, message("ColumnName"), true);
                     }
                     for (int c = 0; c < names.size(); c++) {
                         targetColumns.add(new Data2DColumn(names.get(c), ColumnType.String));

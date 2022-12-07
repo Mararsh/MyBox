@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
@@ -534,16 +535,11 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         }
         List<String> validNames = new ArrayList<>();
         List<Data2DColumn> targetColumns = new ArrayList<>();
-        Random random = new Random();
         for (Data2DColumn column : inColumns) {
             Data2DColumn tcolumn = column.cloneAll();
-            String name = tcolumn.getColumnName();
-            while (validNames.contains(name)) {
-                name += random.nextInt(10);
-            }
+            String name = DerbyBase.checkIdentifier(validNames, tcolumn.getColumnName(), true);
             tcolumn.setColumnName(name);
             targetColumns.add(tcolumn);
-            validNames.add(name);
         }
         return targetColumns;
     }

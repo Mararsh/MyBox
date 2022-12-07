@@ -11,7 +11,6 @@ import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.Data2DTargetExportController;
 import mara.mybox.controller.DataFileCSVController;
@@ -208,9 +207,8 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                 idcolumn.setAuto(true).setIsPrimaryKey(true).setNotNull(true).setEditable(false);
                 tableColumns.add(idcolumn);
                 tableData2D.addColumn(idcolumn);
-                validNames.add(idName.toUpperCase());
+                validNames.add(idName);
             }
-            Random random = new Random();
             for (Data2DColumn referColumn : referColumns) {
                 Data2DColumn dataColumn = new Data2DColumn();
                 dataColumn.cloneFrom(referColumn);
@@ -218,11 +216,8 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                         .setAuto(false).setIsPrimaryKey(false);
                 String referColumnName = referColumn.getColumnName();
                 String columeName = DerbyBase.fixedIdentifier(referColumnName);
-                while (validNames.contains(columeName.toUpperCase())) {
-                    columeName += random.nextInt(10);
-                }
+                columeName = DerbyBase.checkIdentifier(validNames, columeName, true);
                 dataColumn.setColumnName(columeName);
-                validNames.add(columeName.toUpperCase());
                 if (keys != null && !keys.isEmpty()) {
                     dataColumn.setIsPrimaryKey(keys.contains(referColumnName));
                 }

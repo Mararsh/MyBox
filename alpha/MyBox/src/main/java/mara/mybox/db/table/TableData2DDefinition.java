@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.TmpTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
@@ -204,13 +205,13 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         }
     }
 
-    public Data2DDefinition queryTable(Connection conn, String referredName, Type type) {
-        if (conn == null || referredName == null) {
+    public Data2DDefinition queryTable(Connection conn, String tname, Type type) {
+        if (conn == null || tname == null) {
             return null;
         }
         try ( PreparedStatement statement = conn.prepareStatement(Query_Table)) {
             statement.setShort(1, Data2DDefinition.type(type));
-            statement.setString(2, DerbyBase.stringValue(DerbyBase.savedName(referredName)));
+            statement.setString(2, DerbyBase.stringValue(tname));
             return query(conn, statement);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -218,12 +219,12 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         }
     }
 
-    public Data2DDefinition queryUserTable(Connection conn, String referredName) {
-        if (conn == null || referredName == null) {
+    public Data2DDefinition queryUserTable(Connection conn, String tname) {
+        if (conn == null || tname == null) {
             return null;
         }
         try ( PreparedStatement statement = conn.prepareStatement(Query_UserTable)) {
-            statement.setString(1, DerbyBase.stringValue(DerbyBase.savedName(referredName)));
+            statement.setString(1, DerbyBase.stringValue(tname));
             return query(conn, statement);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -231,11 +232,12 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         }
     }
 
-    public int deleteUserTable(Connection conn, String referredName) {
-        if (conn == null || referredName == null) {
+    public int deleteUserTable(Connection conn, String tname) {
+        if (conn == null || tname == null) {
             return -1;
         }
-        try ( PreparedStatement statement = conn.prepareStatement("DROP TABLE " + referredName)) {
+        String fixedName = DerbyBase.fixedIdentifier(tname);
+        try ( PreparedStatement statement = conn.prepareStatement("DROP TABLE " + fixedName)) {
             if (statement.executeUpdate() < 0) {
                 return -2;
             }
@@ -244,7 +246,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             return -3;
         }
         try ( PreparedStatement statement = conn.prepareStatement(Delete_UserTable)) {
-            statement.setString(1, DerbyBase.stringValue(DerbyBase.savedName(referredName)));
+            statement.setString(1, DerbyBase.stringValue(DerbyBase.savedName(fixedName)));
             return statement.executeUpdate();
         } catch (Exception e) {
 //            MyBoxLog.error(e);
@@ -263,6 +265,17 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
+        }
+    }
+
+    public Data2DDefinition writeTable(Connection conn, DataTable table) {
+        if (conn == null || table == null) {
+            return null;
+        }
+        if (queryTable(conn, table.getSheet(), table.getType()) != null) {
+            return updateData(conn, table);
+        } else {
+            return insertData(conn, table);
         }
     }
 
