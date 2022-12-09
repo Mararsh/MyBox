@@ -43,7 +43,8 @@ public abstract class Data2D_Data extends Data2D_Attributes {
             return getPathTempFile(path, name, suffix);
         }
         String pname = shortName();
-        if (pname.startsWith(TmpTable.TmpTablePrefix)) {
+        if (pname.startsWith(TmpTable.TmpTablePrefix)
+                || pname.startsWith(TmpTable.TmpTablePrefix.toLowerCase())) {
             pname = pname.substring(TmpTable.TmpTablePrefix.length());
         }
         pname = pname + ((operation == null || operation.isBlank()) ? "" : "_" + operation);

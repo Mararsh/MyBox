@@ -121,7 +121,8 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
             } else if (manageController instanceof DataTablesController) {
                 buttonsPane.getChildren().removeAll(openButton, queryButton);
                 queryConditions = " data_type = " + Data2D.type(Data2DDefinition.Type.DatabaseTable)
-                        + " AND NOT( sheet like '" + TmpTable.TmpTablePrefix + "%' ) ";
+                        + " AND NOT( sheet like '" + TmpTable.TmpTablePrefix + "%' "
+                        + " OR sheet like '" + TmpTable.TmpTablePrefix.toLowerCase() + "%' )";
 
             } else {
                 queryConditions = null;

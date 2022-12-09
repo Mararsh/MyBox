@@ -401,36 +401,34 @@ public class ColumnDefinition extends BaseData {
             if (results.findColumn(savedName) < 0) {
                 return null;
             }
+            Object o = results.getObject(savedName);
+            if (o == null) {
+                return null;
+            }
+            String s = o + "";
             switch (type) {
                 case String:
                 case Enumeration:
                 case Color:
                 case File:
                 case Image:
-                    return results.getString(savedName);
+                    return s;
                 case Era:
-                    Object eo = results.getObject(savedName);
-                    if (eo == null) {
-                        return null;
-                    }
+                    long lv;
                     try {
-                        long lv = Long.parseLong(eo.toString());
+                        lv = Long.parseLong(s);
                         if (lv >= 10000 || lv <= -10000) {
                             return lv;
                         }
                     } catch (Exception e) {
-                        return eo.toString();
+                        return null;
                     }
                 case Double:
                 case Longitude:
                 case Latitude:
-                    Object od = results.getObject(savedName);
-                    if (od == null) {
-                        return null;
-                    }
                     double d;
                     try {
-                        d = Double.valueOf(od.toString());
+                        d = Double.valueOf(s);
                         if (DoubleTools.invalidDouble(d)) {
                             d = Double.NaN;
                         }
@@ -439,13 +437,9 @@ public class ColumnDefinition extends BaseData {
                     }
                     return d;
                 case Float:
-                    Object of = results.getObject(savedName);
-                    if (of == null) {
-                        return null;
-                    }
                     float f;
                     try {
-                        f = Float.valueOf(of.toString());
+                        f = Float.valueOf(s);
                         if (FloatTools.invalidFloat(f)) {
                             f = Float.NaN;
                         }
@@ -454,51 +448,39 @@ public class ColumnDefinition extends BaseData {
                     }
                     return f;
                 case Long:
-                    Object ol = results.getObject(savedName);
-                    if (ol == null) {
-                        return null;
-                    }
                     long l;
                     try {
-                        l = Long.valueOf(ol.toString());
+                        l = Long.valueOf(s);
                     } catch (Exception e) {
                         l = AppValues.InvalidLong;
                     }
                     return l;
                 case Integer:
-                    Object oi = results.getObject(savedName);
-                    if (oi == null) {
-                        return null;
-                    }
                     int i;
                     try {
-                        i = Integer.valueOf(oi.toString());
+                        i = Integer.valueOf(s);
                     } catch (Exception e) {
                         i = AppValues.InvalidInteger;
                     }
                     return i;
                 case Short:
-                    Object os = results.getObject(savedName);
-                    if (os == null) {
-                        return null;
-                    }
-                    short s;
+                    short ss;
                     try {
-                        s = Short.valueOf(os.toString());
+                        ss = Short.valueOf(s);
                     } catch (Exception e) {
-                        s = AppValues.InvalidShort;
+                        ss = AppValues.InvalidShort;
                     }
-                    return s;
+                    return ss;
                 case Boolean:
-                    return results.getBoolean(savedName);
+                    return StringTools.isTrue(s);
                 case Datetime:
-                    return results.getTimestamp(savedName);
+                    return DateTools.encodeDate(s);
                 case Date:
-                    return results.getDate(savedName);
-                case Blob:
-                    return results.getBlob(savedName);
-                case Clob:
-                    return results.getClob(savedName);
+                    return DateTools.encodeDate(s);
+//                case Blob:
+//                    return results.getBlob(savedName);
+//                case Clob:
+//                    return results.getClob(savedName);
                 default:
                     MyBoxLog.debug(savedName + " " + type);
             }
@@ -961,14 +943,6 @@ public class ColumnDefinition extends BaseData {
                 return Double.NaN;
             }
             switch (sourceType) {
-                case Double:
-                case Float:
-                case Long:
-                case Integer:
-                case Short:
-                case Latitude:
-                case Longitude:
-                    return Double.parseDouble(string.replaceAll(",", ""));
                 case Datetime:
                 case Date:
                 case Era:
@@ -976,7 +950,7 @@ public class ColumnDefinition extends BaseData {
                 case Boolean:
                     return StringTools.isTrue(string) ? 1 : 0;
                 default:
-                    return Double.NaN;
+                    return Double.parseDouble(string.replaceAll(",", ""));
             }
         } catch (Exception e) {
             return Double.NaN;

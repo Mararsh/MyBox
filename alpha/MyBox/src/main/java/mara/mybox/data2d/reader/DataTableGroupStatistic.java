@@ -79,6 +79,8 @@ public class DataTableGroupStatistic {
             }
             try ( ResultSet query = conn.prepareStatement(sql).executeQuery();
                      PreparedStatement insert = conn.prepareStatement(tableGroup.insertStatement());) {
+                String sIdColName = DerbyBase.savedName(mappedIdColName);
+                String sParameterName = DerbyBase.savedName(mappedParameterName);
                 while (query.next()) {
                     if (task == null || task.isCancelled()) {
                         query.close();
@@ -86,11 +88,11 @@ public class DataTableGroupStatistic {
                         conn.close();
                         return false;
                     }
-                    currentGroupid = query.getLong(mappedIdColName);
-                    currentParameterValue = query.getString(mappedParameterName);
+                    currentGroupid = query.getLong(sIdColName);
+                    currentParameterValue = query.getString(sParameterName);
                     Data2DRow data2DRow = tableGroup.newRow();
                     for (String name : calNames) {
-                        Object v = query.getObject(groups.groupColumnName(name));
+                        Object v = groups.groupColumn(name).value(query);
                         data2DRow.setColumnValue(groupColumnName(name), v);
                     }
                     if (groupid > 0 && groupid != currentGroupid) {
@@ -177,7 +179,7 @@ public class DataTableGroupStatistic {
 
             groupColumns = new ArrayList<>();
             for (String name : calNames) {
-                Data2DColumn c = groupResults.columnByName(groups.groupColumnName(name)).cloneAll();
+                Data2DColumn c = groups.groupColumn(name).cloneAll();
                 c.setD2cid(-1).setD2id(-1).setColumnName(name);
                 groupColumns.add(c);
             }
@@ -203,7 +205,7 @@ public class DataTableGroupStatistic {
             return null;
         }
         for (int i = 0; i < calNames.size(); i++) {
-            String tmpName = groups.groupColumnName(calNames.get(i));
+            String tmpName = groups.groupColumn(calNames.get(i)).getColumnName();
             if (sourceName.equals(tmpName)) {
                 return groupData.columnName(i + 1);
             }
@@ -328,8 +330,7 @@ public class DataTableGroupStatistic {
                 List<String> vrow = new ArrayList<>();
                 for (int i = 3; i < statisticData.getColumns().size(); i++) {
                     Data2DColumn column = statisticData.getColumns().get(i);
-                    String name = column.getColumnName();
-                    String s = column.toString(query.getObject(name));
+                    String s = column.toString(column.value(query));
                     vrow.add(s);
                 }
                 data.add(vrow);

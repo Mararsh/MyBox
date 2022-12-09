@@ -338,7 +338,8 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
                 invalid.clear();
                 sql = "SELECT * FROM Data2D_Definition WHERE data_type="
                         + Data2D.type(Data2DDefinition.Type.DatabaseTable)
-                        + " AND sheet like '" + TmpTable.TmpTablePrefix + "%'";
+                        + " AND ( sheet like '" + TmpTable.TmpTablePrefix + "%'"
+                        + " OR sheet like '" + TmpTable.TmpTablePrefix.toLowerCase() + "%' )";
                 try ( ResultSet results = conn.prepareStatement(sql).executeQuery()) {
                     while (results.next()) {
                         Data2DDefinition data = readData(results);

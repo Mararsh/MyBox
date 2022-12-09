@@ -436,7 +436,7 @@ public class DataTable extends Data2D {
         try ( PreparedStatement statement = conn.prepareStatement(sql);
                  ResultSet results = statement.executeQuery()) {
             if (results.next()) {
-                mode = results.getObject(colName);
+                mode = results.getObject(DerbyBase.savedName(colName));
             }
         } catch (Exception e) {
             if (task != null) {
@@ -487,13 +487,13 @@ public class DataTable extends Data2D {
                  ResultSet results = statement.executeQuery()) {
             Object first = null;
             if (results.next()) {
-                first = results.getObject(colName);
+                first = column.value(results);
             }
             if (num == 1) {
                 percentile = first;
             } else if (num == 2) {
                 if (results.next()) {
-                    Object second = results.getObject(colName);
+                    Object second = column.value(results);;
                     try {
                         double lower = Double.valueOf(first + "");
                         double upper = Double.valueOf(second + "");
@@ -664,9 +664,10 @@ public class DataTable extends Data2D {
             }
             try ( PreparedStatement statement = conn.prepareStatement(sql);
                      ResultSet results = statement.executeQuery()) {
+                String sname = DerbyBase.savedName(colName);
                 while (results.next() && task != null && !task.isCancelled()) {
                     row.clear();
-                    Object c = results.getObject(colName);
+                    Object c = results.getObject(sname);
                     row.add(c != null ? c.toString() : null);
                     int count = results.getInt("mybox99_count");
                     row.add(count + "");

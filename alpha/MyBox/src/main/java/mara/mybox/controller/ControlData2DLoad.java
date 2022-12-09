@@ -422,7 +422,8 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                         }
                         case DatabaseTable: {
                             String name = csvData.dataName();
-                            if (name.startsWith(TmpTable.TmpTablePrefix)) {
+                            if (name.startsWith(TmpTable.TmpTablePrefix)
+                                    || name.startsWith(TmpTable.TmpTablePrefix.toLowerCase())) {
                                 name = name.substring(TmpTable.TmpTablePrefix.length());
                             }
 

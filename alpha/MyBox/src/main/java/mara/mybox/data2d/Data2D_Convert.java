@@ -306,7 +306,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                     List<String> row = new ArrayList<>();
                     for (int col = 0; col < tcolsNumber; col++) {
                         Data2DColumn column = dataColumns.get(col);
-                        Object v = results.getObject(column.getColumnName());
+                        Object v = column.value(results);
                         row.add(column.toString(v));
                     }
                     csvPrinter.printRecord(row);
@@ -392,7 +392,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                     targetRow = targetSheet.createRow(++trowsNumber);
                     for (int col = 0; col < tcolsNumber; col++) {
                         Data2DColumn column = dataColumns.get(col);
-                        Object v = results.getObject(column.getColumnName());
+                        Object v = column.value(results);
                         Cell targetCell = targetRow.createCell(col, CellType.STRING);
                         targetCell.setCellValue(column.toString(v));
                     }
@@ -446,7 +446,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                     List<String> row = new ArrayList<>();
                     for (int col = 0; col < tcolsNumber; col++) {
                         Data2DColumn column = dataColumns.get(col);
-                        Object v = results.getObject(column.getColumnName());
+                        Object v = column.value(results);
                         row.add(column.toString(v));
                     }
                     rows.add(row);
@@ -543,7 +543,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                         fileRow.add(rowNumberName + count);
                     }
                     for (Data2DColumn column : db2Columns) {
-                        Object v = results.getObject(column.getColumnName());
+                        Object v = column.value(results);
                         String s = column.toString(v);
                         if (column.needScale()) {
                             s = DoubleTools.scaleString(s, invalidAs, dscale);

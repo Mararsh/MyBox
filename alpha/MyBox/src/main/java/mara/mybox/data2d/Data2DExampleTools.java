@@ -233,7 +233,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(isChinese ? "乡村(万人)" : "rural(ten thousand)", ColumnType.Double));
                 columns.add(new Data2DColumn(isChinese ? "家庭户规模(人/户)" : "family size", ColumnType.Double));
                 columns.add(new Data2DColumn(isChinese ? "0-14岁占比(%)" : "aged 0-14(%)", ColumnType.Double));
-                columns.add(new Data2DColumn(isChinese ? "15-64岁占比(%)" : ",aged 15-64(%)", ColumnType.Double));
+                columns.add(new Data2DColumn(isChinese ? "15-64岁占比(%)" : "aged 15-64(%)", ColumnType.Double));
                 columns.add(new Data2DColumn(isChinese ? "65岁及以上占比(%)" : "aged over 65(%)", ColumnType.Double));
                 columns.add(new Data2DColumn(isChinese ? "汉族(万人)" : "han nationality population(ten thousand)", ColumnType.Double));
                 columns.add(new Data2DColumn(isChinese ? "汉族占比(%)" : "han nationality precentage(%)", ColumnType.Double));
@@ -965,12 +965,14 @@ public class Data2DExampleTools {
                 if (line != null) {
                     List<Data2DColumn> columns = targetData.getColumns();
                     if (columns != null) {
-                        String header = "";
+                        String header = null;
                         for (Data2DColumn column : columns) {
-                            if (!header.isBlank()) {
-                                header += ",";
+                            String name = "\"" + column.getColumnName() + "\"";
+                            if (header == null) {
+                                header = name;
+                            } else {
+                                header += "," + name;
                             }
-                            header += column.getColumnName();
                         }
                         writer.write(header + System.lineSeparator());
                     } else {

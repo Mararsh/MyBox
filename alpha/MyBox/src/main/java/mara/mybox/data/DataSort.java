@@ -33,7 +33,7 @@ public class DataSort {
         }
         List<DataSort> sorts = new ArrayList<>();
         String descString = "-" + message("Descending");
-        String ascString = "-" + message("Descending");
+        String ascString = "-" + message("Ascending");
         int desclen = descString.length();
         int asclen = ascString.length();
         String sname;
@@ -59,7 +59,7 @@ public class DataSort {
         }
         List<String> names = new ArrayList<>();
         String descString = "-" + message("Descending");
-        String ascString = "-" + message("Descending");
+        String ascString = "-" + message("Ascending");
         int desclen = descString.length();
         int asclen = ascString.length();
         String sname;
@@ -91,7 +91,7 @@ public class DataSort {
                 orderBy += ", " + piece;
             }
         }
-        return orderBy == null ? "" : " ORDER BY " + orderBy;
+        return orderBy;
     }
 
     public static String parseToString(List<String> orders) {

@@ -15,6 +15,7 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
+import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.CsvTools;
@@ -93,7 +94,7 @@ public class TmpTable extends DataTable {
                 sourceReferColumns.add(sourceColumn);
                 sourceReferIndice.add(col);
                 Data2DColumn tableColumn = sourceColumn.cloneAll();
-                tableColumn.setD2cid(-1).setD2id(-1);
+                tableColumn.setD2cid(-1).setD2id(-1).setLength(StringMaxLength);
                 tableColumn.setType(forStatistic ? ColumnType.Double : ColumnType.String);
                 tmpColumns.add(tableColumn);
             }
@@ -158,7 +159,7 @@ public class TmpTable extends DataTable {
                 }
                 orderby = DataSort.toString(sorts);
             } else {
-                orderby = "";
+                orderby = null;
             }
         } catch (Exception e) {
             if (task != null) {
@@ -276,7 +277,7 @@ public class TmpTable extends DataTable {
     }
 
     public DataFileCSV sort(int maxSortResults) {
-        if (sourceData == null || orderby == null) {
+        if (sourceData == null) {
             return null;
         }
         List<Data2DColumn> targetColumns = new ArrayList<>();
@@ -292,7 +293,8 @@ public class TmpTable extends DataTable {
             targetColumns.add(column);
         }
         File csvFile = tmpFile(targetName, "sort", ".csv");
-        String sql = "SELECT * FROM " + sheet + orderby;
+        String sql = "SELECT * FROM " + sheet
+                + (orderby != null && !orderby.isBlank() ? " ORDER BY " + orderby : "");
         if (maxSortResults > 0) {
             sql += " FETCH FIRST " + maxSortResults + " ROWS ONLY";
         }
@@ -306,12 +308,13 @@ public class TmpTable extends DataTable {
             }
             long count = 0;
             int offset = includeRowNumber ? 2 : 1;
+            String numberName = columnName(1);
             while (query.next() && task != null && !task.isCancelled()) {
                 Data2DRow dataRow = tableData2D.readData(query);
                 List<String> rowValues = new ArrayList<>();
                 if (includeRowNumber) {
-                    Object v = dataRow.getColumnValue(message("SourceRowNumber"));
-                    rowValues.add(v + "");
+                    Object v = dataRow.getColumnValue(numberName);
+                    rowValues.add(v == null ? null : v + "");
                 }
                 for (int i = 0; i < sourcePickIndice.size(); i++) {
                     Data2DColumn tmpColumn = columns.get(i + offset);
@@ -373,8 +376,9 @@ public class TmpTable extends DataTable {
                 }
                 try ( PreparedStatement statement = conn.prepareStatement(sql);
                          ResultSet results = statement.executeQuery()) {
+                    String sname = DerbyBase.savedName(columnName);
                     while (results.next() && task != null && !task.isCancelled()) {
-                        rowValues.add(results.getString(columnName));
+                        rowValues.add(results.getString(sname));
                     }
                 } catch (Exception e) {
                     if (task != null) {
@@ -572,6 +576,10 @@ public class TmpTable extends DataTable {
 
     public List<String> getOrders() {
         return orders;
+    }
+
+    public String getOrderby() {
+        return orderby;
     }
 
     public List<String> getGroupEqualColumnNames() {
