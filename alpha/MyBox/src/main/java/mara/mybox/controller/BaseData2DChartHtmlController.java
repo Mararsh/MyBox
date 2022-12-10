@@ -138,12 +138,6 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
     }
 
     @Override
-    public void objectChanged() {
-        super.objectChanged();
-        okAction();
-    }
-
-    @Override
     public boolean showRowNumber() {
         return true;
     }

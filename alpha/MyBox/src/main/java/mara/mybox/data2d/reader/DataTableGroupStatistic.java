@@ -92,7 +92,7 @@ public class DataTableGroupStatistic {
                     currentParameterValue = query.getString(sParameterName);
                     Data2DRow data2DRow = tableGroup.newRow();
                     for (String name : calNames) {
-                        Object v = groups.groupColumn(name).value(query);
+                        Object v = groupColumn(name).value(query);
                         data2DRow.setColumnValue(groupColumnName(name), v);
                     }
                     if (groupid > 0 && groupid != currentGroupid) {
@@ -147,7 +147,7 @@ public class DataTableGroupStatistic {
                 valuesColumns.add(new Data2DColumn(message("Group") + "_" + message(type.name()),
                         ColumnType.Double, 150));
             }
-            String dname = groupResults.dataName() + "_" + message("Statistic");
+            String dname = DerbyBase.appendIdentifier(groupResults.dataName(), "_" + message("Statistic"));
             statisticData = DataTable.createTable(task, conn, dname, valuesColumns, null, null, null, true);
             statisticData.setDataName(dname).setScale(scale);
             tableStatistic = statisticData.getTableData2D();
@@ -179,11 +179,12 @@ public class DataTableGroupStatistic {
 
             groupColumns = new ArrayList<>();
             for (String name : calNames) {
-                Data2DColumn c = groups.groupColumn(name).cloneAll();
+                Data2DColumn c = groupColumn(name).cloneAll();
                 c.setD2cid(-1).setD2id(-1).setColumnName(name);
                 groupColumns.add(c);
             }
-            groupData = DataTable.createTable(task, conn, groupColumns);
+            String gname = DerbyBase.appendIdentifier(groupResults.dataName(), "_" + message("Group"));
+            groupData = DataTable.createTable(task, conn, gname, groupColumns, null, null, null, true);
             tableGroup = groupData.getTableData2D();
 
             groupid = 0;
@@ -200,17 +201,22 @@ public class DataTableGroupStatistic {
         }
     }
 
-    public String groupColumnName(String sourceName) {
+    public Data2DColumn groupColumn(String sourceName) {
         if (sourceName == null) {
             return null;
         }
-        for (int i = 0; i < calNames.size(); i++) {
-            String tmpName = groups.groupColumn(calNames.get(i)).getColumnName();
-            if (sourceName.equals(tmpName)) {
-                return groupData.columnName(i + 1);
+        for (int i = 0; i < groups.tmpData.getSourcePickIndice().size(); i++) {
+            int col = groups.tmpData.getSourcePickIndice().get(i);
+            if (sourceName.equals(groups.originalData.columnName(col))) {
+                return groupResults.column(i + 3);
             }
         }
         return null;
+    }
+
+    public String groupColumnName(String sourceName) {
+        Data2DColumn column = groupColumn(sourceName);
+        return column == null ? null : column.getColumnName();
     }
 
     private void statistic() {
@@ -325,6 +331,9 @@ public class DataTableGroupStatistic {
         List<List<String>> data = new ArrayList<>();
         String sql = "SELECT * FROM " + statisticData.getSheet()
                 + " WHERE " + statisticData.columnName(1) + "=" + groupid;
+        if (task != null) {
+            task.setInfo(sql);
+        }
         try ( ResultSet query = qconn.prepareStatement(sql).executeQuery()) {
             while (query.next() && qconn != null && !qconn.isClosed()) {
                 List<String> vrow = new ArrayList<>();
@@ -337,7 +346,7 @@ public class DataTableGroupStatistic {
             }
             return data;
         } catch (Exception e) {
-            MyBoxLog.console(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

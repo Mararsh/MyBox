@@ -36,12 +36,11 @@ public class TmpTable extends DataTable {
     protected List<Data2DColumn> sourceReferColumns;
     protected List<Integer> sourcePickIndice, sourceReferIndice;
     protected List<String> orders, groupEqualColumnNames;
-    protected int valueColumnIndex, equalColumnIndex, rangeColumnIndex, sortStartIndex;
-    protected String targetName, groupRangleColumnName, orderby;
+    protected int valueIndexOffset;
+    protected String targetName, groupRangleColumnName, tmpOrderby;
     protected boolean importData, forStatistic, includeRowNumber, includeColName;
     protected ColumnType groupRangeColumnType;
     protected InvalidAs invalidAs;
-    protected List<DataSort> sorts;
     protected List<List<String>> importRows;
 
     public TmpTable() {
@@ -56,13 +55,12 @@ public class TmpTable extends DataTable {
         groupEqualColumnNames = null;
         groupRangleColumnName = null;
         importData = forStatistic = includeRowNumber = includeColName = false;
-        valueColumnIndex = equalColumnIndex = rangeColumnIndex = sortStartIndex = -1;
+        valueIndexOffset = -1;
         invalidAs = InvalidAs.Skip;
         groupRangeColumnType = null;
         targetName = null;
         importRows = null;
-        sorts = null;
-        orderby = "";
+        tmpOrderby = "";
     }
 
     public boolean createTable() {
@@ -80,11 +78,11 @@ public class TmpTable extends DataTable {
             if (sourceColumns == null || sourceColumns.isEmpty()) {
                 return false;
             }
-            valueColumnIndex = 1;
+            valueIndexOffset = 1;
             List<Data2DColumn> tmpColumns = new ArrayList<>();
             if (includeRowNumber) {
                 tmpColumns.add(new Data2DColumn(message("SourceRowNumber"), ColumnType.Long));
-                valueColumnIndex++;
+                valueIndexOffset++;
             }
             sourceReferIndice = new ArrayList<>();
             sourceReferColumns = new ArrayList<>();
@@ -98,10 +96,8 @@ public class TmpTable extends DataTable {
                 tableColumn.setType(forStatistic ? ColumnType.Double : ColumnType.String);
                 tmpColumns.add(tableColumn);
             }
-            equalColumnIndex = rangeColumnIndex = -1;
             groupRangeColumnType = null;
             if (groupEqualColumnNames != null && !groupEqualColumnNames.isEmpty()) {
-                equalColumnIndex = sourceReferIndice.size();
                 for (String name : groupEqualColumnNames) {
                     Data2DColumn sourceColumn = sourceData.columnByName(name);
                     sourceReferColumns.add(sourceColumn);
@@ -111,7 +107,6 @@ public class TmpTable extends DataTable {
                     sourceReferIndice.add(sourceData.colOrder(name));
                 }
             } else if (groupRangleColumnName != null && !groupRangleColumnName.isBlank()) {
-                rangeColumnIndex = sourceReferIndice.size();
                 Data2DColumn sourceColumn = sourceData.columnByName(groupRangleColumnName);
                 groupRangeColumnType = sourceColumn.getType();
                 sourceReferColumns.add(sourceColumn);
@@ -120,8 +115,7 @@ public class TmpTable extends DataTable {
                 tmpColumns.add(tableColumn);
                 sourceReferIndice.add(sourceData.colOrder(groupRangleColumnName));
             }
-            sortStartIndex = -1;
-            sorts = null;
+            int sortStartIndex = -1;
             if (orders != null && !orders.isEmpty()) {
                 sortStartIndex = sourceReferIndice.size();
                 List<String> sortNames = DataSort.parseNames(orders);
@@ -147,19 +141,21 @@ public class TmpTable extends DataTable {
                 importData(conn);
             }
             if (sortStartIndex > 0) {
-                sorts = DataSort.parse(orders);
+                List<DataSort> sorts = DataSort.parse(orders);
+                List<DataSort> tmpsorts = new ArrayList<>();
                 for (DataSort sort : sorts) {
                     String sortName = sort.getName();
                     for (int i = sortStartIndex; i < sourceReferColumns.size(); i++) {
                         if (sortName.equals(sourceReferColumns.get(i).getColumnName())) {
-                            sort.setName(columnName(i + valueColumnIndex));
+                            sortName = columnName(i + valueIndexOffset);
                             break;
                         }
                     }
+                    tmpsorts.add(new DataSort(sortName, sort.isAscending()));
                 }
-                orderby = DataSort.toString(sorts);
+                tmpOrderby = DataSort.toString(tmpsorts);
             } else {
-                orderby = null;
+                tmpOrderby = null;
             }
         } catch (Exception e) {
             if (task != null) {
@@ -201,17 +197,17 @@ public class TmpTable extends DataTable {
         }
     }
 
+    // sourceRow should include values of all source columns
     public void makeTmpRow(Data2DRow data2DRow, List<String> sourceRow) {
         try {
             int len = sourceRow.size();
-            int offset = includeRowNumber ? 2 : 1;
             for (int i = 0; i < sourceReferIndice.size(); i++) {
                 int col = sourceReferIndice.get(i);
                 if (col < 0 || col >= len) {
                     continue;
                 }
                 Data2DColumn sourceColumn = sourceData.column(col);
-                Data2DColumn targetColumn = column(i + offset);
+                Data2DColumn targetColumn = column(i + valueIndexOffset);
                 String sourceValue = sourceRow.get(col);
                 Object tmpValue;
                 switch (targetColumn.getType()) {
@@ -294,7 +290,7 @@ public class TmpTable extends DataTable {
         }
         File csvFile = tmpFile(targetName, "sort", ".csv");
         String sql = "SELECT * FROM " + sheet
-                + (orderby != null && !orderby.isBlank() ? " ORDER BY " + orderby : "");
+                + (tmpOrderby != null && !tmpOrderby.isBlank() ? " ORDER BY " + tmpOrderby : "");
         if (maxSortResults > 0) {
             sql += " FETCH FIRST " + maxSortResults + " ROWS ONLY";
         }
@@ -307,7 +303,6 @@ public class TmpTable extends DataTable {
                 csvPrinter.printRecord(names);
             }
             long count = 0;
-            int offset = includeRowNumber ? 2 : 1;
             String numberName = columnName(1);
             while (query.next() && task != null && !task.isCancelled()) {
                 Data2DRow dataRow = tableData2D.readData(query);
@@ -317,7 +312,7 @@ public class TmpTable extends DataTable {
                     rowValues.add(v == null ? null : v + "");
                 }
                 for (int i = 0; i < sourcePickIndice.size(); i++) {
-                    Data2DColumn tmpColumn = columns.get(i + offset);
+                    Data2DColumn tmpColumn = columns.get(i + valueIndexOffset);
                     Object v = dataRow.getColumnValue(tmpColumn.getColumnName());
                     rowValues.add(v == null ? null : v + "");
                 }
@@ -437,27 +432,6 @@ public class TmpTable extends DataTable {
         }
     }
 
-    public String tmpGroupEqualColumnName(String sourceName) {
-        try {
-            if (sourceName == null || valueColumnIndex <= 0) {
-                return null;
-            }
-            for (int i = equalColumnIndex; i < equalColumnIndex + groupEqualColumnNames.size(); i++) {
-                if (sourceName.equals(sourceData.columnName(sourceReferIndice.get(i)))) {
-                    return columnName(i + valueColumnIndex);
-                }
-            }
-            return null;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            } else {
-                MyBoxLog.error(e.toString());
-            }
-            return null;
-        }
-    }
-
     /* 
         static
      */
@@ -558,10 +532,6 @@ public class TmpTable extends DataTable {
         return sourceData;
     }
 
-    public static String getTmpTablePrefix() {
-        return TmpTablePrefix;
-    }
-
     public List<Integer> getSourcePickIndice() {
         return sourcePickIndice;
     }
@@ -578,28 +548,16 @@ public class TmpTable extends DataTable {
         return orders;
     }
 
-    public String getOrderby() {
-        return orderby;
+    public String getTmpOrderby() {
+        return tmpOrderby;
     }
 
     public List<String> getGroupEqualColumnNames() {
         return groupEqualColumnNames;
     }
 
-    public int getValueColumnIndex() {
-        return valueColumnIndex;
-    }
-
-    public int getEqualColumnIndex() {
-        return equalColumnIndex;
-    }
-
-    public int getRangeColumnIndex() {
-        return rangeColumnIndex;
-    }
-
-    public int getSortStartIndex() {
-        return sortStartIndex;
+    public int getValueIndexOffset() {
+        return valueIndexOffset;
     }
 
     public String getTargetName() {

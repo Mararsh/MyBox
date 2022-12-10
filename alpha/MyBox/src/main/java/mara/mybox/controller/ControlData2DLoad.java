@@ -253,7 +253,10 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 super.finalAction();
                 data2D.stopTask();
                 task = null;
+                Data2D s = data2D;
+                data2D = null;
                 resetView(false);
+                data2D = s;
                 if (dataController != null) {
                     dataController.loadData(data2D);   // Load data whatever
                 } else {

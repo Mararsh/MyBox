@@ -859,14 +859,10 @@ public class DerbyBase {
     }
 
     public static String appendIdentifier(String name, String suffix) {
-        if (name == null) {
+        if (name == null || suffix == null || suffix.isBlank()) {
             return null;
         }
-        if (name.startsWith("\"") && name.endsWith("\"")) {
-            return name.substring(0, name.length() - 1) + suffix + "\"";
-        } else {
-            return name + suffix;
-        }
+        return fixedIdentifier((name + suffix).replaceAll("\"", ""));
     }
 
     public static String checkIdentifier(List<String> names, String name, boolean add) {
@@ -891,8 +887,11 @@ public class DerbyBase {
         if (referedName == null) {
             return null;
         }
-        return referedName.startsWith("\"") && referedName.endsWith("\"")
-                ? referedName.substring(1, referedName.length() - 1) : referedName.toUpperCase();
+        if (referedName.startsWith("\"") && referedName.endsWith("\"")) {
+            return referedName.substring(1, referedName.length() - 1);
+        } else {
+            return referedName.toUpperCase();
+        }
     }
 
 }

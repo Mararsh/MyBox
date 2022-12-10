@@ -282,7 +282,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             if (isSettingValues) {
                 return true;
             }
-            outOptionsError(null);
             if (data2D == null || !data2D.hasData()) {
                 outOptionsError(message("NoData"));
                 return false;
@@ -299,6 +298,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
 
     public void outOptionsError(String error) {
         if (error != null && !error.isBlank()) {
+            MyBoxLog.error(error);
             popError(error);
         }
     }
@@ -519,7 +519,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             }
             tmpTable.setTask(task);
             if (!isAllPages()) {
-                outputData = tableFiltered(colIndices, needRowNumber);
+                outputData = tableFiltered(data2D.columnIndices(), needRowNumber);
                 if (outputData == null || outputData.isEmpty()) {
                     return null;
                 }

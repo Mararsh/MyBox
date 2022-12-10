@@ -133,8 +133,8 @@ public class Data2DExampleTools {
                 DataFileCSV data = new DataFileCSV();
                 List<Data2DColumn> columns = new ArrayList<>();
                 columns.add(new Data2DColumn(message("Time"), ColumnType.Datetime, true, true).setWidth(180));
-                columns.add(new Data2DColumn(message("Left"), ColumnType.Short));
-                columns.add(new Data2DColumn(message("Right"), ColumnType.Short));
+                columns.add(new Data2DColumn(isChinese ? "左眼" : "left eye", ColumnType.Short));
+                columns.add(new Data2DColumn(isChinese ? "右眼" : "right eye", ColumnType.Short));
                 columns.add(new Data2DColumn(isChinese ? "基弧" : "Radian", ColumnType.Short));
                 columns.add(new Data2DColumn(message("Comments"), ColumnType.String, 300));
                 data.setColumns(columns).setDataName(message("Eyesight"));
@@ -211,7 +211,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(isChinese ? "男性人口(万人)" : "male(ten thousand)", ColumnType.Double));
                 columns.add(new Data2DColumn(isChinese ? "女性人口(万人)" : "female(ten thousand)", ColumnType.Double));
                 columns.add(new Data2DColumn(isChinese ? "城镇人口(万人)" : "urban(ten thousand)", ColumnType.Double));
-                columns.add(new Data2DColumn(isChinese ? "乡村人口(万人)" : "rural(ten thousand)   ", ColumnType.Double));
+                columns.add(new Data2DColumn(isChinese ? "乡村人口(万人)" : "rural(ten thousand)", ColumnType.Double));
                 data.setColumns(columns).setDataName(message("ChinaPopulation"))
                         .setComments("https://data.stats.gov.cn/index.htm");
                 if (makeExampleFile(lang, "ChinaPopulation", data)) {

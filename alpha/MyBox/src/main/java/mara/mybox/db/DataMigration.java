@@ -76,15 +76,14 @@ public class DataMigration {
     public static boolean checkUpdates() {
         SystemConfig.setString("CurrentVersion", AppValues.AppVersion);
         try ( Connection conn = DerbyBase.getConnection()) {
-            reloadInternalDoc();
-            reloadInternalData();
-
             int lastVersion = DevTools.lastVersion(conn);
             int currentVersion = DevTools.myboxVersion(AppValues.AppVersion);
             if (lastVersion == currentVersion) {
                 return true;
             }
             MyBoxLog.info("Last version: " + lastVersion + " " + "Current version: " + currentVersion);
+            reloadInternalDoc();
+            reloadInternalData();
             if (lastVersion > 0) {
 
                 if (lastVersion < 6002001) {
