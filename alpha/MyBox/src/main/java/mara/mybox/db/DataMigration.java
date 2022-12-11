@@ -16,7 +16,6 @@ import mara.mybox.bufferedimage.ImageConvertTools;
 import mara.mybox.data.GeoCoordinateSystem;
 import static mara.mybox.data2d.Data2D_Convert.createTable;
 import mara.mybox.data2d.DataTable;
-import static mara.mybox.db.DerbyBase.BatchSize;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorPaletteName;
 import mara.mybox.db.data.ColumnDefinition;
@@ -279,7 +278,7 @@ public class DataMigration {
                         data2DRow.setColumnValue(message("Image"), query.getString("dataset_image"));
                         data2DRow.setColumnValue(message("Comments"), query.getString("location_comments"));
                         tableLocations.insertData(conn, insert, data2DRow);
-                        if (++count % DerbyBase.BatchSize == 0) {
+                        if (++count % Database.BatchSize == 0) {
                             conn.commit();
                         }
                     } catch (Exception e) {
@@ -379,7 +378,7 @@ public class DataMigration {
                         data2DRow.setColumnValue(message("Source"), source);
 
                         tableReports.insertData(conn, insert, data2DRow);
-                        if (++count % DerbyBase.BatchSize == 0) {
+                        if (++count % Database.BatchSize == 0) {
                             conn.commit();
                         }
                     } catch (Exception e) {
@@ -1274,7 +1273,7 @@ public class DataMigration {
                     GeographyCode code = TableGeographyCode.readResults(results);
                     TableGeographyCode.setUpdate(conn, update, code);
                     update.addBatch();
-                    if (++count % BatchSize == 0) {
+                    if (++count % Database.BatchSize == 0) {
                         update.executeBatch();
                         conn.commit();
                     }

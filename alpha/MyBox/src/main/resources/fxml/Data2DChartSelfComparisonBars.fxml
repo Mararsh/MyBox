@@ -226,7 +226,7 @@ License:    Apache License Version 2.0
                                                                                 <FlowPane fx:id="otherColumnsPane" hgap="2.0" vgap="2.0" />
                                                                             </children>
                                                                         </VBox>
-                                                                        <fx:include fx:id="sort" minHeight="100.0" prefHeight="200.0" source="ControlSelection.fxml" />
+                                                                        <fx:include fx:id="sort" minHeight="200.0" prefHeight="200.0" source="ControlSelection.fxml" />
                                                                         <FlowPane fx:id="maxPane" hgap="2.0" vgap="2.0">
                                                                             <children>
                                                                                 <Label minHeight="-Infinity" text="%MaxSortedRowsTake" wrapText="true" />

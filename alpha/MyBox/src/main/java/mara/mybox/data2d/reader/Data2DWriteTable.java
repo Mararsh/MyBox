@@ -5,7 +5,7 @@ import java.sql.PreparedStatement;
 import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.data2d.DataTable;
-import mara.mybox.db.DerbyBase;
+import mara.mybox.db.Database;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
@@ -82,7 +82,7 @@ public class Data2DWriteTable extends Data2DOperator {
             }
             if (writerTableData2D.setInsertStatement(conn, insert, data2DRow)) {
                 insert.addBatch();
-                if (++count % DerbyBase.BatchSize == 0) {
+                if (++count % Database.BatchSize == 0) {
                     insert.executeBatch();
                     conn.commit();
                     if (task != null) {

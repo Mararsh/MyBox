@@ -13,6 +13,7 @@ import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
+import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
@@ -104,7 +105,7 @@ public class DataTableGroupStatistic {
                     }
                     if (tableGroup.setInsertStatement(conn, insert, data2DRow)) {
                         insert.addBatch();
-                        if (++count % DerbyBase.BatchSize == 0) {
+                        if (++count % Database.BatchSize == 0) {
                             insert.executeBatch();
                             conn.commit();
                             if (task != null) {
@@ -256,7 +257,7 @@ public class DataTableGroupStatistic {
                 }
                 if (tableStatistic.setInsertStatement(conn, statisticInsert, data2DRow)) {
                     statisticInsert.addBatch();
-                    if (++statisticRowsCount % DerbyBase.BatchSize == 0) {
+                    if (++statisticRowsCount % Database.BatchSize == 0) {
                         statisticInsert.executeBatch();
                         conn.commit();
                         if (task != null) {

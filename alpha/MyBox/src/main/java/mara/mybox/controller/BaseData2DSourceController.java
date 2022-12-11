@@ -215,6 +215,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
             }
             isSettingValues = false;
             restoreSelections();
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             isSettingValues = false;

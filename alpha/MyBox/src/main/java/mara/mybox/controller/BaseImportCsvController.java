@@ -13,6 +13,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Tab;
 import mara.mybox.data.FileInformation;
+import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.BaseTable;
@@ -270,7 +271,7 @@ public abstract class BaseImportCsvController<D> extends BaseBatchFileController
                                     + dataValues(data), true);
                         }
                     }
-                    if (importCount % DerbyBase.BatchSize == 0) {
+                    if (importCount % Database.BatchSize == 0) {
                         conn.commit();
                     }
                 }

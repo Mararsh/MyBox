@@ -4,7 +4,7 @@ import java.sql.Connection;
 import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.data2d.DataTable;
-import mara.mybox.db.DerbyBase;
+import mara.mybox.db.Database;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
@@ -49,7 +49,7 @@ public class Data2DSingleColumn extends Data2DOperator {
                     if (targetColumn != null) {
                         data2DRow.setColumnValue("data", targetColumn.fromString(value, InvalidAs.Blank));
                         writerTableData2D.insertData(conn, data2DRow);
-                        if (++count % DerbyBase.BatchSize == 0) {
+                        if (++count % Database.BatchSize == 0) {
                             conn.commit();
                         }
                     }

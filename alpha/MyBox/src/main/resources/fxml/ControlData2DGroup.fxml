@@ -22,91 +22,91 @@ License:    Apache License Version 2.0
 
 <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DGroup">
     <children>
-                      <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
-                          <children>
-                              <Label text="%By" />
-                              <RadioButton fx:id="valuesRadio" mnemonicParsing="false" selected="true" text="%EqualValues">
-               <toggleGroup>
-                  <ToggleGroup fx:id="typeGroup" />
-               </toggleGroup>
-                              </RadioButton>
-                              <RadioButton fx:id="valueRangeRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%ValueRange" toggleGroup="$typeGroup" />
-                              <RadioButton fx:id="conditionsRadio" layoutX="194.0" layoutY="10.0" mnemonicParsing="false" text="%Conditions" toggleGroup="$typeGroup" />
-            <RadioButton fx:id="rowsRangeRadio" layoutX="26.0" layoutY="10.0" mnemonicParsing="false" text="%RowsRange" toggleGroup="$typeGroup" />
-                          </children>
-                      </FlowPane>
-                      <VBox fx:id="groupBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
-                          <children>
-                              <VBox fx:id="columnsBox">
-                                  <children>
-                                      <fx:include fx:id="columns" minHeight="-Infinity" prefHeight="300.0" source="ControlSelection.fxml" />
-                                  </children>
-                              </VBox>
-                              <HBox fx:id="columnBox" alignment="CENTER_LEFT" layoutX="10.0" layoutY="294.0" spacing="2.0">
-                                  <children>
-                                      <Label text="%Column" />
-                                      <ComboBox fx:id="columnSelector" prefWidth="200.0" />
-                                  </children>
-                              </HBox>
-            <VBox fx:id="valueSplitBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-               <children>
-                  <fx:include fx:id="valueSplit" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DSplit.fxml" VBox.vgrow="ALWAYS" />
-               </children>
-            </VBox>
-            <VBox fx:id="rowsSplitBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-               <children>
-                  <fx:include fx:id="rowsSplit" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlSplit.fxml" VBox.vgrow="ALWAYS" />
-               </children>
-            </VBox>
-                              <VBox fx:id="conditionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
-                                  <children>
-                                      <HBox alignment="CENTER_LEFT" spacing="5.0">
-                     <children>
-                        <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#deleteAction">
-                           <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../buttons/Red/iconDelete.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                        <Button fx:id="editButton" disable="true" layoutX="51.0" layoutY="10.0" mnemonicParsing="false" onAction="#editAction">
-                           <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../buttons/Red/iconEdit.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                        <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction">
-                           <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../buttons/Red/iconAdd.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                     </children>
-                                      </HBox>
-                                      <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
-                                          <columns>
-                                              <TableColumn fx:id="conditionColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="300.0" text="%Expression" />
-                        <TableColumn fx:id="reverseColumn" editable="false" maxWidth="1.7976931348623157E308" text="%Reverse" />
-                        <TableColumn fx:id="maxColumn" editable="false" maxWidth="1.7976931348623157E308" text="%MaxLines" />
-                                          </columns>
-                                      </TableView>
-                                  </children>
-                              </VBox>
-            <VBox fx:id="labelBox" spacing="2.0">
-               <children>
-                  <Separator prefWidth="200.0" />
-                  <Label fx:id="commentsLabel" minHeight="-Infinity" wrapText="true" />
-               </children>
-            </VBox>
-                          </children>
-                      </VBox>
+        <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
+            <children>
+                <Label text="%By" />
+                <RadioButton fx:id="valuesRadio" mnemonicParsing="false" selected="true" text="%EqualValues">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="typeGroup" />
+                    </toggleGroup>
+                </RadioButton>
+                <RadioButton fx:id="valueRangeRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%ValueRange" toggleGroup="$typeGroup" />
+                <RadioButton fx:id="conditionsRadio" layoutX="194.0" layoutY="10.0" mnemonicParsing="false" text="%Conditions" toggleGroup="$typeGroup" />
+                <RadioButton fx:id="rowsRangeRadio" layoutX="26.0" layoutY="10.0" mnemonicParsing="false" text="%RowsRange" toggleGroup="$typeGroup" />
+            </children>
+        </FlowPane>
+        <VBox fx:id="groupBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
+            <children>
+                <VBox fx:id="columnsBox">
+                    <children>
+                        <fx:include fx:id="columns"  minHeight="200.0"  prefHeight="300.0" source="ControlSelection.fxml" />
+                    </children>
+                </VBox>
+                <HBox fx:id="columnBox" alignment="CENTER_LEFT" layoutX="10.0" layoutY="294.0" spacing="2.0">
+                    <children>
+                        <Label text="%Column" />
+                        <ComboBox fx:id="columnSelector" prefWidth="200.0" />
+                    </children>
+                </HBox>
+                <VBox fx:id="valueSplitBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                    <children>
+                        <fx:include fx:id="valueSplit" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DSplit.fxml" VBox.vgrow="ALWAYS" />
+                    </children>
+                </VBox>
+                <VBox fx:id="rowsSplitBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                    <children>
+                        <fx:include fx:id="rowsSplit" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlSplit.fxml" VBox.vgrow="ALWAYS" />
+                    </children>
+                </VBox>
+                <VBox fx:id="conditionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="5.0">
+                            <children>
+                                <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#deleteAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/Red/iconDelete.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="editButton" disable="true" layoutX="51.0" layoutY="10.0" mnemonicParsing="false" onAction="#editAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/Red/iconEdit.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/Red/iconAdd.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                            </children>
+                        </HBox>
+                        <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="conditionColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="300.0" text="%Expression" />
+                                <TableColumn fx:id="reverseColumn" editable="false" maxWidth="1.7976931348623157E308" text="%Reverse" />
+                                <TableColumn fx:id="maxColumn" editable="false" maxWidth="1.7976931348623157E308" text="%MaxLines" />
+                            </columns>
+                        </TableView>
+                    </children>
+                </VBox>
+                <VBox fx:id="labelBox" spacing="2.0">
+                    <children>
+                        <Separator prefWidth="200.0" />
+                        <Label fx:id="commentsLabel" minHeight="-Infinity" wrapText="true" />
+                    </children>
+                </VBox>
+            </children>
+        </VBox>
     </children>
 </VBox>

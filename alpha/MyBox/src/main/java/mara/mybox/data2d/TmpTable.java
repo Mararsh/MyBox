@@ -10,6 +10,7 @@ import java.util.List;
 import mara.mybox.data.DataSort;
 import static mara.mybox.data2d.Data2D_Convert.createTable;
 import mara.mybox.data2d.reader.Data2DWriteTmpTable;
+import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
@@ -246,7 +247,7 @@ public class TmpTable extends DataTable {
                 makeTmpRow(data2DRow, values);
                 if (tableData2D.setInsertStatement(conn, insert, data2DRow)) {
                     insert.addBatch();
-                    if (++count % DerbyBase.BatchSize == 0) {
+                    if (++count % Database.BatchSize == 0) {
                         insert.executeBatch();
                         conn.commit();
                         if (task != null) {

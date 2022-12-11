@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.DataTable;
+import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
@@ -129,7 +130,7 @@ public class DataTableWriter extends Data2DWriter {
             }
             if (tableData2D.setUpdateStatement(conn, update, sourceTableRow)) {
                 update.addBatch();
-                if (++count % DerbyBase.BatchSize == 0) {
+                if (++count % Database.BatchSize == 0) {
                     update.executeBatch();
                     conn.commit();
                     if (task != null) {
@@ -153,7 +154,7 @@ public class DataTableWriter extends Data2DWriter {
             }
             if (tableData2D.setDeleteStatement(conn, delete, sourceTableRow)) {
                 delete.addBatch();
-                if (++count % DerbyBase.BatchSize == 0) {
+                if (++count % Database.BatchSize == 0) {
                     delete.executeBatch();
                     conn.commit();
                     if (task != null) {

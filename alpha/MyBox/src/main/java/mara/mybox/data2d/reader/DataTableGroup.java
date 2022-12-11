@@ -20,6 +20,7 @@ import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFilter;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.TmpTable;
+import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
@@ -829,7 +830,7 @@ public class DataTableGroup {
                     }
                     if (tableTarget.setInsertStatement(conn, insert, data2DRow)) {
                         insert.addBatch();
-                        if (++count % DerbyBase.BatchSize == 0) {
+                        if (++count % Database.BatchSize == 0) {
                             insert.executeBatch();
                             conn.commit();
                             if (task != null) {

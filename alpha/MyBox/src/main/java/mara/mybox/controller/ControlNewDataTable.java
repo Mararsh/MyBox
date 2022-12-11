@@ -10,6 +10,7 @@ import javafx.scene.control.ToggleGroup;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.DataTable;
+import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
@@ -228,7 +229,7 @@ public class ControlNewDataTable extends BaseController {
                         sourceColumn.fromString(pageRow.get(col + 1), invalidAs));
             }
             tableData2D.insertData(conn, data2DRow);
-            if (++count % DerbyBase.BatchSize == 0) {
+            if (++count % Database.BatchSize == 0) {
                 conn.commit();
                 taskController.updateLogs(message("Imported") + ": " + count);
             }

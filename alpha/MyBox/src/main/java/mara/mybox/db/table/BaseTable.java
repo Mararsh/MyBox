@@ -13,8 +13,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import mara.mybox.data.StringTable;
+import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.BatchSize;
 import mara.mybox.db.data.BaseData;
 import mara.mybox.db.data.BaseDataAdaptor;
 import mara.mybox.db.data.ColumnDefinition;
@@ -1391,7 +1391,7 @@ public abstract class BaseTable<D> {
                     continue;
                 }
                 statement.addBatch();
-                if (i > 0 && (i % BatchSize == 0)) {
+                if (i > 0 && (i % Database.BatchSize == 0)) {
                     int[] res = statement.executeBatch();
                     for (int r : res) {
                         if (r > 0) {
@@ -1497,7 +1497,7 @@ public abstract class BaseTable<D> {
                     continue;
                 }
                 statement.addBatch();
-                if (i > 0 && (i % BatchSize == 0)) {
+                if (i > 0 && (i % Database.BatchSize == 0)) {
                     int[] res = statement.executeBatch();
                     for (int r : res) {
                         if (r > 0) {
