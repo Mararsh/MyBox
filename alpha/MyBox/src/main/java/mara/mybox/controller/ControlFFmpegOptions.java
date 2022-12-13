@@ -1,7 +1,7 @@
 package mara.mybox.controller;
 
-import com.github.kokorin.jaffree.ffprobe.FFprobeResult;
-import com.github.kokorin.jaffree.ffprobe.Stream;
+//import com.github.kokorin.jaffree.ffprobe.FFprobeResult;
+//import com.github.kokorin.jaffree.ffprobe.Stream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.nio.charset.Charset;
@@ -24,6 +24,7 @@ import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -42,15 +43,13 @@ import mara.mybox.value.UserConfig;
 // http://www.luyixian.cn/news_show_306225.aspx
 public class ControlFFmpegOptions extends BaseController {
 
+    protected BaseTaskController taskController;
     protected String executableName, executableDefault;
     protected File executable;
-    protected FFprobeResult probeResult;
     protected List<String> dataTypes;
-    protected Stream audioStream, videoStream;
-    protected List<Stream> otherStreams;
     protected SingletonTask encoderTask, muxerTask, queryTask;
     protected String muxer, videoCodec, audioCodec, subtitleCodec, aspect, x264preset, volumn;
-    protected boolean disableVideo, disbaleAudio, disbaleSubtitle;
+    protected boolean disableVideo, disableAudio, disableSubtitle;
     protected long mediaStart;
     protected int width, height, crf;
     protected float videoFrameRate, videoBitrate, audioBitrate, audioSampleRate;
@@ -87,7 +86,7 @@ public class ControlFFmpegOptions extends BaseController {
             executableName = "FFmpegExecutable";
             executableDefault = "win".equals(SystemTools.os()) ? "D:\\Programs\\ffmpeg\\bin\\ffmpeg.exe" : "/home/ffmpeg";
 
-            disableVideo = disbaleAudio = disbaleSubtitle = false;
+            disableVideo = disableAudio = disableSubtitle = false;
             width = height = -1;
             videoFrameRate = 24f;
             videoBitrate = 5000 * 1000;
@@ -418,13 +417,13 @@ public class ControlFFmpegOptions extends BaseController {
                     if (newValue != null && !newValue.isEmpty()) {
                         UserConfig.setString("ffmpegDefaultAudioEncoder", newValue);
                     }
-                    disbaleAudio = false;
+                    disableAudio = false;
                     if (newValue == null || newValue.isEmpty() || Languages.message("NotSet").equals(newValue)) {
                         audioCodec = null;
                         return;
                     }
                     if (Languages.message("DisableAudio").equals(newValue)) {
-                        disbaleAudio = true;
+                        disableAudio = true;
                         audioCodec = null;
                         return;
                     }
@@ -737,14 +736,14 @@ public class ControlFFmpegOptions extends BaseController {
                     if (newValue != null && !newValue.isEmpty()) {
                         UserConfig.setString("ffmpegDefaultSubtitleEncoder", newValue);
                     }
-                    disbaleSubtitle = false;
+                    disableSubtitle = false;
                     if (newValue == null || newValue.isEmpty()
                             || Languages.message("NotSet").equals(newValue)) {
                         subtitleCodec = null;
                         return;
                     }
                     if (Languages.message("DisableAudio").equals(newValue)) {
-                        disbaleSubtitle = true;
+                        disableSubtitle = true;
                         subtitleCodec = null;
                         return;
                     }
@@ -972,6 +971,152 @@ public class ControlFFmpegOptions extends BaseController {
     @FXML
     public void download() {
         openLink("http://ffmpeg.org/download.html");
+    }
+
+    protected boolean disableAudio() {
+        return disableAudio;
+    }
+
+    protected boolean disableVideo() {
+        return disableVideo;
+    }
+
+    protected boolean disableSubtitle() {
+        return disableSubtitle;
+    }
+
+    protected List<String> makeParameters(BaseTaskController controller) {
+        List<String> parameters = new ArrayList<>();
+        parameters.add(executable.getAbsolutePath());
+        return makeParameters(controller, parameters);
+    }
+
+    protected List<String> makeParameters(BaseTaskController controller, List<String> parameters) {
+        try {
+            if (controller == null || parameters == null) {
+                return parameters;
+            }
+            taskController = controller;
+
+            makeSpecialParameters(parameters);
+            if (disableVideo()) {
+                parameters.add("-vn");
+            } else {
+                makeVideoParameters(parameters);
+            }
+            if (disableAudio()) {
+                parameters.add("-an");
+            } else {
+                makeAudioParameters(parameters);
+            }
+            if (disableSubtitle()) {
+                parameters.add("-sn");
+            } else {
+                makeSubtitleParameters(parameters);
+            }
+
+            String more = moreInput.getText().trim();
+            if (!more.isBlank()) {
+                String[] args = StringTools.splitBySpace(more);
+                if (args != null && args.length > 0) {
+                    parameters.addAll(Arrays.asList(args));
+                }
+            }
+
+            parameters.add(taskController.targetFile.getAbsolutePath());
+            parameters.add("-y");
+
+            String cmd = parameters.toString().replaceAll("[\\[|,|\\]]", " ");
+            taskController.updateLogs(cmd);
+            return parameters;
+        } catch (Exception e) {
+            taskController.updateLogs(e.toString());
+            MyBoxLog.console(e);
+            return null;
+        }
+    }
+
+    protected List<String> makeSpecialParameters(List<String> parameters) {
+        return parameters;
+    }
+
+    protected List<String> makeVideoParameters(List<String> parameters) {
+        try {
+            if (videoCodec != null) {
+                parameters.add("-vcodec");
+                parameters.add(videoCodec);
+            }
+            if (aspect != null) {
+                parameters.add("-aspect");
+                parameters.add(aspect);
+            }
+            if (videoFrameRate > 0) {
+                parameters.add("-r");
+                parameters.add(videoFrameRate + "");
+            } else {
+                parameters.add("-r");
+                parameters.add("30");
+            }
+            if (videoBitrate > 0) {
+                parameters.add("-b:v");
+                parameters.add(videoBitrate + "k");
+            } else {
+                parameters.add("-b:v");
+                parameters.add("5000k");
+            }
+        } catch (Exception e) {
+            taskController.updateLogs(e.toString());
+            MyBoxLog.console(e);
+        }
+        return parameters;
+    }
+
+    protected List<String> makeAudioParameters(List<String> parameters) {
+        try {
+            if (audioCodec != null) {
+                parameters.add("-acodec");
+                parameters.add(audioCodec);
+            }
+            if (audioBitrate > 0) {
+                parameters.add("-b:a");
+                parameters.add(audioBitrate + "k");
+            } else {
+                parameters.add("-b:a");
+                parameters.add("192k");
+            }
+            if (audioSampleRate > 0) {
+                parameters.add("-ar");
+                parameters.add(audioSampleRate + "");
+            } else {
+                parameters.add("-ar");
+                parameters.add("44100");
+            }
+            if (volumn != null) {
+                parameters.add("-af");
+                parameters.add("volume=" + volumn);
+            }
+            if (stereoCheck != null) {
+                parameters.add("-ac");
+                parameters.add(stereoCheck.isSelected() ? "2" : "1");
+            }
+        } catch (Exception e) {
+            taskController.updateLogs(e.toString());
+            MyBoxLog.console(e);
+        }
+        return parameters;
+    }
+
+    protected List<String> makeSubtitleParameters(List<String> parameters) {
+        try {
+            if (subtitleCodec != null) {
+                parameters.add("-scodec");
+                parameters.add(subtitleCodec);
+            }
+        } catch (Exception e) {
+            taskController.updateLogs(e.toString());
+            MyBoxLog.console(e);
+        }
+        return parameters;
     }
 
 }

@@ -5,6 +5,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.io.BufferedReader;
 import java.nio.charset.Charset;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -434,6 +435,179 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
         delayController.select(5);
         durationController.select(-1);
 
+    }
+
+    @Override
+    protected boolean disableAudio() {
+        return !audioCheck.isSelected() || disableAudio;
+    }
+
+    @Override
+    protected boolean disableVideo() {
+        return !videoCheck.isSelected() || disableVideo;
+    }
+
+    // http://trac.ffmpeg.org/wiki/Capture/Desktop
+    @Override
+    protected List<String> makeSpecialParameters(List<String> parameters) {
+        switch (os) {
+            case "win":
+                if (!winParameters(parameters)) {
+                    return null;
+                }
+                break;
+            case "linux":
+                if (!linuxParameters(parameters)) {
+                    return null;
+                }
+                break;
+            case "mac":
+                if (!macParameters(parameters)) {
+                    return null;
+                }
+                break;
+            default:
+                return null;
+        }
+        return parameters;
+    }
+
+    protected boolean winParameters(List<String> parameters) {
+        try {
+            if (!"win".equals(os) || parameters == null) {
+                return false;
+            }
+            // ffmpeg  -f gdigrab  -thread_queue_size 128 -probesize 200M  -i desktop -f dshow  -thread_queue_size 128 -i audio="立体声混音 (Realtek High Definition Audio)" -vcodec libx264 -acodec aac out.mp4   -y
+            if (disableVideo()) {
+                parameters.add("-vn");
+            } else {
+                parameters.add("-f");
+                parameters.add("gdigrab");
+                // https://stackoverflow.com/questions/57903639/why-getting-and-how-to-fix-the-warning-error-on-ffmpeg-not-enough-frames-to-es
+                parameters.add("-probesize");
+                parameters.add("100M");
+                parameters.add("-thread_queue_size");
+                parameters.add(videoThreadQueueSize + "");
+
+                if (rectangleRadio.isSelected() && width > 0 && height > 0) {
+                    // -offset_x 10 -offset_y 20 -video_size 640x480 -show_region 1 -i desktop
+                    parameters.add("-offset_x");
+                    parameters.add(x + "");
+                    parameters.add("-offset_y");
+                    parameters.add(y + "");
+                    parameters.add("-video_size");
+                    parameters.add(width + "x" + height);
+                    parameters.add("-show_region");
+                    parameters.add("0");
+                    parameters.add("-i");
+                    parameters.add("desktop");
+
+                } else if (windowRadio.isSelected()) {
+                    parameters.add("-i");
+                    parameters.add("title=" + titleInput.getText().trim());
+
+                } else if (fullscreenRadio.isSelected()) {
+                    parameters.add("-i");
+                    parameters.add("desktop");
+                } else {
+                    return false;
+                }
+            }
+
+            if (!audioCheck.isSelected() || audioDevice == null || disableAudio) {
+                parameters.add("-an");
+            } else {
+                parameters.add("-f");
+                parameters.add("dshow");
+                parameters.add("-thread_queue_size");
+                parameters.add(audioThreadQueueSize + "");
+                parameters.add("-i");
+                parameters.add("audio=" + audioDevice);
+
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+        return true;
+    }
+
+    protected boolean linuxParameters(List<String> parameters) {
+        try {
+            if (!"linux".equals(os) || parameters == null) {
+                return false;
+            }
+            // ffmpeg -video_size 1024x768 -framerate 25 -f x11grab -i :0.0+100,200 -f alsa -ac 2 -i hw:0 output.mkv
+            if (!videoCheck.isSelected() || disableVideo) {
+                parameters.add("-vn");
+            } else {
+                String offsets;
+                if (rectangleRadio.isSelected() && width > 0 && height > 0) {
+                    parameters.add("-video_size");
+                    parameters.add(width + "x" + height);
+                    offsets = x + "," + y;
+
+                } else if (fullscreenRadio.isSelected()) {
+                    parameters.add("-video_size");
+                    parameters.add(screenWidth + "x" + screenHeight);
+                    offsets = "0,0";
+                } else {
+                    return false;
+                }
+
+                parameters.add("-f");
+                parameters.add("x11grab");
+                // https://stackoverflow.com/questions/57903639/why-getting-and-how-to-fix-the-warning-error-on-ffmpeg-not-enough-frames-to-es
+                parameters.add("-probesize");
+                parameters.add("100M");
+                parameters.add("-thread_queue_size");
+                parameters.add(videoThreadQueueSize + "");
+                parameters.add("-i");
+                parameters.add(":0.0+" + offsets);
+            }
+
+            if (!audioCheck.isSelected() || disableAudio) {
+                parameters.add("-an");
+            } else {
+                parameters.add("-f");
+                parameters.add("alsa");
+                parameters.add("-thread_queue_size");
+                parameters.add(audioThreadQueueSize + "");
+                parameters.add("-i");
+                parameters.add("hw:0");
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+        return true;
+    }
+
+    protected boolean macParameters(List<String> parameters) {
+        try {
+            if (!"mac".equals(os) || parameters == null) {
+                return false;
+            }
+            // ffmpeg -f avfoundation -i "<screen device index>:<audio device index>" -r 30 -s 3360x2100 -pix_fmt uyvy422 output.yuv
+            parameters.add("-f");
+            parameters.add("avfoundation");
+            if (videoCheck.isSelected()) {
+                parameters.add("-i");
+                if (audioCheck.isSelected()) {
+                    parameters.add(macVideo + ":" + macAudio);
+                } else {
+                    parameters.add(macVideo + "");
+                }
+            } else {
+                if (audioCheck.isSelected()) {
+                    parameters.add(":" + macAudio);
+                }
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+        return true;
     }
 
 }
