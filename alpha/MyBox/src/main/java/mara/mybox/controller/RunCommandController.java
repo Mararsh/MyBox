@@ -62,7 +62,6 @@ public class RunCommandController extends HtmlPopController {
                         p.addAll(Arrays.asList(StringTools.splitBySpace(cmd)));
                         ProcessBuilder pb = new ProcessBuilder(p).redirectErrorStream(true);
                         process = pb.start();
-                        running();
                         try ( BufferedReader inReader = process.inputReader(charset)) {
                             String line;
                             while ((line = inReader.readLine()) != null) {
@@ -95,17 +94,10 @@ public class RunCommandController extends HtmlPopController {
                 @Override
                 protected void finalAction() {
                     cancelCommand();
-                    afterRun();
                 }
             };
             start(task, false);
         }
-    }
-
-    public void running() {
-    }
-
-    public void afterRun() {
     }
 
     public void cancelCommand() {

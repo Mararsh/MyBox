@@ -58,10 +58,15 @@ public abstract class Data2D_Convert extends Data2D_Edit {
     /*
         to/from database table
      */
-    public DataTable toTable(SingletonTask task, String targetName, boolean dropExisted) {
+    public DataTable toTable(SingletonTask task, String targetName) {
         DataTable dataTable = null;
         try ( Connection conn = DerbyBase.getConnection()) {
-            dataTable = createTable(task, conn, targetName, dropExisted);
+            String tableName = DerbyBase.fixedIdentifier(targetName);
+            int index = 1;
+            while (DerbyBase.exist(conn, tableName) > 0) {
+                tableName = DerbyBase.appendIdentifier(tableName, ++index + "");
+            }
+            dataTable = createTable(task, conn, tableName, false);
             importTable(task, conn, dataTable);
         } catch (Exception e) {
             if (task != null) {
@@ -248,9 +253,8 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                 targetName = TmpTable.tmpTableName();
             }
             DataTable dataTable = new DataTable();
-            TableData2D tableData2D = dataTable.getTableData2D();
             String tableName = DerbyBase.fixedIdentifier(targetName);
-            if (tableData2D.exist(conn, tableName) > 0) {
+            if (DerbyBase.exist(conn, tableName) > 0) {
                 if (!dropExisted) {
                     return null;
                 }
@@ -261,7 +265,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             if (dataTable == null) {
                 return null;
             }
-            tableData2D = dataTable.getTableData2D();
+            TableData2D tableData2D = dataTable.getTableData2D();
             String sql = tableData2D.createTableStatement();
             if (task != null) {
                 task.setInfo(sql);

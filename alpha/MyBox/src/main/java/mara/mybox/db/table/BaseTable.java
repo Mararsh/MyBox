@@ -1676,23 +1676,6 @@ public abstract class BaseTable<D> {
         return true;
     }
 
-    public int exist(Connection conn, String referredName) {
-        if (conn == null || referredName == null) {
-            return -1;
-        }
-        try ( ResultSet resultSet = conn.getMetaData().getColumns(null, "MARA",
-                DerbyBase.savedName(referredName), "%")) {
-            if (resultSet.next()) {
-                return 1;
-            } else {
-                return 0;
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e, referredName);
-            return -2;
-        }
-    }
-
     public String string(String value) {
         return DerbyBase.stringValue(value);
     }

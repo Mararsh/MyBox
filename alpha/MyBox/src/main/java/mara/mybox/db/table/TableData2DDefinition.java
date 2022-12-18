@@ -324,7 +324,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             try ( ResultSet results = conn.prepareStatement(sql).executeQuery()) {
                 while (results.next()) {
                     Data2DDefinition data = readData(results);
-                    if (exist(conn, data.getSheet()) == 0) {
+                    if (DerbyBase.exist(conn, data.getSheet()) == 0) {
                         invalid.add(data);
                     }
                 }

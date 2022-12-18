@@ -429,8 +429,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                                     || name.startsWith(TmpTable.TmpTablePrefix.toLowerCase())) {
                                 name = name.substring(TmpTable.TmpTablePrefix.length());
                             }
-
-                            DataTable dataTable = csvData.toTable(task, name, true);
+                            DataTable dataTable = csvData.toTable(task, name);
                             targetData = dataTable;
                             break;
                         }

@@ -20,7 +20,8 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileDeleteTools;
-import mara.mybox.value.AppVariables;
+import mara.mybox.tools.TmpFileTools;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
@@ -67,7 +68,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(message("Location"), ColumnType.String));
                 columns.add(new Data2DColumn(message("Comments"), ColumnType.String, 300));
                 data.setColumns(columns).setDataName(message("Notes"));
-                if (makeExampleFile(lang, "MyData_notes_" + lang, data)) {
+                if (makeExampleFile("MyData_notes_" + lang, data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -87,7 +88,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(message("Hobbies"), ColumnType.String));
                 columns.add(new Data2DColumn(message("Comments"), ColumnType.String, 300));
                 data.setColumns(columns).setDataName(message("Contacts"));
-                if (makeExampleFile(lang, "MyData_contacts_" + lang, data)) {
+                if (makeExampleFile("MyData_contacts_" + lang, data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -104,7 +105,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(message("InvolvedObjects"), ColumnType.String));
                 columns.add(new Data2DColumn(message("Comments"), ColumnType.String, 300));
                 data.setColumns(columns).setDataName(message("CashFlow"));
-                if (makeExampleFile(lang, "MyData_cashflow_" + lang, data)) {
+                if (makeExampleFile("MyData_cashflow_" + lang, data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -120,7 +121,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(message("Account"), ColumnType.String));
                 columns.add(new Data2DColumn(message("Comments"), ColumnType.String, 300));
                 data.setColumns(columns).setDataName(message("PrivateProperty"));
-                if (makeExampleFile(lang, "MyData_property_" + lang, data)) {
+                if (makeExampleFile("MyData_property_" + lang, data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -138,7 +139,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(isChinese ? "基弧" : "Radian", ColumnType.Short));
                 columns.add(new Data2DColumn(message("Comments"), ColumnType.String, 300));
                 data.setColumns(columns).setDataName(message("Eyesight"));
-                if (makeExampleFile(lang, "MyData_eyesight", data)) {
+                if (makeExampleFile("MyData_eyesight", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -152,7 +153,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(message("Weight") + "(kg)", ColumnType.Float).setScale(2));
                 columns.add(new Data2DColumn(message("Comments"), ColumnType.String, 300));
                 data.setColumns(columns).setDataName(message("Weight"));
-                if (makeExampleFile(lang, "MyData_weight", data)) {
+                if (makeExampleFile("MyData_weight", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -166,7 +167,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(message("Height") + "(cm)", ColumnType.Float).setScale(2));
                 columns.add(new Data2DColumn(message("Comments"), ColumnType.String, 300));
                 data.setColumns(columns).setDataName(message("Height"));
-                if (makeExampleFile(lang, "MyData_height", data)) {
+                if (makeExampleFile("MyData_height", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -182,7 +183,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(isChinese ? "卫生巾" : "Pads", ColumnType.Short));
                 columns.add(new Data2DColumn(message("Comments"), ColumnType.String, 300));
                 data.setColumns(columns).setDataName(message("Menstruation"));
-                if (makeExampleFile(lang, "MyData_menstruation", data)) {
+                if (makeExampleFile("MyData_menstruation", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -214,7 +215,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(isChinese ? "乡村人口(万人)" : "rural(ten thousand)", ColumnType.Double));
                 data.setColumns(columns).setDataName(message("ChinaPopulation"))
                         .setComments("https://data.stats.gov.cn/index.htm");
-                if (makeExampleFile(lang, "ChinaPopulation", data)) {
+                if (makeExampleFile("ChinaPopulation", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -251,7 +252,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(isChinese ? "女性平均预期寿命(岁)" : "female average life expectancy(years)", ColumnType.Double));
                 data.setColumns(columns).setDataName(message("ChinaCensus"))
                         .setComments("https://data.stats.gov.cn/index.htm");
-                if (makeExampleFile(lang, "ChinaCensus", data)) {
+                if (makeExampleFile("ChinaCensus", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -270,7 +271,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(isChinese ? "人均国内生产总值(元)" : "GDP per capita(yuan)", ColumnType.Double));
                 data.setColumns(columns).setDataName(message("ChinaGDP"))
                         .setComments("https://data.stats.gov.cn/index.htm");
-                if (makeExampleFile(lang, "ChinaGDP", data)) {
+                if (makeExampleFile("ChinaGDP", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -290,7 +291,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(isChinese ? "固定资产投资价格指数(上年=100)" : "price indices of investment in fixed assets(last_year=100)", ColumnType.Double));
                 data.setColumns(columns).setDataName(message("ChinaCPI"))
                         .setComments("https://data.stats.gov.cn/index.htm");
-                if (makeExampleFile(lang, "ChinaCPI", data)) {
+                if (makeExampleFile("ChinaCPI", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -311,7 +312,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(isChinese ? "2013年" : "year 2013", ColumnType.Double));
                 data.setColumns(columns).setDataName(message("ChinaFoodConsumption"))
                         .setComments("https://data.stats.gov.cn/index.htm");
-                if (makeExampleFile(lang, "ChinaFoods_" + lang, data)) {
+                if (makeExampleFile("ChinaFoods_" + lang, data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -331,7 +332,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(isChinese ? "特殊教育学校毕业生数(万人)" : "special education school graduates(ten thousand)", ColumnType.Double));
                 data.setColumns(columns).setDataName(message("ChinaGraduates"))
                         .setComments("https://data.stats.gov.cn/index.htm");
-                if (makeExampleFile(lang, "ChinaGraduates", data)) {
+                if (makeExampleFile("ChinaGraduates", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -353,7 +354,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(isChinese ? "博物馆参观人次(万人次)" : "visits(ten thousand)", ColumnType.Double));
                 data.setColumns(columns).setDataName(message("ChinaMuseums"))
                         .setComments("https://data.stats.gov.cn/index.htm");
-                if (makeExampleFile(lang, "ChinaMuseums", data)) {
+                if (makeExampleFile("ChinaMuseums", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -376,7 +377,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(isChinese ? "工勤技能人员数(万人)" : "worker(ten thousand)", ColumnType.Double));
                 data.setColumns(columns).setDataName(message("ChinaHealthPersonnel"))
                         .setComments("https://data.stats.gov.cn/index.htm");
-                if (makeExampleFile(lang, "ChinaHealthPersonnel", data)) {
+                if (makeExampleFile("ChinaHealthPersonnel", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -396,7 +397,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(isChinese ? "粗离婚率(千分比)" : "divorced ratio(permillage)", ColumnType.Double));
                 data.setColumns(columns).setDataName(message("ChinaMarriage"))
                         .setComments("https://data.stats.gov.cn/index.htm");
-                if (makeExampleFile(lang, "ChinaMarriage", data)) {
+                if (makeExampleFile("ChinaMarriage", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -415,7 +416,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(isChinese ? "女子世界冠军个数" : "number of female world champions", ColumnType.Integer));
                 data.setColumns(columns).setDataName(message("ChinaSportWorldChampions"))
                         .setComments("https://data.stats.gov.cn/index.htm");
-                if (makeExampleFile(lang, "ChinaSportWorldChampions", data)) {
+                if (makeExampleFile("ChinaSportWorldChampions", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -439,7 +440,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(isChinese ? "其他" : "others", ColumnType.Integer));
                 data.setColumns(columns).setDataName(message("CrimesFiledByChinaPolice"))
                         .setComments("https://data.stats.gov.cn/index.htm");
-                if (makeExampleFile(lang, "CrimesFiledByChinaPolice", data)) {
+                if (makeExampleFile("CrimesFiledByChinaPolice", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -465,7 +466,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(isChinese ? "其他渎职" : "other malfeasance", ColumnType.Integer));
                 data.setColumns(columns).setDataName(message("CrimesFiledByChinaProcuratorate"))
                         .setComments("https://data.stats.gov.cn/index.htm");
-                if (makeExampleFile(lang, "ChinaCrimesFiledByProcuratorate", data)) {
+                if (makeExampleFile("ChinaCrimesFiledByProcuratorate", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -501,7 +502,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(isChinese ? "快乐" : "happiness", ColumnType.Double, true));
                 data.setColumns(columns).setDataName(message("IncomeHappiness"))
                         .setComments("https://www.scribbr.com/statistics/simple-linear-regression/");
-                if (makeExampleFile(lang, "IncomeHappiness", data)) {
+                if (makeExampleFile("IncomeHappiness", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -515,7 +516,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(isChinese ? "薪资" : "Salary", ColumnType.Double, true));
                 data.setColumns(columns).setDataName(message("ExperienceSalary"))
                         .setComments("https://github.com/krishnaik06/simple-Linear-Regression");
-                if (makeExampleFile(lang, "ExperienceSalary", data)) {
+                if (makeExampleFile("ExperienceSalary", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -532,7 +533,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(isChinese ? "种类" : "Species", ColumnType.String, true));
                 data.setColumns(columns).setDataName(message("IrisSpecies"))
                         .setComments("http://archive.ics.uci.edu/ml/datasets/Iris");
-                if (makeExampleFile(lang, "IrisSpecies", data)) {
+                if (makeExampleFile("IrisSpecies", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -555,7 +556,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(isChinese ? "一年后病情进展" : "disease progression one year after baseline", ColumnType.Double));
                 data.setColumns(columns).setDataName(message("DiabetesPrediction"))
                         .setComments("https://hastie.su.domains/Papers/LARS/");
-                if (makeExampleFile(lang, "DiabetesPrediction", data)) {
+                if (makeExampleFile("DiabetesPrediction", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -580,7 +581,7 @@ public class Data2DExampleTools {
                         .setComments("https://hastie.su.domains/Papers/LARS/ \n"
                                 + "first 10 columns have been normalized to have mean 0 and "
                                 + "Euclidean norm 1 and the last column y has been centered (mean 0).");
-                if (makeExampleFile(lang, "DiabetesPrediction_standardized", data)) {
+                if (makeExampleFile("DiabetesPrediction_standardized", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -609,7 +610,7 @@ public class Data2DExampleTools {
                         .setComments("http://archive.ics.uci.edu/ml/datasets/Heart+failure+clinical+records \n"
                                 + "Davide Chicco, Giuseppe Jurman: \"Machine learning can predict survival of patients with heart failure "
                                 + "from serum creatinine and ejection fraction alone\". BMC Medical Informatics and Decision Making 20, 16 (2020)");
-                if (makeExampleFile(lang, "HeartFailure", data)) {
+                if (makeExampleFile("HeartFailure", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -631,7 +632,7 @@ public class Data2DExampleTools {
                 data.setColumns(columns).setDataName(message("ConcreteCompressiveStrength"))
                         .setComments("http://archive.ics.uci.edu/ml/datasets/Concrete+Compressive+Strength \n"
                                 + "https://zhuanlan.zhihu.com/p/168747748");
-                if (makeExampleFile(lang, "ConcreteCompressiveStrength", data)) {
+                if (makeExampleFile("ConcreteCompressiveStrength", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -654,7 +655,7 @@ public class Data2DExampleTools {
                 data.setColumns(columns).setDataName(message("DogRadiographsDataset"))
                         .setComments("https://www4.stat.ncsu.edu/~boos/var.select/lucency.html \n"
                                 + "Radiographic and Clinical Changes of the Tibial Tuberosity after Tibial Plateau Leveling Osteomtomy.");
-                if (makeExampleFile(lang, "DogRadiographs", data)) {
+                if (makeExampleFile("DogRadiographs", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -687,7 +688,7 @@ public class Data2DExampleTools {
                         .setComments("https://www4.stat.ncsu.edu/~boos/var.select/baseball.html \n"
                                 + "Salary information for 337 Major League Baseball (MLB) players who are not pitchers "
                                 + "and played at least one game during both the 1991 and 1992 seasons.");
-                if (makeExampleFile(lang, "BaseballSalaries", data)) {
+                if (makeExampleFile("BaseballSalaries", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -816,7 +817,7 @@ public class Data2DExampleTools {
                         .setComments("http://archive.ics.uci.edu/ml/datasets/South+German+Credit\n"
                                 + "700 good and 300 bad credits with 20 predictor variables. Data from 1973 to 1975. "
                                 + "Stratified sample from actual credits with bad credits heavily oversampled. A cost matrix can be used.");
-                if (makeExampleFile(lang, "SouthGermanCredit", data)) {
+                if (makeExampleFile("SouthGermanCredit", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -844,7 +845,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(isChinese ? "价格中位数" : "median_price", ColumnType.Double));
                 data.setColumns(columns).setDataName(message("BostonHousingPrices"))
                         .setComments("https://github.com/tomsharp/SVR/tree/master/data");
-                if (makeExampleFile(lang, "BostonHousingPrices", data)) {
+                if (makeExampleFile("BostonHousingPrices", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -875,7 +876,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(message(lang, "EndTime"), ColumnType.Era).setFormat(isChinese ? "Gy" : "y G"));
                 columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
                 data.setColumns(columns).setDataName(message("ChineseHistoricalCapitals"));
-                if (makeExampleFile(lang, "ChineseHistoricalCapitals_" + lang, data)) {
+                if (makeExampleFile("ChineseHistoricalCapitals_" + lang, data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -893,7 +894,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
                 data.setColumns(columns).setDataName(message("AutumnMovementPatternsOfEuropeanGadwalls"))
                         .setComments("https://www.datarepository.movebank.org/handle/10255/move.346");
-                if (makeExampleFile(lang, "EuropeanGadwalls", data)) {
+                if (makeExampleFile("EuropeanGadwalls", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -910,7 +911,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
                 data.setColumns(columns).setDataName(message("SpermWhalesGulfOfMexico"))
                         .setComments("https://www.datarepository.movebank.org/handle/10255/move.1059");
-                if (makeExampleFile(lang, "SpermWhales", data)) {
+                if (makeExampleFile("SpermWhales", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -931,7 +932,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(message(lang, "Latitude"), ColumnType.Latitude));
                 data.setColumns(columns).setDataName(message("EpidemicReportsCOVID19"))
                         .setComments("https://github.com/CSSEGISandData/COVID-19");
-                if (makeExampleFile(lang, "EpidemicReports", data)) {
+                if (makeExampleFile("EpidemicReports", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -944,14 +945,13 @@ public class Data2DExampleTools {
         }
     }
 
-    public static boolean makeExampleFile(String lang, String fileName, DataFileCSV targetData) {
+    public static boolean makeExampleFile(String fileName, DataFileCSV targetData) {
         try {
             if (fileName == null || targetData == null) {
                 return false;
             }
             File srcFile = FxFileTools.getInternalFile("/data/examples/" + fileName + ".csv");
-            File targetFile = new File(AppVariables.MyboxDataPath + File.separator + "data" + File.separator
-                    + fileName + "_" + lang + ".csv");
+            File targetFile = TmpFileTools.getPathTempFile(AppPaths.getGeneratedPath(), fileName, ".csv");
             if (targetFile.exists()) {
                 targetFile.delete();
             }

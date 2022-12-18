@@ -182,11 +182,6 @@
             <artifactId>xz</artifactId>
             <version>1.9</version>
         </dependency>
-        <!--        <dependency>
-            <groupId>com.github.kokorin.jaffree</groupId>
-            <artifactId>jaffree</artifactId>
-            <version>0.9.3</version>
-        </dependency>-->
         <dependency>
             <groupId>net.sf.image4j</groupId>
             <artifactId>image4j</artifactId>
