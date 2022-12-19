@@ -86,16 +86,24 @@ public class ControlSelection extends BaseTableViewController<List<String>> {
     }
 
     public void selectNames(List<String> names) {
-        isSettingValues = true;
         selectNone();
         if (tableData != null && names != null && !names.isEmpty()) {
+            isSettingValues = true;
+            List<List<String>> data = new ArrayList<>();
+            for (String name : names) {
+                List<String> row = new ArrayList<>();
+                row.add(name);
+                data.add(row);
+            }
             for (List<String> row : tableData) {
-                if (names.contains(row.get(0))) {
-                    tableView.getSelectionModel().select(row);
+                if (!names.contains(row.get(0))) {
+                    data.add(row);
                 }
             }
+            tableData.setAll(data);
+            tableView.getSelectionModel().selectRange(0, names.size());
+            isSettingValues = false;
         }
-        isSettingValues = false;
         notifySelected();
     }
 
